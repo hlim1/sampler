@@ -1,6 +1,11 @@
 open Cil
 
-let check = Check.checkFile []
+let doChecks = false
+
+let check = if doChecks then
+  Check.checkFile []
+else
+  ignore
     
 let doOne stages filename =
   Printf.printf "%s:\n" filename;

@@ -10,6 +10,10 @@ static const void * const requiresLibAcyclic = &providesLibAcyclic;
 #endif
 
 
+#ifdef CIL
+#pragma cilnoremove("getNextEventCountdown")
+#endif
+
 static inline unsigned getNextEventCountdown() __attribute__((no_instrument_function));
 
 static inline unsigned getNextEventCountdown()

@@ -5,4 +5,9 @@
 extern unsigned nextEventCountdown;
 
 
+#ifdef CIL
+#pragma cilnoremove("nextEventCountdown")
+#endif
+
+
 #endif /* !INCLUDE_libcountdown_countdown_h */

@@ -65,4 +65,27 @@ sub dump ($) {
 ########################################################################
 
 
+sub dot ($) {
+    my $self = shift;
+
+    print "\tsubgraph \"$self\" {\n";
+    print "\t\tlabel=\"$self->{objectName}\";\n";
+    $_->dot foreach values %{$self->{functions}};
+    print "\t}\n";
+}
+
+
+sub dot_calls ($) {
+    my $self = shift;
+
+    print "\tsubgraph \"$self\" {\n";
+    print "\t\tlabel=\"$self->{objectName}\";\n";
+    $_->dot_calls foreach values %{$self->{functions}};
+    print "\t}\n";
+}
+
+
+########################################################################
+
+
 1;

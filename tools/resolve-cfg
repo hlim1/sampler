@@ -6,6 +6,7 @@ use 5.008;			# for safe pipe opens using list form of open
 use Fcntl qw(SEEK_SET);
 use FileHandle;
 use FindBin;
+use Getopt::Long;
 
 use lib $FindBin::Bin;
 use SymbolTable;
@@ -38,6 +39,40 @@ sub check_signature ($$$) {
 
 
 my @units;
+
+
+########################################################################
+
+
+sub print_dump () {
+    $_->dump foreach @units;
+}
+
+
+sub print_dot () {
+    print "digraph CFG {\n";
+    $_->dot foreach @units;
+    print "}\n";
+}
+
+
+sub print_dot_calls () {
+    print "digraph CallGraph {\n";
+    $_->dot_calls foreach @units;
+    print "}\n";
+}
+
+
+my $printer = \&print_dump;
+
+
+GetOptions
+    'dump' => sub { $printer = \&print_dump },
+    'dot' => sub { $printer = \&print_dot },
+    'dot-calls' => sub { $printer = \&print_dot_calls };
+
+
+########################################################################
 
 
 foreach my $objectName (@ARGV) {
@@ -74,7 +109,7 @@ foreach my $objectName (@ARGV) {
 }
 
 
-$_->dump foreach @units;    
+&{$printer} unless $problem;
 
 
 exit $problem;

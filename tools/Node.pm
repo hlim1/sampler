@@ -99,4 +99,33 @@ sub dump ($) {
 ########################################################################
 
 
+sub dot ($) {
+    my $self = shift;
+
+    print "\t\t\t\"$self\" [label=$self->{id}];\n";
+
+    if (@{$self->{successors}}) {
+	print "\t\t\t\"$self\" -> { ";
+	print "\"$_\"; " foreach @{$self->{successors}};
+	print "}\n";
+    }
+
+    if (@{$self->{callees}}) {
+	print "\t\t\t\"$self\" -> { ";
+	print "\"$_\"; " foreach @{$self->{callees}};
+	print "} [style=dotted]\n";
+    }
+}
+
+
+sub count_callees ($$) {
+    my ($self, $count) = @_;
+
+    ++$count->{$_} foreach @{$self->{callees}};
+}
+
+
+########################################################################
+
+
 1;

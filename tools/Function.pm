@@ -54,4 +54,33 @@ sub dump ($) {
 ########################################################################
 
 
+sub dot ($) {
+    my $self = shift;
+
+    print "\t\tsubgraph \"$self\" {\n";
+    print "\t\t\tlabel=\"$self->{name}()\";\n";
+    $_->dot foreach @{$self->{nodes}};
+    print "\t\t}\n"
+}
+
+
+sub dot_calls ($) {
+    my $self = shift;
+
+    print "\t\t\"$self\" [label=\"$self->{name}\", shape=box];\n";
+
+    my %callees;
+    $_->count_callees(\%callees) foreach @{$self->{nodes}};
+
+    while (my ($callee, $count) = each %callees) {
+	print "\t\t\"$self\" -> \"$callee\"";
+	print " [label=$count]" if $count > 1;
+	print ";\n";
+    }
+}
+
+
+########################################################################
+
+
 1;

@@ -25,9 +25,8 @@ class visitor = object
 
 
   method vstmt stmt =
-    let clone = { stmt with
-		  labels = mapNoCopy cloneLabel stmt.labels;
-		  sid = -1 }
+    let clone = { stmt with sid = -1;
+		  labels = mapNoCopy cloneLabel stmt.labels }
     in
     
     let result =
@@ -40,9 +39,12 @@ class visitor = object
 			       mkBlock [mkStmt (Goto (ref clonedDest, location))],
 			       mkBlock [mkStmt clone.skind],
 			       locUnknown) in
+	      
+	      stmt.skind <- choice;
+	      
+	      (* postpone the update so we don't traverse into the choice consequent *)
 	      let update s =
-		clone.skind <- choice;
-		stmt.skind <- choice;
+		s.skind <- choice;
 		s
 	      in
 

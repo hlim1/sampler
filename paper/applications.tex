@@ -182,9 +182,9 @@ From these benchmarks and the examples in Sections~\ref{sec:ccrypt}
 and~\ref{sec:bc}, we conclude that realistic deployments will use
 sampling densities between \nicefrac{1}{100} and \nicefrac{1}{1000}.
 But how effective is \nicefrac{1}{1000} sampling at observing rare
-program behavior?  Suppose we are interested in a bug occurring once
+program behavior?  Suppose we are interested in an event occurring once
 per hundred executions.  To achieve 90\% confidence of observing this
-bug in at least one run, we need at least
+event in at least one run, we need at least
 %%
 \[\log{(1-0.90)} / \log{\left( 1 - \frac{1}{100 \times 1000}\right)} = \text{230,258 runs.}\]
 
@@ -192,8 +192,8 @@ While this is a large number, consider that sixty million Office XP
 licenses were sold in its first year on the market
 \cite{Microsoft:2002:AR-F10K}.  Assuming each licensee runs Microsoft
 Word twice per week, then this user base produces 230,258 runs every
-nineteen minutes.  Achieving 99\% confidence of observing a 
-bug that occurs on one in a thousand runs requires 4,605,168 runs, 
+nineteen minutes.  Achieving 99\% confidence of observing an 
+event that occurs on one in a thousand runs requires 4,605,168 runs, 
 which takes less than seven hours to gather.  
 
 For smaller deployments, we must either wait longer for sufficient

@@ -65,7 +65,7 @@ use POSIX qw(S_IRUSR S_IWUSR);
 my $remote = $query->remote_host;
 
 my %survey;
-tie %survey, 'DB_File::Lock', 'sampler-survey.db', O_RDONLY, 0, $DB_HASH, 'read';
+tie %survey, 'DB_File::Lock', '/var/www/sampler-survey.db', O_RDONLY, 0, $DB_HASH, 'read';
 my $novel = not exists $survey{$remote};
 untie %survey;
 

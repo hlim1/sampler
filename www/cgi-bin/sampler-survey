@@ -22,7 +22,7 @@ die "survey returned with no answer\n" unless defined $distro;
 
 
 my %survey;
-tie %survey, 'DB_File::Lock', 'sampler-survey.db',
+tie %survey, 'DB_File::Lock', '/var/www/sampler-survey.db',
     O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, $DB_HASH, 'write';
 
 $survey{$remote} = $distro;

@@ -9,5 +9,6 @@
 *.dot
 Makefile
 Makefile.in
+find-cliff
 order-sites
 resolve-cfg

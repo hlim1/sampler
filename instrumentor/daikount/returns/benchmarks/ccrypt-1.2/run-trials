@@ -5,6 +5,7 @@ use Carp;
 use File::Copy;
 
 
+@ARGV == 2 or die "Usage: $0 <ccrypt> <sparsity>\n";
 my ($ccrypt, $sparsity) = @ARGV;
 
 

@@ -35,13 +35,5 @@ class visitor file =
 let phase =
   "Transform",
   fun file ->
-    if (!target = "") then
-      raise (Arg.Bad "must identify sampled function")
-    else
-      let visitor = new visitor file in
-      visitCilFile visitor file;
-      if not !foundTarget then
-	begin
-	  prerr_endline ("no function named " ^ !target);
-	  exit 3
-	end
+    let visitor = new visitor file in
+    visitCilFile visitor file;

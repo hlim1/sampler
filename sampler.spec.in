@@ -110,7 +110,6 @@ tools for collecting and decoding sampled instrumentation reports.
 %files devel
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING
-%doc doc/%{name}.html
 %{_bindir}/*
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/doc
@@ -118,9 +117,9 @@ tools for collecting and decoding sampled instrumentation reports.
 %{_libdir}/%{name}
 
 %post devel
-scrollkeeper-update -q -o %{_datadir}/omf/sampler-guide
+scrollkeeper-update -q -o %{_datadir}/omf/sampler
 
-%postun
+%postun devel
 scrollkeeper-update -q
 
 
@@ -142,6 +141,7 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 %makeinstall
+rm -rf $RPM_BUILD_ROOT/var/scrollkeeper
 
 %clean
 rm -rf $RPM_BUILD_ROOT

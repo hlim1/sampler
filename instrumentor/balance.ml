@@ -2,120 +2,173 @@ open Cil
 open Weight
 
 
-let balanceLabel = Labels.build "balance"
+type t = stmt list
 
 
-type t = (WeighPaths.weightsMap -> unit) list
+let fallthroughLabel = Labels.build "fallthrough"
+
+let counterweightLabel = Labels.build "counterweight"
 
 
-let pushBalancer block =
-  let balancer = mkEmptyStmt () in
-  block.bstmts <- balancer :: block.bstmts;
-  balancer
+class visitor =
+  object
+    inherit FunctionBodyVisitor.visitor
+
+    method vstmt stmt =
+      begin
+	match stmt.skind with
+	| Switch (expr, block, cases, location) ->
+	    if not (Cfg.hasDefault cases) then
+	      let default = mkEmptyStmt () in
+	      default.labels <- [Default location];
+	      let break = mkStmt (Break location) in
+	      block.bstmts <- default :: break :: block.bstmts;
+	      let cases = default :: cases in
+	      stmt.skind <- Switch (expr, block, cases, location)
+	| _ ->
+	    ()
+      end;
+      DoChildren
+  end
+
+
+let addDefaultCases file =
+  if !BalancePaths.balancePaths then
+    ignore (visitCilFileSameGlobals (new visitor) file)
 
 
 let prepatch func =
-
-  let makeDummies weights stmt =
-    let lookup node = (weights#find node).threshold in
-    let threshold = lookup stmt in
-    fun succ ->
-      let succThreshold = lookup succ in
-      let dummies = ref [] in
-      for difference = succThreshold + 1 to threshold do
-	let dummy = mkEmptyStmt () in
-	Sites.registry#add func (Site.build dummy);
-	dummies := dummy :: !dummies
-      done;
-      Block (mkBlock !dummies)
-  in
-
   if !BalancePaths.balancePaths then
-    let folder splits = function
-      | { succs = [] }
-      | { succs = [_] } ->
-	  splits
-
+    let isSplit = function
       | { skind = If (_, thenBlock, elseBlock, _) } as stmt ->
-	  (* placeholders whose weights we can ask for later *)
-	  let thenBalancer = pushBalancer thenBlock in
-	  let elseBalancer = pushBalancer elseBlock in
-	  begin
-	    fun weights ->
-	      let makeDummies = makeDummies weights stmt in
-	      let balanceBranch succ =
-		let dummies = makeDummies succ in
-		succ.skind <- dummies
-	      in
-	      balanceBranch thenBalancer;
-	      balanceBranch elseBalancer
-	  end
-	  :: splits
+	  (* make both branches be non-empty *)
+	  let makeNonempty block =
+	    if block.bstmts = [] then
+	      block.bstmts <- mkEmptyStmt () :: block.bstmts
+	  in
+	  makeNonempty thenBlock;
+	  makeNonempty elseBlock;
+	  true
 
       | { skind = Switch (expr, block, cases, location) } as stmt ->
+	  (* turn case fallthroughs into explicit gotos *)
 	  let cases =
-	    if Cfg.hasDefault cases then
-	      cases
-	    else
-	      let default = mkEmptyStmt () in
-	      default.labels <- [Default location];
-	      block.bstmts <- block.bstmts @ [default];
-	      let cases = cases @ [default] in
-	      assert (Cfg.hasDefault cases);
-	      stmt.skind <- Switch (expr, block, cases, location);
-	      cases
-	  in
-	  begin
-	    fun weights ->
-	      let newCases =
-		let makeDummies = makeDummies weights stmt in
-		let balanceCase case =
-		  let dummies = mkStmt (makeDummies case) in
-		  let gotoLabels, switchLabels =
-		    let folder (gotos, switches) label =
-		      match label with
-		      | Label _ ->
-			  label :: gotos, switches
-		      | Case _
-		      | Default _ ->
-			  gotos, label :: switches
-		    in
-		    List.fold_left folder ([], []) case.labels
-		  in
-		  assert (switchLabels <> []);
-		  let skipTo = mkEmptyStmt () in
-		  case.skind <- Block (mkBlock [dummies; skipTo; mkStmt case.skind]);
-		  dummies.labels <- switchLabels;
-		  skipTo.labels <- gotoLabels;
-		  case.labels <- [];
-		  let patchPred pred =
-		    match pred.skind with
-		    | Goto (target, location) ->
-			assert (!target == case);
-			pred.skind <- Labels.buildGoto balanceLabel skipTo location
-		    | other ->
-			if pred != stmt then
-			  let location = get_stmtLoc other in
-			  pred.skind <- Block (mkBlock [mkStmt pred.skind;
-							mkStmt (Labels.buildGoto balanceLabel skipTo location)])
-		  in
-		  List.iter patchPred case.preds;
-		  dummies
+	    let elaborateFallthrough case =
+	      let hasFallthrough =
+		let isFallthrough pred =
+		  match pred.skind with
+		  | Goto _ -> false
+		  | _ -> pred != stmt
 		in
-		List.map balanceCase cases
+		List.exists isFallthrough case.preds
 	      in
-	      stmt.skind <- Switch (expr, block, newCases, location)
-	  end
-	  :: splits
+	      if hasFallthrough then
+		let location = get_stmtLoc case.skind in
+		let switchTarget = mkStmt case.skind in
+		switchTarget.labels <- case.labels;
+		let explicitGoto = mkStmt (Labels.buildGoto fallthroughLabel switchTarget location) in
+		case.labels <- [];
+		case.skind <- Block (mkBlock [explicitGoto; switchTarget]);
+		switchTarget
+	      else
+		case
+	    in
+	    List.map elaborateFallthrough cases
+	  in
+
+	  stmt.skind <- Switch (expr, block, cases, location);
+	  true
+
+      | { succs = [] }
+      | { succs = [_] } ->
+	  false
 
       | stmt ->
 	  ignore (bug "%s: unexpected kind of multi-successor statement" (Utils.stmt_describe stmt.skind));
 	  failwith "internal error"
     in
-    List.fold_left folder [] func.sallstmts
+    Cfg.build func;
+    List.filter isSplit func.sallstmts
   else
     []
 
 
-let patch splits weights =
-  List.iter (fun split -> split weights) splits
+let patch func splits weights =
+  let weightOf stmt = (weights#find stmt).threshold in
+
+  let makeCounterweight () =
+    let dummy = mkEmptyStmt () in
+    dummy.labels <- [counterweightLabel locUnknown];
+    Sites.registry#add func (Site.build dummy);
+    dummy
+  in
+
+  let prependCounterweights stmt =
+    let selfWeight = weightOf stmt in
+    fun successor tail ->
+      let succWeight = weightOf successor in
+      let result = ref tail in
+      for prepend = succWeight + 1 to selfWeight do
+	result := makeCounterweight () :: !result
+      done;
+      !result
+  in
+
+  let patchOneSplit stmt =
+    match stmt.skind with
+    | If (_, thenBlock, elseBlock, location) ->
+	let prependCounterweights = prependCounterweights stmt in
+	let balanceClause clause =
+	  clause.bstmts <- prependCounterweights (List.hd clause.bstmts) clause.bstmts
+	in
+	balanceClause thenBlock;
+	balanceClause elseBlock
+
+    | Switch (expr, body, cases, location) ->
+	let prependCounterweights = prependCounterweights stmt in
+	let balanceCase case =
+	  let switchLabels, gotoLabels =
+	    let isCaseLabel = function
+	      | Case _
+	      | Default _ ->
+		  true
+	      | Label _ ->
+		  false
+	    in
+	    List.partition isCaseLabel case.labels
+	  in
+	  assert (switchLabels <> []);
+	  case.labels <- [];
+
+	  let gotoTarget = mkStmt case.skind in
+	  gotoTarget.labels <- gotoLabels;
+	  let balanced = prependCounterweights case [gotoTarget] in
+	  case.skind <- Block (mkBlock balanced);
+	  case.labels <- switchLabels;
+
+	  let redirectGoto pred =
+	    match pred.skind with
+	    | Goto (target, location) ->
+		assert (!target == case);
+		target := gotoTarget
+	    | Switch _ ->
+		assert (pred == stmt)
+	    | other ->
+		currentLoc := get_stmtLoc other;
+		ignore (bug "unexpected predecessor kind (%s) for elaborated case@!  @[switch labels: [%a]@!goto labels: [%a]@!@]"
+			  (Utils.stmt_what other)
+			  Utils.d_labels switchLabels
+			  Utils.d_labels gotoLabels);
+		failwith "internal error"
+	  in
+	  List.iter redirectGoto case.preds
+	in
+	List.iter balanceCase cases
+
+    | other ->
+	currentLoc := get_stmtLoc other;
+	ignore (bug "unexpected statment kind (%s) on path balancing split list"
+		  (Utils.stmt_what other));
+	failwith "internal error"
+  in
+  List.iter patchOneSplit splits;

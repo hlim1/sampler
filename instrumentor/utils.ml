@@ -45,12 +45,10 @@ let d_label () = function
       text "default"
 
 let d_labels () labels =
-  chr '['
-    ++ (seq
-	  ~sep:(text "; ")
-	  ~doit:(d_label ())
-	  ~elements:labels)
-    ++ chr ']'
+  seq
+    ~sep:(text "; ")
+    ~doit:(d_label ())
+    ~elements:labels
 
 
 let d_preds () {preds = preds} =

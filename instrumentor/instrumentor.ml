@@ -27,6 +27,7 @@ let phase =
     Dynamic.analyze file;
     FunctionFilter.filter#collectPragmas file;
 
+    Balance.addDefaultCases file;
     iterFuncs file RemoveLoops.visit;
     iterFuncs file IsolateInstructions.visit;
 

@@ -16,8 +16,8 @@ let visit file isWeightyCallee countdown =
 	let countdown = countdown func in
 	let afterCalls = WeightyCalls.prepatch isWeightyCallee func countdown in
 	let splits = Balance.prepatch func in
-	Cfg.build func;
 
+	Cfg.build func;
 	let jumps = ClassifyJumps.visit func in
 	let callJumps = WeightyCalls.jumpify afterCalls in
 	let backJumps = jumps.backward @ callJumps in
@@ -27,7 +27,7 @@ let visit file isWeightyCallee countdown =
 	let sites, weights =
 	  if !BalancePaths.balancePaths then
 	    begin
-	      Balance.patch splits weights;
+	      Balance.patch func splits weights;
 	      Cfg.build func;
 	      let sites = Sites.registry#findAll func in
 	      let weights = WeighPaths.weigh func sites headers true in

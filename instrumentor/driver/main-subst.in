@@ -3,8 +3,8 @@
 use strict;
 use FindBin;
 use lib "$FindBin::Bin/@srcdir@";
-use lib '@CIL_HOME@/bin';
-use lib '@CIL_HOME@/lib';
+use lib "$FindBin::Bin/@srcdir@/../cil/bin";
+use lib "$FindBin::Bin/@srcdir@/../cil/lib";
 
 my $scheme = shift or die "Usage: $0 <scheme> [<compiler arguments> ...]\n";
 

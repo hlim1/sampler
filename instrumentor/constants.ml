@@ -12,16 +12,37 @@ let compareToConstants =
     ~default:false
 
 
+let checkFileFilter {file = file} =
+  if FileFilter.filter#included file then
+    DoChildren
+  else
+    SkipChildren
+
+
 class visitor collection =
   object
     inherit nopCilVisitor
+
+    method vglob = function
+      | GEnumTag _ ->
+	  SkipChildren
+      | other ->
+	  checkFileFilter (get_globalLoc other)
+
+    method vstmt stmt =
+      checkFileFilter (get_stmtLoc stmt.skind)
+
+    method vfunc fundec =
+      if FunctionFilter.filter#included fundec.svar.vname then
+	DoChildren
+      else
+	SkipChildren
 
     method vexpr exp =
       begin
 	match isInteger (constFold true exp) with
 	| Some constant ->
-	    if not (collection#mem constant) then
-	      collection#add constant ()
+	    collection#replace constant ()
 	| None ->
 	    ()
       end;

@@ -10,10 +10,8 @@ let name = {
 }
 
 
-class c file =
+class c file : Scheme.c =
   object (self)
-    inherit Scheme.c name file
-
     val tuples = CounterTuples.build name file
 
     val constants = Constants.collect file
@@ -28,17 +26,15 @@ class c file =
 	      when isInterestingVar varinfo ->
 		globals <- varinfo :: globals
 	    | GFun (func, _) ->
-		self#findSites func
+		let finder = new ScalarPairFinder.visitor constants globals tuples func in
+		ignore (Cil.visitCilFunction finder func)
 	    | _ ->
 		()
 	  in
-	  iterGlobals file scanner)
+	  iterGlobals file scanner);
+      tuples#patch
 
-    method private findSites func =
-      let finder = new ScalarPairFinder.visitor constants globals tuples func in
-      ignore (Cil.visitCilFunction finder func)
-
-    method saveSiteInfo = tuples#finalize
+    method saveSiteInfo = tuples#saveSiteInfo
   end
 
 

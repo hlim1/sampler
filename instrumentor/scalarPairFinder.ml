@@ -3,6 +3,9 @@ open Interesting
 open Pretty
 
 
+let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
+
+
 class visitor (constants : Constants.collection) globals (tuples : CounterTuples.manager) func =
   object (self)
     inherit SiteFinder.visitor
@@ -12,10 +15,12 @@ class visitor (constants : Constants.collection) globals (tuples : CounterTuples
 
     method vstmt stmt =
 
-      let build first left location =
+      let build first left location (host, off) =
 	let leftType = typeOfLval left in
 	let leftTypeSig = typeSig leftType in
-	let leftDoc = (d_lval () left) ++ chr '\t' in
+	let leftDoc = d_columns
+	    [d_lval () left; text host; text off]
+	in
 
 	let newLeft = var (Locals.makeTempVar func leftType) in
 	let last = mkStmt (Instr [Set (left, Lval newLeft, location)]) in
@@ -27,9 +32,10 @@ class visitor (constants : Constants.collection) globals (tuples : CounterTuples
 	in
 
 	let compareToVarMaybe right =
-	  if left <> var right && leftTypeSig = typeSig right.vtype then
+	  if leftTypeSig = typeSig right.vtype then
 	    let selector = selector (Lval (var right)) in
-	    let description = leftDoc ++ text right.vname in
+	    let detail = if right.vglob then "global" else "local" in
+	    let description = d_columns [leftDoc; text right.vname; text detail] in
 	    let bump = tuples#addSite func selector description location in
 	    statements := bump :: !statements
 	in
@@ -40,7 +46,7 @@ class visitor (constants : Constants.collection) globals (tuples : CounterTuples
 	begin
 	  let compareToConst right =
 	    let selector = selector right in
-	    let description = leftDoc ++ d_exp () right in
+	    let description = d_columns [leftDoc; d_exp () right; text "const"] in
 	    let bump = tuples#addSite func selector description location in
 	    statements := bump :: !statements
 	  in
@@ -70,15 +76,25 @@ class visitor (constants : Constants.collection) globals (tuples : CounterTuples
       
       match IsolateInstructions.isolated stmt with
       | Some (Set (left, expr, location))
-	when self#includedStatement stmt && isInterestingLval left ->
-	  let replacement = (fun temp -> Set (temp, expr, location)) in
-	  stmt.skind <- build replacement left location;
+	when self#includedStatement stmt ->
+	  begin
+	    match isInterestingLval left with
+	    | None -> ()
+	    | Some info ->
+		let replacement = (fun temp -> Set (temp, expr, location)) in
+		stmt.skind <- build replacement left location info;
+	  end;
 	  SkipChildren
 
       | Some (Call (Some left, callee, args, location))
-	when self#includedStatement stmt && isInterestingLval left ->
-	  let replacement = (fun temp -> Call (Some temp, callee, args, location)) in
-	  stmt.skind <- build replacement left location;
+	when self#includedStatement stmt ->
+	  begin
+	    match isInterestingLval left with
+	    | None -> ()
+	    | Some info ->
+		let replacement = (fun temp -> Call (Some temp, callee, args, location)) in
+		stmt.skind <- build replacement left location info;
+	  end;
 	  SkipChildren
 
       | _ ->

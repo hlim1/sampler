@@ -8,17 +8,18 @@ let name = {
 }
 
 
-class c file =
+class c file : Scheme.c =
   object
-    inherit Scheme.c name file
-
     val tuples = CounterTuples.build name file
 
-    method private findSites func =
-      let finder = new BranchFinder.visitor tuples func in
-      ignore (Cil.visitCilFunction finder func)
+    method private findAllSites =
+      Scanners.iterFuncs file
+	(fun func ->
+	  let finder = new BranchFinder.visitor tuples func in
+	  ignore (Cil.visitCilFunction finder func));
+      tuples#patch
 
-    method saveSiteInfo = tuples#finalize
+    method saveSiteInfo = tuples#saveSiteInfo
   end
 
 

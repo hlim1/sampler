@@ -72,24 +72,26 @@ let isInterestingVar varinfo =
 
 let isInterestingLval lval =
   let isInterestingHost = function
-    | Var var ->
-	hasInterestingName var
-    | Mem expr ->
-	!assignAcrossPointer
+    | Var var when hasInterestingName var ->
+	Some (if var.vglob then "global" else "local")
+    | Mem expr when !assignAcrossPointer -> Some "mem"
+    | _ -> None
   in
 
-  let rec isInterestingOffset = function
-    | NoOffset -> true
-    | Field (_, NoOffset) -> !assignIntoField
-    | Index (_, NoOffset) -> !assignIntoIndex
-    | Field (_, rest)
-    | Index (_, rest) ->
-      if !assignIntoField || !assignIntoIndex then
-	isInterestingOffset rest
-      else
-	false
+  let isInterestingOffset offset =
+    match snd (removeOffset offset) with
+    | NoOffset -> Some "direct"
+    | Field _ when !assignIntoField -> Some "field"
+    | Index _ when !assignIntoIndex -> Some "index"
+    | _ -> None
   in
 
-  isInterestingType (typeOfLval lval) &&
-  isInterestingHost (fst lval) &&
-  isInterestingOffset (snd lval)
+  if isInterestingType (typeOfLval lval) then
+    match isInterestingHost (fst lval) with
+    | None -> None
+    | Some host ->
+	match isInterestingOffset (snd lval) with
+	| None -> None
+	| Some off -> Some (host, off)
+  else
+    None

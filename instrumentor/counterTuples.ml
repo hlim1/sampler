@@ -8,7 +8,8 @@ class type manager =
   object
     method private bump : lval -> location -> instr
     method addSite : fundec -> exp -> doc -> location -> stmt
-    method finalize : Digest.t Lazy.t -> out_channel -> unit
+    method patch : unit
+    method saveSiteInfo : Digest.t Lazy.t -> out_channel -> unit
   end
 
 
@@ -28,21 +29,7 @@ class virtual basis name file =
       siteInfos#push (func, location, description, result);
       result
 
-    method finalize digest channel =
-      fprintf channel "<sites unit=\"%s\" scheme=\"%s\">\n"
-	(Digest.to_hex (Lazy.force digest)) name.flag;
-
-      siteInfos#iter
-	(fun (func, location, description, statement) ->
-	  let description = Pretty.sprint max_int description in
-	  fprintf channel "%s\t%d\t%s\t%d\t%s\n"
-	    location.file location.line
-	    func.svar.vname
-	    statement.sid
-	    description);
-
-      output_string channel "</sites>\n";
-
+    method patch =
       mapGlobals file
 	begin
 	  function
@@ -64,6 +51,21 @@ class virtual basis name file =
 	    | other ->
 		other
 	end
+
+    method saveSiteInfo digest channel =
+      fprintf channel "<sites unit=\"%s\" scheme=\"%s\">\n"
+	(Digest.to_hex (Lazy.force digest)) name.flag;
+
+      siteInfos#iter
+	(fun (func, location, description, statement) ->
+	  let description = Pretty.sprint max_int description in
+	  fprintf channel "%s\t%d\t%s\t%d\t%s\n"
+	    location.file location.line
+	    func.svar.vname
+	    statement.sid
+	    description);
+
+      output_string channel "</sites>\n"
   end
 
 

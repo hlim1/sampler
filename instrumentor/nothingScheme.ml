@@ -8,13 +8,10 @@ let name = {
 }
 
 
-class c file =
+class c file : Scheme.c =
   object
-    inherit Scheme.c name file
-
     method findAllSites = ()
-    method private findSites = ignore
-    method saveSiteInfo _ = ignore
+    method saveSiteInfo _ _ = ()
   end
 
 

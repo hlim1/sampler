@@ -26,6 +26,9 @@ dump: $(libcil) $(dump)
 removeDeadCode: $(libcil) $(removeDeadCode)
 	$(link)
 
+loopless: $(libcil) $(loopless)
+	$(link)
+
 %.i: %.c
 	$(CC) $(CPPFLAGS) $< -o $@ -E
 

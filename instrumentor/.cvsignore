@@ -9,4 +9,5 @@
 cfg-to-dot
 checker
 dump
+loopless
 removeDeadCode

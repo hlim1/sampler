@@ -16,14 +16,15 @@
 %{fsampler-scheme=branches:-include sampler/branches-unit.h} \
 %{fsampler-scheme=returns:-include sampler/returns-unit.h} \
 %{fsampler-scheme=scalar-pairs:-include sampler/scalar-pairs-unit.h} \
-%{fsampler-scheme=*:-include sampler/unit.h}
+%{fsampler-scheme=*:-include sampler/unit.h} \
+--instrumentor-outfile=%g.inst.i
 
 *cc1:
 + %{save-temps} %{v} \
 %(embedding)
 
 *asm_final:
-+ %{v:--verbose} \
++ %{save-temps} %{v:--verbose} \
 %(embedding)
 
 %rename lib old_lib

@@ -11,6 +11,7 @@ my @objcopy;
 
 my $verbose;
 my $outfile;
+my $save_temps;
 
 my $saved_cfg;
 my $saved_site_info;
@@ -22,6 +23,8 @@ while (@ARGV) {
     if ($_ eq '-o') {
 	$outfile = shift;
 	push @as, $_, $outfile;
+    } elsif ($_ eq '-save-temps') {
+	$save_temps = 1;
     } elsif ($_ eq '--verbose') {
 	$verbose = 1;
     } elsif (/^-fsave-cfg=(.+)/) {
@@ -53,3 +56,11 @@ run_stage 'objcopy', @objcopy, $outfile
 
 
 exit 0;
+
+
+END {
+    unless ($save_temps) {
+	unlink $saved_cfg if defined $saved_cfg;
+	unlink $saved_site_info if defined $saved_site_info;
+    }
+}

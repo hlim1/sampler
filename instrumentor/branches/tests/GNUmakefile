@@ -8,7 +8,7 @@ CC := $(front_end) --$(cyclic)
 CFLAGS := -g -W -Wall -Werror -save-temps
 
 traces := $(tests:=.trace)
-checks := $(tests:=.check)
+reports := $(tests:=.report)
 
 countdir := $(top)/../libcountdown
 lib := ../libbranches/libbranches.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la
@@ -23,20 +23,16 @@ recurse = $(MAKE) -C $(@D) $(@F)
 all:
 .PHONY: all
 
-check: $(checks)
+check: $(reports)
 .PHONY: check
 
-$(checks): %.check: %.trace %.sites
-	[ -s $< ]
-.PHONY: $(checks)
+$(reports): %.report: $(top)/../resolver/resolve-samples % %.trace
+	$< $* <$*.trace >$@.
+	mv $@. $@
 
-$(tests:=.trace): %.trace: %
+$(traces): %.trace: %
 	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 	[ -r $@ ]
-
-$(tests:=.sites): %.sites: %
-	$(top)/../resolver/extract-site-info $< >$@.
-	mv $@. $@
 
 simple: %: %.o $(lib) ../main
 	$(LINK.o) $< $(LOADLIBES) $(LDLIBS) -o $@
@@ -57,7 +53,7 @@ force:
 
 clean:
 	libtool --mode=clean 'rm -f' $(tests)
-	rm -f $(traces) *.[ios] *.inst.c *.sites *.sites.
+	rm -f $(checks) $(checks:=.) $(traces) *.[ios] *.inst.c
 .PHONY: clean
 
 spotless: clean

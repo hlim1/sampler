@@ -1,7 +1,7 @@
 *.i
 *.inst.c
 *.s
-*.sites
+*.report
 *.trace
 .libs
 modular

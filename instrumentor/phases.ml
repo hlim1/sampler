@@ -4,7 +4,7 @@ open Cil
 let main manager =
   let phases =
     [
-     "removing unused functions", Unused.removeUnusedFunctions;
+     "removing unused symbols", (fun file -> Rmtmps.removeUnusedTemps file);
      "instrumenting", (fun file -> ignore (manager file));
      "removind unused symbols", (fun file -> Rmtmps.removeUnusedTemps file);
      Idents.phase;

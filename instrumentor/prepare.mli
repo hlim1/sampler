@@ -20,5 +20,7 @@ class virtual visitor :
     method private prepatcher : Calls.prepatcher
     method private shouldTransform : fundec -> bool
 
+    method private prepare : fundec -> global list * info
+
     method finalize : file -> unit
   end

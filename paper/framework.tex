@@ -201,7 +201,7 @@ fast path code instead.
   \label{fig:code-layout}
 \end{figure}
 
-\autoref{fig:code-layout} shows an example of code layout for a
+Figure~\ref{fig:code-layout} shows an example of code layout for a
 function containing one conditional and one loop.  Dotted nodes
 represent instrumentation sites; these are reduced to countdown
 decrements in the fast path.  The boxed nodes represent threshold
@@ -289,7 +289,7 @@ optimizations.
 
 Our framework for statistically fair sampling could be used for any
 application of program monitoring.  As discussed in
-\autoref{sec:introduction}, there are issues peculiar to
+Section~\ref{sec:introduction}, there are issues peculiar to
 monitoring a large number of remote sites.  Here we briefly reiterate
 the main problems and a particular solution that we adopt.
 
@@ -302,9 +302,9 @@ needed to hold results on a central server for analysis.  For example,
 if we wish to keep all results, then the storage requirements for the
 central server grow linearly with the number of executions even if the
 data collected from each execution is constant size.  In
-\autoref{sec:ccured} we give an example of an analysis that does not
-require retention of the data on the server.  However, we expect it
-will often be desirable to be able to perform a new analysis on
+Section~\ref{sec:ccured} we give an example of an analysis that does
+not require retention of the data on the server.  However, we expect
+it will often be desirable to be able to perform a new analysis on
 previously gathered data and in this situation at least some data
 would need to be retained.
 

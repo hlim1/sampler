@@ -1,78 +1,173 @@
 \section{Introduction}
 
-Large software systems are notoriously difficult to understand and
-debug.  Static analysis tools yield strong proofs about all possible
-behaviors, but may be limited by issues of scalability and
-decidability.  Furthermore, unsound languages such as C can easily
-fail in ways that violate their own semantics; few static analyses are
-designed for this contingency.  Testing avoids such issues by directly
-running and observing the real code.  However, testing is only as good
-as test coverage, and has limited predictive power.  If end users do
-things not anticipated by the test suite, they may uncover novel bugs.
+It is an unfortunate fact that almost all deployed software systems
+have bugs, and that users often encounter these bugs.  With steady
+progress in tools and techniques for improving software quality, this
+situation is likely to improve but not be resolved entirely.  For most
+software, the resources (measured in time, money, or people) that can
+be devoted to improving it are quite limited, and the normal case is
+that just through sheer numbers the community using the software
+brings far more resources to bear on testing a piece of software than
+can be done by the team responsible for producing the software.
 
-Ultimately, the most truthful information about program behavior must
-come from the end users themselves.  End users will discover new bugs,
-or may collectively prove that a known flaw thought to be rare is
-actually a common, recurring problem.  This is especially true in
-industrial practice: engineers cost money, delayed releases cost
-money, and bug fixing is a matter of triage.  The bugs that must be
-fixed are those that happen most often to the most users.
+This paper is about making lemonade from lemons.  Given that deployed
+software will have problems, perhaps we can speed up the process of
+identifying and eliminating those problems by learning something
+from the enormous number of executions of a software system performed
+by its user community.  We propose an infrastructure where 
+some information about each user execution of a program is 
+transmitted to a central database; the data 
+gathered from all executions is analyzed to extract information
+that will help engineers to find and fix problems more quickly.
+In our view, such an infrastructure has several benefits:
+\begin{itemize}
 
-Traditionally, user feedback comes in the form of calls or e-mail to a
-technical support center.  Technically astute users might be able to
-provide a stack trace, core dump, or even a repeatable test case.  But
-for the most part, software designers have only an impoverished view
-of how their code is operating (and failing) in the real world.
+\item For deployed software systems, the number of executions
+in actual use dwarfs the number of executions that can be managed in
+testing by orders of magnitude.  For many software systems today,
+essentially all of the information from actual executions is
+discarded, because there is no mechanism for feedback.  Retaining
+even a small portion of that could be very valuable.
 
-Widespread Internet connectivity has improved this somewhat.
-Netscape/Mozilla, Microsoft, GNOME, and KDE have all deployed
-automated (but opt-in) crash reporting systems.  These can report key
-information about program state \emph{after} a failure has occurred:
-stack trace, register contents, and the like.  However, program
-actions \emph{before} the crash remain unknown.  Trace information
-leading up to the failure may contain critical clues, especially in
-such cases as heap corruption where the erroneous program action may
-occur well before the resultant crash.  Also, crash reporting systems
+\item Gathering information from all user executions, or at
+least a representative sample of user executions, gives an
+accurate picture of how the software is actually used,
+allowing better decisions about how to spend scarce resources
+on modifications. In particular, bugs that affect a great number
+of users are higher priority than bugs that are very rare.
+This kind of information is almost impossible to obtain by
+any means other than analyzing actual user executions.
+
+\item While our primary interest is in finding and fixing quality
+problems, such information could be useful for other purposes.
+For example, the authors of software may just wish to know which
+features are most commonly used.
+
+\item Traditional user feedback about problems often involves a call 
+from a relatively unsophisticated user to a perhaps only somewhat
+more sophisticated technical support center.  In a networked world,
+it is simply more efficient and accurate to gather this information
+automatically.
+
+\item Many bugs sit on open bug lists of products for an extended
+period of time before an engineer is available to work on the bug.
+Automatically gathering data from user executions allows for automated
+analysis, without human intervention.  Thus, when an engineer is
+finally available to work on a problem, the results of automated
+analysis done in the interim may help the engineer to identify and fix
+the problem more quickly.
+
+\item Based on the current state of the analysis, clients can be
+instructed to focus attention in data reporting on different aspects
+of the software.  For example, if there appears to be a problem
+with a particular function $f$, we may wish clients to disproportionately
+report information about $f$ for a period of time, to speed up
+the process of gathering enough data for analysis.
+
+\end{itemize}
+
+The idea of gathering data from actual user executions is not new.
+Commercial databases, for example, routinely produce extensive
+log files, and the first action when a user reports a problem is
+to inspect those logs.  Similarly, each flight of the Boeing 777
+generates megabytes of log data which is subsequently combed
+for signs of possible problems.  There are many other similar
+examples in the world of commercial software.
+
+A more recent development is the result of ubiquitous Internet
+connectivity.  Netscape/Mozilla, Microsoft, GNOME, and KDE have all
+deployed automated, opt-in crash reporting systems.  These systems
+gather key information about program state after a failure has
+occurred: stack trace, register contents, and the like.  By sending
+this information back to the development organization, developers are
+able to effectively triage bugs that cause crashes and focus on the
+problems experienced by the most users.
+
+We believe this is progress in the right direction, but we also
+believe that existing approaches only scratch the surface of what
+is possible when developers and users are connected by a network.
+For example, the crash-reporting systems do not gather any information
+about what happened before the crash.  Trace information
+leading up to the failure may contain critical clues to the actual
+problem.  Also, crash reporting systems
 report no information for successful runs.  This makes it difficult to
 distinguish anomalous (crash-causing) behavior from innocuous behavior
-common to all runs.
+common to all runs.  In general, the information gathered by 
+crash-reporting systems is not very systematic.  Furthermore, in all
+feedback systems of which we are aware (crash-reporting or otherwise)
+the subsequent analysis of the data is highly manual.
 
-Therefore, we wish to trace or monitor program behavior continuously
-throughout a run.  Furthermore, we want to measure reality: actual use
-by actual users.  Any monitoring scheme, then, must be sufficiently
-lightweight as to not interfere with normal program usage.  The size
-of collected data is a concern as well, in terms of both the storage
-space and the network bandwidth required to collect it.  Working to
-our advantage is the sheer number of runs we may examine: any deployed
-software system will have far more end users than dedicated in-house
-testers.
+We present one approach to systematically gathering information
+about program runs from a large, distributed user community, and
+performing subsequent automatic analysis of that information to
+help in locating bugs.  Initially, we believed that the interesting
+problem was the analysis of the data, and that gathering the
+data was relatively straightforward.  However, we discovered that
+designing an data gathering infrastructure that would scale was
+non-trivial.  As a result, this paper discusses mostly the design
+and implementation of the system that gathers the data from user
+executions. We do give a non-trivial example of subsequent data analysis
+in Section~\ref{sec:applications}.
 
-Because of this advantage of numbers, it is not necessary to gather
-complete information about each and every run.  We can collect just a
-small sample of program behavior on each run.  The aggregate picture
-resulting from a large number of such samples will still be a truthful
-representation of overall program usage, provided that the samples are
-collected in a statistically fair, randomized manner.  Sampling can
-address performance and size concerns as well: when the monitoring
-cost is spread thin across a great many users, the incremental burden
-on any single user can be made arbitrarily small.
+Our infrastructure is designed to gather information about a
+large number of program executions taking place remotely from
+the central database.  We believe any design must take into account
+the following:
+\begin{enumerate}
 
-This paper presents a framework for fair random sampling of program
-behavior.  \autoref{sec:framework} details the program transformation
-at the heart this framework, which allows us to add randomly sampled
-instrumentation code to an existing application.  In this section we
-also discuss some of the design issues \unknown[something about
-keeping data size down, and doing client-side data reduction].
-\autoref{sec:applications} presents two example applications of our
-system: sharing the cost of checking assertions, and hunting for bugs
-using statistical data mining.  In \autoref{sec:related-work} we
-discuss related work.  Monitoring of deployed code raises important
-privacy and security concerns, both social and technical; a discussion
-of these issues appears in \autoref{sec:privsec}.
-\autoref{sec:conclusions} concludes.
+\item {\em Client performance}  Whatever information is gathered,
+it should be sufficiently lightweight that it has a negligible impact
+on the performance of the user's program.  More precisely, we would
+like a design that allows the performance penalty for our
+instrumentation to be tuned to be arbitrarily small at the expense of
+gathering less information.
 
-\aside{Did this introduction take too long to get to the point?}
+\item {\em Network bandwidth}  Information from the client must
+be transmitted over the network to the central database.  Simply
+generating traces, or partial traces, is simply too expensive in
+network bandwidth even in cases where the performance impact on the
+client is negligible.  The data must be highly compressed in some way.
 
-\aside{I fear that my message may be a bit muddled.  I just care about
-  fixing bugs, or do I care about building up a broader understanding
-  of what the code is doing?}
+\item {\em Server storage}  Gathering even a relatively small amount of data 
+on a regular basis from a large number of clients can quickly 
+overwhelm the storage capacity of the central server.  Another level
+of summarization is needed in combining the information from 
+multiple runs of different clients.
+
+\end{enumerate}
+
+The relative importance of these three concerns varies from
+application to application, but one of them is always the limiting
+factor.  We use sampling to solve problem (1).  Classical sampling for
+measuring program performance searches for the ``elephant in the
+haystack''---we are looking for the biggest users of time.  In
+contrast, we are looking for needles (bugs) that may occur very
+rarely, and furthermore our sampling rates may be very low to maintain
+client performance.  This leads us to be concerned with guaranteeing
+that our sampling is statistically accurate, so that we can rely on
+the reported frequencies of events.
+Besides the problem of sampling accurately, we also develop
+new ways to reduce the overhead of the necessary additional code
+that determines whether to take a sample or not.
+
+Section~\ref{sec:applications} presents two different applications of
+our framework.  In Section~\ref{sec:share} we consider how we can
+share the cost of program assertions over a large user base through
+sampling.  Each user only executes a fraction of the assertions, and
+thus sees good performance, but in the aggregate bugs due to assertion
+failures are still extremely likely to be detected.  In
+Section~\ref{sec:applications:mining} we show how we can use
+statistical techniques to identify the source of a likely bug from
+samples taken from a few thousand executions.  We sample information
+on the relationship between all pairs of integer program variables in
+a program (for each variable whether $i < j$, $i = j$, or $i < j$)
+from both successful and failing runs.  We then use use statistical
+regression techniques to identify the predicates that are highly
+predictive of program failure.
+
+Monitoring of user executions raises some important
+privacy and security concerns.  The problems are both social and technical; 
+a discussion of these issues appears in \autoref{sec:privsec}.
+Finally, \autoref{sec:conclusions} concludes.
+
+

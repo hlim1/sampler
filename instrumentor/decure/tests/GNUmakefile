@@ -21,6 +21,9 @@ crasher-cured crasher-decured: crasher.c ../main
 static-cured static-decured: static-1.c static-2.c static-main.c ../main
 	$(link)
 
+../main: force
+	$(MAKE) -C $(@D) $(@F)
+
 force:
 .PHONY: force
 

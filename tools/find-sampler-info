@@ -45,7 +45,7 @@ sub wanted {
     $exe = new FileHandle;
     open $exe, '-|', $extract, '.debug_site_info', $File::Find::name;
     while (<$exe>) {
-	s{^$buildDir}{/usr/lib/sampler/sites};
+	s{^\Q$buildDir\E/}{/usr/src/debug/};
 	$sites->print($_);
     }
     die unless $exe->close;
@@ -54,7 +54,7 @@ sub wanted {
     $exe = new FileHandle;
     open $exe, '-|', $extract, '.debug_sampler_cfg', $File::Find::name;
     while (<$exe>) {
-	s{(^|\t)\Q$buildDir\E/}{$1/usr/lib/sampler/sites/};
+	s{(^|\t)\Q$buildDir\E/}{$1/usr/src/debug/};
 	$cfg->print($_);
     }
     die unless $exe->close

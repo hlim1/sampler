@@ -30,8 +30,8 @@ class visitor = object
   method vinst = function
     | Set((Mem addr, _), data, location) as original ->
 	ChangeTo [Call (None, Lval (var logWrite),
-			[mkString !currentLoc.file;
-			 kinteger IUInt !currentLoc.line;
+			[mkString location.file;
+			 kinteger IUInt location.line;
 			 mkCast addr voidPtrType;
 			 SizeOf(typeOf data);
 			 mkCast (mkAddrOf (makeLval !currentFunction data)) voidPtrType],

@@ -56,7 +56,6 @@ my %flag_specs =
      '-save-temps' => sub { $save_temps = 1 },
 
      # Optimization Options
-     '-g' => sub { push @cc1, $_ },
      '--param' => sub { push @cc1, $_, shift @ARGV },
 
      # Preprocessor Options
@@ -90,6 +89,8 @@ while (@ARGV) {
 	    my $handler = $flag_specs{$_};
 	    $handler->($_);
 	} elsif (/^-O\d*$/) {
+	    push @cc1, $_;
+	} elsif (/^-g\d*$/) {
 	    push @cc1, $_;
 	} elsif (/^-m(arch|cpu)=/) {
 	    push @cc1, $_;

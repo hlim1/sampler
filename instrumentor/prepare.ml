@@ -70,4 +70,7 @@ class virtual visitor =
 	  end
       | _ ->
 	  SkipChildren
+
+    method finalize file =
+      Rmtmps.removeUnusedTemps file
   end

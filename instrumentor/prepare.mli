@@ -19,4 +19,6 @@ class virtual visitor :
     method private virtual collectSites : fundec -> Sites.info
     method private prepatcher : Calls.prepatcher
     method private shouldTransform : fundec -> bool
+
+    method finalize : file -> unit
   end

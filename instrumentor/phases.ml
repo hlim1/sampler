@@ -7,7 +7,6 @@ let main preparator =
     [
      Choices.phase;
      "Transform", Interproc.visit preparator;
-     "RemoveUnusedTemps", (fun file -> Rmtmps.removeUnusedTemps file);
      Options.phase;
      "dump", dumpFile (new Printer.printer) stdout
    ]

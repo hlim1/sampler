@@ -15,7 +15,10 @@ let visit preparator file =
   let visitor = preparator file in
   visitCilFile (visitor :> cilVisitor) file;
   if !sample then
-    let infos = visitor#infos in
-    let tester = Weightless.collect infos in
-    let countdown = new Countdown.countdown file in
-    infos#iter (Transform.visit tester countdown)
+    begin
+      let infos = visitor#infos in
+      let tester = Weightless.collect infos in
+      let countdown = new Countdown.countdown file in
+      infos#iter (Transform.visit tester countdown)
+    end;
+  visitor#finalize file

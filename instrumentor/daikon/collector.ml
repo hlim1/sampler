@@ -30,9 +30,9 @@ class visitor file =
   let logger = Lval (var (FindFunction.find "checkInvariant" file)) in
   let invariants = Invariants.propose file in
 
-  fun global func ->
+  fun func ->
     object
-      inherit Classifier.visitor global
+      inherit Classifier.visitor
 
       val mutable sites = []
       method sites = sites

@@ -2,7 +2,7 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot checker dump harness.$(cma) loopless
-subdirs := branches daikon daikount decure nothing #logging
+subdirs := branches daikon decure nothing returns scalar-pairs #logging
 
 include rules.mk
 

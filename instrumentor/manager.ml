@@ -49,17 +49,15 @@ let _ =
 
 class virtual visitor file =
   object (self)
-    inherit SkipVisitor.visitor
-
     val mutable infos = new FileInfo.container
 
     initializer
       Dynamic.analyze file
 
-    method private virtual statementClassifier : global -> fundec -> Classifier.visitor
+    method private virtual statementClassifier : fundec -> Classifier.visitor
 
-    method private classifyStatements global func =
-      let visitor = self#statementClassifier global func in
+    method private classifyStatements func =
+      let visitor = self#statementClassifier func in
       ignore (visitCilFunction (visitor :> cilVisitor) func);
 
       let sites =
@@ -78,8 +76,7 @@ class virtual visitor file =
       in
 
       { sites = sites;
-	calls = visitor#calls;
-	globals = visitor#globals }
+	calls = visitor#calls }
 
 
     method private normalize func =
@@ -94,19 +91,18 @@ class virtual visitor file =
     method private shouldTransform =
       ShouldTransform.shouldTransform 
 
-    method vglob = function
-      | GFun (func, _) as global
+    method private iterator = function
+      | GFun (func, _)
 	when self#shouldTransform func ->
 	  self#normalize func;
-	  let info = self#classifyStatements global func in
-	  infos#add func info;
-	  ChangeTo info.globals
+	  let info = self#classifyStatements func in
+	  infos#add func info
       | _ ->
-	  SkipChildren
+	  ()
 
     method visit =
       assert infos#isEmpty;
-      visitCilFile (self :> cilVisitor) file;
+      iterGlobals file self#iterator;
 
       if !sample then
 	begin

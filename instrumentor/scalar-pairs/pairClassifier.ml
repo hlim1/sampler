@@ -4,9 +4,9 @@ open Interesting
 open Pretty
 
 
-class visitor file (tuples : PairTuples.builder) global func =
+class visitor file (tuples : PairTuples.builder) func =
   object (self)
-    inherit Classifier.visitor global as super
+    inherit Classifier.visitor as super
 
     val mutable sites = []
     method sites = sites

@@ -1,9 +1,9 @@
 open Cil
 
 
-class visitor (counters : Counters.builder) global func =
+class visitor (counters : Counters.builder) func =
     object (self)
-      inherit Classifier.visitor global as super
+      inherit Classifier.visitor as super
 
       val mutable sites = []
       method sites = sites

@@ -5,5 +5,5 @@ class visitor : file ->
   object
     inherit Manager.visitor
 
-    method private statementClassifier : global -> fundec -> Classifier.visitor
+    method private statementClassifier : fundec -> Classifier.visitor
   end

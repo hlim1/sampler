@@ -12,12 +12,12 @@ let main () =
       let file = Frontc.parse filename () in
 
       let scanGlobal = function
-	| GFun (func, _) as global
+	| GFun (func, _)
 	  when Should.shouldTransform func ->
 	    begin
 	      prepareCFG func;
 	      IsolateInstructions.visit func;
-	      let collector = new Collector.visitor global func in
+	      let collector = new Collector.visitor func in
 	      ignore (visitCilFunction (collector :> cilVisitor) func);
 	      if collector#sites != [] then
 		print_endline func.svar.vname

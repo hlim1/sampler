@@ -4,5 +4,5 @@ class visitor file =
   object
     inherit Manager.visitor file
 
-    method private statementClassifier func = collector func
+    method private statementClassifier = collector
   end

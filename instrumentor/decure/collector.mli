@@ -1,4 +1,4 @@
 open Cil
 
 
-class visitor : global -> fundec -> Classifier.visitor
+class visitor : fundec -> Classifier.visitor

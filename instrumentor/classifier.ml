@@ -1,22 +1,14 @@
 open Cil
 
 
-class visitor initial =
+class visitor =
   object (self)
     inherit FunctionBodyVisitor.visitor
 
     val mutable calls = []
-
     method calls = calls
 
     method sites : stmt list = []
-
-    val mutable globals : global list = [initial]
-
-    method globals = globals
-	
-    method private addGlobal global =
-      globals <- global :: globals
 
     method private prepatchCall stmt =
       let info = Calls.prepatch stmt in

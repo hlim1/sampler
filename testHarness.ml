@@ -7,12 +7,18 @@ let check = if doChecks then
 else
   ignore
     
+let doOneOne file stage =
+  stage file;
+  if ! Errormsg.hadErrors then
+    raise Errormsg.Error;
+  check file
+      
 let doOne stages filename =
   Printf.printf "%s:\n" filename;
   let file = Frontc.parse filename () in
   (* Rmtmps.removeUnusedTemps file; *)
   check file;
-  List.iter (fun stage -> stage file; check file) stages
+  List.iter (doOneOne file) stages
     
 let main stages =
   let filenames = List.tl (Array.to_list Sys.argv) in

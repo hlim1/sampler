@@ -1,4 +1,6 @@
 top := ..
+include $(top)/defs.mk
+
 targets := main
 libdirs := $(top)
 
@@ -26,7 +28,7 @@ stores = stores
 
 
 main := $(heapStoresTransform) %
-main: %: $(libcil) $(top)/harness.cma $(addsuffix .$(cmo), $(main))
+main: %: $(libcil) $(top)/harness.$(cma) $(addsuffix .$(cmo), $(main))
 	$(link)
 
 $(top)/%.cma: force

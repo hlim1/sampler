@@ -1,21 +1,3 @@
-include $(top)/config.mk
-
-ifdef profile
-native := 1
-ocamlflags := -p
-endif
-
-ifdef native
-ocamlc := ocamlopt.opt
-cma := cmxa
-cmo := cmx
-else
-ocamlflags := -g
-ocamlc := ocamlc.opt
-cma := cma
-cmo := cmo
-endif
-
 fixdeps := $(top)/fixdeps
 
 cildir := $(top)/../cil
@@ -26,6 +8,7 @@ compiler := $(ocamlc) $(ocamlflags)
 
 depend = ocamldep $(includes) $< | $(fixdeps) >$@
 compile = $(compiler) $(includes) -c $<
+archive = $(compiler) -a -o $@ $^
 link = $(compiler) -o $@ $(syslibs) $^
 
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -35,7 +18,7 @@ recurse = $(MAKE) -C $(@D) $(@F)
 
 
 libcil := $(cilobjdir)/cil.$(cma)
-syslibs := unix.$(cma)
+syslibs += unix.$(cma)
 
 impls := $(basename $(wildcard *.ml))
 ifaces := $(basename $(wildcard *.mli))
@@ -78,7 +61,7 @@ clean-here:: force
 	rm -f $(foreach suffix, cmi cmo cmx o, *.$(suffix))
 .PHONY: clean-here
 
-clean:: force clean-here
+clean:: force clean-here $(addsuffix /clean, $(subdirs))
 .PHONY: clean
 
 %/clean: force

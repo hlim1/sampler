@@ -1,5 +1,7 @@
-targets := cfg-to-dot harness.cma
 top := .
+include defs.mk
+
+targets := cfg-to-dot harness.$(cma)
 subdirs := heapStores localVars
 
 include rules.mk
@@ -51,13 +53,13 @@ cfg-to-dot: %: $(libcil) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
 harness := $(filterLabels) $(logWrite) $(skipLog) $(testHarness) $(transformVisitor)
-harness.cma: $(addsuffix .$(cmo), $(harness))
-	$(link) -a
+harness.$(cma): $(addsuffix .$(cmo), $(harness))
+	$(archive)
 
-checker: %: $(addsuffix .$(cmo), %)
+checker: %: $(libcil) $(addsuffix .$(cmo), %)
 	$(link)
 
-dump: %: $(addsuffix .$(cmo), %)
+dump: %: $(libcil) $(addsuffix .$(cmo), %)
 	$(link)
 
 $(libcil): force

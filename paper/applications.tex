@@ -716,7 +716,7 @@ the case.  The allocation on line 167 requests space for
 176 continues on from \texttt{old\_count} through \texttt{v\_count -
   1}.  And here we find the bug: the new storage buffer has room for
 \texttt{a\_count} elements, but the second loop is incorrectly bound
-by \texttt{v\_count} instead.  After a quick glimpse at the
+by \texttt{v\_count} instead.  After a glimpse at the
 neighboring \texttt{more\_variables()} function it is clear that
 \texttt{more\_arrays()} was created by copying and pasting
 \texttt{more\_variables()} and then changing names like

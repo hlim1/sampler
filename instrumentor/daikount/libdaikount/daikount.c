@@ -1,51 +1,37 @@
+#include <malloc.h>
+#include <obstack.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include "daikount.h"
 
 
 const struct Invariant *invariants;
+static FILE *logFile;
 
 
-static const char *logFilename()
-{
-  const char * const env = getenv("SAMPLER_FILE");
-
-  if (!env)
-    fputs("logger: not recording samples; no $SAMPLER_FILE given in environment\n", stderr);
-
-  return env;
-}
+#define obstack_chunk_alloc malloc
+#define obstack_chunk_free free
 
 
 static void dumpInvariants(int signum)
 {
-  const char * const filename = logFilename();
+  const struct Invariant *invariant;
 
-  if (filename)
-    {
-      FILE * const logFile = fopen(filename, "w");
+  fprintf(logFile, "%d\n", signum);
 
-      if (!logFile)
-	perror("logger: fopen error");
-      else
-	{
-	  const struct Invariant *invariant;
+  for (invariant = invariants; invariant; invariant = invariant->next)
+    fprintf(logFile, "%s\t%u\t%s\t%s\t%s\t%u\t%u\t%u\t%u\n",
+	    invariant->file, invariant->line, invariant->function,
+	    invariant->left, invariant->right, invariant->id,
+	    invariant->counters[0], invariant->counters[1],
+	    invariant->counters[2]);
 
-	  fprintf(logFile, "%d\n", signum);
-
-	  for (invariant = invariants; invariant; invariant = invariant->next)
-	    fprintf(logFile, "%s\t%u\t%s\t%s\t%s\t%u\t%u\t%u\t%u\n",
-		    invariant->file, invariant->line, invariant->function,
-		    invariant->left, invariant->right, invariant->id,
-		    invariant->counters[0], invariant->counters[1],
-		    invariant->counters[2]);
-
-	  if (fclose(logFile)) perror("logger: fclose error");
-	}
-    }
+  if (fclose(logFile))
+    perror("logger: fclose error");
 }
-
 
 
 static void handleSignal(int signum)
@@ -64,18 +50,55 @@ static void handleSignal(int signum)
 
 __attribute__((constructor)) static void initialize()
 {
-  if (logFilename())
+  const char * const envar = getenv("SAMPLER_FILE");
+  if (!envar)
     {
-      signal(SIGABRT, handleSignal);
-      signal(SIGBUS, handleSignal);
-      signal(SIGFPE, handleSignal);
-      signal(SIGSEGV, handleSignal);
-      signal(SIGTRAP, handleSignal);
+      fputs("logger: no $SAMPLER_FILE given in environment\n", stderr);
+      return;
     }
+
+  {
+    struct obstack obstack;
+    obstack_init(&obstack);
+
+    const char *start = envar;
+    while (*start)
+      {
+	const char *end = strstr(start, "$$");
+	if (end)
+	  {
+	    obstack_grow(&obstack, start, end - start);
+	    obstack_printf(&obstack, "%d", getpid());
+	    start = end + 2;
+	  }
+	else
+	  break;
+      }
+
+    const int leftovers = strlen(start);
+    obstack_grow0(&obstack, start, leftovers);
+  
+    char * const filename = (char *) obstack_finish(&obstack);
+    logFile = fopen(filename, "w");
+    obstack_free(&obstack, filename);
+  }
+
+  if (!logFile)
+    {
+      perror("logger: fopen error");
+      return;
+    }
+      
+  signal(SIGABRT, handleSignal);
+  signal(SIGBUS, handleSignal);
+  signal(SIGFPE, handleSignal);
+  signal(SIGSEGV, handleSignal);
+  signal(SIGTRAP, handleSignal);
 }
 
 
 __attribute__((destructor)) static void shutdown()
 {
-  dumpInvariants(0);
+  if (logFile)
+    dumpInvariants(0);
 }

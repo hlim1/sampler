@@ -36,7 +36,7 @@ let call file =
   in
   let findEnum target =
     let rec search = function
-      |	(name, exp) :: _ when name = target -> exp
+      |	(name, exp, _) :: _ when name = target -> exp
       |	_ :: rest -> search rest
       |	[] -> raise (Missing target)
     in
@@ -145,7 +145,7 @@ let call file =
 
     let tableauInfo =
       let fieldInfo _ =
-	let shuffle (typ, name, _) = (name, typ, None, []) in
+	let shuffle (typ, name, _) = (name, typ, None, [], locUnknown) in
 	List.map shuffle buffers
       in
       mkCompInfo true tableauName fieldInfo [Attr ("packed", [])]

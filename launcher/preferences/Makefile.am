@@ -48,13 +48,21 @@ install-data-hook:
 	rm -f $(all_python:%.py=$(DESTDIR)$(preferencesdir)/%.pyc)
 
 
-$(BUILT_SOURCES): %: %.in Makefile
+Paths.py Sampler_Preferences.server: %: %.in Makefile
 	sed							\
 		-e 's!@''VERSION@!$(VERSION)!'			\
 		-e 's!@''bindir@!$(bindir)!'			\
 		-e 's!@''commondir@!$(commondir)!'		\
 		-e 's!@''preferencesdir@!$(preferencesdir)!'	\
 		<$< >$@
+
+preferences sampler-preferences: %: %.in Makefile
+	sed							\
+		-e 's!@''VERSION@!$(VERSION)!'			\
+		-e 's!@''bindir@!$(bindir)!'			\
+		-e 's!@''commondir@!$(commondir)!'		\
+		-e 's!@''preferencesdir@!$(preferencesdir)!'	\
+		<$< >$@						\
 	chmod a+x $@
 
 

@@ -11,7 +11,7 @@ graphlib = $(graph) $(transitive)
 graphlib.$(cma): $(graphlib)
 	$(archive)
 
-$(dir $(libcommon))%.cmi: $(libcommon); :
+$(dir $(libcommon))%.cmi: $(libcommon); @:
 
 $(libcommon): $(force)
 	$(recurse)

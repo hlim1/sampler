@@ -12,6 +12,8 @@ $(builds:=/bc/bc): %/bc: %
 $(builds:=/bc):
 	cd $(@D) && CC=$$PWD/cc ../src/configure
 
+clean:: $(builds:=/clean)
+
 $(builds:=/clean):
 	make -C $(@D) $(@F)
 .PHONY: $(builds:=/clean)

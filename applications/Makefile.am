@@ -4,8 +4,7 @@ else
 SUBDIRS =					\
 	gaim					\
 	gimp					\
-	evolution				\
-#	rhythmbox
+	evolution
 endif
 
 EXTRA_DIST =					\

@@ -112,13 +112,15 @@ static void handleSignal(int signum)
 {
   signal(signum, SIG_DFL);
 
-  FILE * const logFile = openLogFile();
-  if (logFile)
-    {
-      dumpSamplesReport(logFile);
-      dumpDebugInfo(logFile);
-      fclose(logFile);
-    }
+  {
+    FILE * const logFile = openLogFile();
+    if (logFile)
+      {
+	dumpSamplesReport(logFile);
+	dumpDebugInfo(logFile);
+	fclose(logFile);
+      }
+  }
 
   raise(signum);
 }

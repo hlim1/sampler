@@ -6,6 +6,7 @@ class builder file =
   object (self)
     inherit Tuples.builder file
 
+    val bumper = Bump.bump file
 
     method bump func location expression =
       let local = var (makeTempVar func (typeOf expression)) in
@@ -14,7 +15,7 @@ class builder file =
 	let slice = self#addSiteInfo { location = location; fundec = func;
 				       description = d_exp () expression }
 	in
-	Bump.bump location (Lval local) slice
+	bumper location (Lval local) slice
       in
 
       local, bump

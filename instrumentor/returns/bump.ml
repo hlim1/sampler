@@ -1,5 +1,7 @@
 open Cil
 
 
-let bump location exp =
-  BumpSign.bump location exp zero
+let bump file =
+  let bumper = BumpSign.bump file in
+  fun location exp ->
+    bumper location exp zero

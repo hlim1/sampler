@@ -2,11 +2,12 @@
 #define INCLUDE_libcountdown_acyclic_h
 
 
-extern const void * const providesLibAcyclic;
+extern const void * const SAMPLER_REENTRANT(providesLibAcyclic);
 
 #ifdef CIL
 #pragma cilnoremove("requiresLibAcyclic")
-static const void * const requiresLibAcyclic = &providesLibAcyclic;
+#pragma cilnoremove("requiresLibAcyclic_r")
+static const void * const SAMPLER_REENTRANT(requiresLibAcyclic) = &SAMPLER_REENTRANT(providesLibAcyclic);
 #endif
 
 

@@ -86,6 +86,14 @@ AC_COMPILE_IFELSE(
   AC_MSG_RESULT(yes),
   AC_MSG_RESULT(no))
 
+AC_MSG_CHECKING(thread-local storage specifier)
+AC_COMPILE_IFELSE(
+  AC_LANG_PROGRAM([__thread int x;], []),
+  have_thread_storage=yes
+  AC_MSG_RESULT(yes),
+  AC_MSG_RESULT(no))
+AM_CONDITIONAL(HAVE_THREAD_STORAGE, test "$have_thread_storage" = yes)
+
 
 ########################################################################
 #

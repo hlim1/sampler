@@ -7,7 +7,7 @@
 #include "countdown.h"
 
 
-const void * const providesLibAcyclic;
+const void * const SAMPLER_REENTRANT(providesLibAcyclic);
 int acyclicInitCount;
 
 double acyclicDensity;

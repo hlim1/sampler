@@ -1,4 +1,4 @@
 open Cil
 
 
-val bump : location -> exp -> lval -> stmtkind
+val bump : file -> location -> exp -> lval -> stmtkind

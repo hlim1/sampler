@@ -2,7 +2,7 @@
 #define INCLUDE_libcountdown_countdown_h
 
 
-extern unsigned nextEventCountdown;
+extern SAMPLER_THREAD_LOCAL unsigned nextEventCountdown;
 
 
 #ifdef CIL

@@ -28,4 +28,15 @@ static void compilationUnitDestructor() __attribute__((destructor))
 }
 
 
+#ifdef SAMPLER_THREADS
+#pragma cilnoremove("atomicIncrementCounter")
+static inline void atomicIncrementCounter(volatile unsigned *counter)
+{
+  asm volatile ("lock incl %0"
+		: "=m" (*counter)
+		: "m" (*counter));
+}
+#endif
+
+
 #endif /* !INCLUDE_libtuples_tuples_cil_h */

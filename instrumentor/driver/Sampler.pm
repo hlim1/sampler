@@ -16,6 +16,19 @@ sub setDefaultArguments {
     $self->{sample_events} = 1;
     $self->{TRACE_COMMANDS} = 0;
     $self->{instrumentor} = ["$::home/main"];
+    $self->{threads} = 0;
+}
+
+
+sub isThreadFlag {
+    my ($self, $flag) = @_;
+
+    return 1 if $flag =~ /^-D_REENTRANT($|=)/;
+    return 1 if $flag =~ /^-D_THREAD_SAFE($|=)/;
+    return 1 if $flag eq '-pthread';
+    return 1 if $flag eq '-lpthread';
+
+    return 0;
 }
 
 
@@ -53,6 +66,10 @@ sub collectOneArgument {
 	push @{$self->{instrumentor}}, $arg;
 	return 1;
     } else {
+	if ($self->isThreadFlag($arg)) {
+	    push @{$self->{instrumentor}}, '--threads';
+	    $self->{threads} = 1;
+	}
 	return 0;
     }
 }
@@ -89,6 +106,7 @@ sub extraHeaders {
 
     my $dir = "$::root/libcountdown";
     push @extras, '-DCIL';
+    push @extras, '-include', ($self->{threads} ? "$dir/threads.h" : "$dir/no-threads.h");
     push @extras, '-include', "$dir/countdown.h" if $self->sampling;
     push @extras, '-include', "$dir/$self->{countdowns}.h" if $self->{sample_events};
 
@@ -101,9 +119,11 @@ sub extraLibs {
     my @extras;
 
     if ($self->sampling) {
+	my $_r = $self->{threads} ? '_r' : '';
 	push @extras, "-L$::root/libcountdown";
-	push @extras, "-l$self->{countdowns}";
-	push @extras, '-lcountdown';
+	push @extras, "-l$self->{countdowns}$_r";
+	push @extras, "-lcountdown$_r";
+	push @extras, '-ldl' if $self->{threads};
 	push @extras, (split ' ', `gsl-config --libs`) if $self->{countdowns} eq 'acyclic';
     }
 

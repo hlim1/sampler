@@ -1,4 +1,4 @@
 open Cil
 
 
-class visitor : file -> PairTuples.builder -> fundec -> Classifier.visitor
+class visitor : file -> Constants.collection -> PairTuples.builder -> fundec -> Classifier.visitor

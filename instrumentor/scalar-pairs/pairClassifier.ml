@@ -4,7 +4,7 @@ open Interesting
 open Pretty
 
 
-class visitor file (tuples : PairTuples.builder) func =
+class visitor file (constants : Constants.collection) (tuples : PairTuples.builder) func =
   object (self)
     inherit Classifier.visitor func as super
 
@@ -56,13 +56,34 @@ class visitor file (tuples : PairTuples.builder) func =
 		  left != right &&
 		  signature = typeSig right.vtype
 	      in
-	      let rec filter = function
+	      let rec filter =
+		let flattenConstants signed =
+		  let kind = if signed then
+		    ILongLong
+		  else
+		    IULongLong
+		  in
+		  let folder number results =
+		    kinteger64 kind number :: results
+		  in
+		  constants#fold folder []
+		in
+		function
 		| right :: rights when isComparable right ->
 		    Lval (var right) :: filter rights
 		| _ :: rights ->
 		    filter rights
 		| [] ->
-		    [mkCast zero left.vtype]
+		    match unrollType left.vtype with
+		    | TPtr _ ->
+			[mkCast zero left.vtype]
+		    | TInt (ikind, _) ->
+			flattenConstants (isSigned ikind)
+		    | TEnum _ ->
+			flattenConstants true
+		    | other ->
+			ignore (bug "unexpected left operand type: %a\n" d_type other);
+			[]
 	      in
 	      filter vars
 	    in

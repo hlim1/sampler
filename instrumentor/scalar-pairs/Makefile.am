@@ -17,3 +17,9 @@ libdirs += ..
 
 main: $(libcil) $(libharness) $(main)
 	$(link)
+
+dumpConstants: $(libcil) $(dumpConstants)
+	$(link)
+
+const: const.c main
+	../driver/main scalar-pairs --compare-constants -save-temps -W -Wall $<

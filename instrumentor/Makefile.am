@@ -12,7 +12,7 @@ libraries.ml: %: build-libraries %.in
 	./$^ >$@.tmp
 	mv $@.tmp $@
 
-harness = $(manager) $(phases) $(tuples) $(bumpSign) $(describedExpression)
+harness = $(manager) $(phases) $(tuples) $(bumpSign) $(describedExpression) $(int64Set)
 harness.$(cma): $(harness)
 	$(archive)
 
@@ -29,9 +29,6 @@ removeDeadCode: $(libcil) $(removeDeadCode)
 	$(link)
 
 loopless: $(libcil) $(loopless)
-	$(link)
-
-dumpConstants: $(libcil) $(dumpConstants)
 	$(link)
 
 %.cfg.dot: cfg-to-dot %.i

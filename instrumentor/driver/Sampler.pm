@@ -23,9 +23,9 @@ sub setDefaultArguments {
 sub isThreadFlag {
     my ($self, $flag) = @_;
 
+    return 1 if $flag eq '-pthread';
     return 1 if $flag =~ /^-D_REENTRANT($|=)/;
     return 1 if $flag =~ /^-D_THREAD_SAFE($|=)/;
-    return 1 if $flag eq '-pthread';
     return 1 if $flag eq '-lpthread';
 
     return 0;

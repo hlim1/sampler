@@ -10,6 +10,19 @@ our @ISA = qw(CillySampler);
 ########################################################################
 
 
+sub collectOneArgument {
+    my $self = shift;
+    my ($arg, $pargs) = @_;
+
+    if ($arg =~ /^--(no-)?compare-constants$/) {
+	push @{$self->{instrumentor}}, $arg;
+	return 1;
+    } else {
+	return $self->CillySampler::collectOneArgument(@_);
+    }
+}
+
+
 sub extraHeaders {
     my $self = shift;
     my @extras = $self->SUPER::extraHeaders;

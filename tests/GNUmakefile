@@ -1,5 +1,7 @@
 instrumenter := ../main
 checker := ../checker
+
+CFLAGS := -W -Wall -Werror
 LOADLIBES := ../liblog/liblog.a
 
 recurse = $(MAKE) -C $(@D) $(@F)

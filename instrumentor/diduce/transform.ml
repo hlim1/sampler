@@ -31,6 +31,4 @@ end
 
 let phase =
   "Transform",
-  fun file ->
-    let visitor = new visitor in
-    visitCilFile (visitor :> cilVisitor) file
+  visitCilFile (new visitor)

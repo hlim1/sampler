@@ -11,12 +11,12 @@ static SamplerTuple2 branchesCounters[];
 
 #ifdef SAMPLER_TIMESTAMP_FIRST
 #pragma cilnoremove("branchesTimestampsFirst");
-static unsigned branchesTimestampsFirst[sizeof(branchesCounters) / sizeof(*branchesCounters)];
+static samplerTimestamp branchesTimestampsFirst[sizeof(branchesCounters) / sizeof(*branchesCounters)];
 #endif /* SAMPLER_TIMESTAMP_FIRST */
 
 #ifdef SAMPLER_TIMESTAMP_LAST
 #pragma cilnoremove("branchesTimestampsLast");
-static unsigned branchesTimestampsLast[sizeof(branchesCounters) / sizeof(*branchesCounters)];
+static samplerTimestamp branchesTimestampsLast[sizeof(branchesCounters) / sizeof(*branchesCounters)];
 #endif /* SAMPLER_TIMESTAMP_LAST */
 
 

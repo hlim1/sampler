@@ -11,12 +11,12 @@ static SamplerTuple3 returnsCounters[];
 
 #ifdef SAMPLER_TIMESTAMP_FIRST
 #pragma cilnoremove("returnsTimestampsFirst");
-static unsigned returnsTimestampsFirst[sizeof(returnsCounters) / sizeof(*returnsCounters)];
+static samplerTimestamp returnsTimestampsFirst[sizeof(returnsCounters) / sizeof(*returnsCounters)];
 #endif /* SAMPLER_TIMESTAMP_FIRST */
 
 #ifdef SAMPLER_TIMESTAMP_LAST
 #pragma cilnoremove("returnsTimestampsLast");
-static unsigned returnsTimestampsLast[sizeof(returnsCounters) / sizeof(*returnsCounters)];
+static samplerTimestamp returnsTimestampsLast[sizeof(returnsCounters) / sizeof(*returnsCounters)];
 #endif /* SAMPLER_TIMESTAMP_LAST */
 
 

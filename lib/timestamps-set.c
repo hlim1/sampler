@@ -5,14 +5,14 @@
 #include "timestamps.h"
 
 
-unsigned samplerClock;
+samplerTimestamp samplerClock;
 
 #ifdef SAMPLER_THREADS
 pthread_mutex_t clockLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 #endif /* threads */
 
 
-void timestampsSetFirst(unsigned site, unsigned first[])
+void timestampsSetFirst(unsigned site, samplerTimestamp first[])
 {
   CRITICAL_REGION(clockLock, {
     ++samplerClock;
@@ -21,7 +21,7 @@ void timestampsSetFirst(unsigned site, unsigned first[])
 }
 
 
-void timestampsSetLast(unsigned site, unsigned last[])
+void timestampsSetLast(unsigned site, samplerTimestamp last[])
 {
   CRITICAL_REGION(clockLock, {
     ++samplerClock;
@@ -30,7 +30,7 @@ void timestampsSetLast(unsigned site, unsigned last[])
 }
 
 
-void timestampsSetBoth(unsigned site, unsigned first[], unsigned last[])
+void timestampsSetBoth(unsigned site, samplerTimestamp first[], samplerTimestamp last[])
 {
   CRITICAL_REGION(clockLock, {
     ++samplerClock;

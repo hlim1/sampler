@@ -5,7 +5,7 @@
 
 void timestampsReport(const SamplerUnitSignature signature,
 		      const char scheme[], const char when[],
-		      unsigned count, const unsigned times[])
+		      unsigned count, const samplerTimestamp times[])
 {
   unsigned scan;
 
@@ -21,7 +21,7 @@ void timestampsReport(const SamplerUnitSignature signature,
 	  scheme, when);
 
   for (scan = 0; scan < count; ++scan)
-    fprintf(reportFile, "%u\n", times[scan]);
+    fprintf(reportFile, "%Lu\n", times[scan]);
 
   fputs("</timestamps>\n", reportFile);
 }

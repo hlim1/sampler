@@ -4,13 +4,16 @@
 #include "signature.h"
 
 
-void timestampsSetFirst(unsigned, unsigned []);
-void timestampsSetLast(unsigned, unsigned []);
-void timestampsSetBoth(unsigned, unsigned [], unsigned []);
+typedef unsigned long long samplerTimestamp;
+
+
+void timestampsSetFirst(unsigned, samplerTimestamp []);
+void timestampsSetLast(unsigned, samplerTimestamp []);
+void timestampsSetBoth(unsigned, samplerTimestamp [], samplerTimestamp []);
 
 void timestampsReport(const SamplerUnitSignature,
 		      const char [], const char when[],
-		      unsigned, const unsigned []);
+		      unsigned, const samplerTimestamp []);
 
 
 #ifdef CIL

@@ -11,12 +11,12 @@ static SamplerTuple1 functionEntriesCounters[];
 
 #ifdef SAMPLER_TIMESTAMP_FIRST
 #pragma cilnoremove("functionEntriesTimestampsFirst");
-static unsigned functionEntriesTimestampsFirst[sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters)];
+static samplerTimestamp functionEntriesTimestampsFirst[sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters)];
 #endif /* SAMPLER_TIMESTAMP_FIRST */
 
 #ifdef SAMPLER_TIMESTAMP_LAST
 #pragma cilnoremove("functionEntriesTimestampsLast");
-static unsigned functionEntriesTimestampsLast[sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters)];
+static samplerTimestamp functionEntriesTimestampsLast[sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters)];
 #endif /* SAMPLER_TIMESTAMP_LAST */
 
 

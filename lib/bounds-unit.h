@@ -7,12 +7,12 @@
 
 #ifdef SAMPLER_TIMESTAMP_FIRST
 #pragma cilnoremove("boundsTimestampsFirst");
-static unsigned boundsTimestampsFirst[];
+static samplerTimestamp boundsTimestampsFirst[];
 #endif /* SAMPLER_TIMESTAMP_FIRST */
 
 #ifdef SAMPLER_TIMESTAMP_LAST
 #pragma cilnoremove("boundsTimestampsLast");
-static unsigned boundsTimestampsLast[];
+static samplerTimestamp boundsTimestampsLast[];
 #endif /* SAMPLER_TIMESTAMP_LAST */
 
 

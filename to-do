@@ -37,10 +37,17 @@ each sampled application RPM.
 
 ** general
 
-Document --{no-,}assume-weighty-{libraries,externs,interns}.
-
 Remember which functions are loopless.  Use this to optimize treatment
 of calls to known loopless functions.
 
 assume that anything declared in /usr/include/... or
 /usr/lib/gcc-lib/... or perhaps a few other places is library code
+
+* documentation
+
+Document --{no-,}assume-weighty-{libraries,externs,interns}.
+
+Document "ccured" scheme once it has been reimplemented.
+
+Document the fact that the "bounds" scheme also looks at function
+return values.

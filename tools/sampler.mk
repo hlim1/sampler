@@ -1,5 +1,12 @@
+ifndef _cdbs_bootstrap
+_cdbs_scripts_path ?= /usr/lib/cdbs
+_cdbs_rules_path ?= /usr/share/cdbs/1/rules
+_cdbs_class_path ?= /usr/share/cdbs/1/class
+endif
+
 ifndef _cdbs_rules_sampler
 _cdbs_rules_sampler := 1
+
 
 include $(_cdbs_rules_path)/debhelper.mk$(_cdbs_makefile_suffix)
 

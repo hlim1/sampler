@@ -126,6 +126,7 @@ fi
 AC_SUBST(schemadir, '${GCONF_SCHEMA_FILE_DIR}')
 AC_SUBST(serversdir, '${libdir}/bonobo/servers')
 
+AC_SUBST(pkglibdir, '${libdir}/${PACKAGE}')
 AC_SUBST(driverdir, '${pkglibdir}/driver')
 AC_SUBST(samplerdir, '${driverdir}/sampler')
 AC_SUBST(schemesdir, '${samplerdir}/schemes')
@@ -135,6 +136,7 @@ AC_SUBST(threads_nodir, '${threadsdir}/no')
 AC_SUBST(toolsdir, '${pkglibdir}/tools')
 AC_SUBST(traylibdir, '${pkglibdir}/tray')
 
+AC_SUBST(pkgdatadir, '${datadir}/${PACKAGE}')
 AC_SUBST(commondir, '${pkgdatadir}/common')
 AC_SUBST(first_timedir, '${pkgdatadir}/first-time')
 AC_SUBST(launcherdir, '${pkgdatadir}/launcher')

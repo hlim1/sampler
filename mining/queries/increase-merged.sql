@@ -61,7 +61,7 @@ SELECT DISTINCT run_id, merged_site_id
 FROM merged_run_sample;
 
 
--- compure F(P | 星) and S(P | 星)
+-- compute F(P | 星) and S(P | 星)
 DROP TABLE IF EXISTS tally_site;
 CREATE TABLE tally_site
 (PRIMARY KEY (merged_site_id))

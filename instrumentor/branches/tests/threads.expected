@@ -1,4 +1,4 @@
-threads.c	11	drop_x	tmp	1	17000
-threads.c	14	drop_x	x % 10 == 0	15300	1700
-threads.c	22	drop_y	tmp	1	12000
-threads.c	25	drop_y	y % 5 == 0	9600	2400
+threads	threads.c	11	drop_x	tmp	1	17000
+threads	threads.c	14	drop_x	x % 10 == 0	15300	1700
+threads	threads.c	22	drop_y	tmp	1	12000
+threads	threads.c	25	drop_y	y % 5 == 0	9600	2400

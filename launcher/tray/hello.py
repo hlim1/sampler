@@ -50,34 +50,35 @@ class UploaderModel(gtk.ListStore):
 class UploaderTrayIcon(trayicon.TrayIcon):
 
     def on_preferences(self, *args):
-        self.preferences.show()
-        return 0
+        self.preferences.present()
+
+    def on_dialog_delete(self, *args):
+        return gtk.TRUE
+
+    def on_dialog_response(self, dialog, response):
+        if response < 0:
+            dialog.hide()
+            dialog.emit_stop_by_name('response')
+            return gtk.TRUE
 
     def on_about(self, *args):
-        top = 'about'
-        gtk.glade.XML('tray.glade', top).get_widget(top).show()
-        return 0
+        self.about.present()
 
     def on_master_toggled(self, master):
         self.applications_group.set_sensitive(master.get_active())
-        return 0
 
     def on_application_toggled(self, renderer, path, model):
         iter = model.get_iter(path)
         value = model.get_value(iter, 0)
         value = not value
         model.set(iter, 0, value)
-        return 0
 
     def on_button_press(self, widget, event):
         if event.type == gtk.gdk.BUTTON_PRESS:
             if event.button == 1:
-                preferences_handler()
-                return 0
+                self.on_preferences()
             elif event.button == 3:
                 self.popup.popup(None, None, None, event.button, event.time)
-                return 0
-        return 1
 
     def _get_glade(self, top):
         return gtk.glade.XML('tray.glade', top)
@@ -98,7 +99,13 @@ class UploaderTrayIcon(trayicon.TrayIcon):
         xml.get_widget('menu-about').connect('activate', self.on_about)
         xml.get_widget('menu-preferences').connect('activate', self.on_preferences)
         
+        (xml, self.about) = self._get_widget('about')
+        self.about.connect('response', self.on_dialog_response)
+        self.about.connect('delete_event', self.on_dialog_delete)
+
         (xml, self.preferences) = self._get_widget('preferences')
+        self.preferences.connect('response', self.on_dialog_response)
+        self.preferences.connect('delete_event', self.on_dialog_delete)
 
         self.applications_group = xml.get_widget('applications-group')
         master = xml.get_widget('master')

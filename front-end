@@ -22,7 +22,7 @@ my $outfile;
 my $verbose;
 
 my @chaff;
-END { unlink @chaff; }
+#END { unlink @chaff; }
 
 
 ########################################################################
@@ -112,6 +112,10 @@ my %flag_spec = (
 		 # link options
 		 'Xlinker' => \&handle_1,
 		 'u' => \&handle_1,
+
+		 # directory options
+		 'I' => \&handle_1,
+		 'L' => \&handle_1,
 
 		 # target options
 		 'b' => \&handle_1,
@@ -216,7 +220,8 @@ if ($mode eq 'special') {
 
     if ($mode eq 'link') {
 	my @out = ('-o', $outfile) if $outfile;
-	push @ld, "-L$FindBin::Bin/libcountdown", '-lcountdown';
+	my $libdir = "$FindBin::Bin/libcountdown";
+	push @ld, "-Wl,-rpath,$libdir", "-L$libdir", '-lcountdown';
 	trace_system @ld, @out;
     }
 }

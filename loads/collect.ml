@@ -12,7 +12,6 @@ class visitor = object
     begin
       match expression with
       | Lval lval ->
-	  ignore (Pretty.eprintf "lval of interest: %a\n" d_lval lval);
 	  let dissection = Dissect.dissect lval (typeOfLval lval) in
 	  outputs <- OutputSet.union outputs dissection
       |	_ -> ()

@@ -42,6 +42,8 @@ class countdown file =
 	Set (local, (Lval global), locUnknown)
 
       method checkThreshold location weight instrumented original =
+	assert (Labels.hasGotoLabel original);
+	assert (Labels.hasGotoLabel instrumented);
 	let gotoOriginal = Goto (ref original, location) in
 	let gotoInstrumented = Goto (ref instrumented, location) in
 	match weight with

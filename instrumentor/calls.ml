@@ -14,9 +14,12 @@ type info = {
 type infos = info list
 
 
+let buildLabel = Labels.build "postCall"
+
+
 let prepatch stmt =
   match stmt.skind with
-  | Instr [Call (_, Lval callee, _, _) as call] ->
+  | Instr [Call (_, Lval callee, _, location) as call] ->
       let info = {
 	export = mkEmptyStmt ();
 	call = mkStmtOneInstr call;
@@ -34,6 +37,7 @@ let prepatch stmt =
 				  info.landing;
 				  info.site])
       in
+      info.landing.labels <- [buildLabel location];
       stmt.skind <- block;
       info
 

@@ -1,15 +1,13 @@
 open Cil
 
 
+let buildLabel = Labels.build "removeLoops"
+
+
 let buildGoto =
   let nextId = ref 0 in
   fun target location ->
-    if target.labels = [] then
-      begin
-	let name = Printf.sprintf "removeLoops_%d" !nextId in
-	incr nextId;
-	target.labels <- [Label (name, get_stmtLoc target.skind, false)]
-      end;
+    Labels.ensureHasGotoLabel target buildLabel;
     Goto (ref target, location)
 
 

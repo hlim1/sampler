@@ -3,7 +3,7 @@ open Cil
 
 class visitor file =
   object
-    inherit Manager.visitor file
+    inherit Manager.visitor "nothing" file
 
     method private statementClassifier = new Classifier.visitor
   end

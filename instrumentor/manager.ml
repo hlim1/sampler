@@ -1,5 +1,6 @@
 open Cil
 open FuncInfo
+open Idents
  
 
 (**********************************************************************)
@@ -16,7 +17,7 @@ let sample =
 (**********************************************************************)
 
 
-class virtual visitor file =
+class virtual visitor schemeName file =
   object (self)
     method private virtual statementClassifier : fundec -> Classifier.visitor
 
@@ -29,6 +30,7 @@ class virtual visitor file =
     method private finalize = ()
 
     initializer
+      Idents.register ("scheme", fun () -> schemeName);
       Dynamic.analyze file;
       FunctionFilter.filter#collectPragmas file;
 

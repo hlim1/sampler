@@ -1,5 +1,11 @@
 -*- outline -*-
 
+* sampler-0.5.5
+
+** Embed the name of the instrumentation scheme as an ident string.
+We want to be able to ask an executable what kind of instrumentation
+it has.
+
 * sampler-0.5.4
 
 ** Correct a typo in the first-time opt-in dialog.

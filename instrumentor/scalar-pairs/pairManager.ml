@@ -3,7 +3,7 @@ class visitor file =
   let constants = Constants.collect file in
 
   object
-    inherit Manager.visitor file as super
+    inherit Manager.visitor "scalar-pairs" file as super
 
     val classifier = new PairClassifier.visitor file constants tuples
 

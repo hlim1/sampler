@@ -481,12 +481,11 @@ call is sampled on such a run, \elim{elimination by successful
   counterexample} will correctly conclude that this predicate does not
 imply failure.  It will be eliminated from further consideration, and
 only the true ``smoking gun,'' the call to \texttt{xreadline()}, will
-remain.  \aside{Is this actually true?  It should be.  I've asked
-  Alice to check that it is.}  Thus we have the ability to identify
-not only the direct cause of a bug but also related behaviors which
-are strongly but imperfectly correlated with failure.  We further
-explore this idea of broad correlation in Section~\ref{sec:bc}, where
-even the buggy line code itself does not always cause a crash.
+remain.  Thus we have the ability to identify not only the direct
+cause of a bug but also related behaviors which are strongly but
+imperfectly correlated with failure.  We further explore this idea of
+broad correlation in Section~\ref{sec:bc}, where even the buggy line
+code itself does not always cause a crash.
 
 \subsubsection{Refinement over time}
 
@@ -521,18 +520,17 @@ over time.
 
 Figure~\ref{fig:ngood} shows the results.  The crosses mark the mean
 number of predicates remaining, while the vertical bars extend one
-standard deviation above and below the mean.  The curve drops very
-sharply with the first few hundred runs, and slowly peters out in the
-tail.  The short vertical bars in this case tells us that there is
-relatively little diversity in each of the hundred random subsets at
-any given size; we might expect more variety in runs collected from
-real users rather than an automated script.  In fact, greater
-diversity can only benefit the analysis, as it would provide more
-novel counterexamples and therefore eliminate more uninteresting
-predicates.  The results show that, on average, 1750 runs are enough
-to isolate twenty candidate features, another 500 runs reduces that
-count by half, and a total of 2600 runs is enough to narrow the set of
-good features down to just five.
+standard deviation above and below the mean.  The short vertical bars
+in this case tells us that there is relatively little diversity in
+each of the hundred random subsets at any given size.  The results
+show that, on average, 1750 runs are enough to isolate twenty
+candidate features, another 500 runs reduces that count by half, and a
+total of 2600 runs is enough to narrow the set of good features down
+to just five.  One would expect more variety in runs collected from
+real users rather than an automated script.  Greater diversity can
+only benefit the analysis, as it would provide more novel
+counterexamples and therefore eliminate more uninteresting predicates
+more rapidly.
 
 \subsubsection{Performance Impact}
 

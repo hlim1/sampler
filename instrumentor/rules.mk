@@ -3,7 +3,7 @@ include $(top_builddir)/instrumentor/config.mk
 
 linkorder = $(top_srcdir)/instrumentor/link-order
 
-cildir = $(CIL_HOME)
+cildir = $(top_builddir)/instrumentor/cil
 cilobjdir = $(cildir)/obj/x86_LINUX
 libdirs = $(cilobjdir)
 includes = $(foreach dir, $(libdirs), -I $(dir))

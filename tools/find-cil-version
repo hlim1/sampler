@@ -1,0 +1,23 @@
+#!/usr/bin/awk -f
+
+match($0, /^CIL_VERSION_MAJOR=(.*)$/, elements) {
+  if (major != "") exit 1;
+  major = elements[1];
+}
+
+match($0, /^CIL_VERSION_MINOR=(.*)$/, elements) {
+  if (minor != "") exit 2;
+  minor = elements[1];
+}
+
+match($0, /^CIL_VERSION_REV=(.*)$/, elements) {
+  if (revision != "") exit 3;
+  revision = elements[1];
+}
+
+END {
+  if (major == "") exit 4;
+  if (minor == "") exit 5;
+  if (revision == "") exit 6;
+  printf "%s.%s.%s\n", major, minor, revision;
+}

@@ -50,18 +50,40 @@ AC_SUBST_FILE(find_driver_fragment)
 
 ########################################################################
 #
-#  OCaml configuration
+#  CIL configuration
 #
 
 
+link=$srcdir/instrumentor/cil
+if test -h $link; then rm $link; fi
+
 AC_MSG_CHECKING(for CIL build tree)
-AC_ARG_WITH(cil, [  --with-cil=DIR          CIL build tree], , with_cil=../cil)
-if ! test -d "$with_cil"; then
-  AC_MSG_ERROR(cannot find CIL build tree; please use --with-cil=DIR)
+if test -d $link; then
+  with_cil=instrumentor/cil
+else
+  AC_ARG_WITH(cil, [  --with-cil=DIR          CIL build tree], , with_cil=../cil)
+  if ! test -d $with_cil; then
+    AC_MSG_RESULT($with_cil (not a directory))
+    AC_MSG_ERROR(cannot find CIL build tree; please use --with-cil=DIR)
+  fi
+  with_cil="`cd $with_cil; pwd`"
+  ln -sf $with_cil $link
 fi
-CIL_HOME=`cd "$with_cil"; pwd`
-AC_SUBST(CIL_HOME)
-AC_MSG_RESULT($CIL_HOME)
+
+AC_MSG_RESULT($with_cil)
+AC_CONFIG_SUBDIRS(instrumentor/cil)
+
+
+AC_MSG_CHECKING(for CIL version)
+cil_version=`$srcdir/tools/find-cil-version <$with_cil/configure.in`
+AC_SUBST(cil_version)
+AC_MSG_RESULT($cil_version)
+
+
+########################################################################
+#
+#  OCaml configuration
+#
 
 
 AC_CHECK_PROGS(OCAMLOPT, ocamlopt.opt ocamlopt)

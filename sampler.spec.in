@@ -11,6 +11,7 @@ Group: Applications/System
 Packager: Ben Liblit <@PACKAGE_BUGREPORT@>
 URL: http://www.cs.berkeley.edu/~liblit/bug-isolation/
 Source0: %{name}-%{version}.tar.gz
+Source1: cil-@cil_version@.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: binutils
 BuildRequires: gcc
@@ -125,6 +126,8 @@ reports.
 
 %prep
 %setup -q
+%define _gzip %__gzip
+%{uncompress:%{S:1}} | tar -xf - -C instrumentor
 
 %build
 %configure --enable-native

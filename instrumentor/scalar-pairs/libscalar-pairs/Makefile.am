@@ -1,4 +1,4 @@
-AM_CFLAGS = -W -Wall -Werror
+INCLUDES = -I$(top_srcdir)
 
 lib_LIBRARIES = libscalar-pairs.a
 

@@ -15,6 +15,7 @@ sub setDefaultArguments {
     $self->{countdowns} = 'acyclic';
     $self->{sample_events} = 1;
     $self->{TRACE_COMMANDS} = 0;
+    $self->{instrumentor} = ["$::home/main"];
 }
 
 
@@ -70,12 +71,6 @@ sub runShellOut {
 ########################################################################
 
 
-sub libcountdown {
-    my $self = shift;
-    return $self->root . '/libcountdown';
-}
-
-
 sub sampling {
     my $self = shift;
     return $self->{sample_events};
@@ -86,7 +81,7 @@ sub extraHeaders {
     my $self = shift;
     my @extras;
 
-    my $dir = $self->libcountdown;
+    my $dir = "$::root/libcountdown";
     push @extras, '-DCIL';
     push @extras, '-include', "$dir/countdown.h" if $self->sampling;
     push @extras, '-include', "$dir/$self->{countdowns}.h" if $self->{sample_events};
@@ -100,7 +95,7 @@ sub extraLibs {
     my @extras;
 
     if ($self->sampling) {
-	push @extras, '-L' . $self->libcountdown;
+	push @extras, "-L$::root/libcountdown";
 	push @extras, "-l$self->{countdowns}";
 	push @extras, '-lcountdown';
 	push @extras, (split ' ', `gsl-config --libs`) if $self->{countdowns} eq 'acyclic';

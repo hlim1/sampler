@@ -7,14 +7,11 @@ AC_ARG_WITH(cil, [  --with-cil=DIR          CIL build tree], , with_cil=../cil)
 if ! test -d "$with_cil"; then
   AC_MSG_ERROR(cannot find CIL build tree; please use --with-cil=DIR)
 fi
-case $with_cil in
-  (/*) CIL_HOME=$with_cil ;;
-  (*) CIL_HOME="\$(top_builddir)/$with_cil" ;;
-esac
+CIL_HOME=`cd "$with_cil"; pwd`
 AC_SUBST(CIL_HOME)
 AC_MSG_RESULT($CIL_HOME)
 
-dnl : ${CXX:=g++3}
+: ${CFLAGS:=-g -W -Wall -Werror}
 : ${CXXFLAGS:=-g -W -Wall -Werror}
 
 AC_PROG_CC
@@ -53,6 +50,8 @@ instrumentor/daikon/Makefile
 instrumentor/daikon/libdaikon/Makefile
 instrumentor/decure/Makefile
 instrumentor/decure/tests/Makefile
+instrumentor/driver/main-subst
+instrumentor/driver/Makefile
 instrumentor/nothing/Makefile
 instrumentor/nothing/tests/Makefile
 instrumentor/returns/Makefile

@@ -2,30 +2,33 @@ AT_INIT(scalar-pairs)
 
 AT_SETUP(late-global)
 AT_CHECK(
-cp $srcdir/late-global.c .
-cp $srcdir/late-global.expected expout
-$srcdir/../driver/main -o late-global late-global.c
+set -e
+cp $abs_srcdir/late-global.c .
+cp $abs_srcdir/late-global.expected expout
+$abs_top_builddir/instrumentor/driver/main scalar-pairs -o late-global late-global.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./late-global
-$top_srcdir/resolver/resolve-samples late-global <trace
+$abs_top_srcdir/resolver/resolve-samples late-global <trace
 , 0, expout)
 AT_CLEANUP
 
 AT_SETUP(upcase-good)
 AT_CHECK(
-cp $srcdir/upcase-good.c .
-cp $srcdir/upcase-good.expected expout
-$srcdir/../driver/main -o upcase-good upcase-good.c
+set -e
+cp $abs_srcdir/upcase-good.c .
+cp $abs_srcdir/upcase-good.expected expout
+$abs_top_builddir/instrumentor/driver/main scalar-pairs -o upcase-good upcase-good.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./upcase-good once upon a time >/dev/null
-$top_srcdir/resolver/resolve-samples upcase-good <trace
+$abs_top_srcdir/resolver/resolve-samples upcase-good <trace
 , 0, expout)
 AT_CLEANUP
 
 AT_SETUP(upcase-bad)
 AT_CHECK(
-cp $srcdir/upcase-bad.c .
-cp $srcdir/upcase-bad.expected expout
-$srcdir/../driver/main -o upcase-bad upcase-bad.c
-{ SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./upcase-bad once upon a time; } 2>/dev/null
-$top_srcdir/resolver/resolve-samples upcase-bad <trace
+set -e
+cp $abs_srcdir/upcase-bad.c .
+cp $abs_srcdir/upcase-bad.expected expout
+$abs_top_builddir/instrumentor/driver/main scalar-pairs -o upcase-bad upcase-bad.c
+{ SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./upcase-bad once upon a time; } 2>/dev/null || :
+$abs_top_srcdir/resolver/resolve-samples upcase-bad <trace
 , 0, expout)
 AT_CLEANUP

@@ -1,35 +1,20 @@
-package Decure;
+package Driver;
 
 use strict;
 use FindBin;
-use File::Basename;
 
 use CCured;
-use Sampler;
+use Sampler
 our @ISA = qw(CCured Sampler);
-
-
-my $libcountdown = "$FindBin::Bin/../../../libcountdown";
 
 
 ########################################################################
 
 
-sub root {
-    my $self = shift;
-    return "$self->{home}/../..";
-}
-
-
 sub setDefaultArguments {
     my $self = shift;
-
     $self->CCured::setDefaultArguments;
     $self->Sampler::setDefaultArguments;
-
-    $self->{TRACE_COMMANDS} = 1;
-    $self->{home} = "$FindBin::Bin/..";
-    $self->{instrumentor} = ["$self->{home}/main"];
 }
 
 

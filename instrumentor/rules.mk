@@ -1,10 +1,9 @@
 include $(top_builddir)/instrumentor/config.mk
-include $(top_builddir)/instrumentor/defs.mk
 
 
 fixdeps = $(top_srcdir)/instrumentor/fixdeps
 
-cildir = $(top_srcdir)/../cil
+cildir = $(CIL_HOME)
 cilobjdir = $(cildir)/obj/x86_LINUX
 libdirs = $(cilobjdir)
 includes = $(foreach dir, $(libdirs), -I $(dir))
@@ -25,8 +24,8 @@ recurse = $(MAKE) -C $(@D) $(@F)
 libcil = $(cilobjdir)/cil.$(cma)
 syslibs = str.$(cma) unix.$(cma)
 
-impls = $(basename $(wildcard $(srcdir)/*.ml))
-ifaces = $(basename $(wildcard $(srcdir)/*.mli))
+impls = $(sort $(extra_impls) $(basename $(wildcard *.ml)))
+ifaces = $(basename $(wildcard *.mli))
 implicits = $(filter-out $(ifaces), $(impls))
 
 

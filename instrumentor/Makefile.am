@@ -1,9 +1,14 @@
-SUBDIRS = branches daikon decure nothing returns scalar-pairs #logging
+SUBDIRS = driver branches daikon decure nothing returns scalar-pairs #logging
 
 targets = harness.$(cma)
+extra_impls = libraries
 
 include rules.mk
 
+
+libraries.ml: %: build-libraries %.in
+	./$^ >$@.tmp
+	mv $@.tmp $@
 
 harness = $(manager) $(phases) $(tuples) $(bumpSign) $(describedExpression)
 harness.$(cma): $(harness)

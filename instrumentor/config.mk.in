@@ -2,3 +2,5 @@
 #native := 1
 
 CIL_HOME = @CIL_HOME@
+
+include $(top_srcdir)/instrumentor/defs.mk

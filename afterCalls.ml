@@ -8,15 +8,14 @@ class visitor = object
   method result = afterCalls
 
   method vstmt stmt =
-    begin
-      match stmt.skind with
-      | Instr [Call _] as call ->
-	  let placeholder = mkEmptyStmt () in
-	  afterCalls <- placeholder :: afterCalls;
-	  stmt.skind <- Block (mkBlock [mkStmt call; placeholder])
-      | _ -> ()
-    end;
-    DoChildren
+    match stmt.skind with
+    | Instr [Call _] as call ->
+	let placeholder = mkEmptyStmt () in
+	let block = Block (mkBlock [mkStmt call; placeholder]) in
+	afterCalls <- placeholder :: afterCalls;
+	let replace stmt = stmt.skind <- block; stmt in
+	ChangeDoChildrenPost (stmt, replace)
+    | _ -> DoChildren
 end
 
 

@@ -18,23 +18,29 @@ my $dbh = Common::connect;
 
 ########################################################################
 #
-#  get the list of already-known sample reports
+#  get the list of reports with no samples, excluding known empties
 #
 
 
-sub get_known ($) {
+sub get_missing ($) {
     my ($dbh) = @_;
-    my $column = $dbh->selectcol_arrayref('SELECT DISTINCT run_id FROM run_sample');
+    my $column = $dbh->selectcol_arrayref(q{
+	SELECT run.run_id
+	    FROM run
+	    LEFT JOIN run_sample USING (run_id)
+	    WHERE run_sample.run_id IS NULL
+	    AND NOT empty
+	});
 
-    print 'already known: ', scalar @{$column}, "\n";
+    print 'missing: ', scalar @{$column}, "\n";
 
-    my %known;
-    $known{$_} = 1 foreach @{$column};
-    return %known;
+    my %missing;
+    $missing{$_} = 1 foreach @{$column};
+    return %missing;
 }
 
 
-my %known = get_known $dbh;
+my %missing = get_missing $dbh;
 
 
 ########################################################################
@@ -48,8 +54,7 @@ my $upload_count = 0;
 
 foreach my $dir (@ARGV) {
     my $run_id = basename $dir;
-    next if $known{$run_id};
-    $known{$run_id} = 1;
+    next unless $missing{$run_id};
     print "reading samples for $dir\n";
     ++$upload_count;
 

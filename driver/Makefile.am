@@ -6,6 +6,7 @@ noinst_SCRIPTS = sampler-cc-here
 EXTRA_DIST = $(driver_DATA)
 
 MOSTLYCLEANFILES =				\
+	main					\
 	sampler					\
 	stamp-links
 

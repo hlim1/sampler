@@ -22,8 +22,6 @@ class SampledLauncher(Launcher):
     def spawn(self):
         # set up random number generator
         os.environ['SAMPLER_SPARSITY'] = str(self.__sparsity)
-        if 'GSL_RNG_TYPE' in os.environ: del os.environ['GSL_RNG_TYPE']
-        if 'GSL_RNG_SEED' in os.environ: del os.environ['GSL_RNG_SEED']
 
         # set up reporting
         self.__pipe = os.pipe()

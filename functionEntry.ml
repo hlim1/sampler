@@ -10,5 +10,18 @@ let find func =
 let patch func weights instrumented =
   let entry = find func in
   let weight = weights#find entry in
-  let choice = LogIsImminent.choose locUnknown weight instrumented func.sbody in
-  func.sbody <- mkBlock [mkStmt choice]
+
+  let body =
+    if weight == 0 then
+      let finis = mkEmptyStmt () in
+      finis.labels <- [ Label ("finis", locUnknown, false) ];
+      [ mkStmt (Block func.sbody);
+	mkStmt (Goto (ref finis, locUnknown));
+	mkStmt (Block instrumented);
+	finis ]
+    else
+      let choice = LogIsImminent.choose locUnknown weight instrumented func.sbody in
+      [ mkStmt choice ]
+  in
+  
+  func.sbody <- mkBlock body

@@ -59,3 +59,10 @@ let d_preds () {preds = preds} =
     ~sep:(text "; ")
     ~doit:(fun stmt -> num stmt.sid)
     ~elements:preds
+
+
+let d_succs () {succs = succs} =
+  seq
+    ~sep:(text "; ")
+    ~doit:(fun stmt -> num stmt.sid)
+    ~elements:succs

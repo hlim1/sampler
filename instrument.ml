@@ -1,13 +1,14 @@
 open Cil
-open Printf
 
 
 let logWrite =
   let f = emptyFunction "logWrite" in
-  let arg = makeFormalVar f ~where:"$" in
-  let a = arg "address" voidPtrType in
-  let s = arg "size" uintType in
-  let d = arg "data" voidPtrType in
+  let arg name typ = ignore (makeFormalVar f ~where:"$" name typ) in
+  arg "file" charConstPtrType;
+  arg "line" uintType;
+  arg "address" voidPtrType;
+  arg "size" uintType;
+  arg "data" voidPtrType;
   f.svar
     
 
@@ -29,7 +30,9 @@ class visitor = object
   method vinst = function
     | Set((Mem addr, _), data, location) as original ->
 	ChangeTo [Call (None, Lval (var logWrite),
-			[mkCast addr voidPtrType;
+			[mkString !currentLoc.file;
+			 kinteger IUInt !currentLoc.line;
+			 mkCast addr voidPtrType;
 			 SizeOf(typeOf data);
 			 mkCast (mkAddrOf (makeLval !currentFunction data)) voidPtrType],
 			location);

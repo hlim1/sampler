@@ -26,7 +26,7 @@ dist-hook:
 
 
 trayicon.so: %.so: lib%.a libegg/tray/libtray.a
-	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(TRAY_ICON_LIBS) -L/usr/lib/python2.2/config -lpython2.2 -lpthread -lutil -Llibegg/tray -ltray
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(TRAY_ICON_LIBS) -L/usr/lib/python2.2/config -lpython2.2 -lpthread -lutil -Llibegg/tray -ltray -L/usr/X11R6/lib -lX11
 
 noinst_LIBRARIES = libtrayicon.a
 

@@ -25,9 +25,11 @@ while (@ARGV) {
     } elsif ($_ eq '--verbose') {
 	$verbose = 1;
     } elsif (/^-fsave-cfg=(.+)/) {
-	push @objcopy, '--add-section', ".debug_sampler_cfg=$1";
+	push @objcopy, '--add-section', ".debug_sampler_cfg=$1"
+	    unless -z $1;
     } elsif (/^-fsave-site-info=(.+)/) {
-	push @objcopy, '--add-section', ".debug_site_info=$1";
+	push @objcopy, '--add-section', ".debug_site_info=$1"
+	    unless -z $1;
     } else {
 	push @as, $_;
     }

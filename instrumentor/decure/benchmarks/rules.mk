@@ -12,14 +12,14 @@ exec ?= $(name).exe
 seeds := 1 2 3 4
 sparsity := 100
 
-workHome := ../cil
+decure := ../..
+instrumentor := $(decure)/..
+sampler := $(instrumentor)/..
+
+workHome := $(instrumentor)/cil
 workDir := $(workHome)/test
 workExec := $(workDir)/$(testDir)/$(exec)
 workComb := $(workExec)_comboptimcured.i
-
-sampler := ../../sampler
-instrumentor := $(sampler)/instrumentor
-decure := $(instrumentor)/decure
 
 -include functions.mk
 onlyForms := $(addprefix only-, $(functions))

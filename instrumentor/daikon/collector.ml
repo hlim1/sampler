@@ -80,6 +80,7 @@ class visitor file =
 	      let callLogger invariant =
 		mkStmtOneInstr (Call (None, logger,
 				      [mkString (sprint max_int (d_loc () location));
+				       mkString func.svar.vname;
 				       mkString (sprint max_int (d_exp () invariant));
 				       invariant],
 				      location))

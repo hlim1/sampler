@@ -31,11 +31,11 @@ __attribute__((destructor)) static void storeShutdown()
 }
 
 
-void checkInvariant(const char location[], const char expr[], intmax_t value)
+void checkInvariant(const char location[], const char function[], const char expr[], intmax_t value)
 {
   if (logFile)
     {
-      fprintf(logFile, "%s\t%s\t%jd\n", location, expr, value);
+      fprintf(logFile, "%s\t%s\t%s\t%jd\n", location, function, expr, value);
       fflush(logFile);
     }
 }

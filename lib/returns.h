@@ -5,7 +5,7 @@
 #include "tuple-3.h"
 
 
-void returnReport(const SamplerUnitSignature, unsigned, const SamplerTuple3 []);
+void returnsReport(const SamplerUnitSignature, unsigned, const SamplerTuple3 []);
 
 
 #endif /* !INCLUDE_sampler_return_h */

@@ -1,6 +1,8 @@
 open Cil
-open Edge
+
+
+type edge = stmt * stmt
 
 class container = object
-  inherit [edge] SetClass.container (fun (source, dest) -> (source.sid, dest.sid))
+  inherit [Edge.edge] SetClass.container (fun (source, dest) -> (source.sid, dest.sid))
 end

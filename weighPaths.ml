@@ -1,12 +1,12 @@
 open Cil
 
 
-type weightsMap = int StmtMap.container
+class weightsMap = [int] StmtMap.container
 
 
 let rec weigh sites headers =
   
-  let cache = new StmtMap.container in
+  let cache = new weightsMap in
 
   let rec subweight succ =
     if List.mem succ headers then

@@ -2,9 +2,12 @@ open Cil
 open Foreach
 
 
-class dominatorTree idom = object(self)
+class type idomMap = [stmt] StmtMap.container
+
+
+class dominatorTree (idom : stmt StmtMap.container) = object(self)
     
-  method idom (node : stmt) : stmt option =
+  method idom node =
     try Some(idom#find node)
     with Not_found -> None
 

@@ -2,6 +2,7 @@
 import AppInfo
 import FirstTime
 import Upload
+import RedirectHandler
 import ReportsReader
 import SamplerConfig
 import ServerMessage
@@ -76,9 +77,17 @@ def main():
         for header in synopsis:
             headers['Sampler-' + header] = synopsis[header]
 
+        # install our special redirect hander
+        redirect = RedirectHandler.RedirectHandler()
+        urllib2.install_opener(urllib2.build_opener(redirect))
+
         # post the upload and read server's response
         request = urllib2.Request(reportingUrl, str(upload), headers)
         reply = urllib2.urlopen(request)
+
+        # server may have requested a permanent URL change
+        if redirect.permanent:
+            gconfig['reporting-url'] = redirect.permanent
 
         # server may have requested a sparsity change
         message = email.message_from_file(reply)

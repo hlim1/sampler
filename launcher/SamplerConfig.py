@@ -32,13 +32,17 @@ class SamplerConfig:
     def __get_string(self, name):
         return self.client.get_string(self.__key(name))
 
+    def __set_string(self, name, value):
+        return self.client.set_string(self.__key(name), value)
+
     __handle_bool = { 'get' : __get_bool,
                       'set' : __set_bool }
 
     __handle_int = { 'get' : __get_int,
                      'set' : __set_int }
 
-    __handle_string = { 'get' : __get_string }
+    __handle_string = { 'get' : __get_string,
+                        'set' : __set_string }
 
     __handlers = { 'asked' : __handle_bool,
                    'compression-level' : __handle_int,

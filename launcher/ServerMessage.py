@@ -41,16 +41,10 @@ class ServerMessage (DialogWrapper):
         stream.write(reply.read())
 
     def on_set_base(self, document, base):
-        print 'old base:', document.base
-        print 'rel base:', base
         document.base = urlparse.urljoin(document.base, base)
-        print 'new base:', document.base
 
     def on_link_clicked(self, document, link):
-        print 'base:', document.base
-        print 'link:', link
         full = urlparse.urljoin(document.base, link)
-        print 'full:', full
         gnome.url_show(full)
 
     def on_title_changed(self, document, title):

@@ -1,0 +1,22 @@
+top := ..
+include $(top)/defs.mk
+
+targets := main
+libdirs := $(top)
+
+include $(top)/rules.mk
+
+
+########################################################################
+
+
+libharness := $(libcil) $(top)/harness.$(cma)
+
+
+main: $(libharness) $(main)
+	$(link)
+
+$(top)/%.cmi: $(top)/harness.$(cma)
+
+$(top)/%.cma: $(force)
+	$(recurse)

@@ -17,19 +17,28 @@ $collated->getline;
 
 while ($_ = <$collated>) {
     my ($suite, $benchmark, $form, $seed, $user, $system, $elapsed, $cpu, $text, $data, $max, $inputs, $outputs, $major, $minor, $swaps) = split;
-    $elapsed{$benchmark}{$form} += $elapsed;
+    die if exists $elapsed{$benchmark}{$form}{$seed};
+    $elapsed{$benchmark}{$form}{$seed} = $elapsed;
+}
+
+
+sub slowdown ($$) {
+    my ($form, $basis) = @_;
+    my $total = 0;
+    $total += $form->{$_} / $basis->{$_} foreach 1 .. 4;
+    return $total / 4;
 }
 
 
 sub print_time ($$) {
     my ($form, $elapsed) = @_;
-    my $me = $elapsed->{$form};
-    my $ref = $elapsed->{'always-none'};
-    my $all = $elapsed->{'always-all'};
+    my $me = slowdown $elapsed->{$form}, $elapsed->{'always-none'};
+    my $all = slowdown $elapsed->{'always-all'}, $elapsed->{'always-none'};
+
     if ($me < $all) {
-	printf " & \\textit{%.2f}", $me / $ref;
+	printf " & \\textit{%.2f}", $me;
     } else {
-	printf " & %.2f", $me / $ref;
+	printf " & %.2f", $me;
     }
 }
 

@@ -11,7 +11,7 @@ exec ?= $(name).exe
 
 sampler = ../../..
 instrumentor = $(sampler)/instrumentor
-decure = $(instrumentor)/decure
+decure = SAMPLER_ALREADY_CURED=1 $(instrumentor)/driver/main decure $(sampling) $(filtering)
 
 include ../config.mk
 workDir = $(workHome)/test
@@ -34,11 +34,8 @@ allExecs = $(alwaysExecs) $(sampleExecs)
 allIdents = $(allForms:=.ident)
 
 CFLAGS = -O2
-LOADLIBES = $(trusted:%=$(workDir)/$(testDir)/%) $(workHome)/obj/x86_LINUX/ccured_GNUCC_releaselib.a -lm
-link = $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
-
-decureMain = $(decure)/main
-runDecure = $(decureMain)
+LOADLIBES = $(trusted:%=$(workDir)/$(testDir)/%) -lm
+link = $(decure) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) $(TARGET_ARCH) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 
 ########################################################################
@@ -72,15 +69,12 @@ $(workComb):
 	$(MAKE) -C $(workDir) ITERATIONS=0 RELEASE=1 INFERBOX=infer EXTRAARGS='--allowInlineAssembly -save-temps' $(name)
 	[ -r $@ ]
 
-basis-cured.c: $(decure)/filterComplete $(workComb)
-	$^  >$@ || rm -f $@
+basis-cured.c: $(instrumentor)/decure/filterComplete $(workComb)
+	$^ >$@ || rm -f $@
 	[ -r $@ ]
 
-countdown_headers = no-threads countdown cyclic
-
-decurable.i: basis-cured.c
-	$(CPP) $(countdown_headers:%=-include $(sampler)/libcountdown/%.h) $< >$@ || rm -f $@
-	[ -r $@ ]
+basis-cured.i: %.i: %.c
+	$(CC) -E $< -o $@
 
 
 ########################################################################
@@ -90,20 +84,18 @@ $(alwaysExecs): %.exe: %.c
 	$(link)
 
 
-always-%.c: runDecure += --no-sample
+always-%.exe: sampling = --no-sample
 
-always-all.c: decurable.i
-	$(runDecure) $< >$@ || rm -f $@
-
-always-none.c: decurable.i
-	$(runDecure) --exclude-function \* $< >$@ || rm -f $@
-
-always-%.c: decurable.i
-	$(runDecure) --include-function $* --exclude-function \* $< >$@ || rm -f $@
-	[ -r $@ ]
+always-%.exe:    filtering = --include-function $* --exclude-function \*
+always-all.exe:  filtering = --include-function \*
+always-none.exe: filtering = --exclude-function \*
 
 
-MOSTLYCLEANFILES = always-*.exe always-*.c
+always-%.c: basis-cured.c
+	cp $< $@
+
+
+MOSTLYCLEANFILES = always-*.exe always-*.[ciso]
 
 
 ########################################################################
@@ -116,34 +108,37 @@ $(sampleExecs): %.exe: %.c
 	$(link)
 
 
-sample-%.c: runDecure += --sample
+sample-%.exe: sampling = --sample
 
-sample-all.c: decurable.i
-	$(runDecure) $< >$@ || rm -f $@
-
-sample-%.c: decurable.i
-	$(runDecure) --include-function $* --exclude-function \* $< >$@ || rm -f $@
-	[ -r $@ ]
+sample-%.exe:    filtering = --include-function $* --exclude-function \*
+sample-all.exe:  filtering = --include-function \*
+sample-none.exe: filtering = --exclude-function \*
 
 
-MOSTLYCLEANFILES += sample-*.exe sample-*.c
+sample-%.c: basis-cured.c
+	cp $< $@
 
 
-########################################################################
-
-
-stats: decurable.i
-	$(runDecure) --show-stats $< >/dev/null 2>$@ || rm -f $@
-	[ -r $@ ]
-
-
-MOSTLYCLEANFILES += stats
+MOSTLYCLEANFILES += sample-*.exe sample-*.[ciso]
 
 
 ########################################################################
 
 
-loopless: $(instrumentor)/loopless decurable.i
+stats: stats.c
+	$(decure) --show-stats -c $< -o stats.o 2>$@ || rm -f $@
+	[ -r $@ ]
+
+stats.c: basis-cured.c
+	cp $< $@
+
+MOSTLYCLEANFILES += stats stats.o
+
+
+########################################################################
+
+
+loopless: $(instrumentor)/loopless basis-cured.i
 	$^ >$@ || rm -f $@
 	[ -r $@ ]
 
@@ -156,7 +151,7 @@ MOSTLYCLEANFILES += loopless
 ########################################################################
 
 
-functions-list: $(decure)/listCandidates decurable.i
+functions-list: $(decure)/listCandidates basis-cured.i
 	$^ >$@ || rm -f $@
 	[ -r $@ ]
 
@@ -164,7 +159,7 @@ functions.mk: ../make-functions-mk functions-list
 	$< <functions-list >$@ || rm -f $@
 	[ -r $@ ]
 
-CLEANFILES = functions.mk functions-list basis-cured.c decurable.i $(workComb)
+CLEANFILES = functions.mk functions-list basis-cured.c basis-cured.i $(workComb)
 
 
 ########################################################################

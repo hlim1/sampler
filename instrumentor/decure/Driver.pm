@@ -26,6 +26,20 @@ sub collectOneArgument {
 }
 
 
+sub preprocess_compile {
+    my $self = shift;
+
+    if ($ENV{SAMPLER_ALREADY_CURED}) {
+	my ($src, $dest, $early_ppargs, $ppargs, $ccargs) = @_;
+	my $aftercilpp = $self->preprocessAfterOutputFile($src);
+	$self->preprocess_after_cil($src, $aftercilpp, $ppargs);
+	return $self->compile_cil($aftercilpp, $dest, $ppargs, $ccargs);
+    } else {
+	return $self->CCured::applyCilAndCompile(@_);
+    }
+}
+
+
 sub preprocess_after_cil {
     my $self = shift;
     my @ppargs = @{(pop)};

@@ -3,21 +3,19 @@ open Cil
 
 exception FoundLoop
 
-let assumeLooplessExterns = ref false
-let assumeLooplessLibraries = ref true
-
-let _ =
+let assumeLooplessExterns =
   Options.registerBoolean
-    assumeLooplessExterns
     ~flag:"assume-loopless-externs"
     ~desc:"assume that functions defined elsewhere have no loops or recursion"
-    ~ident:"AssumeLooplessExterns";
+    ~ident:"AssumeLooplessExterns"
+    ~default:false
 
+let assumeLooplessLibraries =
   Options.registerBoolean
-    assumeLooplessLibraries
     ~flag:"assume-loopless-libraries"
     ~desc:"assume that functions defined in libraries have no loops or recursion"
     ~ident:"AssumeLooplessLibraries"
+    ~default:true
 
 
 class visitor loopless changed =

@@ -196,13 +196,13 @@ less than a 12\% penalty.
 \subsection{Bug Isolation Using Predicate Elimination}
 \label{sec:ccrypt}
 
-Assertion sharing works well when potential failure points have been
-explicitly marked.  In practice, this is rare.  Certainly, few human
-programmers add assertions as pervasively as \CCured.  Instead,
-we may need to guess at which program behaviors are indicative of bad
-behavior.  Most such automated guesses will be incorrect and can be
-eliminated in light of observed program behavior.  Those guesses which
-remain should point in the direction of the bug.
+Sharing the cost of assertions works well when potential failure
+points have been explicitly marked.  In practice, this is rare.
+Certainly, few human programmers add assertions as pervasively as
+\CCured.  Instead, we may need to guess at which program behaviors are
+indicative of bad behavior.  Most such automated guesses will be
+incorrect and can be eliminated in light of observed program behavior.
+Those guesses which remain should point in the direction of the bug.
 
 \subsubsection{Instrumentation Strategy}
 

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.7.2
+
+** Merge Fedora Core 1 port branch back onto trunk
+
 * sampler-0.7.1
 
 ** Back-port the instrumentor to OCaml-3.06.

@@ -6,10 +6,12 @@
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
 Release: 1
-License: Freely modifiable and distributable
+License: BSD style
 Group: Applications/System
+Packager: Ben Liblit <@PACKAGE_BUGREPORT@>
 URL: http://www.cs.berkeley.edu/~liblit/bug-isolation/
 Source0: %{name}-%{version}.tar.gz
+BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: binutils
 BuildRequires: gcc
@@ -43,7 +45,10 @@ bug isolation server.
 %doc AUTHORS COPYING
 %doc doc/%{name}.html
 %dir %{_datadir}/%{name}
+%dir %{_datadir}/%{name}/applications
 %{_datadir}/%{name}/gdb-commands
+%{_datadir}/%{name}/print-debug-info
+%dir %{_datadir}/%{name}/launcher
 %{_datadir}/%{name}/launcher/AppConfig.py[co]
 %{_datadir}/%{name}/launcher/BaseMain.py[co]
 %{_datadir}/%{name}/launcher/BaseUserConfig.py[co]
@@ -55,7 +60,6 @@ bug isolation server.
 %{_datadir}/%{name}/launcher/Upload.py[co]
 %{_datadir}/%{name}/launcher/Uploader.py[co]
 %{_datadir}/%{name}/launcher/UserConfig.py[co]
-%{_datadir}/%{name}/print-debug-info
 
 
 ########################################################################

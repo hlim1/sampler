@@ -11,6 +11,15 @@ use FindBin;
 ########################################################################
 
 
+my $problem = 0;
+
+
+sub error ($) {
+    warn shift;
+    $problem = 1;
+}
+
+
 sub check_signature ($$$) {
     my ($filename, $lineno, $signature) = @_;
     die "$filename:$lineno: malformed signature: $signature\n"
@@ -42,7 +51,7 @@ foreach my $objectName (@ARGV) {
     if ($objectName =~ /\.sites$/) {
 	$handle = new FileHandle $objectName, 'r';
 	unless ($handle) {
-	    warn "warning: cannot read $objectName: $!\n";
+	    error "warning: cannot read $objectName: $!\n";
 	    next;
 	}
 
@@ -50,7 +59,7 @@ foreach my $objectName (@ARGV) {
 	$handle = new FileHandle;
 	my $extractor = "$FindBin::Bin/extract-site-info";
 	if (! open $handle, '-|', $extractor, $objectName) {
-	    warn "warning: cannot run $extractor for $objectName: $!\n";
+	    error "warning: cannot run $extractor for $objectName: $!\n";
 	    next;
 	}
     }
@@ -69,15 +78,17 @@ foreach my $objectName (@ARGV) {
 
 	if (exists $compilationUnit{$signature}) {
 	    if (compare_units($compilationUnit{$signature}, $unit)) {
-		warn "error: duplicate signature: $signature\n";
-		warn "        first defined in \"$compilationUnit{$signature}{name}\"\n";
-		die  "        inconsistently redefined in \"$objectName\"\n";
+		error "error: duplicate signature: $signature\n";
+		error "        first defined in \"$compilationUnit{$signature}{name}\"\n";
+		error "        inconsistently redefined in \"$objectName\"\n";
 	    }
 	} else {
 	    $compilationUnit{$signature} = $unit;
 	}
     }
-    $handle->close or die "site info error for $objectName: exit status $?\n";
+    unless ($handle->close){
+	error "site info error for $objectName: exit status $?\n";
+    }
 }
 
 
@@ -130,12 +141,12 @@ while (my $signature = <$report>) {
 
 	miscount 'few', $signature if @sites;
     } else {
-	warn "warning: unrecognized signature in report: $signature\n";
+	error "warning: unrecognized signature in report: $signature\n";
 	skip $report;
     }
 }
 
-$report->close or die "report extractor error: exit status $?\n";
+$report->close or error "report extractor error: exit status $?\n";
 
 
 local ($,, $\) = ("\t", "\n");
@@ -146,3 +157,6 @@ foreach my $signature (sort keys %compilationUnit) {
 	print $signature, $unit->{name}, $site->{description}, @{$site->{counters}} if exists $site->{counters};
     }
 }
+
+
+exit $problem;

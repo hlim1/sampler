@@ -1,11 +1,11 @@
 open Cil
 
 
-type slice = lval
+type siteId = int
 
 
 class virtual builder : file ->
   object
-    method private addSiteInfo : SiteInfo.t -> slice
+    method private addSiteInfo : SiteInfo.t -> siteId
     method finalize : unit
   end

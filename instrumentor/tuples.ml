@@ -2,7 +2,7 @@ open Cil
 open SiteInfo
 
 
-type slice = lval
+type siteId = int
 
 
 class virtual builder file =
@@ -14,7 +14,7 @@ class virtual builder file =
 
     method private addSiteInfo info =
       sites#add info;
-      let slice = (Var counterTuples, Index (integer nextId, NoOffset)) in
+      let slice = nextId in
       nextId <- nextId + 1;
       slice
 

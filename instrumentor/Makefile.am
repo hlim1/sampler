@@ -12,7 +12,7 @@ libraries.ml: %: build-libraries %.in
 	./$^ >$@.tmp
 	mv $@.tmp $@
 
-harness = $(manager) $(phases) $(tuples) $(bumpSign) $(describedExpression) $(int64Set)
+harness = $(manager) $(phases) $(tuples) $(bumper) $(bumpSign) $(describedExpression) $(int64Set)
 harness.$(cma): $(harness)
 	$(archive)
 

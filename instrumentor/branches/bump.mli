@@ -1,4 +1,4 @@
 open Cil
 
 
-val bump : file -> location -> exp -> Tuples.slice -> stmtkind
+val bump : file -> Tuples.siteId -> location -> exp -> stmtkind

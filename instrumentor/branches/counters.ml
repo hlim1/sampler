@@ -12,10 +12,10 @@ class builder file =
       let local = var (makeTempVar func (typeOf expression)) in
 
       let bump =
-	let slice = self#addSiteInfo { location = location; fundec = func;
-				       description = d_exp () expression }
+	let siteId = self#addSiteInfo { location = location; fundec = func;
+					description = d_exp () expression }
 	in
-	bumper location (Lval local) slice
+	bumper siteId location (Lval local)
       in
 
       local, bump

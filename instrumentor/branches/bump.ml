@@ -2,10 +2,9 @@ open Cil
 
 
 let bump file =
-  let bumper = Threads.bump file in
-  fun location expression counters ->
+  let bumper = Bumper.build file in
+  fun site location expression ->
     let bnot exp = UnOp (LNot, exp, typeOf exp) in
-    let offset = Index (bnot (bnot expression), NoOffset) in
-    let counter = addOffsetLval offset counters in
+    let slot = bnot (bnot expression) in
 
-    Instr [bumper counter location]
+    Instr [bumper site slot location]

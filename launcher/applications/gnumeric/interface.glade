@@ -497,6 +497,7 @@ Do you wish to provide automatic feedback when you use Gnumeric?</property>
 </widget>
 
 <widget class="GtkDialog" id="server-message">
+  <property name="border_width">5</property>
   <property name="title" translatable="yes">Message from Bug Isolation Server</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -505,13 +506,13 @@ Do you wish to provide automatic feedback when you use Gnumeric?</property>
   <property name="default_height">400</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="has_separator">True</property>
+  <property name="has_separator">False</property>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="">
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
-      <property name="spacing">0</property>
+      <property name="spacing">14</property>
 
       <child internal-child="action_area">
 	<widget class="GtkHButtonBox" id="">
@@ -540,6 +541,7 @@ Do you wish to provide automatic feedback when you use Gnumeric?</property>
 
       <child>
 	<widget class="GtkScrolledWindow" id="html-scroll">
+	  <property name="border_width">5</property>
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
 	  <property name="hscrollbar_policy">GTK_POLICY_ALWAYS</property>

@@ -13,8 +13,6 @@ prefix traces with: binary path, pid, timestamp
 instrumentor/logging/loads/tests/multiple is incorrectly printing a
 single value multiple times
 
-server-message dialog needs HIG'ified spacing
-
 launcher doesn't implicitly handle redirects
 
 assume that anything declared in /usr/include/... or

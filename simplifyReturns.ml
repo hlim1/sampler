@@ -23,9 +23,5 @@ class visitor initialFunction = object(self)
 end
 
 
-let simplifyBlock func block =
-  ignore (visitCilBlock (new visitor func) block)
-
-
 let phase _ =
   ("SimplifyReturns", visitCilFileSameGlobals (new visitor dummyFunDec))

@@ -65,11 +65,12 @@ sub collectOneArgument {
     } elsif ($arg =~ /^--(no-)?use-points-to$/) {
 	push @{$self->{instrumentor}}, $arg;
 	return 1;
+    } elsif ($arg =~ /^--(no-)?threads$/) {
+	push @{$self->{instrumentor}}, $arg;
+	$self->{threads} = ! $1;
+	return 1;
     } else {
-	if ($self->isThreadFlag($arg)) {
-	    push @{$self->{instrumentor}}, '--threads';
-	    $self->{threads} = 1;
-	}
+	unshift @{$pargs}, '--threads' if $self->isThreadFlag($arg);
 	return 0;
     }
 }

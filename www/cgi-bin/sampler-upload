@@ -20,6 +20,8 @@ $ENV{UNIQUE_ID} =~ /^([-0-9A-Za-z@]+)$/ or die "\$UNIQUE_ID looks suspicious: \"
 my $uid = $1;
 print($query->header({-unique_id => $uid}));
 
+umask 0007;
+
 my $dir = "/var/www/sampler-uploads/$uid";
 mkdir $dir or die "cannot build upload directory $dir: $!\n";
 END { rmdir $dir if $dir; }

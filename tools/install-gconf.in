@@ -21,6 +21,7 @@ my $name;
 my $sparsity;
 my $reporting_url;
 my $installdir;
+my $template = "$FindBin::Bin/application.schemas.in";
 
 sub usage () {
   die <<"EOT";
@@ -30,15 +31,17 @@ Usage: $0 [options]
   --sparsity=NUM
   --reporting-url=URL
   --install=PATH
+  --template=FILE
 
-All options are required.
+All options are required except for \"--template\".
 EOT
 }
 
 my $result = GetOptions ('name=s' => \$name,
 			 'sparsity=i' => \$sparsity,
 			 'reporting-url=s' => \$reporting_url,
-			 'install=s' => \$installdir);
+			 'install=s' => \$installdir,
+			 'template=s' => \$template);
 
 usage unless $result;
 usage unless $name;
@@ -61,8 +64,7 @@ sub installdir ($) {
 
 
 sub instantiate ($$%) {
-  my ($template, $output, %substitutions) = @_;
-  my $input = "$FindBin::Bin/$template.in";
+  my ($input, $output, %substitutions) = @_;
   my $infile = new FileHandle $input, 'r' or die "cannot read $input: $!\n";
   my $outfile = new FileHandle $output, 'w' or die "cannot write $output: $!\n";
 
@@ -81,7 +83,7 @@ sub instantiate ($$%) {
 
 my $schemas = "$installdir/etc/gconf/schemas/sampler-$name.schemas";
 installdir $schemas;
-instantiate('application.schemas', $schemas,
+instantiate($template, $schemas,
 	    'name' => $name,
 	    'sparsity' => $sparsity,
 	    'reporting_url' => $reporting_url);

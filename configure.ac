@@ -154,6 +154,12 @@ AC_MSG_RESULT($enable_mining)
 AC_PATH_PROG(PERL, perl)
 
 
+AC_MSG_CHECKING(for "learn more" URL)
+AC_ARG_ENABLE(learn-more, AC_HELP_STRING([--enable-learn-more=URL], [Use non-default URL for "learn more" link]), , enable_learn_more='http://www.cs.wisc.edu/cbi/learn-more/')
+AC_SUBST(learn_more_url, $enable_learn_more)
+AC_MSG_RESULT($learn_more_url)
+
+
 ########################################################################
 #
 #  CIL configuration
@@ -344,6 +350,7 @@ instrumentor/timestamps/Makefile
 launcher/Makefile
 launcher/common/Makefile
 launcher/first-time/Makefile
+launcher/first-time/first-time.glade
 launcher/monitor/Makefile
 launcher/pixmaps/Makefile
 launcher/preferences/Makefile

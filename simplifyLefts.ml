@@ -1,12 +1,6 @@
 open Cil
 
 
-let returnTypeOf typ =
-  let (return, _, _, _) = splitFunctionType typ in
-  return
-
-
-
 class visitor = object
   inherit CurrentFunctionVisitor.visitor
 

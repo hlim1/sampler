@@ -92,9 +92,9 @@ unless (@runs) {
 #  convert and analyze these reports
 #
 
-my $scheme = Utils::guess_scheme $name;
-my @sites = Utils::unpack_sites $outdir, $scheme, $rpm_samplerinfo;
-my @debugs = Utils::unpack_debuginfo $outdir, $scheme, $rpm_debuginfo;
-Utils::convert_reports $outdir, $scheme, @runs;
-Utils::analyze_reports $outdir, @runs, @sites, @debugs;
+my @schemes = Utils::guess_schemes $name;
+my @sites = Utils::unpack_sites $outdir, @schemes, $rpm_samplerinfo;
+my @debugs = Utils::unpack_debuginfo $outdir, $rpm_debuginfo;
+Utils::convert_reports $outdir, @schemes, @runs;
+Utils::analyze_reports $outdir, @schemes, @runs, @sites, @debugs;
 Utils::clean $outdir;

@@ -45,16 +45,17 @@ sub try_mkdir ($) {
 #
 
 
-sub guess_scheme ($) {
+sub guess_schemes ($) {
     my $name = shift;
     my %guess =
-	('evolution' => 'returns',
-	 'gaim' => 'scalar-pairs',
-	 'gimp' => 'branches',
-	 'gnumeric' => 'returns',
-	 'nautilus' => 'branches',
-	 'rhythmbox' => 'scalar-pairs');
-    return $guess{$name};
+	('evolution' => ['returns'],
+	 'gaim' => ['scalar-pairs'],
+	 'gimp' => ['branches'],
+	 'gnumeric' => ['returns'],
+	 'nautilus' => ['branches'],
+	 'rhythmbox' => ['scalar-pairs'],
+	 'spim' => ['branches', 'returns']);
+    return @{$guess{$name}};
 }
 
 
@@ -82,10 +83,10 @@ sub extract_rpm ($$;$) {
 #
 
 
-sub unpack_sites ($$$) {
+sub unpack_sites ($\@$) {
     warn "Unpacking static site info ...\n";
 
-    my ($outdir, $scheme, $rpm) = @_;
+    my ($outdir, $schemes, $rpm) = @_;
     check_outdir $outdir;
 
     my $dir = "$outdir/sites";
@@ -112,7 +113,8 @@ sub unpack_sites ($$$) {
     } else {
 	$need_modernize = 1;
 	croak "unrecognized sites file format\n" unless $peek =~ /^[0-9a-f]$/;
-	warn "  modernizing site files ...\n";
+	my $scheme = $schemes->[0];
+	warn "  modernizing site files with \"$scheme\" scheme ...\n";
 	foreach (@sites) {
 	    $ENV{in} = $_;
 	    $_ .= ',modern.sites';
@@ -133,10 +135,10 @@ sub unpack_sites ($$$) {
 #
 
 
-sub unpack_debuginfo ($$$) {
+sub unpack_debuginfo ($$) {
     warn "Unpacking debug information and sources ...\n";
 
-    my ($outdir, $scheme, $rpm) = @_;
+    my ($outdir, $rpm) = @_;
     check_outdir $outdir;
 
     my $dir = "$outdir/debug";
@@ -164,9 +166,9 @@ sub unpack_debuginfo ($$$) {
 #
 
 
-sub convert_reports ($$@) {
+sub convert_reports ($\@@) {
     my $outdir = shift;
-    my $scheme = shift;
+    my $schemes = shift;
     check_outdir $outdir;
     warn 'Unpacking ', scalar @_, " reports for build ...\n";
 
@@ -202,6 +204,7 @@ sub convert_reports ($$@) {
 	    $label_file->print("$label\n");
 	}
 
+	my $scheme = $schemes->[0];
 	$ENV{in} = "$old_dir/samples.gz";
 	$ENV{out} = "$new_dir/reports";
 	$ENV{scheme} = $scheme;
@@ -225,32 +228,19 @@ sub convert_reports ($$@) {
 #
 
 
-sub analyze_reports ($\@\@\@) {
-    my ($outdir, $runs, $sites, $debugs) = @_;
+sub analyze_reports ($\@\@\@\@) {
+    my ($outdir, $schemes, $runs, $sites, $debugs) = @_;
     check_outdir $outdir;
+    my $numRuns = @$runs;
 
-    my @command = ("$FindBin::Bin/../../../cbiexp/bin/analyze-runs",
-		   '--do=process-labels',
-		   '--do=map-sites',
-		   '--do=convert-reports',
-		   '--do=compute-results',
-		   '--do=print-results-1',
-		   '--confidence', 95,
-		   '--runs-directory', 'data',
-		   '--number-of-runs', scalar @{$runs},
-		   (map { ('--sites-text', $_) } @{$sites}));
-
-    my $pid = fork;
-    die "cannot fork: $!\n" unless defined $pid;
-
-    if ($pid) {
-	wait;
-	exit($? & 127 || $? >> 8 || 1) if $?;
-    } else {
-	chdir $outdir or die "cannot chdir $outdir: $!\n";
-	exec @command;
-	die "cannot exec: $!\n";
-    }
+    system ('make',
+	    #'-s',
+	    '-C', $outdir,
+	    '-f', "$FindBin::Bin/one.mk",
+	    "sites=@$sites",
+	    "numRuns=$numRuns",
+	    "schemes=all @$schemes");
+    exit($? & 127 || $? >> 8 || 1) if $?;
 }
 
 
@@ -267,8 +257,6 @@ sub clean ($) {
     rmtree ["$outdir/data",
 	    "$outdir/sites"];
 
-    rmtree "$outdir/debug" if -z "$outdir/preds.txt";
-
     unlink
 	"$outdir/f.runs",
 	"$outdir/s.runs",
@@ -280,6 +268,21 @@ sub clean ($) {
 	"$outdir/convert-reports",
 	"$outdir/gen-views",
 	glob("$outdir/*.tmp.txt");
+
+    if (-z "$outdir/preds.txt") {
+	rmtree "$outdir/debug" ;
+	unlink
+	    "$outdir/logo.css",
+	    "$outdir/logo.xsl",
+	    "$outdir/preds.txt",
+	    "$outdir/stamp-convert-reports",
+	    "$outdir/summary.css",
+	    "$outdir/summary.dtd",
+	    "$outdir/summary.xsl",
+	    "$outdir/view.css",
+	    "$outdir/view.dtd",
+	    "$outdir/view.xsl";
+	}
 }
 
 

@@ -435,6 +435,16 @@ the rest, and show an unmistakable trend:
 \item storage.c:176: more\_arrays(): indx > i\_base
 \end{list}
 
+\begin{figure}
+  \centering
+  \small
+  \listinginput{152}{applications/more_arrays.c}
+  \caption{Suspect \texttt{bc} function \texttt{more\_arrays()}.  All
+  top-ranked crash-predicting features point to large values of
+  \texttt{indx} on line 176.}
+  \label{fig:bc:more-arrays}
+\end{figure}
+
 The source code for \texttt{more\_arrays()} appears in
 \autoref{fig:bc:more-arrays}.  An comment earlier in the same file
 suggests that this one of a suite of ``three functions for increasing
@@ -450,54 +460,43 @@ different storage pools.  The text of these three functions is nearly
 identical, but each uses different global variables (e.g.
 \texttt{a\_count} versus \texttt{f\_count} versus \texttt{v\_count}).
 
-The statistical model reveals that crashes are more likely when the
-loop index (\texttt{indx}) is larger than \texttt{scale},
-\texttt{use\_math}, \texttt{opterr}, \texttt{next\_func}, and
-\texttt{i\_base}.  None of these appear to have a direct connection to
-\texttt{indx}, though.  For example, \texttt{opterr} is part of
-command line flag processing, while \texttt{next\_func} records how
-much storage has been consumed in the pool managed by
-\texttt{more\_functions()}.
+The top ranked predicates seem bizarre at first glance, because the
+variables they relate do not appear to have any real connection to
+each other or to \texttt{more\_arrays()}.  For example, \texttt{scale}
+tracks significant digits for floating point calculations, while
+\texttt{use\_math} records whether an initial math library is to be
+loaded.  Why would crashes tend to happen when local variable
+\texttt{indx} exceeds these seemingly unrelated globals on this
+particular line?  An obvious hypothesis is that \texttt{indx} is
+simply unusually large in such cases.  If \texttt{indx} is large, then
+it will tend to be larger than any number of otherwise unrelated
+variables.  Perhaps crashes occur when the input to \texttt{bc}
+defines unusually large numbers of arrays.
 
-\aside{Subsequent paragraphs in this section are under active revision
-  to reflect our improved statistical model.}
-
-However, we must consider indirect effects as well.  If
-\texttt{next\_func} is unusually large, it will tend to be larger than
-\texttt{indx} even if the two are not strictly related.  Perhaps
-crashes occur when \texttt{bc} tries to define too many functions.
-Similarly, if \texttt{indx} is unusually large, then it will tend to
-be larger then \texttt{break\_label}, \texttt{optind}, and
-\texttt{out\_col}.  Perhaps crashes occur when the input to
-\texttt{bc} defines large numbers of arrays.
-
-As noted, \texttt{more\_arrays()} uses \texttt{indx} to transfer data
-from an old storage buffer into a larger new one, and then to zero out
-the extra space.  It may be worth examining these two loops' bounds
-more closely, as a buffer overrun here could certainly trash the heap.
-The allocation on line 167 requests space for \texttt{a\_count} items.
-The copying loop on line 171 ranges from \texttt{1} through
-\texttt{old\_count - 1}.  The zeroing loop on line 176 continues on
-from \texttt{old\_count} through \texttt{v\_count - 1}.  And there we
-find the bug: the new storage buffer has room for \texttt{a\_count}
-elements, but the second loop is incorrectly bound by
-\texttt{v\_count} instead.  After a quick glimpse at the neighboring
-\texttt{more\_variables()} function it is clear that
+Closer scrutiny of \texttt{more\_arrays()} quickly reveals this to be
+the case.  The allocation on line 167 requests space for
+\texttt{a\_count} items.  The copying loop on line 171 ranges from
+\texttt{1} through \texttt{old\_count - 1}.  The zeroing loop on line
+176 continues on from \texttt{old\_count} through \texttt{v\_count -
+  1}.  And here we find the bug: the new storage buffer has room for
+\texttt{a\_count} elements, but the second loop is incorrectly bound
+by \texttt{v\_count} instead.  After a quick glimpse at the
+neighboring \texttt{more\_variables()} function it is clear that
 \texttt{more\_arrays()} was created by copying and pasting
 \texttt{more\_variables()} and then changing names like
 \texttt{v\_count} and \texttt{v\_names} to \texttt{a\_count} and
 \texttt{a\_names}.  The loop bound on line 176 was missed in the
 renaming.
 
-Having found the bug, it is reasonable to ask whether the statistical
-analysis could have pointed at it more directly.  The mistaken use of
-\texttt{v\_count} instead of \texttt{a\_count} on line 176 means that
-a buffer overrun occurs when \texttt{indx > a\_count} on line 176.
-This does correspond to a predicate sampled by our system, and this
-predicate is the eleventh most highly ranked feature in the trained
-model: significant, but still below six other features which do not
-clearly relate to the bug.  Why was this, the smoking gun, not ranked
-first?
+The logistic regression model points us at the buggy line, the buggy
+variable, and even reveals something of the conditions under which the
+bug will appear.  Having found the bug, it is reasonable to ask
+whether the statistical analysis could have pointed at it even more
+directly.  The mistaken use of \texttt{v\_count} instead of
+\texttt{a\_count} on line 176 means that a buffer overrun occurs when
+\texttt{indx > a\_count} on line 176.  This does correspond to a
+predicate sampled by our system, but this predicate is ranked 240th in
+the trained model.  Why was this, the smoking gun, not ranked first?
 
 There are several reasons to consider.  Samples are taken randomly,
 while the model itself is trained using stochastic gradient ascent.
@@ -515,26 +514,22 @@ fact so tightly interrelated as to be equivalent.  Improving our
 instrumentation scheme and fine-tuning the statistical analysis
 methodology are key areas for continued development.
 
+\aside{Add some treatment of the fact that our model predicts crashes
+  \texttt{better} than an artificial model built using only the
+  smoking gun.  Even taking the single top-ranked feature in isolation
+  gives a model that outperforms the smoking gun.  This is certainly
+  interesting, and worth reporting, but I'm not sure what to say about
+  it by way of explaining \texttt{why} this happens.}
+
 This bug seems clear enough once found.  However it has been present
 and undiscovered at least since 1992 (the time\-stamp on this file in
 the oldest version of GNU \texttt{bc} that we can find).  Many bugs
 are obvious only once one knows where to look.  The logistic
-regression results directed us to a fairly narrow range of less than a
-dozen lines within a 33 line function, out of 8910 lines in
-\texttt{bc} as a whole.  Our approach does not automatically find and
-fix bugs.  But it does suggest where to start looking, and what sort
-of scenarios (large \texttt{indx}) to consider.  Although we are still
-learning about the capabilities of this system, and how to interpret
-its results, we believe that statistically guided debugging has the
-potential to make the process of finding and fixing bugs more
-efficient.
-
-\begin{figure}
-  \centering
-  \small
-  \listinginput{152}{applications/more_arrays.c}
-  \caption{Suspect \texttt{bc} function \texttt{more\_arrays()}.  All
-  top-ranked crash-predicting features point to large values of
-  \texttt{indx} on line 176.}
-  \label{fig:bc:more-arrays}
-\end{figure}
+regression results directed us to one misbehaving variable on one line
+of code, out of 8910 lines in \texttt{bc} as a whole.  Our approach
+does not automatically find and fix bugs.  But it does suggest where
+to start looking, and what sort of scenarios (large \texttt{indx}) to
+consider.  Although we are still learning about the capabilities of
+this system, and how to interpret its results, we believe that
+statistically guided debugging has the potential to make the process
+of finding and fixing bugs more efficient.

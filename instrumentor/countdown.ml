@@ -9,7 +9,7 @@ let findGlobal =
     | TInt _ -> true
     | _ -> false
   in
-  FindGlobal.find predicate "nextLogCountdown"
+  FindGlobal.find predicate "nextEventCountdown"
 
 
 let findReset = FindFunction.find "resetCountdown"

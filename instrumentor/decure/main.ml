@@ -1,8 +1,1 @@
-open Cil
-
-;;
-
-TestHarness.main
-[ Transform.phase;
-  (* "dump", dumpFile (new Printer.printer) stdout *)
-]
+Phases.main Transform.phase

@@ -24,6 +24,7 @@ sub trace_system (@) {
 
 my $dir = $FindBin::Bin;
 
-push @ARGV, '-Wno-uninitialized';
+push @ARGV, '-include', "$root/liblog/log.h";
+push @ARGV, "$root/liblog", 'log';
 
 trace_system "$dir/../front-end", "$dir/main", @ARGV;

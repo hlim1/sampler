@@ -2,10 +2,10 @@
 #define INCLUDE_libcountdown_countdown_h
 
 
-extern unsigned nextLogCountdown;
+extern unsigned nextEventCountdown;
 
 
-unsigned resetCountdown();
+unsigned getNextCountdown();
 
 
 #endif /* !INCLUDE_libcountdown_countdown_h */

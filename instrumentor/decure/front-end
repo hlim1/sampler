@@ -24,6 +24,7 @@ sub trace_system (@) {
 
 my $dir = $FindBin::Bin;
 
-push @ARGV, '-Wno-uninitialized';
+push @ARGV, '-include', "$dir/libdecure/decure.h";
+push @ARGV, "$dir/../../../cil/obj/x86_LINUX/ccured_GNUCC_debug.a";
 
 trace_system "$dir/../front-end", "$dir/main", @ARGV;

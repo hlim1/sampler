@@ -57,7 +57,8 @@ class visitor =
 		ignore (warn "suspicious non-check call: %s\n" vname)
 	      end
 
-	| Instr [_] ->
+	| Instr [_]
+	| Instr [] ->
 	    ()
 
 	| Instr _ ->

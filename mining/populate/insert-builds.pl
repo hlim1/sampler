@@ -95,7 +95,6 @@ foreach my $package (@ARGV) {
     my @fields = (@app_id, $instrumentation_type, $instrumentation_version, $build_date);
     Common::escape @fields;
     print $upload @fields;
-    print @fields;
 
     # done with rpm query
     $rpm_query->close;

@@ -14,6 +14,8 @@ tray_PYTHON =					\
 	PreferencesDialog.py			\
 	UploaderTrayIcon.py
 
+all_python = $(nodist_tray_PYTHON) $(tray_PYTHON)
+
 tray_SCRIPTS = tray
 
 EXTRA_DIST =					\
@@ -36,8 +38,8 @@ TESTS_ENVIRONMENT = ../test-by-extension
 
 
 install-data-hook:
-	rm -f $(tray_PYTHON:%=$(DESTDIR)$(traydir)/%)
-	rm -f $(tray_PYTHON:%.py=$(DESTDIR)$(traydir)/%.pyc)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.py)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.pyc)
 
 
 $(BUILT_SOURCES): %: %.in Makefile

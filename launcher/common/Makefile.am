@@ -10,6 +10,8 @@ common_PYTHON =					\
 	StatusIcon.py				\
 	WindowIcon.py
 
+all_python = $(nodist_common_PYTHON) $(common_PYTHON)
+
 EXTRA_DIST = $(common_PYTHON) Config.py.in
 
 BUILT_SOURCES = Config.py
@@ -18,8 +20,8 @@ MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
 
 install-data-hook:
-	rm -f $(common_PYTHON:%=$(DESTDIR)$(commondir)/%)
-	rm -f $(common_PYTHON:%.py=$(DESTDIR)$(commondir)/%.pyc)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.py)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.pyc)
 
 
 Config.py: %: %.in Makefile

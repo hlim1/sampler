@@ -8,6 +8,8 @@ first_time_PYTHON =				\
 	FirstTime.py				\
 	Main.py
 
+all_python = $(nodist_first_time_PYTHON) $(first_time_PYTHON)
+
 first_time_SCRIPTS = first-time
 
 EXTRA_DIST =					\
@@ -30,8 +32,8 @@ TESTS_ENVIRONMENT = ../test-by-extension
 
 
 install-data-hook:
-	rm -f $(first_time_PYTHON:%=$(DESTDIR)$(first_timedir)/%)
-	rm -f $(first_time_PYTHON:%.py=$(DESTDIR)$(first_timedir)/%.pyc)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.py)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.pyc)
 
 
 $(BUILT_SOURCES): %: %.in Makefile

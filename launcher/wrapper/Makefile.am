@@ -15,6 +15,8 @@ wrapper_PYTHON =				\
 	Upload.py				\
 	UserConfig.py
 
+all_python = $(nodist_wrapper_PYTHON) $(wrapper_PYTHON)
+
 EXTRA_DIST =					\
 	$(wrapper_DATA)				\
 	$(wrapper_PYTHON)			\
@@ -27,8 +29,8 @@ MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
 
 install-data-hook:
-	rm -f $(wrapper_PYTHON:%=$(DESTDIR)$(wrapperdir)/%)
-	rm -f $(wrapper_PYTHON:%.py=$(DESTDIR)$(wrapperdir)/%.pyc)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.py)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.pyc)
 
 Paths.py: %: %.in Makefile
 	sed						\

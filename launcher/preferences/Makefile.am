@@ -11,6 +11,8 @@ preferences_PYTHON =				\
 	Main.py					\
 	PreferencesDialog.py
 
+all_pyton = $(nodist_preferences_PYTHON) $(preferences_PYTHON)
+
 
 preferences_SCRIPTS = preferences
 
@@ -42,8 +44,8 @@ TESTS_ENVIRONMENT = ../test-by-extension
 
 
 install-data-hook:
-	rm -f $(preferences_PYTHON:%=$(DESTDIR)$(preferencesdir)/%)
-	rm -f $(preferences_PYTHON:%.py=$(DESTDIR)$(preferencesdir)/%.pyc)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.py)
+	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.pyc)
 
 
 $(BUILT_SOURCES): %: %.in Makefile

@@ -1,7 +1,7 @@
 # RPM specfile for evolution module
 # Generated Tue Jul  8 20:57:03 2003 GMT by Ximian build system
-# $Id: evolution.spec,v 1.3 2003/08/12 07:40:35 liblit Exp $
-# from $Id: evolution.spec,v 1.3 2003/08/12 07:40:35 liblit Exp $
+# $Id: evolution.spec,v 1.1 2003/08/12 23:26:07 liblit Exp $
+# from $Id: evolution.spec,v 1.1 2003/08/12 23:26:07 liblit Exp $
 
 %define nam	evolution
 %define ver	1.4.3
@@ -291,7 +291,7 @@ esac
 
 
 %changelog
-* Tue Aug 12 2003 Ben Liblit <liblit@cs.berkeley.edu>
+* Tue Aug 12 2003 Ben Liblit <liblit@cs.berkeley.edu> 1.4.3-0.ximian.6.1.sam.1
 
 - Added hooks for sampled instrumentation.
 

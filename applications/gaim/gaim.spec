@@ -104,7 +104,7 @@ rm -rf %{buildroot}
 %sampler_post
 
 %changelog
-* Tue Aug 12 2003 Ben Liblit <liblit@cs.berkeley.edu> 1:0.66-1.sam.1
+* Tue Aug 12 2003 Ben Liblit <liblit@cs.berkeley.edu> 0.66-1.sam.1
 - Added hooks for sampled instrumenation.
 
 * Wed Jul 16 2003 Ethan Blanton <eblanton@cs.ohiou.edu>

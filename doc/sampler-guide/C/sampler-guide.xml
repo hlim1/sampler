@@ -561,9 +561,22 @@
 	<term><option>--no-cache-countdown</option></term>
 	<listitem>
 	  <para>Cache the global next sample countdown in local
-	  variables, an important performance optimization.  Defaults
-	  to caching, and should only be disabled when benchmarking
-	  the effect of this particular optimization.</para>
+	  variables.  This is an important performance optimization.
+	  Defaults to caching, and should only be disabled when
+	  benchmarking the effect of this particular
+	  optimization.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--predict-checks</option></term>
+	<term><option>--no-predict-checks</option></term>
+	<listitem>
+	  <para>Emit static branch prediction hints when checking the
+	  global next sample countdown.  This is a minor performance
+	  optimization.  Defaults to emitting prediction hints, and
+	  should only be disabled when benchmarking the effect of this
+	  particular optimization.</para>
 	</listitem>
       </varlistentry>
     </variablelist>

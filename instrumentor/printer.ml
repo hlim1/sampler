@@ -3,8 +3,16 @@ open Pretty
 open Str
 
 
-let isLocalCountdown =
-  let pattern = regexp "^localEventCountdown[1-9][0-9]*$" in
+let predictChecks =
+  Options.registerBoolean
+    ~flag:"predict-checks"
+    ~desc:"emit static branch prediction hints for countdown checks"
+    ~ident:"PredictChecks"
+    ~default:true
+
+
+let isCountdown =
+  let pattern = regexp "^\\(localEventCountdown[1-9][0-9]*\\|nextEventCountdown\\)$" in
   fun candidate ->
     string_match pattern candidate.vname 0
 
@@ -27,7 +35,7 @@ class printer =
 	    ({ battrs = []; bstmts = [{ skind = Goto _ }] } as instrumented),
 	    location)
 	  as skind
-	  when isLocalCountdown local
+	  when !predictChecks && isCountdown local
 	->
 	  self#pLineDirective location
             ++ (align

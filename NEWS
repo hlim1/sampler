@@ -2,14 +2,15 @@
 
 * sampler-0.13
 
-** Add support for tweaking various optimizations.  These are all
-   intended for use with the "Performance and Optimization" section of
-   my dissertation, and will be of little interest to the typical
-   developer.
+** Add support for tweaking various optimizations.
+
+These are all intended for use with the "Performance and Optimization"
+section of my dissertation.  They are of little interest to the
+typical developer and of no interest to end users.
 
 *** Add support for non-random, fixed-period sampling.
-
 *** Add support for disabling local countdown caching.
+*** Add support for disabling static branch prediction hints.
 
 * sampler-0.12.4
 

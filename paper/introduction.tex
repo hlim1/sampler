@@ -15,8 +15,8 @@ the enormous number of executions performed by the software's user
 community.  We propose an infrastructure where some information about
 each user execution of a program is transmitted to a central database.
 The data gathered from all executions is analyzed to extract
-information that helps engineers to find and fix problems more
-quickly.  In our view, such an infrastructure has several benefits:
+information that helps engineers find and fix problems more quickly.
+In our view, such an infrastructure has several benefits:
 \begin{itemize}
   
 \item For deployed software systems, the number of executions in
@@ -30,7 +30,7 @@ quickly.  In our view, such an infrastructure has several benefits:
   sample, of user executions gives an accurate picture of how the
   software is actually used, allowing better decisions about how to
   spend scarce resources on modifications. In particular, bugs that
-  affect a great number of users are higher priority than bugs that
+  affect a large number of users are a higher priority than bugs that
   are very rare.  This kind of information is almost impossible to
   obtain from anywhere other than actual user executions.
   
@@ -77,9 +77,9 @@ connectivity.  Netscape/Mozilla, Microsoft, GNOME, and KDE have all
 deployed automated, opt-in crash reporting systems.  These systems
 gather key information about program state after a failure has
 occurred: stack trace, register contents, and the like.  By sending
-this information back to the development organization, developers are
-able to effectively triage bugs that cause crashes and focus on the
-problems experienced by the most users.
+this information back to the development organization, the community
+helps developers effectively triage bugs that cause crashes and focus
+on the problems experienced by the most users.
 
 We believe this is progress in the right direction, but we also
 believe that existing approaches only scratch the surface of what is
@@ -117,7 +117,7 @@ sufficiently lightweight that it has a negligible impact on the
 performance of the user's program.  Our approach, discussed in
 \autoref{sec:framework}, is based on sampling.  Classical sampling for
 measuring program performance searches for the ``elephant in the
-haystack''---it is looking for the biggest consumers of time.  In
+haystack'': it is looking for the biggest consumers of time.  In
 contrast, we are looking for needles (bugs) that may occur very
 rarely, and furthermore our sampling rates may be very low to maintain
 client performance.  This leads us to be concerned with guaranteeing

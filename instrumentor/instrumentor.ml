@@ -1,5 +1,6 @@
 open Cil
 open Scanners
+open TestHarness
 
 
 let sample =
@@ -32,13 +33,14 @@ let phase =
     let digest = lazy (Digest.file file.fileName) in
     EmbedSignature.visit file digest;
     EmbedCFG.visit file digest;
-    List.iter (fun scheme -> scheme#embedInfo digest) schemes;
+    time "  collecting site info"
+      (fun () -> List.iter (fun scheme -> scheme#embedInfo digest) schemes);
     EmbedSiteInfo.visit file;
 
     if !sample then
       begin
 	let tester = Weighty.collect file in
 	let countdown = new Countdown.countdown file in
-	TestHarness.time "  applying sampling transformation"
+	time "  applying sampling transformation"
 	  (fun () -> Transform.visit file tester countdown)
       end

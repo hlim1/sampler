@@ -20,6 +20,8 @@ depend = ocamldep $< | $(fixdeps) >$@
 compile = $(compiler) $(includes) -c $<
 link = $(compiler) -o $@ $(syslibs) $^
 
+force := force
+
 
 ########################################################################
 

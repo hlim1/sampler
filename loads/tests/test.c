@@ -12,6 +12,8 @@ typedef struct Multinode {
 
 int main()
 {
+  int result = 0;
+  
   {
     int x = 7;
     Node a = {3.14, 0};
@@ -32,5 +34,11 @@ int main()
     int total = addend + addend * addend;
   }
 
-  return 0;
+  {
+    int predicate = 19;
+    if (predicate)
+      predicate = 0;
+  }
+
+  return result;
 }

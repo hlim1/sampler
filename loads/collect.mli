@@ -1,4 +1,4 @@
 open Cil
 
 
-val collect : instr -> (string * exp) list
+val collect : (cilVisitor -> 'root -> 'result) -> 'root -> OutputSet.OutputSet.t

@@ -12,10 +12,11 @@ include $(top)/rules.mk
 ########################################################################
 
 
-collect = $(dissect) collect
-dissect = dissect
+collect = $(dissect) $(outputSet) collect
+dissect = $(outputSet) dissect
 findLogger = findLogger
 logs = $(collect) $(where) logs
+outputSet = outputSet
 skips = $(functionBodyVisitor) skips
 transform = $(findLogger) $(logs) $(skips) $(weigh) transform
 weigh = weigh

@@ -1,25 +1,42 @@
 open Cil
+open OutputSet
 open Pretty
 
 
-class visitor logger = object (self)
-  inherit FunctionBodyVisitor.visitor as super
+class visitor logger =
 
-  method vstmt _ = DoChildren
-
-  method vinst instr =
-    let dissection = Collect.collect instr in
-    let formats, arguments = List.split dissection in
-    let format = ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
-    let where = Where.locationOf instr in
+  let insert self visit root location =
+    let dissection = Collect.collect visit root in
+    let formats, arguments = List.split (OutputSet.elements dissection) in
+    let format = ("%s:%u:\n" ^ String.concat "" formats) in
     let call = 
       Call (None, logger,
 	    mkString format
-	    :: mkString where.file
-	    :: kinteger IUInt where.line
+	    :: mkString location.file
+	    :: kinteger IUInt location.line
 	    :: arguments,
-	    where)
+	    location)
     in
-    super#queueInstr [call];
-    SkipChildren
-end
+    self#queueInstr [call]
+  in
+  
+  object (self)
+
+    inherit FunctionBodyVisitor.visitor
+
+    method vstmt stmt =
+      begin
+	match stmt.skind with
+	(* Switch should already have been removed by Cil.prepareCFG *)
+	| Return (Some expression, location)
+	| If (expression, _, _, location) ->
+	    insert self visitCilExpr expression location
+	|	_ -> ()
+      end;
+      DoChildren
+
+    method vinst instr =
+      let dissection = Collect.collect in
+      insert self visitCilInstr instr (Where.locationOf instr);
+      SkipChildren
+  end

@@ -1,25 +1,27 @@
 open Cil
+open OutputSet
 
 
 class visitor = object
   inherit nopCilVisitor
 
-  val lvals = ref []
-  method result = !lvals
+  val mutable outputs = OutputSet.empty
+  method result = outputs
 
   method vexpr expression =
     begin
       match expression with
       | Lval lval ->
 	  ignore (Pretty.eprintf "lval of interest: %a\n" d_lval lval);
-	  lvals := (Dissect.dissect lval (typeOfLval lval)) @ !lvals
+	  let dissection = Dissect.dissect lval (typeOfLval lval) in
+	  outputs <- OutputSet.union outputs dissection
       |	_ -> ()
     end;
     DoChildren
 end
 
 
-let collect instruction =
+let collect visit root =
   let visitor = new visitor in
-  ignore (visitCilInstr (visitor :> cilVisitor) instruction);
+  ignore (visit (visitor :> cilVisitor) root);
   visitor#result

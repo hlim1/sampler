@@ -9,7 +9,7 @@ tools_DATA =					\
 	Node.pm					\
 	Object.pm				\
 	SymbolTable.pm				\
-	Unit.pm					\
+	Unit.pm
 
 tools_SCRIPTS =					\
 	debuild					\

@@ -1,1 +1,2 @@
-SUBDIRS = analysis dumps populate queries
+SUBDIRS = dumps populate queries
+DIST_SUBDIRS = analysis

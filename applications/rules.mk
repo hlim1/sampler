@@ -84,11 +84,6 @@ bi: $(spec) $(rpmbuild) BUILD/.stamp RPMS/.stamp
 	$(rpmenv) $(rpmbuild) '$(scheme)' -bi --short-circuit SPECS/$(spec)
 
 
-.PHONY: expand
-expand: $(rpmbuild) $(spec)
-	$(rpmenv) $(rpmbuild) '$(scheme)' --eval '$(content)' $(spec)
-
-
 MOSTLYCLEANFILES = $(overlay)
 
 mostlyclean-local:

@@ -1,0 +1,9 @@
+*.cma
+*.cmi
+*.cmo
+*.cmx
+*.cmxa
+*.di
+*.do
+
+main

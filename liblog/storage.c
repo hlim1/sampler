@@ -21,6 +21,7 @@ __attribute__((constructor)) static void initialize()
     {
       storeInitialize(filename);
       logTableau(signature, sizeof(signature));
+      nextEventCountdown = resetCountdown();
     }
   else
     fprintf(stderr, "logger: not recording samples; no $SAMPLER_FILE given in environment\n");

@@ -18,7 +18,7 @@ liblog-syscall.a: %: %(storage.o) %(syscall.o)
 liblog-stdio.so liblog-syscall.so: liblog-%.so: storage.o %.o
 	$(LINK.o) -shared $^ -o $@
 
-storage.o: %.o: %.c %.h
+storage.o: %.o: %.c %.h log.h
 stdio.o syscall.o: %.o: %.c primitive.h storage.h
 
 libdecoder.a: %: %(decoder.o)

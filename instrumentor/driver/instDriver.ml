@@ -14,9 +14,13 @@ let savedTempName filename strip append =
 
 
 
-class c instrumentor compiler arguments =
+class virtual c homeDir instrumentor compiler arguments =
   object (self)
     inherit GccDriver.c compiler arguments as super
+
+    method private extraLibs =
+      let dir = homeDir ^ "/libcountdown" in
+      ["-Wl,-rpath," ^ dir; "-L" ^ dir; "-lcountdown"]
 
     method private prepare filename =
       let handler =
@@ -34,18 +38,18 @@ class c instrumentor compiler arguments =
       in
       handler filename
 
-    method private runCpp input =
+    method private runCpp input extraFlags =
       let output =
 	if saveTemps then
 	  savedTempName input ".c" ".i"
 	else
 	  fst (TempFile.get ".i")
       in
-      self#run compiler ("-E" :: input :: "-o" :: output :: flags);
+      self#run compiler ("-E" :: input :: "-o" :: output :: extraFlags @ flags);
       output
 
     method private preparePreprocess input =
-      let output = self#runCpp input in
+      let output = self#runCpp input ["-include"; self#extraHeader] in
       self#prepareInstrument output
 
     method private prepareInstrument input =
@@ -61,18 +65,5 @@ class c instrumentor compiler arguments =
       self#preparePostprocess outputName
 
     method private preparePostprocess input =
-      self#runCpp input
-
-    (* method private extraLibs = ["-lcountdown"] *)
+      self#runCpp input []
   end
-
-
-let main () =
-  let nonflag argument = argument.[0] != '-' in
-  match List.tl (Array.to_list Sys.argv) with
-  | instrumentor :: compiler :: arguments
-    when nonflag instrumentor && nonflag compiler ->
-      ignore (new c instrumentor compiler arguments)
-  | _ ->
-      prerr_endline ("usage: " ^ Sys.argv.(0) ^ " <instrumentor> <compiler> [<arguments> ...]");
-      exit 2

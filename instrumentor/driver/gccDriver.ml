@@ -101,9 +101,9 @@ class c compiler arguments =
 	  rest
 
 
-    method private build arguments =
+    method private build =
       try
-	self#parse arguments;
+	self#parse;
 	let built =
 	  let build builder = builder () in
 	  List.map build inputs

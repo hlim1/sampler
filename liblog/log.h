@@ -8,7 +8,9 @@
 void logTableau(const void *, unsigned);
 
 
-inline unsigned resetCountdown()
+static inline unsigned resetCountdown() __attribute__((no_instrument_function));
+
+static inline unsigned resetCountdown()
 {
   const unsigned result = getNextCountdown();
   logTableau(&result, sizeof result);

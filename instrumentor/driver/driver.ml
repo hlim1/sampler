@@ -10,7 +10,7 @@ class virtual c arguments =
 
     method private virtual build : unit
 
-    method private parse arguments =
+    method private parse =
       let rec consume = function
 	| [] -> ()
 	| flag :: rest ->

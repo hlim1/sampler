@@ -10,7 +10,7 @@ static unsigned parse(const char *text)
   std::istringstream stream(text);
   unsigned result;
   stream >> result;
-  assert(stream.good());
+  assert(!stream.fail());
   assert(stream.peek() == EOF);
   return result;
 }
@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
 
   ftruncate(fd, bytes);
   int32_t * const map = (int32_t *) mmap(0, bytes, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+  assert(map);
+  assert(reinterpret_cast<intptr_t>(map) != -1);
   
   const unsigned words = bytes / sizeof(int32_t);
   for (unsigned word = 0; word < words; ++word)

@@ -11,7 +11,6 @@ let sample =
 
 
 let schemes = [
-  NothingScheme.factory;
   ScalarPairScheme.factory;
   BranchScheme.factory;
   ReturnScheme.factory;

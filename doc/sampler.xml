@@ -75,7 +75,7 @@
 	  <term><option>scalar-pairs</option></term>
 	  <listitem>
 	    <para>At each direct scalar assignment, count how many
-	    times the assigned value value is less than, equal to, or
+	    times the assigned value is less than, equal to, or
 	    greater than each other same-typed in-scope variable.
 	    Each such comparable variable at each such assignment
 	    induces one instrumentation point with a triple of

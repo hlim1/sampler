@@ -1,8 +1,11 @@
 #include <config.h>
 
 #include <assert.h>
-#include <gsl/gsl_randist.h>
 #include <limits.h>
+#include <math.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
 #include "acyclic.h"
 #include "countdown.h"
 #include "lifetime.h"
@@ -11,14 +14,16 @@
 const void * const SAMPLER_REENTRANT(providesLibAcyclic);
 int acyclicInitCount;
 
-double acyclicDensity;
-const gsl_rng_type * generatorType;
-SAMPLER_THREAD_LOCAL void *acyclicGenerator;
+double densityScale;
+unsigned short seed[3];
+
+SAMPLER_THREAD_LOCAL int sampling;
+SAMPLER_THREAD_LOCAL struct drand48_data buffer;
 
 
 void initialize_thread()
 {
-  acyclicGenerator = gsl_rng_alloc(generatorType);
+  sampling = seed48_r(seed, &buffer) >= 0;
   nextEventCountdown = getNextEventCountdown();
 }
 
@@ -45,20 +50,29 @@ __attribute__((constructor)) static void initialize()
 	  else
 	    {
 	      const char * const environ = getenv("SAMPLER_SEED");
-	      generatorType = gsl_rng_env_setup();
-
 	      if (environ)
 		{
 		  char *end;
-		  gsl_rng_default_seed = strtoul(environ, &end, 0);
+		  union {
+		    uint64_t all;
+		    uint16_t triple[3];
+		  } convert;
+
+		  convert.all = strtoull(environ, &end, 0);
 		  if (*end != '\0')
 		    {
 		      fprintf(stderr, "countdown/acyclic: trailing garbage in $SAMPLER_SEED: %s\n", end);
 		      exit(2);
 		    }
+
+		  seed[0] = convert.triple[0];
+		  seed[1] = convert.triple[1];
+		  seed[2] = convert.triple[2];
 		}
+	      else
+		seed[0] = seed[1] = seed[2] = 0;
 	      
-	      acyclicDensity = 1 / sparsity;
+	      densityScale = 1 / log(1 - 1 / sparsity);
 	      initialize_thread();
 	    }
 	}
@@ -68,16 +82,21 @@ __attribute__((constructor)) static void initialize()
 
 void finalize_thread()
 {
-  if (acyclicGenerator)
-    {
-      gsl_rng_free(acyclicGenerator);
-      acyclicGenerator = 0;
-    }
 }
-  
 
-__attribute__((destructor)) static void finalize()
+
+/**********************************************************************/
+
+
+unsigned getNextEventCountdown()
 {
-  if (!--acyclicInitCount)
-    finalize_thread();
+  if (__builtin_expect(sampling, 1))
+    {
+      double real;
+      const int error = drand48_r(&buffer, &real);
+      if (__builtin_expect(error >= 0, 1))
+	return log(real) * densityScale + 1;
+    }
+
+  return UINT_MAX;
 }

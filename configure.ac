@@ -62,19 +62,13 @@ fi
 #  C configuration
 #
 
-: ${CFLAGS:=-g -W -Wall -Werror}
-: ${CXXFLAGS:=-g -W -Wall -Werror}
+: ${CFLAGS:=-O9 -W -Wall -Werror}
+: ${CXXFLAGS:=-O9 -W -Wall -Werror}
 
 AC_PROG_CC
 AC_PROG_CXX
 AM_PROG_LEX
 AC_PROG_RANLIB
-
-AC_C_INLINE
-AC_EGREP_CPP(inline, inline, 
-  AC_DEFINE(HAVE_INLINE, 1,
-	   [Define to tell GSL that we can handle inline functions.])
-)
 
 AC_MSG_CHECKING(format string type modifer j)
 AC_COMPILE_IFELSE(
@@ -93,6 +87,16 @@ AC_COMPILE_IFELSE(
   AC_MSG_RESULT(yes),
   AC_MSG_RESULT(no))
 AM_CONDITIONAL(HAVE_THREAD_STORAGE, test "$have_thread_storage" = yes)
+
+AC_MSG_CHECKING(log without -lm)
+old_CFLAGS=$CFLAGS
+CFLAGS="$CFLAGS -ffast-math"
+AC_LINK_IFELSE(
+  AC_LANG_PROGRAM([#include <math.h>], [log(1.)]),
+  AC_MSG_RESULT(yes),
+  AC_MSG_RESULT(no)
+  AC_SUBST(LIBM, -lm))
+CFLAGS=$old_CFLAGS
 
 
 ########################################################################

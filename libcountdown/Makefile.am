@@ -1,5 +1,3 @@
-INCLUDES = -W -Wall -Werror `gsl-config --cflags`
-
 lib_LIBRARIES =	$(nothread_libs) $(thread_libs)
 
 nothread_libs =					\
@@ -12,7 +10,7 @@ acyclic = -DSAMPLER_ACYCLIC
 
 nothreads = -include no-threads.h
 libacyclic_a_SOURCES = acyclic.c acyclic.h countdown.h
-libacyclic_a_CFLAGS = $(nothreads)
+libacyclic_a_CFLAGS = $(nothreads) -ffast-math
 libcyclic_a_SOURCES = countdown.h cyclic.c cyclic.h cyclic-size.h
 libcyclic_a_CFLAGS = $(nothreads)
 libcountdown_a_SOURCES = countdown.c countdown.h
@@ -26,7 +24,7 @@ thread_libs =					\
 
 threads = -D_REENTRANT -include threads.h
 libacyclic_r_a_SOURCES = $(libacyclic_a_SOURCES) hijack.c
-libacyclic_r_a_CFLAGS = $(threads) $(acyclic)
+libacyclic_r_a_CFLAGS = $(threads) $(acyclic) -ffast-math
 libcyclic_r_a_SOURCES = $(libcyclic_a_SOURCES) hijack.c
 libcyclic_r_a_CFLAGS = $(threads) $(cyclic)
 libcountdown_r_a_SOURCES = $(libcountdown_a_SOURCES)
@@ -36,11 +34,11 @@ endif
 libexec_PROGRAMS = precompute
 precompute_SOURCES = precompute.c
 precompute_CFLAGS = $(nothreads)
-precompute_LDADD = libacyclic.a
-precompute_LDFLAGS = `gsl-config --libs`
+precompute_LDADD = libacyclic.a $(LIBM)
 
 noinst_PROGRAMS = mean
-mean_LDFLAGS = `gsl-config --libs`
+mean_CFLAGS = $(nothreads)
+mean_LDADD = libacyclic.a libcountdown.a $(LIBM)
 
 
 countdown-1-1: precompute

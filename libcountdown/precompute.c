@@ -44,12 +44,12 @@ int main(int argc, char *argv[])
 	    {
 	      writeCountdown(outfile);
 	      nextEventCountdown = getNextEventCountdown();
+	      printf("%u\n", nextEventCountdown);
 	    }
 
 	  nextEventCountdown = 0;
 	  writeCountdown(outfile);
 	  writeEnv(outfile, "SamplerSparsity", "SAMPLER_SPARSITY");
-	  writeEnv(outfile, "GslRngType", "GSL_RNG_TYPE");
 	  writeEnv(outfile, "SamplerSeed", "SAMPLER_SEED");
 	  fclose(outfile);
 	}

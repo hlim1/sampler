@@ -123,7 +123,7 @@ foreach my $package (@ARGV) {
 	my $contents = new FileHandle($extracted);
 	while (my $unit_header = <$contents>) {
 	    chomp $unit_header;
-	    my $unit_signature = Common::parse_signature 'sites', $extracted, $contents->input_line_number, $unit_header;
+	    my ($unit_signature, $scheme) = Common::parse_signature 'sites', $extracted, $contents->input_line_number, $unit_header;
 
 	    my $site_order = 0;
 
@@ -137,11 +137,22 @@ foreach my $package (@ARGV) {
 		my $line_number = shift @description;
 		my $function = shift @description;
 		my $cfg = shift @description if $has_cfg;
-		my $operand_0 = shift @description;
-		my $operand_1 = shift @description;
+		my $operand_0;
+		my $operand_1;
+
+		if ($scheme eq 'scalar-pairs' && @description == 5) {
+		    $operand_0 = shift @description;
+		    my $scope_0 = shift @description;
+		    my $kind_0 = shift @description;
+		    $operand_1 = shift @description;
+		    my $scope_1 = shift @description;
+		} else {
+		    $operand_0 = shift @description;
+		    $operand_1 = shift @description;
+		}
 
 		my $where = "$extracted:" . $contents->input_line_number;
-		die "$where: extra descriptive fields\n" if @description;
+		die "$where: ", scalar @description, " extra descriptive fields\n" if @description;
 		die "$where: empty source file name\n" unless $source_name;
 		die "$where: bad source line number\n" unless $line_number =~ /^\d+$/;
 		die "$where: empty function name\n" unless $function;

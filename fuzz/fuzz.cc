@@ -15,8 +15,14 @@ static unsigned parse(const char *text)
 }
 
 
-int main(int, char *argv[])
+int main(int argc, char *argv[])
 {
+  if (argc != 4)
+    {
+      cerr << "usage: " << argv[0] << " <seed> <megs> <outfile>" << endl;
+      return 2;
+    }
+
   srand48(parse(argv[1]));
   const size_t bytes = parse(argv[2]) * 1024 * 1024;
   const int fd = open(argv[3], O_RDWR | O_CREAT, 0666);

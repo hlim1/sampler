@@ -43,10 +43,7 @@ the overhead of performing the dynamic checks.
     & \multicolumn{3}{c|}{\textbf{function counts}} & \multicolumn{3}{c|}{\textbf{average for functions with sites}} \\
     \raisebox{1.5ex}[0pt]{\textbf{benchmark}} & \textbf{total} & \textbf{weightless} & \textbf{has sites} & \textbf{sites} & \textbf{threshold checks} & \textbf{threshold weight} \\
     \hline\hline
-    \input{applications/olden-static}
-    \hline
-    \input{applications/spec95-static}
-    \hline
+    \input{applications/ccured-static}
   \end{tabular}
   \caption{Static metrics for \CCured benchmarks.  Olden benchmarks
     are listed first, followed by SPECINT95.}
@@ -80,17 +77,16 @@ amortization rates are fairly good.
 
 \begin{table}
   \centering
-  \begin{tabular}{|l|rrrr|}
+  \begin{tabular}{|l|r|rrrr|}
     \hline
     \rule{0pt}{2.5ex}
-    \textbf{benchmark} & $\mathbf{10^{-2}}$ & $\mathbf{10^{-3}}$ & $\mathbf{10^{-4}}$ & $\mathbf{10^{-6}}$ \\
+    \textbf{benchmark} & \textbf{always} & $\mathbf{10^{-2}}$ & $\mathbf{10^{-3}}$ & $\mathbf{10^{-4}}$ & $\mathbf{10^{-6}}$ \\
     \hline\hline
-    \input{applications/olden-density}
-    \hline
-    \input{applications/spec95-density}
-    \hline
+    \input{applications/ccured-density}
   \end{tabular}
-  \caption{Relative speedup of various sampling rates versus always checking}
+  \caption{Relative performance of various sampling rates versus no
+    instrumentation.  \textit{Italics} marks cases where sampled
+    instrumentation outperforms unconditional instrumentation.}
   \label{tab:share:density}
 \end{table}
 
@@ -129,14 +125,16 @@ One benchmark continues to run slower than standard \CCured; two run
 at the same speed; the remaining ten run 2\% - 39\% faster.
 
 \subsubsection{Single-Function Sampling}
+\input{applications/ccured-size}
 
 In an effort to better understand the sources of overhead, we have
 performed additional experiments in which only a single function is
 instrumented at a time.  This also approximates a more realistic
 approach to managing code size.  The fully instrumented executables
-from \autoref{sec:share:whole} range from 2\%-76\% larger than their
-non-sampling counterparts.  When only a single function is
-instrumented, code expansion is small enough to not be a concern.
+from \autoref{sec:share:whole} range from
+\execGrowthMin\%-\execGrowthMax\% larger than their non-sampling
+counterparts.  When only a single function is instrumented, code
+expansion is small enough to not be a concern.
 
 A fully deployed system might use dynamic instrumentation to randomly
 instrument a single selected function \textit{du jour}.  For the

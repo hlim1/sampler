@@ -1,37 +1,40 @@
 #!/usr/bin/perl -w
 
 use strict;
-use File::Basename;
 use FileHandle;
 
 
-foreach my $stats (@ARGV) {
-    my $benchmark = basename dirname $stats;
-    my $stats = new FileHandle $stats or die;
+my %suite = (
+	     olden => ['bh', 'bisort', 'em3d', 'health', 'mst', 'perimeter', 'power', 'treeadd', 'tsp'],
+	     spec95 => ['compress', 'go', 'ijpeg', 'li']
+	     );
 
-    my $numSites = 0;
-    my $numFuncs = 0;
-    my $numWeightless = 0;
-    my $numHasSites = 0;
-    my $numRegions = 0;
-    my $totalWeight = 0;
+my %stats;
 
-    while (<$stats>) {
-	if (/^stats: weightless: (\d+) functions, (\d+) weightless$/) {
-	    $numFuncs += $1;
-	    $numWeightless += $2;
-	} elsif (/^stats: transform: \w+ has sites: (\d+) sites, (\d+) headers, (\d+) total header weights$/) {
-	    ++$numHasSites;
-	    $numSites += $1;
-	    $numRegions += $2;
-	    $totalWeight += $3;
-	}
+
+my $collated = new FileHandle $ARGV[0];
+$collated->getline;
+
+while ($_ = <$collated>) {
+    my ($benchmark, $numFuncs, $numWeightless, $numHasSites, $numSites, $numRegions, $totalWeight) = split;
+    $stats{$benchmark} = {numFuncs => $numFuncs,
+			  numWeightless => $numWeightless,
+			  numHasSites => $numHasSites,
+			  numSites => $numSites,
+			  numRegions => $numRegions,
+			  totalWeight => $totalWeight};
+}
+
+
+foreach ('olden', 'spec95') {
+    foreach my $benchmark (@{$suite{$_}}) {
+	my %info = %{$stats{$benchmark}};
+	printf("%s & %d & %d & %d & %.1f & %.1f & %.1f \\\\\n",
+	       $benchmark,
+	       $info{numFuncs}, $info{numWeightless}, $info{numHasSites},
+	       ($info{numSites} / $info{numHasSites}),
+	       ($info{numRegions} / $info{numHasSites}),
+	       ($info{totalWeight} / $info{numRegions}));
     }
-
-    printf("%s & %d & %d & %d & %.1f & %.1f & %.1f \\\\\n",
-	   $benchmark,
-	   $numFuncs, $numWeightless, $numHasSites,
-	   ($numSites / $numHasSites),
-	   ($numRegions / $numHasSites),
-	   ($totalWeight / $numRegions));
+    print "\\hline\n";
 }

@@ -8,37 +8,47 @@
 enum { StringMax = PATH_MAX };
 
 
-void slurp(void *buffer, size_t bytes)
+static void slurp(void *buffer, size_t bytes)
 {
   fread(buffer, bytes, 1, stdin);
 }
 
 
-int slurpString(char *buffer)
+static int terminal(int character)
+{
+  return character == 0 || character == -1;
+}
+
+
+static int slurpString(char *buffer)
 {
   int length = 0;
   int character = getchar();
-  if (character == 0 || character == -1)
+  
+  if (terminal(character))
     return 0;
-
-  while (character != 0 && character != -1)
+  else
     {
-      if (length < StringMax - 1)
-	buffer[length++] = character;
+      do
+	{
+	  if (length < StringMax - 1)
+	    buffer[length++] = character;
 
-      character = getchar();
+	  character = getchar();
+	}
+      while (!terminal(character));
+  
+      assert(length < StringMax);
+      buffer[length] = '\0';
+      return 1;
     }
-
-  assert(length < StringMax);
-  buffer[length] = '\0';
-  return 1;
 }
 
 
 /**********************************************************************/
 
 
-char recentFile[StringMax];
+static char recentFile[StringMax];
 
 
 static void file()

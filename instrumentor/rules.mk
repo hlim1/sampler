@@ -52,7 +52,8 @@ $(addsuffix .do, $(impls)): %.do: %.ml
 	mv $@.tmp $@
 
 $(addsuffix .dl, $(impls)): %.dl: %.do $(linkorder)
-	$(linkorder) <$< >$@
+	$(linkorder) <$< >$@.tmp
+	mv $@.tmp $@
 
 browse: force
 	ocamlbrowser $(includes)

@@ -43,13 +43,16 @@ run: main $(infile).i
 	./$^
 .PHONY: run
 
+dumper: %: $(libs) $(addsuffix .$(cmo), skipVisitor cfg functionBodyVisitor testHarness utils %)
+	$(link)
+
 cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), cfg utils foreach dotify skipVisitor functionBodyVisitor splitAfterCalls testHarness %)
 	$(link)
 
-main: %: $(libs) $(addsuffix .$(cmo), mapClass setClass edgeSet stmtMap stmtSet foreach cfg skipVisitor functionBodyVisitor splitAfterCalls collectHeaders stores weighPaths testHarness %)
+main: %: $(libs) $(addsuffix .$(cmo), skipVisitor functionBodyVisitor currentFunctionVisitor simplifyReturns simplifyLefts simplifyRights checkSimplicity instrument testHarness %)
 	$(link)
 
-cfg-bug: %: $(libs) $(addsuffix .$(cmo), utils skipVisitor functionBodyVisitor splitAfterCalls %)
+checker: %: $(libs) $(addsuffix .$(cmo), %)
 	$(link)
 
 $(ifaces:=.cmi): %.cmi: %.mli

@@ -249,6 +249,7 @@ AM_PATH_GSL
 
 AM_CONFIG_HEADER(config.h)
 
+AC_CONFIG_TESTDIR(instrumentor/bounds)
 AC_CONFIG_TESTDIR(instrumentor/branches)
 AC_CONFIG_TESTDIR(instrumentor/decure/tests)
 AC_CONFIG_TESTDIR(instrumentor/function-entries)
@@ -266,6 +267,7 @@ doc/sampler-guide/Makefile
 doc/sampler-guide/C/Makefile
 fuzz/Makefile
 instrumentor/Makefile
+instrumentor/bounds/Makefile
 instrumentor/branches/Makefile
 instrumentor/daikon/Makefile
 instrumentor/decure/Makefile

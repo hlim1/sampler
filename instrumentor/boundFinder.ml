@@ -72,6 +72,9 @@ let extremes typ =
   builder typ
 
 
+let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
+
+
 class visitor global func =
   object (self)
     inherit SiteFinder.visitor
@@ -80,7 +83,7 @@ class visitor global func =
     method globals = globals
 
     method vstmt stmt =
-      let build replacement left location _ =
+      let build replacement left location (host, offset) =
 	let leftType = unrollType (typeOfLval left) in
 	let newLeft = var (Locals.makeTempVar func leftType) in
 	let min, max = makeGlobals leftType in
@@ -93,7 +96,9 @@ class visitor global func =
 					   mkStmt (updateBound max (Lval newLeft) Max location)]))
 	in
 	Sites.registry#add func site;
-	BoundManager.register min max nil;
+	BoundManager.register
+	  (min, max)
+	  (func, location, d_columns [d_lval () left; text host; text offset], site);
 	Block (mkBlock [mkStmtOneInstr (replacement newLeft);
 			site;
 			mkStmtOneInstr (Set (left, Lval newLeft, location))])

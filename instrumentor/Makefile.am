@@ -1,5 +1,6 @@
 SUBDIRS =					\
 	driver					\
+	bounds					\
 	branches				\
 	function-entries			\
 	nothing					\

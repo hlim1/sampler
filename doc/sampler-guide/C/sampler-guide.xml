@@ -47,6 +47,34 @@
 
 	  <variablelist>
 	    <title>Instrumentation schemes</title>
+
+	    <varlistentry>
+	      <term><option>bounds</option></term>
+	      <listitem>
+		<para>At each assignment of a scalar value, record the
+		minimum and maximum values ever assigned.  Each
+		assignment induces one instrumentation point with one
+		global min/max pair.</para>
+
+		<para>The minimum component is initialized to the
+		maximum representable value for the assigned type,
+		whereas the maximum component is initialized to the
+		minimum representable value for the assigned type.  A
+		site which has never been sampled, then, will have a
+		minimum which is greater than the corresponding
+		maximum.</para>
+
+		<para>See also the <link
+		linkend="assign-across-pointer"><option>--assign-across-pointer</option></link>,
+		<link
+		linkend="assign-into-field"><option>--assign-into-field</option></link>,
+		and <link
+		linkend="assign-into-index"><option>--assign-into-index</option></link>
+		flags for ways to customize which kinds of assignments
+		are instrumented.</para>
+	      </listitem>
+	    </varlistentry>
+
 	    <varlistentry>
 	      <term><option>branches</option></term>
 	      <listitem>

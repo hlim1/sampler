@@ -18,61 +18,67 @@ void boundsReportEnd()
 /**********************************************************************/
 
 
-void boundDumpChar(char min, char max)
+void boundDumpSignedChar(signed char min, signed char max)
 {
-  printf("%c\t%c\n", min, max);
+  fprintf(reportFile, "%hhd\t%hhd\n", min, max);
+}
+
+
+void boundDumpUnsignedChar(unsigned char min, unsigned char max)
+{
+  fprintf(reportFile, "%hhu\t%hhu\n", min, max);
 }
 
 
 void boundDumpSignedShort(signed short min, signed short max)
 {
-  printf("%hd\t%hd\n", min, max);
+  fprintf(reportFile, "%hd\t%hd\n", min, max);
 }
 
 
 void boundDumpUnsignedShort(unsigned short min, unsigned short max)
 {
-  printf("%hu\t%hu\n", min, max);
+  fprintf(reportFile, "%hu\t%hu\n", min, max);
 }
 
 
 void boundDumpSignedInt(signed int min, signed int max)
 {
-  printf("%d\t%d\n", min, max);
+  fprintf(reportFile, "%d\t%d\n", min, max);
 }
 
 
 void boundDumpUnsignedInt(unsigned int min, unsigned int max)
 {
-  printf("%u\t%u\n", min, max);
+  fprintf(reportFile, "%u\t%u\n", min, max);
 }
 
 
 void boundDumpSignedLong(signed long min, signed long max)
 {
-  printf("%ld\t%ld\n", min, max);
+  fprintf(reportFile, "%ld\t%ld\n", min, max);
 }
 
 
 void boundDumpUnsignedLong(unsigned long min, unsigned long max)
 {
-  printf("%lu\t%lu\n", min, max);
+  fprintf(reportFile, "%lu\t%lu\n", min, max);
 }
 
 
 void boundDumpSignedLongLong(signed long long min, signed long long max)
 {
-  printf("%Ld\t%Ld\n", min, max);
+  fprintf(reportFile, "%Ld\t%Ld\n", min, max);
 }
 
 
 void boundDumpUnsignedLongLong(unsigned long long min, unsigned long long max)
 {
-  printf("%Lu\t%Lu\n", min, max);
+  fprintf(reportFile, "%Lu\t%Lu\n", min, max);
 }
 
 
 void boundDumpPointer(const void * min, const void * max)
 {
-  printf("%p\t%p\n", min, max);
+  fprintf(reportFile, "%p\t%p\n", min, max);
 }

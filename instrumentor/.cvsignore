@@ -1,0 +1,8 @@
+*.cma
+*.cmi
+*.cmo
+*.di
+*.do
+cfg-to-dot
+checker
+dump

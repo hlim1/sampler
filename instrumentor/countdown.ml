@@ -39,12 +39,10 @@ class countdown (global, reset) fundec =
       choice
 
     method log location calls =
+      let callReset = Call (Some local, reset, [], location) in
       [ mkStmtOneInstr (self#decrement location);
 	mkStmt (If (BinOp (Eq, Lval local, zero, intType),
-		    mkBlock [ mkStmt (Instr (Call (Some local,
-						   reset, [],
-						   location)
-					     :: calls)) ],
+		    mkBlock [ mkStmt (Instr (calls @ [ callReset ])) ],
 		    mkBlock [],
 		    location)) ]
   end

@@ -7,18 +7,16 @@ EXTRA_DIST = stamps.pl
 
 -include stamps.mk
 
-stamps: $(sort $(stamps))
-.PHONY: stamps
-
-results/stamp:
-	mkdir $(@D)
-	touch $@
+overview.xml: $(stamps)
+	find results/*/*/preds.txt -size +0 | ./overview.pl >$@
+	xmllint --valid --noout $@
 
 stamps.mk: stamps.pl
 	./$< >$@
 
 CLEANFILES = stamps.mk
 clean-local:
+	rm overview.xml
 	rm -rf results
 
 .DELETE_ON_ERROR:

@@ -12,6 +12,9 @@ use FileHandle;
 use FindBin;
 
 
+my $RunsPerSubdirectory = 10000;
+
+
 ########################################################################
 #
 #  sanity check for dangerous characters
@@ -60,6 +63,21 @@ our $need_modernize;
 
 ########################################################################
 #
+#  extract the files inside an RPM
+#
+
+
+sub extract_rpm ($$;$) {
+    $ENV{rpm} = shift;
+    $ENV{dir} = shift;
+    $ENV{pattern} = @_ ? shift : '';
+    system('rpm2cpio $rpm | ( cd $dir && cpio --extract --make-directories --no-absolute-filenames --quiet $pattern )') == 0
+	or exit($? & 127 || $? >> 8 || 1);
+}
+
+
+########################################################################
+#
 #  extract site information for use by analysis tools
 #
 
@@ -74,15 +92,13 @@ sub unpack_sites ($$$) {
     rmtree $dir;
     try_mkdir $dir;
 
-    $ENV{dir} = $dir;
-    $ENV{rpm} = $rpm;
-    system 'rpm2cpio $rpm | ( cd $dir && cpio --extract --make-directories --no-absolute-filenames --quiet \\*.sites )';
+    extract_rpm $rpm, $dir, '*.sites';
 
     my @sites;
 
     my $wanted = sub {
-	die if /\/\.\.\//;
-	return unless /\.sites$/;
+	return if -d;
+	die unless /\.sites$/;
 	push @sites, File::Spec->rel2abs($_);
     };
 
@@ -99,7 +115,7 @@ sub unpack_sites ($$$) {
 	warn "  modernizing site files ...\n";
 	foreach (@sites) {
 	    $ENV{in} = $_;
-	    $_ .= ',modern';
+	    $_ .= ',modern.sites';
 	    $ENV{out} = $_;
 	    $ENV{scheme} = $scheme;
 	    system('./modernize $scheme sites <$in >$out') == 0
@@ -113,6 +129,37 @@ sub unpack_sites ($$$) {
 
 ########################################################################
 #
+#  extract debug information for linking results to source code
+#
+
+
+sub unpack_debuginfo ($$$) {
+    warn "Unpacking debug information and sources ...\n";
+
+    my ($outdir, $scheme, $rpm) = @_;
+    check_outdir $outdir;
+
+    my $dir = "$outdir/debug";
+    rmtree $dir;
+    try_mkdir $dir;
+    extract_rpm $rpm, $dir;
+
+    my @debugs;
+    my $wanted = sub {
+	return if -d;
+	return unless /\.debug$/;
+	push @debugs, File::Spec->rel2abs($_);
+    };
+
+    croak "no debug records for build\n" unless -d "$dir/usr/lib/debug";
+    find {wanted => $wanted, no_chdir => 1 }, "$dir/usr/lib/debug";
+    croak "no debug records for build\n" unless @debugs;
+    return @debugs;
+}
+
+
+########################################################################
+#
 #  build a data directory suitable for the analysis tools
 #
 
@@ -121,7 +168,7 @@ sub convert_reports ($$@) {
     my $outdir = shift;
     my $scheme = shift;
     check_outdir $outdir;
-    warn "Unpacking $#_ reports for build ...\n";
+    warn 'Unpacking ', scalar @_, " reports for build ...\n";
 
     my $dir = "$outdir/data";
     rmtree $dir;
@@ -135,9 +182,11 @@ sub convert_reports ($$@) {
 	my $environment = new FileHandle $env_name
 	    or die "cannot read $env_name: $!\n";
 
-	my $new_dir = "$dir/$run_num";
+	my $subdir = int($run_num / $RunsPerSubdirectory);
+	my $new_dir = "$dir/$subdir";
+	mkdir $new_dir;
+	$new_dir .= "/$run_num";
 	try_mkdir $new_dir;
-	++$run_num;
 
 	symlink File::Spec->rel2abs($old_dir), "$new_dir/original"
 	    or die "cannot create link $new_dir/original: $!\n";
@@ -176,29 +225,27 @@ sub convert_reports ($$@) {
 #
 
 
-sub analyze_reports ($\@\@) {
-    my ($outdir, $runs, $sites) = @_;
+sub analyze_reports ($\@\@\@) {
+    my ($outdir, $runs, $sites, $debugs) = @_;
     check_outdir $outdir;
 
     my @command = ("$FindBin::Bin/../../../cbiexp/bin/analyze-runs",
-		   '-do-process-labels',
-		   '-do-map-sites',
-		   '-do-convert-reports',
-		   '-do-compute-results',
-		   '-do-print-results-1',
-		   '-c', 90,
-		   '-n', scalar @{$runs},
-		   '-l', 'data/%d/label',
-		   (map { ('-st', $_) } @{$sites}),
-		   '-vr', 'data/%d/reports',
-		   '-cr', 'data/%d/reports.new');
+		   '--do=process-labels',
+		   '--do=map-sites',
+		   '--do=convert-reports',
+		   '--do=compute-results',
+		   '--do=print-results-1',
+		   '--confidence', 95,
+		   '--runs-directory', 'data',
+		   '--number-of-runs', scalar @{$runs},
+		   (map { ('--sites-text', $_) } @{$sites}));
 
     my $pid = fork;
     die "cannot fork: $!\n" unless defined $pid;
 
     if ($pid) {
 	wait;
-	die "analysis failed: $?\n" if $?;
+	exit($? & 127 || $? >> 8 || 1) if $?;
     } else {
 	chdir $outdir or die "cannot chdir $outdir: $!\n";
 	exec @command;
@@ -220,6 +267,8 @@ sub clean ($) {
     rmtree ["$outdir/data",
 	    "$outdir/sites"];
 
+    rmtree "$outdir/debug" if -z "$outdir/preds.txt";
+
     unlink
 	"$outdir/f.runs",
 	"$outdir/s.runs",
@@ -232,7 +281,7 @@ sub clean ($) {
 	"$outdir/gen-views",
 	glob("$outdir/*.tmp.txt");
 }
-    
+
 
 
 ########################################################################

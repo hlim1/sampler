@@ -3,5 +3,6 @@ Makefile
 Makefile.in
 modernize
 modernize.cc
+overview.xml
 results
 stamps.mk

@@ -24,10 +24,22 @@ sub usage () {
 }
 
 usage unless @ARGV == 2;
-my ($rpm, $outdir) = @ARGV;
-die "$!: $rpm\n" unless -r $rpm;
+my ($rpm_samplerinfo, $outdir) = @ARGV;
+die "$!: $rpm_samplerinfo\n" unless -r $rpm_samplerinfo;
 
-$ENV{rpm} = $rpm;
+my $rpm_debuginfo = $rpm_samplerinfo;
+$rpm_debuginfo =~ s/-samplerinfo-/-debuginfo-/;
+unless (-r $rpm_debuginfo) {
+    my $rpm_debug = $rpm_debuginfo;
+    $rpm_debug =~ s/-debuginfo-/-debug-/;
+    if (-r $rpm_debug) {
+	$rpm_debuginfo = $rpm_debug;
+    } else {
+	die "$!: $rpm_debuginfo, $rpm_debug\n";
+    }
+}
+
+$ENV{rpm} = $rpm_samplerinfo;
 my $target = `rpm -qp --queryformat '%{name}\t%{version}\t%{release}' \$rpm`;
 die "rpm error\n" if $?;
 
@@ -81,7 +93,8 @@ unless (@runs) {
 #
 
 my $scheme = Utils::guess_scheme $name;
-my @sites = Utils::unpack_sites $outdir, $scheme, $rpm;
+my @sites = Utils::unpack_sites $outdir, $scheme, $rpm_samplerinfo;
+my @debugs = Utils::unpack_debuginfo $outdir, $scheme, $rpm_debuginfo;
 Utils::convert_reports $outdir, $scheme, @runs;
-Utils::analyze_reports $outdir, @runs, @sites;
+Utils::analyze_reports $outdir, @runs, @sites, @debugs;
 Utils::clean $outdir;

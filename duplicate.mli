@@ -1,3 +1,5 @@
 open Cil
 
-val duplicateBody : fundec -> block
+type clonesMap = stmt StmtMap.container
+
+val duplicateBody : fundec -> block * clonesMap

@@ -8,14 +8,17 @@ class visitor = object
   method vfunc func =
     prepareCFG func;
     RemoveLoops.visit func;
-    ignore (computeCFGInfo func false);	(* for sid's only *)
+    ignore (computeCFGInfo func false);
+    
+    let forwards, backwards = ClassifyJumps.visit func in
+    let instrumented, clones = Duplicate.duplicateBody func in
 
-    let predicate = zero in
-    let original = func.sbody in
-    let instrumented = Duplicate.duplicateBody func in
-
+    ForwardJumps.patch clones forwards;
+    BackwardJumps.patch clones backwards;
     InstrumentWrites.visit func instrumented;
     
+    let predicate = zero in
+    let original = func.sbody in
     let choice = mkStmt (If (predicate, original, instrumented, func.svar.vdecl)) in
     func.sbody <- mkBlock [choice];
     SkipChildren

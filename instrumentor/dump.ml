@@ -4,11 +4,6 @@ let check = Check.checkFile []
 
 let process filename =
   let file = Frontc.parse filename () in
-  let iterator = function
-    | GFun (func, _) -> prepareCFG func
-    | _ -> ()
-  in
-  iterGlobals file iterator;
   dumpFile defaultCilPrinter stdout file
 
 ;;

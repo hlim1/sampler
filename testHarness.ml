@@ -13,8 +13,6 @@ let check file title =
       if not (Check.checkFile [] file) then
 	raise Errormsg.Error
     end
-  else
-    ignore file
 
     
 let doOneOne file (title, action) =
@@ -22,7 +20,7 @@ let doOneOne file (title, action) =
   if ! Errormsg.hadErrors then
     raise Errormsg.Error;
   check file title
-      
+
 let doOne stages filename =
   let file = Frontc.parse filename () in
   check file "parse";
@@ -30,7 +28,7 @@ let doOne stages filename =
     
 let main stages =
   initCIL ();
-  printLnComment := true;
+  (* printLnComment := true; *)
 
   let filenames = List.tl (Array.to_list Sys.argv) in
   List.iter (doOne stages) filenames

@@ -52,21 +52,30 @@ sub dumpbase ($) {
 }
 
 
+sub inst_toggle ($) {
+    $_[0] =~ /\A-f([-a-z]+)\Z/
+	or die "internal error: malformed instrumentor flag @_\n";
+    push @inst, "--$1";
+}
+
+
 my %flag_specs =
     (
      # Sampler Options
      '-fthreads' => sub { },
      '-fno-threads' => sub { },
-     '-fsample' => sub { push @inst, '--sample' },
-     '-fno-sample' => sub { push @inst, '--no-sample' },
-     '-frename-locals' => sub { push @inst, '--rename-locals' },
-     '-fno-rename-locals' => sub { push @inst, '--no-rename-locals' },
-     '-fassign-across-pointer' => sub { push @inst, '--assign-across-pointer' },
-     '-fno-assign-across-pointer' => sub { push @inst, '--assign-across-pointer' },
-     '-fassign-into-field' => sub { push @inst, '--assign-into-field' },
-     '-fno-assign-into-field' => sub { push @inst, '--assign-into-field' },
-     '-fassign-into-index' => sub { push @inst, '--assign-into-index' },
-     '-fno-assign-into-index' => sub { push @inst, '--assign-into-index' },
+     '-fsample' => \&inst_toggle,
+     '-fno-sample' => \&inst_toggle,
+     '-frename-locals' => \&inst_toggle,
+     '-fno-rename-locals' => \&inst_toggle,
+     '-fassign-across-pointer' => \&inst_toggle,
+     '-fno-assign-across-pointer' => \&inst_toggle,
+     '-fassign-into-field' => \&inst_toggle,
+     '-fno-assign-into-field' => \&inst_toggle,
+     '-fassign-into-index' => \&inst_toggle,
+     '-fno-assign-into-index' => \&inst_toggle,
+     '-fcompare-constants' => \&inst_toggle,
+     '-fno-compare-constants' => \&inst_toggle,
 
      # Overall Options
      '-o' => sub { slurp_1 $_; $cpp0_output_slot = \$cpp0[@cpp0 - 1]; },

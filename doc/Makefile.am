@@ -12,3 +12,5 @@ TESTS_ENVIRONMENT = xmllint --valid --noout
 
 %.html: %.xml config.xml $(xsl_html)
 	xsltproc --nonet -o $@ $(xsl_html) $<
+
+MOSTLYCLEANFILES = $(noinst_DATA)

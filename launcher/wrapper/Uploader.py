@@ -20,7 +20,7 @@ def upload(app, user, outcome, accept):
     '''Upload the results of a single run.'''
 
     reporting_url = user.reporting_url()
-    if reporting_url:
+    if reporting_url and outcome.reports:
 
         # compress reports in preparation for upload
         upload = Upload(outcome.reports)

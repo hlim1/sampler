@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.6.1
+
+** Don't upload empty report if instrumented app died suddenly.
+
 * sampler-0.6
 
 ** Internal bug fixes to report reader/writer pipe management.

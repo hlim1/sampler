@@ -61,7 +61,8 @@ let patch clones weights countdown =
       
       let gotoStandard = mkBlock [mkStmt (Goto (ref standardLanding, locUnknown))] in
       let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumentedLanding, locUnknown))] in
-      let choice = countdown#choose locUnknown weight gotoInstrumented gotoStandard in
+      let choice = countdown#checkThreshold locUnknown weight
+	  gotoInstrumented gotoStandard in
       
       standardAfter.skind <- Block (mkBlock [mkStmt choice; standardLanding]);
       instrumentedAfter.skind <- Block (mkBlock [mkStmt choice; instrumentedLanding])

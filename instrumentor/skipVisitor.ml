@@ -8,6 +8,7 @@ class virtual visitor = object
   method vexpr _ = SkipChildren
   method vlval _ = SkipChildren
   method voffs _ = SkipChildren
+  method vinitoffs _ = SkipChildren
   method vinst _ = SkipChildren
   method vstmt _ = SkipChildren
   method vblock _ = SkipChildren

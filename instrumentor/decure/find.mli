@@ -1,0 +1,1 @@
+class visitor : Collector.visitor

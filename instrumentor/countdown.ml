@@ -23,7 +23,7 @@ class countdown (global, reset) fundec =
   
   object (self)
     method decrement location =
-      Set (local, increm (Lval local) (-1), location)
+      Instr [Set (local, increm (Lval local) (-1), location)]
 
     method beforeCall location =
       Set (global, (Lval local), location)
@@ -31,18 +31,19 @@ class countdown (global, reset) fundec =
     method afterCall location =
       Set (local, (Lval global), location)
 
-    method choose location weight instrumented original =
+    method checkThreshold location weight instrumented original =
       let within = kinteger IUInt weight in
       let predicate = BinOp (Gt, Lval local, within, intType) in
       let choice = If (predicate, original, instrumented, location) in
       Choices.add choice;
       choice
 
-    method log location calls =
-      let callReset = Call (Some local, reset, [], location) in
-      [ mkStmtOneInstr (self#decrement location);
-	mkStmt (If (BinOp (Eq, Lval local, zero, intType),
-		    mkBlock [ mkStmt (Instr (calls @ [ callReset ])) ],
-		    mkBlock [],
-		    location)) ]
+    method decrementAndCheckZero skind =
+      let location = get_stmtLoc skind in
+      let callReset = mkStmtOneInstr (Call (Some local, reset, [], location)) in
+      Block (mkBlock [ mkStmt (self#decrement location);
+			mkStmt (If (BinOp (Eq, Lval local, zero, intType),
+				    mkBlock [ callReset; mkStmt skind ],
+				    mkBlock [],
+				    location)) ])
   end

@@ -14,7 +14,8 @@ let patch clones weights countdown =
 	  let gotoStandard = mkBlock [mkStmt jump.skind] in
 	  let gotoInstrumented = mkBlock [mkStmt (Goto (ref clonedDest, location))] in
 	  
-	  let choice = countdown#choose location weight gotoInstrumented gotoStandard in
+	  let choice = countdown#checkThreshold location weight
+	      gotoInstrumented gotoStandard in
 	  
 	  jump.skind <- choice;
 	  (findCloneOf clones jump).skind <- choice;

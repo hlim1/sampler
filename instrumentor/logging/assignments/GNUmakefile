@@ -1,8 +1,9 @@
-top := ..
+top := ../..
 include $(top)/defs.mk
 
 targets := main
-libdirs := $(top)
+libdirs := .. $(top)
+syslibs := str.$(cma)
 
 include $(top)/rules.mk
 
@@ -10,15 +11,16 @@ include $(top)/rules.mk
 ########################################################################
 
 
-find = find
-transform = $(find) transform
+findOutputs = findOutputs
+log = $(findOutputs) log
+transform = $(log) transform
 
 
 ########################################################################
 
 
 main := $(transform) %
-main: %: $(libcil) $(top)/harness.$(cma) $(addsuffix .$(cmo), $(main))
+main: %: $(libcil) $(top)/harness.$(cma) ../logging.$(cma) $(addsuffix .$(cmo), $(main))
 	$(link)
 
 $(top)/%.cma: force
@@ -32,13 +34,6 @@ $(top)/%.cmi: force
 
 ../%.cmi: force
 	$(recurse)
-
-
-########################################################################
-
-
-infile := tests/echocured
-
 
 run: main $(infile).i
 	./$^

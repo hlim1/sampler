@@ -2,8 +2,8 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot checker dump harness.$(cma)
-transformers := assignments decure diduce heapStores loads localVars
-subdirs := $(transformers)
+#subdirs := assignments decure diduce heapStores loads localVars
+subdirs := decure logging
 
 include rules.mk
 
@@ -28,7 +28,6 @@ choices = choices
 classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
 clonesMap = clonesMap
 countdown = $(choices) $(findGlobal) countdown
-dissect = $(outputSet) dissect
 dotify = $(utils) dotify
 duplicate = $(functionBodyVisitor) $(identity) $(stmtMap) duplicate
 filterLabels = $(functionBodyVisitor) $(stmtSet) filterLabels
@@ -39,21 +38,18 @@ functionBodyVisitor = $(skipVisitor) functionBodyVisitor
 functionEntry = functionEntry
 identity = identity
 isolateInstructions = $(functionBodyVisitor) isolateInstructions
-logger = $(findFunction) $(outputSet) logger
 mapClass = mapClass
-outputSet = outputSet
-patchSites = patchSites
 phases = $(filterLabels) $(printer) $(testHarness) phases
 printer = $(choices) printer
 removeLoops = $(functionBodyVisitor) removeLoops
 setClass = $(mapClass) setClass
-sites = sites
+shouldTransform = shouldTransform
 skipVisitor = skipVisitor
 stmtHash = stmtHash
 stmtMap = $(mapClass) $(stmtHash) stmtMap
 stmtSet = $(setClass) $(stmtHash) stmtSet
 testHarness = testHarness
-transformVisitor = $(backwardJumps) $(calls) $(classifyJumps) $(countdown) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(isolateInstructions) $(removeLoops) $(sites) $(weighPaths) transformVisitor
+transformVisitor = $(backwardJumps) $(calls) $(classifyJumps) $(countdown) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(isolateInstructions) $(removeLoops) $(weighPaths) transformVisitor
 utils = utils
 weighPaths = $(stmtMap) weighPaths
 
@@ -65,7 +61,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libcil) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-harness := $(dissect) $(findFunction) $(logger) $(phases) $(setClass) $(transformVisitor)
+harness := $(findFunction) $(phases) $(setClass) $(shouldTransform) $(transformVisitor) $(utils)
 harness.$(cma): $(addsuffix .$(cmo), $(harness))
 	$(archive)
 

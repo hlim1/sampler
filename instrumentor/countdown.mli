@@ -6,9 +6,9 @@ type token
 val find : file -> token
 
 class countdown : token -> fundec -> object
-  method decrement : location -> instr
+  method decrement : location -> stmtkind
   method beforeCall : location -> instr
   method afterCall : location -> instr
-  method choose : location -> int -> block -> block -> stmtkind
-  method log : location -> instr list -> stmt list
+  method checkThreshold : location -> int -> block -> block -> stmtkind
+  method decrementAndCheckZero : stmtkind -> stmtkind
 end

@@ -23,7 +23,7 @@ let patch func weights countdown instrumented =
 	mkStmt (Block instrumented);
 	finis ]
     else
-      let choice = countdown#choose locUnknown weight instrumented original in
+      let choice = countdown#checkThreshold locUnknown weight instrumented original in
       [ import;
 	mkStmt choice ]
   in

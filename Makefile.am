@@ -14,6 +14,7 @@ DIST_SUBDIRS =					\
 
 EXTRA_DIST =					\
 	$(PACKAGE).spec				\
+	debian					\
 	package.m4
 
 

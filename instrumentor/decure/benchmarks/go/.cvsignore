@@ -1,5 +1,6 @@
 *.c
 *.exe
+*.ident
 *.times
 .libs
 decurable.i

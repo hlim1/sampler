@@ -44,7 +44,7 @@ runDecure := $(decureMain)
 ########################################################################
 
 
-all: stats loopless execs
+all: stats loopless idents
 .PHONY: all
 
 execs: always sample

@@ -82,7 +82,7 @@ sub handle_save_temps ($) {
 
 
 sub handle_S ($) {
-    &push_all;
+    push @cc, @_;
     $mode = 'codegen';
 }
 
@@ -125,7 +125,7 @@ my %flag_spec = (
 		 'save-temps' => \&handle_save_temps,
 
 		 # preprocessor options
-		 'include' => \&handle_cpp_1,
+		 'include' => \&handle_1,
 		 'imacros' => \&handle_1,
 		 'idirafter' => \&handle_1,
 		 'iprefix' => \&handle_1,
@@ -136,8 +136,6 @@ my %flag_spec = (
 		 'E' => \&handle_E,
 		 'M' => \&handle_E,
 		 'MM' => \&handle_E,
-		 'MD' => \&handle_E,
-		 'MMD' => \&handle_E,
 
 		 # link options
 		 'Xlinker' => \&handle_1,
@@ -235,10 +233,6 @@ while ($_ = shift) {
 	if ($key =~ /^l/) {
 	    push @ld, $_;
 	    $has_inputs = 1;
-	    next;
-	}
-	if ($key =~ /^Wl,/) {
-	    push @ld, $_;
 	    next;
 	}
 

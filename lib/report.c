@@ -7,16 +7,15 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "lock.h"
+#include "once.h"
 #include "registry.h"
 #include "report.h"
 
 
-const void * const providesLibReport;
-
-unsigned reportInitCount;
 FILE *reportFile;
 
 pthread_mutex_t reportLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
+sampler_once_t reportInitOnce = SAMPLER_ONCE_INIT;
 
 
 static void closeOnExec(int fd)
@@ -142,21 +141,24 @@ static void handleSignal(int signum)
 }
 
 
+static void initializeOnce()
+{
+  openReportFile();
+  if (reportFile)
+    {
+      atexit(finalize);
+      signal(SIGABRT, handleSignal);
+      signal(SIGBUS, handleSignal);
+      signal(SIGFPE, handleSignal);
+      signal(SIGSEGV, handleSignal);
+      signal(SIGTRAP, handleSignal);
+    }
+}
+
+
 __attribute__((constructor)) static void initialize()
 {
   CRITICAL_REGION(reportLock, {
-    if (!reportInitCount++)
-      {
-	openReportFile();
-	if (reportFile)
-	  {
-	    atexit(finalize);
-	    signal(SIGABRT, handleSignal);
-	    signal(SIGBUS, handleSignal);
-	    signal(SIGFPE, handleSignal);
-	    signal(SIGSEGV, handleSignal);
-	    signal(SIGTRAP, handleSignal);
-	  }
-      }
+    sampler_once(&reportInitOnce, initializeOnce);
   });
 }

@@ -24,16 +24,17 @@
 
     <para>The instrumentor provides a driver script that acts as a
     transparent wrapper around <application>GCC</application>.  It is
-    run as follows:</para>
+    run as follows:
 
-    <cmdsynopsis>
-      <command>sampler-cc</command>
-      <group choice="req" rep="repeat">
-	<arg choice="plain"><replaceable>C source file</replaceable></arg>
-	<arg choice="plain"><replaceable>GCC compiler flag</replaceable></arg>
-	<arg choice="plain"><replaceable>instrumentor flag</replaceable></arg>
-      </group>
-    </cmdsynopsis>
+      <cmdsynopsis>
+	<command>sampler-cc</command>
+	<group choice="req" rep="repeat">
+	  <arg choice="plain"><replaceable>C source file</replaceable></arg>
+	  <arg choice="plain"><replaceable>GCC compiler flag</replaceable></arg>
+	  <arg choice="plain"><replaceable>instrumentor flag</replaceable></arg>
+	</group>
+      </cmdsynopsis>
+    </para>
 
     <para>Recognized instrumentor flags are as follows:</para>
 
@@ -67,13 +68,18 @@
 		<para>At each assignment of a scalar value, record the
 		minimum and maximum values ever assigned.  Each
 		assignment induces one instrumentation point with one
-		global min/max pair:</para>
+		global min/max pair:
 
-		<orderedlist>
-		  <listitem><para>minimum value</para></listitem>
+		  <orderedlist>
+		    <listitem>
+		      <para>minimum value</para>
+		    </listitem>
 
-		  <listitem><para>maximum value</para></listitem>
-		</orderedlist>
+		    <listitem>
+		      <para>maximum value</para>
+		    </listitem>
+		  </orderedlist>
+		</para>
 
 		<para>The minimum component is initialized to the
 		maximum representable value for the assigned type,
@@ -104,29 +110,34 @@
 		structures and certain operators
 		(<literal>&amp;&amp;</literal>, <literal>||</literal>,
 		<literal>?:</literal>).  Each branch induces one
-		instrumentation point with a pair of counters:</para>
+		instrumentation point with a pair of counters:
 
-		<orderedlist>
-		  <listitem><para>branch predicate
-		  false</para></listitem>
+		  <orderedlist>
+		    <listitem>
+		      <para>branch predicate false</para>
+		    </listitem>
 
-		  <listitem><para>branch predicate
-		  true</para></listitem>
-		</orderedlist>
-
+		    <listitem>
+		      <para>branch predicate true</para>
+		    </listitem>
+		  </orderedlist>
+		</para>
 	      </listitem>
 	    </varlistentry>
 
 	    <varlistentry>
 	      <term><option>function-entries</option></term>
 	      <listitem>
-		<para>Count how many times each function is called.
-		Each function body induces one instrumentation point
-		with one counter:</para>
+		<para>Count how many times each function is
+		called. Each function body induces one instrumentation
+		point with one counter:
 
-		<orderedlist>
-		  <listitem><para>function entered</para></listitem>
-		</orderedlist>
+		  <orderedlist>
+		    <listitem>
+		      <para>function entered</para>
+		    </listitem>
+		  </orderedlist>
+		</para>
 	      </listitem>
 	    </varlistentry>
 
@@ -138,21 +149,30 @@
 		<function>g_object_unref</function>, check the current
 		reference count for the object about to be unref'd.
 		Each such call induces one instrumentation point with
-		a quadruple of counters:</para>
+		a quadruple of counters:
 
-		<orderedlist>
-		  <listitem><para>zero references: object already
-		  being reclaimed</para></listitem>
+		  <orderedlist>
+		    <listitem>
+		      <para>zero references: object already being
+		      reclaimed</para>
+		    </listitem>
 
-		  <listitem><para>one reference: object about to be
-		  reclaimed</para></listitem>
+		    <listitem>
+		      <para>one reference: object about to be
+		      reclaimed</para>
+		    </listitem>
 
-		  <listitem><para>more than one reference: object not
-		  about to be reclaimed</para></listitem>
+		    <listitem>
+		      <para>more than one reference: object not about
+		      to be reclaimed</para>
+		    </listitem>
 
-		  <listitem><para>invalid: argument is not a
-		  <type>GObject</type> instance</para></listitem>
-		</orderedlist>
+		    <listitem>
+		      <para>invalid: argument is not a
+		      <type>GObject</type> instance</para>
+		    </listitem>
+		  </orderedlist>
+		</para>
 	      </listitem>
 	    </varlistentry>
 
@@ -163,21 +183,22 @@
 		many times the called function returned a negative,
 		zero, or positive value.  Each such call induces one
 		instrumentation point with a triple of
-		counters:</para>
+		counters:
 
-		<orderedlist>
-		  <listitem><para>return value
-		  negative</para></listitem>
+		  <orderedlist>
+		    <listitem>
+		      <para>return value negative</para>
+		    </listitem>
 
-		  <listitem><para>return value zero</para></listitem>
+		    <listitem>
+		      <para>return value zero</para>
+		    </listitem>
 
-		  <listitem><para>return value
-		  positive</para></listitem>
-		</orderedlist>
-
-		<para>This is the scheme used for the
-		<application>ccrypt</application> experiment in our
-		PLDI paper.</para>
+		    <listitem>
+		      <para>return value positive</para>
+		    </listitem>
+		  </orderedlist>
+		</para>
 	      </listitem>
 	    </varlistentry>
 
@@ -189,22 +210,22 @@
 		or greater than each other same-typed in-scope
 		variable. Each such comparable variable at each such
 		assignment induces one instrumentation point with a
-		triple of counters:</para>
+		triple of counters:
 
-		<orderedlist>
-		  <listitem><para>assigned value less than
-		  other</para></listitem>
+		  <orderedlist>
+		    <listitem>
+		      <para>assigned value less than other</para>
+		    </listitem>
 
-		  <listitem><para>assigned value equal to
-		  other</para></listitem>
+		    <listitem>
+		      <para>assigned value equal to other</para>
+		    </listitem>
 
-		  <listitem><para>assigned value greater than
-		  other</para></listitem>
-		</orderedlist>
-
-		<para>This is the scheme used for the
-		<application>bc</application> experiment in our PLDI
-		paper.</para>
+		    <listitem>
+		      <para>assigned value greater than other</para>
+		    </listitem>
+		  </orderedlist>
+		</para>
 
 		<para>This scheme can also optionally compare each
 		assigned value to each constant-valued integer
@@ -255,32 +276,34 @@
 	  included or excluded from instrumentation.</para>
 
 	  <para>These flags are useful for filtering out boring
-	  functions:</para>
+	  functions:
 
-	  <informalexample>
-	    <para><userinput>&hellip; <option>--exclude-function=<function>boringFunction</function></option>
-	    &hellip;</userinput></para>
-	  </informalexample>
+	    <informalexample>
+	      <para><userinput>&hellip; <option>--exclude-function=<function>boringFunction</function></option>
+	      &hellip;</userinput></para>
+	    </informalexample>
+	  </para>
 
 	  <para>They can also be used to create executables with
-	  just a few selected functions instrumented:</para>
+	  just a few selected functions instrumented:
 
-	  <informalexample>
-	    <para><userinput>&hellip;
-	    <option>--include-function=<function>interestingFunction</function></option>
-	    <option>--exclude-function=<literal>*</literal></option>
-	    &hellip;</userinput></para>
-	  </informalexample>
+	    <informalexample>
+	      <para><userinput>&hellip;
+	      <option>--include-function=<function>interestingFunction</function></option>
+	      <option>--exclude-function=<literal>*</literal></option>
+	      &hellip;</userinput></para>
+	    </informalexample>
+	  </para>
 
 	  <para>Default is to include all functions, as though
 	  <option>--include-function=<literal>*</literal></option>
 	  were implicitly the last flag given.</para>
 
 	  <tip>
-	    <simpara>If you use the wildcard, remember to protect it
-	    from expansion by the shell such as by quoting it as
+	    <para>If you use the wildcard, remember to protect it from
+	    expansion by the shell such as by quoting it as
 	    <userinput>'*'</userinput> or
-	    <userinput>"*"</userinput>.</simpara>
+	    <userinput>"*"</userinput>.</para>
 	  </tip>
 	</listitem>
       </varlistentry>
@@ -331,13 +354,14 @@
 	  <application>Flex</application> lexers which mix
 	  user-specified actions with fixed boilerplate.  One can
 	  instrument the actions while excluding the
-	  boilerplate:</para>
+	  boilerplate:
 
-	  <informalexample>
-	    <para><userinput>&hellip; <option>--exclude-file=<filename>/usr/gnu/share/bison.simple</filename></option>
-	    <option>--exclude-file=<filename>lex.yy.c</filename></option>
-	    &hellip;</userinput></para>
-	  </informalexample>
+	    <informalexample>
+	      <para><userinput>&hellip; <option>--exclude-file=<filename>/usr/gnu/share/bison.simple</filename></option>
+	      <option>--exclude-file=<filename>lex.yy.c</filename></option>
+	      &hellip;</userinput></para>
+	    </informalexample>
+	  </para>
 
 	  <para>Default is to include instrumentation points from all
 	  files, as though
@@ -345,26 +369,51 @@
 	  implicitly the last flag given.</para>
 
 	  <tip>
-	    <simpara>If you use the wildcard, remember to protect it
-	    from expansion by the shell such as by quoting it as
+	    <para>If you use the wildcard, remember to protect it from
+	    expansion by the shell such as by quoting it as
 	    <userinput>'*'</userinput> or
-	    <userinput>"*"</userinput>.</simpara>
+	    <userinput>"*"</userinput>.</para>
 	  </tip>
 	</listitem>
       </varlistentry>
 
       <varlistentry>
-	<term><option>--acyclic</option></term>
-	<term><option>--cyclic</option></term>
+	<term><option>--sampler-random=<replaceable>randomizer</replaceable></option></term>
 	<listitem>
-	  <para>Countdown management.  The acyclic countdown style
-	  generates countdowns as needed at runtime within the
-	  program itself.  The cyclic style uses a pre-generated
-	  bank of &cycliccount; countdowns which much be generated
-	  and stored before the instrumented program is launched.
-	  See <xref linkend="envars" /> for how this choice affects
-	  which environment variables should be set at run time.
-	  Default is acyclic.</para>
+	  <para>Random countdown management.
+	  <replaceable>randomizer</replaceable> must be one of the
+	  following:
+
+	    <variablelist>
+	      <varlistentry>
+		<term><option>online</option></term>
+		<listitem>
+		  <para>Random countdowns are generated dynamically,
+		  as needed, while the program runs.</para>
+		</listitem>
+	      </varlistentry>
+	      <varlistentry>
+		<term><option>offline</option></term>
+		<listitem>
+		  <para>A fixed bank of random countdowns is generated
+		  and stored before the instrumented program is
+		  launched.</para>
+		</listitem>
+	      </varlistentry>
+	      <varlistentry>
+		<term><option>fixed</option></term>
+		<listitem>
+		  <para>Countdowns are not random.  Samples are taken
+		  according to some fixed period determined when the
+		  program is launched.</para>
+		</listitem>
+	      </varlistentry>
+	    </variablelist>
+	  </para>
+
+	  <para>See <xref linkend="envars" /> for how this choice
+	  affects which environment variables should be set at run
+	  time.  Default is <option>online</option>.</para>
 	</listitem>
       </varlistentry>
 
@@ -524,8 +573,9 @@
       section</link>.</remark>
 
       <remark>The launchers currently assume that the program was
-      compiled using <option>--acyclic</option>.  We should either
-      remove that restriction or document it clearly here.</remark>
+      compiled using <option>--sampler-random=online</option>.  We
+      should either remove that restriction or document it clearly
+      here.</remark>
     </section>
 
     <section id="envars">
@@ -545,14 +595,11 @@
 	  <term><envar>$SAMPLER_EVENT_COUNTDOWNS</envar></term>
 	  <listitem>
 	    <para>Used when the executable was built with
-	    <option>--cyclic</option>.  Set this to the name of a file
-	    containing pre-generated random countdowns.  See <xref
-	    linkend="precompute" /> for information on a tool for
-	    building these countdown files.</para>
-
-	    <para>Not used when either <option>--acyclic</option> or
-	    <option>--no-sample</option> was given at compile
-	    time.</para>
+	    <option>--sampler-random=offline</option>.  Set this to
+	    the name of a file containing pre-generated random
+	    countdowns.  See <xref linkend="precompute" /> for
+	    information on a tool for building these countdown
+	    files.</para>
 
 	    <para>If not set, countdowns are always initialized to
 	    <symbol>UINT_MAX</symbol>, effectively disabling
@@ -564,15 +611,21 @@
 	  <term><envar>$SAMPLER_SPARSITY</envar></term>
 	  <listitem>
 	    <para>Used when the executable was built with
-	    <option>--acyclic</option>.  Set this to an integer which
-	    will be used as the sampling sparsity.  A sparsity of
+	    <option>--sampler-random=online</option> or
+	    <option>--sampler-random=fixed</option>.</para>
+
+	    <para>For <option>online</option> random sampling, set
+	    this to a positive integer or floating point number: the
+	    mean number of samples skipped between samples taken.
 	    <userinput>1000</userinput>, for example, will sample
-	    approximately one in instrumentation point per thousand
+	    approximately one instrumentation point per thousand
 	    opportunities.</para>
 
-	    <para>Not used when either <option>--cyclic</option> or
-	    <option>--no-sample</option> was given at compile
-	    time.</para>
+	    <para>For <option>fixed</option> random sampling, set this
+	    to a positive integer: the exact number of samples skipped
+	    between samples taken.  <userinput>1000</userinput>, for
+	    example, will sample exactly one instrumentation point per
+	    thousand opportunities.</para>
 
 	    <para>If not set, countdowns are always initialized to
 	    <symbol>UINT_MAX</symbol>, effectively disabling
@@ -584,13 +637,10 @@
 	  <term><envar>$SAMPLER_SEED</envar></term>
 	  <listitem>
 	    <para>Used when the executable was built with
-	    <option>--acyclic</option>.  Seeds the random number
-	    generator.  In multithreaded code, each new thread seeds
-	    its own generator using this same value.</para>
-
-	    <para>Not used when either <option>--cyclic</option> or
-	    <option>--no-sample</option> was given at compile
-	    time.</para>
+	    <option>--sampler-random=online</option>.  Seeds the
+	    random number generator.  In multithreaded code, each new
+	    thread seeds its own generator using this same
+	    value.</para>
 
 	    <para>If not set, the seed is selected at runtime using
 	    some system entropy source
@@ -659,9 +709,10 @@
 
 	<para><filename>&prefix;/lib/sampler/tools/precompute</filename>
 	is a tool for producing pre-generated countdowns.  This should
-	be used in conjunction with the <option>--cyclic</option> flag
-	and the <envar>$SAMPLER_EVENT_COUNTDOWNS</envar> environment
-	variable.  Before starting the instrumented program:</para>
+	be used in conjunction with the
+	<option>--sampler-random=offline</option> flag and the
+	<envar>$SAMPLER_EVENT_COUNTDOWNS</envar> environment variable.
+	Before starting the instrumented program:</para>
 
 	<procedure>
 	  <step>
@@ -672,7 +723,7 @@
 	  <step>
 	    <para>Run <userinput><command>precompute</command>
 	    <filename><replaceable>outfile</replaceable></filename></userinput>
-	    to generate and store &cycliccount; random countdowns in
+	    to generate and store random countdowns in
 	    <filename><replaceable>outfile</replaceable></filename>.</para>
 	  </step>
 
@@ -716,17 +767,18 @@
 	form for additional analysis.  The
 	<filename>&prefix;/lib/sampler/tools/extract-section</filename>
 	tool may be used for this purpose.  It is run as
-	follows:</para>
+	follows:
 
-	<cmdsynopsis>
-	  <command>extract-section</command>
-	  <arg choice="req"><replaceable>section-name</replaceable></arg>
-	  <group choice="req" rep="repeat">
-	    <arg choice="plain"><replaceable>executable</replaceable></arg>
-	    <arg choice="plain"><replaceable>shared-library</replaceable></arg>
-	    <arg choice="plain"><replaceable>object</replaceable></arg>
-	  </group>
-	</cmdsynopsis>
+	  <cmdsynopsis>
+	    <command>extract-section</command>
+	    <arg choice="req"><replaceable>section-name</replaceable></arg>
+	    <group choice="req" rep="repeat">
+	      <arg choice="plain"><replaceable>executable</replaceable></arg>
+	      <arg choice="plain"><replaceable>shared-library</replaceable></arg>
+	      <arg choice="plain"><replaceable>object</replaceable></arg>
+	    </group>
+	  </cmdsynopsis>
+	</para>
 
 	<para><replaceable>section-name</replaceable> names the
 	<acronym>ELF</acronym> section containing the desired data,
@@ -788,9 +840,9 @@
 
 	  <para>At the top level, a static site information file
 	  consists of a sequence of sections marked by XML-style
-	  <sgmltag class="element">sites</sgmltag> tags:</para>
+	  <sgmltag class="element">sites</sgmltag> tags:
 
-	  <screen>&lt;<sgmltag class="element">sites</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
+	    <screen>&lt;<sgmltag class="element">sites</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
 &hellip;
 <sgmltag class="endtag">sites</sgmltag>
 &lt;<sgmltag class="element">sites</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
@@ -801,14 +853,15 @@
 &hellip;
 <sgmltag class="endtag">sites</sgmltag>
 </screen>
+	  </para>
 
 	  <note>
-	    <simpara>Unlike true XML, there is no prologue and no
-	    single root tag.  The first line is the <sgmltag
+	    <para>Unlike true XML, there is no prologue and no single
+	    root tag.  The first line is the <sgmltag
 	    class="starttag">sites</sgmltag> start tag for the first
 	    compilation unit and the last line is the <sgmltag
 	    class="endtag">sites</sgmltag> end tag for the last
-	    compilation unit.</simpara>
+	    compilation unit.</para>
 	  </note>
 
 	  <para>A single <sgmltag class="starttag">sites</sgmltag>
@@ -816,28 +869,29 @@
 	  describes the instrumentation sites for one compilation unit
 	  with one instrumentation scheme.  Each <sgmltag
 	  class="element">sites</sgmltag> start tag carries two
-	  attributes:</para>
+	  attributes:
 
-	  <variablelist id="unit-scheme-attrs">
-	    <varlistentry>
-	      <term>unit</term>
-	      <listitem>
-		<para>a 128-bit identifying signature for this
-		compilation unit expressed as 32 lower case hexadecimal
-		digits</para>
-	      </listitem>
-	    </varlistentry>
+	    <variablelist id="unit-scheme-attrs">
+	      <varlistentry>
+		<term>unit</term>
+		<listitem>
+		  <para>a 128-bit identifying signature for this
+		  compilation unit expressed as 32 lower case hexadecimal
+		  digits</para>
+		</listitem>
+	      </varlistentry>
 
-	    <varlistentry>
-	      <term>scheme</term>
-	      <listitem>
-		<para>the name of an instrumentation scheme as given to
-		<command>sampler-cc</command>'s <link
-		linkend="sampler-scheme"><option>--sampler-scheme</option></link>
-		flag</para>
-	      </listitem>
-	    </varlistentry>
-	  </variablelist>
+	      <varlistentry>
+		<term>scheme</term>
+		<listitem>
+		  <para>the name of an instrumentation scheme as given to
+		  <command>sampler-cc</command>'s <link
+		  linkend="sampler-scheme"><option>--sampler-scheme</option></link>
+		  flag</para>
+		</listitem>
+	      </varlistentry>
+	    </variablelist>
+	  </para>
 
 	  <para>When data is collected during a run, it is also marked
 	  with these same two attributes.  Thus this
@@ -877,208 +931,213 @@
 
 	  <para>Details for each site are given as a sequence of
 	  tab-delimited fields.  The initial fields are common to all
-	  instrumentation schemes:</para>
+	  instrumentation schemes:
 
-	  <orderedlist>
-	    <listitem>
-	      <simpara>source file name</simpara>
-	    </listitem>
-	    <listitem>
-	      <simpara>source line number</simpara>
-	    </listitem>
-	    <listitem>
-	      <simpara>name of function containing site</simpara>
-	    </listitem>
-	    <listitem>
-	      <simpara>control flow graph number of site (unique
-	      within function</simpara>
-	    </listitem>
-	  </orderedlist>
+	    <orderedlist>
+	      <listitem>
+		<para>source file name</para>
+	      </listitem>
+	      <listitem>
+		<para>source line number</para>
+	      </listitem>
+	      <listitem>
+		<para>name of function containing site</para>
+	      </listitem>
+	      <listitem>
+		<para>control flow graph number of site (unique within
+		function</para>
+	      </listitem>
+	    </orderedlist>
+	  </para>
 
 	  <para>Additional fields are specific to the instrumentation
-	  scheme that induced this site:</para>
+	  scheme that induced this site:
 
-	  <itemizedlist>
-	    <listitem>
-	      <simpara><option>bounds</option></simpara>
-	      <orderedlist continuation="continues">
-		<listitem>
-		  <simpara>the left hand side of the instrumented assignment</simpara>
-		</listitem>
-		<listitem>
-		  <simpara>one of:</simpara>
-		  <variablelist>
-		    <varlistentry>
-		      <term><computeroutput>local</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to a named local variable</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>global</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to a named global variable</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>mem</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to an indirectly
-			addressed memory location</simpara>
-		      </listitem>
-		    </varlistentry>
-		  </variablelist>
-		</listitem>
-		<listitem>
-		  <simpara>one of:</simpara>
-		  <variablelist>
-		    <varlistentry>
-		      <term><computeroutput>direct</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to a direct base
-			location with no offset</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>field</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to a named field within
-			a structure</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>index</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to an indexed element
-			within an array</simpara>
-		      </listitem>
-		    </varlistentry>
-		  </variablelist>
-		</listitem>
-	      </orderedlist>
-	    </listitem>
-	    <listitem>
-	      <simpara><option>branches</option></simpara>
-	      <orderedlist>
-		<?dbhtml start="5"?>
-		<listitem>
-		  <simpara>the predicate of the instrumented branch</simpara>
-		</listitem>
-	      </orderedlist>
-	    </listitem>
-	    <listitem>
-	      <simpara><option>function-entries</option>: no additional fields</simpara>
-	    </listitem>
-	    <listitem>
-	      <simpara>g-object-unref</simpara>
-	      <orderedlist>
-		<?dbhtml start="5"?>
-		<listitem>
-		  <simpara>the object argument in the instrumented
-		  call to
-		  <function>g_object_unref</function></simpara>
-		</listitem>
-	      </orderedlist>
-	    </listitem>
-	    <listitem>
-	      <simpara>returns</simpara>
-	      <orderedlist>
-		<?dbhtml start="5"?>
-		<listitem>
-		  <simpara>the callee in the instrumented function
-		  call</simpara>
-		</listitem>
-	      </orderedlist>
-	    </listitem>
-	    <listitem>
-	      <simpara>scalar-pairs</simpara>
-	      <orderedlist>
-		<?dbhtml start="5"?>
-		<listitem>
-		  <simpara>the left hand side of the instrumented assignment</simpara>
-		</listitem>
-		<listitem>
-		  <simpara>one of:</simpara>
-		  <variablelist>
-		    <varlistentry>
-		      <term><computeroutput>local</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to a named local variable</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>global</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to a named global variable</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>mem</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to an indirectly
-			addressed memory location</simpara>
-		      </listitem>
-		    </varlistentry>
-		  </variablelist>
-		</listitem>
-		<listitem>
-		  <simpara>one of:</simpara>
-		  <variablelist>
-		    <varlistentry>
-		      <term><computeroutput>direct</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to a direct base
-			location with no offset</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>field</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to a named field within
-			a structure</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>index</computeroutput></term>
-		      <listitem>
-			<simpara>assignment is to an indexed element
-			within an array</simpara>
-		      </listitem>
-		    </varlistentry>
-		  </variablelist>
-		</listitem>
-		<listitem>
-		  <simpara>the right hand side of the instrumented assignment</simpara>
-		</listitem>
-		<listitem>
-		  <simpara>one of:</simpara>
-		  <variablelist>
-		    <varlistentry>
-		      <term><computeroutput>local</computeroutput></term>
-		      <listitem>
-			<simpara>site is comparing the assigned value
-			with a named local variable</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>global</computeroutput></term>
-		      <listitem>
-			<simpara>site is comparing the assigned value
-			with a named global variable</simpara>
-		      </listitem>
-		    </varlistentry>
-		    <varlistentry>
-		      <term><computeroutput>const</computeroutput></term>
-		      <listitem>
-			<simpara>site is comparing the assigned value
-			with with a compile-time constant</simpara>
-		      </listitem>
-		    </varlistentry>
-		  </variablelist>
-		</listitem>
-	      </orderedlist>
-	    </listitem>
-	  </itemizedlist>
+	    <itemizedlist>
+	      <listitem>
+		<para><option>bounds</option></para>
+		<orderedlist continuation="continues">
+		  <listitem>
+		    <para>the left hand side of the instrumented assignment</para>
+		  </listitem>
+		  <listitem>
+		    <para>one of:
+		      <variablelist>
+			<varlistentry>
+			  <term><computeroutput>local</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a named local variable</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>global</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a named global variable</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>mem</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to an indirectly
+			    addressed memory location</para>
+			  </listitem>
+			</varlistentry>
+		      </variablelist>
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>one of:
+		      <variablelist>
+			<varlistentry>
+			  <term><computeroutput>direct</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a direct base
+			    location with no offset</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>field</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a named field within
+			    a structure</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>index</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to an indexed element
+			    within an array</para>
+			  </listitem>
+			</varlistentry>
+		      </variablelist>
+		    </para>
+		  </listitem>
+		</orderedlist>
+	      </listitem>
+	      <listitem>
+		<para><option>branches</option></para>
+		<orderedlist>
+		  <?dbhtml start="5"?>
+		  <listitem>
+		    <para>the predicate of the instrumented branch</para>
+		  </listitem>
+		</orderedlist>
+	      </listitem>
+	      <listitem>
+		<para><option>function-entries</option>: no additional fields</para>
+	      </listitem>
+	      <listitem>
+		<para>g-object-unref</para>
+		<orderedlist>
+		  <?dbhtml start="5"?>
+		  <listitem>
+		    <para>the object argument in the instrumented call
+		    to <function>g_object_unref</function></para>
+		  </listitem>
+		</orderedlist>
+	      </listitem>
+	      <listitem>
+		<para>returns</para>
+		<orderedlist>
+		  <?dbhtml start="5"?>
+		  <listitem>
+		    <para>the callee in the instrumented function call</para>
+		  </listitem>
+		</orderedlist>
+	      </listitem>
+	      <listitem>
+		<para>scalar-pairs</para>
+		<orderedlist>
+		  <?dbhtml start="5"?>
+		  <listitem>
+		    <para>the left hand side of the instrumented assignment</para>
+		  </listitem>
+		  <listitem>
+		    <para>one of:
+		      <variablelist>
+			<varlistentry>
+			  <term><computeroutput>local</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a named local variable</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>global</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a named global variable</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>mem</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to an indirectly
+			    addressed memory location</para>
+			  </listitem>
+			</varlistentry>
+		      </variablelist>
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>one of:
+		      <variablelist>
+			<varlistentry>
+			  <term><computeroutput>direct</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a direct base
+			    location with no offset</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>field</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a named field within
+			    a structure</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>index</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to an indexed element
+			    within an array</para>
+			  </listitem>
+			</varlistentry>
+		      </variablelist>
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>the right hand side of the instrumented assignment</para>
+		  </listitem>
+		  <listitem>
+		    <para>one of:
+		      <variablelist>
+			<varlistentry>
+			  <term><computeroutput>local</computeroutput></term>
+			  <listitem>
+			    <para>site is comparing the assigned value
+			    with a named local variable</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>global</computeroutput></term>
+			  <listitem>
+			    <para>site is comparing the assigned value
+			    with a named global variable</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>const</computeroutput></term>
+			  <listitem>
+			    <para>site is comparing the assigned value
+			    with a compile-time constant</para>
+			  </listitem>
+			</varlistentry>
+		      </variablelist>
+		    </para>
+		  </listitem>
+		</orderedlist>
+	      </listitem>
+	    </itemizedlist>
+	  </para>
 	</section>
       </section>
 
@@ -1096,7 +1155,7 @@
 
     <section>
       <title>Dynamic Feedback Reports</title>
-      
+
       <para>A dynamic feedback report consists of instrumentation data
       and possibly other debugging information collected from a single
       run of an instrumented program.  When using <link
@@ -1111,9 +1170,9 @@
 
       <para>At the top level, a dynamic feedback report consists of a
       sequence of sections marked by XML-style <sgmltag
-      class="element">report</sgmltag> tags:</para>
+      class="element">report</sgmltag> tags:
 
-      <screen>&lt;<sgmltag class="element">report</sgmltag> <sgmltag class="attribute">id</sgmltag>="<sgmltag class="attvalue"><replaceable>subreport name</replaceable></sgmltag>"&gt;
+        <screen>&lt;<sgmltag class="element">report</sgmltag> <sgmltag class="attribute">id</sgmltag>="<sgmltag class="attvalue"><replaceable>subreport name</replaceable></sgmltag>"&gt;
 &hellip;
 <sgmltag class="endtag">report</sgmltag>
 &lt;<sgmltag class="element">report</sgmltag> <sgmltag class="attribute">id</sgmltag>="<sgmltag class="attvalue"><replaceable>subreport name</replaceable></sgmltag>"&gt;
@@ -1124,14 +1183,15 @@
 &hellip;
 <sgmltag class="endtag">report</sgmltag>
 </screen>
+      </para>
 
       <note>
-	<simpara>Unlike true XML, there is no prologue and no single
-	root tag.  The first line is the <sgmltag
+	<para>Unlike true XML, there is no prologue and no single root
+	tag.  The first line is the <sgmltag
 	class="starttag">report</sgmltag> start tag for the first
 	subreport and the last line is the <sgmltag
 	class="endtag">report</sgmltag> end tag for the last
-	subreport.</simpara>
+	subreport.</para>
       </note>
 
       <para>The following subsections describe the subreports currently in use.</para>
@@ -1140,26 +1200,26 @@
 	<title><computeroutput>samples</computeroutput> subreport</title>
 
 	<para>The first subreport always has <sgmltag
-        class="attribute">id</sgmltag>="<sgmltag class="attvalue">samples</sgmltag>".
-        The <computeroutput>samples</computeroutput> subreport
-        contains the final recorded values for all instrumentation
-        sites.  It is designed to be small and therefore easy to send
-        to a central collection server.  For this reason, it cannot be
-        understood by itself.  A
-        <computeroutput>samples</computeroutput> subreport must be
-        decoded using the <link
-        linkend="static-site-information">static site information
-        files</link> generated when the application was built.  Taken
-        together, the <computeroutput>samples</computeroutput>
-        subreport and the static site information files connect
-        observed dynamic behaviors with static source features such as
-        functions, files, and line numbers.</para>
+	class="attribute">id</sgmltag>="<sgmltag class="attvalue">samples</sgmltag>".
+	The <computeroutput>samples</computeroutput> subreport
+	contains the final recorded values for all instrumentation
+	sites.  It is designed to be small and therefore easy to send
+	to a central collection server.  For this reason, it cannot be
+	understood by itself.  A
+	<computeroutput>samples</computeroutput> subreport must be
+	decoded using the <link
+	linkend="static-site-information">static site information
+	files</link> generated when the application was built.  Taken
+	together, the <computeroutput>samples</computeroutput>
+	subreport and the static site information files connect
+	observed dynamic behaviors with static source features such as
+	functions, files, and line numbers.</para>
 
 	<para>A <computeroutput>samples</computeroutput> subreport
 	consists of a sequence of sections marked by XML-style
-	<sgmltag class="element">samples</sgmltag> tags:</para>
+	<sgmltag class="element">samples</sgmltag> tags:
 
-	<screen>&lt;<sgmltag class="element">samples</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
+	  <screen>&lt;<sgmltag class="element">samples</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
 &hellip;
 <sgmltag class="endtag">samples</sgmltag>
 &lt;<sgmltag class="element">samples</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
@@ -1170,6 +1230,7 @@
 &hellip;
 <sgmltag class="endtag">samples</sgmltag>
 </screen>
+	</para>
 
 	<para>Each <sgmltag class="element">samples</sgmltag> section
 	gives the final instrumentation data for one instrumentation
@@ -1229,18 +1290,19 @@
 	class="element">sites</sgmltag> sections can be tedious.  The
 	<filename>&prefix;/lib/sampler/tools/resolve-samples</filename>
 	tool provides simple merging to support basic data analysis.
-	It is run as follows:</para>
+	It is run as follows:
 
-	<cmdsynopsis>
-	  <command>resolve-samples</command>
-	  <arg choice="req"><replaceable>section-name</replaceable></arg>
-	  <group choice="req" rep="repeat">
-	    <arg choice="plain"><replaceable>executable</replaceable></arg>
-	    <arg choice="plain"><replaceable>shared-library</replaceable></arg>
-	    <arg choice="plain"><replaceable>object</replaceable></arg>
-	    <arg choice="plain"><replaceable>standalone site information file</replaceable></arg>
-	  </group>
-	</cmdsynopsis>
+	  <cmdsynopsis>
+	    <command>resolve-samples</command>
+	    <arg choice="req"><replaceable>section-name</replaceable></arg>
+	    <group choice="req" rep="repeat">
+	      <arg choice="plain"><replaceable>executable</replaceable></arg>
+	      <arg choice="plain"><replaceable>shared-library</replaceable></arg>
+	      <arg choice="plain"><replaceable>object</replaceable></arg>
+	      <arg choice="plain"><replaceable>standalone site information file</replaceable></arg>
+	    </group>
+	  </cmdsynopsis>
+	</para>
 
 	<para>Standard input to <command>resolve-samples</command>
 	should be a <computeroutput>samples</computeroutput>
@@ -1253,33 +1315,35 @@
 	a sequence of lines containing only tab-delimited columnar
 	data, with no XML-like tags.  Each instrumentation site
 	appears on a single line with the following initial
-	fields:</para>
+	fields:
 
-	<orderedlist>
-	  <listitem>
-	    <simpara>file name from <command>resolve-samples</command>
-	    in which this site was found</simpara>
-	  </listitem>
-	  <listitem>
-	    <simpara>signature of the compilation unit in which this
-	    site was found</simpara>
-	  </listitem>
-	  <listitem>
-	    <simpara>name of the instrumentation scheme that induced
-	    this site</simpara>
-	  </listitem>
-	</orderedlist>
+	  <orderedlist>
+	    <listitem>
+	      <para>file name from <command>resolve-samples</command>
+	      in which this site was found</para>
+	    </listitem>
+	    <listitem>
+	      <para>signature of the compilation unit in which this
+	      site was found</para>
+	    </listitem>
+	    <listitem>
+	      <para>name of the instrumentation scheme that induced
+	      this site</para>
+	    </listitem>
+	  </orderedlist>
+	</para>
 
-	<para>These initial fields are followed by:</para>
+	<para>These initial fields are followed by:
 
-	<itemizedlist>
-	  <listitem>
-	    <simpara>all static information fields for this site</simpara>
-	  </listitem>
-	  <listitem>
-	    <simpara>all dynamic values reported for this site</simpara>
-	  </listitem>
-	</itemizedlist>
+	  <itemizedlist>
+	    <listitem>
+	      <para>all static information fields for this site</para>
+	    </listitem>
+	    <listitem>
+	      <para>all dynamic values reported for this site</para>
+	    </listitem>
+	  </itemizedlist>
+	</para>
 
 	<para>The flat, uniform structure of a fully resolved samples
 	report can be convenient for basic data analysis on small
@@ -1298,7 +1362,7 @@
 
       <section>
 	<title>Additional crash subreports</title>
-	
+
 	<para>In the event of a crash, the dynamic feedback report may
 	contain additional subreports with more detailed information
 	about the failure.  The format and content of these subreports
@@ -1307,31 +1371,32 @@
 	The example script installed as
 	<filename>&prefix;/share/sampler/print-debug-info</filename>
 	uses GDB to generate the following additional
-	subreports:</para>
+	subreports:
 
-	<variablelist>
-	  <varlistentry>
-	    <term><computeroutput>shared-libraries</computeroutput></term>
-	    <listitem>
-	      <simpara>a list of shared libraries mapped by the
-	      application at the time of the crash</simpara>
-	    </listitem>
-	  </varlistentry>
-	  <varlistentry>
-	    <term><computeroutput>main-stack-trace</computeroutput></term>
-	    <listitem>
-	      <simpara>a stack trace for the current thread at the
-	      time of the crash</simpara>
-	    </listitem>
-	  </varlistentry>
-	  <varlistentry>
-	    <term>threads-stack-trace</term>
-	    <listitem>
-	      <simpara>stack traces for all threads at the time of the
-	      crash</simpara>
-	    </listitem>
-	  </varlistentry>
-	</variablelist>
+	  <variablelist>
+	    <varlistentry>
+	      <term><computeroutput>shared-libraries</computeroutput></term>
+	      <listitem>
+		<para>a list of shared libraries mapped by the
+		application at the time of the crash</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term><computeroutput>main-stack-trace</computeroutput></term>
+	      <listitem>
+		<para>a stack trace for the current thread at the
+		time of the crash</para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>threads-stack-trace</term>
+	      <listitem>
+		<para>stack traces for all threads at the time of the
+		crash</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+	</para>
 
 	<para>The level of detail in stack traces varies depending on
 	the amount of debug information available to GDB on the end
@@ -1363,25 +1428,27 @@
 	an entire feedback report.  The
 	<filename>&prefix;/lib/sampler/tools/extract-section</filename>
 	tool may be used for this purpose.  It is run as
-	follows:</para>
+	follows:
 
-	<cmdsynopsis>
-	  <command>extract-report</command>
-	  <arg choice="req"><replaceable>report id</replaceable></arg>
-	</cmdsynopsis>
+	  <cmdsynopsis>
+	    <command>extract-report</command>
+	    <arg choice="req"><replaceable>report id</replaceable></arg>
+	  </cmdsynopsis>
+	</para>
 
 	<para>Standard input to <command>extract-report</command>
 	should be a raw dynamic feedback report.  It prints the report
 	with the requested ID on standard output and discards the
 	rest.  For example, one might use this in conjunction with
-	<command>extract-section</command> as follows:</para>
+	<command>extract-section</command> as follows:
 
-	<informalexample>
-	  <para><userinput><command>extract-report</command> samples
-	  &lt;<filename>raw-report.log</filename> | <command>resolve-samples</command>
-	  <filename>myapp</filename> <filename>myplugin.so</filename>
-	  <filename>libmylib.so</filename></userinput></para>
-	</informalexample>
+	  <informalexample>
+	    <para><userinput><command>extract-report</command> samples
+	    &lt;<filename>raw-report.log</filename> | <command>resolve-samples</command>
+	    <filename>myapp</filename> <filename>myplugin.so</filename>
+	    <filename>libmylib.so</filename></userinput></para>
+	  </informalexample>
+	</para>
       </section>
     </section>
   </section>

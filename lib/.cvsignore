@@ -2,6 +2,5 @@
 Makefile
 Makefile.in
 countdown-1-1
-cyclic-size.h
 mean
 precompute

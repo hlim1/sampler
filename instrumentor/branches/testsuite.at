@@ -31,7 +31,7 @@ cp $abs_srcdir/library.c .
 cp $abs_srcdir/library.h .
 cp $abs_srcdir/sharing.c .
 cp $abs_srcdir/sharing.expected expout
-cc="$abs_top_builddir/instrumentor/driver/sampler-cc-here --relative-paths --sampler-scheme=branches -save-temps"
+cc="$abs_top_builddir/instrumentor/driver/sampler-cc-here --no-sample -g --relative-paths --sampler-scheme=branches -save-temps"
 $cc -shared -o plugin.so plugin.c
 $cc -shared -o library.so library.c
 $cc -c sharing.c

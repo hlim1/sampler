@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.13
+
+** Add support for non-random, fixed-period sampling.
+
 * sampler-0.12.4
 
 ** Continued small packaging tweaks.

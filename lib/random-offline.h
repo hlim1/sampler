@@ -1,7 +1,7 @@
-#ifndef INCLUDE_libcountdown_cyclic_h
-#define INCLUDE_libcountdown_cyclic_h
+#ifndef INCLUDE_sampler_random_offline_h
+#define INCLUDE_sampler_random_offline_h
 
-#include "cyclic-size.h"
+#include "random-offline-size.h"
 #include "threads.h"
 
 
@@ -23,4 +23,4 @@ static inline int getNextEventCountdown()
 }
 
 
-#endif /* !INCLUDE_libcountdown_cyclic_h */
+#endif /* !INCLUDE_sampler_random_offline_h */

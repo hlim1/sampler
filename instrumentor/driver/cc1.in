@@ -9,7 +9,6 @@ use FindBin;
 ########################################################################
 
 
-my $countdowns = 'acyclic';
 my $verbose;
 my $preprocessed;
 my $preprocessing;
@@ -157,6 +156,8 @@ while (@ARGV) {
 	    push @inst, '--load-scales', $1;
 	} elsif (/^-f((in|ex)clude-(file|function))=(.*)/) {
 	    push @inst, "--$1", $4;
+	} elsif (/^-fsampler-random=/) {
+	    ;
 	} elsif (/^-f/) {
 	    push @cc1, $_
 	} else {

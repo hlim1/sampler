@@ -1,8 +1,0 @@
-#ifndef INCLUDE_libcountdown_cyclic_size_h
-#define INCLUDE_libcountdown_cyclic_size_h
-
-
-#define PRECOMPUTE_COUNT @PRECOMPUTE_COUNT@
-
-
-#endif /* !INCLUDE_libcountdown_cyclic_size_h */

@@ -3,14 +3,6 @@
 #include <stdlib.h>
 #include "lifetime.h"
 
-#ifdef SAMPLER_CYCLIC
-#include "cyclic.h"
-#endif
-
-#ifdef SAMPLER_ACYCLIC
-#include "acyclic.h"
-#endif
-
 
 typedef void * (*Starter)(void *);
 

@@ -19,21 +19,22 @@ gnome_headers =					\
 	g-object-unref-unit.h
 endif
 
-nodist_package_include_HEADERS = cyclic-size.h
 package_include_HEADERS =			\
 	$(gnome_headers)			\
-	acyclic.h				\
 	bounds.h				\
 	bounds-unit.h				\
 	branches.h				\
 	branches-unit.h				\
 	countdown.h				\
-	cyclic.h				\
 	function-entries.h			\
 	function-entries-unit.h			\
 	lifetime.h				\
 	lock.h					\
 	log.h					\
+	random-fixed.h				\
+	random-online.h				\
+	random-offline.h			\
+	random-offline-size.h			\
 	registry.h				\
 	report.h				\
 	returns.h				\
@@ -54,14 +55,18 @@ package_include_HEADERS =			\
 
 
 thread_sources =				\
-	acyclic.c				\
-	acyclic.h				\
 	countdown.c				\
 	countdown.h				\
-	cyclic.c				\
-	cyclic.h				\
 	lifetime.h				\
 	lock.h					\
+	once.h					\
+	random-fixed.c				\
+	random-fixed.h				\
+	random-online.c				\
+	random-online.h				\
+	random-offline.c			\
+	random-offline.h			\
+	random-offline-size.h			\
 	registry.c				\
 	registry.h				\
 	report.c				\
@@ -70,16 +75,14 @@ thread_sources =				\
 	timestamps-set.c			\
 	threads.h
 
-
-nodist_libsampler_no_threads_a_SOURCES = cyclic-size.h
 libsampler_no_threads_a_SOURCES =		\
 	$(thread_sources)			\
+	once-no-threads.h			\
 	no-hijack.c
 
-
-nodist_libsampler_threads_a_SOURCES = cyclic-size.h
 libsampler_threads_a_SOURCES =			\
 	$(thread_sources)			\
+	once-threads.h				\
 	hijack.c
 
 libsampler_threads_a_CFLAGS = -pthread -DSAMPLER_THREADS
@@ -136,4 +139,4 @@ countdown-1-1: precompute
 ########################################################################
 
 
-CLEANFILES = countdown-1-1 cyclic-size.h
+CLEANFILES = countdown-1-1

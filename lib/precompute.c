@@ -2,22 +2,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "acyclic.h"
-#include "cyclic-size.h"
+#include "random-online.h"
+#include "random-offline-size.h"
 
 
 int nextEventCountdown;
 
 
-static void writeCountdown(FILE *outfile)
-{
-  fwrite(&nextEventCountdown, sizeof(nextEventCountdown), 1, outfile);
-}
+char *envSparsity;
+char *envSeed;
 
 
-static void writeEnv(FILE *outfile, const char ident[], const char envar[])
+static void writeCountdown(FILE *outfile, int value)
 {
-  fprintf(outfile, "$%s: %s $", ident, getenv(envar));
+  fwrite(&value, sizeof(value), 1, outfile);
 }
 
 
@@ -42,14 +40,10 @@ int main(int argc, char *argv[])
 	  int slot = PRECOMPUTE_COUNT;
 	  while (slot--)
 	    {
-	      writeCountdown(outfile);
+	      writeCountdown(outfile, nextEventCountdown);
 	      nextEventCountdown = getNextEventCountdown();
 	    }
 
-	  nextEventCountdown = 0;
-	  writeCountdown(outfile);
-	  writeEnv(outfile, "SamplerSparsity", "SAMPLER_SPARSITY");
-	  writeEnv(outfile, "SamplerSeed", "SAMPLER_SEED");
 	  fclose(outfile);
 	}
     }

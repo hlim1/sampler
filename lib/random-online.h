@@ -1,5 +1,5 @@
-#ifndef INCLUDE_libcountdown_acyclic_h
-#define INCLUDE_libcountdown_acyclic_h
+#ifndef INCLUDE_libcountdown_random_online_h
+#define INCLUDE_libcountdown_random_online_h
 
 
 #ifdef CIL
@@ -10,4 +10,4 @@
 int getNextEventCountdown();
 
 
-#endif /* !INCLUDE_libcountdown_acyclic_h */
+#endif /* !INCLUDE_libcountdown_random_online_h */

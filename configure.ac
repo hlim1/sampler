@@ -99,12 +99,6 @@ fi
 #
 
 
-AC_MSG_CHECKING(for precomputed countdown size)
-PRECOMPUTE_COUNT=1021
-AC_SUBST(PRECOMPUTE_COUNT, $PRECOMPUTE_COUNT)
-AC_MSG_RESULT($PRECOMPUTE_COUNT)
-
-
 AC_SUBST(schemadir, '${GCONF_SCHEMA_FILE_DIR}')
 AC_SUBST(serversdir, '${libdir}/bonobo/servers')
 AC_SUBST(package_includedir, '${includedir}/sampler')
@@ -331,7 +325,6 @@ launcher/trayicon/libegg/Makefile
 launcher/trayicon/libegg/tray/Makefile
 launcher/wrapper/Makefile
 lib/Makefile
-lib/cyclic-size.h
 mining/analysis/Makefile
 mining/dumps/Makefile
 mining/Makefile

@@ -1,5 +1,4 @@
 open Cil
-open Clude
 open FuncInfo
  
 
@@ -14,6 +13,22 @@ let _ =
     ~desc:"<file-name> instrument this file"
     ~ident:"FilterFile"
     fileFilter
+
+
+let funcFilter = ref []
+
+
+let _ =
+  Clude.register
+    ~flag:"function"
+    ~desc:"<function> instrument this function"
+    ~ident:"FilterFunction"
+    funcFilter
+
+
+let selected func site =
+  Clude.selected !funcFilter func.svar.vname
+    && Clude.selected !fileFilter (get_stmtLoc site.skind).file
 
 
 (**********************************************************************)
@@ -49,12 +64,13 @@ class virtual visitor file =
 	let unfiltered = visitor#sites in
 	let folder sites site =
 	  let location = get_stmtLoc site.skind in
-	  match filter !fileFilter location.file with
-	  | Include ->
-	      site :: sites
-	  | Exclude ->
+	  if selected func site then
+	    site :: sites
+	  else
+	    begin
 	      site.skind <- Instr [];
 	      sites
+	    end
 	in
 	List.fold_left folder [] unfiltered
       in

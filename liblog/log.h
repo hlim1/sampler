@@ -5,7 +5,10 @@
 
 extern const char logSignature[];
 
+#ifdef CIL
 #pragma cilnoremove("requireLogSignature")
+#endif
+
 static const char * const requireLogSignature __attribute__((unused)) = logSignature;
 
 

@@ -4,8 +4,8 @@ use strict;
 use FindBin;
 use File::Basename;
 
-use lib '../../../../cil/bin';
-use lib '../../../../cil/lib';
+use lib "$FindBin::Bin/../../../../cil/bin";
+use lib "$FindBin::Bin/../../../../cil/lib";
 use CCured;
 our @ISA = qw(CCured);
 

@@ -60,7 +60,7 @@ force:
 .PHONY: force
 
 
-MOSTLYCLEANFILES = $(targets) *.cma *.cmxa *.cmi *.cmo *.cmx *.o
+MOSTLYCLEANFILES = $(targets) *.annot *.cma *.cmxa *.cmi *.cmo *.cmx *.o
 CLEANFILES = *.d[ilo]
 
 

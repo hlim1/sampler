@@ -1,3 +1,4 @@
+*.annot
 Makefile
 Makefile.in
 cc1

@@ -140,6 +140,16 @@ if test -z "$OCAMLC"; then
 fi
 
 
+AC_MSG_CHECKING(whether $OCAMLC supports -dtypes)
+if $OCAMLC -help 2>&1 | grep -q dtypes; then
+  DTYPES=-dtypes
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+AC_SUBST(DTYPES)
+
+
 AC_MSG_CHECKING(for profiling)
 AC_ARG_ENABLE(profiling, [  --enable-profiling      Compile OCaml for gprof profiling (implies --enable-native)])
 if test "$enable_profiling" = yes; then

@@ -4,6 +4,8 @@ ENABLE_NATIVE = @ENABLE_NATIVE@
 OCAMLOPT = @OCAMLOPT@
 OCAMLC = @OCAMLC@
 
+DTYPES = @DTYPES@
+
 cil_libdir = @cil_libdir@
 
 
@@ -20,7 +22,7 @@ ocamlc := $(OCAMLOPT)
 cma := cmxa
 cmo := cmx
 else
-ocamlflags += -g
+ocamlflags += -g $(DTYPES)
 ocamlc := $(OCAMLC)
 cma := cma
 cmo := cmo

@@ -1,6 +1,8 @@
-When using acyclic countdowns, threads are racing on the random number
-generator.  They either need to lock it or each have their own.
-Cyclic countdowns have a similar problem.
+Each thread starts its own random sequence of countdowns with the same
+initial state used when the application first launched.  An
+alternateive would be for all threads to share the same random state.
+This would require locking: what performance penalty would result?
+Would this give us more truly random countdowns?
 
 Document --{no-,}assume-weightless-{libraries,externs} and hook them
 up in the Perl driver.

@@ -17,7 +17,7 @@
 const void * const SAMPLER_REENTRANT(providesLibCyclic);
 
 const unsigned *nextEventPrecomputed = 0;
-unsigned nextEventSlot = 0;
+SAMPLER_THREAD_LOCAL unsigned nextEventSlot = 0;
 
 unsigned cyclicInitCount;
 
@@ -54,6 +54,12 @@ static int checkedOpen(const char filename[])
 }
 
 
+void initialize_thread()
+{
+  nextEventCountdown = getNextEventCountdown();
+}
+
+
 __attribute__((constructor)) static void initialize()
 {
   if (!cyclicInitCount++)
@@ -80,8 +86,13 @@ __attribute__((constructor)) static void initialize()
 	}
 
       nextEventPrecomputed = (const unsigned *) mapping;
-      nextEventCountdown = getNextEventCountdown();
+      initialize_thread();
     }
+}
+
+
+void finalize_thread()
+{
 }
 
 

@@ -20,7 +20,7 @@ static const void * const SAMPLER_REENTRANT(requiresLibAcyclic) = &SAMPLER_REENT
 static inline unsigned getNextEventCountdown()
 {
   extern double acyclicDensity;
-  extern void *acyclicGenerator;
+  extern SAMPLER_THREAD_LOCAL void *acyclicGenerator;
   extern unsigned gsl_ran_geometric();
 
   if (__builtin_expect(!acyclicGenerator, 0))

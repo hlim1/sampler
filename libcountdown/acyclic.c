@@ -5,13 +5,22 @@
 #include <limits.h>
 #include "acyclic.h"
 #include "countdown.h"
+#include "lifetime.h"
 
 
 const void * const SAMPLER_REENTRANT(providesLibAcyclic);
 int acyclicInitCount;
 
 double acyclicDensity;
-void *acyclicGenerator;
+const gsl_rng_type * generatorType;
+SAMPLER_THREAD_LOCAL void *acyclicGenerator;
+
+
+void initialize_thread()
+{
+  acyclicGenerator = gsl_rng_alloc(generatorType);
+  nextEventCountdown = getNextEventCountdown();
+}
 
 
 __attribute__((constructor)) static void initialize()
@@ -35,8 +44,9 @@ __attribute__((constructor)) static void initialize()
 	    }
 	  else
 	    {
-	      const gsl_rng_type * const type = gsl_rng_env_setup();
 	      const char * const environ = getenv("SAMPLER_SEED");
+	      generatorType = gsl_rng_env_setup();
+
 	      if (environ)
 		{
 		  char *end;
@@ -49,19 +59,25 @@ __attribute__((constructor)) static void initialize()
 		}
 	      
 	      acyclicDensity = 1 / sparsity;
-	      acyclicGenerator = gsl_rng_alloc(type);
-	      nextEventCountdown = getNextEventCountdown();
+	      initialize_thread();
 	    }
 	}
+    }
+}
+
+
+void finalize_thread()
+{
+  if (acyclicGenerator)
+    {
+      gsl_rng_free(acyclicGenerator);
+      acyclicGenerator = 0;
     }
 }
   
 
 __attribute__((destructor)) static void finalize()
 {
-  if (!--acyclicInitCount && acyclicGenerator)
-    {
-      gsl_rng_free(acyclicGenerator);
-      acyclicGenerator = 0;
-    }
+  if (!--acyclicInitCount)
+    finalize_thread();
 }

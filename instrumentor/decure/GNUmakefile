@@ -10,7 +10,8 @@ include $(top)/rules.mk
 ########################################################################
 
 
-transform = transform
+findSites = findSites
+transform = $(findSites) transform
 
 
 ########################################################################
@@ -31,6 +32,13 @@ $(top)/%.cmi: force
 
 ../%.cmi: force
 	$(recurse)
+
+
+########################################################################
+
+
+infile := tests/echocured
+
 
 run: main $(infile).i
 	./$^

@@ -1,24 +1,20 @@
 open Cil
-open Str
-
-
-let checkPattern = regexp "^__CHECK_"
 
 
 class visitor = object
   inherit FunctionBodyVisitor.visitor
       
-  method vinst inst =
-    begin
-      match inst with
-      | Call (_, Lval (Var varinfo, NoOffset), _, location)
-	when string_match checkPattern varinfo.vname 0 ->
-	  ignore (Pretty.eprintf "%a: %s\n"
-		    d_loc location varinfo.vname)
-      | _ -> ()
-    end;
+  method vfunc func =
+    IsolateInstructions.visit func;
+    let sites = FindSites.findSites func in
+    let dump site =
+      ignore (Pretty.eprintf "%a: check site: %a\n"
+		d_loc (get_stmtLoc site.skind)
+		d_stmt site)
+    in
+    List.iter dump sites;
     SkipChildren
-  end
+end
 
 
 let phase =

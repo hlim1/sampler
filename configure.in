@@ -5,7 +5,7 @@ AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE(sampler,0.0)
 AM_CONFIG_HEADER(config.h)
 
-: ${CXX:=g++3}
+dnl : ${CXX:=g++3}
 : ${CXXFLAGS:=-g -W -Wall -Werror}
 
 AC_PROG_CXX

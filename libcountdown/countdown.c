@@ -48,6 +48,7 @@ __attribute__((constructor)) static void initialize()
   
   assert(!generator);
   generator = gsl_rng_alloc(gsl_rng_env_setup());
+  nextEventCountdown = getNextCountdown();
 }
 
 

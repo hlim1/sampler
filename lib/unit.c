@@ -8,14 +8,20 @@ struct CompilationUnit compilationUnitAnchor = { &compilationUnitAnchor,
 						 &compilationUnitAnchor,
 						 "", 0, 0 };
 
+unsigned compilationUnitCount;
+
 
 void registerCompilationUnit(struct CompilationUnit *unit)
 {
   CRITICAL_REGION({
-    unit->prev = &compilationUnitAnchor;
-    unit->next = compilationUnitAnchor.next;
-    compilationUnitAnchor.next->prev = unit;
-    compilationUnitAnchor.next = unit;
+    if (!unit->next && !unit->prev)
+      {
+	++compilationUnitCount;
+	unit->prev = &compilationUnitAnchor;
+	unit->next = compilationUnitAnchor.next;
+	compilationUnitAnchor.next->prev = unit;
+	compilationUnitAnchor.next = unit;
+      }
   });
 }
 
@@ -23,11 +29,17 @@ void registerCompilationUnit(struct CompilationUnit *unit)
 void unregisterCompilationUnit(struct CompilationUnit *unit)
 {
   CRITICAL_REGION({
-    if (unit->prev) unit->prev->next = unit->next;
-    if (unit->next) unit->next->prev = unit->prev;
-    unit->prev = unit->next = 0;
+    if (unit->next && unit->prev)
+      {
+	unit->prev->next = unit->next;
+	unit->next->prev = unit->prev;
+	unit->prev = unit->next = 0;
 
-    if (reportFile)
-      reportCompilationUnit(unit);
+	if (compilationUnitCount)
+	  {
+	    if (reportFile) reportCompilationUnit(unit);
+	    --compilationUnitCount;
+	  }
+      }
   });
 }

@@ -24,12 +24,6 @@ Check both script text as well as "configure --version" output.
 Consider adding some sort of "README.sampler" to the documentation for
 each sampled application RPM.
 
-* runtime libraries
-
-Add some sort of integrity checking to the linked list of compilation
-units.  For example, keep a running count of how many there should be
-and then verify that the list is that long before dumping.
-
 * instrumentor
 
 ** threads

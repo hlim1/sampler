@@ -7,7 +7,7 @@ use CGI::Carp qw(fatalsToBrowser);
 
 use lib '/usr/lib/perl5/site_perl/5.6.1';
 use DB_File::Lock;
-use POSIX qw(S_IRUSR S_IWUSR);
+use POSIX qw(S_IRUSR S_IWUSR S_IRGRP S_IWGRP);
 
 
 ########################################################################
@@ -22,7 +22,8 @@ die "survey returned with no answer\n" unless defined $distro;
 
 my %survey;
 tie %survey, 'DB_File::Lock', '/var/www/sampler-survey/distro.db',
-    O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, $DB_HASH, 'write';
+    O_CREAT | O_RDWR, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP,
+    $DB_HASH, 'write';
 
 $survey{$remote} = $distro;
 

@@ -1,13 +1,14 @@
 open Cil
 
 
+let computation = BinOp (MinusA,
+			 Lval Countdown.lval,
+			 kinteger IUInt 1,
+			 uintType)
+
+
 let skipCall location =
-  Set (Countdown.lval,
-       BinOp (MinusA,
-	      Lval Countdown.lval,
-	      one,
-	      uintType),
-       location)
+  Set (Countdown.lval, computation, location)
 	
 	
 class visitor = object

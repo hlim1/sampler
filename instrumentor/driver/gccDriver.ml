@@ -12,7 +12,7 @@ class c compiler arguments =
 
     val mutable saveTemps = false
 
-    val mutable inputs : (unit -> string) list = []
+    val mutable inputs = []
 
     method private prepare filename = filename
 

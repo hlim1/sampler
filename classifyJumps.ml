@@ -31,5 +31,5 @@ end
 
 let visit {sbody = sbody} =
   let visitor = new visitor in
-  ignore(visitCilBlock (visitor :> cilVisitor) sbody);
+  ignore (visitCilBlock (visitor :> cilVisitor) sbody);
   visitor#result

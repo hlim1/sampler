@@ -12,6 +12,5 @@ class visitor file =
     method private statementClassifier = classifier
 
     method private finalize =
-      counters#finalize;
-      super#finalize
+      counters#finalize
   end

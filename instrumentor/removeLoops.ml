@@ -20,9 +20,7 @@ class visitor =
   end
 
 
-let phase =
-  "RemoveLoops",
-  visitCilFileSameGlobals new visitor
+let phase = visitCilFileSameGlobals new visitor
 
 
 let visit original =

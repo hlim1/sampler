@@ -39,8 +39,7 @@ class virtual visitor file =
       RemoveLoops.visit func;
       IsolateInstructions.visit func;
 
-    method private finalize =
-      Rmtmps.removeUnusedTemps file
+    method private finalize = ()
 
 
     method private shouldTransform =

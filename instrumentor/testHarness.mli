@@ -1,6 +1,6 @@
 open Cil
 
 
-type phase = string * (file -> unit)
+type phase = file -> unit
 
 val doOne : phase list -> string -> unit

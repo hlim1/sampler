@@ -106,7 +106,7 @@ let build func =
 
     | Break _ ->
 	(* jump to current break target *)
-	linkLoop statement context.break
+	linkMaybe statement context.break
 
     | Continue _ ->
 	(* jump to current continue target *)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="/usr/share/sgml/docbook/xsl-stylesheets/xhtml/chunk.xsl"?>
+<?xml-stylesheet type="text/xsl" href="sampler-guide.xsl"?>
 <!DOCTYPE article
   PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
   [<!ENTITY % config SYSTEM "../../config.xml"> %config;]>
@@ -1224,15 +1224,15 @@
 	take the minimum of all corresponding minima and the maximum
 	of all corresponding maxima.</para>
 
-	<para>Aligning and merging multiple <sgmltag
-	class="element">samples</sgmltag> and <sgmltag
+	<para id="resolve-samples">Aligning and merging multiple
+	<sgmltag class="element">samples</sgmltag> and <sgmltag
 	class="element">sites</sgmltag> sections can be tedious.  The
 	<filename>&prefix;/lib/sampler/tools/resolve-samples</filename>
 	tool provides simple merging to support basic data analysis.
 	It is run as follows:</para>
 
 	<cmdsynopsis>
-	  <command>resolve-reports</command>
+	  <command>resolve-samples</command>
 	  <arg choice="req"><replaceable>section-name</replaceable></arg>
 	  <group choice="req" rep="repeat">
 	    <arg choice="plain"><replaceable>executable</replaceable></arg>
@@ -1242,7 +1242,7 @@
 	  </group>
 	</cmdsynopsis>
 
-	<para>Standard input to <command>resolve-reports</command>
+	<para>Standard input to <command>resolve-samples</command>
 	should be a <computeroutput>samples</computeroutput>
 	subreport, starting with the first <sgmltag
 	class="starttag">samples</sgmltag> start tag and ending after
@@ -1257,7 +1257,7 @@
 
 	<orderedlist>
 	  <listitem>
-	    <simpara>file name from <command>resolve-reports</command>
+	    <simpara>file name from <command>resolve-samples</command>
 	    in which this site was found</simpara>
 	  </listitem>
 	  <listitem>
@@ -1357,13 +1357,13 @@
 
 	<para>It is often useful to extract a single subreport from a
 	dynamic feedback report.  For example, <link
-	href="resolve-samples">the <command>resolve-samples</command>
-	tool</link> expects to see just a
-	<computeroutput>samples</computeroutput> subreport, not an
-	entire feedback report.  The
+	linkend="resolve-samples">the
+	<command>resolve-samples</command> tool</link> expects to see
+	just a <computeroutput>samples</computeroutput> subreport, not
+	an entire feedback report.  The
 	<filename>&prefix;/lib/sampler/tools/extract-section</filename>
-	tool may be used for this purpose.
-	It is run as follows:</para>
+	tool may be used for this purpose.  It is run as
+	follows:</para>
 
 	<cmdsynopsis>
 	  <command>extract-report</command>

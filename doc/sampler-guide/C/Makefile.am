@@ -15,8 +15,8 @@ TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
 
 html-local: index.html
 
-index.html: $(docname).xml
+index.html: $(docname).xml $(docname).xsl
 	rm -f index.html ar??s??.html
-	xsltproc --stringparam html.stylesheet $(docname).css --param admon.graphics 1 $<
+	xsltproc $<
 
 .DELETE_ON_ERROR:

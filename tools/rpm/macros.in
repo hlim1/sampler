@@ -1,0 +1,144 @@
+%sampler_rpmbuild 1
+
+%sampler_cc %{_bindir}/sampler-cc
+%sampler_cc_version %(rpm -q --qf "%%{version}" sampler-devel)
+
+%sampler_datadir %{_datadir}/sampler
+%sampler_libdir %{_libdir}/sampler
+%sampler_tooldir %{sampler_libdir}/tools
+
+%sampler_name %{name}
+%sampler_wrapped %{_bindir}/%{name}
+
+%sampler_sparsity 100
+%sampler_reporting_host www.example.org
+%sampler_reporting_url https://%{sampler_reporting_host}/cgi-bin/sampler-upload
+%sampler_build_distribution @DISTRO@
+
+
+########################################################################
+
+
+%sampler_tags \
+%define samplerSource $samplerSource\
+Source%{sampler_source}: %{name}-sampler.tar.gz\
+Requires: sampler >= 0.4\
+BuildRequires: sampler-devel >= 0.7.4\
+Packager: %{sampler_packager}\
+Vendor: %{sampler_vendor}\
+Distribution: %{sampler_distribution}\
+%{?sampler_tags_post}\
+%{nil}
+
+
+%sampler_description \
+This package has been built with sampled bug feedback instrumentation.\
+%{nil}
+
+
+########################################################################
+
+
+%sampler_prep \
+tar xzf %{S:%{sampler_source}}\
+%{nil}
+
+
+%__spec_prep_post \
+%{sampler_prep}\
+%{___build_post}\
+%{nil}
+
+
+########################################################################
+
+
+%sampler_build \
+export CC='%{sampler_cc} %{sampler_cc_flags}'\
+sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{sampler_sparsity}/g' -e 's!@reporting_url@!%{sampler_reporting_url}!g' <sampler/application.schemas.in >sampler/sampler-%{name}.schemas\
+sed -e 's/@sampler_name@/%{sampler_name}/g' -e 's/@sampler_cc_version@/%{sampler_cc_version}/g' -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@build_distribution@/%{sampler_build_distribution}/g' -e 's!@sampler_datadir@!%{sampler_datadir}!g' <sampler/config.in >sampler/config\
+sed -e 's!@sampler_datadir@!%{sampler_datadir}!g' -e 's!@sampler_libdir@!%{sampler_libdir}!g' -e 's!@name@!%{name}!g' <sampler/wrapper.in >sampler/wrapper\
+chmod a+x sampler/wrapper\
+%{nil}
+
+
+%build %%build\
+LANG=C\
+export LANG\
+unset DISPLAY\
+%{sampler_build}\
+%{nil}
+
+
+########################################################################
+
+
+%sampler_install \
+install -d %{buildroot}%{sampler_libdir}/applications/%{name}\
+install -m 644 sampler/config %{buildroot}%{sampler_libdir}/applications/%{name}\
+mv %{buildroot}%{sampler_wrapped} %{buildroot}%{sampler_libdir}/applications/%{name}/executable\
+install sampler/wrapper %{buildroot}%{sampler_wrapped}\
+install -d %{buildroot}%{_sysconfdir}/gconf/schemas\
+install -m 644 sampler/sampler-%{name}.schemas %{buildroot}%{_sysconfdir}/gconf/schemas\
+%{sampler_tooldir}/find-sampler-info $RPM_BUILD_ROOT\
+%{nil}
+
+
+%__spec_install_post \
+%{sampler_install}\
+%{?__debug_package:%{__debug_install_post}}\
+%{__arch_install_post}\
+%{__os_install_post}\
+%{nil}
+
+
+########################################################################
+
+
+%sampler_post \
+env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas >/dev/null\
+%{nil}
+
+
+%post %%post\
+%{sampler_post}\
+%{nil}
+
+
+########################################################################
+
+
+%sampler_package \
+%package samplerinfo\
+Summary: Sampler information for package %{name}\
+Group: Development/Debug\
+AutoReqProv: 0\
+%description samplerinfo\
+This package provides sampler information for package %{name}.  You do\
+not need this to use %{name}.  Most users have no need to install this\
+package.\
+%%files samplerinfo\
+%defattr(-,root,root)\
+%{sampler_libdir}/sites/*\
+%{nil}
+
+
+%sampler_files \
+%attr(-, root, root) %{sampler_libdir}/applications/%{name}\
+%attr(-, root, root) %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas\
+%{nil}
+
+
+########################################################################
+
+
+%sampler_changelog \
+* %(date +'%a %b %_d %Y') %{packager} %{?epoch:%{epoch}:}%{version}-%{release}\
+- Added hooks for sampled instrumentation\
+\
+%{nil}
+
+
+%changelog %%changelog\
+%{sampler_changelog}\
+%{nil}

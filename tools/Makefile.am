@@ -1,4 +1,4 @@
-SUBDIRS = cfg
+SUBDIRS = cfg rpm
 
 tools_PROGRAMS =				\
 	decimate-samples			\

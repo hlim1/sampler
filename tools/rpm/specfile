@@ -1,0 +1,93 @@
+#!/usr/bin/perl -w
+# -*- cperl -*-
+
+use strict;
+use FindBin;
+
+
+########################################################################
+
+
+sub startMultiline () {
+  return /^%(package|description|prep|build|install|pre|post|preun|postun|triggerin|truggerun|triggerpostun|clean|files|changelog)([[:space:]]|\Z)/;
+}
+
+
+sub copySection {
+  while (<>) {
+    last if startMultiline;
+    print;
+  }
+  return $_;
+}
+
+
+########################################################################
+
+
+print <<'EOT';
+%if %{?sampler_rpmbuild:0}%{!?sampler_rpmbuild:1}
+%{error:This specfile must be built using %{_libdir}/sampler/tools/rpm/rpmbuild}
+%endif
+EOT
+
+
+########################################################################
+
+
+my @sources;
+
+while (<>) {
+  last if startMultiline;
+
+  if (/^Source([0-9]*):/) {
+    my $num = $1 || 0;
+    $sources[$num] = 1;
+
+  } elsif (/^Release:/) {
+    chomp;
+    $_ .= ".sam.%{sampler_release}\n"
+
+  } elsif (/^(Packager|Vendor|Distribution):/) {
+    next;
+  }
+
+  print;
+}
+
+my $samplerSource = @sources;
+
+print "%define sampler_source $samplerSource\n%{sampler_tags}\n";
+
+
+########################################################################
+
+
+do {
+  print;
+
+  if (/^%description/) {
+    $_ = copySection;
+    print "%{sampler_description}\n";
+
+  } elsif (/^%prep/) {
+    $_ = copySection;
+    print "%{?sampler_prep_post}\n";
+
+  } elsif (/^%files/) {
+    my @args = split;
+    shift @args;
+    if (@args == 1 || @args == 2 && $args[0] eq '-f') {
+      $_ = copySection;
+      print "%{sampler_files}\n";
+    } else {
+      $_ = copySection;
+    }
+
+  } else {
+    $_ = copySection;
+  }
+} until (eof);
+
+
+print "%{sampler_package}\n";

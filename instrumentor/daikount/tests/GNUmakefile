@@ -43,7 +43,7 @@ late-global.trace: late-global $(countdowns)
 
 $(tests): %: %.o $(lib)
 
-$(objects): %.o: %.c $(front_end) ../main
+$(objects): %.o: %.c $(front_end) ../main ../libdaikount/daikount.h
 
 ../main: $(force)
 	$(recurse)

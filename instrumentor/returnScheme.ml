@@ -1,4 +1,11 @@
-let name = "returns"
+open SchemeName
+
+
+let name = {
+  flag = "returns";
+  prefix = "returns";
+  ident = "Returns";
+}
 
 
 class c file =
@@ -16,4 +23,4 @@ class c file =
   end
 
 
-let factory = SchemeFactory.build ~flag:name ~ident:"Returns" new c
+let factory = SchemeFactory.build name new c

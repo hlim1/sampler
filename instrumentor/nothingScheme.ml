@@ -1,4 +1,11 @@
-let name = "nothing"
+open SchemeName
+
+
+let name = {
+  flag = "nothing";
+  prefix = "nothing";
+  ident = "Nothing";
+}
 
 
 class c file =

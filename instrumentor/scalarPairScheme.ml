@@ -1,21 +1,26 @@
 open Cil
 open Interesting
+open SchemeName
 
 
-let name = "scalar-pairs"
+let name = {
+  flag = "scalar-pairs";
+  prefix = "scalarPairs";
+  ident = "ScalarPairs";
+}
 
 
 class c file =
   object (self)
     inherit Scheme.c name file
 
-    val tuples = CounterTuples.build "scalarPairs" file
+    val tuples = CounterTuples.build name file
 
     val constants = Constants.collect file
     val mutable globals = []
 
     method findAllSites =
-      TestHarness.time ("  finding " ^ name ^ " sites")
+      TestHarness.time ("  finding " ^ name.flag ^ " sites")
 	(fun () ->
 	  let scanner = function
 	    | GVar (varinfo, _, _)
@@ -37,4 +42,4 @@ class c file =
   end
 
 
-let factory = SchemeFactory.build ~flag:name ~ident:"ScalarPairs" new c
+let factory = SchemeFactory.build name new c

@@ -1,11 +1,14 @@
+open SchemeName
+
+
 type t = Cil.file -> Scheme.c
 
 
-let build ~flag ~ident factory =
+let build name factory =
   let active = Options.registerBoolean
-      ~flag: ("scheme-" ^ flag)
-      ~desc: ("enable " ^ flag ^ " instrumentation scheme")
-      ~ident: ("Scheme" ^ ident)
+      ~flag: ("scheme-" ^ name.flag)
+      ~desc: ("enable " ^ name.flag ^ " instrumentation scheme")
+      ~ident: ("Scheme" ^ name.ident)
       ~default: false
   in
   fun file ->

@@ -1,5 +1,6 @@
 open Cil
 open Pretty
+open SchemeName
 
 
 class type manager =
@@ -10,9 +11,9 @@ class type manager =
   end
 
 
-class virtual basis prefix file =
+class virtual basis name file =
   object (self)
-    val tuples = FindGlobal.find (prefix ^ "CounterTuples") file
+    val tuples = FindGlobal.find (name.prefix ^ "CounterTuples") file
     val mutable nextId = 0
     val siteInfos = new QueueClass.container
 
@@ -37,11 +38,15 @@ class virtual basis prefix file =
 		      initinfo, location)
 
 	    | GVar ({vname = vname}, initinfo, _) as global
-	      when vname = prefix ^ "SiteInfo"
+	      when vname = name.prefix ^ "SiteInfo"
 	      ->
 		let buffer = new BufferClass.c 33 in
-		buffer#addString (Digest.to_hex (Lazy.force digest));
-		buffer#addChar '\n';
+		buffer#addString
+		  (sprint max_int
+		     (seq nil text
+			["<sites unit=\"";
+			 Digest.to_hex (Lazy.force digest);
+			 "\" scheme=\""; name.flag; "\">\n"]));
 
 		let serializer (func, location, description, statement) =
 		  let fields = [text location.file;
@@ -61,7 +66,7 @@ class virtual basis prefix file =
 
 	    | GFun ({svar = {vname = "samplerReporter"}; sbody = sbody}, _) as global
 	      when nextId > 0 ->
-		let schemeReporter = FindFunction.find (prefix ^ "Reporter") file in
+		let schemeReporter = FindFunction.find (name.prefix ^ "Reporter") file in
 		let call = Call (None, Lval (var schemeReporter), [], locUnknown) in
 		sbody.bstmts <- mkStmtOneInstr call :: sbody.bstmts;
 		global
@@ -72,18 +77,18 @@ class virtual basis prefix file =
   end
 
 
-class nonThreaded prefix file =
+class nonThreaded name file =
   object
-    inherit basis prefix file
+    inherit basis name file
 
     method private bump lval location =
       Set (lval, increm (Lval lval) 1, location)
   end
 
 
-class threaded prefix file =
+class threaded name file =
   object
-    inherit basis prefix file
+    inherit basis name file
 
     val helper = Lval (var (FindFunction.find "atomicIncrementCounter" file))
 
@@ -92,11 +97,11 @@ class threaded prefix file =
   end
 
 
-let build prefix file =
+let build name file =
   let factory =
     if !Threads.threads then
       new threaded
     else
       new nonThreaded
   in
-  factory prefix file
+  factory name file

@@ -8,4 +8,4 @@ class type manager =
   end
 
 
-val build : string -> file -> manager
+val build : SchemeName.t -> file -> manager

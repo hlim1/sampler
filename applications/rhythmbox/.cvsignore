@@ -1,0 +1,10 @@
+*-sampler.schemas
+*-sampler.tar.gz
+*.src.rpm
+BUILD
+Makefile
+Makefile.in
+RPMS
+SOURCES
+SPECS
+SRPMS

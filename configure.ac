@@ -235,6 +235,7 @@ applications/evolution/Makefile
 applications/gaim/Makefile
 applications/gimp/Makefile
 applications/nautilus/Makefile
+applications/rhythmbox/Makefile
 benchmarks/Makefile
 benchmarks/ccured/Makefile
 benchmarks/ccured/bh/Makefile

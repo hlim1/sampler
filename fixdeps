@@ -15,10 +15,15 @@ while (<>) {
 
     $_ = $line;
     my @F = split;
-    print "@F\n";
+
+    my @deps = @F;
+    s/\.cm[ox]$/\.cmi/ foreach @deps[1 .. $#F];
+    print "@deps\n";
     
+    print "@deps\n" if $deps[0] =~ s/(.*)\.cmo:$/$1.cmi:/ && ! -e "$1.mli";
+
     if ($F[0] =~ s/\.cm([io]):$/.d$1:/) {
-	foreach (@F) {
+	foreach (@F[1 .. $#F]) {
 	    s/\.cmi$/.mli/;
 	    s/\.cmo$/.ml/;
 	}

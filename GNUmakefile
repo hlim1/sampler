@@ -35,6 +35,7 @@ infile := hello
 targets := cfg-to-dot main
 impls := $(basename $(wildcard *.ml))
 ifaces := $(basename $(wildcard *.mli))
+implicits := $(filter-out $(ifaces), $(impls))
 
 
 ########################################################################
@@ -102,10 +103,13 @@ main: %: $(libs) $(addsuffix .$(cmo), $(main))
 checker: %: $(libs) $(addsuffix .$(cmo), %)
 	$(link)
 
+$(impls:=.$(cmo)): %.$(cmo): %.ml
+	$(compile)
+
 $(ifaces:=.cmi): %.cmi: %.mli
 	$(compile)
 
-$(impls:=.$(cmo)): %.$(cmo): %.ml
+$(implicits:=.cmi): %.cmi: %.ml
 	$(compile)
 
 $(impls:=.do): %.do: %.ml $(fixdeps)

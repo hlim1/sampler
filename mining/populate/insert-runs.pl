@@ -26,7 +26,7 @@ my $dbh = Common::connect;
 
 sub get_known ($) {
     my ($dbh) = @_;
-    my $column = $dbh->selectcol_arrayref('SELECT DISTINCT run_id FROM run');
+    my $column = $dbh->selectcol_arrayref('SELECT run_id FROM run UNION SELECT run_id FROM run_suppress ORDER BY run_id');
 
     print 'already known runs: ', scalar @{$column}, "\n";
 
@@ -113,6 +113,11 @@ sub read_environment ($\%) {
     unless (defined $environment{DATE}) {
 	my $stat = stat($filename) or die;
 	$environment{DATE} = strftime('%F %T', gmtime $stat->mtime);
+    }
+
+    foreach (@slot[0 .. 2]) {
+	next if defined $environment{$_};
+	die "$_ is undefined in report $filename\n";
     }
 
     my $app_id = join("\t", @environment{@slot[0 .. 2]});
@@ -221,8 +226,7 @@ unless ($dry_run) {
 	    sparsity,
 	    exit_signal,
 	    exit_status,
-	    date,
-	    NULL
+	    date
 
 	    FROM upload_run
 	    NATURAL LEFT JOIN build

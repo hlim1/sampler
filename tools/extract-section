@@ -31,11 +31,15 @@ foreach my $name (@ARGV) {
 	last;
     }
 
-    warn "\"$sectionName\" section is missing\n"
-	unless defined $offset;
+    unless (defined $offset) {
+	warn "\"$sectionName\" section is missing\n";
+	next;
+    }
 
-    warn "\"$sectionName\" section is empty\n"
-	unless $size;
+    unless ($size) {
+	warn "\"$sectionName\" section is empty\n";
+	next;
+    }
 
     my $buffer;
     my $executable = new FileHandle $name, 'r';

@@ -1,10 +1,34 @@
+#include <assert.h>
+#include <limits.h>
 #include <stdio.h>
 #include "decoder.h"
 
 
+unsigned sampleCounter;
+
+
+int main()
+{
+  switch (yylex())
+    {
+    case Normal:
+      puts("\n(terminated normally)");
+      return 0;
+    case Abnormal:
+      puts("\n(terminated abnormally)");
+      return 0;
+    default:
+      puts("\n(garbled trace)");
+      return 1;
+    }
+}
+
+
 void siteCountdown(unsigned countdown)
 {
-  printf("... %u ...\n", countdown);
+  assert(UINT_MAX - sampleCounter >= countdown);
+  sampleCounter += countdown;
+  printf("#%u...\n", sampleCounter);
 }
 
 
@@ -17,11 +41,6 @@ void siteFile(const char *file)
 void siteLine(unsigned line)
 {
   printf("%u\n", line);
-}
-
-
-void siteEnd()
-{
 }
 
 
@@ -39,89 +58,89 @@ void sampleExpr(const char *expression)
 
 void sampleChar(char value)
 {
-  printf("%hhu\n", value);
+  printf("(char) %hhu\n", value);
 }
 
 
 void sampleSignedChar(signed char value)
 {
-  printf("%hhd\n", value);
+  printf("(signed char) %hhd\n", value);
 }
 
 
 void sampleUnsignedChar(unsigned char value)
 {
-  printf("%hhu\n", value);
+  printf("(unsigned char) %hhu\n", value);
 }
 
 
 void sampleInt(int value)
 {
-  printf("%d\n", value);
+  printf("(int) %d\n", value);
 }
 
 
 void sampleUnsignedInt(unsigned int value)
 {
-  printf("%u\n", value);
+  printf("(unsigned int) %u\n", value);
 }
 
 
 void sampleShort(short value)
 {
-  printf("%hd\n", value);
+  printf("(short) %hd\n", value);
 }
 
 
 void sampleUnsignedShort(unsigned short value)
 {
-  printf("%u\n", value);
+  printf("(unsigned short) %u\n", value);
 }
 
 
 void sampleLong(long value)
 {
-  printf("%ld\n", value);
+  printf("(long) %ld\n", value);
 }
 
 
 void sampleUnsignedLong(unsigned long value)
 {
-  printf("%lu\n", value);
+  printf("(unsigned long) %lu\n", value);
 }
 
 
 void sampleLongLong(long long value)
 {
-  printf("%Ld\n", value);
+  printf("(long long) %Ld\n", value);
 }
 
 
 void sampleUnsignedLongLong(unsigned long long value)
 {
-  printf("%Lu\n", value);
+  printf("(unsigned long long) %Lu\n", value);
 }
 
 
 void sampleFloat(float value)
 {
-  printf("%g\n", value);
+  printf("(float) %g\n", value);
 }
 
 
 void sampleDouble(double value)
 {
-  printf("%g\n", value);
+  printf("(double) %g\n", value);
 }
 
 
 void sampleLongDouble(long double value)
 {
-  printf("%Lg\n", value);
+  printf("(long double) %Lg\n", value);
 }
 
 
 void samplePointer(const void * value)
 {
-  printf("%p\n", value);
+  printf("(const void *) %p\n", value);
 }

@@ -10,9 +10,10 @@
 static char recentFile[PATH_MAX];
 %}
 
-%option main
+%option nomain
 %option nodefault
 %option nounput
+%option noyywrap
 
 %x COUNTDOWN
 %x COUNTDOWN0
@@ -72,7 +73,6 @@ signature  \212sam\r\n\032\n
 }
 
 <EXPR0>{null} {
-  siteEnd();
   BEGIN COUNTDOWN0;
 }
 
@@ -181,26 +181,22 @@ signature  \212sam\r\n\032\n
   BEGIN EXPR0;
 }
 
-<FILENAME,FILENAME0>\377 {
+<FILENAME,FILENAME0>\377{signature} {
   BEGIN END;
 }
 
 <END><<EOF>> {
-  puts("\n(terminated normally)");
-  return 0;
+  return Normal;
 }
 
 <FILENAME,FILENAME0,EXPR,EXPR0><<EOF>> {
-  puts("\n(terminated abnormally)");
-  return 1;
+  return Abnormal;
 }
 
 <LINE,VALUE><<EOF>> {
-  puts("\n\n(terminated abnormally)");
-  return 1;
+  return Abnormal;
 }
 
 <*>{byte} {
-  puts("\n\n(garbled input)");
-  return 2;
+  return Garbled;
 }

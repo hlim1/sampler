@@ -31,4 +31,5 @@ __attribute__((destructor)) static void shutdown()
 {
   const char terminator = -1;
   logTableau(&terminator, sizeof(terminator));
+  logTableau(signature, sizeof(signature));
 }

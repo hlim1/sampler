@@ -6,6 +6,11 @@ extern "C" {
 #endif // C++
 
 
+enum DecoderResult { Normal = 0, Abnormal, Garbled };
+
+#define YY_DECL enum DecoderResult yylex()
+YY_DECL;
+
 void siteCountdown(unsigned);
 void siteFile(const char *);
 void siteLine(unsigned);

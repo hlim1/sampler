@@ -214,6 +214,26 @@ We expect that these and other optimizations will continue to improve
 the performance benefit from sampling, both for single-function as
 well as whole-program instrumentation.
 
+\subsection{Bug Hunting Using Feature Elimination}
+
+\aside{Story to tell here:
+  
+  Preceding experiment is all well and good if possible failure points
+  are explicitly marked with assertions, but you can't expect that in
+  general.  Instead, we want to make fairly wild guesses about
+  possible problems, then eliminate these in light of their behavior
+  in actual runs.  Function return values are a good place to make
+  these guesses, as they are often used to indicate success or failure
+  of a given operation.  Experiment with \texttt{ccrypt} shows that we
+  can reliably rediscover a known fatal error by sampling and
+  filtering function return values.
+  
+  We didn't have the \texttt{ccrypt} experiment when we first wrote up
+  the \texttt{bc} experiment, so \autoref{sec:debug} already spends
+  some time introducing the idea of counter triples, randomized input
+  to simulate a large user community, etc.  Some of that text should
+  probably be lifted up and placed here instead.}
+
 \subsection{Statistical Debugging}
 \label{sec:debug}
 
@@ -416,28 +436,31 @@ the rest, and show an unmistakable trend:
 \end{list}
 
 The source code for \texttt{more\_arrays()} appears in
-\autoref{fig:bc:more-arrays}.  An earlier comment suggests that this
-one of a suite of ``three functions for increasing the number of
-functions, variables, or arrays that are needed''.  The logic is a
-fairly clear instance of the buffer reallocation idiom, even to one
-unfamiliar with the code: line 167 allocates a larger chunk of memory;
-line 171 is the top of a loop that transfers values over from the old,
-smaller array; line 176 completes the resize by zeroing out the new
-extra space.  As the comment suggests, there are two other similar
-functions (\texttt{more\_functions()} and \texttt{more\_variables()})
-nearby that do largely the same thing with different storage pools.
-The text of these three functions is nearly identical, but each uses
-different global variables (e.g. \texttt{a\_count} versus
-\texttt{f\_count} versus \texttt{v\_count}).
+\autoref{fig:bc:more-arrays}.  An comment earlier in the same file
+suggests that this one of a suite of ``three functions for increasing
+the number of functions, variables, or arrays that are needed''.  The
+logic is a fairly clear instance of the buffer reallocation idiom,
+even to one unfamiliar with the code: line 167 allocates a larger
+chunk of memory; line 171 is the top of a loop that transfers values
+over from the old, smaller array; line 176 completes the resize by
+zeroing out the new extra space.  As the comment suggests, there are
+two similar functions (\texttt{more\_functions()} and
+\texttt{more\_variables()}) nearby that do largely the same thing with
+different storage pools.  The text of these three functions is nearly
+identical, but each uses different global variables (e.g.
+\texttt{a\_count} versus \texttt{f\_count} versus \texttt{v\_count}).
 
-Crashes are more likely when the loop index (\texttt{indx}) is smaller
-than \texttt{next\_func} and larger than \texttt{break\_label},
-\texttt{optind}, and \texttt{out\_col}.  None of these appear to have
-a direct connection to \texttt{indx}, though: \texttt{optind} is part
-of command line flag processing, \texttt{break\_label} concerns
-evaluation of loops, \texttt{out\_col} helps output formatting, and
-\texttt{next\_func} records how much storage has been consumed in the
-pool managed by \texttt{more\_functions()}.
+The statistical model reveals that crashes are more likely when the
+loop index (\texttt{indx}) is larger than \texttt{scale},
+\texttt{use\_math}, \texttt{opterr}, \texttt{next\_func}, and
+\texttt{i\_base}.  None of these appear to have a direct connection to
+\texttt{indx}, though.  For example, \texttt{opterr} is part of
+command line flag processing, while \texttt{next\_func} records how
+much storage has been consumed in the pool managed by
+\texttt{more\_functions()}.
+
+\aside{Subsequent paragraphs in this section are under active revision
+  to reflect our improved statistical model.}
 
 However, we must consider indirect effects as well.  If
 \texttt{next\_func} is unusually large, it will tend to be larger than

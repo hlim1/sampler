@@ -5,6 +5,7 @@ omffile = $(docname)-$(lang).omf
 entities =
 
 include $(top_srcdir)/doc/xmldocs.make
+xml_files += $(docname).xsl $(docname).css
 
 dist-hook: app-dist-hook
 

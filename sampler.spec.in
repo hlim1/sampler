@@ -103,7 +103,7 @@ tools for collecting and decoding sampled instrumentation reports.
 %{_datadir}/%{name}/doc
 %{_datadir}/omf/*
 %dir %{_libdir}/%{name}
-%{_libdir}/%{name}/instrumentor
+%{_libdir}/%{name}/driver
 %{_libdir}/%{name}/tools
 
 %post devel

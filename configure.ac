@@ -127,12 +127,14 @@ AC_SUBST(schemadir, '${GCONF_SCHEMA_FILE_DIR}')
 AC_SUBST(serversdir, '${libdir}/bonobo/servers')
 
 AC_SUBST(package_libdir, '${libdir}/${PACKAGE}')
-AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
-AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
-AC_SUBST(driverdir, '${instrumentordir}/driver')
+AC_SUBST(driverdir, '${package_libdir}/driver')
+AC_SUBST(samplerdir, '${driverdir}/sampler')
+AC_SUBST(schemesdir, '${samplerdir}/schemes')
+AC_SUBST(threadsdir, '${samplerdir}/threads')
+AC_SUBST(threads_yesdir, '${threadsdir}/yes')
+AC_SUBST(threads_nodir, '${threadsdir}/no')
 AC_SUBST(toolsdir, '${package_libdir}/tools')
 AC_SUBST(traylibdir, '${package_libdir}/tray')
-AC_SUBST(package_includedir, '${driverdir}/sampler')
 
 AC_SUBST(package_datadir, '${datadir}/${PACKAGE}')
 AC_SUBST(commondir, '${package_datadir}/common')
@@ -328,12 +330,12 @@ doc/Makefile
 doc/config.xml
 doc/sampler-guide/Makefile
 doc/sampler-guide/C/Makefile
+driver/Makefile
 fuzz/Makefile
 instrumentor/Makefile
 instrumentor/balance/Makefile
 instrumentor/bounds/Makefile
 instrumentor/branches/Makefile
-instrumentor/driver/Makefile
 instrumentor/function-entries/Makefile
 instrumentor/g-object-unref/Makefile
 instrumentor/g-object-unref/atlocal
@@ -354,6 +356,10 @@ launcher/trayicon/libegg/Makefile
 launcher/trayicon/libegg/tray/Makefile
 launcher/wrapper/Makefile
 lib/Makefile
+lib/schemes/Makefile
+lib/threads/Makefile
+lib/threads/no/Makefile
+lib/threads/yes/Makefile
 mining/analysis/Makefile
 mining/dumps/Makefile
 mining/Makefile
@@ -369,16 +375,16 @@ www/Makefile
 www/cgi-bin/Makefile
 ])
 
-AC_CONFIG_FILES([instrumentor/driver/sampler-cc], [chmod +x $ac_file])
-AC_CONFIG_FILES([instrumentor/driver/sampler-cc-here], [chmod +x $ac_file])
-AC_CONFIG_FILES([instrumentor/driver/as], [chmod +x $ac_file])
-AC_CONFIG_FILES([instrumentor/driver/cc1], [chmod +x $ac_file])
+AC_CONFIG_FILES([driver/sampler-cc], [chmod +x $ac_file])
+AC_CONFIG_FILES([driver/sampler-cc-here], [chmod +x $ac_file])
+AC_CONFIG_FILES([driver/as], [chmod +x $ac_file])
+AC_CONFIG_FILES([driver/cc1], [chmod +x $ac_file])
 AC_CONFIG_FILES([launcher/test-by-extension], [chmod +x $ac_file])
 AC_CONFIG_FILES([mining/populate/insert-builds.pl], [chmod +x $ac_file])
 AC_CONFIG_FILES([mining/populate/insert-runs.pl], [chmod +x $ac_file])
 AC_CONFIG_FILES([mining/populate/integrity-checks.pl], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/add-depends], [chmod +x $ac_file])
-AC_CONFIG_FILES([tools/build-control], [chmod +x $ac_file])
+AC_CONFIG_FILES([tools/build-info-deb], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/find-sampler-info], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/install-gconf], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/install-wrappers], [chmod +x $ac_file])

@@ -8,6 +8,7 @@ endif
 SUBDIRS =					\
 	debian					\
 	doc					\
+	driver					\
 	fuzz					\
 	instrumentor				\
 	$(launcher)				\
@@ -30,3 +31,10 @@ rpms: dist sampler.spec
 	cp $(distdir).tar.gz redhat/SOURCES
 	cp sampler.spec redhat/SPECS
 	rpmbuild --define '_topdir $(shell pwd)/redhat' -ba redhat/SPECS/sampler.spec
+
+debs: dist
+	rm -rf debuild
+	mkdir debuild
+	cp $(distdir).tar.gz debuild
+	cd debuild && tar xzf $(distdir).tar.gz
+	cd debuild/$(distdir) && debuild

@@ -8,20 +8,23 @@ if DISTRO_BASIS_DEBIAN
 distro_data = sampler.mk
 distro_scripts =				\
 	add-depends				\
-	build-control
+	build-info-deb
 endif
+
+perl_data =					\
+	Embedded.pm				\
+	Function.pm				\
+	Node.pm					\
+	Object.pm				\
+	SymbolTable.pm				\
+	Unit.pm
 
 tools_PROGRAMS =				\
 	decimate-samples
 
 tools_DATA =					\
 	$(distro_data)				\
-	Embedded.pm				\
-	Function.pm				\
-	Node.pm					\
-	Object.pm				\
-	SymbolTable.pm				\
-	Unit.pm					\
+	$(perl_data)				\
 	application.schemas.in			\
 	wrapper.in
 
@@ -37,12 +40,13 @@ tools_SCRIPTS =					\
 	resolve-timestamps
 
 EXTRA_DIST =					\
-	$(tools_DATA)				\
+	$(perl_data)				\
 	application.schemas.in			\
 	extract-report				\
 	extract-section				\
 	find-sampler-info			\
 	resolve-cfg				\
+	sampler.mk.in				\
 	skip-test				\
 	wrapper.in.in
 
@@ -70,8 +74,13 @@ wrapper.in: %: %.in
 	sed							\
 		-e 's!@''pkgdatadir@!$(pkgdatadir)!'		\
 		-e 's!@''pkglibdir@!$(pkglibdir)!'		\
-		-e 's!@''PACKAGE_VERSION@!$(PACKAGE_VERSION)!'		\
+		-e 's!@''PACKAGE_VERSION@!$(PACKAGE_VERSION)!'	\
 		-e 's!@''DISTRO_NAME@!$(DISTRO_NAME)!'		\
-		-e 's!@''DISTRO_VERSION@!$(DISTRO_VERSION)!'		\
+		-e 's!@''DISTRO_VERSION@!$(DISTRO_VERSION)!'	\
 		-e 's!@''DISTRO_ARCH@!$(DISTRO_ARCH)!'		\
+		<$< >$@
+
+sampler.mk: %: %.in
+	sed							\
+		-e 's!@''toolsdir@!$(toolsdir)!'		\
 		<$< >$@

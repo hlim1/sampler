@@ -8,6 +8,5 @@ sampler
 sampler-dev
 sampler-doc
 sampler-server
-stamp-autotools-files
-stamp-makefile-build
+stamp-*
 tmp

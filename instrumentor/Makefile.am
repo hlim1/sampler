@@ -1,5 +1,4 @@
 SUBDIRS =					\
-	driver					\
 	balance					\
 	bounds					\
 	branches				\
@@ -21,7 +20,7 @@ include $(top_srcdir)/ocaml.mk.in
 libdirs += $(top_builddir)/ocaml
 syslibs = str.$(cma) unix.$(cma)
 
-instrumentor_SCRIPTS = main
+driver_SCRIPTS = main
 
 
 MOSTLYCLEANFILES += libraries.ml

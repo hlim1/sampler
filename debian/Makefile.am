@@ -9,3 +9,8 @@ EXTRA_DIST =					\
 	sampler.install				\
 	sampler-server.install			\
 	watch
+
+clean-local:
+	cd .. && dh_clean
+
+CLEANFILES = *-stamp stamp-*

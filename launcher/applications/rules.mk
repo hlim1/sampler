@@ -58,9 +58,9 @@ $(sampler_extras): config.in $(name)-sampler.schemas interface.glade wrapper.in
 
 srpm: $(sam_srpm)
 .PHONY: srpm
-$(sam_srpm): $(spec) $(rpmbuild) $(sampler_extras) SOURCES/.stamp SRPMS/.stamp
-	cp $(sampler_exras) SOURCES
-	$(rpmenv) rpm -i $<
+$(sam_srpm): $(spec) $(srpm) $(sampler_extras) $(rpmbuild) SOURCES/.stamp SRPMS/.stamp
+	cp $(sampler_extras) SOURCES
+	$(rpmenv) rpm -i $(srpm)
 	$(rpmenv) $(rpmbuild) '$(scheme)' -bs $<
 
 rpm: $(sam_rpm)
@@ -70,7 +70,7 @@ $(sam_rpm): $(sam_srpm) $(rpmbuild) BUILD/.stamp RPMS/.stamp
 	[ -e $@ ]
 
 .PHONY: bi
-bi: $(sam_rpm) $(rpmbuild) BUILD/.stamp RPMS/.stamp
+bi: $(spec) $(rpmbuild) BUILD/.stamp RPMS/.stamp
 	cp $(spec) SPECS
 	$(rpmenv) $(rpmbuild) '$(scheme)' -bi --short-circuit SPECS/$(spec)
 

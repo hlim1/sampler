@@ -25,5 +25,5 @@ let phase =
     in
 
     let init = SingleInit (mkString text) in
-    let global = GVar (varinfo, Some init, locUnknown) in
+    let global = GVar (varinfo, { init = Some init }, locUnknown) in
     file.globals <- global :: file.globals)

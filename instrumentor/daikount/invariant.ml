@@ -45,18 +45,18 @@ let invariant file =
       let initNum tag num = init tag (kinteger IUInt num) in
       
       GVar (global,
-	    Some
-	      (CompoundInit
-		 (compType,
-		  [ init "next" zero;
-		    arrayOffset, makeZeroInit arrayField.ftype;
-		    initStr "file" location.file;
-		    initNum "line" location.line;
-		    initStr "function" func.svar.vname;
-		    initStr "left" left.name;
-		    initStr "right" right.name;
-		    initNum "id" !id
-		  ])),
+	    { init = Some
+		(CompoundInit
+		   (compType,
+		    [ init "next" zero;
+		      arrayOffset, makeZeroInit arrayField.ftype;
+		      initStr "file" location.file;
+		      initNum "line" location.line;
+		      initStr "function" func.svar.vname;
+		      initStr "left" left.name;
+		      initStr "right" right.name;
+		      initNum "id" !id
+		    ])) },
 	    location)
     in
 

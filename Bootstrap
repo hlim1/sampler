@@ -43,6 +43,5 @@ cd $srcdir
 aclocal
 autoheader
 [ -d config-aux ] || mkdir config-aux
-libtoolize
 automake -a
 autoconf

@@ -214,47 +214,229 @@ We expect that these and other optimizations will continue to improve
 the performance benefit from sampling, both for single-function as
 well as whole-program instrumentation.
 
-\subsection{Bug Hunting Using Feature Elimination}
+\subsection{Bug Isolation Using Feature Elimination}
+\label{subsec:ccrypt}
 
-\aside{Story to tell here:
-  
-  Preceding experiment is all well and good if possible failure points
-  are explicitly marked with assertions, but you can't expect that in
-  general.  Instead, we want to make fairly wild guesses about
-  possible problems, then eliminate these in light of their behavior
-  in actual runs.  Function return values are a good place to make
-  these guesses, as they are often used to indicate success or failure
-  of a given operation.  Experiment with \texttt{ccrypt} shows that we
-  can reliably rediscover a known fatal error by sampling and
-  filtering function return values.
-  
-  We didn't have the \texttt{ccrypt} experiment when we first wrote up
-  the \texttt{bc} experiment, so \autoref{sec:debug} already spends
-  some time introducing the idea of counter triples, randomized input
-  to simulate a large user community, etc.  Some of that text should
-  probably be lifted up and placed here instead.}
+%% \aside{Story to tell here:
+
+%%   Preceding experiment is all well and good if possible failure points
+%%   are explicitly marked with assertions, but you can't expect that in
+%%   general.  Instead, we want to make fairly wild guesses about
+%%   possible problems, then eliminate these in light of their behavior
+%%   in actual runs.  Function return values are a good place to make
+%%   these guesses, as they are often used to indicate success or failure
+%%   of a given operation.  Experiment with \texttt{ccrypt} shows that we
+%%   can reliably rediscover a known fatal error by sampling and
+%%   filtering function return values.
+
+%%   We didn't have the \texttt{ccrypt} experiment when we first wrote up
+%%   the \texttt{bc} experiment, so \autoref{sec:debug} already spends
+%%   some time introducing the idea of counter triples, randomized input
+%%   to simulate a large user community, etc.  Some of that text should
+%%   probably be lifted up and placed here instead.}
+
+
+\CCured style bug-hunting techniques is all well and good if possible
+failure points are explicitly marked with assertions.  But in general,
+this is not to be expected.  Crafting potentially useful assertions is
+at best a painstaking process; more often than not, it is horribly
+ineffective.  In this and the next subsections, we describe how to
+harness the power of thousands of trial users to cast a much bigger
+net, one that leads to the automatic discovery of sometimes
+non-trivial bugs.  First, a large number of fairly wild guesses about
+possible problems are strewn into the code, their behavior at run time
+is then sampled under the framework described in
+\autoref{sec:framework}.  After collecting a number of these trial
+runs, we combine simple rules and more sophisticated statistical
+techniques to automatically eliminate swaths of wrong guesses, leaving
+just a handful of guesses that accurately isolate the location of the
+bug.
+
+Function return values are good candidate guesses for where a bug may
+hide.  Often times a program crashes because it has neglected to check
+for the (failed) return value of a function call.  The compression
+program \texttt{ccrypt} is a good example.  Given an input file, the
+program first checks whether the designated output file exists; if
+so, it asks the user whether or not to overwrite it.  The function
+\texttt{xreadline()} returns the user response string, which is then
+directly sent to \texttt{strcmp()} without checking for the validity
+of the string pointer.  Hence if the user responds with \texttt{eof},
+\texttt{xreadline()} will return the \texttt{NULL} pointer, causing the
+program to crash in \texttt{strcmp()}.
+
+The \texttt{ccrypt} bug is a deterministic one, meaning that without
+exception, the program crashes if and only if \texttt{xreadline()}
+returns zero or \texttt{NULL}.  This is different from the kind of
+non-deterministic bugs often seen with memory corruption: sometimes
+the bug will result in a crash, but occasionally the program completes
+successfully even in the presence of the bug.  Additionally, the
+\texttt{ccrypt} bug is very close to the actual crashing point, making
+debugging very easy for a human.  Nevertheless, this kind of bug is an
+annoyance in a large program with many other bug reports.  It also
+poses a sanity check for the automatic bug-hunting approach: one
+would hope that there is a very simple solution to catch these
+simple deterministic bugs.  Our solution, as it turns out, does not
+even require the heavy statistical machinery needed in
+\autoref{sec:debug}; it is based on straightforward logical
+reasoning.
+
+Since we do not have ready access to thousands of users, we simulate
+a large user community by using randomly generated inputs in the
+spirit of the Fuzz project~\cite{MKLMMNS95}.  For each trial run, we
+generate a random input file, and sometimes, we also generate an
+output file in order to induce the crash.  Assertions are instrumented
+into the code to compare every function call return value against zero
+(the usual signal for success).  A direct trace of these comparisons
+is out of the question: even with very sparse sampling, the
+amount of data generated would overwhelm the client, network, and
+server.  Instead, we locally reduce the trace by merely recording the
+number of times the return value is greater than, less than, or equal
+to zero.
+
+For \texttt{ccrypt}, this results in 570 predicates, or $570 * 3 =
+1710$ total number of counters.  In statistical analysis lingo, each
+of these counters is a \termdef{feature}.  Only one of these features
+is what we want, namely, the one of the return value of
+\texttt{xreadline()} being equal to 0.  Our dataset contains 2990
+trial runs at a sampling rate of $1/1000$; on average, the
+program records the value of only one instrumentation site for every
+thousand that it encounters.  This means that, with high probability,
+we will not have sampled the return value of \texttt{xreadline()} for
+any single run.  In fact, out of the 2990 trial runs, only 88
+ultimately resulted in a crash, and the smoking gun is observed in
+only one of these crashes.  But the picture is not quite as bad as it
+may seem: shuffling through the data a bit, we notice that out of the
+1710 counters, only 141 of them are ever non-zero.\footnote{Beyond
+  simplifying the statistical analysis, this degree of regularity
+  means that counter reports are highly compressible: good news for
+  deployed users with small hard drives or slow modems.}  Still, this
+poses a daunting task for any statistical analysis technique.
+
+Let's stop for a bit and think about the problem rationally.  As a bug
+hunter, we may have some intuition about the bug, or at least we can
+try out several alternatives.  First, we can assume that the bug is
+deterministic and see where that leads us.  Right away, this
+assumptions means that a predicate that is true for any successful run
+can never be the bug -- if it were, then the program would have
+crashed.  Hence we can eliminate all the counters that are ever
+non-zero in any of the 2902 successful runs, and only keep those
+that are always zero for all successful runs. Doing this feature
+elimination step on the 141 features leaves us with just 2 features,
+one is the predicate for \texttt{file\_exists()} returning true ($>
+0$), and the other the smoking gun.
+
+The result is encouraging.  However, we may question whether using
+close to 3000 trial runs to find one simple bug is an overkill.  More
+importantly, we would like to know how many successful runs it takes
+on average to weed out all but a handful of the ``good'' features,
+i.e. those that are most likely bugs in the program.
+\autoref{fig:ngood} plots the number of ``good'' features selected,
+averaged across 100 random sequences of subsets of the 2902 successful
+runs.  The crosses mark the means, while the vertical bars extend one
+standard deviation above and below the mean.  The curve drops very
+sharply with the first few hundred runs, and slowly peter out in the
+tail.  The short vertical bars in this case tells us that there's not
+much variation across the 100 random sequences of subsets.  The
+results show that, on average, 650 runs are enough to isolate 20
+candidate features, another 550 runs reduces that count by half, and
+a total of 1750 runs is enough to narrow the set of good features down
+to 5.
+
+\begin{figure}
+  \centering
+  \small
+  \includegraphics[width=\columnwidth]{applications/ds1000ngood_plot}
+  \caption{Effect of dataset size on the number of good features
+    selected by the all-zero-for-all-successes feature selection
+    process.}
+  \label{fig:ngood}
+\end{figure}
+
+In the field of statistical analysis and machine learning,
+\termdef{feature selection} is a symmetric notion: important features
+are those that are highly correlated with either crashes or successes.
+However, when it comes to bug isolation, we only want the features
+that are predictive of a crash.  We can make good use of this kind of
+\termdef{negative information} in our analysis.  While we cannot
+always be certain which ones are predictive of a crash, we can
+eliminate those features that could not possibly have caused the
+crash.  The zero-for-all-successes selection criterion that we
+describe above lies along this line of reasoning.  However, it only
+works if the bug is deterministic.  If there is are cases where
+the program succeeds despite the occurrence of the bug, then the
+criterion would wrongly eliminate the actual bug.
+
+A rule that works for both sporadic and deterministic bugs is to
+eliminate those features that are always zero in all the observed
+crashes.  The reason is that predicates that are never observed to be
+true in any crashes represent events that are never witnessed in
+those crashes.  Assuming that we have enough crashed trial runs at the
+given sampling rate to observe the event at least once, then a event
+that was never observed in these trials could not possibly have caused
+the crash.  Applying this rule to the 141 effective predicates of the
+88 crashed runs leaves us with 45 features.
+
+A third criterion is to eliminate those features representing lines of
+code that were never reached due to the crash: un-executed code could
+not cause a crash.  A rough count of code coverage can be obtained by
+summing the triple counters for each predicate.  In the case of
+\texttt{ccrypt}, summing the number of times a return value is greater
+than, equal to, or less than zero, gives us the total number of times
+we sampled that return value.  Again assuming we have enough number of
+runs in our data set, if the sum is always zero, then with high
+probability, the instrumentation site in question was probably never
+reached during any crashed run.  Notice that the set of features
+eliminated using this rule is a subset of those eliminated by rule two
+above.  Counter values are always non-negative, hence if the sum of
+the three counters is zero for all crashes, then each individual
+counter must also be zero for all crashes.  Applying rule three to the
+\texttt{ccrypt} crashed runs leaves us with 48 features, including the
+45 that were selected by rule two.
+
+We have already alluded to the combined effect of sampling rate and
+dataset size on our confidence results.  More specifically, suppose we
+are interested in an event that will happen exactly once during a
+trial run.  At a sampling rate of $1/1000$, we'll observe this event
+an average of once every thousand trials.  To be $95\%$ confident that
+we'll have observed said event at least once, we'll need at least
+$\log(1-0.95)/ \log(1-1/1000) \approx 2995$ trials.
+
+In summary, the \texttt{ccrypt} example illustrates a simple bug that
+can be rooted out using simple techniques.  There are three strategies
+that we can use for feature elimination:
+%%
+\begin{enumerate}
+\item[1.] discard a feature if it is nonzero in any successful run;
+\item[2.] discard a feature if it is zero in every failed run;
+\item[3.] discard a feature triple if their sum is zero in every failed run
+\end{enumerate}
+%%
+Rule 1 cannot be used if the bug is suspected to be
+non-deterministic.  Rule 2 in fact covers rule 3, but neither are as
+effective for a deterministic bug.  In the next subsection, we look at
+a more elusive bug and describe powerful statistical techniques used
+to catch it.
 
 \subsection{Statistical Debugging}
 \label{sec:debug}
 
-Sampled information about program behavior can be thought of as a
-database.  Data mining techniques, then, may reveal important
-information about the aggregate behavior of many runs.  Of particular
-interest to us is finding and fixing bugs.  We now illustrate how
-mining of sampled program behavior can help direct software engineers
-to the root cause of difficult bugs.
+%% this paragraph no longer fits the flow here, perhaps we can make
+%% this point elsewhere in the paper?  [axz]
+%% Sampled information about program behavior can be thought of as a
+%% database.  Data mining techniques, then, may reveal important
+%% information about the aggregate behavior of many runs.  Of particular
+%% interest to us is finding and fixing bugs.  We now illustrate how
+%% mining of sampled program behavior can help direct software engineers
+%% to the root cause of difficult bugs.
 
-Because we do not have ready access to thousands of users, we simulate
-a large user community by using randomly generated inputs in the
-spirit of the Fuzz project~\cite{MKLMMNS95}.  Our selected target is
-version 1.06 of the GNU implementation of \texttt{bc}.  We find that
-feeding \texttt{bc} nine megabytes of random input causes it to crash
-roughly one time in four.  \disregard{While this would be an unusually
-  high failure rate for shipping software under normal usage patterns,
-  we expect that users experiencing crashes will be more likely to
-  opt-in to a trace reporting system.  Thus, this may be a reasonable
-  ratio to expect if most crashes and a few non-crashes are reported.}
-
+Our next target is version 1.06 of the GNU implementation of
+\texttt{bc}.  We find that feeding \texttt{bc} nine megabytes of
+random input causes it to crash roughly one time in four.
+\disregard{While this would be an unusually high failure rate for
+  shipping software under normal usage patterns, we expect that users
+  experiencing crashes will be more likely to opt-in to a trace
+  reporting system.  Thus, this may be a reasonable ratio to expect if
+  most crashes and a few non-crashes are reported.}
 Quick perusal of the stack trace at a typical failure is discouraging.
 The crash occurs several frames deep inside the C library's
 \texttt{malloc()} function: a sure sign of heap corruption.  Such bugs
@@ -281,11 +463,13 @@ all other local or global variables $\{ \mathtt{b}_1, \mathtt{b}_2,
 \dots, \mathtt{b}_n \}$ which are also in scope and which have the
 same type.  We then compare the updated \texttt{a} to each
 $\mathtt{b}_i$, and note whether \texttt{a} was less than, equal to,
-or greater than $\mathtt{b}_i$.  Even with very sparse sampling, a
-direct trace of these comparisons would overwhelm both client,
-network, and server.  Instead, we locally reduce the trace by merely
-counting how often each of the three relative orderings appeared.  We
-compare pointers to same-typed pointers as well, and additionally
+or greater than $\mathtt{b}_i$.
+%% the following sentence has been moved to the previous subsection [axz]
+%% Even with very sparse sampling, a direct trace of these comparisons
+%% would overwhelm both client, network, and server.  Instead, we
+%% locally reduce the trace by merely counting how often each of the
+%% three relative orderings appeared.
+We compare pointers to same-typed pointers as well, and additionally
 compare each pointer for equality with null.  One comparison between
 \texttt{a} and $\mathtt{b}_i$, which bumps one of three counters, is
 considered to be one instrumentation site subject to random sampling.
@@ -293,6 +477,8 @@ When an instrumented application terminates, it emits the vector of
 counter triples along with a flag indicating whether it completed
 successfully or was aborted by a fatal signal.
 
+%% changed number of counter triples to reflect the dataset without
+%% bison/lex lines
 As expected, this gives us a large number of candidate predicates:
 10,050 counter triples, or 30,150 counters in all.  Because our
 guesses are so crude, the vast majority of these are of no interest:
@@ -339,7 +525,7 @@ function parameters to ignore most input features.
 
 \aside{Alice writes: this paragraph should be revisited after we
   finish the experimental results.}
-  
+
 While other ways of combined classification and feature selection
 exist, none of them are particularly well-suited for this problem.
 Some methods \cite{Golub:MCC:1999,Tibshirani2002} calculate a
@@ -396,28 +582,30 @@ subtracting a penalty term based on the L1-norm $\norm{\tilde{\beta}}_1 =
     & - \lambda \norm{\beta}_1
   \end{split}
 \end{equation*}
+%%
 
 \subsubsection{Bug Hunting in \texttt{bc}}
-
 Our \texttt{bc} dataset consists of 4390 runs with distinct random
 inputs and distinct randomized $1/1000$ sampling, of which 2729 are
 randomly chosen for training, 322 for validation, and 1339 for
 testing.  Although there are 30,150 raw features, many can be
 discarded immediately: in the training set 27,242 features are always
 zero.  Hence the effective number of features used in training is
-2908.  (Beyond simplifying the statistical analysis, this degree of
-regularity means that counter reports are highly compressible: good
-news for deployed users with small hard drives or slow modems.)
-Furthermore, to make the magnitude of the $\beta$ parameters comparable,
-the feature values have to be on the same scale.  Hence all the input
-features are shifted and scaled to lie between $[0,1]$, then
-normalized to have unit sample variance.  A suitable value for the
-regularization parameter $\lambda$ is determined through validation to be
-$0.3$.  The model is then trained using stochastic gradient ascent to
-reach a local maximum of the penalized log likelihood.  Using a
-learning rate of $10^{-5}$, the model usually converges within sixty
-iterations through the training set.  This takes roughly thirty
-minutes in MATLAB on a 1.8 GHz Pentium 4 CPU with 1 GB of RAM.
+2908.  (Applying rule 2 described in \autoref{subsec:ccrypt}
+can eliminate another 647 features that are zero for all failed runs.
+But the presence or absence of these 647 features turn out not to
+affect the quality of the regularized logistic regression results.)
+Furthermore, to make the magnitude of the $\beta$ parameters
+comparable, the feature values have to be on the same scale.  Hence
+all the input features are shifted and scaled to lie between $[0,1]$,
+then normalized to have unit sample variance.  A suitable value for
+the regularization parameter $\lambda$ is determined through
+validation to be $0.3$.  The model is then trained using stochastic
+gradient ascent to reach a local maximum of the penalized log
+likelihood.  Using a learning rate of $10^{-5}$, the model usually
+converges within sixty iterations through the training set.  This
+takes roughly thirty minutes in MATLAB on a 1.8 GHz Pentium 4 CPU with
+1 GB of RAM.
 
 Once the model has been trained, predicates with the largest $\beta$
 coefficients suggest where to begin looking for the bug.  In our case,
@@ -520,7 +708,7 @@ methodology are key areas for continued development.
   it by way of explaining \texttt{why} this happens.}
 
 \aside{Need to add discussion of overhead: compare no instrumentation,
-  sampled instrumentation, and unconditional instrumentation.} 
+  sampled instrumentation, and unconditional instrumentation.}
 
 This bug seems clear enough once found.  However it has been present
 and undiscovered at least since 1992 (the time\-stamp on this file in

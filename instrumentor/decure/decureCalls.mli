@@ -1,1 +1,1 @@
-val prepatch : Cil.fundec -> Calls.infos
+class prepatcher : Calls.prepatcher

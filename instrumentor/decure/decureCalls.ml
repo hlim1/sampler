@@ -14,9 +14,3 @@ class prepatcher =
       | Generic ->
 	  super#vstmt stmt
   end
-
-
-let prepatch {sbody = sbody} =
-  let visitor = new prepatcher in
-  ignore (visitCilBlock (visitor :> cilVisitor) sbody);
-  visitor#result

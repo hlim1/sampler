@@ -7,6 +7,6 @@ class visitor =
     inherit Prepare.visitor
 
     method private collectSites = Find.collect
-    method private prepatchCalls = DecureCalls.prepatch
+    method private prepatcher = new DecureCalls.prepatcher
     method private shouldTransform = Should.shouldTransform
   end

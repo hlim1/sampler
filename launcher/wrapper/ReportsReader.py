@@ -18,10 +18,9 @@ class ReportsReader (dict):
             match = startTag.match(line)
             if match:
                 name = match.group(1)
-                if name in self:
-                    print >>sys.stderr, 'duplicate report name:', name
+                if not name in self:
+                    self[name] = cStringIO.StringIO()
 
-                self[name] = cStringIO.StringIO()
                 for line in lines:
                     if line == '</report>\n':
                         break

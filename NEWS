@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.5.6
+
+** Driver bug fixes when running out of build tree.
+
 * sampler-0.5.5
 
 ** Minor ident string improvements.

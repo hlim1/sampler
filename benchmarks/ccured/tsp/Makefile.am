@@ -1,6 +1,6 @@
 name := tsp
 
-buildOnlys := 1
+#buildOnlys := 1
 runArgs :=
 
 

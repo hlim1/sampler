@@ -9,36 +9,36 @@ exec ?= $(name).exe
 ########################################################################
 
 
-sampler := ../../..
-instrumentor := $(sampler)/instrumentor
-decure := $(instrumentor)/decure
+sampler = ../../..
+instrumentor = $(sampler)/instrumentor
+decure = $(instrumentor)/decure
 
 include ../config.mk
-workDir := $(workHome)/test
-workExec := $(workDir)/$(testDir)/$(exec)
-workComb := $(workExec:.exe=.cured.i)
+workDir = $(workHome)/test
+workExec = $(workDir)/$(testDir)/$(exec)
+workComb = $(workExec:.exe=.cured.i)
 
 # hide from automake
 -include ../onlys.mk
 
-alwaysForms := $(addprefix always-, $(functions) all none)
-alwaysExecs := $(alwaysForms:=.exe)
-alwaysSrcs  := $(alwaysForms:=.c)
+alwaysForms = $(addprefix always-, $(functions) all none)
+alwaysExecs = $(alwaysForms:=.exe)
+alwaysSrcs  = $(alwaysForms:=.c)
 
-sampleForms := $(addprefix sample-, $(functions) all)
-sampleExecs := $(sampleForms:=.exe)
-sampleSrcs  := $(sampleForms:=.c)
+sampleForms = $(addprefix sample-, $(functions) all)
+sampleExecs = $(sampleForms:=.exe)
+sampleSrcs  = $(sampleForms:=.c)
 
-allForms := $(alwaysForms) $(sampleForms)
-allExecs := $(alwaysExecs) $(sampleExecs)
-allIdents := $(allForms:=.ident)
+allForms = $(alwaysForms) $(sampleForms)
+allExecs = $(alwaysExecs) $(sampleExecs)
+allIdents = $(allForms:=.ident)
 
-CFLAGS := -O2
-LOADLIBES := $(trusted:%=$(workDir)/$(testDir)/%) $(workHome)/obj/x86_LINUX/ccured_GNUCC_releaselib.a -lm
+CFLAGS = -O2
+LOADLIBES = $(trusted:%=$(workDir)/$(testDir)/%) $(workHome)/obj/x86_LINUX/ccured_GNUCC_releaselib.a -lm
 link = $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
-decureMain := $(decure)/main
-runDecure := $(decureMain)
+decureMain = $(decure)/main
+runDecure = $(decureMain)
 
 
 ########################################################################
@@ -76,8 +76,10 @@ basis-cured.c: $(decure)/filterComplete $(workComb)
 	$^  >$@ || rm -f $@
 	[ -r $@ ]
 
+countdown_headers = no-threads countdown cyclic
+
 decurable.i: basis-cured.c
-	$(CPP) -include $(sampler)/libcountdown/event.h $< >$@ || rm -f $@
+	$(CPP) $(countdown_headers:%=-include $(sampler)/libcountdown/%.h) $< >$@ || rm -f $@
 	[ -r $@ ]
 
 
@@ -107,7 +109,6 @@ MOSTLYCLEANFILES = always-*.exe always-*.c
 ########################################################################
 
 
-$(sampleExecs): CC := libtool $(CC)
 $(sampleExecs): LOADLIBES += -L$(sampler)/libcountdown -lcyclic -lcountdown
 
 

@@ -114,6 +114,21 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 
 AC_CONFIG_FILES([
 Makefile
+benchmarks/Makefile
+benchmarks/ccured/Makefile
+benchmarks/ccured/bh/Makefile
+benchmarks/ccured/bisort/Makefile
+benchmarks/ccured/compress/Makefile
+benchmarks/ccured/em3d/Makefile
+benchmarks/ccured/go/Makefile
+benchmarks/ccured/health/Makefile
+benchmarks/ccured/ijpeg/Makefile
+benchmarks/ccured/li/Makefile
+benchmarks/ccured/mst/Makefile
+benchmarks/ccured/perimeter/Makefile
+benchmarks/ccured/power/Makefile
+benchmarks/ccured/treeadd/Makefile
+benchmarks/ccured/tsp/Makefile
 doc/Makefile
 doc/config.xml
 fuzz/Makefile

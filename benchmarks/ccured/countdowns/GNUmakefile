@@ -6,4 +6,4 @@ all:
 	SAMPLER_SPARSITY=$(strip $(subst -, SAMPLER_SEED=, $*)) $< $@
 
 clean:
-	rm -f *.*.counts
+	rm -f *-*.counts

@@ -1,6 +1,6 @@
 name := li
 
-buildOnlys := 1
+#buildOnlys := 1
 runArgs = <$(workDir)/$(testDir)/../data/train/input/train.lsp >/dev/null
 
 

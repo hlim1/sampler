@@ -1,1 +1,1 @@
-testDir := $(wildcard spec95/*.$(name)/src)
+testDir = $(subst $(workDir)/,,$(wildcard $(workDir)/spec95/*.$(name)/src))

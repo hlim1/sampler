@@ -1,6 +1,6 @@
 name := perimeter
 
-buildOnlys := 1
+#buildOnlys := 1
 runArgs :=
 
 

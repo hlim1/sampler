@@ -1,6 +1,6 @@
 name := go
 
-buildOnlys := 1
+#buildOnlys := 1
 runArgs := 50 9
 
 

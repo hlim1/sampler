@@ -1,1 +1,1 @@
-testDir := olden/$(name)
+testDir = olden/$(name)

@@ -1,10 +1,14 @@
 AUTOMAKE_OPTIONS = foreign 1.6
 
+if WITH_GNOME
+launcher = launcher
+endif
+
 SUBDIRS =					\
 	doc					\
 	fuzz					\
 	instrumentor				\
-	launcher				\
+	$(launcher)				\
 	lib					\
 	tools					\
 	www

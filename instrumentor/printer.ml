@@ -1,5 +1,12 @@
 open Cil
 open Pretty
+open Str
+
+
+let isLocalCountdown =
+  let pattern = regexp "^localEventCountdown[1-9][0-9]*$" in
+  fun candidate ->
+    string_match pattern candidate.vname 0
 
 
 class printer =
@@ -7,8 +14,13 @@ class printer =
     inherit defaultCilPrinterClass as super
 
     method pStmtKind next () = function
-      |	If (predicate, original, instrumented, location) as skind
-	when Choices.mem skind ->
+      |	If (BinOp (Gt, Lval (Var local, NoOffset), Const (CInt64 (_, IUInt, None)), intType) as predicate,
+	    ({ battrs = []; bstmts = [{ skind = Goto _ }] } as original),
+	    ({ battrs = []; bstmts = [{ skind = Goto _ }] } as instrumented),
+	    location)
+	  as skind
+	  when isLocalCountdown local
+	->
 	  self#pLineDirective location
             ++ (align
                   ++ text "if"

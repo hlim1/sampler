@@ -61,7 +61,6 @@ class countdown file =
 			     mkBlock [mkStmt gotoOriginal],
 			     mkBlock [mkStmt gotoInstrumented],
 			     location) in
-	    Choices.add choice;
 	    choice
 
       method decrementAndCheckZero skind =

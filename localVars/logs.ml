@@ -47,9 +47,9 @@ class visitor logger func = object (self)
 	| TInt (ikind, _) ->
 	    let format =
 	      match ikind with
-	      | IChar -> "c"
-	      | ISChar -> "c"
-	      | IUChar -> "c"
+	      | IChar -> "hhd"
+	      | ISChar -> "hhd"
+	      | IUChar -> "hhd"
 	      | IShort -> "hd"
 	      | IUShort -> "hu"
 	      | IInt -> "d"

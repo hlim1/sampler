@@ -12,8 +12,8 @@ let patch clones weights func =
 	let branch =
 	  let dest' = clones#find !dest in
 	  If (Lval lval,
-	      mkBlock [mkStmt jump.skind],
 	      mkBlock [mkStmt (Goto (ref dest', location))],
+	      mkBlock [mkStmt jump.skind],
 	      location)
 	in
 	Block (mkBlock [mkStmtOneInstr call; mkStmt branch])

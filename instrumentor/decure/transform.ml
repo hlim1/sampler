@@ -8,14 +8,7 @@ class visitor file =
 
     method private collector _ = new Find.visitor
     method private prepatchCalls = DecureCalls.prepatch
-
-    method private shouldTransform func =
-      match classifyByName func.svar.vname with
-      | Check
-      | Fail ->
-	  false
-      | Generic ->
-	  super#shouldTransform func
+    method private shouldTransform = Should.shouldTransform
   end
 
 

@@ -6,7 +6,7 @@ open Str
 let collect func =
 
   let isTemporary {vname = vname} =
-    let pattern = regexp "^__\|^tmp$\|^tmp___[0-9]+$" in
+    let pattern = regexp "^__\\|^tmp$\\|^tmp___[0-9]+$" in
     string_match pattern vname 0
   in
 

@@ -6,7 +6,6 @@ class ['key, 'data] container : ('key -> 'index) -> object
   method find : 'key -> 'data
   method mem : 'key -> bool
 
-  method size : int
   method isEmpty : bool
 
   method iter : ('key -> 'data -> unit) -> unit

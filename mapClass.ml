@@ -1,22 +1,31 @@
+exception Nonempty
+
+
 class ['key, 'data] container indexer = object(self)
 
-  val storage : ('index * ('key * 'data)) list ref = ref []
+  val mutable storage
+      : (_, ('key * 'data)) Hashtbl.t
+      = Hashtbl.create 0
       
   method add key data =
     self#remove key;
-    storage := (indexer key, (key, data)) :: !storage
+    Hashtbl.add storage (indexer key) (key, data)
 
   method remove key =
-    storage := List.remove_assoc (indexer key) !storage
+    Hashtbl.remove storage (indexer key)
 					      
-  method find key = snd (List.assoc (indexer key) !storage)
+  method find key = snd (Hashtbl.find storage (indexer key))
 
-  method mem key = List.mem_assoc (indexer key) !storage
+  method mem key = Hashtbl.mem storage (indexer key)
 
-  method size = List.length !storage
-
-  method isEmpty = !storage == []
+  method isEmpty =
+    try
+      Hashtbl.iter (fun _ -> raise Nonempty) storage;
+      true
+    with Nonempty ->
+      false
 
   method iter action =
-    List.iter (fun (_, (key, data)) -> action key data) !storage
+    let action _ (key, data) = action key data in
+    Hashtbl.iter action storage
 end

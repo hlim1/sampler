@@ -1,28 +1,31 @@
-exception Missing_key
-   
+exception Chosen
+
 
 class ['key] container indexer = object(self)
-    
-  val storage : ('index * 'key) list ref = ref []
 
-  method add key =
-    if not (self#mem key) then
-      storage := (indexer key, key) :: !storage
+  val storage = new MapClass.container indexer
 
-  method remove chaff =
-    if not (self#mem chaff) then raise Missing_key;
-    storage := List.remove_assoc (indexer chaff) !storage
-			 
-  method mem key = List.mem_assoc (indexer key) !storage
-      
-  method size = List.length !storage
+  method add key = storage#add key ()
 
-  method isEmpty = !storage == []
+  method remove = storage#remove
 
-  method clear = storage := []
+  method mem = storage#mem
 
-  method choose = snd (List.hd !storage)
+  method isEmpty = storage#isEmpty
+
+  method choose =
+    let result = ref None in
+    begin
+      try
+	self#iter (fun key -> result := Some key; raise Chosen);
+	raise Not_found
+      with Chosen -> ()
+    end;
+    match !result with
+      None -> raise Not_found
+    | Some chosen -> chosen
 
   method iter action =
-    List.iter (fun (_, key) -> action key) !storage
+    let mapAction (key : 'key) () = action key in
+    storage#iter mapAction
 end

@@ -89,21 +89,19 @@ have:
   \rangle
 \end{equation*}
 
-A more compressed representation encodes the number of
-tosses until (and including) the next sampled check: $\langle6, 4, 2, 3,
-\dots\rangle$.  This representation is 
-predictive: the head of the
-sequence can be treated as a countdown, telling us how far away the
-next sample is.  If we are at the top of a basic block containing only
-two checks, and the next sampling countdown is 6, we know in advance
-that neither of those sites is sampled on this visit.  Instead,
-we merely discard two tosses and proceed directly to the
-instrumentation-free fast path:
+An equivalent representation counts the number of tosses until (and
+including) the next sampled check: $\langle6, 4, 2, 3, \dots \rangle$.
+This representation is predictive: the head of the sequence can be
+treated as a countdown, telling us how far away the next sample is.
+If we are at the top of a basic block containing only two checks, and
+the next sampling countdown is 6, we know in advance that neither of
+those sites is sampled on this visit.  Instead, we merely discard two
+tosses and proceed directly to the instrumentation-free fast path:
 
 \begin{code}
   \{\+ \\
   if(countdown > 2) \{ \\
-  \> /* fast path: no sample in near future */ \\
+  \> /* fast path: no sample ahead */ \\
   \> countdown -= 2; \\
   \> \up p = p->next; \\
   \> \up total += sizes[i]; \\
@@ -132,13 +130,13 @@ more instrumentation sites, the initial countdown check has a larger
 threshold, but that one check suffices to predict a larger number of
 skipped sampling opportunities.
 
-Consider the distribution of likely countdown values.  With a sampling
+Consider the distribution of countdown values.  With a sampling
 density of 1/100, there is a 1/100 chance that we sample at the very
 next opportunity.  There is a $(99/100) \times (1/100)$ that the next
 chance is skipped but that the one after that is taken.  A countdown
-of three appears on a $(99/100)^2 \times (1/100)$ chance, and so on.  These
-numbers form a \termdef{geometric distribution} whose mean value is
-the inverse of the sampling density (that is, 100).  Numbers in a
+of three appears on a $(99/100)^2 \times (1/100)$ chance, and so on.
+These numbers form a \termdef{geometric distribution} whose mean value
+is the inverse of the sampling density (that is, 100).  Numbers in a
 geometric distribution characterize the expected inter-arrival times
 of a Bernoulli process.  However, repeated tossing of a biased coin is
 not necessary: geometrically distributed random numbers can be
@@ -251,12 +249,12 @@ require no cloning or transformation of any kind.
 Our initial experience suggests that having the next-site countdown in
 a global variable can be expensive.  Our system is implemented as a
 source-to-source transformation for C, with \texttt{gcc} as our native
-compiler.  Examining the native machine code reveals that \texttt{gcc}
-treats the many ``\texttt{countdown--}'' decrements along the fast
-path quite poorly.  It will not, for example, coalesce a sequence of
-five such decrements into a single ``\texttt{countdown -= 5}''
-adjustment.  This apparently stems from conservative assumptions about
-aliasing of global variables.
+compiler.  We find that \texttt{gcc} treats the many
+``\texttt{countdown--}'' decrements along the fast path quite poorly.
+It will not, for example, coalesce a sequence of five such decrements
+into a single ``\texttt{countdown -= 5}'' adjustment.  This apparently
+stems from conservative assumptions about aliasing of global
+variables.
 
 Efficient countdown management requires that the native C compiler
 take greater liberties when optimizing these decrements.  We assist

@@ -5,7 +5,7 @@ open Str
 let checkPattern = regexp "^__CHECK_"
 
 
-type classification = Check | Fail | Generic
+type classification = Check | Fail | DoNotInstrument | Generic
 
 let classify = function
   | "__CHECK_BOUNDS_LEN"
@@ -33,6 +33,9 @@ let classify = function
   | "lbound_or_ubound_fail"
   | "ubound_or_non_pointer_fail" ->
       Fail
+  | "qsort_wrapper_wsww"
+  | "strcpy_wrapper_sff" ->
+      DoNotInstrument
   | _ ->
       Generic
 
@@ -48,7 +51,8 @@ class visitor =
     method vfunc func =
       match classify func.svar.vname with
       | Check
-      | Fail ->
+      | Fail
+      | DoNotInstrument ->
 	  SkipChildren
       | Generic ->
 	  DoChildren
@@ -63,6 +67,7 @@ class visitor =
 	    | Fail ->
 		currentLoc := get_stmtLoc skind;
 		ignore (bug "found raw call to failure routine %s(); missed containing check?" vname);
+	    | DoNotInstrument
 	    | Generic ->
 		if string_match checkPattern vname 0 then
 		  begin

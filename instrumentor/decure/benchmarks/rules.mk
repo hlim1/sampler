@@ -61,11 +61,18 @@ sample: $(sort $(sampleExecs))
 
 source: $(sort $(allExecs:.exe=.c))
 
+../config.mk: %: %.in ../../../../config.status
+	$(MAKE) -C $(@D) $(@F)
+
 force:
 .PHONY: force
 
+
+########################################################################
+
+
 $(workComb):
-	$(MAKE) -C $(workDir) ITERATIONS=0 $(name)
+	$(MAKE) -C $(workDir) ITERATIONS=0 RELEASE=1 INFERBOX=infer EXTRAARGS=--allowInlineAssembly $(name)
 	[ -r $@ ]
 
 basis-cured.c: $(decure)/filterComplete $(workComb)
@@ -75,6 +82,9 @@ basis-cured.c: $(decure)/filterComplete $(workComb)
 decurable.i: basis-cured.c
 	$(CPP) -include $(sampler)/libcountdown/event.h $< >$@ || rm -f $@
 	[ -r $@ ]
+
+clean::
+	$(MAKE) -C $(workDir) clean
 
 
 ########################################################################

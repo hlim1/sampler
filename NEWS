@@ -1,5 +1,10 @@
 -*- outline -*-
 
+* sampler-0.12.2
+
+** If the first-time dialog is dismissed using the window manager
+   instead of the [OK] button, ask again next time.
+
 * sampler-0.12.1
 
 ** More work on multiple wrapped executables in a single package.

@@ -16,20 +16,6 @@ sub connect () {
 }
 
 
-sub read_app_id ($) {
-    my ($subprocess) = (@_);
-    my $app_id = <$subprocess>;
-    defined $app_id or exit 1;
-
-    chomp $app_id;
-    my @app_id = split /\t/, $app_id;
-    @app_id == 3 or die "\tmangled name-version-release: $app_id";
-    $app_id[0] =~ s/-samplerinfo$// or die "\tmangled name: $app_id[0]\n";
-
-    return @app_id;
-}
-
-
 sub parse_signature ($$$$) {
     my ($tag, $filename, $lineno, $signature) = @_;
     return ($1, undef) if $signature =~ /^([0-9A-Fa-f]{32})\z/;

@@ -25,10 +25,11 @@ CREATE TABLE build (
   application_name varchar(50) NOT NULL default '',
   application_version varchar(50) NOT NULL default '',
   application_release varchar(50) NOT NULL default '',
+  build_distribution varchar(50) NOT NULL default '',
   build_date datetime NOT NULL default '0000-00-00 00:00:00',
   build_suppress varchar(255) default NULL,
   PRIMARY KEY  (build_id),
-  UNIQUE KEY application_name (application_name,application_version,application_release)
+  UNIQUE KEY application_name (application_name,application_version,application_release,build_distribution)
 ) TYPE=InnoDB;
 
 --

@@ -48,9 +48,9 @@ my %known = get_known $dbh;
 sub get_suppressed ($) {
     my ($dbh) = @_;
     my $rows = $dbh->selectall_arrayref(q{
-	SELECT application_name, application_version, application_release
+	SELECT application_name, application_version, application_release, build_distribution
 	    FROM build
-	    WHERE suppress IS NOT NULL});
+	    WHERE build_suppress IS NOT NULL});
 
     print 'suppressed builds: ', scalar @{$rows}, "\n";
 
@@ -76,6 +76,7 @@ my %suppressed = get_suppressed $dbh;
 my @slot = ('HTTP_SAMPLER_APPLICATION_NAME',
 	    'HTTP_SAMPLER_APPLICATION_VERSION',
 	    'HTTP_SAMPLER_APPLICATION_RELEASE',
+	    'HTTP_SAMPLER_BUILD_DISTRIBUTION',
 	    'HTTP_SAMPLER_VERSION',
 	    'HTTP_SAMPLER_SPARSITY',
 	    'HTTP_SAMPLER_EXIT_SIGNAL',
@@ -93,6 +94,13 @@ sub read_environment ($\%) {
     while (my $line = <$file>) {
 	$line =~ /^([^	]+)	(.*)$/ or die;
 	$environment{$1} = $2;
+    }
+
+    unless (defined $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION}) {
+	$environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} =
+	    ($environment{HTTP_SAMPLER_VERSION} eq '0.9.1')
+	    ? 'fedora-1-i386'
+	    : 'redhat-9-i386';
     }
 
     unless (defined $environment{DATE}) {
@@ -173,6 +181,7 @@ $dbh->do(q{
 	 application_name VARCHAR(50) NOT NULL,
 	 application_version VARCHAR(50) NOT NULL,
 	 application_release VARCHAR(50) NOT NULL,
+	 build_distribution VARCHAR(50) NOT NULL,
 	 version VARCHAR(255),
 	 sparsity INTEGER UNSIGNED NOT NULL,
 	 exit_signal TINYINT UNSIGNED NOT NULL,
@@ -205,11 +214,12 @@ unless ($dry_run) {
 	    sparsity,
 	    exit_signal,
 	    exit_status,
-	    date
+	    date,
+	    NULL
 
 	    FROM upload_run
 	    NATURAL LEFT JOIN build
-	    WHERE suppress IS NULL
+	    WHERE build_suppress IS NULL
 	}) or die;
 }
 

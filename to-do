@@ -1,3 +1,12 @@
+Should use something other than 1024 for size of cyclic countdowns, as
+that's too obvious a power of two.  What's the largest prime number
+smaller than 1024?
+
+let uploader tell server whether it wants text/html or text/plain in
+replies
+
+add listener for changes to gconf 'enabled' key
+
 how does launcher propagate SIGINT (^C) down to child?
 
 ShowStats doesn't need ident string, as it has no effect on the

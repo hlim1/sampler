@@ -28,7 +28,7 @@ let rec weigh ~sites:sites ~headers:headers =
 	total
   in
 
-  let weights = new StmtMap.container in
+  let weights = new weightsMap in
   
   let record header =
     let weight = weight header in

@@ -4,7 +4,7 @@ open Cil
 type info = {
     export : stmt;
     call : stmt;
-    callee : exp;
+    callee : lval;
     import : stmt;
     jump : stmt;
     landing : stmt;
@@ -16,7 +16,7 @@ type infos = info list
 
 let prepatch stmt =
   match stmt.skind with
-  | Instr [Call (_, callee, _, _) as call] ->
+  | Instr [Call (_, Lval callee, _, _) as call] ->
       let info = {
 	export = mkEmptyStmt ();
 	call = mkStmtOneInstr call;
@@ -36,5 +36,11 @@ let prepatch stmt =
       in
       stmt.skind <- block;
       info
+
+  | Instr [Call (_, callee, _, _) as call] ->
+      ignore (bug "unexpected non-lval callee: %a" d_exp callee);
+      failwith "internal error"
+
   | _ ->
-      failwith "can only prepatch isolated call instructions"
+      ignore (bug "can only prepatch isolated call instructions");
+      failwith "internal error"

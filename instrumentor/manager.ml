@@ -53,6 +53,8 @@ class virtual visitor file =
 
     val mutable infos = new FileInfo.container
 
+    initializer
+      Dynamic.analyze file
 
     method private virtual statementClassifier : global -> fundec -> Classifier.visitor
 

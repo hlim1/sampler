@@ -4,7 +4,7 @@ open Cil
 type info = {
     export : stmt;
     call : stmt;
-    callee : exp;
+    callee : lval;
     import : stmt;
     jump : stmt;
     landing : stmt;

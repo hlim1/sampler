@@ -24,7 +24,7 @@ let _ =
 (**********************************************************************)
 
 
-type tester = exp -> bool
+type tester = lval -> bool
 
 
 type stmtMap = stmt list FunctionMap.container
@@ -36,26 +36,31 @@ let isBuiltin =
     string_match pattern var.vname 0
 
 
-let collect (infos : FileInfo.container) : tester =
+let collect (infos : FileInfo.container) =
   let weightless = new StringMap.container in
 
-  let isWeightlessFunction callee =
+  let isWeightlessVarinfo callee =
     try
       weightless#find callee.vname
     with Not_found ->
       isBuiltin callee || !assumeWeightlessExterns
   in
 
-  let isWeightlessCallee = function
-    | Lval (Var callee, NoOffset) ->
-	isWeightlessFunction callee
-    | _ ->
-	(* !!!: use points-to analysis here *)
+  let isWeightlessLval callee =
+    match Dynamic.resolve callee with
+    | [] ->
+	ignore (Pretty.eprintf "%a cannot be resolved\n" d_lval callee);
 	false
+    | resolved ->
+	let d_varinfo () var = Pretty.text var.vname in
+	ignore (Pretty.eprintf "%a resolves to [%a]\n"
+		  d_lval callee
+		  (Pretty.d_list ", " d_varinfo) resolved);
+	List.for_all isWeightlessVarinfo resolved
   in
 
   let isWeightlessCall info =
-    isWeightlessCallee info.callee
+    isWeightlessLval info.callee
   in
 
   if !assumeWeightlessLibraries then
@@ -71,7 +76,7 @@ let collect (infos : FileInfo.container) : tester =
     (fun madeProgress ->
       infos#iter
 	(fun func info ->
-	  if isWeightlessFunction func.svar then
+	  if isWeightlessVarinfo func.svar then
 	    if not (List.for_all isWeightlessCall info.calls) then
 	      begin
 		weightless#replace func.svar.vname false;
@@ -84,7 +89,7 @@ let collect (infos : FileInfo.container) : tester =
 	infos#fold
 	  (fun func _ (numFuncs, numWeightless) ->
 	    (numFuncs + 1,
-	     if isWeightlessFunction func.svar then
+	     if isWeightlessVarinfo func.svar then
 	       numWeightless + 1
 	     else
 	       numWeightless))
@@ -95,7 +100,7 @@ let collect (infos : FileInfo.container) : tester =
 
   infos#iter
     (fun func _ ->
-      if isWeightlessFunction func.svar then
+      if isWeightlessVarinfo func.svar then
 	infos#remove func);
 
-  isWeightlessCallee
+  isWeightlessLval

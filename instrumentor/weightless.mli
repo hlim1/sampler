@@ -1,6 +1,9 @@
+open Cil
+
+
 val assumeWeightlessExterns : bool ref
 
 
-type tester = Cil.exp -> bool
+type tester = lval -> bool
 
 val collect : FileInfo.container -> tester

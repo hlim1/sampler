@@ -4,6 +4,8 @@ class ['key, 'value] t initial =
 
     method add = Hashtbl.add storage
 
+    method remove = Hashtbl.remove storage
+
     method find = Hashtbl.find storage
 
     method findAll = Hashtbl.find_all storage

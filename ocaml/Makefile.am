@@ -10,7 +10,11 @@ include $(top_srcdir)/ocaml/rules.mk
 all-local: common.$(cma)
 
 
-common = $(hashClass) $(mapClass) $(queueClass)
+common =					\
+	$(fixpoint)				\
+	$(hashClass)				\
+	$(mapClass)				\
+	$(queueClass)
 
 common.$(cma): $(common)
 	$(archive)

@@ -1,25 +1,6 @@
-let argSpecs = []
+let _ = () in
 
-
-let objects = ref []
-
-
-let doOne filename =
-  let channel = open_in filename in
-  let stream = Stream.of_channel channel in
-  objects := (Object.parse filename stream) :: !objects
-
-
-;;
-
-
-Arg.parse argSpecs doOne
-("Usage:" ^ Sys.executable_name ^ " <module>.cfg ...");
-print_endline "done parsing";
-
-List.iter Object.addNodes !objects;
-List.iter Object.addEdges !objects;
-print_endline "done building graph";
+Args.process ();
 
 let reach fromFunc fromSlot toFunc toSlot =
   let origin = Find.findNode fromFunc fromSlot in

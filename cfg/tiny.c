@@ -1,3 +1,6 @@
+void ping();
+
+
 void pong()
 {
 }
@@ -6,7 +9,9 @@ void pong()
 int tiny(int x)
 {
   if (x)
-    pong();
+    ping();
+  else
+    ping();
 
   pong();
 }

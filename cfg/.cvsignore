@@ -9,4 +9,5 @@
 *.dot
 Makefile
 Makefile.in
+order-sites
 resolve-cfg

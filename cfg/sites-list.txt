@@ -1,0 +1,5 @@
+pong	0
+tiny	1
+tiny	2
+tiny	3
+tiny	4

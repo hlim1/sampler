@@ -1,3 +1,2 @@
 <!ENTITY prefix "@prefix@">
-<!ENTITY buildhost "@BUILD_HOST@">
 <!ENTITY cycliccount "@PRECOMPUTE_COUNT@">

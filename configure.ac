@@ -33,16 +33,8 @@ PRECOMPUTE_COUNT=1021
 AC_SUBST(PRECOMPUTE_COUNT, $PRECOMPUTE_COUNT)
 AC_MSG_RESULT($PRECOMPUTE_COUNT)
 
-AC_MSG_CHECKING(for absolute build directory)
-AC_SUBST(ABSOLUTE_BUILDDIR, $PWD)
-AC_MSG_RESULT($PWD)
 
-AC_MSG_CHECKING(for build host name)
-AC_SUBST(BUILD_HOST, `hostname`)
-AC_MSG_RESULT($BUILD_HOST)
-
-
-AC_SUBST(package_libdir,  '${libdir}/${PACKAGE}')
+AC_SUBST(package_libdir, '${libdir}/${PACKAGE}')
 AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
 AC_SUBST(liblibdir, '${package_libdir}/lib')
 AC_SUBST(cillibdir, '${instrumentordir}/cil/lib')

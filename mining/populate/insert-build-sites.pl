@@ -77,8 +77,7 @@ foreach my $package (@ARGV) {
 
     while (my $filename = <$rpm_query>) {
 	chomp $filename;
-	my $object_name = $filename;
-	next unless $object_name =~ s/^\/usr\/lib\/sampler\/sites(\/.*)\.sites$/$1/;
+	next unless $filename =~ s/^\/usr\/lib\/sampler\/sites\/.*\.sites$/;
 
 	my $extracted = "$tempdir$filename";
 	die "missing file: $filename\n" unless -e $extracted;

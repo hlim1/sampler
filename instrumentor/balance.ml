@@ -29,66 +29,76 @@ class visitor =
 	    ()
       end;
       DoChildren
+
+    method vfunc func =
+      Cfg.build func;
+      DoChildren
   end
 
 
-let addDefaultCases file =
-  if !BalancePaths.balancePaths then
-    ignore (visitCilFileSameGlobals (new visitor) file)
+let addDefaultCases func =
+  ignore (visitCilFunction (new visitor) func)
+
+
+let prepatchSplits func =
+  let isSplit = function
+    | { skind = If (_, thenBlock, elseBlock, _) } as stmt ->
+	(* make both branches be non-empty *)
+	let makeNonempty block =
+	  if block.bstmts = [] then
+	    block.bstmts <- mkEmptyStmt () :: block.bstmts
+	in
+	makeNonempty thenBlock;
+	makeNonempty elseBlock;
+	true
+
+    | { skind = Switch (expr, block, cases, location) } as stmt ->
+	(* turn case fallthroughs into explicit gotos *)
+	let cases =
+	  let elaborateFallthrough case =
+	    let hasFallthrough =
+	      let isFallthrough pred =
+		match pred.skind with
+		| Goto _ -> false
+		| _ -> pred != stmt
+	      in
+	      List.exists isFallthrough case.preds
+	    in
+	    if hasFallthrough then
+	      let location = get_stmtLoc case.skind in
+	      let switchTarget = mkStmt case.skind in
+	      switchTarget.labels <- case.labels;
+	      let explicitGoto = mkStmt (Labels.buildGoto fallthroughLabel switchTarget location) in
+	      case.labels <- [];
+	      case.skind <- Block (mkBlock [explicitGoto; switchTarget]);
+	      switchTarget
+	    else
+	      case
+	  in
+	  List.map elaborateFallthrough cases
+	in
+
+	stmt.skind <- Switch (expr, block, cases, location);
+	true
+
+    | { succs = [] }
+    | { succs = [_] } ->
+	false
+
+    | stmt ->
+	ignore (bug "%s: unexpected kind of multi-successor statement" (Utils.stmt_describe stmt.skind));
+	failwith "internal error"
+  in
+  Cfg.build func;
+  List.filter isSplit func.sallstmts
 
 
 let prepatch func =
   if !BalancePaths.balancePaths then
-    let isSplit = function
-      | { skind = If (_, thenBlock, elseBlock, _) } as stmt ->
-	  (* make both branches be non-empty *)
-	  let makeNonempty block =
-	    if block.bstmts = [] then
-	      block.bstmts <- mkEmptyStmt () :: block.bstmts
-	  in
-	  makeNonempty thenBlock;
-	  makeNonempty elseBlock;
-	  true
-
-      | { skind = Switch (expr, block, cases, location) } as stmt ->
-	  (* turn case fallthroughs into explicit gotos *)
-	  let cases =
-	    let elaborateFallthrough case =
-	      let hasFallthrough =
-		let isFallthrough pred =
-		  match pred.skind with
-		  | Goto _ -> false
-		  | _ -> pred != stmt
-		in
-		List.exists isFallthrough case.preds
-	      in
-	      if hasFallthrough then
-		let location = get_stmtLoc case.skind in
-		let switchTarget = mkStmt case.skind in
-		switchTarget.labels <- case.labels;
-		let explicitGoto = mkStmt (Labels.buildGoto fallthroughLabel switchTarget location) in
-		case.labels <- [];
-		case.skind <- Block (mkBlock [explicitGoto; switchTarget]);
-		switchTarget
-	      else
-		case
-	    in
-	    List.map elaborateFallthrough cases
-	  in
-
-	  stmt.skind <- Switch (expr, block, cases, location);
-	  true
-
-      | { succs = [] }
-      | { succs = [_] } ->
-	  false
-
-      | stmt ->
-	  ignore (bug "%s: unexpected kind of multi-successor statement" (Utils.stmt_describe stmt.skind));
-	  failwith "internal error"
-    in
-    Cfg.build func;
-    List.filter isSplit func.sallstmts
+    begin
+      addDefaultCases func;
+      prepatchSplits func
+    end
   else
     []
 

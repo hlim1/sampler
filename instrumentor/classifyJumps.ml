@@ -22,14 +22,23 @@ class visitor =
 	      backwards <- stmt :: backwards
 	    else
 	      forwards <- stmt :: forwards
+	| Break _
+	| Continue _
+	| Loop _ ->
+	    ignore (bug "loop constructs should have been converted into gotos");
+	    failwith "internal error"
 	| _ -> ()
       end;
       seen#add stmt ();
       DoChildren
+
+    method vfunc func =
+      NumberStatements.visit func;
+      DoChildren
   end
 
 
-let visit {sbody = sbody} =
+let visit func =
   let visitor = new visitor in
-  ignore (visitCilBlock (visitor :> cilVisitor) sbody);
+  ignore (visitCilFunction (visitor :> cilVisitor) func);
   visitor#result

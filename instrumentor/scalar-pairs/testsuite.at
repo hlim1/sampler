@@ -18,7 +18,7 @@ cp $abs_srcdir/upcase-good.c .
 cp $abs_srcdir/upcase-good.expected expout
 $abs_top_builddir/instrumentor/driver/sampler-cc-here --relative-paths --sampler-scheme=scalar-pairs -o upcase-good upcase-good.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./upcase-good once upon a time >/dev/null
-$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples upcase-good | cut -f1,3- | /bin/sort -t '	'
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples upcase-good | cut -f1,3- | sort -t '	'
 ], 0, expout)
 AT_CLEANUP
 

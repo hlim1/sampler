@@ -26,9 +26,6 @@ let phase =
   fun file ->
     Dynamic.analyze file;
     FunctionFilter.filter#collectPragmas file;
-
-    Balance.addDefaultCases file;
-    iterFuncs file RemoveLoops.visit;
     iterFuncs file IsolateInstructions.visit;
 
     let schemes = List.map (fun scheme -> scheme file) schemes in

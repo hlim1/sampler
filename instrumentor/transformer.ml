@@ -17,7 +17,7 @@ let visit file isWeightyCallee countdown =
 	let afterCalls = WeightyCalls.prepatch isWeightyCallee func countdown in
 	let splits = Balance.prepatch func in
 
-	Cfg.build func;
+	RemoveLoops.visit func;
 	let jumps = ClassifyJumps.visit func in
 	let callJumps = WeightyCalls.jumpify afterCalls in
 	let backJumps = jumps.backward @ callJumps in

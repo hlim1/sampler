@@ -56,3 +56,6 @@ loopless: $(libcil) $(loopless)
 check-local: main
 
 .DELETE_ON_ERROR:
+
+bug.o: bug.c main
+	driver/sampler-cc-here --sampler-scheme=branches -c $<

@@ -43,6 +43,8 @@ let weigh func sites headers balanced =
 	total
   in
 
+  Cfg.build func;
+
   let record header =
     ignore (weight header)
   in

@@ -3,7 +3,7 @@ include $(top)/defs.mk
 
 libdirs := $(top)
 targets := logging.$(cma)
-subdirs := assignments driver heapStores loads localVars
+subdirs := assignments heapStores loads localVars
 
 include $(top)/rules.mk
 

@@ -1,12 +1,11 @@
 -*- outline -*-
 
-* sampler-0.9.2
+* sampler-0.9.1
 
 ** Minor bug fixes to developer tools.
 
-* sampler-0.9.1
-
-** More robust cleanup of compiler temporary files.
+** Add experimental "--without-gnome" configure script flag to
+   suppress building of GNOME-dependent client GUI tools.
 
 * sampler-0.9
 

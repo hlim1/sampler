@@ -25,7 +25,7 @@ __attribute__((constructor)) static void initialize()
       logTableau(&nextEventCountdown, sizeof nextEventCountdown);
     }
   else
-    fprintf(stderr, "logger: not recording samples; no $SAMPLER_FILE given in environment\n");
+    fputs("logger: not recording samples; no $SAMPLER_FILE given in environment\n", stderr);
 }
 
 

@@ -1,5 +1,3 @@
-CFLAGS = -W -Wall -Werror
-
 libdecoder = ../../liblog/libdecoder.a
 
 noinst_PROGRAMS = populate

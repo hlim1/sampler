@@ -5,8 +5,7 @@ use FindBin;
 use File::Basename;
 
 use Cilly;
-use Instrumentor;
-our @ISA = qw(Cilly Instrumentor);
+our @ISA = qw(Cilly);
 
 
 ########################################################################
@@ -34,6 +33,7 @@ sub new {
 
 sub setDefaultArguments {
     my $self = shift;
+    $self->SUPER::setDefaultArguments;
     $self->{LD} = "libtool $self->{LD}";
     $self->{cycle} = 'acyclic';
 }

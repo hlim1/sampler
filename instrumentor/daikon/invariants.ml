@@ -1,30 +1,42 @@
 open Cil
 
 
-let comparison op left right =
-  BinOp (op, left, right, intType)
+let propose file =
+  let intmax_t =
+    let rec seek = function
+      | GType ({ tname = "intmax_t"; ttype = typ }, _) :: _ ->
+	  typ
+      | _ :: rest ->
+	  seek rest
+      | [] ->
+	  raise Not_found
+    in
+    seek file.globals
+  in
 
+  fun typsig left rights ->
 
-let unary typsig varinfo =
-  match typsig with
-  | TSPtr _ ->
-      [comparison Eq varinfo zero]
-  | _ ->
-      []
+    let binop =
+      let leftExp = Lval (var left) in
+      fun op right ->
+	BinOp (op, leftExp, right, intmax_t)
+    in
 
+    let unary =
+      match typsig with
+      | TSPtr _ -> [binop Eq zero]
+      | _ -> []
+    in
 
-let binary typsig left right =
-  match typsig with
-  | TSPtr _
-  | TSBase (TInt _) ->
-      let rightExp = Lval (var right) in
-      [comparison Eq left rightExp;
-       comparison Lt left rightExp]
-  | _ ->
-      []
+    let binary right =
+      let minus = match typsig with
+      | TSPtr _ -> Some MinusPP
+      | TSBase (TInt _) -> Some MinusA
+      | _ -> None
+      in
+      match minus with
+      | Some op -> [binop op (Lval (var right))]
+      | None -> []
+    in
 
-
-let propose typsig left rights =
-  let leftExp = Lval (var left) in
-  List.concat (unary typsig leftExp ::
-	       List.map (binary typsig leftExp) rights)
+    List.concat (unary :: List.map binary rights)

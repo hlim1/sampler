@@ -43,6 +43,7 @@ let globalVars file =
 class visitor file =
   let globalVars = globalVars file in
   let logger = FindFunction.find "checkInvariant" file in
+  let invariants = Invariants.propose file in
 
   fun func ->
     object
@@ -71,7 +72,7 @@ class visitor file =
 	    let comparableVars = List.filter isComparable vars in
 	    (* ignore (eprintf "  comparable vars: %a@!" d_vars comparableVars); *)
 
-	    let invariants = Invariants.propose signature varinfo comparableVars in
+	    let invariants = invariants signature varinfo comparableVars in
 	    (* ignore (eprintf "  invariants: %a@!"
 		      (d_list ", " d_exp) invariants); *)
 

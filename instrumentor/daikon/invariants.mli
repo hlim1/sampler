@@ -1,4 +1,4 @@
 open Cil
 
 
-val propose : typsig -> varinfo -> varinfo list -> exp list
+val propose : file -> typsig -> varinfo -> varinfo list -> exp list

@@ -1,7 +1,0 @@
-*.i
-*.inst.?
-*.trace
-.libs
-late-global
-upcase-bad
-upcase-good

@@ -1,5 +1,0 @@
-*.i
-*.inst.?
-*.trace
-.libs
-test

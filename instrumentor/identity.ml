@@ -1,1 +1,0 @@
-let identity thing = thing

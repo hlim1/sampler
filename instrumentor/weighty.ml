@@ -134,20 +134,17 @@ class visitor hasDefinition hasPragmaWeightless weighty =
 type tester = lval -> bool
 
 
-let collect file (fileInfo : FileInfo.container) =
+let collect file allSites =
   let hasDefinition = hasDefinition file in
   let hasPragmaWeightless = hasPragmaWeightless file in
   let weighty = new VarinfoSet.container in
 
-  let prepopulate func info =
-    if info.sites <> [] then
-      begin
-	weighty#add func.svar;
-	if !debugWeighty then
-	  Printf.eprintf "function %s is weighty: has sites\n" func.svar.vname
-      end
+  let prepopulate ({svar = svar}, _) =
+    weighty#add svar;
+    if !debugWeighty then
+      Printf.eprintf "function %s is weighty: has sites\n" svar.vname
   in
-  fileInfo#iter prepopulate;
+  List.iter prepopulate allSites;
 
   let visitor = new visitor hasDefinition hasPragmaWeightless weighty in
   let refine madeProgress =

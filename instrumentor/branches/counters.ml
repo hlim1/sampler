@@ -8,11 +8,12 @@ class builder file =
 
     val bumper = Bump.bump file
 
-    method bump func location expression =
+    method bump func location statement expression =
       let local = var (makeTempVar func (typeOf expression)) in
 
       let bump =
 	let siteId = self#addSiteInfo { location = location; fundec = func;
+					statement = statement;
 					description = d_exp () expression }
 	in
 	bumper siteId location (Lval local)

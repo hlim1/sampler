@@ -8,18 +8,19 @@ let patch clones weights countdown =
     let instrumentedImport = findClone standard.import in
     let instrumentedJump = findClone standard.jump in
     let instrumentedLanding = findClone standard.landing in
+    let location = get_stmtLoc standard.call.skind in
 
-    let export () = Instr [countdown#export locUnknown] in
+    let export () = Instr [countdown#export location] in
     let instrumentedExport = findClone standard.export in
     standard.export.skind <- export ();
     instrumentedExport.skind <- export ();
 
-    let import () = Instr [countdown#import locUnknown] in
+    let import () = Instr [countdown#import location] in
     standard.import.skind <- import ();
     instrumentedImport.skind <- import ();
 
     let weight = weights#find standard.landing in
-    let choice () = countdown#checkThreshold locUnknown weight instrumentedLanding standard.landing in
+    let choice () = countdown#checkThreshold location weight instrumentedLanding standard.landing in
     standard.jump.skind <- choice ();
     instrumentedJump.skind <- choice ()
   in

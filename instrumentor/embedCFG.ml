@@ -19,11 +19,15 @@ class visitor =
 
     val expectedSid = ref 0
 
-    method private addLocation location =
-      self#addString location.file;
-      self#addChar '\t';
-      self#addString (string_of_int location.line);
-      self#addChar '\n'
+    method private addLocation = function
+      | {file = ""} ->
+	  ignore (bug "cannot serialize unknown location");
+	  failwith "internal error"
+      | location ->
+	  self#addString location.file;
+	  self#addChar '\t';
+	  self#addString (string_of_int location.line);
+	  self#addChar '\n'
 
     method postNewline thing =
       self#addChar '\n';
@@ -75,6 +79,10 @@ class visitor =
 
 	| Instr [Call (_, callee, _, _) as call] ->
 	    ignore (bug "unexpected non-lval callee: %a" d_exp callee);
+	    failwith "internal error"
+
+	| Instr (_ :: _ :: _) ->
+	    ignore (bug "instr should have been atomized");
 	    failwith "internal error"
 
 	| _ ->

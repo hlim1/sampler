@@ -24,8 +24,7 @@ class virtual visitor schemeName file =
     method private classifyStatements func =
       let visitor = self#statementClassifier func in
       ignore (visitCilFunction (visitor :> cilVisitor) func);
-      { sites = visitor#sites;
-	calls = visitor#calls }
+      visitor#sites
 
     method private finalize = ()
 
@@ -34,20 +33,27 @@ class virtual visitor schemeName file =
       Dynamic.analyze file;
       FunctionFilter.filter#collectPragmas file;
 
-      let infos = new FileInfo.container in
-      let iterator = function
-	| GFun (func, _) ->
-	    let info = self#classifyStatements func in
-	    infos#add func info
-	| _ -> ()
+      let allSites =
+	let folder others = function
+	  | GFun (func, _) ->
+	      begin
+		match self#classifyStatements func with
+		| [] -> others
+		| sites -> (func, sites) :: others
+	      end
+	  | _ ->
+	      others
+	in
+	foldGlobals file folder []
       in
-      iterGlobals file iterator;
+
+      EmbedCFG.visit file;
 
       if !sample then
 	begin
-	  let tester = Weighty.collect file infos in
+	  let tester = Weighty.collect file allSites in
 	  let countdown = new Countdown.countdown file in
-	  infos#iter (Transform.visit tester countdown)
+	  List.iter (Transform.visit tester countdown) allSites
 	end;
 
       self#finalize

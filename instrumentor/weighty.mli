@@ -6,4 +6,4 @@ val assumeWeightlessExterns : bool ref
 
 type tester = lval -> bool
 
-val collect : file -> FileInfo.container -> tester
+val collect : file -> (fundec * 'a) list -> tester

@@ -8,10 +8,12 @@ unit cfg.o
 		node 2 at cfg.c:9
 			successors: 4 3
 		node 3 at cfg.c:9
-			successors: 5
+			successors: 6
 		node 4 at cfg.c:10
+			successors: 5
+		node 5 at cfg.c:9
 			successors: 0
-		node 5 at cfg.c:11
+		node 6 at cfg.c:11
 	function conditional at cfg.c:14
 		node 0 at cfg.c:16
 			successors: 2 1

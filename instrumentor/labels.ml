@@ -20,6 +20,7 @@ let hasGotoLabel statement =
   List.exists isGotoLabel statement.labels
 
 
-let ensureHasGotoLabel statement builder =
+let buildGoto builder statement location =
   if not (hasGotoLabel statement) then
-    statement.labels <- builder (get_stmtLoc statement.skind) :: statement.labels
+    statement.labels <- builder (get_stmtLoc statement.skind) :: statement.labels;
+  Goto (ref statement, location)

@@ -1,14 +1,8 @@
 open Cil
 
 
-let buildLabel = Labels.build "removeLoops"
-
-
 let buildGoto =
-  let nextId = ref 0 in
-  fun target location ->
-    Labels.ensureHasGotoLabel target buildLabel;
-    Goto (ref target, location)
+  Labels.buildGoto (Labels.build "removeLoops")
 
 
 class visitor =

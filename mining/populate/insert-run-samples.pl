@@ -51,6 +51,7 @@ my %missing = get_missing $dbh;
 
 my ($upload, $upload_filename) = tempfile(UNLINK => 1);
 my $upload_count = 0;
+my @empties;
 
 foreach my $dir (@ARGV) {
     my $run_id = basename $dir;
@@ -63,6 +64,7 @@ foreach my $dir (@ARGV) {
     my $samples_filename = "$dir/samples.gz";
     my $samples_handle = new FileHandle;
     open $samples_handle, '-|', 'zcat', $samples_filename;
+    my $empty = 1;
 
     while (my $unit_signature = <$samples_handle>) {
 	chomp $unit_signature;
@@ -82,10 +84,13 @@ foreach my $dir (@ARGV) {
 		    Common::escape @fields;
 		    print $upload @fields;
 		}
+		$empty = 0;
 	    }
 	    ++$site_order;
 	}
     }
+
+    push @empties, $run_id if $empty;
 }
 
 close $upload;
@@ -137,6 +142,26 @@ $dbh->do(q{
 
 	FROM upload NATURAL LEFT JOIN run
     }) or die;
+
+
+########################################################################
+#
+#  flag empties
+#
+
+
+if (@empties) {
+    my @placeholders = map '?', @empties;
+    my $placeholders = join ',', @placeholders;
+
+    $dbh->do(qq{
+	UPDATE run
+	    SET empty = 1
+	    WHERE run_id IN ($placeholders)},
+	     undef, @empties);
+
+    print "marked ", scalar @empties, " new empties\n";
+}
 
 
 ########################################################################

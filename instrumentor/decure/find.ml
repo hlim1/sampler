@@ -62,7 +62,7 @@ class visitor =
 		sites <- stmt :: sites;
 	    | Fail ->
 		currentLoc := get_stmtLoc skind;
-		ignore (bug "found raw failure call; missed containing check?");
+		ignore (bug "found raw call to failure routine %s(); missed containing check?" vname);
 	    | Generic ->
 		if string_match checkPattern vname 0 then
 		  begin

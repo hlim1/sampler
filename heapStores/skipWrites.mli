@@ -1,1 +1,1 @@
-val visit : Cil.block -> unit
+class visitor : Cil.cilVisitor

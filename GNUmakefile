@@ -29,7 +29,6 @@ functionEntry = $(logIsImminent) functionEntry
 identity = identity
 identity = identity
 logIsImminent = $(countdown) logIsImminent
-logWrite = logWrite
 mapClass = mapClass
 patchSites = patchSites
 removeLoops = $(functionBodyVisitor) removeLoops
@@ -39,6 +38,7 @@ stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 testHarness = testHarness
 transform = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(patchSites) $(removeLoops) $(weighPaths) transform
+transformVisitor = $(functionBodyVisitor) $(transform) transformVisitor
 utils = utils
 weighPaths = $(stmtMap) weighPaths
 
@@ -50,7 +50,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libcil) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-harness := $(filterLabels) $(logWrite) $(transform) $(testHarness)
+harness := $(filterLabels) $(logWrite) $(testHarness) $(transformVisitor)
 harness.cma: $(addsuffix .$(cmo), $(harness))
 	$(link) -a
 

@@ -2,6 +2,12 @@ open Cil
 open Printf
 
 
+let visitSameBlock visitor original =
+  let replacement = visitCilBlock visitor original in
+  if replacement != original then
+    failwith "instrumentation visitor unexpectedly replaced block"
+
+
 let transform scale insertSkips instrument func =
   prepareCFG func;
   RemoveLoops.visit func;
@@ -23,7 +29,7 @@ let transform scale insertSkips instrument func =
 	BackwardJumps.patch clones weights backwardJumps;
 	AfterCalls.patch clones weights afterCalls;
 	
-	insertSkips original;
+	visitSameBlock insertSkips original;
 	FunctionEntry.patch func weights instrumented;
-	instrument instrumented
+	visitSameBlock instrument instrumented
   end

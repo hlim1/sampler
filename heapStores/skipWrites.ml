@@ -17,7 +17,3 @@ class visitor = object
     | _ ->
 	SkipChildren
 end
-
-
-let visit block =
-  ignore (visitCilBlock new visitor block)

@@ -4,7 +4,14 @@
 We have used the transformation framework to inject different forms of
 instrumentation into several programs, both to assess the performance
 impact of sampling as well as to show that sampling can offer novel
-insights into program (mis)behavior.
+insights into program (mis)behavior.  We begin with the relatively
+simple case of sampling explicit assertions.  When assertions are not
+present, but failure is a deterministic consequence of some buggy
+behavior, we show how broad guesses followed by elimination can
+identify the incorrect code.  Lastly, we demonstrate the use of
+statistical modeling techniques to isolate a previously unreported
+memory corruption bug that cannot even be depended upon to reliably
+cause a crash each time it occurs.
 
 \subsection{Sharing the Cost of Assertions}
 \label{sec:ccured}
@@ -73,7 +80,7 @@ threshold weight measures how effective our transformation has been in
 amortizing the cost of countdown checks over multiple sites.
 Single-site functions are not uncommon; thus, an average threshold
 weight above two is encouraging because it suggests that overall
-amortization rates are fairly good.
+amortization rates are good.
 
 \begin{table}
   \centering
@@ -91,42 +98,55 @@ amortization rates are fairly good.
   \label{tab:share:density}
 \end{table}
 
-\autoref{tab:share:density} shows the performance effect of various
-sampling densities.  We take the running time of standard \CCured code
-as the baseline.  We report the speedup ($>1$) or slowdown ($<1$)
-relative to this baseline when sampling at various densities.  All
-benchmarks were compiled using \texttt{gcc} 2.96 using standard
-optimization (\texttt{-O2}).  Times were collected on a 550 MHz
-Pentium III Linux machine with two gigabytes of RAM\@.  Reported
+\autoref{tab:share:density} shows the performance effect of
+unconditional instrumentation as well as sampled instrumentation at
+various densities.  Our basis for comparison is code whose data layout
+has been transformed by \CCured but from which all dynamic memory
+safety checks have been removed.  We report the speedup ($>1$) or
+slowdown ($<1$) relative to this baseline when sampling at various
+densities.  All benchmarks were compiled using \texttt{gcc} 3.2 using
+standard optimization (\texttt{-O2}).  Times were collected on a 1.3
+GHz Pentium 4 Linux workstation with 512 megabytes of RAM\@.  Reported
 speedups represent the average of four runs; each run used a different
 pre-generated bank of 1024 geometrically distributed random
 countdowns.
 
-Even at a fairly high sampling density of 1/100, more than two thirds
-of our benchmarks run faster then they would if all checks were
-performed.  Because each single check is so small and fast, this
-suggests that we have been successful in amortizing our sampling
-overhead.  The most dramatic speedups are seen in \texttt{ijpeg} (24\%
-faster) and \texttt{compress} (32\% faster).  On the other hand, three
-benchmarks do run slower, with \texttt{go} showing the largest
-penalty.  In these cases, the time recovered by skipping 99/100 checks
-is not enough to mask the added overhead of sampling.
+Unconditional instrumentation imposes slowdowns that vary from the
+small (\texttt{health}: 2\%) to the extreme (\texttt{bh}: 181\%;
+\texttt{ijpeg}: 146\%).  Even at a fairly high sampling density of
+1/100, more than two thirds of our benchmarks run faster then they
+would if all checks were always performed.  Because each single check
+is so small and fast, this suggests that we have been successful in
+amortizing our sampling overhead.  On the other hand, three benchmarks
+do run slower, with \texttt{go} showing the largest penalty.  In these
+cases, the time recovered by skipping 99/100 checks is not enough to
+mask the added overhead of sampling.  Furthermore, in all benchmarks,
+the overhead relative to instrumentation-free code remains large.
+Only five benchmarks have less than a 10\% slowdown, and only one is
+below 5\%.
 
-As we reduce the sampling density to 1/1000, \texttt{power} reaches a
-balance point of no measurable speedup or slowdown, while
-\texttt{perimeter} remains a stubborn 3\% slower.  The \texttt{health}
-benchmark crosses over and is now slightly faster with sampling.
-Other benchmarks, which already showed speedups at 1/100, either
-retain their position (\texttt{treeadd} and \texttt{tsp}) or show
-additional boosts, with \texttt{compress} reaching an overall 38\%
-speedup versus standard \CCured.  Further reducing the sampling
-density to 1/10,000 shows little change, and by the time we reach
-1/1,000,000 it is clear that we have reached a performance ceiling.
-One benchmark continues to run slower than standard \CCured; two run
-at the same speed; the remaining ten run 2\% - 39\% faster.
+Performance improves as we reduce the sampling density to 1/1000.
+Most benchmarks suffer less than a 10\% penalty relative to
+uninstrumented code, and half are below 5\%.  Further reducing the
+sampling density to 1/10,000 shows little change, and by the time we
+reach 1/1,000,000 it is clear that we have reached a performance
+floor.  Three benchmarks (\texttt{perimeter}, \texttt{tsp},
+\texttt{go}) are unable to compensate for their sampling overhead
+relative to unconditional instrumentation, while the remaining ten do
+run faster.  Among these, a few benchmarks (\texttt{treeadd},
+\texttt{compress}, \texttt{li}) retain high overhead relative to
+instrumentation-free code, but in most cases the penalty is quite
+modest.  Some benchmarks which perform the worst using unconditional
+instrumentation perform quite well with sampling: \texttt{ijpeg}, for
+example, moves from an unconditional instrumentation overhead of 146\%
+to a mere 3\% with sparse sampling.
 
 \subsubsection{Single-Function Sampling}
 \input{applications/ccured-size}
+
+\aside{This entire section needs to be redone more or less from
+  scratch.  Our single-function numbers have changed quite a bit since
+  the PLDI draft.}
 
 In an effort to better understand the sources of overhead, we have
 performed additional experiments in which only a single function is

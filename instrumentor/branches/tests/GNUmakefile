@@ -5,7 +5,7 @@ top := ../..
 front_end := ../driver/main
 cyclic := acyclic
 CC := $(front_end) --$(cyclic)
-CFLAGS := -g -W -Wall -Werror -save-temps
+CFLAGS := -g -W -Wall -Werror
 
 traces := $(tests:=.trace)
 reports := $(tests:=.report)

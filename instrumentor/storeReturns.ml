@@ -9,7 +9,8 @@ class visitor func =
     method vstmt _ = DoChildren
 
     method vinst = function
-      | Call (None, callee, args, location) ->
+      | Call (None, callee, args, location)
+	when isInterestingCallee callee ->
 	  let resultType, _, _, _ = splitFunctionType (typeOf callee) in
 	  if isInterestingType resultType then
 	    let resultVar = Locals.makeTempVar func resultType in

@@ -9,7 +9,8 @@ class visitor (tuples : CounterTuples.manager) func =
     method vstmt stmt =
       match IsolateInstructions.isolated stmt with
       | Some (Call (Some result, callee, args, location))
-	when self#includedStatement stmt ->
+	when self#includedStatement stmt
+	    && isInterestingCallee callee ->
 	  let resultType, _, _, _ = splitFunctionType (typeOf callee) in
 	  if isInterestingType resultType then
 	    begin

@@ -16,7 +16,7 @@ decure := $(instrumentor)/decure
 include ../config.mk
 workDir := $(workHome)/test
 workExec := $(workDir)/$(testDir)/$(exec)
-workComb := $(workExec)_comboptimcured.i
+workComb := $(workExec:.exe=.cured.i)
 
 ifdef buildOnlys
 -include functions.mk
@@ -73,7 +73,7 @@ force:
 
 
 $(workComb):
-	$(MAKE) -C $(workDir) ITERATIONS=0 RELEASE=1 INFERBOX=infer EXTRAARGS=--allowInlineAssembly $(name)
+	$(MAKE) -C $(workDir) ITERATIONS=0 RELEASE=1 INFERBOX=infer EXTRAARGS='--allowInlineAssembly -save-temps' $(name)
 	[ -r $@ ]
 
 basis-cured.c: $(decure)/filterComplete $(workComb)
@@ -114,7 +114,7 @@ clean::
 
 
 $(sampleExecs): CC := libtool $(CC)
-$(sampleExecs): LOADLIBES += -L$(sampler)/libcountdown -levent -lcyclic
+$(sampleExecs): LOADLIBES += -L$(sampler)/libcountdown -lcyclic -lcountdown
 
 
 $(sampleExecs): %.exe: %.c
@@ -177,7 +177,7 @@ clean::
 	if [ -d .libs ]; then rmdir .libs; fi
 
 spotless: clean
-	rm -f functions.mk functions-list basis-cured.c decurable.i
+	rm -f functions.mk functions-list basis-cured.c decurable.i $(workComb)
 
 
 ########################################################################
@@ -198,13 +198,18 @@ clean::
 
 
 sparsities := 100 1000 10000 1000000
+ccuredTimes := ccured.times
 alwaysTimes := $(alwaysForms:=-1.times)
 sampleAllTimes := $(sparsities:%=sample-all-%.times)
 sampleOnlyTimes := $(functions:%=sample-%-1000.times)
-times := $(alwaysTimes) $(sampleAllTimes) $(sampleOnlyTimes)
+times := $(ccuredTimes) $(alwaysTimes) $(sampleAllTimes) $(sampleOnlyTimes)
 
 times: $(times)
 .PHONY: times
+
+$(ccuredTimes): ../run-trials $(workExec)
+	./$< 1 './$(workExec) $(runArgs)' >$@. 2>&1
+	mv $@. $@
 
 %.times: when       = $(word 1, $(subst -, , $*))
 %.times: where      = $(word 2, $(subst -, , $*))

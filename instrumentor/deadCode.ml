@@ -28,6 +28,13 @@ let rec markBlock { bstmts = bstmts } =
     | Loop (body, _, _, _)
     | Block body ->
 	markIfChild (markBlock body)
+
+    | TryFinally (body, finally, _)
+    | TryExcept (body, _, finally, _) ->
+	let markedBody = markBlock body in
+	let markedFinally = markBlock finally in
+	markIfChild (markedBody || markedFinally)
+
   in
   let folder marked stmt =
     markStmt stmt || marked

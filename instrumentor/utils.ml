@@ -16,6 +16,8 @@ let stmt_what = function
   | Switch(_) -> "Switch"
   | Loop(_) -> "Loop"
   | Block({bstmts = bstmts}) -> Printf.sprintf "Block × %i" (List.length bstmts)
+  | TryFinally(_) -> "TryFinally"
+  | TryExcept(_) -> "TryExcept"
 
 let stmt_describe stmt =
   let where = get_stmtLoc stmt in

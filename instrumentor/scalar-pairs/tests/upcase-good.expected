@@ -1,4 +1,4 @@
-1	0	0	upcase-good.c	8	main	arg	argc
-0	0	4	upcase-good.c	15	main	chr	(char *)0
-0	0	13	upcase-good.c	15	main	chr	(char *)0
-3	1	0	upcase-good.c	8	main	arg	argc
+upcase-good.c	8	main	arg	argc	1	0	0
+upcase-good.c	15	main	chr	(char *)0	0	0	4
+upcase-good.c	15	main	chr	(char *)0	0	0	13
+upcase-good.c	8	main	arg	argc	3	1	0

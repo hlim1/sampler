@@ -62,7 +62,7 @@ force:
 
 clean-here:: force
 	rm -f $(targets)
-	rm -f $(foreach suffix, cmi cmo cma cmx o cmxa, *.$(suffix))
+	rm -f $(foreach suffix, cmi cmo cma cmx o cmxa a, *.$(suffix))
 .PHONY: clean-here
 
 clean:: force clean-here $(addsuffix /clean, $(subdirs))

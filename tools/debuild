@@ -1,0 +1,17 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use FindBin;
+
+
+########################################################################
+
+
+my $scheme = shift
+    or die "Usage: $0 <scheme> <debuild flags> ...\n";
+
+$ENV{CC} = "$FindBin::Bin/../instrumentor/driver/main $scheme";
+
+exec 'debuild', '--preserve-envvar=CC', @ARGV;
+die "cannot exec debuild: $!\n";

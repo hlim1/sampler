@@ -15,6 +15,7 @@ tray_PYTHON = $(sort $(wildcard *.py) Paths.py)
 tray_SCRIPTS = tray
 
 EXTRA_DIST =					\
+	$(servers_DATA)				\
 	$(tray_DATA)				\
 	$(filter-out Paths.py, $(tray_PYTHON))	\
 	Paths.py.in				\

@@ -6,7 +6,6 @@ debian/tmp/usr/lib/sampler/tray
 debian/tmp/usr/lib/sampler/wrapped
 debian/tmp/usr/share/control-center-2.0
 debian/tmp/usr/share/icons
-debian/tmp/usr/share/sampler/applications
 debian/tmp/usr/share/sampler/common
 debian/tmp/usr/share/sampler/first-time
 debian/tmp/usr/share/sampler/gdb-commands

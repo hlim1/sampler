@@ -4,7 +4,7 @@ open Printf
 
 let rec weighPaths headers =
   
-  let cache = new MapClass.container 0 in
+  let cache = new StmtMap.container in
 
   let rec subweight node succ =
     if headers#mem (node, succ) then
@@ -23,7 +23,7 @@ let rec weighPaths headers =
 	total
   in
 
-  let weights = new MapClass.container headers#size in
+  let weights = new StmtMap.container in
 
   headers#iter begin
     fun (s, destination) ->

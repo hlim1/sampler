@@ -46,7 +46,7 @@ run: main $(infile).i
 cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), cfg utils foreach dotify skipVisitor functionBodyVisitor splitAfterCalls testHarness %)
 	$(link)
 
-main: %: $(libs) $(addsuffix .$(cmo), mapClass setClass edgeSet stmtSet foreach cfg skipVisitor functionBodyVisitor splitAfterCalls collectHeaders stores weighPaths testHarness %)
+main: %: $(libs) $(addsuffix .$(cmo), mapClass setClass edgeSet stmtMap stmtSet foreach cfg skipVisitor functionBodyVisitor splitAfterCalls collectHeaders stores weighPaths testHarness %)
 	$(link)
 
 cfg-bug: %: $(libs) $(addsuffix .$(cmo), utils skipVisitor functionBodyVisitor splitAfterCalls %)

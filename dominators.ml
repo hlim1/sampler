@@ -23,15 +23,14 @@ end
 
 let computeDominators (r, nodes) =
   let n0 = dummyStmt in
-  let nodeCount = List.length nodes in
-  let newMap _ = new MapClass.container nodeCount in
+  let newMap _ = new StmtMap.container in
   
   let bucket = newMap ()
   and sdno = newMap ()
   and size = newMap ()
   and ancestor = newMap ()
   and label = newMap ()
-  and ndfs = newMap ()
+  and ndfs = new IntMap.container
   and child = newMap ()
   and parent = newMap ()
   and idom = newMap ()
@@ -39,7 +38,7 @@ let computeDominators (r, nodes) =
 
   foreach nodes begin
     fun node ->
-      bucket#add node new SetClass.container;
+      bucket#add node new StmtSet.container;
       sdno#add node 0
   end;
   

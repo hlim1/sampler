@@ -8,9 +8,9 @@ class visitor = object
   method vfunc func =
     let (root, _) = Cfg.cfg func in
     
-    let backEdges = new SetClass.container and
-	arrived = new SetClass.container and
-	departed = new SetClass.container in
+    let backEdges = new EdgeSet.container and
+	arrived = new StmtSet.container and
+	departed = new StmtSet.container in
     
     let rec explore stmt =
       arrived#add stmt;

@@ -2,9 +2,9 @@ exception Duplicate_key
 exception Missing_key
     
 
-class ['a, 'b] container size = object(self)
+class ['key, 'data] container (indexer : 'key -> 'index) = object(self)
     
-  val storage : ('a * 'b) list ref = ref []
+  val storage : ('key * 'data) list ref = ref []
       
   method add key data =
     storage := (key, data) :: List.remove_assq key !storage

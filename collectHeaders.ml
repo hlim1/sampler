@@ -3,7 +3,7 @@ open Foreach
 open Printf
 
 
-type headers = (stmt * stmt) SetClass.container
+type headers = EdgeSet.container
 
     
 let collectLoopHeaders headers root =

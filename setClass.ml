@@ -2,7 +2,7 @@ exception Duplicate_key
 exception Missing_key
    
 
-class ['a] container (indexer : 'a -> 'b) = object(self)
+class ['key] container (indexer : 'key -> 'index) = object(self)
     
   val storage = ref []
 

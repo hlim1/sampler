@@ -8,7 +8,7 @@ let isLoopHeader dom stmt = List.exists (dom#dominates stmt) stmt.preds
     
 let naturalLoop m n =
   let stack = new StackClass.container in
-  let loop = new SetClass.container in
+  let loop = new StmtSet.container in
   
   loop#add m;
   if m != n then

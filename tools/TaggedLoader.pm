@@ -66,8 +66,8 @@ sub read ($$$) {
 	my $merged;
 
 	if (defined $prior) {
-	    $merged = $self->merge($unit, $scheme, $prior->{lines}, \@lines);
-	    die "cannot merge multiple instances of unit $unit, scheme $scheme\n";
+	    $merged = $self->merge($prior->{lines}, \@lines);
+	    die "cannot merge multiple instances of unit $unit, scheme $scheme\n" unless $merged;
 	} else {
 	    $merged = \@lines;
 	}

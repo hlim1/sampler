@@ -1,14 +1,14 @@
-ifdef profile
-native := 1
-ocamlflags := -p
+ifdef ENABLE_PROFILING
+ENABLE_NATIVE := 1
+ocamlflags += -p
 endif
 
-ifdef native
+ifdef ENABLE_NATIVE
 ocamlc := ocamlopt.opt
 cma := cmxa
 cmo := cmx
 else
-ocamlflags := -g
+ocamlflags += -g
 ocamlc := ocamlc.opt
 cma := cma
 cmo := cmo

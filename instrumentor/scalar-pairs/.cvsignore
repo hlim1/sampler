@@ -1,5 +1,6 @@
 *.cmi
 *.cmo
+*.cmx
 *.di
 *.do
 Makefile

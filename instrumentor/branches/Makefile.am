@@ -11,7 +11,7 @@ libdirs += ..
 
 ../%.cmi: $(libharness)
 
-%.cma: $(force)
+%.$(cma): $(force)
 	$(recurse)
 
 

@@ -2,6 +2,13 @@ AC_INIT(sampler,0.0,liblit@cs.berkeley.edu)
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
+
+########################################################################
+#
+#  OCaml configuration
+#
+
+
 AC_MSG_CHECKING(for CIL build tree)
 AC_ARG_WITH(cil, [  --with-cil=DIR          CIL build tree], , with_cil=../cil)
 if ! test -d "$with_cil"; then
@@ -10,6 +17,34 @@ fi
 CIL_HOME=`cd "$with_cil"; pwd`
 AC_SUBST(CIL_HOME)
 AC_MSG_RESULT($CIL_HOME)
+
+
+AC_MSG_CHECKING(for profiling)
+AC_ARG_ENABLE(profiling, [  --enable-profiling      Compile OCaml for gprof profiling (implies --enable-native)])
+if test "$enable_profiling" = yes; then
+  enable_native=yes
+  AC_SUBST(ENABLE_PROFILING, 1)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+
+AC_MSG_CHECKING(for native compilation)
+AC_ARG_ENABLE(native, [  --enable-native         Compile OCaml to native code (default: compile to bytecode)])
+AM_CONDITIONAL(ENABLE_NATIVE, test "$enable_native" = yes)
+if test "$enable_native" = yes; then
+  AC_SUBST(ENABLE_NATIVE, 1)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+
+########################################################################
+#
+#  C configuration
+#
 
 : ${CFLAGS:=-g -W -Wall -Werror}
 : ${CXXFLAGS:=-g -W -Wall -Werror}
@@ -37,7 +72,9 @@ AC_COMPILE_IFELSE(
 
 
 ########################################################################
-
+#
+#  Output
+#
 
 AM_CONFIG_HEADER(config.h)
 

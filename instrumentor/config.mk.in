@@ -1,6 +1,5 @@
-#profile := 1
-#native := 1
-
+ENABLE_PROFILING = @ENABLE_PROFILING@
+ENABLE_NATIVE = @ENABLE_NATIVE@
 CIL_HOME = @CIL_HOME@
 
 include $(top_srcdir)/instrumentor/defs.mk

@@ -1,5 +1,6 @@
 open Cil
 
-class ['data] container = object
-  inherit [stmt, 'data] MapClass.container (fun {sid = sid} -> assert (sid != -1); sid)
-end
+
+module StmtMap = MapClass.Make (StmtHash)
+
+class ['data] container = ['data] StmtMap.container

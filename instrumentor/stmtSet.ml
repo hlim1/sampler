@@ -1,5 +1,5 @@
 open Cil
 
-class container = object
-  inherit [stmt] SetClass.container (fun {sid = sid} -> assert (sid != -1); sid)
-end
+module StmtSet = SetClass.Make (StmtHash)
+
+class container = StmtSet.container

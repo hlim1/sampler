@@ -1,1 +1,1 @@
-class container : [Cil.stmt] SetClass.container
+class container : [Cil.stmt] SetClass.s

@@ -1,1 +1,1 @@
-class ['data] container : [Cil.stmt, 'data] MapClass.container
+class ['data] container : [Cil.stmt, 'data] MapClass.s

@@ -2,7 +2,7 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot checker dump harness.$(cma)
-transformers := assignments heapStores loads localVars
+transformers := assignments deduce heapStores loads localVars
 subdirs := $(transformers)
 
 include rules.mk
@@ -16,6 +16,9 @@ infile := hello
 
 ########################################################################
 
+
+hashClass = hashClass
+varHash = $(hashClass) varHash
 
 backwardJumps = $(clonesMap) backwardJumps
 calls = $(clonesMap) $(functionBodyVisitor) calls
@@ -46,8 +49,9 @@ removeLoops = $(functionBodyVisitor) removeLoops
 setClass = $(mapClass) setClass
 sites = sites
 skipVisitor = skipVisitor
-stmtMap = $(mapClass) stmtMap
-stmtSet = $(setClass) stmtSet
+stmtHash = stmtHash
+stmtMap = $(mapClass) $(stmtHash) stmtMap
+stmtSet = $(setClass) $(stmtHash) stmtSet
 testHarness = testHarness
 transformVisitor = $(backwardJumps) $(calls) $(classifyJumps) $(countdown) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(isolateInstructions) $(removeLoops) $(sites) $(weighPaths) transformVisitor
 utils = utils

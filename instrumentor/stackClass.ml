@@ -9,5 +9,5 @@ class ['a] container = object
     Stack.pop storage
 
   method isEmpty =
-    Stack.length storage == 0
+    Stack.is_empty storage
 end

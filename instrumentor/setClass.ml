@@ -1,31 +1,48 @@
 exception Chosen
 
 
-class ['key] container indexer = object(self)
+class type ['key] s = object
+  method add : 'key -> unit
+  method remove : 'key -> unit
 
-  val storage = new MapClass.container indexer
+  method mem : 'key -> bool
+  method isEmpty : bool
 
-  method add key = storage#add key ()
+  method choose : 'key
+  method iter : ('key -> unit) -> unit
+end
 
-  method remove = storage#remove
 
-  method mem = storage#mem
+module Make (Key : Hashtbl.HashedType) = struct
 
-  method isEmpty = storage#isEmpty
+  module Map = MapClass.Make(Key)
 
-  method choose =
-    let result = ref None in
-    begin
-      try
-	self#iter (fun key -> result := Some key; raise Chosen);
-	raise Not_found
-      with Chosen -> ()
-    end;
-    match !result with
-      None -> raise Not_found
-    | Some chosen -> chosen
+  class container = object (self)
 
-  method iter action =
-    let mapAction (key : 'key) () = action key in
-    storage#iter mapAction
+    val storage = new Map.container
+
+    method add key = storage#add key ()
+
+    method remove = storage#remove
+
+    method mem = storage#mem
+
+    method isEmpty = storage#isEmpty
+
+    method choose =
+      let result = ref None in
+      begin
+	try
+	  self#iter (fun key -> result := Some key; raise Chosen);
+	  raise Not_found
+	with Chosen -> ()
+      end;
+      match !result with
+	None -> raise Not_found
+      | Some chosen -> chosen
+
+    method iter action =
+      let mapAction key () = action key in
+      storage#iter mapAction
+  end
 end

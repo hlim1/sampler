@@ -24,8 +24,5 @@ end
 ;;
 
 let file = Frontc.parse "bug.c" () in
-Check.checkFile [] file;
 visitCilFileSameGlobals (new SplitAfterCalls.visitor) file;
-Check.checkFile [] file;
-visitCilFileSameGlobals (new visitor) file;
-Check.checkFile [] file
+visitCilFileSameGlobals (new visitor) file

@@ -5,7 +5,7 @@ let main manager =
   let phases =
     [
      Unused.removeUnusedFunctions;
-     (fun file -> (manager file)#visit);
+     (fun file -> ignore (manager file));
      (fun file -> Rmtmps.removeUnusedTemps file);
      Idents.phase;
      dumpFile (new Printer.printer) stdout

@@ -32,10 +32,7 @@ class visitor file =
 
   fun func ->
     object (self)
-      inherit Classifier.visitor
-
-      val mutable sites = []
-      method sites = sites
+      inherit Classifier.visitor func
 
       val vars =
 	let globals =

@@ -4,26 +4,24 @@ open ClassifyJumps
 open FuncInfo
 
 
-let removeDeadCode = ref true
-
-let _ =
+let removeDeadCode = 
   Options.registerBoolean
-    removeDeadCode
     ~flag:"remove-dead-code"
     ~desc:"remove dead code"
     ~ident:"RemoveDeadCode"
+    ~default:true
 
 
 (**********************************************************************)
 
 
-let visit isWeightlessCallee countdownToken func info =
+let visit isWeightyCallee countdownToken func info =
   if info.sites != [] then
     begin
       ignore (computeCFGInfo func false);
       let entry = FunctionEntry.find func in
       let jumps = ClassifyJumps.visit func in
-      let weightyCalls = List.filter (fun call -> not (isWeightlessCallee call.callee)) info.calls in
+      let weightyCalls = List.filter (fun call -> isWeightyCallee call.callee) info.calls in
       let afterCalls = List.map (fun info -> info.landing) weightyCalls in
       let headers = entry :: jumps.backward @ afterCalls in
       ignore (computeCFGInfo func false);

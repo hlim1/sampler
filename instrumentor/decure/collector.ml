@@ -3,24 +3,19 @@ open Classify
 
 
 class visitor func =
-  let _ = assert (classifyByName func.svar.vname == Generic) in
-
   object (self)
-    inherit Classifier.visitor as super
+    inherit Classifier.visitor func as super
 
-    val mutable sites = []
-    method sites = sites
+    val role = Classify.classifyByName func.svar.vname
+
+    method private shouldVisit = role == Generic
 
     method private pushOrRemove stmt =
-      if self#includedFunction func && self#includedStatement stmt then
+      assert (role == Classify.Generic);
+      if includedFunction && self#includedStatement stmt then
 	sites <- stmt :: sites
       else
 	stmt.skind <- Instr [];
-
-    (* even if this function should be excluded, we must visit its
-       body to remove CCured checks *)
-    method vfunc func =
-      DoChildren
 
     method vstmt stmt =
       match classifyStatement stmt.skind with

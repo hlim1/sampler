@@ -6,10 +6,11 @@ open Interesting
 
 class visitor (tuples : ReturnTuples.builder) func =
   object (self)
-    inherit Classifier.visitor as super
+    inherit Classifier.visitor func as super
 
-    val mutable sites = []
-    method sites = sites
+    method private normalize =
+      StoreReturns.visit func;
+      super#normalize
 
     method vstmt stmt =
       match stmt.skind with

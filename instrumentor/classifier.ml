@@ -1,56 +1,50 @@
 open Cil
 
 
-let fileFilter = ref []
-
-
-let _ =
-  Clude.register
+let fileFilter = new Clude.filter
     ~flag:"file"
     ~desc:"<file-name> instrument this file"
     ~ident:"FilterFile"
-    fileFilter
-
-
-let funcFilter = ref []
-
-
-let _ =
-  Clude.register
-    ~flag:"function"
-    ~desc:"<function> instrument this function"
-    ~ident:"FilterFunction"
-    funcFilter
 
 
 (**********************************************************************)
 
 
-class visitor =
+class visitor func =
   object (self)
     inherit FunctionBodyVisitor.visitor
 
     val mutable calls = []
     method calls = calls
 
-    method sites : stmt list = []
+    val mutable sites = []
+    method sites : stmt list = sites
+
+    method private includedStatement stmt =
+      fileFilter#included (get_stmtLoc stmt.skind).file
+
+    val includedFunction = FunctionFilter.filter#included func.svar.vname
+
+    method private shouldVisit = includedFunction
 
     method private prepatchCall stmt =
       let info = Calls.prepatch stmt in
       calls <- info :: calls;
       info
 
-    method private includedFunction func =
-      Clude.selected !funcFilter func.svar.vname
+    method private normalize =
+      prepareCFG func;
+      RemoveLoops.visit func;
+      IsolateInstructions.visit func
 
-    method vfunc func =
-      if self#includedFunction func then
-	DoChildren
+    method vfunc _ =
+      if self#shouldVisit then
+	begin
+	  self#normalize;
+	  DoChildren
+	end
       else
 	SkipChildren
-
-    method private includedStatement stmt =
-      Clude.selected !fileFilter (get_stmtLoc stmt.skind).file
 
     method vstmt stmt =
       match stmt.skind with

@@ -14,9 +14,8 @@ static const void * const requiresLibCyclic = &providesLibCyclic;
 
 #ifdef CIL
 #pragma cilnoremove("getNextEventCountdown")
+#pragma sampler_exclude_function("getNextEventCountdown")
 #endif
-
-static inline unsigned getNextEventCountdown() __attribute__((no_instrument_function));
 
 static inline unsigned getNextEventCountdown()
 {

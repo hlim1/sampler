@@ -3,10 +3,7 @@ open Cil
 
 class visitor (counters : Counters.builder) func =
   object (self)
-    inherit Classifier.visitor as super
-
-    val mutable sites = []
-    method sites = sites
+    inherit Classifier.visitor func as super
 
     method private patchConditional stmt =
       begin

@@ -13,17 +13,15 @@ static struct CompilationUnit compilationUnit;
 static const char siteInfo[] __attribute__((section(".debug_site_info")));
 
 
-#pragma cilnoremove("compilationUnitConstructor")
-static void compilationUnitConstructor() __attribute__((constructor));
-static void compilationUnitConstructor()
+#pragma sampler_assume_weightless("registerCompilationUnit")
+static void compilationUnitConstructor() __attribute__((no_instrument_function, constructor))
 {
   registerCompilationUnit(&compilationUnit);
 }
 
 
-#pragma cilnoremove("compilationUnitDestructor")
-static void compilationUnitDestructor() __attribute__((destructor));
-static void compilationUnitDestructor()
+#pragma sampler_assume_weightless("unregisterCompilationUnit")
+static void compilationUnitDestructor() __attribute__((no_instrument_function, destructor))
 {
   unregisterCompilationUnit(&compilationUnit);
 }

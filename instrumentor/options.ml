@@ -12,10 +12,13 @@ let push argspec =
   args := argspec :: !args
 
 
-let registerBoolean ~flag ~desc ~ident value =
-  push ("--no-" ^ flag, Clear value, "");
-  push ("--" ^ flag, Set value, desc);
-  Idents.register (ident, fun () -> string_of_bool !value)
+let registerBoolean ~flag ~desc ~ident ~default =
+  let storage = ref default in
+  push ("--no-" ^ flag, Clear storage, "");
+  push ("--" ^ flag, Set storage, desc);
+  if ident <> "" then
+    Idents.register (ident, fun () -> string_of_bool !storage);
+  storage
 
 
 let argspecs () = !args

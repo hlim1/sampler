@@ -1,21 +1,19 @@
 open Cil
 
 
-let specializeEmptyRegions = ref true
-let specializeSingletonRegions = ref true
-
-let _ =
+let specializeEmptyRegions =
   Options.registerBoolean
-    specializeEmptyRegions
     ~flag:"specialize-empty-regions"
     ~desc:"specialize countdown checks for regions with no sampling sites"
-    ~ident:"SpecializeEmptyRegions";
+    ~ident:"SpecializeEmptyRegions"
+    ~default:true
 
+let specializeSingletonRegions =
   Options.registerBoolean
-    specializeSingletonRegions
     ~flag:"specialize-singleton-regions"
     ~desc:"specialize countdown checks for regions with exactly one sampling site"
     ~ident:"SpecializeSingletonRegions"
+    ~default:true
 
 
 let findGlobal = FindGlobal.find "nextEventCountdown"

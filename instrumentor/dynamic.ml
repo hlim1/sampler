@@ -7,14 +7,12 @@ type resolution = Unknown | Known of varinfo list
 
 
 
-let usePointsTo = ref false
-
-let _ =
+let usePointsTo =
   Options.registerBoolean
-    usePointsTo
     ~flag:"use-points-to"
     ~desc:"use a points-to analysis to resolve dynamic function calls"
     ~ident:"UsePointsTo"
+    ~default:false
 
 
 let analyze file =

@@ -7,9 +7,6 @@ class virtual visitor file () =
   object (self)
     inherit Classifier.visitor
 
-    val mutable sites = []
-    method private sites = sites
-
     val mutable globals = []
     method private globals = globals
 

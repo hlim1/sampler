@@ -6,10 +6,7 @@ open Pretty
 
 class visitor file (tuples : PairTuples.builder) func =
   object (self)
-    inherit Classifier.visitor as super
-
-    val mutable sites = []
-    method sites = sites
+    inherit Classifier.visitor func as super
 
     val vars =
       let globalVars =

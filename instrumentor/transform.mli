@@ -1,4 +1,4 @@
 open Cil
 
 
-val visit : Weightless.tester -> (fundec -> Countdown.countdown) -> fundec -> FuncInfo.t -> unit
+val visit : Weighty.tester -> (fundec -> Countdown.countdown) -> fundec -> FuncInfo.t -> unit

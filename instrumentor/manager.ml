@@ -5,14 +5,12 @@ open FuncInfo
 (**********************************************************************)
 
 
-let sample = ref true
-
-let _ =
+let sample =
   Options.registerBoolean
-    sample
     ~flag:"sample"
     ~desc:"randomly sample instrumentation sites at run time"
     ~ident:"Sample"
+    ~default:true
 
 
 (**********************************************************************)
@@ -20,11 +18,6 @@ let _ =
 
 class virtual visitor file =
   object (self)
-    val mutable infos = new FileInfo.container
-
-    initializer
-      Dynamic.analyze file
-
     method private virtual statementClassifier : fundec -> Classifier.visitor
 
     method private classifyStatements func =
@@ -33,34 +26,24 @@ class virtual visitor file =
       { sites = visitor#sites;
 	calls = visitor#calls }
 
-
-    method private normalize func =
-      prepareCFG func;
-      RemoveLoops.visit func;
-      IsolateInstructions.visit func;
-
     method private finalize = ()
 
+    initializer
+      Dynamic.analyze file;
+      FunctionFilter.collectPragmas file;
 
-    method private shouldTransform =
-      ShouldTransform.shouldTransform 
-
-    method private iterator = function
-      | GFun (func, _)
-	when self#shouldTransform func ->
-	  self#normalize func;
-	  let info = self#classifyStatements func in
-	  infos#add func info
-      | _ ->
-	  ()
-
-    method visit =
-      assert infos#isEmpty;
-      iterGlobals file self#iterator;
+      let infos = new FileInfo.container in
+      let iterator = function
+	| GFun (func, _) ->
+	    let info = self#classifyStatements func in
+	    infos#add func info
+	| _ -> ()
+      in
+      iterGlobals file iterator;
 
       if !sample then
 	begin
-	  let tester = Weightless.collect infos in
+	  let tester = Weighty.collect file infos in
 	  let countdown = new Countdown.countdown file in
 	  infos#iter (Transform.visit tester countdown)
 	end;

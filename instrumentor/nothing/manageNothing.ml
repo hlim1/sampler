@@ -5,5 +5,5 @@ class visitor file =
   object
     inherit Manager.visitor file
 
-    method private statementClassifier _ = new Classifier.visitor
+    method private statementClassifier = new Classifier.visitor
   end

@@ -12,9 +12,9 @@ static const void * const requiresLibAcyclic = &providesLibAcyclic;
 
 #ifdef CIL
 #pragma cilnoremove("getNextEventCountdown")
+#pragma sampler_exclude_function("getNextEventCountdown")
+#pragma sampler_assume_weightless("gsl_ran_geometric")
 #endif
-
-static inline unsigned getNextEventCountdown() __attribute__((no_instrument_function));
 
 static inline unsigned getNextEventCountdown()
 {

@@ -8,10 +8,6 @@ class visitor file =
 
     method private statementClassifier = classifier
 
-    method private normalize func =
-      StoreReturns.visit func;
-      super#normalize func
-
     method private finalize =
       tuples#finalize;
       super#finalize

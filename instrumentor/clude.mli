@@ -1,6 +1,7 @@
-type pattern
+class filter : flag:string -> desc:string -> ident:string ->
+  object
+    method addExclude : string -> unit
+    method addInclude : string -> unit
 
-
-val register : flag:string -> desc:string -> ident:string -> pattern list ref -> unit
-
-val selected : pattern list -> string -> bool
+    method included : string -> bool
+  end

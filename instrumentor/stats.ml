@@ -1,8 +1,6 @@
-let showStats = ref false
-
-let _ =
+let showStats =
   Options.registerBoolean
-    showStats
     ~flag:"show-stats"
     ~desc:"show various summary statistics"
-    ~ident:"ShowStats"
+    ~ident:""
+    ~default:false

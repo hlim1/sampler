@@ -19,15 +19,13 @@ class visitor =
 
     val expectedSid = ref 0
 
-    method private addLocation = function
-      | {file = ""} ->
-	  ignore (bug "cannot serialize unknown location");
-	  failwith "internal error"
-      | location ->
-	  self#addString location.file;
-	  self#addChar '\t';
-	  self#addString (string_of_int location.line);
-	  self#addChar '\n'
+    method private addLocation location =
+      let file = if location.file = "" then "(unknown)" else location.file in
+      let line = if location.line = -1 then 0 else location.line in
+      self#addString file;
+      self#addChar '\t';
+      self#addString (string_of_int line);
+      self#addChar '\n'
 
     method postNewline thing =
       self#addChar '\n';
@@ -96,18 +94,18 @@ class visitor =
 
 let visit file =
   if !embedCFG then
-    begin
-      Dynamic.analyze file;
-      let visitor = new visitor in
-      visitCilFileSameGlobals (visitor :> cilVisitor) file;
-      visitor#addChar '\n';
-      let contents = visitor#contents in
+    TestHarness.time "  embedding CFG"
+      (fun () ->
+	Dynamic.analyze file;
+	let visitor = new visitor in
+	visitCilFileSameGlobals (visitor :> cilVisitor) file;
+	visitor#addChar '\n';
+	let contents = visitor#contents in
 
-      let init = SingleInit (mkString contents) in
-      let varinfo = makeGlobalVar "samplerCFG" (TArray (TInt (IChar, [Attr ("const", [])]), None, [])) in
-      varinfo.vstorage <- Static;
-      varinfo.vattr <- [Attr("section", [AStr ".debug_sampler_cfg"]); Attr("unused", [])];
-      let global = GVar (varinfo, {init = Some init}, locUnknown) in
+	let init = SingleInit (mkString contents) in
+	let varinfo = makeGlobalVar "samplerCFG" (TArray (TInt (IChar, [Attr ("const", [])]), None, [])) in
+	varinfo.vstorage <- Static;
+	varinfo.vattr <- [Attr("section", [AStr ".debug_sampler_cfg"]); Attr("unused", [])];
+	let global = GVar (varinfo, {init = Some init}, locUnknown) in
 
-      file.globals <- global :: file.globals
-    end
+	file.globals <- global :: file.globals)

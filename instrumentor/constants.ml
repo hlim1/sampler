@@ -39,13 +39,16 @@ class visitor collection =
 	SkipChildren
 
     method vexpr exp =
-      begin
-	match isInteger (constFold true exp) with
-	| Some constant ->
-	    collection#replace constant ()
-	| None ->
-	    ()
-      end;
+      if FileFilter.filter#included !currentLoc.file then
+	begin
+	  match isInteger (constFold true exp) with
+	  | Some constant ->
+	      ignore (Pretty.eprintf "%t: picked up constant %Ld@!"
+			d_thisloc constant);
+	      collection#replace constant ()
+	  | None ->
+	      ()
+	end;
       DoChildren
   end
 

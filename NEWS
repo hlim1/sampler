@@ -1,5 +1,11 @@
 -*- outline -*-
 
+* sampler-0.14
+
+** Ignore program constants in excluded files.
+
+We were already doing the analogous thing for excluded functions.
+
 * sampler-0.13.1
 
 ** Put architecture back into build distribution upload header.

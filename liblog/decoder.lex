@@ -121,7 +121,7 @@ byte	.|\n
   BEGIN EXPR0;
 }
 
-<VALUE>\13{byte}{4} {
+<VALUE>\13{byte}{8} {
   assert(yytext[0] == UnsignedLongLong);
   assert(yyleng - 1 == sizeof(unsigned long long));
   printf("%Lu\n", * (const unsigned long long *) (yytext + 1));

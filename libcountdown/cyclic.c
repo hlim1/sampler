@@ -18,7 +18,7 @@ const unsigned *loadCountdowns(const char envar[])
   const char * const environ = getenv(envar);
   if (!environ)
     {
-      fprintf(stderr, __FUNCTION__ ": must name precomputed countdowns file in $%s\n", envar);
+      fprintf(stderr, "%s: must name precomputed countdowns file in $%s\n",  __FUNCTION__, envar);
       exit(2);
     }
   else
@@ -26,7 +26,7 @@ const unsigned *loadCountdowns(const char envar[])
       const int fd = open(environ, O_RDONLY);
       if (fd == -1)
 	{
-	  fprintf(stderr, __FUNCTION__ ": cannot open \"%s\": %s\n", environ, strerror(errno));
+	  fprintf(stderr, "%s: cannot open \"%s\": %s\n", __FUNCTION__, environ, strerror(errno));
 	  exit(2);
 	}
       else
@@ -34,7 +34,7 @@ const unsigned *loadCountdowns(const char envar[])
 	  void * const mapping = mmap(0, MAP_SIZE, PROT_READ, MAP_PRIVATE, fd, 0);
 	  if (mapping == (void *) -1)
 	    {
-	      fprintf(stderr, __FUNCTION__ ": cannot mmap \"%s\": %s\n", environ, strerror(errno));
+	      fprintf(stderr, "%s: cannot mmap \"%s\": %s\n",  __FUNCTION__, environ, strerror(errno));
 	      exit(2);
 	    }
 

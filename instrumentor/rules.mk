@@ -90,6 +90,11 @@ check:: force $(addsuffix /check, $(subdirs))
 .PHONY: %/check
 
 
+browse: force
+	ocamlbrowser $(includes)
+.PHONY: browse
+
+
 ########################################################################
 
 

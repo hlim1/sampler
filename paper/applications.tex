@@ -256,23 +256,22 @@ roles; relationships among scalars may reveal buffer overruns,
 unanticipated consequences of negative values, invalid enumeration
 constants, or a variety of other problems.
 
-%% changed x and y_i to a and b_i to avoid confusion with the logistic
-%% regression notation later on [axz]
-At any direct assignment to a scalar variable $a$, we identify all
-other local or global variables $\{ b_1, b_2, \dots, b_n \}$ which are
-also in scope and which have the same type.  We then compare $a$ to
-each $b_i$, and note whether $a$ was smaller, equal to, or greater
-than $b_i$.  Even with very sparse sampling, a direct trace of these
-comparisons would overwhelm both client, network, and server.
-Instead, we locally reduce the trace by merely counting how often each
-of the three relative orderings appeared.  We compare pointers to
-same-typed pointers as well, and additionally compare each pointer for
-equality with null.  One comparison between $a$ and $b_i$, which bumps
-one of three counters, is considered to be one instrumentation site
-subject to random sampling.  When an instrumented application
-terminates, it emits the vector of counter triples along with a flag
-indicating whether it completed successfully or was aborted by a fatal
-signal.
+At any direct assignment to a scalar variable \texttt{a}, we identify
+all other local or global variables $\{ \mathtt{b}_1, \mathtt{b}_2,
+\dots, \mathtt{b}_n \}$ which are also in scope and which have the
+same type.  We then compare the updated \texttt{a} to each
+$\mathtt{b}_i$, and note whether \texttt{a} was less than, equal to,
+or greater than $\mathtt{b}_i$.  Even with very sparse sampling, a
+direct trace of these comparisons would overwhelm both client,
+network, and server.  Instead, we locally reduce the trace by merely
+counting how often each of the three relative orderings appeared.  We
+compare pointers to same-typed pointers as well, and additionally
+compare each pointer for equality with null.  One comparison between
+\texttt{a} and $\mathtt{b}_i$, which bumps one of three counters, is
+considered to be one instrumentation site subject to random sampling.
+When an instrumented application terminates, it emits the vector of
+counter triples along with a flag indicating whether it completed
+successfully or was aborted by a fatal signal.
 
 %% changed number of counter triples to reflect the dataset without
 %% bison/lex lines

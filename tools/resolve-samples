@@ -1,7 +1,6 @@
 #!/usr/bin/perl -w
 
 use strict;
-use 5.008;			# for safe pipe opens using list form of open
 
 #use Data::Dumper;
 use Fcntl qw(SEEK_SET);

@@ -1,2 +1,2 @@
-test	test.c	10	main	five	0	0	1
-test	test.c	9	main	five	0	0	1
+returns	test	test.c	10	main	7	five	0	0	1
+returns	test	test.c	9	main	3	five	0	0	1

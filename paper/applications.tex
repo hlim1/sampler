@@ -1,3 +1,171 @@
 \section{Applications and Experiments}
 \label{sec:applications}
 
+We have used the transformation framework to inject different forms of
+instrumentation into several programs, both to assess the performance
+impact of sampling as well as to gain novel insights into program
+(mis)behavior.  We report on our findings here.
+
+\subsection{Sharing the Cost of Assertions}
+
+In conventional usage, C \texttt{assert()} calls are used during
+program development but are disabled (``\texttt{-DNDEBUG}'') when the
+code ships in order to boost performance.  However, we all know that
+shipping release 1.0 does not magically make our code bug-free.
+Deployed programs will fail in unanticipated ways, and it would be
+helpful to retain some level of assertion checking if the performance
+penalty were not excessive.
+
+As an extreme example of assertion-dense code, consider software built
+using the \ccured instrumenting translator \cite{POPL_'02*128}.
+\ccured analyses programs written in C and attempts to prove,
+statically, that most pointer operations are memory safe.  Where this
+cannot be done, \ccured inserts dynamic checks to enforce memory
+safety at run time.  For purposes of our research, \ccured may be
+thought of as a source of highly assertion-dense code.  The individual
+assertions are quite small and fast: array bounds checks, testing for
+null, etc.  However, in large numbers, their performance impact can be
+considerable.  We wish to use random sampling to share this cost
+fairly among many users.
+
+We have applied sampling to several benchmarks taken from the
+SPECINT95 \cite{SPEC95} and Olden \cite{Carlisle:1996:OPPWDDSDMM}
+benchmark suites.  These are the same benchmarked originally examined
+by \ccured's designers, but the memory safety bugs they discovered
+have been fixed.  Thus all programs run to completion and we are
+simply measuring the overhead of performing the dynamic checks.
+
+\begin{table*}[tb]
+  \centering
+  \begin{tabular}{|l|rrr|rrr|}
+    \hline
+    & \multicolumn{3}{c|}{\textbf{function counts}} & \multicolumn{3}{c|}{\textbf{average for functions with sites}} \\
+    \raisebox{1.5ex}[0pt]{\textbf{benchmark}} & \textbf{total} & \textbf{weightless} & \textbf{has sites} & \textbf{sites} & \textbf{threshold checks} & \textbf{threshold weight} \\
+    \hline\hline
+    \input{applications/olden-static}
+    \hline
+    \input{applications/spec95-static}
+    \hline
+  \end{tabular}
+  \caption{Static metrics for \ccured benchmarks.  Olden benchmarks
+    are listed first, followed by SPECINT95.}
+  \label{tab:ccured-static}
+\end{table*}
+
+Table~\ref{tab:ccured-static} gives summary information for static
+facets of the sampling transformation.  For each benchmark, we count
+the total number of non-library functions and the number of these
+which are shown to be weightless.  \ccured is a whole-program
+analysis, so weightless function identification has the advantage of
+being able to examine every function body.  We also count the number
+of functions which directly contain at least one instrumentation site.
+(A function may contain no sites, but still not be weightless if it
+calls other functions which do have sites.)
+
+Considering just the functions which directly contain at least one
+instrumentation site, Table~\ref{tab:ccured-static} also presents the
+average number of sites per function, the average number of threshold
+check points per function, and the average threshold weight for all
+such points.  (Note that the product of the last two of these metrics
+may exceed the first, as a single instrumentation site may fall under
+more than one threshold check point.  This can be seen in the example
+in Figure~\ref{fig:code-layout} as well.)  The average site count
+gives an impression of how assertion-dense the code is, while the
+average threshold weight measures how effective our transformation has
+been in amortizing the cost of countdown checks over multiple sites.
+
+\begin{table}
+  \centering
+  \begin{tabular}{|l|rrr|}
+    \hline
+    \rule{0pt}{2.5ex}
+    \textbf{benchmark} & $\mathbf{10^{-2}}$ & $\mathbf{10^{-4}}$ & $\mathbf{10^{-6}}$ \\
+    \hline\hline
+    %%\input{applications/olden-density}
+    \hline
+    %%\input{applications/spec95-density}
+  \end{tabular}
+  \caption{Relative speedup of various sampling rates versus always checking.}
+  \label{tab:ccured-density}
+\end{table}
+
+Table~\ref{tab:ccured-density} shows the performance effect of various
+sampling densities.  We take the running time of standard \ccured code
+as the baseline.  We report the speedup (>1) or slowdown (<1) relative
+to this baseline when sampling at various densities.  All benchmarks
+were compiled using \texttt{gcc} 2.96 using standard optimization
+(\texttt{-O2}).  Times were collected on a \unknown MHz Pentium III
+Linux machine with one gigabyte of RAM.  Reported speedups represent
+the average of four runs; each run used a different pre-generated bank
+of 1024 geometrically distributed random countdowns.
+
+\aside{Interpret the data, once I have it.}
+
+\aside{Present and interpret single-function sampling data.}
+
+\subsection{Finding Bugs Using Data Mining}
+
+Sampled information about program behavior can be thought of as a
+database.  Data mining techniques, then, may reveal important
+information about the aggregate behavior of many runs.  Of particular
+interest to us is finding and fixing bugs.  We now illustrate how
+mining of sampled program behavior can help direct software engineers
+to the root cause of difficult bugs.
+
+Because we do not have ready access to thousands of users, we simulate
+a large user community by using randomly generated inputs in the
+spirit of the Fuzz project~\cite{MKLMMNS95}.  Our selected target is
+version 1.06 of the GNU implementation of \texttt{bc}.  We find that
+feeding \texttt{bc} nine megabytes of random input causes it to crash
+roughly one time in four.  While this would be an unusually high
+failure rate for shipping software under normal usage patterns, we
+expect that users experiencing crashes will be more likely to opt-in
+to a trace reporting system.  Thus, this may be a reasonable ratio to
+expect if most crashes and a few non-crashes are reported.
+
+Quick perusal of the stack trace at a typical failure is discouraging.
+The crash occurs several frames deep inside the C library's
+\texttt{malloc()} function: a sure sign of heap corruption.  Such bugs
+are especially pernicious because the actual corruption may have
+happened well before the ultimate crash.  
+
+We instrument \texttt{bc} to guess and randomly check a large number
+of possible invariants.  Our goal is to identify invariants that hold
+when the program succeeds, but which are violated when the program
+crashes.  We cast an extremely broad net, but with an eye toward
+pointer use violations and buffer overruns.  At any direct assignment
+to a scalar variable $x$, we identify all other local or global
+variables $\{ y_1, y_2, \dots, y_n \}$ which are also in scope and
+which have the same type.  We then compare $x$ to each $y_i$, and
+update one of three counters depending on whether $x$ was smaller,
+equal to, or greater than $y_i$.  A distinct counter triple is
+maintained for each $(x, y_i)$ pair at each distinct syntactic
+assignment.  We compare pointers to same-typed pointers as well, and
+additionally compare each pointer for equality with null.  One
+comparison between $x$ and $y_i$, which bumps one of three counters,
+is considered to be one instrumentation site subject to random
+sampling.
+
+As expected, this gives us a large number of candidate invariants:
+13,442 counter triples, or 40,326 counters in all.  Because our
+invariant guesses are so crude, the vast majority of these are of no
+interest, either because they compare completely unrelated variables
+or because they express invariants which hold equally in both
+successful and failed runs.
+
+To find the few invariants that do count, we use \aside{identify and
+  describe the particular form of logistic regression we used.}
+
+\aside{Interpretation of logistic regression results.  Statement that
+  they direct us to some small region of code in a single function,
+  versus 9764 lines of code in all of \texttt{bc}.  Description of bug
+  found on like 176 of \texttt{storage.c}.}
+
+\aside{Alice reports:
+  
+  Well, of the 40296 features (yet another name for ``predictors''),
+  only 9056 of them are ever non-zero.  Of the non-zero useful
+  features, 955 are constant; 948 of these are constant at 1, 2 at 2,
+  1 at 28, 1 at 31, and 3 at 32.  144 of the useful features have very
+  small variation, where the value is only different for one or two
+  runs.}

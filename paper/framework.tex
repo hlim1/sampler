@@ -18,10 +18,10 @@ of code as instrumentation; for this particular example, assume that
 the italicized \texttt{\textit{check()}} calls have been tagged for
 sampling.  A \texttt{\textit{check()}} call might conditionally halt
 the program (as \texttt{assert()}), or it might append an event to a
-trace stream, or it might simply update a per-predicate counter to
-record how often the claimed invariant did indeed hold.  The precise
-behavior of the instrumentation code depends on what one wishes to
-measure, but is of no concern to the sampling transformation itself.
+trace stream, or it might update a per-predicate counter to record how
+often the claimed invariant did indeed hold.  The precise behavior of
+the instrumentation code depends on what one wishes to measure, but is
+of no concern to the sampling transformation itself.
 
 \subsection{Sampling the Bernoulli Way}
 
@@ -180,7 +180,8 @@ Within these bounds, there is some flexibility regarding exactly where
 a threshold check is placed.  For simplicity, our present system
 places one threshold check at function entry and one along each back
 edge.  Weights may be computed in a single bottom-up traversal of each
-function's control flow graph.
+function's control flow graph.  If any threshold check is found to
+have zero weight, it is simply discarded.
 
 We produce two complete copies of the function body.  One contains
 full instrumentation, with each possible sample guarded by a decrement
@@ -197,26 +198,27 @@ fast path code instead.
   \centering
   \input{layout}
   \caption{Example of instrumented code layout}
-  \label{fig:layout}
+  \label{fig:code-layout}
 \end{figure}
 
-Figure~\ref{fig:layout} shows an example of code layout for a function
-containing one conditional and one loop.  Dotted nodes represent
-instrumentation sites; these are reduced to mere countdown decrements
-in the fast path.  The boxed nodes represent threshold checks; we have
-added one at function entry and one along the back edge of the loop.
-At a high level, this code layout strategy is a variation on that used
-by Arnold and Ryder to reduce the cost of code instrumented for
-performance profiling \cite{Arnold:2001:FRC}.  The principal change in
-our transformation is the use of geometrically distributed countdowns
-in conjunction with acyclic region weights to choose between the two
-code variants.  Arnold and Ryder use fixed sampling periods (e.g.,
-exactly once per $n$ opportunities, or exactly once per $n$
-instructions) and do not apply region-specific weighting.  Our
-approach imposes more overhead, but offers greater statistical rigor
-in the resultant sampled data.  Arnold and Ryder have studied several
-variant layouts with varying trade-offs of code size versus overhead;
-the same choices and trade-offs are directly applicable here.
+Figure~\ref{fig:code-layout} shows an example of code layout for a
+function containing one conditional and one loop.  Dotted nodes
+represent instrumentation sites; these are reduced to mere countdown
+decrements in the fast path.  The boxed nodes represent threshold
+checks; we have added one at function entry and one along the back
+edge of the loop.  At a high level, this code layout strategy is a
+variation on that used by Arnold and Ryder to reduce the cost of code
+instrumented for performance profiling \cite{Arnold:2001:FRC}.  The
+principal change in our transformation is the use of geometrically
+distributed countdowns in conjunction with acyclic region weights to
+choose between the two code variants.  Arnold and Ryder use fixed
+sampling periods (e.g., exactly once per $n$ opportunities, or exactly
+once per $n$ instructions) and do not apply region-specific weighting.
+Our approach imposes more overhead, but offers greater statistical
+rigor in the resultant sampled data.  Arnold and Ryder have studied
+several variant layouts with varying trade-offs of code size versus
+overhead; the same choices and trade-offs are directly applicable
+here.
 
 \aside{Should something here about using loop unrolling to create
   larger acyclic regions?  This has a conceptual connection to VLIW
@@ -250,7 +252,7 @@ can extend below such calls, and no additional threshold check is
 required after such a call returns.  A further benefit is that the
 bodies of weightless functions may be compiled with no modifications.
 They have no threshold checks, no instrumented code, and therefore
-require no cloning or transformation of any sort.
+require no cloning or transformation of any kind.
 
 \subsection{Global Countdown Management}
 
@@ -287,6 +289,17 @@ countdown.  Similarly, the bodies of weightless functions need not
 import and export at entry and exit, since they always leave the
 countdown unchanged.
 
+With this change, the native C compiler is well positioned to coalesce
+decrements and perform other standard but important optimizations.
+
 \aside{Should we say something about multithreaded code (specifically,
   that it is OK to have per-thread countdowns to avoid global lock
   contention)?}
+
+\aside{Still need to discuss:
+
+  \begin{itemize}
+  \item instrumenting a single function at a time
+  \item hierarchical sampling at the level of functions and sites
+  \item client-side data reduction
+  \end{itemize}}

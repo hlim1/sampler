@@ -32,10 +32,14 @@ stack trace, register contents, and the like.  However, program
 actions \emph{before} the crash remain unknown.  Trace information
 leading up to the failure may contain critical clues, especially in
 such cases as heap corruption where the erroneous program action may
-occur well before the resultant crash.  Also, such systems report no
-information for successful runs.  This makes it difficult to
-distinguish anomalous (crash-causing) behavior from behavior common to
-all runs.
+occur well before the resultant crash.  Also, crash reporting systems
+report no information for successful runs.  This makes it difficult to
+distinguish anomalous (crash-causing) behavior from innocuous behavior
+common to all runs.
+
+\aside{I've actually \emph{met} with the Mozilla crash feedback
+  people.  If I can find an excuse to mention that, it might improve
+  our credibility.}
 
 Therefore, we wish to trace or monitor program behavior continuously
 throughout a run.  Furthermore, we want to measure reality: actual use

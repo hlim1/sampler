@@ -1,10 +1,7 @@
 open Cil
 
 
-class visitor file =
-  let counters = Counters.build file in
-
-  fun global func ->
+class visitor (counters : Counters.builder) global func =
     object (self)
       inherit Classifier.visitor global as super
 
@@ -15,8 +12,7 @@ class visitor file =
 	begin
 	  match stmt.skind with
 	  | If (predicate, thenClause, elseClause, location) ->
-	      let (lval, site, profile) = counters func location predicate in
-	      self#addGlobal profile;
+	      let (lval, site) = counters#bump func location predicate in
 	      let site = mkStmt site in
 	      sites <- site :: sites;
 	      stmt.skind <- Block (mkBlock [mkStmtOneInstr (Set (lval, predicate, location));

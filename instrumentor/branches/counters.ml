@@ -1,107 +1,108 @@
 open Cil
-open Rmtmps
+open SiteInfo
 
 
-let id = ref 0
+type branchProfileVar = { varinfo : varinfo;
+			  compinfo : compinfo;
+			  initinfo : initinfo }
 
 
-let findCompInfo file =
-  let rec seek = function
-    | GCompTag ({ cstruct = true; cname = "BranchProfile" } as compinfo, _) :: _ ->
-	compinfo
-    | _ :: rest ->
-	seek rest
-    | [] ->
-	raise Not_found
-  in
-  seek file.globals
-
-
-let build file =
-  let compInfo = findCompInfo file in
-  let compType = TComp(compInfo, []) in
-  let fieldOffset field = Field (field, NoOffset) in
-  let getField = getCompField compInfo in
-  let arrayField = getField "counters" in
-  let arrayOffset = fieldOffset arrayField in
-
-  fun func location (expression : exp) ->
-    let global =
-      incr id;
-      let result = makeGlobalVar ("branch_profile_" ^ string_of_int !id) compType in
-      result.vstorage <- Static;
-      result
+class builder file =
+  let branchProfile =
+    let rec seek = function
+      | GVar ({vname = "branchProfile";
+	       vtype = TComp ({cstruct = true;
+			       cname = "BranchProfile"} as compinfo,
+			      []);
+	       vstorage = Static} as varinfo,
+	      ({init = None} as initinfo),
+	      _) :: _
+	->
+	  {varinfo = varinfo; initinfo = initinfo; compinfo = compinfo}
+      | _ :: rest ->
+	  seek rest
+      | [] ->
+	  failwith "cannot find global variable \"branchProfile\""
     in
-
-    let declaration =
-      let init tag expr = fieldOffset (getField tag), SingleInit expr in
-      let initStr tag str = init tag (mkString str) in
-      let initNum tag num = init tag (kinteger IUInt num) in
-      
-      GVar (global,
-	    { init = Some
-		(CompoundInit
-		   (compType,
-		    [ init "prev" zero;
-		      init "next" zero;
-		      arrayOffset, makeZeroInit arrayField.ftype;
-		      initStr "file" location.file;
-		      initNum "line" location.line;
-		      initStr "function" func.svar.vname;
-		      initStr "condition" (Pretty.sprint max_int (d_exp () expression));
-		      initNum "id" !id
-		    ])) },
-	    location)
-    in
-
-    let local = var (makeTempVar func (typeOf expression)) in
-
-    let bump =
-      let array = (Var global, arrayOffset) in
-      Bump.bump func location (Lval local) array
-    in
-
-    local, bump, declaration
-
-
-let register file =
-  removeUnusedTemps file;
-
-  let profiles =
-    try
-      let target = findCompInfo file in
-
-      let rec filter = function
-	| GVar ({ vtype = TComp (compinfo, _) } as varinfo, _, _) :: globals
-	  when compinfo == target ->
-	    varinfo :: filter globals
-	| _ :: globals ->
-	    filter globals
-	| [] ->
-	    []
-      in
-
-      filter file.globals
-
-    with Not_found -> []
+    seek file.globals
   in
 
-  if profiles != [] then
-    begin
-      let call helper profile = Call (None, Lval (var helper), [mkAddrOf (var profile)], profile.vdecl) in
-      let calls helper = List.map (call helper) profiles in
-      let build timing name helper =
-	let func = emptyFunction name in
-	func.svar.vstorage <- Static;
-	func.svar.vattr <- [Attr (timing, [])];
-	func.sbody.bstmts <- [mkStmt (Instr (calls helper))];
-	GFun (func, locUnknown)
-      in
-      
-      let registerHelper = FindFunction.find "registerBranchProfile" file in
-      let unregisterHelper = FindFunction.find "unregisterBranchProfile" file in
-      let registerAll = build "constructor" "registerBranchProfiles" registerHelper in
-      let unregisterAll = build "destructor" "unregisterBranchProfiles" unregisterHelper in
 
-      file.globals <- file.globals @ [registerAll; unregisterAll]
-    end
+  object (self)
+    val mutable id = 0
+
+    val sites = new SiteInfoQueue.container
+
+
+    method private getField = getCompField branchProfile.compinfo
+
+
+    method bump =
+      let sitesField = self#getField "sites" in
+
+      fun func location expression ->
+	let local = var (makeTempVar func (typeOf expression)) in
+
+	let bump =
+	  let array = (Var branchProfile.varinfo, Field (sitesField, Index (integer id, NoOffset))) in
+	  id <- id + 1;
+	  Bump.bump location (Lval local) array
+	in
+
+	sites#add { location = location;
+		    condition = expression };
+
+	local, bump
+
+
+    method register =
+      let signature = Digest.file file.fileName in
+      let noOffset field = Field (field, NoOffset) in
+      let getOffset name = noOffset (self#getField name) in
+      let singleInit name expr = getOffset name, SingleInit expr in
+      let init = CompoundInit (branchProfile.varinfo.vtype,
+			       [ singleInit "prev" zero;
+				 singleInit "next" zero;
+				 singleInit "signature" (mkString signature);
+				 singleInit "count" (integer id);
+				 let sitesField = self#getField "sites" in
+				 let countersInit =
+				   let countersType =
+				     match sitesField.ftype with
+				     | TArray (countersType, _, _) -> countersType
+				     | _ -> failwith "bad sites field type"
+				   in
+				   CompoundInit (countersType, [])
+				 in
+				 (noOffset sitesField,
+				  CompoundInit (sitesField.ftype,
+						let arrayInit = ref [] in
+						for slot = id downto 1 do
+						  arrayInit := (Index (integer slot, NoOffset),
+								countersInit)
+						    :: !arrayInit
+						done;
+						!arrayInit))
+			       ])
+      in
+      branchProfile.initinfo.init <- Some init;
+
+
+      let siteInfoInit = SiteInfos.serialize sites signature in
+      let siteInfoSize = Some (integer (String.length siteInfoInit)) in
+      let truncator = function
+	| GVar ({vname = "siteInfo";
+		 vtype = TArray (TInt (IChar, [Attr("const", [])]) as elementType, None, attributes);
+		 vstorage = Static} as varinfo,
+		({init = None}),
+		location)
+	  ->
+	    GVar ({varinfo with vtype = TArray (elementType, siteInfoSize, attributes) },
+		  { init = Some (SingleInit (mkString siteInfoInit)) },
+		  location)
+	| other ->
+	    other
+      in
+      mapGlobals file truncator
+
+  end

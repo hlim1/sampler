@@ -1,6 +1,8 @@
 open Cil
 
 
-val build : file -> fundec -> location -> exp -> lval * stmtkind * global
-
-val register : file -> unit
+class builder : file ->
+  object
+    method bump : fundec -> location -> exp -> lval * stmtkind
+    method register : unit
+  end

@@ -31,7 +31,7 @@ sub extraHeaders {
     my $self = shift;
     my @extras = $self->SUPER::extraHeaders;
     push @extras, '-include', $self->root . '/libreport/requires.h';
-    push @extras, '-include', "$self->{libdir}/branches.h";
+    push @extras, '-include', "$self->{libdir}/branches-cil.h";
     return @extras;
 }
 

@@ -1,6 +1,8 @@
 *.i
 *.inst.c
 *.s
+*.sites
 *.trace
 .libs
+modular
 simple

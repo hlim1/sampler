@@ -2,7 +2,8 @@ open Cil
 
 
 class visitor file =
-  let classifier = new BranchClassifier.visitor file in
+  let counters = new Counters.builder file in
+  let classifier = new BranchClassifier.visitor counters in
 
   object
     inherit Manager.visitor file as super
@@ -10,6 +11,6 @@ class visitor file =
     method private statementClassifier = classifier
 
     method private finalize =
-      Counters.register file;
+      counters#register;
       super#finalize
   end

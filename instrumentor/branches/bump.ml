@@ -1,7 +1,7 @@
 open Cil
 
 
-let bump _ location expression counters =
+let bump location expression counters =
   let bnot exp = UnOp (LNot, exp, typeOf exp) in
   let offset = Index (bnot (bnot expression), NoOffset) in
   let counter = addOffsetLval offset counters in

@@ -1,4 +1,4 @@
 open Cil
 
 
-class visitor : file -> global -> fundec -> Classifier.visitor
+class visitor : Counters.builder -> global -> fundec -> Classifier.visitor

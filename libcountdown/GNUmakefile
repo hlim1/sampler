@@ -1,4 +1,7 @@
-CFLAGS := -W -Wall -Werror -g
+CFLAGS := -W -Wall -Werror -g `gsl-config --cflags`
+CPPFLAGS := -DHAVE_INLINE
+LOADLIBES := `gsl-config --libs`
+
 libs := libcountdown.a libcountdown.so
 
 all: $(libs)
@@ -7,7 +10,7 @@ all: $(libs)
 libcountdown.a: %: %(countdown.o)
 
 libcountdown.so: countdown.o
-	$(LINK.o) -shared $^ -o $@
+	$(LINK.o) -shared $^ $(LOADLIBES) -o $@
 
 countdown.o: %.o: %.c countdown.h
 

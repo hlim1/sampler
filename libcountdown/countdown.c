@@ -1,33 +1,57 @@
 #include <assert.h>
+#include <gsl/gsl_randist.h>
 #include <limits.h>
-#include <stdlib.h>
 #include "countdown.h"
 
 
 unsigned nextLogCountdown = UINT_MAX;
 
+double density;
+gsl_rng *generator;
+
 
 unsigned resetCountdown()
 {
-  unsigned countUp = 1;
-  
-#if 0
-  while (random() % (1 << 20) != 0)
-    {
-      ++countUp;
-      if (countUp == 0)
-      {
-	countUp = UINT_MAX;
-	break;
-      }
-    }
-#endif
-
-  return countUp;
+  assert(generator);
+  return gsl_ran_geometric(generator, density);
 }
 
 
 __attribute__((constructor)) static void initialize()
 {
+  const char * const environ = getenv("SAMPLER_SPARSITY");
+  if (environ)
+    {
+      char *end;
+      const double sparsity = strtod(environ, &end);
+      if (*end != '\0')
+	{
+	  fprintf(stderr, "countdown: trailing garbage in $SAMPLER_SPARSITY: %s", end);
+	  exit(2);
+	}
+      else if (sparsity < 1)
+	{
+	  fputs("countdown: $SAMPLER_SPARSITY must be greater than one", stderr);
+	  exit(2);
+	}
+      else
+	density = 1 / sparsity;
+    }
+  else
+    {
+      fputs("countdown: must give sampling sparsity in $SAMPLER_SPARSITY\n", stderr);
+      exit(2);
+    }
+  
+  assert(!generator);
+  generator = gsl_rng_alloc(gsl_rng_env_setup());
   nextLogCountdown = resetCountdown();
+}
+
+
+__attribute__((destructor)) static void shutdown()
+{
+  assert(generator);
+  gsl_rng_free(generator);
+  generator = 0;
 }

@@ -1,5 +1,7 @@
 *.browser
+*.cured.[ci]
+*.i
+*.inst.[cis]
 *.trace
-*cured.c
 .libs
 test

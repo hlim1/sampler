@@ -1,3 +1,5 @@
+how does launcher propagate SIGINT (^C) down to child?
+
 ShowStats doesn't need ident string, as it has no effect on the
 built binary.
 
@@ -15,8 +17,6 @@ single value multiple times
 
 assume that anything declared in /usr/include/... or
 /usr/lib/gcc-lib/... or perhaps a few other places is library code
-
-how does launcher propagate SIGINT (^C) down to child?
 
 Apache's $UNIQUE_ID can be decoded to reveal the submitter's IP
 address.  So if we're using this to name uploaded report directories,

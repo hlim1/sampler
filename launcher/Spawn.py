@@ -26,13 +26,16 @@ class Spawn:
             if 'GSL_RNG_SEED' in os.environ:
                 del os.environ['GSL_RNG_SEED']
 
-        os.spawnv(os.P_NOWAIT, application.executable, sys.argv)
+        self.__pid = os.spawnv(os.P_NOWAIT, application.executable, sys.argv)
 
         os.close(pipe[1])
         self.reportsFile = os.fdopen(pipe[0])
 
     def wait(self):
-        [None, exitCodes] = os.wait()
+        [pid, exitCodes] = os.wait()
         exitStatus = os.WIFEXITED(exitCodes) and os.WEXITSTATUS(exitCodes)
         exitSignal = os.WIFSIGNALED(exitCodes) and os.WTERMSIG(exitCodes)
         return [exitStatus, exitSignal]
+
+    def kill(self, signum):
+        os.kill(self.__pid, signum)

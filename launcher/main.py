@@ -14,6 +14,7 @@ import gtk
 # standard Python libraries
 import email
 import os
+import signal
 import sys
 import urllib2
 
@@ -48,10 +49,14 @@ def main():
     enabled &= (reportingUrl != None)
 
     if enabled:
-        # run the real application and collect its reports
+        # run the real application
         process = Spawn.Spawn(sparsity, application)
+        old_sigint = signal.signal(signal.SIGINT, lambda signum, frame: process.kill(signum))
+
+        # collect its reports and exit status
         reports = ReportsReader.ReportsReader(process.reportsFile)
         [exitStatus, exitSignal] = process.wait()
+        signal.signal(signal.SIGINT, old_sigint)
 
         # compress reports in preparation for upload
         compressLevel = gconfig['compression-level']

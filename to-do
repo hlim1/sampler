@@ -40,8 +40,5 @@ up in the Perl driver.
 Remember which functions are loopless.  Use this to optimize treatment
 of calls to known loopless functions.
 
-instrumentor/logging/loads/tests/multiple is incorrectly printing a
-single value multiple times
-
 assume that anything declared in /usr/include/... or
 /usr/lib/gcc-lib/... or perhaps a few other places is library code

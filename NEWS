@@ -6,6 +6,10 @@
 We want to be able to ask an executable what kind of instrumentation
 it has.
 
+** Let C compiler merge identical ident strings used to record
+instrumentor configuration.  We don't mind the aliasing and it makes
+executables smaller.
+
 * sampler-0.5.4
 
 ** Correct a typo in the first-time opt-in dialog.

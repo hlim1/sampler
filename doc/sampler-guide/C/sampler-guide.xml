@@ -969,7 +969,7 @@
 	      </listitem>
 	      <listitem>
 		<para>control flow graph number of site (unique within
-		function</para>
+		function)</para>
 	      </listitem>
 	    </orderedlist>
 	  </para>

@@ -34,7 +34,7 @@ Requires: python >= 2.2
 Requires: gnome-python2
 Requires: gnome-python2-gconf
 Requires: gnome-python2-gtkhtml2
-Requires: pygtk2
+Requires: pygtk2 >= 1.99.14
 Requires: pygtk2-libglade
 Obsoletes: sampler-gnome < 0.5
 

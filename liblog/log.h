@@ -1,7 +1,7 @@
 #ifndef INCLUDE_liblog_log_h
 #define INCLUDE_liblog_log_h
 
-#include <countdown.h>
+#include "../libcountdown/countdown.h"
 #include "primitive.h"
 
 

@@ -8,7 +8,7 @@ use FileHandle;
 use FindBin;
 use Getopt::Long;
 
-use lib $FindBin::Bin;
+use lib $FindBin::RealBin;
 use SymbolTable;
 use Function;
 use Object;
@@ -92,7 +92,7 @@ foreach my $objectName (@ARGV) {
 
     } else {
 	$handle = new FileHandle;
-	my $extractor = "$FindBin::Bin/extract-section";
+	my $extractor = "$FindBin::RealBin/extract-section";
 	if (! open $handle, '-|', $extractor, '.debug_sampler_cfg', $objectName) {
 	    error "warning: cannot run $extractor for $objectName: $!\n";
 	    next;

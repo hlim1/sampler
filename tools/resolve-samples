@@ -8,7 +8,7 @@ use Fcntl qw(SEEK_SET);
 use FileHandle;
 use FindBin;
 
-use lib $FindBin::Bin;
+use lib $FindBin::RealBin;
 use RawSamples;
 use SiteInfo;
 

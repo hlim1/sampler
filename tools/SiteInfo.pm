@@ -46,7 +46,7 @@ sub load ($$) {
 	$handle = new FileHandle $filename, 'r';
 	$handle or die "cannot read $filename: $!\n";
     } else {
-	my $extractor = "$FindBin::Bin/extract-section";
+	my $extractor = "$FindBin::RealBin/extract-section";
 	open $handle, '-|', $extractor, ".debug_site_info", $filename;
 	$handle or die "cannot extract sites from $filename: $!\n";
     }

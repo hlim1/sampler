@@ -39,7 +39,7 @@ class UserConfig:
 
     def change_sparsity(self, sparsity):
         '''Record a new sampling sparsity for future runs.'''
-        self.__client.set_int(self.__key('compression-level'), sparsity)
+        self.__client.set_int(self.__key('sparsity'), sparsity)
 
     def reporting_url(self):
         '''Destination address for uploaded reports.'''

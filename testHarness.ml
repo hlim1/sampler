@@ -1,9 +1,9 @@
 open Cil
 
 let visitOne visitors arg =
+  Printf.printf "%s:\n" arg;
   let file = Frontc.parse arg () in
-  Rmtmps.removeUnusedTemps file;
-  
+  (* Rmtmps.removeUnusedTemps file; *)
   List.iter (fun visitor -> visitCilFileSameGlobals (visitor :> cilVisitor) file) visitors;
   file
     

@@ -2,39 +2,12 @@ Source: sampler
 Section: devel
 Priority: optional
 Maintainer: Ben Liblit <liblit@cs.wisc.edu>
-Build-Depends: autoconf
-Build-Depends: cil-dev
-Build-Depends: debhelper (>> 4.0.0)
-Build-Depends: fakeroot
-Build-Depends: file
-Build-Depends: flex
-Build-Depends: gconf2
-Build-Depends: libbonobo2-dev
-Build-Depends: libgsl0-dev
-Build-Depends: libgtk2.0-dev
-Build-Depends: liborbit2-dev
-Build-Depends: libxml2-utils
-Build-Depends: ocaml-base-nox
-Build-Depends: ocaml-interp
-Build-Depends: ocaml-native-compilers
-Build-Depends: ocaml-nox
-Build-Depends: perl-base
-Build-Depends: pkg-config
-Build-Depends: python
-Build-Depends: python-dev
-Build-Depends: python-gnome2-dev
-Build-Depends: python-gtk2-dev
-Build-Depends: scrollkeeper
-Build-Depends: xsltproc
+Build-Depends: autoconf, cdbs, cil-dev, debhelper (>> 4.1.0), fakeroot, file, flex, gconf2, libbonobo2-dev, libgsl0-dev, libgtk2.0-dev, liborbit2-dev, libxml2-utils, ocaml-base-nox, ocaml-interp, ocaml-native-compilers, ocaml-nox, perl-base, pkg-config, python, python-dev, python-gnome2-dev, python-gtk2-dev, scrollkeeper, xsltproc
 Standards-Version: 3.6.1
 
 Package: sampler
 Architecture: any
-Depends: ${misc:Depends}
-Depends: ${python:Depends}
-Depends: ${shlibs:Depends}
-Depends: python-glade2
-Depends: python-gnome2
+Depends: ${misc:Depends}, ${python:Depends}, ${shlibs:Depends}, python-glade2, python-gnome2
 Description: support for applications with sampled instrumentation
  This package supports instrumented applications at run time.  It
  includes tools for launching instrumented applications, collecting
@@ -43,8 +16,7 @@ Description: support for applications with sampled instrumentation
 
 Package: sampler-dev
 Architecture: any
-Depends: ${perl:Depends}
-Depends: ${shlibs:Depends}
+Depends: ${perl:Depends}, ${shlibs:Depends}
 Description: tools for building applications with sampled instrumentation
  This package provides tools for building applications with sampled
  instrumentation.  It includes an instrumenting C compiler and utility
@@ -58,8 +30,7 @@ Description: documentation for sampler
 
 Package: sampler-server
 Architecture: all
-Depends: ${perl:Depends}
-Depends: apache-common
+Depends: ${perl:Depends}, apache-common
 Recommends: apache-ssl | libapache-mod-ssl
 Description: CGI script to receive uploaded instrumentation reports
  This package provides a CGI script that manages the server end of

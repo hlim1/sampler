@@ -18,8 +18,8 @@ static const char *getcap(char name[], const char fallback[])
 }
 
 
-static const char * const cr = getcap("cr", "");
 static const char * const el = getcap("el", "\n");
+static const char * const cr = el[0] ? getcap("cr", "") : "";
 
 
 Progress::Progress(const string &description, unsigned total)

@@ -45,44 +45,58 @@ let call file =
     search primitiveEnum.eitems
   in
   
-  let codeChar = findEnum "Char" in
-  let codeSignedChar = findEnum "SignedChar" in
-  let codeUnsignedChar = findEnum "UnsignedChar" in
-  let codeInt = findEnum "Int" in
-  let codeUnsignedInt = findEnum "UnsignedInt" in
-  let codeShort = findEnum "Short" in
-  let codeUnsignedShort = findEnum "UnsignedShort" in
-  let codeLong = findEnum "Long" in
-  let codeUnsignedLong = findEnum "UnsignedLong" in
-  let codeLongLong = findEnum "LongLong" in
-  let codeUnsignedLongLong = findEnum "UnsignedLongLong" in
-  let codeFloat = findEnum "Float" in
-  let codeDouble = findEnum "Double" in
-  let codeLongDouble = findEnum "LongDouble" in
-  let codePointer = findEnum "Pointer" in
+  let codeInt8 = findEnum "Int8" in
+  let codeUInt8 = findEnum "UInt8" in
+  let codeInt16 = findEnum "Int16" in
+  let codeUInt16 = findEnum "UInt16" in
+  let codeInt32 = findEnum "Int32" in
+  let codeUInt32 = findEnum "UInt32" in
+  let codeInt64 = findEnum "Int64" in
+  let codeUInt64 = findEnum "UInt64" in
+  let codeFloat32 = findEnum "Float32" in
+  let codeFloat64 = findEnum "Float64" in
+  let codeFloat96 = findEnum "Float96" in
+  let codePointer32 = findEnum "Pointer32" in
 
-  let rec typeCode = function
+  let rec typeCode typ =
+    match typ with
     | TInt (ikind, _) ->
-	(match ikind with
-	| IChar -> codeChar
-	| ISChar -> codeSignedChar
-	| IUChar -> codeUnsignedChar
-	| IInt -> codeInt
-	| IUInt -> codeUnsignedInt
-	| IShort -> codeShort
-	| IUShort -> codeUnsignedShort
-	| ILong -> codeLong
-	| IULong -> codeUnsignedLong
-	| ILongLong -> codeLongLong
-	| IULongLong -> codeUnsignedLongLong)
-    | TFloat (fkind, _) ->
-	(match fkind with
-	| FFloat -> codeFloat
-	| FDouble -> codeDouble
-	| FLongDouble -> codeLongDouble)
-    | TPtr _ -> codePointer
+	(match isSigned ikind, bitsSizeOf typ with
+	| true, 8 -> codeInt8
+	| false, 8 -> codeUInt8
+	| true, 16 -> codeInt16
+	| false, 16 -> codeUInt16
+	| true, 32 -> codeInt32
+	| false, 32 -> codeUInt32
+	| true, 64 -> codeInt64
+	| false, 64 -> codeUInt64
+	| _, other ->
+	    ignore (Errormsg.error "%s: cannot log %d-bit integer"
+		      file.fileName other);
+	    failwith "internal error")
+    | TFloat _ ->
+	(match bitsSizeOf typ with
+	| 32 -> codeFloat32
+	| 64 -> codeFloat64
+	| 96 -> codeFloat96
+	| other ->
+	    ignore (Errormsg.error "%s: cannot log %d-bit float"
+		      file.fileName other);
+	    failwith "internal error")
+    | TPtr _ ->
+	(match bitsSizeOf typ with
+	| 32 -> codePointer32
+	| other ->
+	    ignore (Errormsg.error "%s: cannot log %d-bit pointer"
+		      file.fileName other);
+	    failwith "internal error")
     | TNamed ({ttype = ttype}, _) -> typeCode ttype
-    | problematic ->
+    | TVoid _
+    | TArray _
+    | TFun _
+    | TComp _
+    | TEnum _
+    | TBuiltin_va_list _ as problematic ->
 	ignore (Errormsg.error "%s: cannot log non-primitive type %a"
 		  file.fileName d_type problematic);
 	failwith "internal error"

@@ -47,99 +47,80 @@ void sampleExpr(const char *expression)
 ////////////////////////////////////////////////////////////////////////
 
 
-template<class T> void sampleValue(PrimitiveType typeCode, T value)
+template<typename T> void sampleValue(T value)
 {
-  ostringstream stringify;
-  stringify << value;
-  Session::singleton.back().push_back(Sample(expression, typeCode, stringify.str()));
+  const Sample<T> sample(expression, value);
+  Session::singleton.back().addSample(sample);
 }
 
 
-void sampleChar(char value)
+void sampleInt8(int8_t value)
 {
-  sampleValue(Char, (unsigned) value);
+  sampleValue(value);
 }
 
 
-void sampleSignedChar(signed char value)
+void sampleUInt8(uint8_t value)
 {
-  sampleValue(SignedChar, (int) value);
+  sampleValue(value);
 }
 
 
-void sampleUnsignedChar(unsigned char value)
+void sampleInt16(int16_t value)
 {
-  sampleValue(UnsignedChar, (unsigned) value);
+  sampleValue(value);
 }
 
 
-void sampleInt(int value)
+void sampleUInt16(uint16_t value)
 {
-  sampleValue(Int, value);
+  sampleValue(value);
 }
 
 
-void sampleUnsignedInt(unsigned int value)
+void sampleInt32(int32_t value)
 {
-  sampleValue(UnsignedInt, value);
+  sampleValue(value);
 }
 
 
-void sampleShort(short value)
+void sampleUInt32(uint32_t value)
 {
-  sampleValue(Short, value);
+  sampleValue(value);
 }
 
 
-void sampleUnsignedShort(unsigned short value)
+void sampleInt64(int64_t value)
 {
-  sampleValue(UnsignedShort, value);
+  sampleValue(value);
 }
 
 
-void sampleLong(long value)
+void sampleUInt64(uint64_t value)
 {
-  sampleValue(Long, value);
+  sampleValue(value);
 }
 
 
-void sampleUnsignedLong(unsigned long value)
+void sampleFloat32(float value)
 {
-  sampleValue(UnsignedLong, value);
+  sampleValue(value);
 }
 
 
-void sampleLongLong(long long value)
+void sampleFloat64(double value)
 {
-  sampleValue(LongLong, value);
+  sampleValue(value);
 }
 
 
-void sampleUnsignedLongLong(unsigned long long value)
+void sampleFloat96(long double value)
 {
-  sampleValue(UnsignedLongLong, value);
+  sampleValue(value);
 }
 
 
-void sampleFloat(float value)
+void samplePointer32(const void *value)
 {
-  sampleValue(Float, value);
-}
-
-
-void sampleDouble(double value)
-{
-  sampleValue(Double, value);
-}
-
-
-void sampleLongDouble(long double value)
-{
-  sampleValue(LongDouble, value);
-}
-
-
-void samplePointer(const void *value)
-{
-  sampleValue(Pointer, value);
+  sampleValue(value);
 }

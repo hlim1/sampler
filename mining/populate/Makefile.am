@@ -5,10 +5,12 @@ populate_LDADD = -lcurses -lpq++ $(libdecoder)
 populate_SOURCES =				\
 	File.cc					\
 	File.h					\
+	PrimitiveTraits.cc			\
+	PrimitiveTraits.h			\
 	Progress.cc				\
 	Progress.h				\
-	Sample.cc				\
 	Sample.h				\
+	Samples.h				\
 	Session.cc				\
 	Session.h				\
 	Site.cc					\

@@ -1,6 +1,8 @@
 #ifndef INCLUDE_sampler_liblog_decoder_h
 #define INCLUDE_sampler_liblog_decoder_h
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif // C++
@@ -18,21 +20,20 @@ void siteEnd();
 
 void sampleExpr(const char *);
 
-void sampleChar(char);
-void sampleSignedChar(signed char);
-void sampleUnsignedChar(unsigned char);
-void sampleInt(int);
-void sampleUnsignedInt(unsigned int);
-void sampleShort(short);
-void sampleUnsignedShort(unsigned short);
-void sampleLong(long);
-void sampleUnsignedLong(unsigned long);
-void sampleLongLong(long long);
-void sampleUnsignedLongLong(unsigned long long);
-void sampleFloat(float);
-void sampleDouble(double);
-void sampleLongDouble(long double);
-void samplePointer(const void *);
+void sampleInt8(int8_t);
+void sampleUInt8(uint8_t);
+void sampleInt16(int16_t);
+void sampleUInt16(uint16_t);
+void sampleInt32(int32_t);
+void sampleUInt32(uint32_t);
+void sampleInt64(int64_t);
+void sampleUInt64(uint64_t);
+
+void sampleFloat32(float);
+void sampleFloat64(double);
+void sampleFloat96(long double);
+
+void samplePointer32(const void *);
 
 
 #ifdef __cplusplus

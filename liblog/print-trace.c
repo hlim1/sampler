@@ -61,91 +61,73 @@ void sampleExpr(const char *expression)
 ////////////////////////////////////////////////////////////////////////
 
 
-void sampleChar(char value)
+void sampleInt8(int8_t value)
 {
-  printf("(char) %hhu\n", value);
+  printf("(int8_t) %hhd\n", value);
 }
 
 
-void sampleSignedChar(signed char value)
+void sampleUInt8(uint8_t value)
 {
-  printf("(signed char) %hhd\n", value);
+  printf("(uint8_t) %hhu\n", value);
 }
 
 
-void sampleUnsignedChar(unsigned char value)
+void sampleInt16(int16_t value)
 {
-  printf("(unsigned char) %hhu\n", value);
+  printf("(int16_t) %hd\n", value);
 }
 
 
-void sampleInt(int value)
+void sampleUInt16(uint16_t value)
 {
-  printf("(int) %d\n", value);
+  printf("(uint16_t) %hu\n", value);
 }
 
 
-void sampleUnsignedInt(unsigned int value)
+void sampleInt32(int32_t value)
 {
-  printf("(unsigned int) %u\n", value);
+  printf("(int32_t) %d\n", value);
 }
 
 
-void sampleShort(short value)
+void sampleUInt32(uint32_t value)
 {
-  printf("(short) %hd\n", value);
+  printf("(uint32_t) %u\n", value);
 }
 
 
-void sampleUnsignedShort(unsigned short value)
+void sampleInt64(int64_t value)
 {
-  printf("(unsigned short) %u\n", value);
+  printf("(int64_t) %Ld\n", value);
 }
 
 
-void sampleLong(long value)
+void sampleUInt64(uint64_t value)
 {
-  printf("(long) %ld\n", value);
+  printf("(uint64_t) %Lu\n", value);
 }
 
 
-void sampleUnsignedLong(unsigned long value)
+void sampleFloat32(float value)
 {
-  printf("(unsigned long) %lu\n", value);
+  printf("(float32_t) %g\n", value);
 }
 
 
-void sampleLongLong(long long value)
+void sampleFloat64(double value)
 {
-  printf("(long long) %Ld\n", value);
+  printf("(float64_t) %g\n", value);
 }
 
 
-void sampleUnsignedLongLong(unsigned long long value)
+void sampleFloat96(long double value)
 {
-  printf("(unsigned long long) %Lu\n", value);
+  printf("(float96_t) %Lg\n", value);
 }
 
 
-void sampleFloat(float value)
+void samplePointer32(const void *value)
 {
-  printf("(float) %g\n", value);
-}
-
-
-void sampleDouble(double value)
-{
-  printf("(double) %g\n", value);
-}
-
-
-void sampleLongDouble(long double value)
-{
-  printf("(long double) %Lg\n", value);
-}
-
-
-void samplePointer(const void * value)
-{
-  printf("(const void *) %p\n", value);
+  printf("(pointer) %p\n", (const void *) value);
 }

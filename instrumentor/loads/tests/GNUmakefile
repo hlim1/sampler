@@ -47,5 +47,5 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(traces) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i)
+	rm -f $(traces) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i) $(tests:=.inst.i) $(tests:=.inst.s)
 .PHONY: clean

@@ -3,21 +3,18 @@
 
 
 enum PrimitiveType {
-  Char = 1,
-  SignedChar,
-  UnsignedChar,
-  Int,
-  UnsignedInt,
-  Short,
-  UnsignedShort,
-  Long,
-  UnsignedLong,
-  LongLong,
-  UnsignedLongLong,
-  Float,
-  Double,
-  LongDouble,
-  Pointer
+  Int8 = 1,
+  UInt8,
+  Int16,
+  UInt16,
+  Int32,
+  UInt32,
+  Int64,
+  UInt64,
+  Float32,
+  Float64,
+  Float96,
+  Pointer32
 };
 
 

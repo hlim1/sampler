@@ -7,8 +7,9 @@
 class PgDatabase;
 
 
-struct Session : public list<Site>
+class Session : public list<Site>
 {
+public:
   static Session singleton;
 
   void upload(PgDatabase &,
@@ -17,6 +18,9 @@ struct Session : public list<Site>
 	      unsigned seed,
 	      unsigned inputSize,
 	      unsigned short signum) const;
+
+private:
+  template<typename T> void uploadSamples(PgDatabase &, unsigned) const;
 };
 
 

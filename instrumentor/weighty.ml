@@ -135,53 +135,55 @@ type tester = lval -> bool
 
 
 let collect file allSites =
-  let hasDefinition = hasDefinition file in
-  let hasPragmaWeightless = hasPragmaWeightless file in
-  let weighty = new VarinfoSet.container in
+  TestHarness.time "  identifying weighty functions"
+    (fun () ->
+      let hasDefinition = hasDefinition file in
+      let hasPragmaWeightless = hasPragmaWeightless file in
+      let weighty = new VarinfoSet.container in
 
-  let prepopulate ({svar = svar}, _) =
-    weighty#add svar;
-    if !debugWeighty then
-      Printf.eprintf "function %s is weighty: has sites\n" svar.vname
-  in
-  List.iter prepopulate allSites;
-
-  let visitor = new visitor hasDefinition hasPragmaWeightless weighty in
-  let refine madeProgress =
-    let iterator = function
-      | GFun (func, _) ->
-	  begin
-	    try
-	      ignore (visitCilFunction visitor func)
-	    with ContainsWeightyCall (location, callee) ->
-	      weighty#add func.svar;
-	      madeProgress := true;
-	      if !debugWeighty then
-		ignore (Pretty.eprintf "%a: function %s is weighty: has weighty call to %a@!"
-			  d_loc location func.svar.vname d_lval callee)
-	  end
-      | _ -> ()
-    in
-    iterGlobals file iterator
-  in
-  Fixpoint.compute refine;
-
-  let tester = isWeightyLval hasDefinition hasPragmaWeightless weighty in
-
-  if !Statistics.showStats then
-    begin
-      let numFuncs = ref 0 in
-      let numWeightless = ref 0 in
-      let iterator = function
-	| GFun (func, _) ->
-	    incr numFuncs;
-	    if not (tester (var func.svar)) then
-	      incr numWeightless
-	| _ ->
-	    ()
+      let prepopulate ({svar = svar}, _) =
+	weighty#add svar;
+	if !debugWeighty then
+	  Printf.eprintf "function %s is weighty: has sites\n" svar.vname
       in
-      iterGlobals file iterator;
-      Printf.eprintf "stats: weightless: %d functions, %d weightless\n" !numFuncs !numWeightless
-    end;
+      List.iter prepopulate allSites;
 
-  tester
+      let visitor = new visitor hasDefinition hasPragmaWeightless weighty in
+      let refine madeProgress =
+	let iterator = function
+	  | GFun (func, _) ->
+	      begin
+		try
+		  ignore (visitCilFunction visitor func)
+		with ContainsWeightyCall (location, callee) ->
+		  weighty#add func.svar;
+		  madeProgress := true;
+		  if !debugWeighty then
+		    ignore (Pretty.eprintf "%a: function %s is weighty: has weighty call to %a@!"
+			      d_loc location func.svar.vname d_lval callee)
+	      end
+	  | _ -> ()
+	in
+	iterGlobals file iterator
+      in
+      Fixpoint.compute refine;
+
+      let tester = isWeightyLval hasDefinition hasPragmaWeightless weighty in
+
+      if !Statistics.showStats then
+	begin
+	  let numFuncs = ref 0 in
+	  let numWeightless = ref 0 in
+	  let iterator = function
+	    | GFun (func, _) ->
+		incr numFuncs;
+		if not (tester (var func.svar)) then
+		  incr numWeightless
+	    | _ ->
+		()
+	  in
+	  iterGlobals file iterator;
+	  Printf.eprintf "stats: weightless: %d functions, %d weightless\n" !numFuncs !numWeightless
+	end;
+
+      tester)

@@ -8,7 +8,7 @@
 #include "daikount.h"
 
 
-const struct Invariant *invariants;
+struct Invariant anchor = { &anchor, &anchor, { 0, 0, 0 }, 0, 0, 0, 0, 0, 0 };
 
 
 #define obstack_chunk_alloc malloc
@@ -65,7 +65,7 @@ static void dumpInvariants(int signum)
       const struct Invariant *invariant;
 
       fprintf(logFile, "%d\n", signum);
-      for (invariant = invariants; invariant; invariant = invariant->next)
+      for (invariant = anchor.next; invariant != &anchor; invariant = invariant->next)
 	fprintf(logFile, "%s\t%u\t%s\t%s\t%s\t%u\t%u\t%u\t%u\n",
 		invariant->file, invariant->line, invariant->function,
 		invariant->left, invariant->right, invariant->id,

@@ -42,7 +42,8 @@ let build file =
 	    { init = Some
 		(CompoundInit
 		   (compType,
-		    [ init "next" zero;
+		    [ init "prev" zero;
+		      init "next" zero;
 		      arrayOffset, makeZeroInit arrayField.ftype;
 		      initStr "file" location.file;
 		      initNum "line" location.line;
@@ -65,11 +66,13 @@ let build file =
 
 let register file =
   let compInfo = findCompInfo file in
-  let callee = FindFunction.find "registerBranchProfile" file in
+  let registerHelper = FindFunction.find "registerBranchProfile" file in
+  let unregisterHelper = FindFunction.find "unregisterBranchProfile" file in
 
   let markRoots file =
     defaultRootsMarker file;
-    callee.vreferenced <- true;
+    registerHelper.vreferenced <- true;
+    unregisterHelper.vreferenced <- true;
     compInfo.creferenced <- true
   in
   removeUnusedTemps ~markRoots:markRoots file;
@@ -95,14 +98,18 @@ let register file =
 
   if profiles != [] then
     begin
-      let call profile = Call (None, Lval (var callee), [mkAddrOf (var profile)], profile.vdecl) in
-      let calls = List.map call profiles in
+      let call helper profile = Call (None, Lval (var helper), [mkAddrOf (var profile)], profile.vdecl) in
+      let calls helper = List.map (call helper) profiles in
+      let build timing name helper =
+	let func = emptyFunction name in
+	func.svar.vstorage <- Static;
+	func.svar.vattr <- [Attr (timing, [])];
+	func.sbody.bstmts <- [mkStmt (Instr (calls helper))];
+	GFun (func, locUnknown)
+      in
       
-      let func = emptyFunction "registerBranchProfiles" in
-      func.svar.vstorage <- Static;
-      func.svar.vattr <- [Attr ("constructor", [])];
-      func.sbody.bstmts <- [mkStmt (Instr calls)];
+      let registerAll = build "constructor" "registerBranchProfiles" registerHelper in
+      let unregisterAll = build "destructor" "unregisterBranchProfiles" unregisterHelper in
 
-      assert (file.globinit == None);
-      file.globinit <- Some func
+      file.globals <- file.globals @ [registerAll; unregisterAll]
     end

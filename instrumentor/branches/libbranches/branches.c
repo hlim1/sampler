@@ -8,7 +8,7 @@
 #include "branches.h"
 
 
-const struct BranchProfile *profiles;
+struct BranchProfile anchor = { &anchor, &anchor, { 0, 0 }, 0, 0, 0, 0, 0 };
 
 
 #define obstack_chunk_alloc malloc
@@ -65,7 +65,7 @@ static void dumpProfiles(int signum)
       const struct BranchProfile *profile;
 
       fprintf(logFile, "%d\n", signum);
-      for (profile = profiles; profile; profile = profile->next)
+      for (profile = anchor.next; profile != &anchor; profile = profile->next)
 	fprintf(logFile, "%s\t%u\t%s\t%u\t%s\t%u\t%u\n",
 		profile->file, profile->line, profile->function,
 		profile->id, profile->condition,

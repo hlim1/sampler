@@ -4,8 +4,9 @@
 
 struct BranchProfile
 {
-  const struct BranchProfile *next;
-
+  struct BranchProfile *prev;
+  struct BranchProfile *next;
+  
   unsigned counters[2];
 
   const char * const file;
@@ -16,14 +17,26 @@ struct BranchProfile
 };
 
 
+extern struct BranchProfile anchor;
+
+
 static inline void registerBranchProfile(struct BranchProfile *) __attribute__((no_instrument_function));
 
 static inline void registerBranchProfile(struct BranchProfile *profile)
 {
-  extern const struct BranchProfile *profiles;
+  profile->prev = &anchor;
+  profile->next = anchor.next;
+  anchor.next->prev = profile;
+  anchor.next = profile;
+}
 
-  profile->next = profiles;
-  profiles = profile;
+
+static inline void unregisterBranchProfile(struct BranchProfile *) __attribute__((no_instrument_function));
+
+static inline void unregisterBranchProfile(struct BranchProfile *profile)
+{
+  profile->prev->next = profile->next;
+  profile->next->prev = profile->prev;
 }
 
 

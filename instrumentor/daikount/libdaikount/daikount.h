@@ -4,7 +4,8 @@
 
 struct Invariant
 {
-  const struct Invariant *next;
+  struct Invariant *prev;
+  struct Invariant *next;
 
   unsigned counters[3];
 
@@ -17,14 +18,26 @@ struct Invariant
 };
 
 
+extern struct Invariant anchor;
+
+
 static inline void registerInvariant(struct Invariant *) __attribute__((no_instrument_function));
 
 static inline void registerInvariant(struct Invariant *invariant)
 {
-  extern const struct Invariant *invariants;
+  invariant->prev = &anchor;
+  invariant->next = anchor.next;
+  anchor.next->prev = invariant;
+  anchor.next = invariant;
+}
 
-  invariant->next = invariants;
-  invariants = invariant;
+
+static inline void unregisterInvariant(struct Invariant *) __attribute__((no_instrument_function));
+
+static inline void unregisterInvariant(struct Invariant *invariant)
+{
+  invariant->prev->next = invariant->next;
+  invariant->next->prev = invariant->prev;
 }
 
 

@@ -2,7 +2,7 @@
 
 SELECT
     application_name,
-    count(*),
+    count(*) as count,
     sum(!exit_status AND !exit_signal) AS good,
     sum(!!exit_status) AS error,
     sum(!!exit_signal) AS crash,

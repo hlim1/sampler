@@ -1,5 +1,5 @@
 *cpp:
-+ -include sampler/scalar-pairs.h -include sampler/unit.h -include sampler/tuples-cil.h
++ -include scalar-pairs.h -include sampler/unit.h -include sampler/tuples-cil.h
 
 *lib:
 + -lscalar-pairs

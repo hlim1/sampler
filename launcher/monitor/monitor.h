@@ -3,7 +3,6 @@
 
 #include <bonobo/bonobo-object.h>
 #include <Python.h>
-#include "Sampler_Monitor.h"
 
 G_BEGIN_DECLS
 
@@ -25,7 +24,7 @@ typedef struct _SamplerMonitor SamplerMonitor;
 
 struct _SamplerMonitorClass {
   BonoboObjectClass parent_class;
-  POA_Sampler_Monitor__epv epv;
+  POA_Bonobo_Unknown__epv epv;
 };
 
 typedef struct _SamplerMonitorClass SamplerMonitorClass;

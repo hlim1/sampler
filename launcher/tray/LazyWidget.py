@@ -1,4 +1,3 @@
-import gtk.gdk
 import gtk.glade
 
 from BusyCursor import BusyCursor

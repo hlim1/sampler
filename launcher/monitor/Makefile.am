@@ -3,13 +3,9 @@ INCLUDES = $(MONITOR_CFLAGS) -I/usr/include/python2.2
 defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
 
 EXTRA_DIST =					\
-	Sampler_Monitor.idl			\
 	monitor.override
 
 BUILT_SOURCES =					\
-	Sampler_Monitor-common.c		\
-	Sampler_Monitor-skels.c			\
-	Sampler_Monitor.h			\
 	monitor-wrap.c
 
 MOSTLYCLEANFILES =				\
@@ -17,8 +13,7 @@ MOSTLYCLEANFILES =				\
 	*-skels.c				\
 	*-wrap.c				\
 	*.defs					\
-	*.so					\
-	Sampler_Monitor.h
+	*.so
 
 traylib_DATA = monitor.so
 
@@ -37,9 +32,6 @@ monitor.so: %.so: lib%.a
 noinst_LIBRARIES = libmonitor.a
 
 libmonitor_a_SOURCES =				\
-	Sampler_Monitor-common.c		\
-	Sampler_Monitor-skels.c			\
-	Sampler_Monitor.h			\
 	monitor.c				\
 	monitor.h				\
 	monitor-module.c			\
@@ -59,6 +51,3 @@ monitor-wrap.c: %-wrap.c: %.defs %.override
 monitor.defs: monitor.h
 	python /usr/share/pygtk/2.0/codegen/h2def.py $< >$@.tmp
 	mv $@.tmp $@
-
-Sampler_Monitor.h Sampler_Monitor-skels.c Sampler_Monitor-common.c: Sampler_Monitor.idl
-	orbit-idl-2 --nostubs $(patsubst %, --include %, $(srcdir) $(shell pkg-config --variable idlinclude libbonobo-2.0)) $<

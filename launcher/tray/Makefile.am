@@ -40,9 +40,12 @@ install-data-hook:
 
 
 tray Paths.py Sampler_Monitor.server: %: %.in Makefile
-	sed						\
-		-e 's!@''traydir@!$(traydir)!'		\
-		-e 's!@''commondir@!$(commondir)!'	\
+	sed							\
+		-e 's!@''first_timedir@!$(first_timedir)!'	\
+		-e 's!@''commondir@!$(commondir)!'		\
+		-e 's!@''traydir@!$(traydir)!'			\
+		-e 's!@''traylibdir@!$(traylibdir)!'		\
+		-e 's!@''VERSION@!$(VERSION)!'			\
 		<$< >$@.tmp
 	chmod a+x $@.tmp
 	mv $@.tmp $@

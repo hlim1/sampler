@@ -17,8 +17,17 @@ def run_without_sampling(app):
         del os.environ['SAMPLER_SPARSITY']
 
     # away we go!
-    os.execv(app.executable(), sys.argv)
+    result = os.spawnv(os.P_WAIT, app.executable(), sys.argv)
 
+    # collect exit status
+    outcome = Outcome()
+    if result < 0:
+        outcome.signal = -result
+        outcome.status = 0
+    else:
+        outcome.signal = 0
+        outcome.status = result
+    return outcome
 
 def run_with_sampling(app, sparsity):
     '''Run an application with sampling according to user preferences.

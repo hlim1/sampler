@@ -1,7 +1,8 @@
-import gconf
-import gtk.gdk
-import gtk.glade
+import gtk
 
+from AppFinder import AppFinder
+from Application import Application
+from AppModel import AppModel
 from LazyDialog import LazyDialog
 from MasterNotifier import MasterNotifier
 
@@ -10,11 +11,14 @@ import Paths
 
 
 class PreferencesDialog(LazyDialog):
-    def __init__(self, client, model):
+    def __init__(self, client):
         LazyDialog.__init__(self, client, 'preferences')
-
         self.__client = client
-        self.__model = model
+
+        finder = AppFinder()
+        self.__model = AppModel()
+        for path in finder:
+            app = Application(client, self.__model, path)
 
     def __name_data_func(self, column, renderer, model, iter):
         app = model.get_value(iter, model.COLUMN_NAME)

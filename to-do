@@ -13,6 +13,10 @@ right thing to do about this.
 
 * launcher
 
+The last client to call monitor.unref() sometimes gets a
+CORBA.COMM_FAILURE exception.  Not sure why.  We work around it by
+catching and discarding the exception, but that's not a real fix.
+
 GNOME launcher's server reply dialog has bad tab navigation.  If focus
 is on a hyperlink in the HTML area, you cannot tab out to the "OK"
 button.

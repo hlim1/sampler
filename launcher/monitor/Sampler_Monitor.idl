@@ -1,7 +1,0 @@
-#include <Bonobo.idl>
-
-
-module Sampler {
-  interface Monitor : Bonobo::Unknown {
-  };
-};

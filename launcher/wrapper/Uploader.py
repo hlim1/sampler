@@ -1,7 +1,13 @@
 import urllib2
 
 from RedirectHandler import RedirectHandler
+from ServerMessage import ServerMessage
 from Upload import Upload
+
+import Config
+
+
+########################################################################
 
 
 def __add_headers(upload, contributor):
@@ -17,16 +23,16 @@ def upload(app, user, outcome, accept):
     if reporting_url:
 
         # compress reports in preparation for upload
-        upload = Upload.Upload(outcome.reports)
+        upload = Upload(outcome.reports)
 
         # collect headers from various contributors
-        upload.headers['sampler-uploader-version'] = '0.1'
+        upload.headers['sampler-version'] = Config.version
         upload.headers['accept'] = accept
         __add_headers(upload, app)
         __add_headers(upload, outcome)
 
         # install our special redirect hander
-        redirect = RedirectHandler.RedirectHandler()
+        redirect = RedirectHandler()
         urllib2.install_opener(urllib2.build_opener(redirect))
 
         # post the upload and read server's response
@@ -46,6 +52,9 @@ def upload(app, user, outcome, accept):
             user.change_sparsity(int(reply.info()['change-sparsity']))
 
         # server may have posted a message for the user
-        if reply.info().has_key('content-length') and int(reply.info()['content-length']):
-            dialog = ServerMessage(reply)
+        message = reply.read()
+        if message:
+            base = reply.geturl()
+            content_type = reply.info()['content-type']
+            dialog = ServerMessage(base, content_type, message)
             dialog.run()

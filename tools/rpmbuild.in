@@ -57,10 +57,12 @@ EOF
 	      _sampler_reporting_host => '%{?sampler_reporting_host}%{!?sampler_reporting_host:www.example.org}',
 	      _sampler_reporting_url => '%{?sampler_reporting_url}%{!?sampler_reporting_url:https://%{_sampler_reporting_host}/cgi-bin/sampler-upload}',
 
+	      _sampler_name => '%{?sampler_name}%{!?sampler_name:%{name}}',
+
 	      sampler_prebuild => <<'EOF',
 export CC='%{sampler_cc} %{sampler_scheme} %{sampler_cc_flags}'
 sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/application.schemas.in >sampler/sampler-%{name}.schemas
-sed -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >sampler/config
+sed -e 's/@sampler_name@/%{_sampler_name}/g' -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >sampler/config
 sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' -e 's!@sampler_libdir@!%{_sampler_libdir}!g' -e 's!@name@!%{name}!g' <sampler/wrapper.in >sampler/wrapper
 chmod a+x sampler/wrapper
 %{nil}
@@ -71,9 +73,8 @@ EOF
 	      sampler_install => <<'EOF',
 install -d %{buildroot}%{_sampler_libdir}/applications/%{name}
 install -m 644 sampler/config sampler/interface.glade %{buildroot}%{_sampler_libdir}/applications/%{name}
-install sampler/wrapper %{buildroot}%{_sampler_libdir}/applications/%{name}
 mv %{buildroot}%{sampler_wrapped} %{buildroot}%{_sampler_libdir}/applications/%{name}/executable
-ln -s %{_sampler_libdir}/applications/%{name}/wrapper %{buildroot}%{sampler_wrapped}
+install sampler/wrapper %{buildroot}%{sampler_wrapped}
 install -d %{buildroot}%{_sysconfdir}/gconf/schemas
 install sampler/sampler-%{name}.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
 %{sampler_tooldir}/find-sampler-info $RPM_BUILD_ROOT

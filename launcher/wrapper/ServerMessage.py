@@ -6,6 +6,7 @@ import gnome
 import gtk.glade
 import gtkhtml2
 
+import Paths
 import Signals
 
 
@@ -16,26 +17,27 @@ import Signals
 
 
 class ServerMessage:
-    def __init__(self, dir, reply):
+    def __init__(self, base, content_type, body):
         xml = gtk.glade.XML(Paths.glade)
         Signals.autoconnect(self, xml)
+        self.__dialog = xml.get_widget('server-message')
 
         document = gtkhtml2.Document()
         document.connect('request_url', self.on_request_url)
         document.connect('set_base', self.on_set_base)
         document.connect('link_clicked', self.on_link_clicked)
         document.connect('title_changed', self.on_title_changed)
-        document.dialog = self.dialog
+        document.dialog = self.__dialog
         document.base = ''
-        self.on_set_base(document, reply.geturl())
-        [type, options] = cgi.parse_header(reply.info()['Content-type'])
+        self.on_set_base(document, base)
+        [type, options] = cgi.parse_header(content_type)
         document.open_stream(type)
-        document.write_stream(reply.read())
+        document.write_stream(body)
         document.close_stream()
 
         view = gtkhtml2.View()
         view.set_document(document)
-        port = self.get_widget('html-scroll')
+        port = xml.get_widget('html-scroll')
         port.add(view)
         view.show()
 

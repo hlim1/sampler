@@ -1,6 +1,3 @@
-import gtk.gdk
-import gtk.glade
-
 from LazyDialog import LazyDialog
 
 import Config
@@ -13,5 +10,5 @@ class AboutDialog(LazyDialog):
 
     def populate(self, xml, widget):
         LazyDialog.populate(self, xml, widget)
-        widget.set_property('name', 'Feedback Collector')
+        widget.set_property('name', 'Bug Isolation Monitor')
         widget.set_property('version', Config.version)

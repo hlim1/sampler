@@ -1,5 +1,3 @@
-import gconf
-
 from GConfNotifier import GConfNotifier
 
 import Keys

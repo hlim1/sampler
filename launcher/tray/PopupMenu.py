@@ -1,6 +1,4 @@
-import gconf
 import gtk.gdk
-import gtk.glade
 
 from AboutDialog import AboutDialog
 from LazyWidget import LazyWidget

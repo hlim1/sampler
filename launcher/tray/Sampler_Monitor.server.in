@@ -3,7 +3,7 @@
 
 <oaf_info>
 
-  <oaf_server iid="OAFIID:SamplerMonitor_Factory:1.0"
+  <oaf_server iid="OAFIID:SamplerMonitor_Factory:@VERSION@"
     type="exe"
     location="@traydir@/tray">
 
@@ -15,9 +15,9 @@
     <oaf_attribute name="name" type="string" value="Sampler Monitor Factory"/>
   </oaf_server>
 
-  <oaf_server iid="OAFIID:SamplerMonitor:1.0"
+  <oaf_server iid="OAFIID:SamplerMonitor:@VERSION@"
     type="factory"
-    location="OAFIID:SamplerMonitor_Factory:1.0">
+    location="OAFIID:SamplerMonitor_Factory:@VERSION@">
 
     <oaf_attribute name="repo_ids" type="stringv">
       <item value="IDL:Bonobo/Unknown:1.0"/>

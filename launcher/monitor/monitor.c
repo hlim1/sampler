@@ -1,6 +1,5 @@
 #include <libbonobo.h>
 #include "monitor.h"
-#include "Sampler_Monitor.h"
 
 
 /**********************************************************************/
@@ -16,7 +15,7 @@ static void sampler_monitor_class_init(SamplerMonitorClass *klass)
 }
 
 
-BONOBO_TYPE_FUNC_FULL (SamplerMonitor, Sampler_Monitor, BONOBO_TYPE_OBJECT, sampler_monitor);
+BONOBO_TYPE_FUNC_FULL (SamplerMonitor, Bonobo_Unknown, BONOBO_TYPE_OBJECT, sampler_monitor);
 
 
 /**********************************************************************/

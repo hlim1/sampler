@@ -14,9 +14,7 @@
   <section id="installing">
     <title>Getting and Installing the Sampler</title>
 
-    <remark>Not yet written.  Tools are currently built and installed
-    on <literal>&buildhost;</literal> under <filename
-    class="directory">&samplerdir;</filename>.</remark>
+    <remark>Not yet written.</remark>
   </section>
     
   <section id="compiling">
@@ -27,9 +25,8 @@
     follows:</para>
 
     <cmdsynopsis>
-      <command>&samplerdir;/instrumentor/driver/main</command>
+      <command>sampler-cc</command>
       <arg choice="req"><replaceable>scheme</replaceable></arg>
-      <sbr/>
       <group choice="req" rep="repeat">
 	<arg choice="plain"><replaceable>source file</replaceable></arg>
 	<arg choice="plain"><replaceable>compiler option</replaceable></arg>
@@ -467,7 +464,7 @@
 	    <para>On Linux workstations equipped with
 	    <application>GDB</application>, a suitable value for this
 	    environment variable is
-	    <filename>&samplerdir;/launcher/print-debug-info</filename>.</para>
+	    <filename>&prefix;/share/samper/print-debug-info</filename>.</para>
 
 	    <para>If not set, no additional debug report will be
 	    appended to <envar>$SAMPLER_FILE</envar>.</para>
@@ -481,7 +478,7 @@
       <section id="precompute">
 	<title><command>precompute</command></title>
 
-	<para><filename>&samplerdir;/libcountdown/precompute</filename>
+	<para><filename>&prefix;/lib/sampler/tools/precompute</filename>
 	is a tool for producing pre-generated countdowns.  This should
 	be used in conjunction with the <option>--cyclic</option> flag
 	and the <envar>$SAMPLER_EVENT_COUNTDOWNS</envar> environment

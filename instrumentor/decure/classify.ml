@@ -56,8 +56,13 @@ let classifyByName = function
   | "fp_fail"
   | "fp_fail_str"
   | "fp_fail_w"
+  | "ccured_fail_str"
+  | "ccured_fail_str_terse"
+  | "ccured_fail"
+  | "ccured_fail_terse"
   | "lbound_or_ubound_fail"
-  | "ubound_or_non_pointer_fail" ->
+  | "ubound_or_non_pointer_fail"
+  | "___stack_overflow" ->
       Fail
   | "__ccuredInit" ->
       Init

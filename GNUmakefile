@@ -49,6 +49,7 @@ classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
 countdown = countdown
 dotify = $(utils) dotify
 duplicate = $(functionBodyVisitor) $(identity) $(stmtMap) duplicate
+filterLabels = $(functionBodyVisitor) $(stmtSet) filterLabels
 forwardJumps = forwardJumps
 functionBodyVisitor = $(skipVisitor) functionBodyVisitor
 functionEntry = $(logIsImminent) functionEntry
@@ -94,7 +95,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-main := $(countdown) $(logWrite) $(transform) $(testHarness) %
+main := $(countdown) $(filterLabels) $(logWrite) $(transform) $(testHarness) %
 main: %: $(libs) $(addsuffix .$(cmo), $(main))
 	$(link)
 

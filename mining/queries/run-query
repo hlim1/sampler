@@ -1,7 +1,7 @@
 #!/bin/sh
 
 site=../site-config.sh
-if [ -e $site ]; source $site; fi
+if [ -e $site ]; then source $site; fi
 
 {
   echo 'USE sampler;'

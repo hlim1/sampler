@@ -1,20 +1,80 @@
 #include <glib-object.h>
-#include <gtk/gtkmain.h>
-#include <gtk/gtkwindow.h>
 
 
-int main(int argc, char *argv[])
+typedef struct _Test Test;
+typedef struct _TestClass TestClass;
+
+struct _Test
 {
-  GtkWindowGroup *object;
+  GObject parent;
+};
 
-  gtk_init(&argc, &argv);
+struct _TestClass
+{
+  GObjectClass parent;
+};
 
-  object = gtk_window_group_new();
-  g_object_ref(object);
 
-  g_object_unref(object);
-  g_object_unref(object);
-  g_object_unref(object);
+static void
+test_init (GTypeInstance *instance, gpointer g_class)
+{
+  Test *self = (Test *) instance;
+}
+
+
+static void
+test_finalize (Test *self)
+{
+  g_message ("finalizing");
+  g_object_unref (self);
+}
+
+
+static void
+test_class_init (TestClass *klass)
+{
+  klass->parent.finalize = (GObjectFinalizeFunc) test_finalize;
+}
+
+
+GType
+test_get_type()
+{
+  static GType type = 0;
+
+  if (type == 0)
+    {
+      static const GTypeInfo info =
+	{
+	  sizeof (TestClass),
+	  NULL,
+	  NULL,
+	  (GClassInitFunc) test_class_init,
+	  NULL,
+	  NULL,
+	  sizeof (Test),
+	  0,
+	  NULL
+	};
+
+      type = g_type_register_static (G_TYPE_OBJECT, "TestType", &info, 0);
+    }
+
+  return type;
+}
+
+
+int
+main (int argc, char *argv[])
+{
+  Test *object;
+  
+  g_type_init ();
+
+  object = g_object_new (test_get_type (), 0);
+  g_object_ref (object);
+  g_object_unref (object);
+  g_object_unref (object);
 
   return 0;
 }

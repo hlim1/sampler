@@ -5,6 +5,7 @@ wrapper_PYTHON =				\
 	AppConfig.py				\
 	Launcher.py				\
 	Main.py					\
+	Main2.py				\
 	Outcome.py				\
 	RedirectHandler.py			\
 	ReportsReader.py			\

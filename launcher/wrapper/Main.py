@@ -1,53 +1,29 @@
-import sys
-import Paths
-sys.path.append(Paths.common)
+import os.path
+from ConfigParser import ConfigParser
 
-import pygtk
-pygtk.require('2.0')
-
-import ORBit
-import bonobo.activation
-
-ORBit.load_typelib('Everything')
-import CORBA
-
-from AppConfig import AppConfig
-from SampledLauncher import SampledLauncher
-from UnsampledLauncher import UnsampledLauncher
-from UserConfig import UserConfig
-
-import Config
-import Uploader
+import Main2
 
 
 ########################################################################
+#
+#  Backward compatibility adaptor
+#
 
 
-def main(name, wrapped, debug_reporter, upload_headers):
-    app = AppConfig(name, wrapped, debug_reporter, upload_headers)
-    user = UserConfig(name)
+def main(configdir, wrapped = 'executable'):
+    configfile = os.path.join(configdir, 'config')
+    config = ConfigParser()
+    config.readfp(file(configfile))
 
-    sparsity = user.sparsity()
-    if sparsity > 0:
-        launcher = SampledLauncher(app, user, sparsity)
-    else:
-        launcher = UnsampledLauncher(app)
+    name = config.get('application', 'name')
+    wrapped = os.path.join(configdir, wrapped)
+    debug_reporter = config.get('application', 'debug-reporter')
 
-    launcher.spawn()
+    upload_headers = {}
+    for (key, value) in config.items('upload-headers'):
+        upload_headers[key] = value
 
-    if not user.asked():
-        bonobo.activation.activate("iid == 'OAFIID:SamplerFirstTime:0.1'")
-
-    monitor = bonobo.activation.activate("iid == 'OAFIID:SamplerMonitor:0.1'")
-
-    try:
-        outcome = launcher.wait()
-
-    finally:
-        if monitor != None:
-            try:
-                monitor.unref()
-            except CORBA.COMM_FAILURE:
-                pass
-
-    outcome.exit()
+    return Main2.main(name = name,
+                      wrapped = wrapped,
+                      debug_reporter = debug_reporter,
+                      upload_headers = upload_headers)

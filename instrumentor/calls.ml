@@ -100,4 +100,4 @@ class postpatcher countdown =
 
 let postpatch {sbody = sbody} countdown =
   let visitor = new postpatcher countdown in
-  ignore (visitCilBlock (visitor :> cilVisitor) sbody)
+  ignore (visitCilBlock visitor sbody)

@@ -14,4 +14,4 @@ class visitor file =
 let phase =
   "Compact",
   fun file ->
-    visitCilFileSameGlobals (new visitor file :> cilVisitor) file
+    visitCilFileSameGlobals (new visitor file) file

@@ -26,6 +26,7 @@ my $dir = $FindBin::Bin;
 my $liblog = "$dir/liblog";
 
 push @ARGV, '-include', "$liblog/log.h";
+push @ARGV, '-Wno-uninitialized';
 push @ARGV, "-L$liblog", '-llog' unless grep /^-[cE]$/, @ARGV;
 
 trace_system "$dir/../front-end", "$dir/main", @ARGV;

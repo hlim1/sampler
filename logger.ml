@@ -30,31 +30,36 @@ let call file =
   let logPointer = find "logPointer" in
 
   fun location lvals ->
+    let rec handlerForType = function
+      | TInt (ikind, _) ->
+	  (match ikind with
+	  | IChar -> logChar
+	  | ISChar -> logSignedChar
+	  | IUChar -> logUnsignedChar
+	  | IInt -> logInt
+	  | IUInt -> logUnsignedInt
+	  | IShort -> logShort
+	  | IUShort -> logUnsignedShort
+	  | ILong -> logLong
+	  | IULong -> logUnsignedLong
+	  | ILongLong -> logLongLong
+	  | IULongLong -> logUnsignedLongLong)
+      | TFloat (fkind, _) ->
+	  (match fkind with
+	  | FFloat -> logFloat
+	  | FDouble -> logDouble
+	  | FLongDouble -> logLongDouble)
+      | TPtr _ -> logPointer
+      | TNamed ({ttype = ttype}, _) -> handlerForType ttype
+      | problematic ->
+	  currentLoc := location;
+	  ignore (bug "cannot log non-primitive type %a"
+		    d_type problematic);
+	  failwith "internal error"
+    in
+    
     let buildOne lval =
-      let handler =
-	match typeOfLval lval with
-	| TInt (ikind, _) ->
-	    (match ikind with
-	    | IChar -> logChar
-	    | ISChar -> logSignedChar
-	    | IUChar -> logUnsignedChar
-	    | IInt -> logInt
-	    | IUInt -> logUnsignedInt
-	    | IShort -> logShort
-	    | IUShort -> logUnsignedShort
-	    | ILong -> logLong
-	    | IULong -> logUnsignedLong
-	    | ILongLong -> logLongLong
-	    | IULongLong -> logUnsignedLongLong)
-	| TFloat (fkind, _) ->
-	    (match fkind with
-	    | FFloat -> logFloat
-	    | FDouble -> logDouble
-	    | FLongDouble -> logLongDouble)
-	| TPtr _ -> logPointer
-	| _ -> failwith "cannot log non-primitive type"
-      in
-      
+      let handler = handlerForType (typeOfLval lval) in
       let name = mkString (sprint 80 (d_lval () lval)) in
       Call (None, handler, [ name; Lval lval ], location)
     in

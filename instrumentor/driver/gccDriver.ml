@@ -54,57 +54,55 @@ class c compiler arguments =
 	  partial ()
 
       | "-save-temps", _ ->
-	    flags <- flags @ [flag];
-	    saveTemps <- true;
-	    rest
+	  flags <- flags @ [flag];
+	  saveTemps <- true;
+	  rest
 
-	| "-include", argument :: rest
-	| "-imacros", argument :: rest
-	| "-idirafter", argument :: rest
-	| "-iprefix", argument :: rest
-	| "-iwithprefix", argument :: rest
-	| "-iwithprefixbefore", argument :: rest
-	| "-isystem", argument :: rest
-	| "-isystem-c++", argument :: rest
-	  ->
-	    flags <- flags @ [flag; argument];
-	    rest
+      | "-include", argument :: rest
+      | "-imacros", argument :: rest
+      | "-idirafter", argument :: rest
+      | "-iprefix", argument :: rest
+      | "-iwithprefix", argument :: rest
+      | "-iwithprefixbefore", argument :: rest
+      | "-isystem", argument :: rest
+      | "-isystem-c++", argument :: rest ->
+	  flags <- flags @ [flag; argument];
+	  rest
 
-	| "-E", _
-	| "-M", _
-	| "-MM", _ ->
-	    special ()
+      | "-E", _
+      | "-M", _
+      | "-MM", _ ->
+	  special ()
 
-	| "-Xlinker", argument :: rest
-	| "-u", argument :: rest
-	| "-I", argument :: rest
-	| "-L", argument :: rest
-	| "-b", argument :: rest
-	| "-V", argument :: rest
-	| "-G", argument :: rest
-	  ->
-	    flags <- flags @ [flag; argument];
-	    rest
+      | "-Xlinker", argument :: rest
+      | "-u", argument :: rest
+      | "-I", argument :: rest
+      | "-L", argument :: rest
+      | "-b", argument :: rest
+      | "-V", argument :: rest
+      | "-G", argument :: rest ->
+	  flags <- flags @ [flag; argument];
+	  rest
 
-	| print, _
-	  when Prefix.check print "-print-" ->
-	    special ()
+      | print, _
+	when Prefix.check print "-print-" ->
+	  special ()
 
-	| library, _
-	  when Prefix.check library "-l" ->
-	    let input _ = library in
-	    inputs <- inputs @ [input];
-	    rest
+      | library, _
+	when Prefix.check library "-l" ->
+	  let input _ = library in
+	  inputs <- inputs @ [input];
+	  rest
 
-	| _
-	  when flag.[0] == '-' ->
-	    flags <- flags @ [flag];
-	    rest
+      | _
+	when flag.[0] == '-' ->
+	  flags <- flags @ [flag];
+	  rest
 
-	| filename, _ ->
-	    let builder () = self#prepare filename in
-	    inputs <- inputs @ [builder];
-	    rest
+      | filename, _ ->
+	  let builder () = self#prepare filename in
+	  inputs <- inputs @ [builder];
+	  rest
 
 
     method private build =

@@ -5,8 +5,8 @@ have bugs, and that users often encounter these bugs.  With steady
 progress in tools and techniques for improving software quality, this
 situation is likely to improve but not be resolved entirely.  For most
 software, the resources (measured in time, money, or people) that can
-be devoted to improving it are quite limited, and the normal case is
-that just through sheer numbers the community using the software
+be devoted to making improvements are quite limited, and the normal case is
+that just through sheer numbers the user community 
 brings far more resources to bear on testing a piece of software than
 can be done by the team responsible for producing the software.
 
@@ -27,7 +27,7 @@ in actual use dwarfs the number of executions that can be managed in
 testing by orders of magnitude.  For many software systems today,
 essentially all of the information from actual executions is
 discarded, because there is no mechanism for feedback.  Retaining
-even a small portion of that could be very valuable.
+even a small portion of that information could be very valuable.
 
 \item Gathering information from all user executions, or at
 least a representative sample of user executions, gives an
@@ -39,8 +39,8 @@ This kind of information is almost impossible to obtain by
 any means other than analyzing actual user executions.
 
 \item While our primary interest is in finding and fixing quality
-problems, such information could be useful for other purposes.
-For example, the authors of software may just wish to know which
+problems, information gathered from user executions could be useful for other purposes.
+For example, software authors may simply wish to know which
 features are most commonly used.
 
 \item Traditional user feedback about problems often involves a call 
@@ -57,8 +57,8 @@ finally available to work on a problem, the results of automated
 analysis done in the interim may help the engineer to identify and fix
 the problem more quickly.
 
-\item Based on the current state of the analysis, clients can be
-instructed to focus attention in data reporting on different aspects
+\item Based on the current state of automatic analysis, clients can be
+instructed to focus attention in data gathering on different aspects
 of the software.  For example, if there appears to be a problem
 with a particular function $f$, we may wish clients to disproportionately
 report information about $f$ for a period of time, to speed up
@@ -70,7 +70,7 @@ The idea of gathering data from actual user executions is not new.
 Commercial databases, for example, routinely produce extensive
 log files, and the first action when a user reports a problem is
 to inspect those logs.  Similarly, each flight of the Boeing 777
-generates megabytes of log data which is subsequently combed
+generates megabytes of log data which are subsequently combed
 for signs of possible problems.  There are many other similar
 examples in the world of commercial software.
 
@@ -103,7 +103,7 @@ performing subsequent automatic analysis of that information to
 help in locating bugs.  Initially, we believed that the interesting
 problem was the analysis of the data, and that gathering the
 data was relatively straightforward.  However, we discovered that
-designing an data gathering infrastructure that would scale was
+designing a data gathering infrastructure that would scale is
 non-trivial.  As a result, this paper discusses mostly the design
 and implementation of the system that gathers the data from user
 executions. We do give a non-trivial example of subsequent data analysis
@@ -137,18 +137,17 @@ multiple runs of different clients.
 \end{enumerate}
 
 The relative importance of these three concerns varies from
-application to application, but one of them is always the limiting
-factor.  We use sampling to solve problem (1).  Classical sampling for
-measuring program performance searches for the ``elephant in the
-haystack''---we are looking for the biggest users of time.  In
-contrast, we are looking for needles (bugs) that may occur very
-rarely, and furthermore our sampling rates may be very low to maintain
-client performance.  This leads us to be concerned with guaranteeing
-that our sampling is statistically accurate, so that we can rely on
-the reported frequencies of events.
-Besides the problem of sampling accurately, we also develop
-new ways to reduce the overhead of the necessary additional code
-that determines whether to take a sample or not.
+application to application.  We use sampling to solve problem (1).
+Classical sampling for measuring program performance searches for the
+``elephant in the haystack''---we are looking for the biggest users of
+time.  In contrast, we are looking for needles (bugs) that may occur
+very rarely, and furthermore our sampling rates may be very low to
+maintain client performance.  This leads us to be concerned with
+guaranteeing that our sampling is statistically accurate, so that we
+can rely on the reported frequencies of events.  Besides the problem
+of sampling accurately, we also develop new ways to reduce the
+overhead of the necessary additional code that determines whether to
+take a sample or not.
 
 Section~\ref{sec:applications} presents two different applications of
 our framework.  In Section~\ref{sec:share} we consider how we can
@@ -160,14 +159,17 @@ Section~\ref{sec:applications:mining} we show how we can use
 statistical techniques to identify the source of a likely bug from
 samples taken from a few thousand executions.  We sample information
 on the relationship between all pairs of integer program variables in
-a program (for each variable whether $i < j$, $i = j$, or $i < j$)
-from both successful and failing runs.  We then use use statistical
+a program (for each variable whether $i < j$, $i = j$, or $i > j$)
+from both successful and failing runs.  This choice is critical to
+solving problems (2) and (3) above; as we discuss in Section~\ref{sec:applications:mining}
+this information is both highly compressible and sufficient to
+carry out the data analysis.  We use statistical
 regression techniques to identify the predicates that are highly
 predictive of program failure.
 
-Monitoring of user executions raises some important
+Finally, monitoring of user executions raises some important
 privacy and security concerns.  The problems are both social and technical; 
 a discussion of these issues appears in \autoref{sec:privsec}.
-Finally, \autoref{sec:conclusions} concludes.
+
 
 

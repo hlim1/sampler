@@ -2,16 +2,6 @@ open Cil
 open Calls
 
 
-let nextLabelNum = ref 0
-
-let label name = Label (name, locUnknown, false)
-
-let nextLabels _ =
-  incr nextLabelNum;
-  let basis = "postCall" ^ string_of_int !nextLabelNum in
-  label basis, label (basis ^ "__dup")
-
-
 let patch clones weights countdown =
   let patchOne standard =
     let findClone = ClonesMap.findCloneOf clones in
@@ -31,11 +21,7 @@ let patch clones weights countdown =
     let weight = weights#find standard.landing in
     let choice () = countdown#checkThreshold locUnknown weight instrumentedLanding standard.landing in
     standard.jump.skind <- choice ();
-    instrumentedJump.skind <- choice ();
-
-    let standardLabel, instrumentedLabel = nextLabels () in
-    standard.landing.labels <- [standardLabel];
-    instrumentedLanding.labels <- [instrumentedLabel]
+    instrumentedJump.skind <- choice ()
   in
   
   List.iter patchOne

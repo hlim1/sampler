@@ -13,6 +13,7 @@
 
 cfg-bug
 cfg-to-dot
+checker
 collectHeaders
 dom-to-dot
 findBackEdges

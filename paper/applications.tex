@@ -68,10 +68,10 @@ the number of these that are weightless.  As \CCured is a
 whole-program analysis, weightless function identification has the
 advantage of being able to examine every function body.  We also count
 the number of functions that directly contain at least one
-instrumentation site.  (The remainder are functions which contain no
-sites of their own but which call other functions that do have sites.)
+instrumentation site.  (The remainder are functions that have no sites
+of their own but that call other non-weightless functions.)
 
-Considering just the functions which directly contain at least one
+Considering just the functions that directly contain at least one
 instrumentation site, Table~\ref{tab:share:static} also presents the
 average number of sites per function, the average number of threshold
 check points per function, and the average threshold weight for all
@@ -140,7 +140,7 @@ compensate for their sampling overhead relative to unconditional
 instrumentation, while the remaining ten do run faster.  Among these,
 a few benchmarks (\texttt{treeadd}, \texttt{compress}, \texttt{li})
 retain high overhead relative to instrumentation-free code, but in
-most cases the penalty is quite modest.  Some benchmarks which perform
+most cases the penalty is quite modest.  Some benchmarks that perform
 the worst using unconditional instrumentation perform quite well with
 sampling: \texttt{ijpeg}, for example, moves from an unconditional
 instrumentation overhead of 146\% to only 3\% with sparse sampling.
@@ -246,7 +246,7 @@ interest and ask how often that call returned a negative, zero, or
 positive value.  
 
 For \texttt{ccrypt}, there are 570 call sites of interest, for $570 \times 3 =
-1710$ counters.  Each counter corresponds to a single predicate which
+1710$ counters.  Each counter corresponds to a single predicate that
 is hypothesized to behave differently in successful versus crashed
 runs.  Specifically, we pose the problem as follows:
 \begin{quote}
@@ -258,14 +258,14 @@ bug) or is at
 \end{quote}
 
 If we eliminate all predicates for which this hypothesis is disproved
-by observed runtime behavior, then the predicates which remain
+by observed runtime behavior, then the predicates that remain
 describe the conditions under which the program fails.
 
 \subsubsection{Elimination Strategies}
 
 We make no effort to restrict instrumentation to known
 system or library calls, nor do we distinguish
-functions which return status codes from those that do not.  
+functions that return status codes from those that do not.  
 Most of those 1710 predicates,
 then, have no bearing on program success or failure.
 Given a set of runs, we can discard irrelevant predicates using a 
@@ -274,7 +274,7 @@ set of \termdef{elimination strategies}:
 \begin{description}\sloppy
 \item[\elim{Elimination by universal falsehood}:] Disregard any
   counter that is zero on all runs.  These likely represent
-  predicates which can never be true.
+  predicates that can never be true.
 
 \item[\elim{Elimination by lack of failing coverage}:] Disregard any
   triple of counters all three of which are zero on all failed runs.
@@ -284,12 +284,12 @@ set of \termdef{elimination strategies}:
 
 
 \item[\elim{Elimination by lack of failing example}:] Disregard any
-  counter which is zero on all failed runs.  These likely represent
+  counter that is zero on all failed runs.  These likely represent
   predicates that need not be true for a failure to occur.
   
 \item[\elim{Elimination by successful counterexample}:] Disregard any
-  counter which has a non-zero value on any successful run.  These
-  must represent predicates which can be true without a subsequent
+  counter that has a non-zero value on any successful run.  These
+  must represent predicates that can be true without a subsequent
   program failure.
 \end{description}
 
@@ -298,7 +298,7 @@ from random sampling, and also because not all are equally applicable
 to all bugs.  For example, elimination by \elim{successful
   counterexample} assumes that the bug is deterministic.  The other three
 strategies do not make this assumption, but do require enough
-runs so that any predicate which is ever true is likely to
+runs so that any predicate that is ever true is likely to
 have been observed true at least once.  Note that these
 strategies are also not independent: \elim{universal falsehood} and
 \elim{lack of failing coverage} each eliminate a subset of the
@@ -325,16 +325,16 @@ We have collected 2990 trial runs at a sampling rate of
 elimination strategy independently to the counter traces:
 
 \begin{description}\sloppy
-\item[\elim{Universal falsehood}] discards 1569 counters which are
+\item[\elim{Universal falsehood}] discards 1569 counters that are
   zero on all runs, leaving 141 candidate predicates.
 
-\item[\elim{Lack of failing example}] discards 1665 counters which are
+\item[\elim{Lack of failing example}] discards 1665 counters that are
   zero on all crashes, leaving 45 candidate predicates.
 
 \item[\elim{Lack of failing coverage}] discards 526 counter triples
-  which are all zero on all crashes, leaving 132 candidate predicates.
+  that are all zero on all crashes, leaving 132 candidate predicates.
 
-\item[\elim{Successful counterexample}] discards 139 counters which
+\item[\elim{Successful counterexample}] discards 139 counters that
   are non-zero on any successful run, leaving 1571 candidate
   predicates.
 \end{description}
@@ -346,7 +346,7 @@ At first glance, \elim{elimination by universal falsehood} is quite effective
 while \elim{elimination by successful counterexample} seems rather
 poor.  However, these two strategies test disjoint properties and can
 be combined to good effect.
-The combination leaves only those predicates which are sometimes
+The combination leaves only those predicates that are sometimes
 observed to be true in failed runs but never observed to be true in
 successful runs.  For our \texttt{ccrypt} trials, only two
 predicates meet this criterion:
@@ -381,7 +381,7 @@ call is sampled on such a run, \elim{elimination by successful
 imply failure.  It will be eliminated from further consideration, and
 only the true ``smoking gun,'' the call to \texttt{xreadline()}, will
 remain.  Thus we have the ability to identify not only the direct
-cause of a bug but also related behaviors which are strongly but
+cause of a bug but also related behaviors that are strongly but
 imperfectly correlated with failure.  We further explore this idea of
 broad correlation in Section~\ref{sec:bc}, where even the buggy line
 of code itself does not always cause a crash.
@@ -504,7 +504,7 @@ eye toward pointer and buffer errors.  For pointers,
 null pointers are of interest.  Relative addresses of pointers
 may be interesting as well, as this may capture cases where one
 pointer scans within a second pointed-to buffer.  Checking
-pointer/pointer equality may reveal aliasing which, when not
+pointer/pointer equality may reveal aliasing that, when not
 anticipated by the programmer, can lead to dangling ``wild'' pointer
 bugs.  Scalar variables serve as array indexes, pointer offsets, and
 in many other roles; relationships among scalars may reveal buffer
@@ -528,7 +528,7 @@ aborted by a fatal signal.
 For \texttt{bc} there are 10,050 counter triples, or 30,150 counters
 in all.  The vast majority of these are of no interest: either they
 compare completely unrelated variables, or they express relationships
-which behave identically in both successful and failed runs.  The
+that behave identically in both successful and failed runs.  The
 challenge is to find the few predicates that matter.
 
 \subsubsection{Crash Prediction Using Logistic Regression}
@@ -566,7 +566,7 @@ successful run).  Feature selection can be achieved by
 features, forcing it to form a model that predicts success or failure
 using just a small selection of sampled features.  Regularization is
 important for our purposes because we expect that most of our features
-are wild guesses, but that there may be just a few which correctly
+are wild guesses, but that there may be just a few that correctly
 characterize the bug.
 
 While other techniques for combined classification and feature
@@ -740,9 +740,9 @@ programs can ``get lucky'', meaning that this is not a strict
 $\text{overrun} \implies \text{crash}$ implication.  Manual inspection
 of the data reveals a high degree of redundancy among many
 instrumentation sites within \texttt{more\_arrays()}, meaning that the
-model has several features to choose from which have equivalent
+model has several features to choose from that have equivalent
 predictive power.  This suggests that our counters may be too
-fine-grained---we are distinguishing many behaviors which are in
+fine-grained---we are distinguishing many behaviors that are in
 fact so tightly interrelated as to be equivalent.  
 %Improving our
 %instrumentation scheme and fine-tuning the statistical analysis

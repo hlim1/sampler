@@ -42,8 +42,19 @@
       <varlistentry>
 	<term><option>--sampler-scheme=<replaceable>scheme</replaceable></option></term>
 	<listitem>
-	  <para>Activate the named instrumentation scheme.  The
-	  following instrumentation schemes are currently
+	  <para>Activate the named instrumentation scheme.  This flag
+	  may be used multiple times to activate multiple schemes.
+	  However, the order in which active schemes are applied is
+	  fixed and does not depend on the order in which they are
+	  named on the command line.</para>
+
+	  <important>
+	    <para>If this flag never appears on the command line, then
+	    no instrumentation scheme is activated and no
+	    instrumentation is added to the compiled code.</para>
+	  </important>
+
+	  <para>The following instrumentation schemes are currently
 	  available:</para>
 
 	  <variablelist>
@@ -214,15 +225,6 @@
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>
-
-	  <para>This flag may be used multiple times to activate
-	  multiple schemes.  However, the order in which active
-	  schemes are applied is fixed and does not depend on the
-	  order in which they are named on the command line.</para>
-
-	  <para>If this flag never appears on the command line, then
-	  no instrumentation scheme is activated and no
-	  instrumentation is added to the compiled code.</para>
 	</listitem>
       </varlistentry>
 

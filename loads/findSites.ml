@@ -14,9 +14,10 @@ class visitor = object
   method vstmt statement =
     let outputs =
       match statement.skind with
+	(* Switch has been removed by Cil.prepareCFG *)
       | Return (Some expression, location)
       | If (expression, _, _, location) ->
-	  Collect.collect visitCilStmt statement
+	  Collect.collect visitCilExpr expression
       |	Instr (instruction :: instructions) ->
 	  assert (instructions == []);
 	  Collect.collect visitCilInstr instruction

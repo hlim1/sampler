@@ -1,4 +1,4 @@
-ocamlflags = -warn-error A
+ocamlflags = -warn-error A $(ocamlflags_profile) $(ocamlflags_native)
 
 OCAMLOPT = @OCAMLOPT@
 OCAMLC = @OCAMLC@
@@ -12,7 +12,7 @@ cil_libdir = @cil_libdir@
 
 
 if ENABLE_PROFILING
-ocamlflags += -p
+ocamlflags_profile = -p
 endif
 
 if ENABLE_NATIVE
@@ -20,7 +20,7 @@ ocamlc := $(OCAMLOPT)
 cma := cmxa
 cmo := cmx
 else
-ocamlflags += -g $(DTYPES)
+ocamlflags_native = -g $(DTYPES)
 ocamlc := $(OCAMLC)
 cma := cma
 cmo := cmo

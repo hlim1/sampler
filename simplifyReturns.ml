@@ -6,8 +6,8 @@ let returnTypeOf typ =
   return
 
 
-class visitor = object(self)
-  inherit SimplifyVisitor.visitor
+class visitor initialFunction = object(self)
+  inherit SimplifyVisitor.visitor initialFunction
 
   method vinst = function
     | Call (Some result, fname, actuals, location) ->
@@ -23,9 +23,9 @@ class visitor = object(self)
 end
 
 
-let simplifyBlock block =
-  ignore (visitCilBlock (new visitor) block)
+let simplifyBlock func block =
+  ignore (visitCilBlock (new visitor func) block)
 
 
 let phase _ =
-  ("SimplifyReturns", visitCilFileSameGlobals new visitor)
+  ("SimplifyReturns", visitCilFileSameGlobals (new visitor dummyFunDec))

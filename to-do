@@ -1,3 +1,7 @@
+have module Dynamic set Ptranal.conservative_undefineds to true; only
+the ccured instrumentor then needs to change this to something else,
+provided that initializations happen in the order I think they do
+
 Remember which functions are loopless.  Use this to optimize treatment
 of calls to known loopless functions.
 

@@ -22,7 +22,7 @@ class visitor pairs =
       if stmt.sid != -1 then
 	pairs.(stmt.sid) <- (stmt, clone);
 
-      ChangeDoChildrenPost (clone, identity)
+      ChangeDoChildrenPost (clone, (fun s -> s))
   end
 
 

@@ -17,10 +17,6 @@ class BaseUserConfig:
         """Level of compression for uploaded reports."""
         raise NotImementedError
 
-    def upload_headers(self):
-        """Contribute additional headers to report uploads."""
-        return {"sparsity" : str(self.sparsity())}
-
     def change_reporting_url(self, url):
         """Record a new address for future uploads."""
         raise NotImementedError
@@ -31,4 +27,4 @@ class BaseUserConfig:
 
     def show_server_message(self, reply):
         """Show a server message in response to an upload."""
-        raise NotImementedError
+        raise NotImplementedError

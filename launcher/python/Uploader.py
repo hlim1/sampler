@@ -25,7 +25,6 @@ def upload(app, user, outcome):
         # collect headers from various contributors
         upload.headers["sampler-uploader-version"] = "0.1"
         __add_headers(upload, "application", app)
-        __add_headers(upload, "user", user)
         __add_headers(upload, "outcome", outcome)
 
         # install our special redirect hander
@@ -35,8 +34,6 @@ def upload(app, user, outcome):
         # post the upload and read server's response
         request = urllib2.Request(reporting_url, upload.body(), upload.headers)
         reply = urllib2.urlopen(request)
-        import shutil
-        import sys
 
         # server may have requested a permanent URL change
         if redirect.permanent:

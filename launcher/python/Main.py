@@ -3,8 +3,8 @@ import BaseMain
 import UserConfig
 
 
-def main(app_filename, user_filename):
+def main(config_filename):
     """Run an instrumented application."""
-    app = AppConfig.AppConfig(app_filename)
-    user = UserConfig.UserConfig(user_filename)
+    app = AppConfig.AppConfig(config_filename)
+    user = UserConfig.UserConfig(config_filename, app.config)
     BaseMain.main(app, user)

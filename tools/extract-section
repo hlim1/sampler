@@ -10,7 +10,9 @@ use FileHandle;
 ########################################################################
 
 
-die "Usage: $0 [<executable> | <object> | <library>] ...\n" unless @ARGV >= 1;
+die "Usage: $0 <section-name> [<executable> | <object> | <library>] ...\n" unless @ARGV >= 2;
+
+my $sectionName = shift;
 
 foreach my $name (@ARGV) {
     my $objdump = new FileHandle;
@@ -22,15 +24,15 @@ foreach my $name (@ARGV) {
     while (<$objdump>) {
 	my @field = split;
 	next unless @field >= 7;
-	next unless $field[1] eq '.debug_site_info';
+	next unless $field[1] eq $sectionName;
 	next unless $field[0] =~ /^\d+$/;
 	$size = hex $field[2];
 	$offset = hex $field[5];
 	last;
     }
 
-    die "\".debug_site_info\" section is missing\n" unless defined $offset;
-    die "\".debug_site_info\" section is empty\n" unless $size;
+    die "\"$sectionName\" section is missing\n" unless defined $offset;
+    die "\"$sectionName\" section is empty\n" unless $size;
 
     my $buffer;
     my $executable = new FileHandle $name, 'r';

@@ -47,3 +47,14 @@ loopless: $(libcil) $(loopless)
 
 %.ps: %.dot
 	dot -Tps -Gsize=7.5,10 -Gcenter=1 -o $@ $<
+
+calls.cfg: %.cfg: %.cfg.o
+	$(top_srcdir)/tools/extract-section .debug_sampler_cfg $< >$@.tmp
+	mv $@.tmp $@
+
+calls.cfg.i: %.cfg.i: cfgTest %.c
+	./$^ >$@.tmp
+	mv $@.tmp $@
+
+%.o: %.i
+	$(CC) -c $<

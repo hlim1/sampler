@@ -1,0 +1,104 @@
+#!/usr/bin/perl -w
+
+use strict;
+use 5.008;			# for safe pipe opens using list form of open
+
+use Fcntl qw(SEEK_SET);
+use FileHandle;
+use FindBin;
+
+
+########################################################################
+
+
+my $problem = 0;
+
+
+sub error ($) {
+    warn shift;
+    $problem = 1;
+}
+
+
+sub malformed ($$$$) {
+    my ($filename, $handle, $context, $actual) = @_;
+    die "$filename:", $handle->input_line_number, ": malformed $context: $actual\n";
+}
+
+
+sub check_signature ($$$) {
+    my ($filename, $handle, $signature) = @_;
+    malformed $filename, $handle, 'signature', $signature
+	unless $signature eq '*0.0';
+}
+
+
+my %compilationUnit;
+
+
+foreach my $objectName (@ARGV) {
+    my $handle;
+
+    if ($objectName =~ /\.cfg$/) {
+	$handle = new FileHandle $objectName, 'r';
+	unless ($handle) {
+	    error "warning: cannot read $objectName: $!\n";
+	    next;
+	}
+
+    } elsif (-d $objectName) {
+	next;
+
+    } else {
+	$handle = new FileHandle;
+	my $extractor = "$FindBin::Bin/extract-section";
+	if (! open $handle, '-|', $extractor, '.debug_sampler_cfg', $objectName) {
+	    error "warning: cannot run $extractor for $objectName: $!\n";
+	    next;
+	}
+    }
+
+    while (my $signature = <$handle>) {
+	chomp $signature;
+	check_signature $objectName, $handle, $signature;
+	my $unit = { sites => [], name => $objectName };
+
+	while (my $function = <$handle>) {
+	    chomp $function;
+	    last if $function eq '';
+
+	    $function =~ /^([-+])\t([\w\$]+)\t(.+)\t(\d+)$/ or malformed $objectName, $handle, 'function header', $function;
+	    my ($linkage, $name, $file, $line) = ($1, $2, $3, $4);
+	    print "$file:$line:	function $name()\n";
+
+	    while (my $node = <$handle>) {
+		chomp $node;
+		last if $node eq '';
+
+		$node =~ /^(.+)\t(\d+)$/ or malformed $objectName, $handle, 'node header', $node;
+		my ($file, $line) = ($1, $2);
+		print "$file:$line:		node\n";
+
+		my $successors = <$handle>;
+		chomp $successors;
+		$successors =~ /^(\d+\t)*$/ or malformed $objectName, $handle, 'successors list', $successors;
+		my @successors = split /\t/, $successors;
+		print "$file:$line:			succs: @successors\n" if @successors;
+
+		my $callees = <$handle>;
+		chomp $callees;
+		my @callees;
+		if ($callees eq '???') {
+		    @callees = ('???');
+		} else {
+		    $callees =~ /^([\w\$]+\t)*$/ or malformed $objectName, $handle, 'callees list', $callees;
+		    @callees = split /\t/, $callees;
+		}
+		print "$file:$line:			callees: @callees\n" if @callees;
+	    }
+	}
+    }
+}
+
+
+exit $problem;

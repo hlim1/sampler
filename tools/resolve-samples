@@ -60,8 +60,8 @@ foreach my $objectName (@ARGV) {
 
     } else {
 	$handle = new FileHandle;
-	my $extractor = "$FindBin::Bin/extract-site-info";
-	if (! open $handle, '-|', $extractor, $objectName) {
+	my $extractor = "$FindBin::Bin/extract-section";
+	if (! open $handle, '-|', $extractor, '.debug_site_info', $objectName) {
 	    error "warning: cannot run $extractor for $objectName: $!\n";
 	    next;
 	}

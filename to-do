@@ -49,3 +49,14 @@ single value multiple times
 
 assume that anything declared in /usr/include/... or
 /usr/lib/gcc-lib/... or perhaps a few other places is library code
+
+** CFG embedding
+
+instruction isolation only needs to happen once
+
+cfg building might not need to be called as often
+
+Dynamic.analyze might not need to be called as often
+
+Does the serialization format work properly in the degenerate case of
+an empty function body?

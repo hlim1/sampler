@@ -46,8 +46,9 @@ let endsWithCall {skind = skind} =
 let collectPostCallHeader headers stmt =
   if endsWithCall stmt then
     match stmt.succs with
+    | [] -> ()
     | [succ] -> headers#add (stmt, succ)
-    | _ -> failwith "found call with non-singleton successor set"
+    | _ -> failwith (sprintf "CFG #%i contains call with %i successors" stmt.sid (List.length stmt.succs))
 	
 
 let collectPostCallHeaders headers stmts =

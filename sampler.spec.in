@@ -5,7 +5,7 @@
 
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
-Release: 0
+Release: 1
 License: BSD
 Group: Applications/System
 Packager: Ben Liblit <@PACKAGE_BUGREPORT@>

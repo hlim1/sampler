@@ -20,6 +20,7 @@ let classifyByName = function
   | "__CHECK_SEQ2FSEQ"
   | "__CHECK_POSITIVE"
   | "__CHECK_FSEQARITH"
+  | "__CHECK_FSEQARITH2SAFE"
   | "__CHECK_NULL"
   | "__CHECK_RTTICAST"
   | "__CHECK_WILDPOINTERREAD"

@@ -12,10 +12,10 @@ use CilConfig;
 sub setDefaultArguments {
     my $self = shift;
 
+    $self->{countdowns} = 'acyclic';
     $self->{sample_events} = 1;
-    $self->{sample_funcs} = 0;
-    unshift @{$self->{LD}}, 'libtool';
     $self->{TRACE_COMMANDS} = 0;
+    unshift @{$self->{LD}}, 'libtool';
 }
 
 
@@ -34,13 +34,8 @@ sub collectOneArgument {
 	push @{$self->{instrumentor}}, $arg;
 	$self->{sample_events} = 1;
 	return 1;
-    } elsif ($arg eq '--no-sample-funcs') {
-	push @{$self->{instrumentor}}, $arg;
-	$self->{sample_funcs} = 0;
-	return 1;
-    } elsif ($arg eq '--sample-funcs') {
-	push @{$self->{instrumentor}}, $arg;
-	$self->{sample_funcs} = 1;
+    } elsif ($arg =~ /^--(a?cyclic)$/) {
+	$self->{countdowns} = $1;
 	return 1;
     } elsif ($arg =~ /^--(no-)?show-stats$/) {
 	push @{$self->{instrumentor}}, $arg;
@@ -80,7 +75,7 @@ sub libcountdown {
 
 sub sampling {
     my $self = shift;
-    return $self->{sample_events} || $self->{sample_funcs};
+    return $self->{sample_events};
 }
 
 
@@ -89,8 +84,9 @@ sub extraHeaders {
     my @extras;
 
     my $dir = $self->libcountdown;
-    push @extras, '-include', "$dir/event.h" if $self->{sample_events};
-    push @extras, '-include', "$dir/func.h" if $self->{sample_funcs};
+    push @extras, '-DCIL';
+    push @extras, '-include', "$dir/countdown.h" if $self->sampling;
+    push @extras, '-include', "$dir/$self->{countdowns}.h" if $self->{sample_events};
 
     return @extras;
 }
@@ -102,9 +98,7 @@ sub extraLibs {
 
     if ($self->sampling) {
 	push @extras, '-L' . $self->libcountdown;
-	push @extras, '-levent' if $self->{sample_events};
-	push @extras, '-lfunc' if $self->{sample_funcs};
-	push @extras, '-lcyclic';
+	push @extras, "-l$self->{countdowns}";
     }
 
     return @extras;

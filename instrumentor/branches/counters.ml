@@ -65,17 +65,7 @@ let build file =
 
 
 let register file =
-  let compInfo = findCompInfo file in
-  let registerHelper = FindFunction.find "registerBranchProfile" file in
-  let unregisterHelper = FindFunction.find "unregisterBranchProfile" file in
-
-  let markRoots file =
-    defaultRootsMarker file;
-    registerHelper.vreferenced <- true;
-    unregisterHelper.vreferenced <- true;
-    compInfo.creferenced <- true
-  in
-  removeUnusedTemps ~markRoots:markRoots file;
+  removeUnusedTemps file;
 
   let profiles =
     try
@@ -108,6 +98,8 @@ let register file =
 	GFun (func, locUnknown)
       in
       
+      let registerHelper = FindFunction.find "registerBranchProfile" file in
+      let unregisterHelper = FindFunction.find "unregisterBranchProfile" file in
       let registerAll = build "constructor" "registerBranchProfiles" registerHelper in
       let unregisterAll = build "destructor" "unregisterBranchProfiles" unregisterHelper in
 

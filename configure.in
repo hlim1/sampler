@@ -43,6 +43,7 @@ instrumentor/daikon/libdaikon/Makefile
 instrumentor/daikount/libdaikount/Makefile
 libcountdown/Makefile
 liblog/Makefile
+libreport/Makefile
 mining/Makefile
 mining/libodbc++/Makefile
 mining/populate/Makefile

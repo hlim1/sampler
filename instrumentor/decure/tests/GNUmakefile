@@ -9,8 +9,7 @@ traces := $(tests:=.trace)
 checks := $(tests:=.check)
 
 countdir := $(top)/../libcountdown
-countdowns := $(countdir)/countdown-1-1
-lib := $(countdir)/libevent.la $(countdir)/libcyclic.la
+lib := $(countdir)/libacyclic.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -30,7 +29,7 @@ $(checks): %.check: %.trace
 .PHONY: $(checks)
 
 $(tests:=.trace): %.trace: % $(countdowns)
-	SAMPLER_EVENT_COUNTDOWNS=$(countdowns) ./$<
+	SAMPLER_SPARSITY=1 ./$<
 	touch $@
 
 test: test.c $(lib) $(front_end) ../main

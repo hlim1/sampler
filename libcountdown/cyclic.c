@@ -6,11 +6,16 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include "countdown.h"
 #include "cyclic.h"
 #include "cyclic-size.h"
 
 
 #define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(unsigned))
+
+
+const unsigned *nextEventPrecomputed = 0;
+unsigned nextEventSlot = 0;
 
 
 static void failed(const char function[])
@@ -45,8 +50,9 @@ static int checkedOpen(const char filename[])
 }
 
 
-const unsigned *loadCountdowns(const char envar[])
+__attribute__((constructor)) static void initialize()
 {
+  const char envar[] = "SAMPLER_EVENT_COUNTDOWNS";
   const char * const environ = getenv(envar);
   void *mapping;
   
@@ -67,12 +73,13 @@ const unsigned *loadCountdowns(const char envar[])
 	failed("mremap");
     }
 
-  return (const unsigned *) mapping;
+  nextEventPrecomputed = (const unsigned *) mapping;
+  nextEventCountdown = getNextEventCountdown();
 }
 
 
-void unloadCountdowns(const unsigned *mapping)
+__attribute__((destructor)) static void finalize()
 {
-  if (mapping != 0)
-    munmap((void *) mapping, MAP_SIZE);
+  if (nextEventPrecomputed != 0)
+    munmap((void *) nextEventPrecomputed, MAP_SIZE);
 }

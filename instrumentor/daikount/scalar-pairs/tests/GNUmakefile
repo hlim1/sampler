@@ -10,8 +10,7 @@ traces := $(tests:=.trace)
 checks := $(tests:=.check)
 
 countdir := $(top)/../libcountdown
-countdowns := $(countdir)/countdown-1-1
-lib := ../../libdaikount/libdaikount.la $(countdir)/libevent.la $(countdir)/libcyclic.la
+lib := ../../libdaikount/libdaikount.la $(countdir)/libacyclic.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -31,15 +30,15 @@ $(checks): %.check: %.trace
 .PHONY: $(checks)
 
 upcase-bad.trace: %.trace: % $(countdowns)
-	SAMPLER_FILE=$@ SAMPLER_EVENT_COUNTDOWNS=$(countdowns) ./$< once upon a time || :
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$< once upon a time || :
 	[ -r $@ ]
 
 upcase-good.trace: %.trace: % $(countdowns)
-	SAMPLER_FILE=$@ SAMPLER_EVENT_COUNTDOWNS=$(countdowns) ./$< once upon a time
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$< once upon a time
 	[ -r $@ ]
 
 late-global.trace: late-global $(countdowns)
-	SAMPLER_FILE=$@ SAMPLER_EVENT_COUNTDOWNS=$(countdowns) ./$<
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 	[ -r $@ ]
 
 $(tests): %: %.o $(lib)

@@ -11,7 +11,6 @@ decodes := $(tests:=.decode)
 traces := $(tests:=.trace)
 objects := $(tests:=.o)
 
-countdowns := $(top)/libcountdown/countdown-1-1
 decoder := $(top)/liblog/print-trace
 
 force := force
@@ -31,8 +30,8 @@ $(decodes): %.decode: %.trace $(decoder)
 	$(decoder) <$< >$@
 	cat $@
 
-$(traces): %.trace: % $(countdowns)
-	SAMPLER_FILE=$@ SAMPLER_COUNTDOWNS=$(countdowns) ./$<
+$(traces): %.trace: %
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 	[ -r $@ ]
 
 $(objects): %.o: %.c $(top)/liblog/log.h $(top)/libcountdown/event.h $(front_end)

@@ -70,17 +70,7 @@ let invariant file =
 
 
 let register file =
-  let compInfo = findCompInfo file in
-  let registerHelper = FindFunction.find "registerInvariant" file in
-  let unregisterHelper = FindFunction.find "unregisterInvariant" file in
-
-  let markRoots file =
-    defaultRootsMarker file;
-    registerHelper.vreferenced <- true;
-    unregisterHelper.vreferenced <- true;
-    compInfo.creferenced <- true
-  in
-  removeUnusedTemps ~markRoots:markRoots file;
+  removeUnusedTemps file;
 
   let profiles =
     try
@@ -113,6 +103,8 @@ let register file =
 	GFun (func, locUnknown)
       in
       
+      let registerHelper = FindFunction.find "registerInvariant" file in
+      let unregisterHelper = FindFunction.find "unregisterInvariant" file in
       let registerAll = build "constructor" "registerInvariants" registerHelper in
       let unregisterAll = build "destructor" "unregisterInvariants" unregisterHelper in
 

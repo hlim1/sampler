@@ -2,6 +2,13 @@
 #define INCLUDE_libdaikon_daikon_h
 
 
+#ifdef CIL
+#pragma cilnoremove("struct Invariant")
+#pragma cilnoremove("registerInvariant")
+#pragma cilnoremove("unregisterInvariant")
+#endif
+
+
 struct Invariant
 {
   struct Invariant *prev;

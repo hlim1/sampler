@@ -2,6 +2,13 @@
 #define INCLUDE_libbranches_branches_h
 
 
+#ifdef CIL
+#pragma cilnoremove("struct BranchProfile")
+#pragma cilnoremove("registerBranchProfile")
+#pragma cilnoremove("unregisterBranchProfile")
+#endif
+
+
 struct BranchProfile
 {
   struct BranchProfile *prev;
@@ -35,8 +42,8 @@ static inline void unregisterBranchProfile(struct BranchProfile *) __attribute__
 
 static inline void unregisterBranchProfile(struct BranchProfile *profile)
 {
-  profile->prev->next = profile->next;
-  profile->next->prev = profile->prev;
+  if (profile->prev) profile->prev->next = profile->next;
+  if (profile->next) profile->next->prev = profile->prev;
 }
 
 

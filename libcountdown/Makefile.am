@@ -1,12 +1,15 @@
 INCLUDES = -W -Wall -Werror `gsl-config --cflags`
 
+lib_LTLIBRARIES = libacyclic.la libcountdown.la libcyclic.la
 
-lib_LTLIBRARIES = libacyclic.la libcyclic.la libevent.la libfunc.la
+libacyclic_la_SOURCES = acyclic.c acyclic.h countdown.h
+libacyclic_la_LIBADD = libcountdown.la
+libacyclic_la_LDFLAGS = `gsl-config --libs`
 
-libacyclic_la_SOURCES = acyclic.c acyclic.h
-libcyclic_la_SOURCES = cyclic.c cyclic.h cyclic-internals.h cyclic-size.h
-libevent_la_SOURCES = event.c event.h
-libfunc_la_SOURCES = func.c func.h
+libcyclic_la_SOURCES = countdown.h cyclic.c cyclic.h cyclic-size.h
+libcyclic_la_LIBADD = libcountdown.la
+
+libcountdown_la_SOURCES = countdown.c countdown.h
 
 libexec_PROGRAMS = precompute
 precompute_SOURCES = precompute.c

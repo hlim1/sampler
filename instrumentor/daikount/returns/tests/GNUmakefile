@@ -9,8 +9,7 @@ traces := $(tests:=.trace)
 checks := $(tests:=.check)
 
 countdir := $(top)/../libcountdown
-countdowns := $(countdir)/countdown-1-1
-lib := ../../libdaikount/libdaikount.la $(countdir)/libevent.la $(countdir)/libcyclic.la
+lib := ../../libdaikount/libdaikount.la $(countdir)/libacyclic.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -29,8 +28,8 @@ $(checks): %.check: %.trace
 	[ -s $< ]
 .PHONY: $(checks)
 
-$(tests:=.trace): %.trace: % $(countdowns)
-	SAMPLER_FILE=$@ SAMPLER_EVENT_COUNTDOWNS=$(countdowns) ./$<
+$(tests:=.trace): %.trace: %
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 	[ -r $@ ]
 
 test: test.o $(lib) ../main

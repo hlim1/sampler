@@ -2,9 +2,9 @@
 #define INCLUDE_libcountdown_acyclic_h
 
 
-static inline unsigned getNextCountdown() __attribute__((no_instrument_function));
+static inline unsigned getNextEventCountdown() __attribute__((no_instrument_function));
 
-static inline unsigned getNextCountdown()
+static inline unsigned getNextEventCountdown()
 {
   extern double density;
   extern void *generator;

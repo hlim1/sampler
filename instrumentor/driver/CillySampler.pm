@@ -51,6 +51,7 @@ sub link_after_cil {
     my $self = shift;
     my @ldargs = @{(pop)};
 
+    push @ldargs, '-Wl,-u,providesLibReport';
     push @ldargs, $self->extraLibs;
 
     $self->Cilly::link_after_cil(@_, \@ldargs);

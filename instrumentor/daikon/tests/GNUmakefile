@@ -8,8 +8,6 @@ CC := $(front_end) -g -W -Wall -Werror
 traces := $(tests:=.trace)
 objects := $(tests:=.o)
 
-countdowns := $(top)/libcountdown/countdown-1-1
-
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
 
@@ -24,11 +22,11 @@ check: $(traces)
 .PHONY: check
 
 upcase.trace: upcase $(countdowns)
-	SAMPLER_FILE=$@ SAMPLER_COUNTDOWNS=$(countdowns) ./$< once upon a time || :
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$< once upon a time || :
 	[ -r $@ ]
 
 late-global.trace: late-global $(countdowns)
-	SAMPLER_FILE=$@ SAMPLER_COUNTDOWNS=$(countdowns) ./$<
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 	[ -r $@ ]
 
 $(objects): %.o: %.c $(front_end) ../main

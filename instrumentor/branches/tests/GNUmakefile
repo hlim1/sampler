@@ -3,14 +3,14 @@ tests := simple
 top := ../..
 
 front_end := ../driver/main
-CC := $(front_end) -g -W -Wall -Werror
+cyclic := acyclic
+CC := $(front_end) -g -W -Wall -Werror --$(cyclic)
 
 traces := $(tests:=.trace)
 checks := $(tests:=.check)
 
 countdir := $(top)/../libcountdown
-countdowns := $(countdir)/countdown-1-1
-lib := ../libbranches/libbranches.la $(countdir)/libevent.la $(countdir)/libcyclic.la
+lib := ../libbranches/libbranches.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -29,19 +29,16 @@ $(checks): %.check: %.trace
 	[ -s $< ]
 .PHONY: $(checks)
 
-$(tests:=.trace): %.trace: % $(countdowns)
-	SAMPLER_FILE=$@ SAMPLER_EVENT_COUNTDOWNS=$(countdowns) ./$<
+$(tests:=.trace): %.trace: %
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 	[ -r $@ ]
 
 simple: %: %.o $(lib) ../main
 	$(LINK.o) $< $(LOADLIBES) $(LDLIBS) -o $@
 
-simple.o: %.o: %.c $(front_end) ../main ../libbranches/branches.h
+simple.o: %.o: %.c $(front_end) ../main ../libbranches/branches.h $(countdir)/$(cyclic).h
 
 ../main: $(force)
-	$(recurse)
-
-$(countdowns): $(force)
 	$(recurse)
 
 $(lib): $(force)

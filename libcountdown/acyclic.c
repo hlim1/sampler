@@ -4,9 +4,8 @@
 #include <gsl/gsl_randist.h>
 #include <limits.h>
 #include "acyclic.h"
+#include "countdown.h"
 
-
-unsigned nextEventCountdown = UINT_MAX;
 
 double density;
 void *generator;
@@ -39,7 +38,7 @@ __attribute__((constructor)) static void initialize()
 	{
 	  density = 1 / sparsity;
 	  generator = gen = gsl_rng_alloc(gsl_rng_env_setup());
-	  nextEventCountdown = getNextCountdown();
+	  nextEventCountdown = getNextEventCountdown();
 	}
     }
 }

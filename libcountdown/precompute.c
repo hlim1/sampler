@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	  while (slot--)
 	    {
 	      writeCountdown(outfile);
-	      nextEventCountdown = getNextCountdown();
+	      nextEventCountdown = getNextEventCountdown();
 	    }
 
 	  nextEventCountdown = 0;

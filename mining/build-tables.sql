@@ -31,3 +31,6 @@ CREATE TABLE samples (
   UNIQUE (session, site, expression),
   FOREIGN KEY (session, site) REFERENCES sites (session, site) MATCH FULL
 );
+
+
+CREATE INDEX samples_expression_value ON samples (expression, value);

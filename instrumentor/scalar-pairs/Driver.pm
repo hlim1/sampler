@@ -39,6 +39,7 @@ sub extraLibs {
     my @extras = $self->SUPER::extraLibs;
     my $_r = $self->{threads} ? '_r' : '';
     push @extras, "-L$::root/libreport", "-lreport$_r";
+    push @extras, '-lpthread' if $self->{threads};
     push @extras, "-L$::home/libscalar-pairs", '-lscalar-pairs';
     return @extras;
 }

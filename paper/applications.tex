@@ -271,7 +271,7 @@ then, have no bearing on program success or failure.
 Given a set of runs, we can discard irrelevant predicates using a 
 set of \termdef{elimination strategies}:
 
-\begin{description}\sloppy
+\begin{elimlist}
 \item[\elim{Elimination by universal falsehood}:] Disregard any
   counter that is zero on all runs.  These likely represent
   predicates that can never be true.
@@ -281,8 +281,7 @@ set of \termdef{elimination strategies}:
   Because one counter in each triple must always be true for any
   sample, these likely represent instrumentation sites that are not
   even reached in failing executions.
-
-
+  
 \item[\elim{Elimination by lack of failing example}:] Disregard any
   counter that is zero on all failed runs.  These likely represent
   predicates that need not be true for a failure to occur.
@@ -291,7 +290,7 @@ set of \termdef{elimination strategies}:
   counter that has a non-zero value on any successful run.  These
   must represent predicates that can be true without a subsequent
   program failure.
-\end{description}
+\end{elimlist}
 
 We characterize these as strategies because they are subject to noise
 from random sampling, and also because not all are equally applicable
@@ -324,20 +323,20 @@ We have collected 2990 trial runs at a sampling rate of
 \nicefrac{1}{1000}; 88 of these end in a crash.  Applying each
 elimination strategy independently to the counter traces:
 
-\begin{description}\sloppy
+\begin{elimlist}
 \item[\elim{Universal falsehood}] discards 1569 counters that are
   zero on all runs, leaving 141 candidate predicates.
-
+  
 \item[\elim{Lack of failing example}] discards 1665 counters that are
   zero on all crashes, leaving 45 candidate predicates.
-
+  
 \item[\elim{Lack of failing coverage}] discards 526 counter triples
   that are all zero on all crashes, leaving 132 candidate predicates.
-
+  
 \item[\elim{Successful counterexample}] discards 139 counters that
   are non-zero on any successful run, leaving 1571 candidate
   predicates.
-\end{description}
+\end{elimlist}
 
 %Several factors conspire to drive most counters to zero: the \naive
 %nature of our guesses, the limited coverage of our automated test

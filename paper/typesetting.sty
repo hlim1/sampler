@@ -25,3 +25,10 @@
   \begin{list}{\arabic{feature}.}{\usecounter{feature}\setlength{\itemsep}{0pt}\setlength{\parsep}{0in}\ttfamily\small}
   }{
   \end{list}}
+
+\newenvironment{elimlist}[0]{
+  \begin{description}
+    \let\olditem\item
+    \renewcommand{\item}[1][]{\olditem \textbf{##1}}
+  }{
+  \end{description}}

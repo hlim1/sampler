@@ -6,8 +6,8 @@ let returnTypeOf typ =
   return
 
 
-class visitor = object
-  inherit CurrentFunctionVisitor.visitor
+class visitor = object(self)
+  inherit SimplifyVisitor.visitor
 
   method vinst = function
     | Call (Some result, fname, actuals, location) ->
@@ -15,7 +15,7 @@ class visitor = object
 	  match result with
 	  | (Var _, _) -> SkipChildren
 	  | (Mem _, _) ->
-	      let temp = var (makeTempVar !currentFunction ~name:"call" (returnTypeOf (typeOf fname))) in
+	      let temp = var (self#makeTempVar "call" (returnTypeOf (typeOf fname))) in
 	      ChangeTo [Call (Some temp, fname, actuals, location);
 			Set (result, Lval temp, location)]
 	end

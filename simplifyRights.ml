@@ -1,16 +1,16 @@
 open Cil
 
 
-class visitor = object
-  inherit CurrentFunctionVisitor.visitor
-
+class visitor = object(self)
+  inherit SimplifyVisitor.visitor
+      
   method vinst = function
     | Set ((Mem _, _) as lval, data, location) ->
 	begin
 	  match data with
 	  | Lval (Var _, NoOffset) -> SkipChildren
 	  | _ ->
-	      let temp = var (makeTempVar !currentFunction ~name:"right" (typeOf data)) in
+	      let temp = var (self#makeTempVar "right" (typeOf data)) in
 	      ChangeTo [Set (temp, data, location);
 			Set (lval, Lval temp, location)]
 	end

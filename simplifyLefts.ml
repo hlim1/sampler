@@ -1,8 +1,8 @@
 open Cil
 
 
-class visitor = object
-  inherit CurrentFunctionVisitor.visitor
+class visitor = object(self)
+  inherit SimplifyVisitor.visitor
 
   method vinst = function
     | Set ((Mem(expr), offset) as lval, data, location) ->
@@ -12,7 +12,7 @@ class visitor = object
 	      SkipChildren
 	  | _ ->
 	      let addr = mkAddrOf lval in
-	      let temp = var (makeTempVar !currentFunction ~name:"left" (typeOf addr)) in
+	      let temp = var (self#makeTempVar "left" (typeOf addr)) in
 	      let mem = mkMem (Lval temp) NoOffset in
 	      ChangeTo [Set (temp, addr, location);
 			Set (mem, data, location)]

@@ -28,5 +28,7 @@ class countdown global fundec =
     method choose location weight instrumented original =
       let within = kinteger IUInt weight in
       let predicate = BinOp (Gt, Lval local, within, intType) in
-      If (predicate, original, instrumented, location)
+      let choice = If (predicate, original, instrumented, location) in
+      (* Choices.add choice; *)
+      choice
   end

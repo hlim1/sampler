@@ -8,17 +8,12 @@ add listener for changes to gconf 'enabled' key
 
 how does launcher propagate SIGINT (^C) down to child?
 
-ShowStats doesn't need ident string, as it has no effect on the
-built binary.
-
 PairClassifier.visitor does a lot of redundant work to re-scan for
 globals from the start of the file for each new instance.  We should
 be able to accumulate this incrementally as we go along.
 
 Remember which functions are loopless.  Use this to optimize treatment
 of calls to known loopless functions.
-
-prefix traces with: binary path, pid, timestamp
 
 instrumentor/logging/loads/tests/multiple is incorrectly printing a
 single value multiple times

@@ -20,7 +20,7 @@ def __install(abled):
     set = gtk.IconSet()
 
     source_48 = __source(abled, 48)
-    #source_48.set_size_wildcarded(gtk.FALSE)
+    source_48.set_size_wildcarded(gtk.FALSE)
     source_48.set_size(gtk.ICON_SIZE_DIALOG)
     set.add_source(source_48)
 
@@ -38,6 +38,5 @@ size_emblem = gtk.icon_size_register('sampler-emblem', 96, 96)
 
 __install('disabled')
 __install('enabled')
-print 'BlipIcons.install(): installed'
 
 stock = ['sampler-disabled', 'sampler-enabled']

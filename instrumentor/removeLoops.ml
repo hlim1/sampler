@@ -22,8 +22,8 @@ class visitor =
 	    let goto = mkStmt (buildGoto stmt location) in
 	    block.bstmts <- block.bstmts @ [goto];
 	    stmt.skind <- Block block
-	| Break _ when stmt.succs = [] ->
-	    ()
+	| Break location when stmt.succs = [] ->
+	    stmt.skind <- Return (None, location)
 	| Break location
 	| Continue location ->
 	    begin

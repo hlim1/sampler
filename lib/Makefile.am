@@ -21,7 +21,7 @@ liblib_HEADERS =				\
 
 
 
-INCLUDES = -W -Wall -Werror -ffast-math
+INCLUDES = -ffast-math
 
 common_sources =				\
 	acyclic.c				\

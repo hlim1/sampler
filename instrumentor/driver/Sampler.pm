@@ -14,7 +14,7 @@ sub setDefaultArguments {
 
     $self->{sample_events} = 1;
     $self->{sample_funcs} = 0;
-    $self->{LD} = "libtool $self->{LD}";
+    unshift @{$self->{LD}}, 'libtool';
     $self->{TRACE_COMMANDS} = 0;
 }
 
@@ -51,6 +51,21 @@ sub collectOneArgument {
     } else {
 	return 0;
     }
+}
+
+
+########################################################################
+
+
+sub runShellOut {
+    my ($self, $out, @cmd) = @_;
+    open my $oldOut, '>&STDOUT' or die "cannot dup stdout: $!\n";
+    open STDOUT, '>', $out or die "cannot redirect stdout: $!\n";
+
+    $self->runShell(@cmd);
+
+    close STDOUT;
+    open STDOUT, '>&', $oldOut or die "cannot restore stdout: $!\n";
 }
 
 

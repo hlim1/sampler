@@ -55,7 +55,7 @@ sub applyCil {
     my ($base, $dir, undef) = fileparse $dest, '\\.[^.]+';
     my $aftercil = "$dir$base.inst.c";
 
-    $self->runShell("$self->{instrumentor} @{$ppsrc} >$aftercil");
+    $self->runShellOut($aftercil, $self->{instrumentor}, @{$ppsrc});
     return $aftercil;
 }
 

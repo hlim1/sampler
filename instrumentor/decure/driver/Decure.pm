@@ -57,7 +57,7 @@ sub compile_cil {
     my $base = basename $input, ".i";
     my $output = "${base}_inst.c";
     my $instrumentor = "$FindBin::Bin/../main";
-    $self->runShell("$self->{instrumentor} $input >$output");
+    $self->runShellOut($output, $self->{instrumentor}, $input);
 
     $self->CCured::compile_cil($output, @_);
 }

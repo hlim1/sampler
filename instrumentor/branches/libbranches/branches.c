@@ -1,41 +1,19 @@
 #include <libreport/report.h>
+#include <libreport/unit.h>
 #include "branches.h"
 
 
-static struct CompilationUnit anchor = { &anchor, &anchor, "", 0, 0 };
-
-
-void registerCompilationUnit(struct CompilationUnit *unit)
+void reportCompilationUnit(const struct CompilationUnit *unit)
 {
-  unit->prev = &anchor;
-  unit->next = anchor.next;
-  anchor.next->prev = unit;
-  anchor.next = unit;
-}
+  unsigned scan;
 
+  for (scan = 0; scan < sizeof(unit->signature); ++scan)
+    fprintf(reportFile, "%02x", unit->signature[scan]);
 
-void unregisterCompilationUnit(struct CompilationUnit *unit)
-{
-  if (unit->prev) unit->prev->next = unit->next;
-  if (unit->next) unit->next->prev = unit->prev;
-}
+  for (scan = 0; scan < unit->count; ++scan)
+    fprintf(reportFile, "\n%u\t%u",
+	    unit->tuples[scan].values[0],
+	    unit->tuples[scan].values[1]);
 
-
-void dumpSamples(FILE * const logFile)
-{
-  const struct CompilationUnit *unit;
-  for (unit = anchor.next; unit != &anchor; unit = unit->next)
-    {
-      unsigned scan;
-
-      for (scan = 0; scan < sizeof(unit->signature); ++scan)
-	fprintf(logFile, "%02x", unit->signature[scan]);
-
-      for (scan = 0; scan < unit->count; ++scan)
-	fprintf(logFile, "\n%u\t%u",
-		unit->tuples[scan][0],
-		unit->tuples[scan][1]);
-
-      fputs("\n\n", logFile);
-    }
+  fputs("\n\n", reportFile);
 }

@@ -3,8 +3,13 @@
 
 #include <stdio.h>
 
+struct CompilationUnit;
 
-void dumpSamples(FILE * const);
+
+extern FILE *reportFile;
+
+
+void reportCompilationUnit(const struct CompilationUnit *);
 
 
 #endif /* !INCLUDE_libreport_report_h */

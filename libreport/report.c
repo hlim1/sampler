@@ -5,30 +5,28 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include "anchor.h"
 #include "report.h"
 #include "requires.h"
+#include "unit.h"
 
 #define obstack_chunk_alloc malloc
 #define obstack_chunk_free free
 
 
 const void * const providesLibReport;
+
 unsigned reportInitCount;
+FILE *reportFile;
 
 
-static const char *logFileName()
+static void openReportFile()
 {
-  return getenv("SAMPLER_FILE");
-}
-
-
-static FILE *openLogFile()
-{
-  const char *start = logFileName();
+  const char *start = getenv("SAMPLER_FILE");
   struct obstack obstack;
 
   if (!start)
-    return 0;
+    return;
   
   obstack_init(&obstack);
   while (*start)
@@ -51,23 +49,37 @@ static FILE *openLogFile()
   
   {
     char * const filename = (char *) obstack_finish(&obstack);
-    FILE * const logFile = fopen(filename, "w");
+    reportFile = fopen(filename, "w");
+    if (reportFile)
+      fputs("<report id=\"samples\">\n", reportFile);
     obstack_free(&obstack, filename);
-    return logFile;
   }
 }
 
 
-static void dumpSamplesReport(FILE * const logFile)
+static void closeReportFile()
 {
-  fputs("<report id=\"samples\">\n", logFile);
-  dumpSamples(logFile);
-  fputs("</report>\n", logFile);
-  fflush(logFile);
+  fclose(reportFile);
+  reportFile = 0;
 }
 
 
-static void dumpDebugInfo(FILE * const logFile)
+/**********************************************************************/
+
+
+static void reportAllCompilationUnits()
+{
+  if (reportFile)
+    {
+      while (compilationUnitAnchor.next != &compilationUnitAnchor)
+	unregisterCompilationUnit(compilationUnitAnchor.next);
+      
+      fputs("</report>\n", reportFile);
+    }
+}
+
+
+static void reportDebugInfo()
 {
   const char * const debugger = getenv("SAMPLER_DEBUGGER");
   if (debugger)
@@ -79,7 +91,7 @@ static void dumpDebugInfo(FILE * const logFile)
 	  break;
 
 	case 0:
-	  if (dup2(fileno(logFile), STDOUT_FILENO) == -1)
+	  if (dup2(fileno(reportFile), STDOUT_FILENO) == -1)
 	    perror("dup2 failed");
 	  else
 	    {
@@ -100,11 +112,10 @@ static void dumpDebugInfo(FILE * const logFile)
 
 static void finalize()
 {
-  FILE * const logFile = openLogFile();
-  if (logFile)
+  if (reportFile)
     {
-      dumpSamplesReport(logFile);
-      fclose(logFile);
+      reportAllCompilationUnits();
+      closeReportFile();
     }
 }
 
@@ -113,15 +124,13 @@ static void handleSignal(int signum)
 {
   signal(signum, SIG_DFL);
 
-  {
-    FILE * const logFile = openLogFile();
-    if (logFile)
-      {
-	dumpSamplesReport(logFile);
-	dumpDebugInfo(logFile);
-	fclose(logFile);
-      }
-  }
+  if (reportFile)
+    {
+      reportAllCompilationUnits();
+      reportDebugInfo();
+      fclose(reportFile);
+      reportFile = 0;
+    }
 
   raise(signum);
 }
@@ -130,13 +139,16 @@ static void handleSignal(int signum)
 __attribute__((constructor)) static void initialize()
 {
   if (!reportInitCount++)
-    if (logFileName())
-      {
-	atexit(finalize);
-	signal(SIGABRT, handleSignal);
-	signal(SIGBUS, handleSignal);
-	signal(SIGFPE, handleSignal);
-	signal(SIGSEGV, handleSignal);
-	signal(SIGTRAP, handleSignal);
-      }
+    {
+      openReportFile();
+      if (reportFile)
+	{
+	  atexit(finalize);
+	  signal(SIGABRT, handleSignal);
+	  signal(SIGBUS, handleSignal);
+	  signal(SIGFPE, handleSignal);
+	  signal(SIGSEGV, handleSignal);
+	  signal(SIGTRAP, handleSignal);
+	}
+    }
 }

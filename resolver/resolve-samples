@@ -28,6 +28,10 @@ foreach my $objectName (@ARGV) {
 
     if ($objectName =~ /\.sites$/) {
 	my $handle = new FileHandle $objectName, 'r';
+	unless ($handle) {
+	    warn "warning: cannot read $objectName: $!\n";
+	    next;
+	}
 	local $/;
 	$buffer = $handle->getline;
 

@@ -22,6 +22,24 @@ $abs_top_srcdir/resolver/resolve-samples modular <trace
 , 0, expout)
 AT_CLEANUP
 
+AT_SETUP(sharing)
+AT_CHECK([
+set -e
+cp $abs_srcdir/plugin.c .
+cp $abs_srcdir/library.c .
+cp $abs_srcdir/library.h .
+cp $abs_srcdir/sharing.c .
+cp $abs_srcdir/sharing.expected expout
+cc="$abs_top_builddir/instrumentor/driver/main branches -save-temps"
+$cc -shared -o plugin.so plugin.c
+$cc -shared -o library.so library.c
+$cc -c sharing.c
+$cc -Wl,-rpath,. -o sharing sharing.o library.so -ldl
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./sharing
+$abs_top_srcdir/resolver/resolve-samples sharing library.so plugin.so <trace
+], 0, expout)
+AT_CLEANUP
+
 AT_SETUP(threads)
 AT_CHECK(
 set -e

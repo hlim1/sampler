@@ -2,26 +2,21 @@
 #define INCLUDE_libtuples_tuples_cil_h
 
 
-/* define CounterTuple before including this header */
-
-
 /* the instrumentor will create initializers for these */
 #pragma cilnoremove("counterTuples")
 #pragma cilnoremove("siteInfo")
-static CounterTuple counterTuples[];
+static struct CounterTuple counterTuples[];
 static struct CompilationUnit compilationUnit;
 
 static const char siteInfo[] __attribute__((section(".debug_site_info")));
 
 
-#pragma sampler_assume_weightless("registerCompilationUnit")
 static void compilationUnitConstructor() __attribute__((constructor))
 {
   registerCompilationUnit(&compilationUnit);
 }
 
 
-#pragma sampler_assume_weightless("unregisterCompilationUnit")
 static void compilationUnitDestructor() __attribute__((destructor))
 {
   unregisterCompilationUnit(&compilationUnit);
@@ -33,7 +28,7 @@ static void compilationUnitDestructor() __attribute__((destructor))
 static inline void atomicIncrementCounter(int site, int counter)
 {
   asm ("lock incl %0"
-       : "+m" (counterTuples[site][counter])
+       : "+m" (counterTuples[site].values[counter])
        :
        : "cc");
 }

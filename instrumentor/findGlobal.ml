@@ -1,9 +1,6 @@
 open Cil
 
 
-exception Missing of string
-
-
 let find name {globals = globals} =
   let rec findAmong = function
     | GVarDecl ({vtype = TFun _} as varinfo, _) :: rest ->
@@ -17,6 +14,6 @@ let find name {globals = globals} =
     | _ :: rest ->
 	findAmong rest
     | [] ->
-	raise (Missing name)
+	raise (Missing.Missing name)
   in
   findAmong globals

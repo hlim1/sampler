@@ -42,9 +42,9 @@ class virtual builder file =
 	    let singleInit (name, expr) = getOffset name, SingleInit expr in
 	    let inits = List.map singleInit [ "prev", zero;
 					      "next", zero;
-					      "signature", (mkString signature);
+					      "signature", mkString signature;
 					      "count", siteCount;
-					      "tuples", (mkAddrOrStartOf (var counterTuples)) ]
+					      "tuples", mkAddrOrStartOf (var counterTuples) ]
 	    in
 	    initinfo.init <- Some (CompoundInit (varinfo.vtype, inits));
 	    global

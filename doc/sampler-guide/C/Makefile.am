@@ -10,5 +10,4 @@ dist-hook: app-dist-hook
 
 
 TESTS = $(docname).xml $(omffile)
-XMLLINT = @XMLLINT@
 TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout

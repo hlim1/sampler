@@ -289,39 +289,95 @@ sampling.
 As expected, this gives us a large number of candidate invariants:
 13,442 counter triples, or 40,326 counters in all.  Because our
 invariant guesses are so crude, the vast majority of these are of no
-interest, either because they compare completely unrelated variables
-or because they express invariants which behave indistinguishably in
-both successful and failed runs.
+interest: either they compare completely unrelated variables, or they
+express invariants which behave indistinguishably in both successful
+and failed runs.
 
-To find the few invariants that do count, we use \aside{identify and
-  describe the particular form of logistic regression we used.}
+To find the few invariants that do count, we recast the bug hunt as a
+statistical analysis problem.  Each run of \texttt{bc} constitutes one
+sample point consisting of 40,326 observed \termdef{features} and one
+binary outcome ($0 = \text{succeeded}, 1 = \text{crashed}$).  In C, a
+misbehaving program can sometimes ``get lucky'': it may violate memory
+safety yet not crash.  Hence the outcome label is stochastic.  Given
+numerous data points (sampled runs), we would like to identify a
+narrow subset of our 40,326 features which are relevant to predicting
+the succeeded/crashed outcome.  This is the problem of feature
+selection in a classification setting.
 
-\aside{Interpretation of logistic regression results.  Statement that
-  they direct us to some small region of code in a single function,
-  versus 9764 lines of code in all of \texttt{bc}.  Description of
-  previously unreported buffer overrun bug found on like 176 of
+\termdef{Logistic regression} \needcite[some logistic regression
+paper] is a discriminative binary classification method.  It is akin
+to linear regression, but uses the logit function instead of the
+linear output function.  Let $x \in \Real^N$ be our input data
+(sampled counter values \aside{Alice, do we need to say something like
+  ``\dots normalized to unit variance''?}), and $Y = \{0, 1\}$ be the
+output label.  The class conditional probability is modeled as the
+logit function:
+
+\begin{equation*}
+  P(Y = 1 | X = x) = \frac{1}{ 1 + \exp(- \beta_0 - \vec\beta^T x) }
+\end{equation*}
+
+The $\beta$ values essentially weigh the relative importance of each
+feature in the final outcome.  Since we have many more parameters than
+data points, we constrain the possible set of parameters values by
+penalizing large $\beta$ values using the L1-norm, $\norm{\vec\beta}_1
+= \sum_j \abs{\beta_j}$.  The model is then trained using stochastic
+gradient ascent to reach a local maximum of the penalized log
+likelihood:
+
+\begin{equation*}
+  \begin{split}
+    LL_\lambda (x, y, \{\beta_j\}) \:=\:
+    & y \log P(Y = 1 | x) \\
+    & + (1 - y) \log P(Y = 0 | x) \\
+    & - \lambda \sum_{j = 0}^N \abs{\beta_j}
+  \end{split}
+\end{equation*}
+
+While other ways of doing feature selection exist, none of them are
+particularly well-suited for this problem.  Some methods
+\needcite[Golub, T-statistic, Tibshirani shrinking centroids]
+calculate a univariate correlation coeffient independently for each
+feature; other methods are more computationally intensive
+\needcite[random forests, subset selection].  In our dataset, the
+features are clearly not independent of each other, and the size of
+the problem is too large for more computationally intensive methods.
+\aside{Alice will provide a bit of text here stating that logistic
+  regression is also attractive because it makes few assumptions about
+  the distribution of feature values.  That's important here, because
+  we don't really know what to expect.}
+
+Our \textbf{bc} dataset consists of 4058 runs with distinct random
+inputs and distinct randomized 1/100 sampling.  We partition these
+runs into 2704 to be used for training and 1354 for testing.  Although
+there are \unknown raw features, many can be discarded immediately: in
+the training set, \unknown features never take on a non-zero value,
+and \unknown of them are always some non-zero constant.  Hence the
+effective number of features used in training is \unknown.  Sparser
+sampling drives counts lower: at 1/1000, the effective number of
+interesting features drops to \unknown.  Beyond simplifying the
+statistical analysis, this degree of sparsity and regularity means
+that counter reports are highly compressible: good news for deployed
+users with small hard drives or slow modems.
+
+In our experiments, the model converged after roughly thirty
+iterations through the training dataset, which took just over three
+hours \aside{update this if subsequent experiments run faster or
+  slower} in MATLAB on a 1.8 GHz Pentium 4 CPU with 1 GB of RAM.  Due
+to time constraints, we did not validate the learning rate and the
+regularization parameter, but instead set them to safe numbers
+(learning rate = $10^{-6}$ and $\lambda = 5$) \aside{Alice is still
+  tweaking the learning rate; remember to update preceding prose to
+  reflect actual rate used}.  With a well tuned learning rate,
+however, training time could speed up significantly.
+
+\aside{Interpretation of logistic regression results.  Claim that they
+  direct us to some small region of code in a single function, versus
+  9764 lines of code in all of \texttt{bc}.  Description of previously
+  unreported buffer overrun bug found on like 176 of
   \texttt{storage.c}.
   
-  Yes, this is rigged.}
-
-\aside{Alice reports:
-  
-  \begin{quote}
-    Well, of the 40296 features (yet another name for ``predictors''),
-    only 9056 of them are ever non-zero.  Of the non-zero useful
-    features, 955 are constant; 948 of these are constant at 1, 2 at
-    2, 1 at 28, 1 at 31, and 3 at 32.  144 of the useful features have
-    very small variation, where the value is only different for one or
-    two runs.
-  \end{quote}
-
-  And once we sample down to 1/100, we have only 2088 columns, so
-  things speed up quite a bit.
-
-  Beyond what this does for the regression analysis, this means the
-  counts would compress very well.  That's good news for deployed
-  users with slow modems.  It's also good news for the server's hard
-  drive.}
+  Yes, this is somewhat rigged.  Hey, we're new at this.}
 
 \aside{While it is uncommon to do an analysis where the number of
   independent variables swamps the number of observations, there is
@@ -338,13 +394,15 @@ To find the few invariants that do count, we use \aside{identify and
   Although the specific techniques vary, these folks (like us) use
   methodologies which assume that the vast majority of predictors are
   actually irrelevant, and you want to pick out the few that actually
-  matter.}
+  matter.
+  
+  I think it would be very cool if we could come up with an excuse to
+  cite this pair of biostatistics papers.  Perhaps in related work?}
 
 \begin{figure}
   \centering
   \small
   \listinginput{152}{applications/more_arrays.c}
-  \caption{Source code of suspect \texttt{bc} function
-    \texttt{more\_arrays()}}
+  \caption{Suspect \texttt{bc} function \texttt{more\_arrays()}}
   \label{fig:bc:more-arrays}
 \end{figure}

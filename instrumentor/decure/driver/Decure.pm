@@ -27,8 +27,9 @@ sub setDefaultArguments {
     $self->CCured::setDefaultArguments;
     $self->Sampler::setDefaultArguments;
 
+    $self->{TRACE_COMMANDS} = 1;
     $self->{home} = "$FindBin::Bin/..";
-    $self->{instrumentor} = ["$home/main"];
+    $self->{instrumentor} = ["$self->{home}/main"];
 }
 
 
@@ -57,7 +58,7 @@ sub compile_cil {
     my $base = basename $input, ".i";
     my $output = "${base}_inst.c";
     my $instrumentor = "$FindBin::Bin/../main";
-    $self->runShellOut($output, $self->{instrumentor}, $input);
+    $self->runShellOut($output, @{$self->{instrumentor}}, $input);
 
     $self->CCured::compile_cil($output, @_);
 }
@@ -69,7 +70,7 @@ sub link_after_cil {
 
     push @ldargs, $self->extraLibs;
 
-    $self->Cilly::link_after_cil(@_, \@ldargs);
+    $self->CCured::link_after_cil(@_, \@ldargs);
 }
 
 

@@ -16,11 +16,13 @@ type phase = string * (file -> unit)
 let time description action =
   if !showPhaseTimes then
     begin
-      Printf.eprintf "%s: begin\n%!" description;
+      Printf.eprintf "%s: begin\n" description;
+      flush stderr;
       let before = Unix.gettimeofday () in
       let result = action () in
       let after = Unix.gettimeofday () in
-      Printf.eprintf "%s: end; %f sec\n%!" description (after -. before);
+      Printf.eprintf "%s: end; %f sec\n" description (after -. before);
+      flush stderr;
       result
     end
   else

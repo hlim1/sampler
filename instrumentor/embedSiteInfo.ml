@@ -4,7 +4,7 @@ open Cil
 let saveSiteInfo =
   let value = ref "" in
   Options.push ("--save-site-info",
-		Arg.Set_string value,
+		Arg.String ((:=) value),
 		"save instrumentation site info in the named file");
   value
 

@@ -4,7 +4,7 @@ open Cil
 let saveCFG =
   let value = ref "" in
   Options.push ("--save-cfg",
-		Arg.Set_string value,
+		Arg.String ((:=) value),
 		"save control flow graph in the named file");
   value
 
@@ -12,7 +12,7 @@ let saveCFG =
 let dumpBase =
   let value = ref "" in
   Options.push ("--dumpbase",
-		Arg.Set_string value,
+		Arg.String ((:=) value),
 		"original source file name");
   value
 

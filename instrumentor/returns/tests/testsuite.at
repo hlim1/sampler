@@ -14,7 +14,8 @@ AT_CLEANUP
 AT_SETUP(extern)
 AT_CHECK(
 set -e
-cp $abs_srcdir/extern-*.c .
+cp $abs_srcdir/extern-callee.c .
+cp $abs_srcdir/extern-caller.c .
 cp $abs_srcdir/extern.expected expout
 $abs_top_builddir/instrumentor/driver/main returns -o extern *.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./extern

@@ -14,7 +14,8 @@ AT_CLEANUP
 AT_SETUP(modular)
 AT_CHECK(
 set -e
-cp $abs_srcdir/modular-*.c .
+cp $abs_srcdir/modular-a.c .
+cp $abs_srcdir/modular-b.c .
 cp $abs_srcdir/modular.expected expout
 $abs_top_builddir/instrumentor/driver/main branches -o modular *.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./modular

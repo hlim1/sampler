@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Name=Bug Isolation
 Comment=Change feedback settings for the Bug Isolation Project
-Icon=../sampler/pixmaps/enabled-48.png
+Icon=sampler
 Exec=sampler-preferences
 Terminal=false
 Type=Application

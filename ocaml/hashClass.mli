@@ -1,5 +1,7 @@
-class ['key, 'value] t : int ->
+class type ['key, 'value] t =
   object
+    method copy : ('key, 'value) t
+
     method add : 'key -> 'value -> unit
     method remove : 'key -> unit
 
@@ -9,3 +11,6 @@ class ['key, 'value] t : int ->
 
     method iter : ('key -> 'value -> unit) -> unit
   end
+
+
+val create : int -> ('key, 'value) t

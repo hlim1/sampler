@@ -3,7 +3,7 @@ open Types.Function
 
 class t =
   object (self)
-    val table : (extension, (key * data)) HashClass.t = new HashClass.t 1
+    val table : (extension, (key * data)) HashClass.t = HashClass.create 1
 
     method add name value =
       if table#mem name then

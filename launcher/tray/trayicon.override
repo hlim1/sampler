@@ -9,7 +9,10 @@ modulename trayicon
 import gtk.Plug as PyGtkPlug_Type       
 %%
 ignore-glob
-  *_get_type                            
+  *_get_type
+%%
+ignore-glob
+  egg_tray_icon_new_for_screen
 %%
 override egg_tray_icon_send_message kwargs
 static PyObject *

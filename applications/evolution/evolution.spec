@@ -1,15 +1,15 @@
 # RPM specfile for evolution module
-# Generated Tue Jul  8 20:57:03 2003 GMT by Ximian build system
-# $Id: evolution.spec,v 1.4 2003/08/13 22:20:59 liblit Exp $
-# from $Id: evolution.spec,v 1.4 2003/08/13 22:20:59 liblit Exp $
+# Generated Tue Jul 29 16:21:44 2003 GMT by Ximian build system
+# $Id: bb_do,v 1.235.2.2 2003/07/15 21:23:22 thunder Exp $
+# from $Id: ximian-build.conf,v 1.35 2003/07/17 14:32:58 dobey Exp $
 
 %define nam	evolution
-%define ver	1.4.3
+%define ver	1.4.4
 %define licensedir	%{_datadir}/licenses/%{nam}-%{ver}
 %define ximrev	1
 
 Name:     	evolution
-Version: 	1.4.3
+Version: 	1.4.4
 Release:	0.ximian.6.1.sam.1
 Packager:	Ben Liblit <liblit@cs.berkeley.edu>
 Vendor:		UC Berkeley
@@ -19,13 +19,13 @@ BuildRoot:	/var/tmp/%{nam}-%{ver}-root
 Docdir:         /usr/share/doc
 
 URL:		http://www.gnome.org/
-Source0:	evolution-1.4.3.tar.gz
+Source0:	evolution-1.4.4.tar.gz
 Patch0:		forward_messages.patch
 BuildRequires:	bison
 BuildRequires:	evo-db3
 BuildRequires:	openldap-devel
-BuildRequires:	gtkhtml3.0-devel >= 3.0.4
-BuildRequires:	libgal2.0-devel >= 1.99.6
+BuildRequires:	gtkhtml3.0-devel >= 3.0.8
+BuildRequires:	libgal2.0-devel >= 1.99.9
 BuildRequires:	libbonoboui-devel
 BuildRequires:	bonobo-activation-devel
 BuildRequires:	gnome-vfs2-devel
@@ -40,16 +40,16 @@ BuildRequires:	mozilla-nspr
 BuildRequires:	mozilla-nspr-devel
 BuildRequires:	mozilla-nss
 BuildRequires:	mozilla-nss-devel
-BuildRequires:	gnome-pilot-devel >= 2.0.5
+BuildRequires:	gnome-pilot-devel >= 2.0.9
 BuildRequires:	krb5-devel
 BuildRequires:	flex
-BuildRequires:	libsoup-devel >= 1.99.22
+BuildRequires:	libsoup-devel >= 1.99.24
 Summary:	GNOME's next-generation groupware suite
 Group:		Applications/Productivity
-Requires:	libgtkhtml3.0_2 >= 3.0.7
-Requires:	gtkhtml3.0 >= 3.0.7
-Requires:	libgal2.0_3 >= 1.99.8
-Requires:	libsoup >= 1.99.23
+Requires:	libgtkhtml3.0_2 >= 3.0.8
+Requires:	gtkhtml3.0 >= 3.0.8
+Requires:	libgal2.0_5 >= 1.99.9
+Requires:	libsoup >= 1.99.24
 Requires:	libgnomecanvas >= 2.2.0.2
 Provides:	ximian-evolution = %{?epoch:%{epoch}:}%{version}-%{?ximrev:%{ximrev}}%{!?ximrev:%{release}}
 Obsoletes:	evolution1.3
@@ -205,6 +205,7 @@ using Evolution's libraries.
 
 %{?sampler_package}
 
+
 # $RPM_COMMAND is an environment variable used by the Ximian build
 # system to control the build process with finer granularity than RPM
 # normally allows.  This specfile will function as expected by RPM if
@@ -214,13 +215,16 @@ using Evolution's libraries.
 %prep
 case "${RPM_COMMAND:-all}" in
 dist)
-%setup  -q -D -n evolution-1.4.3
-%patch0 -p 0
+%setup  -q -D -n evolution-1.4.4
     ;;
 all)
-%setup  -q -n evolution-1.4.3
+%setup  -q -n evolution-1.4.4
 %patch0 -p 0
 %{?sampler_prep}
+    ;;
+esac
+case "${RPM_COMMAND:-all}" in
+dist|all)
     ;;
 esac
 
@@ -273,11 +277,10 @@ install|all)
     rm -f ${DESTDIR}/usr/lib/evolution/1.4/*/*.la
     rm -f ${DESTDIR}/usr/lib/gnome-pilot/conduits/libe*_conduit.a
     rm -f ${DESTDIR}/usr/lib/gnome-pilot/conduits/libe*_conduit.la
-    ;;
-esac
-
 %define sampler_wrapped %{_bindir}/%{name}-1.4
 %{?sampler_install}
+    ;;
+esac
 
 %clean
 DESTDIR=${DESTDIR:-"$RPM_BUILD_ROOT"}
@@ -292,9 +295,15 @@ esac
 
 
 %changelog
-* Tue Aug 12 2003 Ben Liblit <liblit@cs.berkeley.edu> 1.4.3-0.ximian.6.1.sam.1
+* Wed Aug 20 2003 Ben Liblit <liblit@cs.berkeley.edu> 1.4.4-0.ximian.6.1.sam.1
 
 - Added hooks for sampled instrumentation.
+
+* Tue Jul 29 2003 Ximian, Inc.
+
+- Version: 1.4.4-0.ximian.6.1
+- Summary: New build.
+- New automated build.
 
 * Tue Jul 8 2003 Ximian, Inc.
 

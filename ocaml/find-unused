@@ -11,9 +11,9 @@ sub wanted () {
     my $obj = $_;
 
     if ($obj =~ s/\.ml$/.cmo/) {
-	warn "unused: $File::Find::dir/$_\n" unless -e $obj;
+	warn "$File::Find::dir/$_\n" unless -e $obj;
     } elsif ($obj =~ s/\.mli$/.cmi/) {
-	warn "unused: $File::Find::dir/$_\n" unless -e $obj;
+	warn "$File::Find::dir/$_\n" unless -e $obj;
     }
 }
 

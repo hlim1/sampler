@@ -13,8 +13,6 @@ prefix traces with: binary path, pid, timestamp
 instrumentor/logging/loads/tests/multiple is incorrectly printing a
 single value multiple times
 
-opt-in dialog's href button lacks color, underline
-
 server-message dialog needs HIG'ified spacing
 
 launcher doesn't implicitly handle redirects

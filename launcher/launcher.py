@@ -2,6 +2,7 @@
 
 import gconf
 import gnome
+import gnome.ui
 import gobject
 import gtk
 import gtk.glade
@@ -209,6 +210,15 @@ def main():
         yesno_set()
 
         dialog = xml.get_widget('opt-in')
+
+        # work around for libglade bug: <http://bugzilla.gnome.org/show_bug.cgi?id=112470>
+        oldLink = xml.get_widget('learn-more')
+        newLink = gnome.ui.HRef(oldLink.get_property('url'), oldLink.get_property('label'))
+        linkParent = oldLink.parent
+        oldLink.destroy()
+        linkParent.add(newLink)
+        newLink.show()
+        
         response = dialog.run()
         dialog.hide()
         if response != gtk.RESPONSE_OK:

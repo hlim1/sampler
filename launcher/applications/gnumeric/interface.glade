@@ -303,11 +303,17 @@ Do you wish to provide automatic feedback when you use Gnumeric?</property>
 	      </child>
 
 	      <child>
-		<widget class="GnomeHRef" id="">
+		<widget class="GtkEventBox" id="">
 		  <property name="visible">True</property>
-		  <property name="can_focus">True</property>
-		  <property name="url">http://www.cs.berkeley.edu/~liblit/</property>
-		  <property name="label" translatable="yes">Click here to learn more.</property>
+
+		  <child>
+		    <widget class="GnomeHRef" id="learn-more">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="url">http://www.cs.berkeley.edu/~liblit/</property>
+		      <property name="label" translatable="yes">Click here to learn more.</property>
+		    </widget>
+		  </child>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>

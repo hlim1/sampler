@@ -19,7 +19,6 @@ simplifyReturns = $(simplifyVisitor) simplifyReturns
 simplifyRights = $(simplifyVisitor) simplifyRights
 simplifyVisitor = simplifyVisitor
 skipWrites = $(skipWrite) skipWrites
-skipWrite = skipWrite
 stores = stores
 
 

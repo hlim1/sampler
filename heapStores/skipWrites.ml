@@ -1,10 +1,6 @@
 open Cil
 
 
-let skipCall location =
-  Call (None, Lval (var SkipWrite.skipWrite), [], location)
-	
-	
 class visitor = object
   inherit FunctionBodyVisitor.visitor
       
@@ -13,7 +9,7 @@ class visitor = object
   method vinst inst =
     match inst with
     | Set ((Mem _, NoOffset), _, location) ->
-	ChangeTo [skipCall location; inst]
+	ChangeTo [SkipLog.call location; inst]
     | _ ->
 	SkipChildren
 end

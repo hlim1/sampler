@@ -1,6 +1,6 @@
 open Cil
 
 
-val skipWrite : varinfo
+val call : location -> instr
 
 val phase : TestHarness.phase

@@ -33,6 +33,7 @@ mapClass = mapClass
 patchSites = patchSites
 removeLoops = $(functionBodyVisitor) removeLoops
 setClass = setClass
+skipLog = skipLog
 skipVisitor = skipVisitor
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
@@ -49,7 +50,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libcil) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-harness := $(filterLabels) $(logWrite) $(testHarness) $(transformVisitor)
+harness := $(filterLabels) $(logWrite) $(skipLog) $(testHarness) $(transformVisitor)
 harness.cma: $(addsuffix .$(cmo), $(harness))
 	$(link) -a
 

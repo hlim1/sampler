@@ -1,12 +1,12 @@
-int early;
-int counter;
+int early = 0;
+int counter = 0;
 
 void incr()
 {
   ++counter;
 }
 
-int late;
+int late = 0;
 
 void decr()
 {

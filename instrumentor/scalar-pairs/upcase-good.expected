@@ -1,6 +1,6 @@
-upcase-good	upcase-good.c	15	main	chr	(char *)0	0	0	13
-upcase-good	upcase-good.c	15	main	chr	(char *)0	0	0	4
-upcase-good	upcase-good.c	8	main	arg	0LL	0	0	1
-upcase-good	upcase-good.c	8	main	arg	0LL	0	0	4
-upcase-good	upcase-good.c	8	main	arg	argc	1	0	0
-upcase-good	upcase-good.c	8	main	arg	argc	3	1	0
+scalar-pairs	upcase-good	upcase-good.c	8	main	3	arg	argc	1	0	0
+scalar-pairs	upcase-good	upcase-good.c	8	main	2	arg	0LL	0	0	1
+scalar-pairs	upcase-good	upcase-good.c	15	main	12	chr	(char *)0	0	0	4
+scalar-pairs	upcase-good	upcase-good.c	15	main	22	chr	(char *)0	0	0	13
+scalar-pairs	upcase-good	upcase-good.c	8	main	28	arg	argc	3	1	0
+scalar-pairs	upcase-good	upcase-good.c	8	main	27	arg	0LL	0	0	4

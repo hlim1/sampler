@@ -48,10 +48,11 @@ and plugins.
 %sampler_package
 
 %prep
-%sampler_setup
+%sampler_prep
 %setup
 
 %build
+%sampler_build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --bindir=%{_bindir} \
                                     --datadir=%{_datadir} \

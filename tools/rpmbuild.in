@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
+use FindBin;
 
 
 ########################################################################
@@ -19,10 +20,11 @@ $ENV{CC} = "$driver $scheme";
 my %macros = (
 	      sampler_scheme => $scheme,
 
-	      sampler_tags => <<'EOF',
+	      'sampler_tags(s:)' => <<'EOF',
 Requires: sampler-gnome
 BuildRequires: sampler-devel
-Source1: %{name}-sampler.tar.gz
+%global _sampler_source %{-s*}%{!-s:1}
+Source%{_sampler_source}: %{name}-sampler.tar.gz
 EOF
 
 	      sampler_description => 'This package has been built with sampled %{sampler_scheme} instrumentation.',
@@ -41,14 +43,19 @@ this to use %{name}.  Most users have no need to install this package.
 %{_libdir}/sampler/sites/*
 EOF
 
-	      sampler_setup => '%setup -n %{name}-sampler -T -c -a 1',
+	      sampler_prep => '%setup -n %{name}-sampler -T -c -a %{_sampler_source}',
+
+	      sampler_build => <<'EOF',
+sed -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' <../%{name}-sampler/config.in >../%{name}-sampler/config
+sed -e 's!@_launcherdir@!%{_datadir}/sampler/launcher!g' <../%{name}-sampler/wrapper.in >../%{name}-sampler/wrapper
+EOF
 
 	      'sampler_install(x:)' => <<'EOF',
 install -d %{buildroot}%{_libdir}/sampler/applications/%{name}
 for file in config %{name}-sampler.schemas interface.glade wrapper; do
   install %{_builddir}/%{name}-sampler/$file %{buildroot}%{_libdir}/sampler/applications/%{name}
 done
-mv %{buildroot}%{-x:-x*}%{!-x:%{_bindir}/%{name}} %{buildroot}%{_libdir}/sampler/applications/%{name}/executable
+mv %{buildroot}%{-x*}%{!-x:%{_bindir}/%{name}} %{buildroot}%{_libdir}/sampler/applications/%{name}/executable
 ln -s %{_libdir}/sampler/applications/%{name}/wrapper %{buildroot}%{-x:-x*}%{!-x:%{_bindir}/%{name}}
 install -d %{buildroot}%{_sysconfdir}/gconf/schemas
 install %{_builddir}/%{name}-sampler/%{name}-sampler.schemas %{buildroot}%{_sysconfdir}/gconf/schemas

@@ -248,6 +248,7 @@ instrumentor/scalar-pairs/tests/Makefile
 launcher/Makefile
 launcher/python/Makefile
 launcher/applications/Makefile
+launcher/applications/evolution/Makefile
 launcher/applications/gaim/Makefile
 launcher/applications/gnumeric/Makefile
 launcher/applications/gnumeric-non-gui/Makefile

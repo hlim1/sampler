@@ -25,8 +25,7 @@ EXTRA_DIST :=					\
 	$(name)-sampler.schemas			\
 	$(name).spec				\
 	interface.glade				\
-	interface.gladep			\
-	wrapper
+	interface.gladep
 
 
 ########################################################################
@@ -45,35 +44,22 @@ $(dtd): ../$(dtd)
 	$(LN_S) $< $@
 
 
-config: $(srcdir)/../config.in
-	sed					\
-	  -e 's/@''name@/${name}/g'		\
-	  -e 's/@''version@/${version}/g'	\
-	  -e 's/@''release@/${release}/g'	\
-	  -e 's/@''scheme@/${scheme}/g'		\
-	<$< >$@.tmp
-	mv $@.tmp $@
-
-
 ########################################################################
 
 
 $(rpmbuild): force
 	$(MAKE) -C $(@D) $(@F)
-force:
-.PHONY: force
-
 
 unpack: SPECS/$(spec)
 .PHONY: unpack
 SPECS/$(spec): $(srpm)
 	$(rpmenv) rpm -i $<
 
-wrapper: ../wrapper
-	cp $< $@
-
-$(sampler_extras): config $(name)-sampler.schemas interface.glade wrapper
+$(sampler_extras): config.in $(name)-sampler.schemas interface.glade wrapper.in
 	tar czf $@ $^
+
+config.in wrapper.in: %: ../%
+	cp $< $@
 
 SOURCES/$(sampler_extras): SOURCES/%: % SOURCES/.stamp
 	cp $< $@
@@ -106,3 +92,7 @@ RPMS/.stamp: %/.stamp:
 
 mostlyclean-local:
 	rm -rf BUILD RPMS SOURCES SPECS SRPMS
+
+
+force:
+.PHONY: force

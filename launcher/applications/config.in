@@ -4,10 +4,11 @@ debug-reporter: ../../print-debug-info
 
 [upload-headers]
 accept: text/html
-application-name: @PACKAGE@
-application-version: @VERSION@
-instrumentation-type: @SAMPLER_SCHEME@
+application-name: @name@
+application-version: @version@
+application-release: @release@
+instrumentation-type: @scheme@
 instrumentation-version: 0.1
 
 [user]
-gconf-root: /apps/@PACKAGE@/sampler/branches
+gconf-root: /apps/@name@/sampler/@scheme@

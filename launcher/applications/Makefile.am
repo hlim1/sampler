@@ -1,4 +1,8 @@
-SUBDIRS = gaim gnumeric
+SUBDIRS =					\
+	evolution				\
+	gaim					\
+	gnumeric
+
 DIST_SUBDIRS = $(SUBDIRS) gnumeric-non-gui
 
 EXTRA_DIST =					\

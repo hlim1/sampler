@@ -3,7 +3,7 @@
 import os.path
 import sys
 
-sys.path[0:0] = [sys.path[0], os.path.join(sys.path[0], '..', '..', 'python')]
+sys.path[0:0] = [sys.path[0], '@_launcherdir@']
 
 import GnomeMain
 GnomeMain.main(os.path.join(sys.path[0], 'config'))

@@ -6,14 +6,16 @@ let returnTypeOf typ =
   return
 
 
+
 class visitor = object
   inherit CurrentFunctionVisitor.visitor
 
   method vinst = function
-    | Set ((Mem(expr), _) as lval, data, location) ->
+    | Set ((Mem(expr), offset) as lval, data, location) ->
 	begin
-	  match expr with
-	  | Lval (Var _, NoOffset) -> SkipChildren
+	  match (expr, offset) with
+	  | (Lval (Var _, NoOffset), NoOffset) ->
+	      SkipChildren
 	  | _ ->
 	      let addr = mkAddrOf lval in
 	      let temp = var (makeTempVar !currentFunction ~name:"left" (typeOf addr)) in

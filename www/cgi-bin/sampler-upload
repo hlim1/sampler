@@ -30,7 +30,7 @@ sub stash_environ () {
     local ($,, $\) = ("\t", "\n");
     while (my ($key, $value) = each %ENV) {
 	$environment->print($key, $value)
-	    if $key =~ /^(REMOTE|HTTP_SAMPLER)_/;
+	    if $key =~ /^HTTP_SAMPLER_/;
     }
 }
 

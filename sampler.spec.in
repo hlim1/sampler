@@ -121,6 +121,7 @@ scrollkeeper-update -q
 Group: System Environment/Daemons
 Summary: CGI script to receive uploaded instrumentation reports
 Requires: webserver
+Requires: mod_cgi.so
 Requires: mod_unique_id.so
 
 %description server

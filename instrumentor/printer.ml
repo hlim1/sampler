@@ -13,6 +13,14 @@ class printer =
   object (self)
     inherit defaultCilPrinterClass as super
 
+    method pGlobal () = function
+      | GPragma (Attr ("sampler_exclude_function" as directive, [AStr argument]), location)
+      | GPragma (Attr ("sampler_assume_weightless" as directive, [AStr argument]), location) ->
+          self#pLineDirective location ++
+	    dprintf "/* #pragma %s(\"%s\") */@!" directive argument
+      | other ->
+	  super#pGlobal () other
+
     method pStmtKind next () = function
       |	If (BinOp (Gt, Lval (Var local, NoOffset), Const (CInt64 (_, IUInt, None)), intType) as predicate,
 	    ({ battrs = []; bstmts = [{ skind = Goto _ }] } as original),

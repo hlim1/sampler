@@ -3,6 +3,7 @@ include $(top)/defs.mk
 
 targets := main
 libdirs := $(top)
+subdirs := tests
 
 include $(top)/rules.mk
 

@@ -35,4 +35,4 @@ class c file =
   end
 
 
-let register () = Schemes.register name new c
+let factory = SchemeFactory.build ~flag:name ~ident:"ScalarPairs" new c

@@ -9,11 +9,12 @@ let sample =
     ~default:true
 
 
-let schemes = ref []
-
-
-let addScheme scheme =
-  schemes := scheme :: !schemes
+let schemes = [
+  NothingScheme.factory;
+  ScalarPairScheme.factory;
+  BranchScheme.factory;
+  ReturnScheme.factory;
+]
 
 
 let phase =
@@ -22,7 +23,7 @@ let phase =
     Dynamic.analyze file;
     FunctionFilter.filter#collectPragmas file;
 
-    let schemes = List.map (fun scheme -> scheme file) !schemes in
+    let schemes = List.map (fun scheme -> scheme file) schemes in
     List.iter (fun scheme -> scheme#findAllSites) schemes;
 
     let digest = lazy (Digest.file file.fileName) in

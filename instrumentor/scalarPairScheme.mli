@@ -1,1 +1,1 @@
-val register : unit -> unit
+val factory : Cil.file -> Scheme.c

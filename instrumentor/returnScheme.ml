@@ -16,4 +16,4 @@ class c file =
   end
 
 
-let register () = Schemes.register name new c
+let factory = SchemeFactory.build ~flag:name ~ident:"Returns" new c

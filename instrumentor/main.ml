@@ -17,11 +17,6 @@ let _ =
   Ptranal.conservative_undefineds := false;
   lineDirectiveStyle := Some LinePreprocessorOutput;
 
-  NothingScheme.register ();
-  ScalarPairScheme.register ();
-  BranchScheme.register ();
-  ReturnScheme.register ();
-
   Arg.parse (Options.argspecs ())
     (TestHarness.doOne phases)
     ("Usage:" ^ Sys.executable_name ^ " [<flag> | <source>] ...")

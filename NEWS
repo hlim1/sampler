@@ -1,8 +1,9 @@
 -*- outline -*-
 
-* sampler-0.15
+* sampler-0.14.1
 
 ** Fix duplicate symbol errors in bounds scheme.
+** Fix GCC prototype warning.
 
 * sampler-0.14
 

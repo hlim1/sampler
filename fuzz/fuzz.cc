@@ -1,4 +1,5 @@
 #include <fcntl.h>
+#include <iostream>
 #include <sstream>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -6,7 +7,7 @@
 
 static unsigned parse(const char *text)
 {
-  istringstream stream(text);
+  std::istringstream stream(text);
   unsigned result;
   stream >> result;
   assert(stream.good());
@@ -19,7 +20,7 @@ int main(int argc, char *argv[])
 {
   if (argc != 4)
     {
-      cerr << "usage: " << argv[0] << " <seed> <megs> <outfile>" << endl;
+      std::cerr << "usage: " << argv[0] << " <seed> <megs> <outfile>" << std::endl;
       return 2;
     }
 
@@ -30,7 +31,8 @@ int main(int argc, char *argv[])
   ftruncate(fd, bytes);
   int32_t * const map = (int32_t *) mmap(0, bytes, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   
-  for (unsigned word = bytes / sizeof(int32_t); word--; )
+  const unsigned words = bytes / sizeof(int32_t);
+  for (unsigned word = 0; word < words; ++word)
     map[word] = mrand48();
       
   munmap(map, bytes);

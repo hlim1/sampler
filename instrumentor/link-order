@@ -14,7 +14,6 @@ sub parse_dependencies ($$) {
 
 
 $_ = <>;
-print $_;
 
 die unless /^([^ ]+)\.cmo:(.*[^\\])\\?\n$/;
 my $target = $1;
@@ -22,12 +21,8 @@ my @dependencies = parse_dependencies $target, $2;
 
 while (/\\$/) {
     $_ = <>;
-    print $_;
     /(.*[^\\])\\?\n$/;
     push @dependencies, parse_dependencies $target, $1;
 };
 
 print "$target = @dependencies\n";
-
-
-print $_ while <>;

@@ -3,6 +3,7 @@
 *.cmo
 *.cmx
 *.di
+*.dl
 *.do
 *.o
 Makefile

@@ -1,7 +1,7 @@
 include $(top_builddir)/instrumentor/config.mk
 
 
-fixdeps = $(top_srcdir)/instrumentor/fixdeps
+linkorder = $(top_srcdir)/instrumentor/link-order
 
 cildir = $(CIL_HOME)
 cilobjdir = $(cildir)/obj/x86_LINUX
@@ -9,7 +9,7 @@ libdirs = $(cilobjdir)
 includes = $(foreach dir, $(libdirs), -I $(dir))
 compiler = $(ocamlc) $(ocamlflags)
 
-depend = ocamldep $(includes) $<
+depend = ocamldep $(includes) $< >$@
 compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) -o $@ $(syslibs) $^
@@ -38,20 +38,23 @@ implicits = $(filter-out $(ifaces), $(impls))
 
 all-local: $(targets)
 
-$(addsuffix .$(cmo), $(impls)): %.$(cmo): %.ml
-	$(compile)
-
 $(addsuffix .cmi, $(ifaces)): %.cmi: %.mli
 	$(compile)
 
 $(addsuffix .cmi, $(implicits)): %.cmi: %.ml
 	$(compile)
 
-$(addsuffix .do, $(impls)): %.do: %.ml $(fixdeps)
-	$(depend) | $(fixdeps) >$@
+$(addsuffix .$(cmo), $(impls)): %.$(cmo): %.ml
+	$(compile)
 
-$(addsuffix .di, $(ifaces)): %.di: %.mli $(fixdeps)
-	$(depend) >$@
+$(addsuffix .di, $(ifaces)): %.di: %.mli
+	$(depend)
+
+$(addsuffix .do, $(impls)): %.do: %.ml
+	$(depend)
+
+$(addsuffix .dl, $(impls)): %.dl: %.do $(linkorder)
+	$(linkorder) <$< >$@
 
 $(libcil): $(force)
 	$(MAKE) -C $(cildir) -f Makefile.cil NATIVECAML=$(ENABLE_NATIVE) cillib
@@ -66,11 +69,12 @@ browse: force
 
 
 MOSTLYCLEANFILES = $(targets) *.cma *.cmxa *.cmi *.cmo *.cmx *.o
-CLEANFILES = *.di *.do
+CLEANFILES = *.d[ilo]
 
 
 ########################################################################
 
 
--include $(impls:=.do)
 -include $(ifaces:=.di)
+-include $(impls:=.do)
+-include $(impls:=.dl)

@@ -4,6 +4,7 @@
 *.cmx
 *.cmxa
 *.di
+*.dl
 *.do
 Makefile
 Makefile.in

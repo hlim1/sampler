@@ -23,9 +23,15 @@ let makeLval = function
 	
 class visitor = object
   inherit FunctionBodyVisitor.visitor
+      
+  method vstmt _ = DoChildren
 
-  method vinst = function
+  method vinst inst =
+    prerr_endline "considering instruction";
+    match inst with
     | Set((Mem addr, _), data, location) as original ->
+	Printf.eprintf "%s:%i: adding instrumentation point\n"
+	  location.file location.line;
 	ChangeTo [Call (None, Lval (var logWrite),
 			[mkString location.file;
 			 kinteger IUInt location.line;
@@ -36,10 +42,6 @@ class visitor = object
 		  original]
     | _ -> SkipChildren
 end
-    
-    
-let instrumentBlock =
-  visitCilBlock (new visitor)
 
 
 let phase _ =

@@ -2,6 +2,7 @@ open Cil
 
   
 val addPrototype : file -> unit
-val instrumentBlock : block -> block
+
+class visitor : cilVisitor
 
 val phase : unit -> TestHarness.phase

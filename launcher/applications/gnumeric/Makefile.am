@@ -8,7 +8,7 @@ all-local: $(links)
 
 stamp-executable:
 	rm -f executable
-	ln -s ../../../../apps/gnumeric/cvs/branches/src/gnumeric executable
+	ln -s /usr/bin/gnumeric executable
 	touch $@
 
 gdb-commands: ; ln -s ../../$@ .

@@ -7,7 +7,7 @@ let find func =
   | _ -> ignore (bug "cannot find function entry"); dummyStmt
 
 
-let patch func weights instrumented =
+let patch func weights countdown instrumented =
   let entry = find func in
   let weight = weights#find entry in
 
@@ -20,7 +20,7 @@ let patch func weights instrumented =
 	mkStmt (Block instrumented);
 	finis ]
     else
-      let choice = LogIsImminent.choose locUnknown weight instrumented func.sbody in
+      let choice = LogIsImminent.choose locUnknown weight countdown instrumented func.sbody in
       [ mkStmt choice ]
   in
   

@@ -1,6 +1,6 @@
 open Cil
 
 
-val call : location -> instr
+type closure = location -> instr
 
-val phase : TestHarness.phase
+val find : file -> closure

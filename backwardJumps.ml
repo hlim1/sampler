@@ -1,7 +1,7 @@
 open Cil
 
 
-let patch clones weights =
+let patch clones weights countdown =
   
   let patchOne jump =
     let weight = weights#find jump in
@@ -13,7 +13,7 @@ let patch clones weights =
 	  let gotoStandard = mkBlock [mkStmt jump.skind] in
 	  let gotoInstrumented = mkBlock [mkStmt (Goto (ref clonedDest, location))] in
 	  
-	  let choice = LogIsImminent.choose location weight gotoInstrumented gotoStandard in
+	  let choice = LogIsImminent.choose location weight countdown gotoInstrumented gotoStandard in
 	  
 	  jump.skind <- choice;
 	  (clones#find jump).skind <- choice;

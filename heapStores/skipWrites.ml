@@ -1,7 +1,7 @@
 open Cil
 
 
-class visitor = object (self)
+class visitor skipLog = object (self)
   inherit FunctionBodyVisitor.visitor
       
   method vstmt _ = DoChildren
@@ -10,7 +10,7 @@ class visitor = object (self)
     begin
       match inst with
       | Set ((Mem _, NoOffset), _, location) ->
-	  self#queueInstr [SkipLog.call location]
+	  self#queueInstr [skipLog location]
       | _ -> ()
     end;
     SkipChildren

@@ -141,6 +141,8 @@ sub trace_system (@) {
 ########################################################################
 
 
+push @ARGV, '-include', "$FindBin::Bin/libcountdown/countdown.h";
+
 while ($_ = shift) {
     if (/^-(.*)/) {
 	

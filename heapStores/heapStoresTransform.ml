@@ -1,8 +1,8 @@
 open Cil
 
 
-class visitor = object
-  inherit TransformVisitor.visitor as super
+class visitor file = object
+  inherit TransformVisitor.visitor file as super
 
   method weigh = Stores.count_stmt
   method insertSkips = new SkipWrites.visitor
@@ -16,4 +16,5 @@ end
 
 let phase =
   "Transform",
-  visitCilFileSameGlobals (new visitor :> cilVisitor)
+  fun file ->
+    visitCilFileSameGlobals (new visitor file :> cilVisitor) file

@@ -66,7 +66,7 @@ let nextLabels _ =
   label basis, label (basis ^ "__dup")
 
 
-let patch clones weights =
+let patch clones weights countdown =
   let patchOne standardAfter =
     let weight = weights#find standardAfter in
     if weight != 0 then
@@ -80,7 +80,7 @@ let patch clones weights =
       
       let gotoStandard = mkBlock [mkStmt (Goto (ref standardLanding, locUnknown))] in
       let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumentedLanding, locUnknown))] in
-      let choice = LogIsImminent.choose locUnknown weight gotoInstrumented gotoStandard in
+      let choice = LogIsImminent.choose locUnknown weight countdown gotoInstrumented gotoStandard in
       
       standardAfter.skind <- Block (mkBlock [mkStmt choice; standardLanding]);
       instrumentedAfter.skind <- Block (mkBlock [mkStmt choice; instrumentedLanding])

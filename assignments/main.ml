@@ -2,8 +2,6 @@ open Cil
 
 let phases =
   [
-   Countdown.phase;
-   SkipLog.phase;
    Transform.phase;
    "RemoveUnusedTemps", Rmtmps.removeUnusedTemps;
    FilterLabels.phase;

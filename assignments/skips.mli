@@ -1,1 +1,1 @@
-class visitor : Cil.cilVisitor
+class visitor : SkipLog.closure -> Cil.cilVisitor

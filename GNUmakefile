@@ -2,7 +2,7 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot harness.$(cma)
-subdirs := assignments heapStores libcountdown localVars
+subdirs := assignments heapStores libcountdown loads
 
 include rules.mk
 
@@ -21,10 +21,12 @@ backwardJumps = $(logIsImminent) backwardJumps
 cfg = cfg
 cfgToDot = $(dotify) cfgToDot
 classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
-countdown = countdown
+countdown = $(findGlobal) countdown
 dotify = $(utils) dotify
 duplicate = $(functionBodyVisitor) $(identity) $(stmtMap) duplicate
 filterLabels = $(functionBodyVisitor) $(stmtSet) filterLabels
+findFunction = $(findGlobal) findFunction
+findGlobal = findGlobal
 forwardJumps = forwardJumps
 functionBodyVisitor = $(skipVisitor) functionBodyVisitor
 functionEntry = $(logIsImminent) functionEntry
@@ -35,7 +37,7 @@ mapClass = mapClass
 patchSites = patchSites
 removeLoops = $(functionBodyVisitor) removeLoops
 setClass = setClass
-skipLog = skipLog
+skipLog = $(findFunction) skipLog
 skipVisitor = skipVisitor
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet

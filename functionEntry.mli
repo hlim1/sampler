@@ -3,5 +3,4 @@ open Cil
 
 val find : fundec -> stmt
 
-val patch : fundec -> WeighPaths.weightsMap -> block -> unit
-
+val patch : fundec -> WeighPaths.weightsMap -> exp -> block -> unit

@@ -1,19 +1,20 @@
 open Cil
 
 
-class visitor file = object
-  inherit TransformVisitor.visitor
+class visitor file =
+  let logger = FindLogger.find file in
 
-  val logger = FindLogger.find file
+  object
+    inherit TransformVisitor.visitor file
 
-  method weigh {skind = skind} =
-    match skind with
-    | Instr instrs -> List.length instrs
-    | _ -> 0
+    method weigh {skind = skind} =
+      match skind with
+      | Instr instrs -> List.length instrs
+      | _ -> 0
 
-  method insertSkips = new Skips.visitor
-  method insertLogs fundec = new Logs.visitor logger fundec
-end
+    method insertSkips = new Skips.visitor
+    method insertLogs = new Logs.visitor logger fundec
+  end
 
 
 let phase =

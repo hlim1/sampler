@@ -1,9 +1,9 @@
 open Cil
 
 
-let find =
+let find name =
   let predicate = function
-    | {vname = "nextLogCountdown"; vtype = TInt _} -> true
+    | {vname = name; vtype = TFun _} -> true
     | _ -> false
   in
   FindGlobal.find predicate

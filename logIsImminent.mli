@@ -1,4 +1,4 @@
 open Cil
 
 
-val choose : location -> int -> block -> block -> stmtkind
+val choose : location -> int -> exp -> block -> block -> stmtkind

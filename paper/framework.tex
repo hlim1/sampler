@@ -8,7 +8,7 @@ following C code:
 
 \begin{code}
   \{\+ \\
-  check(p != 0); \\
+  check(p != NULL); \\
   \up p = p->next; \\
   \\
   check(i < max); \\
@@ -17,15 +17,15 @@ following C code:
 \end{code}
 
 Our sampling framework can be configured to sample arbitrary pieces of
-code, which may be either portions of the actual program or
-instrumentation predicates added to the program.  For this particular
+code, which may be either portions of the original program or
+instrumentation predicates added separately.  For this particular
 example, assume that the italicized \texttt{\textit{check()}} calls
 have been tagged for sampling.  A \texttt{\textit{check()}} call might
-conditionally halt the program (as \texttt{assert()}), or it might
-append an event to a trace stream, or it might update a per-predicate
-counter to record how often the predicate is true.  The precise
-behavior of the instrumentation code is of no concern to the sampling
-transformation itself.
+conditionally halt the program (as with \texttt{assert()}), or it
+might append an event to a trace stream, or it might update a
+per-predicate counter to record how often the predicate is true.  The
+precise behavior of the instrumentation code is of no concern to the
+sampling transformation itself.
 
 \subsection{Sampling the Bernoulli Way}
 
@@ -35,10 +35,11 @@ disadvantage of being trivially periodic.  If the above fragment were
 in a loop, for example, one of the checks would execute on every
 fiftieth iteration while the other would never execute.  We wish
 sampling to be fair and random: each check should independently have a
-1/100 chance of being sampled.  This is a so-called \termdef{Bernoulli
-  process}, the most common example of which is repeatedly tossing a
-coin.  We wish to sample based on the outcome of tossing a coin which
-is biased to come up heads only one time in a hundred.
+1/100 chance of being sampled each time it occurs.  This is a
+so-called \termdef{Bernoulli process}, the most common example of
+which is repeatedly tossing a coin.  We wish to sample based on the
+outcome of tossing a coin which is biased to come up heads only one
+time in a hundred.
 
 A \naive approach would be to use a simple random number generator.
 Suppose \texttt{rnd($n$)} yields a random integer uniformly
@@ -47,7 +48,7 @@ fair random sampling at the desired density:
 
 \begin{code}
   \{\+ \\
-  if(rnd(100) == 0) check(p != 0); \\
+  if(rnd(100) == 0) check(p != NULL); \\
   \up p = p->next; \\
   \\
   if(rnd(100) == 0) check(i < max); \\
@@ -80,16 +81,17 @@ have:
 %%
 \begin{equation*}
   \langle
-    \underbrace{0, 0, 0, 0, 0, 1,}_{\text{6 tosses}}
-    \underbrace{0, 0, 0, 1,}_{\text{4 tosses}}
-    \underbrace{0, 1,}_{\text{2 tosses}}
-    \underbrace{0, 0, 1}_{\text{3 tosses}}
-    \rangle
+  \underbrace{0, 0, 0, 0, 0, 1}_6,
+  \underbrace{0, 0, 0, 1}_4,
+  \underbrace{0, 1}_2,
+  \underbrace{0, 0, 1}_3,
+  \dots
+  \rangle
 \end{equation*}
 
 A more compressed representation would be to encode the number of
-tosses until (and including) the next sampled check: $\langle 6, 4, 2,
-3 \rangle$.  An advantage of this representation is that it is
+tosses until (and including) the next sampled check: $\langle6, 4, 2, 3,
+\dots\rangle$.  An advantage of this representation is that it is
 predictive: looking at the head of the sequence, we can see that five
 sites will be skipped before the next sample.  The head of the
 sequence can be treated as a countdown, telling us how far away the
@@ -109,7 +111,7 @@ instrumentation-free fast path:
   \} else \{ \\
   \> /* slow path: sample is imminent */ \\
   \> if(countdown-- == 0) \{ \\
-  \>\> check(p != 0); \\
+  \>\> check(p != NULL); \\
   \>\> countdown = getNextCountdown(); \\
   \> \} \\
   \> \up p = p->next; \\
@@ -135,15 +137,15 @@ Consider the distribution of likely countdown values.  With a sampling
 density of 1/100, there is a 1/100 chance that we sample at the very
 next opportunity.  There is a $(99/100) \times (1/100)$ that the next
 chance is skipped but that the one after that is taken.  A countdown
-of three appears on a $(99/100)^2 \times (1/100)$ chance, and so on.
-These numbers form a \termdef{geometric distribution} whose mean value
-is the inverse of the sampling density (that is, 100).  Numbers in a
+of three appears on a $(99/100)^2 \times (1/100)$ chance, and so on.  These
+numbers form a \termdef{geometric distribution} whose mean value is
+the inverse of the sampling density (that is, 100).  Numbers in a
 geometric distribution characterize the expected inter-arrival times
 of a Bernoulli process.  However, repeated tossing of a biased coin is
 not necessary: geometrically distributed random numbers can be
-generated directly using a standard (uniform) random generator and
-some simple floating-point operations.\footnote{In theory, a countdown
-  may need to be arbitrarily large.  However, the odds of a 1/100
+generated directly using a standard uniform random generator and some
+simple floating-point operations.\footnote{In theory, a countdown may
+  need to be arbitrarily large.  However, the odds of a 1/100
   countdown exceeding $2^{32}-1$ are less than one in $10^{10^7}$.
   This divisor vastly exceeds any reasonable estimate of the number of
   elementary particles in the universe.}
@@ -158,7 +160,7 @@ slowly than would a similar bank of raw coin tosses.
 
 \subsection{From Blocks to Functions}
 
-The block amortizing scheme outlined generalizes to an arbitrary
+The block amortizing scheme outlined above generalizes to an arbitrary
 control flow graph as follows.  Any region of acyclic code has a
 finite number of possible paths.  We call the maximum number of
 instrumented sites on any path the \termdef{weight} of that region.
@@ -170,16 +172,17 @@ region.
 Cycles without instrumentation are effectively weightless and may be
 disregarded.  A cycle with instrumentation must also contain a
 threshold check.  This guarantees that if we start at any threshold
-check and execute forward, we cross a finite number of instrumentation
-sites before reaching the next threshold check.  Thus, we can compute
-a finite weight for each threshold check.
+check and execute forward, we cross only a finite number of
+instrumentation sites before reaching the next threshold check.  Thus,
+we can compute a finite weight for each threshold check.
 
 There is some flexibility regarding exactly where a threshold check is
-placed.  For simplicity, our present system places one threshold check
-at function entry and one along each loop back edge.  Weights may be
-computed in a single bottom-up traversal of each function's control
-flow graph.  If any threshold check is found to have zero weight, it
-is simply discarded.
+placed; an optimal solution here is NP-hard
+\cite{Hirzel:2001:BT-FLOTP}.  For simplicity, our present system
+places one threshold check at function entry and one along each loop
+back edge.  Weights may be computed in a single bottom-up traversal of
+each function's control flow graph.  If any threshold check is found
+to have zero weight, it is simply discarded.
 
 We produce two complete copies of the function body.  One contains
 full instrumentation, with each possible sample guarded by a decrement
@@ -218,11 +221,11 @@ the same choices and trade-offs are directly applicable here.
 
 \subsection{Function Calls}
 
-New choices arise in the presence of function calls.  A conservative
-treatment assumes any function call changes the countdown arbitrarily.
-Therefore, a new threshold check must appear immediately after each
-function call.  This treatment is appropriate if, e.g., the callee is
-being compiled separately.
+New optimization opportunities arise in the presence of function
+calls.  A conservative treatment assumes any function call changes the
+countdown arbitrarily.  Therefore, a new threshold check must appear
+immediately after each function call.  This treatment is appropriate
+if, e.g., the callee is being compiled separately.
 
 However, if the callee is known and available for examination, a
 simple interprocedural analysis can be used.  A \termdef{weightless
@@ -292,11 +295,11 @@ the main problems and a particular solution that we adopt.
 
 There are several dimensions in which performance can be harmed by
 remote monitoring.  As usual the performance penalty imposed by the
-extra monitoring code is a concern, but so is the use of local storage
-to hold results (even temporarily) on a user's machine, the use of
-network bandwidth to transmit results, and finally the stoage needed
-to hold results on a central server for analysis.  For example, if we
-wish to keep all results, then the storage requirements for the
+extra monitoring code is a concern, but so are the use of local
+storage to hold results (even temporarily) on a user's machine, the
+use of network bandwidth to transmit results, and finally the storage
+needed to hold results on a central server for analysis.  For example,
+if we wish to keep all results, then the storage requirements for the
 central server grow linearly with the number of executions even if the
 data collected from each execution is constant size.  In
 \autoref{sec:ccured} we give an example of an analysis that does not
@@ -306,8 +309,8 @@ previously gathered data and in this situation at least some data
 would need to be retained.
 
 Our solution is to sample the number of observations of each of a very
-large, but fixed, set of predicates (see Sections \autoref{sec:ccrypt}
-and \ref{sec:bc}).  The final form of the data is a vector of
+large, but fixed, set of predicates (see Sections~\ref{sec:ccrypt}
+and~\ref{sec:bc}).  The final form of the data is a vector of
 integers, with position $i$ containing the number of times we observed
 that the $i$th predicate was true.  For example, a typical entry might
 be that the predicate $x > y$ at a particular program point was
@@ -321,5 +324,3 @@ as showing that one can get fairly far without ordering, we expect
 there will be interesting applications that require ordering information.
 We leave the problem of determining how to efficiently gather, store and
 analyze partial traces (with ordering information) as future work.
-
-

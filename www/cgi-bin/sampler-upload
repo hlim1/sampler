@@ -9,6 +9,8 @@ use CGI::Pretty;
 use File::Copy;
 use FileHandle;
 
+use POSIX qw(strftime);
+
 
 ########################################################################
 

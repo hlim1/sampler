@@ -1,36 +1,18 @@
 #define _GNU_SOURCE
 #include <cassert>
 #include <climits>
-#include <clocale>
-#include <iomanip>
 #include <liblog/decoder.h>
 #include <liblog/primitive.h>
 #include <sstream>
 #include "database.h"
 #include "progress.h"
+#include "quote.h"
 #include "require.h"
 #include "session.h"
 
 
 static unsigned long long sampleCounter = 0;
 static string file;
-static string expression;
-
-
-static string quote(const char *suspicious)
-{
-  ostringstream result;
-  result << oct << setfill('0') << '\'';
-  
-  for (const char *scan = suspicious; *scan; ++scan)
-    if (isprint(*scan) && *scan != '\'')
-      result << *scan;
-    else
-      result << '\\' << setw(3) << (int) *scan;
-
-  result << '\'';
-  return result.str();
-}
 
 
 void siteCountdown(unsigned countdown)
@@ -42,7 +24,7 @@ void siteCountdown(unsigned countdown)
 
 void siteFile(const char *file)
 {
-  ::file = quote(file);
+  ::file = '\'' + quote(file, '\'') + '\'';
 }
 
 
@@ -53,6 +35,17 @@ void siteLine(unsigned line)
 	  << sessionId << ", " << sampleCounter << ", " << file << ", " << line
 	  << ')';
   require(database.ExecCommandOk(command.str().c_str()));
+
+  const ExecStatusType status = database.Exec("COPY samples FROM STDIN");
+  require(status == PGRES_COPY_IN);
+}
+
+
+void siteEnd()
+{
+  database.PutLine("\\.\n");
+  const int error = database.EndCopy();
+  require(!error);
   
   ++tasksCompleted;
   if (progressUpdateNeeded)
@@ -68,7 +61,11 @@ void siteLine(unsigned line)
 
 void sampleExpr(const char *expression)
 {
-  ::expression = quote(expression);
+  ostringstream fields;
+  fields << sessionId << '\t'
+	 << sampleCounter << '\t'
+	 << quote(expression, '\t') << '\t';
+  database.PutLine(fields.str().c_str());
 }
 
 
@@ -77,11 +74,9 @@ void sampleExpr(const char *expression)
 
 template<class T> void sampleValue(PrimitiveType typeCode, T value)
 {
-  ostringstream command;
-  command << "INSERT INTO samples (session, sample, expression, type, value) VALUES ("
-	  << sessionId << ", " << sampleCounter << ", "
-	  << expression << ", " << typeCode << ", '" << value << "')";
-  require(database.ExecCommandOk(command.str().c_str()));
+  ostringstream fields;
+  fields << typeCode << '\t' << value << '\n';
+  database.PutLine(fields.str().c_str());
 }
 
 

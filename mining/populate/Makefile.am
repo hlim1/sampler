@@ -9,6 +9,8 @@ populate_SOURCES =				\
 	populate.cc				\
 	progress.cc				\
 	progress.h				\
+	quote.cc				\
+	quote.h					\
 	require.cc				\
 	require.h				\
 	session.cc				\

@@ -7,7 +7,7 @@ libdirs = $(cil_libdir)
 includes = $(foreach dir, $(libdirs), -I $(dir))
 compiler = $(ocamlc) $(ocamlflags)
 
-depend = ocamldep $(includes) $< >$@
+depend = ocamldep $(includes) $< >$@.tmp
 compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) -o $@ $(syslibs) $^
@@ -45,9 +45,11 @@ $(addsuffix .$(cmo), $(impls)): %.$(cmo): %.ml
 
 $(addsuffix .di, $(ifaces)): %.di: %.mli
 	$(depend)
+	mv $@.tmp $@
 
 $(addsuffix .do, $(impls)): %.do: %.ml
 	$(depend)
+	mv $@.tmp $@
 
 $(addsuffix .dl, $(impls)): %.dl: %.do $(linkorder)
 	$(linkorder) <$< >$@

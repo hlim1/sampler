@@ -1,5 +1,11 @@
 -*- outline -*-
 
+* sampler-0.7.3
+
+** Minor bug fixes in feedback analysis tools.
+
+** Extend copyright notices into 2004.
+
 * sampler-0.7.2
 
 ** Merge Fedora Core 1 port branch back onto trunk

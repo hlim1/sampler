@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh -e
 
 test -n "$RPM_BUILD_ROOT"
 
@@ -15,6 +15,7 @@ while read filename; do
     input=$RPM_BUILD_ROOT/$filename
     outbase=/usr/lib/sampler/sites/$filename.sites
     output=$RPM_BUILD_ROOT/$outbase
+    echo "extracting sampler site info from $input"
     mkdir -p `dirname $output`
     $extract $input >$output
     echo $outbase

@@ -12,7 +12,7 @@ use Site;
 
 sub connect () {
     my %options = (AutoCommit => 0, RaiseError => 1);
-    return DBI->connect('DBI:mysql:sampler', $Site::user, $Site::password, \%options);
+    return DBI->connect("DBI:mysql:$Site::database", $Site::user, $Site::password, \%options);
 }
 
 
@@ -40,8 +40,12 @@ sub check_signature ($$$) {
 sub escape (\@) {
     my ($fields) = @_;
     foreach (@{$fields}) {
-	$_ =~ s/\\/\\\\/;
-	$_ =~ s/[^[:print:]]/\\$&/;
+	if (defined $_) {
+	    $_ =~ s/\\/\\\\/g;
+	    $_ =~ s/[^[:print:]]/\\$&/g;
+	} else {
+	    $_ = '\N';
+	}
     }
 }
 

@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
+use 5.008;			# for safe pipe opens using list form of open
 
 use DBI;
 use File::Basename;
@@ -9,11 +10,8 @@ use File::Temp qw(tempfile);
 use FileHandle;
 use POSIX qw(strftime);
 
-
-########################################################################
-
-
 use Common;
+use Upload;
 
 my $dbh = Common::connect;
 
@@ -59,6 +57,7 @@ sub get_suppressed ($) {
 	my $app_id = join("\t", @{$row});
 	$suppressed{$app_id} = 1;
     }
+
     return %suppressed;
 }
 
@@ -72,12 +71,10 @@ my %suppressed = get_suppressed $dbh;
 #
 
 
-my @slot = ('RUN_ID',
-	    'HTTP_SAMPLER_APPLICATION_NAME',
+my @slot = ('HTTP_SAMPLER_APPLICATION_NAME',
 	    'HTTP_SAMPLER_APPLICATION_VERSION',
 	    'HTTP_SAMPLER_APPLICATION_RELEASE',
 	    'HTTP_SAMPLER_INSTRUMENTATION_TYPE',
-	    'HTTP_SAMPLER_INSTRUMENTATION_VERSION',
 	    'HTTP_SAMPLER_VERSION',
 	    'HTTP_SAMPLER_SPARSITY',
 	    'HTTP_SAMPLER_EXIT_SIGNAL',
@@ -87,14 +84,11 @@ my @slot = ('RUN_ID',
 
 sub read_environment ($\%) {
     my ($dir, $known) = @_;
-    my $run_id = basename $dir;
-    return undef if exists $known->{$run_id};
-    $known->{$run_id} = 1;
-
-    my %environment = (RUN_ID => $run_id);
 
     my $filename = "$dir/environment";
     my $file = new FileHandle($filename) or die;
+    my %environment;
+
     while (my $line = <$file>) {
 	$line =~ /^([^	]+)	(.*)$/ or die;
 	$environment{$1} = $2;
@@ -105,10 +99,7 @@ sub read_environment ($\%) {
 	$environment{DATE} = strftime('%F %T', gmtime $stat->mtime);
     }
 
-    $environment{HTTP_SAMPLER_VERSION} = '\N'
-	unless defined $environment{HTTP_SAMPLER_VERSION};
-
-    my $app_id = join("\t", @environment{@slot[1 .. 3]});
+    my $app_id = join("\t", @environment{@slot[0 .. 2]});
     return undef if $suppressed{$app_id};
 
     return \%environment;
@@ -127,34 +118,77 @@ sub environment_fields (\%) {
 #
 
 
-my ($upload, $upload_filename) = tempfile(UNLINK => 1);
-my $upload_count = 0;
+my $upload_run = new Upload;
+my $upload_sample = new Upload;
+
+my @empties;
 
 foreach my $dir (@ARGV) {
+    my $run_id = basename $dir;
+
+    # skip already-known reports
+    next if exists $known{$run_id};
+    $known{$run_id} = 1;
+
+    # load environment, and skip reports from bad builds
     my $environment = read_environment $dir, %known;
     next unless defined $environment;
-    print "new: $dir\n";
-    ++$upload_count;
 
-    local ($,, $\) = ("\t", "\n");
+    # new report of good build, so add to upload
+    print "new: $dir\n";
     my @environment = environment_fields %{$environment};
-    Common::escape @environment;
-    print $upload @environment;
+    $upload_run->print($run_id, @environment);
+
+    # grovel through samples
+    my $samples_filename = "$dir/samples.gz";
+    my $samples_handle = new FileHandle;
+    open $samples_handle, '-|', 'zcat', $samples_filename;
+    my $empty = 1;
+
+    while (my $unit_signature = <$samples_handle>) {
+	chomp $unit_signature;
+	Common::check_signature $samples_filename, $samples_handle->input_line_number, $unit_signature;
+
+	my $site_order = 0;
+
+	while (my $counts = <$samples_handle>) {
+	    unless ($counts =~ /^0(\t0)*$/) {
+		chomp $counts;
+		last if $counts eq '';
+		my @counts = split /\t/, $counts;
+		foreach my $predicate (0 .. $#counts) {
+		    my $count = $counts[$predicate];
+		    next unless $count;
+		    my @fields = ($run_id, $unit_signature, $site_order, $predicate, $count);
+		    $upload_sample->print(@fields);
+		}
+		$empty = 0;
+	    }
+	    ++$site_order;
+	}
+    }
+
+    push @empties, $run_id if $empty;
 }
 
-close $upload;
+
+########################################################################
+#
+#  bulk upload
+#
 
 
 print "upload\n";
 
+print "\trun: ", $upload_run->count, " new\n";
+
 $dbh->do(q{
-    CREATE TEMPORARY TABLE upload
+    CREATE TEMPORARY TABLE upload_run
 	(run_id VARCHAR(24) NOT NULL,
 	 application_name VARCHAR(50) NOT NULL,
 	 application_version VARCHAR(50) NOT NULL,
 	 application_release VARCHAR(50) NOT NULL,
 	 instrumentation_type ENUM('branches','returns','scalar-pairs') NOT NULL,
-	 instrumentation_version VARCHAR(50) NOT NULL,
 	 version VARCHAR(255),
 	 sparsity INTEGER UNSIGNED NOT NULL,
 	 exit_signal TINYINT UNSIGNED NOT NULL,
@@ -163,15 +197,33 @@ $dbh->do(q{
 	TYPE=InnoDB
     }) or die;
 
-$dbh->do(q{
-    LOAD DATA LOCAL INFILE ?
-	INTO TABLE upload},
-	 undef, $upload_filename)
-    or die;
+$upload_run->send($dbh, 'upload_run');
 
-unlink $upload_filename;
+
+print "\tsample: ", $upload_sample->count, " new\n";
+
+$dbh->do(q{
+    CREATE TEMPORARY TABLE upload_sample
+	(run_id VARCHAR(24) NOT NULL,
+	 unit_signature CHAR(32) NOT NULL,
+	 site_order INTEGER UNSIGNED NOT NULL,
+	 predicate TINYINT UNSIGNED NOT NULL,
+	 count INTEGER UNSIGNED NOT NULL)
+	TYPE=InnoDB
+    }) or die;
+
+$upload_sample->send($dbh, 'upload_sample');
+
+
+########################################################################
+#
+#  add to existing tables
+#
+
 
 print "insert\n";
+
+print "\trun: ", $upload_run->count, " new\n";
 
 $dbh->do(q{
     INSERT INTO run
@@ -185,13 +237,39 @@ $dbh->do(q{
 	date,
 	0
 
-	FROM upload
+	FROM upload_run
 	NATURAL LEFT JOIN build
 	WHERE suppress IS NULL
     }) or die;
 
 
-print "added $upload_count new runs\n";
+print "\tsample: ", $upload_sample->count, " new\n";
+
+$dbh->do(q{
+    INSERT run_sample
+	SELECT *
+	FROM upload_sample
+    }) or die;
+
+
+########################################################################
+#
+#  flag empties
+#
+
+
+if (@empties) {
+    my @placeholders = map '?', @empties;
+    my $placeholders = join ',', @placeholders;
+
+    $dbh->do(qq{
+	UPDATE run
+	    SET empty = 1
+	    WHERE run_id IN ($placeholders)},
+	     undef, @empties);
+
+    print "marked ", scalar @empties, " new empties\n";
+}
 
 
 ########################################################################

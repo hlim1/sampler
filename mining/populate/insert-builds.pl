@@ -2,12 +2,14 @@
 
 use strict;
 use 5.008;			# for safe pipe opens using list form of open
+
 use File::Path;
-use File::Temp qw(tempfile);
+use File::Temp qw(tempdir);
 use FileHandle;
 use POSIX qw(strftime);
 
 use Common;
+use Upload;
 
 my $dbh = Common::connect;
 
@@ -56,8 +58,6 @@ my %guess_instrumentation_type =
      'nautilus' => 'branches',
      'rhythmbox' => 'scalar-pairs');
 
-my $guess_instrumentation_version = '0.1';
-
 
 ########################################################################
 #
@@ -65,11 +65,12 @@ my $guess_instrumentation_version = '0.1';
 #
 
 
-my ($upload, $upload_filename) = tempfile(UNLINK => 1);
-my $upload_count = 0;
+my $upload_build = new Upload;
+my $upload_module = new Upload;
+my $upload_site = new Upload;
 
 foreach my $package (@ARGV) {
-    my @command = ('rpm', '-qp', '--qf', '%{name}\t%{version}\t%{release}\n%{buildtime}\n', $package);
+    my @command = ('rpm', '-qp', '--qf', '%{name}\t%{version}\t%{release}\n%{buildtime}\n[%{filenames}\n]', $package);
     my $rpm_query = new FileHandle;
     open $rpm_query, '-|', @command;
 
@@ -80,7 +81,6 @@ foreach my $package (@ARGV) {
     # have we seen this before?
     next if exists $known{$app_id};
     $known{$app_id} = 1;
-    ++$upload_count;
 
     print "new: $package\n";
 
@@ -89,13 +89,75 @@ foreach my $package (@ARGV) {
     defined $raw_date or die "mangled RPM build date\n";
     my $build_date = strftime('%F %T', gmtime $raw_date);
 
-    # add to upload
-    local ($,, $\) = ("\t", "\n");
+    # add to uploads for build table
     my $instrumentation_type = $guess_instrumentation_type{$app_id[0]};
-    my $instrumentation_version = $guess_instrumentation_version;
-    my @fields = (@app_id, $instrumentation_type, $instrumentation_version, $build_date);
-    Common::escape @fields;
-    print $upload @fields;
+    my @fields = (@app_id, $instrumentation_type, $build_date);
+    $upload_build->print(@fields);
+
+    # unpack site information
+    print "\tunpack cpio\n";
+    my $tempdir = tempdir(CLEANUP => 0);
+    $ENV{package} = $package;
+    system("rpm2cpio \$package | ( cd $tempdir && cpio -id --quiet --no-absolute-filenames '*.sites' '*.cfg'; )") == 0
+	or die "cpio extraction failed: $?\n";
+
+    # grovel through site information
+    print "\tcollect sites\n";
+
+    while (my $filename = <$rpm_query>) {
+	chomp $filename;
+	my $module_name = $filename;
+	next unless $module_name =~ s/^\/usr\/lib\/sampler\/sites(\/.*)\.sites$/$1/;
+
+	# should each site have a CFG node number?
+	my $cfg_name = $filename;
+	$cfg_name =~ s/\.sites$/.cfg/;
+	my $has_cfg = -e "$tempdir$cfg_name";
+
+	my $extracted = "$tempdir$filename";
+	die "missing file: $filename\n" unless -e $extracted;
+	next if -d $extracted;
+
+	my $contents = new FileHandle($extracted);
+	while (my $unit_signature = <$contents>) {
+	    chomp $unit_signature;
+	    Common::check_signature $extracted, $contents->input_line_number, $unit_signature;
+
+	    my $site_order = 0;
+
+	    while (my $description = <$contents>) {
+		chomp $description;
+		last unless $description;
+		my @description = split /\t/, $description;
+		my $source_name = shift @description;
+		my $line_number = shift @description;
+		my $function = shift @description;
+		my $cfg = shift @description if $has_cfg;
+		my $operand_0 = shift @description;
+		my $operand_1 = shift @description;
+
+		my $where = "$extracted:" . $contents->input_line_number;
+		die "$where: extra descriptive fields" if @description;
+		die "$where: empty source file name" unless $source_name;
+		die "$where: bad source line number" unless $line_number =~ /^\d+$/;
+		die "$where: empty function name" unless $function;
+		die "$where: empty operand 0" unless defined $operand_0;
+
+		my @fields = (@app_id, $unit_signature, $site_order, $source_name,
+			      $line_number, $function, $cfg, $operand_0, $operand_1);
+		$upload_site->print(@fields);
+		++$site_order;
+	    }
+	    
+	    next unless $site_order;
+
+	    my @fields = (@app_id, $module_name, $unit_signature);
+	    $upload_module->print(@fields);
+	}
+    }
+
+    print "\tclean cpio\n";
+    rmtree $tempdir;
 
     # done with rpm query
     $rpm_query->close;
@@ -104,8 +166,6 @@ foreach my $package (@ARGV) {
         exit($? >> 8 || $?);
     }
 }
-
-close $upload;
 
 
 ########################################################################
@@ -116,39 +176,71 @@ close $upload;
 
 print "upload\n";
 
+print "\tbuild: ", $upload_build->count, " new\n";
+
 $dbh->do(q{
-    CREATE TEMPORARY TABLE upload
+    CREATE TEMPORARY TABLE upload_build
 	(application_name VARCHAR(50) NOT NULL,
 	 application_version VARCHAR(50) NOT NULL,
 	 application_release VARCHAR(50) NOT NULL,
 	 instrumentation_type ENUM('branches', 'returns', 'scalar-pairs') NOT NULL,
-	 instrumentation_version VARCHAR(50) NOT NULL,
 	 build_date DATETIME NOT NULL)
 	TYPE=InnoDB
     }) or die;
 
+$upload_build->send($dbh, 'upload_build');
+
+
+print "\tmodule: ", $upload_module->count, " new\n";
+
 $dbh->do(q{
-    LOAD DATA LOCAL INFILE ?
-	INTO TABLE upload
-    
-	(application_name,
-	 application_version,
-	 application_release,
-	 instrumentation_type,
-	 instrumentation_version,
-	 build_date)
-    },
-	 undef, $upload_filename)
-    or die;
+    CREATE TEMPORARY TABLE upload_module
+	(application_name VARCHAR(50) NOT NULL,
+	 application_version VARCHAR(50) NOT NULL,
+	 application_release VARCHAR(50) NOT NULL,
+
+	 module_name VARCHAR(255) NOT NULL,
+	 unit_signature CHAR(32) NOT NULL)
+	TYPE=InnoDB
+    }) or die;
+
+$upload_module->send($dbh, 'upload_module');
+
+
+print "\tsite: ", $upload_site->count, " new\n";
+
+$dbh->do(q{
+    CREATE TEMPORARY TABLE upload_site
+	(application_name VARCHAR(50) NOT NULL,
+	 application_version VARCHAR(50) NOT NULL,
+	 application_release VARCHAR(50) NOT NULL,
+
+	 unit_signature CHAR(32) NOT NULL,
+	 site_order INTEGER UNSIGNED NOT NULL,
+
+	 source_name VARCHAR(255) NOT NULL,
+	 line_number INTEGER UNSIGNED NOT NULL,
+	 function VARCHAR(255) NOT NULL,
+	 cfg INTEGER UNSIGNED,
+
+	 operand_0 VARCHAR(255) NOT NULL,
+	 operand_1 VARCHAR(255))
+
+	TYPE=InnoDB
+    }) or die;
+
+$upload_site->send($dbh, 'upload_site');
 
 
 ########################################################################
 #
-#  merge into existing table
+#  add to existing tables
 #
 
 
-print "insert into build\n";
+print "insert\n";
+
+print "\tbuild: ", $upload_build->count, " new\n";
 
 $dbh->do(q{
     INSERT INTO build
@@ -156,15 +248,36 @@ $dbh->do(q{
 	 application_version,
 	 application_release,
 	 instrumentation_type,
-	 instrumentation_version,
 	 build_date)
 
 	SELECT *
-	FROM upload
+	FROM upload_build
     }) or die;
 
 
-print "newly added: $upload_count\n";
+print "\tmodule: ", $upload_module->count, " new\n";
+
+$dbh->do(q{
+    INSERT INTO build_module
+	(build_id, module_name, unit_signature)
+
+	SELECT build_id, module_name, unit_signature
+	FROM build NATURAL JOIN upload_module
+    }) or die;
+
+
+print "\tsite: ", $upload_site->count, " new\n";
+
+$dbh->do(q{
+    INSERT IGNORE INTO build_site
+	(build_id, unit_signature, site_order,
+	 source_name, line_number, function, cfg, operand_0, operand_1)
+
+	SELECT build_id, unit_signature, site_order,
+	source_name, line_number, function, cfg, operand_0, operand_1
+
+	FROM build NATURAL JOIN upload_site
+    }) or die;
 
 
 ########################################################################

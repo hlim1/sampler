@@ -132,15 +132,8 @@ print "insert\n";
 
 $dbh->do(q{
     INSERT run_sample
-	(run_id, build_id,
-	 unit_signature, site_order,
-	 predicate, count)
-
-	SELECT upload.run_id, build_id,
-	unit_signature, site_order,
-	predicate, count
-
-	FROM upload NATURAL LEFT JOIN run
+	SELECT *
+	FROM upload
     }) or die;
 
 

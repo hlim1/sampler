@@ -1,8 +1,19 @@
--- MySQL dump 9.09
+-- MySQL dump 9.10
 --
 -- Host: localhost    Database: sampler
----------------------------------------------------------
--- Server version	4.0.15-standard
+-- ------------------------------------------------------
+-- Server version	4.0.17-standard
+
+--
+-- Table structure for table `instrumentation`
+--
+
+DROP TABLE IF EXISTS instrumentation;
+CREATE TABLE instrumentation (
+  instrumentation_type enum('branches','returns','scalar-pairs') NOT NULL default 'branches',
+  predicates_per_site tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (instrumentation_type)
+) TYPE=InnoDB;
 
 --
 -- Table structure for table `build`
@@ -15,13 +26,12 @@ CREATE TABLE build (
   application_version varchar(50) NOT NULL default '',
   application_release varchar(50) NOT NULL default '',
   instrumentation_type enum('branches','returns','scalar-pairs') NOT NULL default 'branches',
-  instrumentation_version varchar(50) NOT NULL default '',
   build_date datetime NOT NULL default '0000-00-00 00:00:00',
   suppress varchar(255) default NULL,
   PRIMARY KEY  (build_id),
   UNIQUE KEY application_name (application_name,application_version,application_release),
   KEY instrumentation_type (instrumentation_type),
-  CONSTRAINT `0_606` FOREIGN KEY (`instrumentation_type`) REFERENCES `instrumentation` (`instrumentation_type`)
+  CONSTRAINT `0_2119` FOREIGN KEY (`instrumentation_type`) REFERENCES `instrumentation` (`instrumentation_type`)
 ) TYPE=InnoDB;
 
 --
@@ -34,7 +44,7 @@ CREATE TABLE build_module (
   module_name varchar(255) NOT NULL default '',
   unit_signature varchar(32) NOT NULL default '',
   UNIQUE KEY build_id (build_id,unit_signature,module_name),
-  CONSTRAINT `0_597` FOREIGN KEY (`build_id`) REFERENCES `build` (`build_id`)
+  CONSTRAINT `0_2121` FOREIGN KEY (`build_id`) REFERENCES `build` (`build_id`)
 ) TYPE=InnoDB;
 
 --
@@ -49,21 +59,12 @@ CREATE TABLE build_site (
   source_name varchar(255) NOT NULL default '',
   line_number int(10) unsigned NOT NULL default '0',
   function varchar(255) NOT NULL default '',
+  cfg int(10) unsigned default NULL,
   operand_0 varchar(255) NOT NULL default '',
   operand_1 varchar(255) default NULL,
   PRIMARY KEY  (build_id,unit_signature,site_order),
-  CONSTRAINT `0_599` FOREIGN KEY (`build_id`, `unit_signature`) REFERENCES `build_module` (`build_id`, `unit_signature`)
-) TYPE=InnoDB;
-
---
--- Table structure for table `instrumentation`
---
-
-DROP TABLE IF EXISTS instrumentation;
-CREATE TABLE instrumentation (
-  instrumentation_type enum('branches','returns','scalar-pairs') NOT NULL default 'branches',
-  predicates_per_site tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (instrumentation_type)
+  KEY unit_signature (unit_signature,site_order),
+  CONSTRAINT `0_2123` FOREIGN KEY (`build_id`, `unit_signature`) REFERENCES `build_module` (`build_id`, `unit_signature`)
 ) TYPE=InnoDB;
 
 --
@@ -83,7 +84,8 @@ CREATE TABLE run (
   PRIMARY KEY  (run_id),
   KEY build_id (build_id),
   KEY run_id (run_id,build_id),
-  CONSTRAINT `0_263` FOREIGN KEY (`build_id`) REFERENCES `build` (`build_id`)
+  KEY exit_signal (exit_signal),
+  CONSTRAINT `0_2125` FOREIGN KEY (`build_id`) REFERENCES `build` (`build_id`)
 ) TYPE=InnoDB;
 
 --
@@ -93,15 +95,11 @@ CREATE TABLE run (
 DROP TABLE IF EXISTS run_sample;
 CREATE TABLE run_sample (
   run_id char(24) NOT NULL default '',
-  build_id int(10) unsigned NOT NULL default '0',
   unit_signature char(32) NOT NULL default '',
   site_order int(10) unsigned NOT NULL default '0',
   predicate tinyint(3) unsigned NOT NULL default '0',
   count int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (run_id,unit_signature,site_order,predicate),
-  KEY build_id (build_id,unit_signature,site_order),
-  KEY run_id (run_id,build_id),
-  CONSTRAINT `0_525` FOREIGN KEY (`build_id`, `unit_signature`, `site_order`) REFERENCES `build_site` (`build_id`, `unit_signature`, `site_order`),
-  CONSTRAINT `0_532` FOREIGN KEY (`run_id`, `build_id`) REFERENCES `run` (`run_id`, `build_id`)
+  CONSTRAINT `0_2127` FOREIGN KEY (`run_id`) REFERENCES `run` (`run_id`)
 ) TYPE=InnoDB;
 

@@ -283,10 +283,10 @@ set of \termdef{elimination strategies}:
   counter which is zero on all failed runs.  These likely represent
   predicates that need not be true for a failure to occur.
   
-\item[Elimination by \elim{successful counterexample}:] disregard any
+\item[\elim{Elimination by successful counterexample}:] Disregard any
   counter which has a non-zero value on any successful run.  These
-  must represent predicates which can be true without subsequently
-  causing a failure.
+  must represent predicates which can be true without a subsequent
+  program failure.
 \end{description}
 
 We characterize these as strategies because they are subject to noise

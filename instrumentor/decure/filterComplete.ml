@@ -10,7 +10,7 @@ let main () =
   let filterFile filename =
     try
       let file = Frontc.parse filename () in
-      removeUnusedTemps ~markRoots:markCompleteProgramRoots file;
+      removeUnusedTemps ~isRoot:isCompleteProgramRoot file;
       dumpFile defaultCilPrinter stdout file
     with Frontc.ParseError _ ->
       error := true

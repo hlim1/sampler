@@ -49,13 +49,9 @@ let collect (infos : FileInfo.container) =
   let isWeightlessLval callee =
     match Dynamic.resolve callee with
     | [] ->
-	ignore (Pretty.eprintf "%a cannot be resolved\n" d_lval callee);
 	false
     | resolved ->
 	let d_varinfo () var = Pretty.text var.vname in
-	ignore (Pretty.eprintf "%a resolves to [%a]\n"
-		  d_lval callee
-		  (Pretty.d_list ", " d_varinfo) resolved);
 	List.for_all isWeightlessVarinfo resolved
   in
 

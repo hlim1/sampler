@@ -231,7 +231,7 @@
 		    <widget class="GnomeHRef" id="learn-more">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="url">http://www.cs.berkeley.edu/~liblit/sampler/learn-more/</property>
+		      <property name="url">http://www.cs.wisc.edu/cbi/learn-more/</property>
 		      <property name="text" translatable="yes">Click here to learn more.</property>
 		    </widget>
 		  </child>

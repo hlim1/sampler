@@ -20,7 +20,7 @@ harness = $(manager) $(phases) $(tuples) $(bumper) $(bumpSign) $(describedExpres
 harness.$(cma): $(harness)
 	$(archive)
 
-$(dir $(libcommon)): $(libcommon)
+$(dir $(libcommon))/%.cmi: $(libcommon); :
 
 $(libcommon): $(force)
 	$(recurse)

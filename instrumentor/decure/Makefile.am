@@ -11,8 +11,8 @@ include $(top_srcdir)/ocaml/rules.mk
 libdirs += ..
 syslibs = str.$(cma) unix.$(cma)
 
-$(dir $(libharness))/%.cmi: $(libharness)
-$(dir $(libcommon))/%.cmi: $(libcommon)
+$(dir $(libharness))/%.cmi: $(libharness); :
+$(dir $(libcommon))/%.cmi: $(libcommon); :
 
 %.cma: $(force)
 	$(recurse)

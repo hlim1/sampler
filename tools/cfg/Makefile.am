@@ -21,9 +21,9 @@ resolve-cfg: $(libcommon) $(libgraph) $(resolve-cfg)
 order-sites: $(libcommon) $(libgraph) $(order-sites)
 	$(link)
 
-$(dir $(libcommon))/%.cmi: $(libcommon)
+$(dir $(libcommon))/%.cmi: $(libcommon); :
 
-$(libgraph)/graph.cmi: $(libgraph)
+$(dir $(libgraph))/%.cmi: $(libgraph); :
 
 $(libcommon) $(libgraph): $(force)
 	$(recurse)

@@ -13,7 +13,7 @@ class virtual builder file =
 
 
     method private addSiteInfo info =
-      sites#add info;
+      sites#push info;
       let slice = nextId in
       nextId <- nextId + 1;
       slice

@@ -23,7 +23,7 @@ sub collectOneArgument {
     my $self = shift;
     my ($arg, $pargs) = @_;
 
-    if ($arg =~ '--(in|ex)clude-(function|file)') {
+    if ($arg =~ /^--(in|ex)clude-(function|file)$/) {
 	push @{$self->{instrumentor}}, $arg, shift @{$pargs};
 	return 1;
     } elsif ($arg eq '--no-sample') {
@@ -42,10 +42,10 @@ sub collectOneArgument {
 	push @{$self->{instrumentor}}, $arg;
 	$self->{sample_funcs} = 1;
 	return 1;
-    } elsif ($arg eq '--no-show-stats') {
+    } elsif ($arg =~ /^--(no-)?show-stats$/) {
 	push @{$self->{instrumentor}}, $arg;
 	return 1;
-    } elsif ($arg eq '--show-stats') {
+    } elsif ($arg =~ /^--(no-)?specialize-(singleton|empty)-regions$/) {
 	push @{$self->{instrumentor}}, $arg;
 	return 1;
     } else {

@@ -4,10 +4,7 @@ include $(top_srcdir)/ocaml/rules.mk
 
 libdirs += $(dir $(libcommon))
 
-all-local: user graphlib.$(cma)
-
-user: $(libcommon) $(user)
-	$(link)
+all-local: graphlib.$(cma)
 
 graphlib = $(graph) $(transitive)
 

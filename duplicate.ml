@@ -60,7 +60,7 @@ class visitor = object
       end;
 
       clones#add stmt clone;
-      ChangeDoChildrenPost (clone, Identity.identity)
+      ChangeDoChildrenPost (clone, identity)
 end
 
 

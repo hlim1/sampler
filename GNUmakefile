@@ -1,10 +1,19 @@
+ifdef native
+ocamlc := ocamlopt.opt
+cma := cmxa
+cmo := cmx
+else
+ocamlflags := -g
+ocamlc := ocamlc.opt
+cma := cma
+cmo := cmo
+endif
+
 fixdeps := ./fixdeps
 
 cildir := ../cil
 cilobjdir := $(cildir)/obj/x86_LINUX
-ocamlflags := -g
 includes := -I $(cilobjdir)
-ocamlc := ocamlc.opt
 compiler := $(ocamlc) $(ocamlflags)
 
 compile = $(compiler) $(includes) -c $<
@@ -14,9 +23,9 @@ link = $(compiler) -o $@ $(syslibs) $^
 ########################################################################
 
 
-libcil := $(cilobjdir)/cil.cma
+libcil := $(cilobjdir)/cil.$(cma)
 libs := $(libcil)
-syslibs := unix.cma
+syslibs := unix.$(cma)
 
 infile := hello
 
@@ -27,26 +36,26 @@ ifaces := $(basename $(wildcard *.mli))
 all: $(targets)
 .PHONY: all
 
-parts: $(impls:=.cmo) $(ifaces:=.cmi)
+parts: $(impls:=.$(cmo)) $(ifaces:=.cmi)
 .PHONY: parts
 
 run: main $(infile).i
 	./$^
 .PHONY: run
 
-cfg-to-dot: %: $(libs) $(addsuffix .cmo, cfg utils foreach dotify skipVisitor functionBodyVisitor splitAfterCalls testHarness %)
+cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), cfg utils foreach dotify skipVisitor functionBodyVisitor splitAfterCalls testHarness %)
 	$(link)
 
-main: %: $(libs) $(addsuffix .cmo, mapClass setClass foreach cfg skipVisitor functionBodyVisitor splitAfterCalls collectHeaders stores weighPaths testHarness %)
+main: %: $(libs) $(addsuffix .$(cmo), mapClass setClass foreach cfg skipVisitor functionBodyVisitor splitAfterCalls collectHeaders stores weighPaths testHarness %)
 	$(link)
 
-cfg-bug: %: $(libs) $(addsuffix .cmo, utils skipVisitor functionBodyVisitor splitAfterCalls %)
+cfg-bug: %: $(libs) $(addsuffix .$(cmo), utils skipVisitor functionBodyVisitor splitAfterCalls %)
 	$(link)
 
 $(ifaces:=.cmi): %.cmi: %.mli
 	$(compile)
 
-$(impls:=.cmo): %.cmo: %.ml
+$(impls:=.$(cmo)): %.$(cmo): %.ml
 	$(compile)
 
 $(impls:=.do): %.do: %.ml $(fixdeps)
@@ -56,7 +65,7 @@ $(ifaces:=.di): %.di: %.mli $(fixdeps)
 	ocamldep $(includes) $< | $(fixdeps) >$@
 
 $(libcil): $(force)
-	$(MAKE) -C $(cildir) -f Makefile.cil cillib
+	$(MAKE) -C $(cildir) -f Makefile.cil NATIVE=$(native) cillib
 
 force:
 .PHONY: force
@@ -78,7 +87,7 @@ force:
 
 clean: force
 	rm -f $(targets) $(infile).i
-	rm -f $(foreach suffix, cmi cmo cmx, *.$(suffix))
+	rm -f $(foreach suffix, cmi cmo cmx o, *.$(suffix))
 	rm -f $(foreach kind, cfg dom, $(foreach format, dot ps, *.$(kind).$(format)))
 .PHONY: clean
 

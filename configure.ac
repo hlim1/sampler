@@ -156,7 +156,7 @@ AC_COMPILE_IFELSE(
 
 
 AC_MSG_CHECKING(for thread-local storage qualifier)
-AC_RUN_IFELSE(
+AC_COMPILE_IFELSE(
   AC_LANG_PROGRAM([__thread int global;], []),
   have_thread_storage=yes,
   have_thread_storage=no)

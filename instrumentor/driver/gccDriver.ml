@@ -1,10 +1,12 @@
-type goal = Special | Partial | Complete
+exception Special
+
+
+type goal = Partial | Complete
 
 
 class c compiler arguments =
   object (self)
     inherit Driver.c arguments
-
 
     val mutable flags = []
     val mutable finalFlags = []
@@ -24,12 +26,6 @@ class c compiler arguments =
       let partial () =
 	goal <- Partial;
 	finalFlags <- finalFlags @ [flag];
-	rest
-      in
-
-      let special () =
-	goal <- Special;
-	flags <- flags @ [flag];
 	rest
       in
 
@@ -54,8 +50,8 @@ class c compiler arguments =
 	  partial ()
 
       | "-save-temps", _ ->
-	  flags <- flags @ [flag];
 	  saveTemps <- true;
+	  flags <- flags @ [flag];
 	  rest
 
       | "-include", argument :: rest
@@ -72,7 +68,7 @@ class c compiler arguments =
       | "-E", _
       | "-M", _
       | "-MM", _ ->
-	  special ()
+	  raise Special
 
       | "-Xlinker", argument :: rest
       | "-u", argument :: rest
@@ -86,7 +82,7 @@ class c compiler arguments =
 
       | print, _
 	when Prefix.check print "-print-" ->
-	  special ()
+	  raise Special
 
       | library, _
 	when Prefix.check library "-l" ->
@@ -105,16 +101,15 @@ class c compiler arguments =
 	  rest
 
 
-    method private build =
-      match goal with
-      | Special ->
-	  self#run compiler arguments
-      | Partial
-      | Complete ->
-	  let built =
-	    let build builder = builder () in
-	    List.map build inputs
-	  in
-	  let extraLibs = if goal == Complete then self#extraLibs else [] in
-	  self#run compiler (flags @ finalFlags @ built @ extraLibs)
+    method private build arguments =
+      try
+	self#parse arguments;
+	let built =
+	  let build builder = builder () in
+	  List.map build inputs
+	in
+	let extraLibs = if goal == Complete then self#extraLibs else [] in
+	self#run compiler (flags @ finalFlags @ built @ extraLibs)
+      with Special ->
+	self#run compiler arguments
   end

@@ -6,14 +6,18 @@ class virtual c arguments =
     val mutable verbose = false
 
     initializer
+      self#build
+
+    method private virtual build : unit
+
+    method private parse arguments =
       let rec consume = function
 	| [] -> ()
 	| flag :: rest ->
 	    let remainder = self#parse_1 flag rest in
 	    consume remainder
       in
-      consume arguments;
-      self#build
+      consume arguments
 
     method private virtual parse_1 : string -> string list -> string list
 

@@ -5,6 +5,7 @@ class virtual c : string list ->
   object
     val mutable verbose : bool
 
+    method private parse : string list -> unit
     method private virtual parse_1 : string -> string list -> string list
 
     method private virtual build : unit

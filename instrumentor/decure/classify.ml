@@ -58,9 +58,7 @@ let classifyStatement = function
 			{ battrs = []; bstmts = [
 			  { skind = Instr [ Call (None, Lval (Var {vname = "fp_fail"},
 							      NoOffset),
-						  [ Const (CInt64 (zero, IInt, _));
-						    Const (CStr _);
-						    Const (CInt64 (_, IInt, _)) ],
+						  Const (CInt64 (zero, IInt, _)) :: _,
 						  _) ] } ] },
 			_) } ] },
 	{ battrs = []; bstmts = [] },

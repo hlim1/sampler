@@ -193,6 +193,11 @@ AC_MSG_CHECKING(for cpp0)
 AC_SUBST(cpp0, `$CC -print-prog-name=cpp0`)
 AC_MSG_RESULT($cpp0)
 
+case $cpp0 in
+  (/*) ;;
+  (*) AC_PATH_PROG(cpp0, $cpp0, [])
+esac
+
 AC_MSG_CHECKING(for cc1)
 AC_SUBST(cc1, `$CC -print-prog-name=cc1`)
 AC_MSG_RESULT($cc1)

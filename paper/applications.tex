@@ -354,24 +354,18 @@ Our \textbf{bc} dataset consists of 4058 runs with distinct random
 inputs and distinct randomized 1/100 sampling.  We partition these
 runs into 2704 to be used for training and 1354 for testing.  Although
 there are 40,326 raw features, many can be discarded immediately: in
-the training set \unknown[I have this for the complete traces, but
-what is it for 1/100 sampling?] features are always zero value and
-\unknown[I have this for the complete traces, but what is it for 1/100
-sampling?] of them are always some non-zero constant.  Hence the
-effective number of features used in training is 7260.  Sparser
-sampling drives counts lower: at 1/1000, the effective number of
-interesting features drops to 6738.  Beyond simplifying the
-statistical analysis, this degree of regularity means that counter
-reports are highly compressible: good news for deployed users with
-small hard drives or slow modems.
+the training set 32,044 features are always zero and 1011 are always
+some non-zero constant.  Hence the effective number of features used
+in training is 7260.  Sparser sampling drives counts lower: at 1/1000,
+the effective number of interesting features drops to 6738.  Beyond
+simplifying the statistical analysis, this degree of regularity means
+that counter reports are highly compressible: good news for deployed
+users with small hard drives or slow modems.
 
 In our experiments, the model converged after roughly four iterations
 through the training dataset, using learning rate = $10^{-6}$ and
 $\lambda = 5$.  This took fourteen minutes in MATLAB on a 1.8 GHz
-Pentium 4 CPU with 1 GB of RAM.  \aside{If we decide to discuss the
-  1/1000 data, that took eighteen minutes.}  \aside{1 GB RAM is how
-  much the box had, not how much MATLAB used.  Alice, do we know how
-  much MATLAB used?}
+Pentium 4 CPU with 1 GB of RAM.
 
 Once the model has been trained, predicates with the largest $\beta$
 coefficients point instruct us where to begin looking for the bug.
@@ -449,9 +443,9 @@ first?
 There are several reasons to consider.  Samples are taken randomly,
 while the model itself is trained using stochastic gradient ascent.
 Thus, a degree of noise is fundamental to the process.  Even crashing
-is not guaranteed: out of \unknown[Alice?] runs in which sampling
-spotted \texttt{indx > a\_count}, \unknown[Alice?] did not crash.
-Thus, C programs can ``get lucky'', meaning that this is not a strict
+is not guaranteed: out of 320 runs in which sampling spotted
+\texttt{indx > a\_count} at least once, 66 did not crash.  Thus, C
+programs can ``get lucky'', meaning that this is not a strict
 $\text{overrun} \implies \text{crash}$ implication.  Manual inspection
 of the data reveals a high degree of redundancy among many
 instrumentation sites within \texttt{more\_arrays()}, meaning that the

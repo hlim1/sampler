@@ -7,9 +7,5 @@ class virtual c file =
     method virtual embedInfo : Digest.t Lazy.t -> unit
 
     method findAllSites =
-      let findFuncs = function
-	| GFun (fundec, _) -> self#findSites fundec
-	| _ -> ()
-      in
-      iterGlobals file findFuncs
+      Scanners.iterFuncs file (fun (func, _) -> self#findSites func)
   end

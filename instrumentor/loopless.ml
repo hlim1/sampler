@@ -65,7 +65,7 @@ class visitor loopless changed =
 
 
 let addLibraries loopless =
-  Libraries.functions#iter (fun name -> loopless#add name true);
+  Libraries.functions#iter (fun name () -> loopless#add name true);
   List.iter loopless#remove ["bsearch"; "qsort";
 			     "setjmp"; "__sigsetjmp"; "_setjmp";
 			     "__libc_longjmp"; "__libc_siglongjmp";
@@ -81,29 +81,24 @@ let addExterns loopless file =
 	| _ -> ()
     end;
 
-  iterGlobals file
+  Scanners.iterFuncs file
     begin
-      function
-	| GFun ({ svar = { vname = vname }}, _) ->
-	    loopless#remove vname
-	| _ -> ()
+      fun ({ svar = { vname = vname }}, _) ->
+	loopless#remove vname
     end
 
 
 let loopless file =
-  let loopless = new StringMap.container in
+  let loopless = new StringHash.c 0 in
   if !assumeLooplessExterns then addExterns loopless file;
   if !assumeLooplessLibraries then addLibraries loopless;
 
-  let considerGlobal = function
-    | GFun (func, _) ->
-	RemoveLoops.visit func;
-	if (ClassifyJumps.visit func).ClassifyJumps.backward != [] then
-	  loopless#add func.svar.vname false
-    | _ ->
-	()
+  let considerGlobal (func, _) =
+    RemoveLoops.visit func;
+    if (ClassifyJumps.visit func).ClassifyJumps.backward != [] then
+      loopless#add func.svar.vname false
   in
-  iterGlobals file considerGlobal;
+  Scanners.iterFuncs file considerGlobal;
 
   let changed = ref false in
   let visitor = new visitor loopless changed in
@@ -129,13 +124,10 @@ initCIL ();
 let process filename =
   let file = Frontc.parse filename () in
   let loopless = loopless file in
-  let considerGlobal = function
-    | GFun ({svar = varinfo}, _) ->
-	Printf.printf "%s\t%b\n" varinfo.vname (loopless varinfo)
-    | _ ->
-	()
+  let considerGlobal ({svar = varinfo}, _) =
+    Printf.printf "%s\t%b\n" varinfo.vname (loopless varinfo)
   in
-  iterGlobals file considerGlobal
+  Scanners.iterFuncs file considerGlobal
 in
 let filenames = List.tl (Array.to_list Sys.argv) in
 List.iter process filenames

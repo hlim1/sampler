@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <cassert>
 #include <climits>
 #include <clocale>
@@ -10,7 +11,7 @@
 #include "session.h"
 
 
-static unsigned sampleCounter = 0;
+static unsigned long long sampleCounter = 0;
 static string file;
 static string expression;
 
@@ -33,7 +34,7 @@ static string quote(const char *suspicious)
 
 void siteCountdown(unsigned countdown)
 {
-  require(UINT_MAX - sampleCounter >= countdown, "samples counter has wrapped around");
+  require(ULONG_LONG_MAX - sampleCounter >= countdown, "samples counter has wrapped around");
   sampleCounter += countdown;
 }
 

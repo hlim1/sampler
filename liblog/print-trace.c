@@ -4,7 +4,7 @@
 #include "decoder.h"
 
 
-unsigned sampleCounter;
+unsigned long long sampleCounter;
 
 
 int main()
@@ -26,9 +26,9 @@ int main()
 
 void siteCountdown(unsigned countdown)
 {
-  assert(UINT_MAX - sampleCounter >= countdown);
+  assert(ULONG_LONG_MAX - sampleCounter >= countdown);
   sampleCounter += countdown;
-  printf("#%u...\n", sampleCounter);
+  printf("#%Lu...\n", sampleCounter);
 }
 
 

@@ -9,7 +9,7 @@ CREATE TABLE sessions (
 
 CREATE TABLE sites (
   session int NOT NULL CHECK (session > 0) REFERENCES sessions MATCH FULL,
-  sample int NOT NULL CHECK (sample > 0),
+  sample bigint NOT NULL CHECK (sample > 0),
   file text NOT NULL CHECK (file <> ''),
   line int NOT NULL CHECK (line > 0),
 

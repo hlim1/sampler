@@ -18,10 +18,15 @@ class UserConfig:
     def __key(self, extension):
         return self.__namespace + '/' + extension
 
+    def asked(self):
+        '''Check whether we have asked the user to participate.'''
+
+        return self.__client.get_bool(Keys.asked)
+
     def enabled(self):
         '''Check whether sampling is enabled for this application.'''
 
-        if not self.__client.get_bool(Keys.asked):
+        if not self.asked():
             return 0
 
         if not self.__client.get_bool(Keys.master):

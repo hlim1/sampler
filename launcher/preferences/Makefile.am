@@ -27,10 +27,10 @@ BUILT_SOURCES =					\
 	preferences				\
 	sampler-preferences
 
-MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(BUILT_SOURCES)
 
-TESTS = $(capplet_DATA)
-TESTS_ENVIRONMENT = desktop-file-validate
+TESTS = $(capplet_DATA) $(servers_DATA)
+TESTS_ENVIRONMENT = ../test-by-extension
 
 
 install-data-hook:
@@ -47,3 +47,9 @@ $(BUILT_SOURCES): %: %.in Makefile
 		<$< >$@.tmp
 	chmod a+x $@.tmp
 	mv $@.tmp $@
+
+
+check-am: oaf.dtd
+
+oaf.dtd: %: ../%
+	$(LN_S) $< $@

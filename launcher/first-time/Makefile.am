@@ -1,3 +1,5 @@
+servers_DATA = Sampler_FirstTime.server
+
 first_time_DATA = first-time.glade
 
 first_time_PYTHON = $(sort $(wildcard *.py) Paths.py)
@@ -5,15 +7,22 @@ first_time_PYTHON = $(sort $(wildcard *.py) Paths.py)
 first_time_SCRIPTS = first-time
 
 EXTRA_DIST =						\
+	$(servers_DATA:=.in)				\
 	$(first_time_DATA)				\
 	$(filter-out Paths.py, $(first_time_PYTHON))	\
 	Paths.py.in					\
 	first-time.gladep				\
 	first-time.in
 
-BUILT_SOURCES = first-time Paths.py
+BUILT_SOURCES =					\
+	Paths.py				\
+	Sampler_FirstTime.server		\
+	first-time
 
-MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(BUILT_SOURCES)
+
+TESTS = $(servers_DATA)
+TESTS_ENVIRONMENT = ../test-by-extension
 
 
 install-data-hook:
@@ -21,10 +30,16 @@ install-data-hook:
 	rm -f $(first_time_PYTHON:%.py=$(DESTDIR)$(first_timedir)/%.pyc)
 
 
-first-time Paths.py: %: %.in Makefile
+$(BUILT_SOURCES): %: %.in Makefile
 	sed							\
 		-e 's!@''first_timedir@!$(first_timedir)!'	\
 		-e 's!@''commondir@!$(commondir)!'		\
 		<$< >$@.tmp
 	chmod a+x $@.tmp
 	mv $@.tmp $@
+
+
+check-am: oaf.dtd
+
+oaf.dtd: %: ../%
+	$(LN_S) $< $@

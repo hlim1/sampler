@@ -1,5 +1,6 @@
 *.pyc
 *.pyo
+*.server
 Makefile
 Makefile.in
 Paths.py

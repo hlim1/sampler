@@ -62,6 +62,9 @@ class FirstTime:
     def on_response(self, dialog, response):
         self.__client.set_bool(Keys.asked, gtk.TRUE)
 
+    def present(self):
+        return self.__dialog.present()
+
     def run(self):
         result = self.__dialog.run()
         self.__dialog.destroy()

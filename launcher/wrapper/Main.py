@@ -35,8 +35,12 @@ def main(configdir):
 
     launcher.spawn()
 
+    if not user.asked():
+        bonobo.activation.activate("iid == 'OAFIID:SamplerFirstTime:0.1'")
+
+    monitor = bonobo.activation.activate("iid == 'OAFIID:SamplerMonitor:0.1'")
+
     try:
-        monitor = bonobo.activation.activate("iid == 'OAFIID:SamplerMonitor:0.1'")
         outcome = launcher.wait()
 
     finally:

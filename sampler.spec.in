@@ -153,7 +153,3 @@ rm -rf $RPM_BUILD_ROOT/var/scrollkeeper
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%changelog
-* Mon Jul 28 2003 Ben Liblit <liblit@cs.berkeley.edu> 
-- Initial build.

@@ -1,4 +1,4 @@
-AC_INIT(sampler,0.5.1,liblit@cs.berkeley.edu)
+AC_INIT(sampler,0.5.2,liblit@cs.berkeley.edu)
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -43,7 +43,7 @@ if test "$sk_config" != scrollkeeper-config; then
 fi
 
 
-AC_CHECK_PROG(XMLLINT, xmllint, xmllint, \$(top_srcdir)/tools/skip-test)
+AC_CHECK_PROG(XMLLINT, xmllint, xmllint, \${top_srcdir}/tools/skip-test)
 if test "$XMLLINT" != xmllint; then
   AC_MSG_WARN(cannot find xmllint in \$PATH)
   AC_MSG_WARN(XML validation tests will be skipped)
@@ -290,6 +290,7 @@ www/Makefile
 www/cgi-bin/Makefile
 ])
 
+AC_CONFIG_FILES([launcher/test-by-extension], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/main], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/sampler-cc], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/cc1], [chmod +x $ac_file])

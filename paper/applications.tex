@@ -273,14 +273,12 @@ When an instrumented application terminates, it emits the vector of
 counter triples along with a flag indicating whether it completed
 successfully or was aborted by a fatal signal.
 
-%% changed number of counter triples to reflect the dataset without
-%% bison/lex lines
 As expected, this gives us a large number of candidate predicates:
 10,050 counter triples, or 30,150 counters in all.  Because our
 guesses are so crude, the vast majority of these are of no interest:
 either they compare completely unrelated variables, or they express
-relationships which behave indistinguishably in both successful and
-failed runs.
+relationships which behave identically in both successful and failed
+runs.
 
 To find the few predicates that do count, we recast the bug hunt as a
 statistical analysis problem.  Each run of \texttt{bc} constitutes one

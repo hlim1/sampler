@@ -1,4 +1,0 @@
-#!/bin/sed -nf
-
-/^\/usr\/gnu\/share\/bison\.simple	/=
-/^lex\.yy\.c	/=

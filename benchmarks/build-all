@@ -1,8 +1,0 @@
-#!/bin/sh -x
-
-date
-sleep 30
-time make -k
-time make -k times
-date
-echo "*** finis ***"

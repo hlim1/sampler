@@ -152,8 +152,8 @@ than a single executable with sampling in all functions.
 
 \begin{figure}
   \centering
-  \includegraphics{applications/perimeter}
-  \caption{\texttt{perimeter} tunning times with single-function
+  \includegraphics[width=\columnwidth]{applications/perimeter}
+  \caption{\texttt{perimeter} running times with single-function
     instrumentation}
   \label{fig:ccured-perimeter}
 \end{figure}
@@ -168,8 +168,8 @@ or with checks sampled.  The solo ``none'' bar represents the extreme
 limit of performance: all instrumentation statically removed from all
 functions.  No instrumentation scheme, with or without sampling, can
 run faster than this.  The remaining bars show the running time for
-each site-containing function, with sites either checked always or
-sampled 1/100.
+each site-containing function, with that function's sites either
+checked always or sampled 1/100.
 
 Note that the vertical baseline is nine seconds, not zero, which
 magnifies fairly small differences: the two leftmost bars differ by
@@ -207,7 +207,7 @@ noting that \texttt{child()}, which does show speedup, is the only
 function of these six which is not self recursive.
 
 Benchmarks that are less dominated by recursion suggest additional
-areas for improvement.  Recurring trends we have observed include:
+areas for improvement.  Recurring trends include:
 
 \begin{itemize}
 \item Poor amortization due to lightweight regions in fixed-bound
@@ -340,3 +340,11 @@ To find the few invariants that do count, we use \aside{identify and
   actually irrelevant, and you want to pick out the few that actually
   matter.}
 
+\begin{figure}
+  \centering
+  \small
+  \listinginput{152}{applications/more_arrays.c}
+  \caption{Source code of suspect \texttt{bc} function
+    \texttt{more\_arrays()}}
+  \label{fig:bc:more-arrays}
+\end{figure}

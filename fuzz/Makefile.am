@@ -1,4 +1,4 @@
-CXXFLAGS = -g -W -Wall -Werror
+AM_CXXFLAGS = -g -W -Wall -Werror
 
 libdecoder = ../../liblog/libdecoder.a
 

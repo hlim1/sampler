@@ -1,5 +1,15 @@
 -*- outline -*-
 
+* sampler-0.7.1
+
+** Back-port the instrumentor to OCaml-3.06.
+
+** Omit GNOME-based client tools if "pkg-config" is missing.
+
+* sampler-0.7
+
+** Support multiple active schemes within a single binary.
+
 * sampler-0.6.1
 
 ** Don't upload empty report if instrumented app died suddenly.

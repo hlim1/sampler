@@ -49,10 +49,10 @@ run: main $(infile).i
 dumper: %: $(libs) $(addsuffix .$(cmo), skipVisitor cfg functionBodyVisitor testHarness utils %)
 	$(link)
 
-cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), cfg utils foreach dotify skipVisitor functionBodyVisitor splitAfterCalls testHarness %)
+cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), cfg utils foreach dotify skipVisitor functionBodyVisitor splitAfterCalls cfgToDot testHarness %)
 	$(link)
 
-main: %: $(libs) $(addsuffix .$(cmo), identity mapClass stmtMap setClass stmtSet skipVisitor functionBodyVisitor removeLoops classifyJumps forwardJumps backwardJumps simplifyVisitor simplifyReturns simplifyLefts simplifyRights checkSimplicity instrument utils duplicate instrumentWrites transform testHarness %)
+main: %: $(libs) $(addsuffix .$(cmo), identity mapClass stmtMap setClass stmtSet skipVisitor functionBodyVisitor removeLoops classifyJumps forwardJumps backwardJumps simplifyVisitor simplifyReturns simplifyLefts simplifyRights checkSimplicity instrument utils duplicate instrumentWrites stores weighPaths transform testHarness %)
 	$(link)
 
 checker: %: $(libs) $(addsuffix .$(cmo), %)

@@ -6,7 +6,7 @@ class visitor = object
 
   method weigh = Stores.count_stmt
   method insertSkips = new SkipWrites.visitor
-  method insertLogs _ = new Instrument.visitor
+  method insertLogs = new Instrument.visitor
 
   method vfunc func =
     Simplify.visit func;

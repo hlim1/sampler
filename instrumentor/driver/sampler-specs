@@ -7,29 +7,29 @@
 %{!fthreads:%{!fno-threads:%{pthread:-D SAMPLER_THREADS}}}
 
 *cpp_random:
-%{!fsampler-random:-include sampler/random-online.h} \
-%{fsampler-random=online:-include sampler/random-online.h} \
-%{fsampler-random=offline:-include sampler/random-offline.h} \
-%{fsampler-random=fixed:-include sampler/random-fixed.h}
+%{!fsampler-random:-include sampler/random-online.h%s} \
+%{fsampler-random=online:-include sampler/random-online.h%s} \
+%{fsampler-random=offline:-include sampler/random-offline.h%s} \
+%{fsampler-random=fixed:-include sampler/random-fixed.h%s}
 
 *cpp_timestamps:
 %{ftimestamp-first:-D SAMPLER_TIMESTAMP_FIRST} \
 %{ftimestamp-last:-D SAMPLER_TIMESTAMP_LAST} \
-%{ftimestamp-*:-include sampler/timestamps.h}
+%{ftimestamp-*:-include sampler/timestamps.h%s}
 
 *cpp:
 + -DCIL \
 %(cpp_threads) \
 %(cpp_timestamps) \
--include sampler/countdown.h \
+-include sampler/countdown.h%s \
 %(cpp_random) \
-%{fsampler-scheme=bounds:-include sampler/bounds-unit.h} \
-%{fsampler-scheme=branches:-include sampler/branches-unit.h} \
-%{fsampler-scheme=function-entries:-include sampler/function-entries-unit.h} \
-%{fsampler-scheme=g-object-unref:-include sampler/g-object-unref-unit.h} \
-%{fsampler-scheme=returns:-include sampler/returns-unit.h} \
-%{fsampler-scheme=scalar-pairs:-include sampler/scalar-pairs-unit.h} \
-%{fsampler-scheme=*:-include sampler/unit.h}
+%{fsampler-scheme=bounds:-include sampler/bounds-unit.h%s} \
+%{fsampler-scheme=branches:-include sampler/branches-unit.h%s} \
+%{fsampler-scheme=function-entries:-include sampler/function-entries-unit.h%s} \
+%{fsampler-scheme=g-object-unref:-include sampler/g-object-unref-unit.h%s} \
+%{fsampler-scheme=returns:-include sampler/returns-unit.h%s} \
+%{fsampler-scheme=scalar-pairs:-include sampler/scalar-pairs-unit.h%s} \
+%{fsampler-scheme=*:-include sampler/unit.h%s}
 
 *cc1:
 + %{v} \

@@ -1,4 +1,4 @@
-AC_INIT([sampler],[0.14],[liblit@cs.berkeley.edu])
+AC_INIT([sampler],[0.14.1],[liblit@cs.berkeley.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -104,7 +104,6 @@ fi
 
 AC_SUBST(schemadir, '${GCONF_SCHEMA_FILE_DIR}')
 AC_SUBST(serversdir, '${libdir}/bonobo/servers')
-AC_SUBST(package_includedir, '${includedir}/sampler')
 
 AC_SUBST(package_libdir, '${libdir}/${PACKAGE}')
 AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
@@ -112,6 +111,7 @@ AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
 AC_SUBST(driverdir, '${instrumentordir}/driver')
 AC_SUBST(toolsdir, '${package_libdir}/tools')
 AC_SUBST(traylibdir, '${package_libdir}/tray')
+AC_SUBST(package_includedir, '${driverdir}/include')
 
 AC_SUBST(package_datadir, '${datadir}/${PACKAGE}')
 AC_SUBST(commondir, '${package_datadir}/common')

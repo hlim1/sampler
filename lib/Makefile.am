@@ -5,7 +5,7 @@ if HAVE_THREAD_STORAGE
 thread_lib = libsampler-threads.a
 endif
 
-lib_LIBRARIES =					\
+driver_LIBRARIES =				\
 	libsampler.a				\
 	libsampler-no-threads.a			\
 	$(thread_lib)

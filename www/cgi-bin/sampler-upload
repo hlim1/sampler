@@ -36,7 +36,7 @@ sub stash_environ () {
 	$environment->print($key, $value)
 	    if $key =~ /^HTTP_SAMPLER_/;
     }
-    $environment->print('DATE', strftime('%F %T', localtime));
+    $environment->print('DATE', strftime('%F %T', gmtime));
 }
 
 

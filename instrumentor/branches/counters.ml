@@ -18,7 +18,8 @@ class builder file =
 	Bump.bump location (Lval local) slice
       in
 
-      sites#add { location = location; description = d_exp () expression };
+      sites#add { location = location; fundec = func;
+		  description = d_exp () expression };
       local, bump
 
 

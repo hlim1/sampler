@@ -13,6 +13,7 @@ class container =
 	  ++ seq (chr '\t') (fun d -> d) [text site.location.file;
 					  num site.location.line;
 					  num site.location.byte;
+					  text site.fundec.svar.vname;
 					  site.description]
 	  ++ line
       in

@@ -1,2 +1,6 @@
-type t = { location : Cil.location;
+open Cil
+
+
+type t = { location : location;
+	   fundec : fundec;
 	   description : Pretty.doc }

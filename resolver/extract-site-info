@@ -28,8 +28,8 @@ while (<$objdump>) {
     last;
 }
 
-die unless defined $offset;
-die unless $size;
+die "\".debug_site_info\" section is missing\n" unless defined $offset;
+die "\".debug_site_info\" section is empty\n" unless $size;
 
 my $buffer;
 my $executable = new FileHandle $name, 'r';

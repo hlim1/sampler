@@ -15,6 +15,8 @@ class ['key, 'data] container indexer = object(self)
 
   method size = List.length !storage
 
+  method isEmpty = !storage == []
+
   method iter action =
     List.iter (fun (_, (key, data)) -> action key data) !storage
 end

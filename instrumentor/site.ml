@@ -1,22 +1,18 @@
 open Cil
 
 
-let all = new FunctionNameHash.c 0
+let hosts = new FunctionNameHash.c 0
+let sites = new FunctionNameHash.c 0
 
-let count = ref 0
+let hostCount = ref 0
 
 
-class virtual c func =
-  let sites =
-    let list = ref [] in
-    all#add func list;
-    incr count;
-    list
-  in
-
+class virtual c host =
   object (self)
     initializer
-      sites := (self :> c) :: !sites
+      hosts#replace host ();
+      sites#add host (self :> c);
+      incr hostCount
 
     method virtual enact : stmt
   end
@@ -25,10 +21,11 @@ class virtual c func =
 type index = stmt list FunctionNameHash.c
 
 let enactAll () =
-  let result = new FunctionNameHash.c !count in
-  let enactFunctionSites host sites =
-    let statements = List.map (fun site -> site#enact) !sites in
-    result#add host statements
+  let result = new FunctionNameHash.c !hostCount in
+  let enactFunc host () =
+    let sites = sites#findAll host in
+    let enactments = List.map (fun site -> site#enact) sites in
+    result#add host enactments
   in
-  all#iter enactFunctionSites;
+  hosts#iter enactFunc;
   result

@@ -23,12 +23,11 @@ let phase =
     FunctionFilter.filter#collectPragmas file;
 
     let schemes = List.map (fun scheme -> scheme file) !schemes in
-    List.iter (fun scheme -> scheme#findSites) schemes;
-    let allSites = Site.enactAll () in
+    List.iter (fun scheme -> scheme#findAllSites) schemes;
 
     let digest = lazy (Digest.file file.fileName) in
-    List.iter (fun scheme -> scheme#embedInfo digest) schemes;
     EmbedCFG.visit file digest;
+    List.iter (fun scheme -> scheme#embedInfo digest) schemes;
 
     if !sample then
       begin

@@ -112,7 +112,6 @@ let visit file digest =
   if !embedCFG then
     TestHarness.time "  embedding CFG"
       (fun () ->
-	Dynamic.analyze file;
 	let visitor = new visitor file digest in
 	visitCilFileSameGlobals (visitor :> cilVisitor) file;
 	visitor#addChar '\n';

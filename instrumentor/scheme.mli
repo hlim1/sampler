@@ -1,5 +1,10 @@
-class virtual c :
+open Cil
+
+
+class virtual c : file ->
   object
-    method virtual findSites : unit
+    method virtual private findSites : fundec -> unit
     method virtual embedInfo : Digest.t Lazy.t -> unit
+
+    method findAllSites : unit
   end

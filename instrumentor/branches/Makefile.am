@@ -13,16 +13,14 @@ include $(top_srcdir)/ocaml/rules.mk
 
 MOSTLYCLEANFILES += $(scheme).$(cma)
 
-
-libdirs += .. $(top_builddir)/ocaml
+libdirs += $(dir $(libharness)) $(dir $(libcommon))
 syslibs = str.$(cma) unix.$(cma)
 
-$(dir $(libharness))/%.cmi: $(libharness); :
-$(dir $(libcommon))/%.cmi: $(libcommon); :
+$(dir $(libharness))%.cmi: $(libharness); @:
+$(dir $(libcommon))%.cmi: $(libcommon); @:
 
-%.$(cma): $(force)
-	$(recurse)
+$(libharness): $(force); $(recurse)
+$(libcommon): $(force); $(recurse)
 
-
-$(scheme).$(cma): $($(scheme)Scheme)
-	$(archive)
+all-local: $(scheme).$(cma)
+$(scheme).$(cma): $(branchScheme); $(archive)

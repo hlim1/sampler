@@ -7,7 +7,7 @@ extra_impls = libraries version
 
 include $(top_srcdir)/ocaml/rules.mk
 
-libdirs += $(top_builddir)/ocaml
+libdirs += $(top_builddir)/ocaml branches
 syslibs = str.$(cma) unix.$(cma)
 
 
@@ -21,14 +21,16 @@ main = main.$(cmo)
 main: $(libcil) $(libcommon) harness.$(cma) main.$(cmo)
 	$(link)
 
-harness = $(phases)
+harness = $(bumper) $(siteFinder) $(phases)
 harness.$(cma): $(harness)
 	$(archive)
 
-$(dir $(libcommon))/%.cmi: $(libcommon); :
+$(dir $(libcommon))%.cmi: $(libcommon); @:
+$(libcommon): $(force); $(recurse)
 
-$(libcommon): $(force)
-	$(recurse)
+libbranches := branches/branches.cma
+$(dir $(libbranches))%.cmi: $(libbranches); @:
+$(libbranches): $(force); $(recurse)
 
 cfgTest: $(libcil) $(cfgTest)
 	$(link)

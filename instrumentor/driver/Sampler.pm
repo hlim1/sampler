@@ -65,9 +65,15 @@ sub collectOneArgument {
     } elsif ($arg =~ /^--(no-)?use-points-to$/) {
 	push @{$self->{instrumentor}}, $arg;
 	return 1;
-    } elsif ($arg =~ /^--(no-)?threads$/) {
+    } elsif ($arg eq '--no-threads') {
 	push @{$self->{instrumentor}}, $arg;
-	$self->{threads} = ! $1;
+	$self->{threads} = 0;
+	return 1;
+    } elsif ($arg =~ '--threads') {
+	$::have_thread_storage
+	    or die "cannot instrument multithreaded applications on this platform\n";
+	push @{$self->{instrumentor}}, $arg;
+	$self->{threads} = 1;
 	return 1;
     } else {
 	unshift @{$pargs}, '--threads' if $self->isThreadFlag($arg);

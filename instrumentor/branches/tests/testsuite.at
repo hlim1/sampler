@@ -42,10 +42,12 @@ $abs_top_srcdir/tools/resolve-samples sharing library.so plugin.so <trace | cut 
 AT_CLEANUP
 
 AT_SETUP(threads)
+m4_include(config.m4)
 AT_CHECK(
 set -e
 cp $abs_srcdir/threads.c .
 cp $abs_srcdir/threads.expected expout
+if test 'HAVE_THREAD_STORAGE' != 1; then exit 77; fi
 $abs_top_builddir/instrumentor/driver/main branches -save-temps -pthread -o threads threads.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./threads >/dev/null
 $abs_top_srcdir/tools/resolve-samples threads <trace | cut -f2- | sort

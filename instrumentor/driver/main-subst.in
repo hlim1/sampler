@@ -8,6 +8,7 @@ use lib '@CIL_HOME@/lib';
 
 my $scheme = shift or die "Usage: $0 <scheme> [<compiler arguments> ...]\n";
 
+our $have_thread_storage = '@HAVE_THREAD_STORAGE@';
 our $libm = '@LIBM@';
 our $root = "$FindBin::Bin/@top_srcdir@";
 our $home = "$root/instrumentor/$scheme";

@@ -107,13 +107,33 @@ AC_COMPILE_IFELSE(
   AC_MSG_RESULT(yes),
   AC_MSG_RESULT(no))
 
-AC_MSG_CHECKING(thread-local storage specifier)
-AC_COMPILE_IFELSE(
-  AC_LANG_PROGRAM([__thread int x;], []),
-  have_thread_storage=yes
-  AC_MSG_RESULT(yes),
-  AC_MSG_RESULT(no))
-AM_CONDITIONAL(HAVE_THREAD_STORAGE, test "$have_thread_storage" = yes)
+
+AC_MSG_CHECKING(for thread-local storage qualifier)
+AC_RUN_IFELSE(
+  AC_LANG_PROGRAM([__thread int global;], []),
+  have_thread_storage=yes,
+  have_thread_storage=no)
+AC_MSG_RESULT($have_thread_storage)
+
+if test "$have_thread_storage" != no; then
+  AC_MSG_CHECKING(whether thread-local storage actually works)
+  AC_RUN_IFELSE(
+    AC_LANG_PROGRAM([__thread int global;], [global = 0; return 0;]),
+    have_thread_storage=yes,
+    have_thread_storage=no,
+    have_thread_storage='optimistically assuming yes')
+  AC_MSG_RESULT($have_thread_storage)
+fi
+
+if test "$have_thread_storage" = no; then
+  AC_MSG_WARN(cannot instrument multithreaded applications)
+else
+  HAVE_THREAD_STORAGE=1
+fi
+
+AC_SUBST(HAVE_THREAD_STORAGE)
+AM_CONDITIONAL(HAVE_THREAD_STORAGE, test "$have_thread_storage" != no)
+
 
 AC_MSG_CHECKING(for log without -lm)
 old_CFLAGS=$CFLAGS
@@ -156,6 +176,7 @@ benchmarks/ccured/perimeter/Makefile
 benchmarks/ccured/power/Makefile
 benchmarks/ccured/treeadd/Makefile
 benchmarks/ccured/tsp/Makefile
+config.m4
 doc/Makefile
 doc/config.xml
 fuzz/Makefile
@@ -187,6 +208,7 @@ libcountdown/cyclic-size.h
 libreport/Makefile
 libthreads/Makefile
 libtuples/Makefile
+package.m4
 sampler.spec
 ])
 

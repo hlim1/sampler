@@ -103,8 +103,8 @@ straightforward.  However, we discovered that designing a data
 gathering infrastructure that would scale is non-trivial.  As a
 result, this paper discusses mostly the design and implementation of
 the system that gathers the data from user executions
-(Section~\ref{sec:framework}). We do give a non-trivial example of
-subsequent data analysis in Section~\ref{sec:applications}.
+(\autoref{sec:framework}). We do give a non-trivial example of
+subsequent data analysis in \autoref{sec:applications}.
 
 
 Our infrastructure is designed to gather information about a
@@ -115,7 +115,7 @@ two critical problems.
 The first problem is that the method for gathering information must be
 sufficiently lightweight that it has a negligible impact on the
 performance of the user's program.  Our approach, discussed in
-Section~\ref{sec:framework}, is based on sampling.  Classical sampling
+\autoref{sec:framework}, is based on sampling.  Classical sampling
 for measuring program performance searches for the ``elephant in the
 haystack''---it is looking for the biggest consumers of time.  In
 contrast, we are looking for needles (bugs) that may occur very
@@ -134,14 +134,14 @@ client is negligible.  Furthermore, gathering a relatively small
 amount of data periodically from a large number of clients can
 quickly overwhelm the storage capacity of a central server.  In our
 experience, compression of the data must always be designed in to
-the analysis; we discuss this further in Section~\ref{sec:applications}. 
+the analysis; we discuss this further in \autoref{sec:applications}. 
 
-Section~\ref{sec:applications} presents two different applications of our
-framework.  In Section~\ref{sec:share} we consider how we can share the
+\autoref{sec:applications} presents two different applications of our
+framework.  In \autoref{sec:share} we consider how we can share the
 cost of program assertions over a large user base through sampling.
 Each user only executes a fraction of the assertions, and thus sees
 good performance, but in the aggregate bugs due to assertion failures
-are still extremely likely to be detected.  In Section~\ref{sec:applications:mining} we
+are still extremely likely to be detected.  In \autoref{sec:debug} we
 show how we can use statistical techniques to identify the source of a
 likely bug from samples taken from a few thousand executions.  We
 sample information on the relationship between pairs of integer
@@ -151,6 +151,6 @@ highly predictive of program failure.
 
 Finally, monitoring of user executions raises some important privacy
 and security concerns.  The problems are both social and technical; a
-discussion of these issues appears in Section~\ref{sec:privsec}.
+discussion of these issues appears in \autoref{sec:privsec}.
 
 %% LocalWords:  privsec

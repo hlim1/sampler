@@ -38,8 +38,8 @@ class PreferencesDialog:
         column = gtk.TreeViewColumn('Application', renderer)
         column.set_cell_data_func(renderer, self.__name_data_func)
         column.set_sort_column_id(model.COLUMN_NAME)
-        column.set_reorderable(gtk.TRUE)
-        column.set_resizable(gtk.TRUE)
+        column.set_reorderable(True)
+        column.set_resizable(True)
         view.append_column(column)
 
         renderer = gtk.CellRendererToggle()
@@ -47,7 +47,7 @@ class PreferencesDialog:
         column = gtk.TreeViewColumn('Enabled', renderer)
         column.set_cell_data_func(renderer, self.__enabled_data_func)
         column.set_sort_column_id(model.COLUMN_ENABLED)
-        column.set_reorderable(gtk.TRUE)
+        column.set_reorderable(True)
         view.append_column(column)
 
         view.set_model(model)
@@ -75,13 +75,13 @@ class PreferencesDialog:
         app.set_enabled(not app.get_enabled())
 
     def on_dialog_delete(self, dialog, event):
-        return gtk.TRUE
+        return True
 
     def on_dialog_response(self, dialog, response):
         if response < 0:
             dialog.hide()
             dialog.emit_stop_by_name('response')
-            return gtk.TRUE
+            return True
 
     def present(self):
         return self.__dialog.present()

@@ -52,7 +52,7 @@ class FirstTime:
 
     def on_response(self, dialog, response):
         if response == gtk.RESPONSE_OK:
-            self.__client.set_bool(Keys.asked, gtk.TRUE)
+            self.__client.set_bool(Keys.asked, True)
 
     def present(self):
         return self.__dialog.present()

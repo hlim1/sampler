@@ -19,10 +19,10 @@ class LazyDialog(LazyWidget):
         self.widget().present()
 
     def on_dialog_delete(self, dialog, event):
-        return gtk.TRUE
+        return True
 
     def on_dialog_response(self, dialog, response):
         if response < 0:
             dialog.hide()
             dialog.emit_stop_by_name('response')
-            return gtk.TRUE
+            return True

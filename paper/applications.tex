@@ -264,22 +264,22 @@ then, are wild guesses with no bearing on program success or failure.
 Given a body of actual runs, we can discard bad guesses using a set of
 tests we term \termdef{elimination strategies}:
 
-\begin{description}
-\item[\elim{Elimination by universal falsehood}:] disregard any
-  counter that is zero on all runs.  These likely represent
-  predicates which can never be true.
-
-\item[\elim{Elimination by lack of failing coverage}:] disregard any
+\begin{description}\sloppy
+\item[Elimination by \elim{universal falsehood}:] disregard any
+  counter that is zero on all runs.  These likely represent predicates
+  which can never be true.
+  
+\item[Elimination by \elim{lack of failing coverage}:] disregard any
   triple of counters all three of which are zero on all failed runs.
   Because one counter in each triple must always be true for any
   sample, these likely represent instrumentation sites that are not
   even reached in failing executions.
-
-\item[\elim{Elimination by lack of failing example}:] disregard any
+  
+\item[Elimination by \elim{lack of failing example}:] disregard any
   counter which is zero on all failed runs.  These likely represent
   predicates that need not be true for a failure to occur.
-
-\item[\elim{Elimination by successful counterexample}:] disregard any
+  
+\item[Elimination by \elim{successful counterexample}:] disregard any
   counter which has a non-zero value on any successful run.  These
   must represent predicates which can be true without subsequently
   causing a failure.
@@ -287,7 +287,7 @@ tests we term \termdef{elimination strategies}:
 
 We characterize these as strategies because they are subject to noise
 from random sampling, and also because not all are equally applicable
-to all bugs.  For example, \elim{Elimination by successful
+to all bugs.  For example, elimination by \elim{successful
   counterexample} assumes that the bug is deterministic: whenever the
 bad behavior occurs, the program \emph{must} crash.  The first three
 strategies do not have this dependency, but do require a large enough
@@ -317,7 +317,7 @@ We have collected 2990 trial runs at a sampling rate of $1/1000$; 88
 of these end in a crash.  Applying each elimination strategy
 independently to the counter traces:
 
-\begin{description}
+\begin{description}\sloppy
 \item[\elim{Universal falsehood}] discards 1569 counters which are
   zero on all runs, leaving 141 candidate predicates.
 
@@ -388,8 +388,8 @@ analyzed together.  \elim{Lack of failing example} in general
 eliminates the most features, and therefore is also a good candidate
 to combine with \elim{successful counterexample}.  Doing so in the
 case of \texttt{ccrypt} leaves us with exactly the same two features,
-though in general one might find different results.  \elim{Elimination
-  by lack of failing coverage}, on the other hand, is an inherently
+though in general one might find different results.  Elimination by
+\elim{lack of failing coverage}, on the other hand, is an inherently
 weaker strategy; when combined with \elim{successful counterexample},
 we are still left with 86 features.
 
@@ -644,11 +644,11 @@ randomly chosen for training, 322 for validation, and 1339 for
 testing.  Although there are 30,150 raw features, many can be
 discarded immediately using \elim{elimination by universal falsehood}:
 in the training set 27,242 features are always zero.  Hence the
-effective number of features used in training is 2908.
-(\elim{Elimination by lack of failing example} can eliminate another
-647 features that are zero for all failed runs.  However we find that
-the presence or absence of these 647 features does not significantly
-affect the quality of the regularized logistic regression results.)
+effective number of features used in training is 2908.  (Elimination
+by \elim{lack of failing example} can eliminate another 647 features
+that are zero for all failed runs.  However we find that the presence
+or absence of these 647 features does not significantly affect the
+quality of the regularized logistic regression results.)
 
 To make the magnitude of the $\beta$ parameters comparable, the feature
 values have to be on the same scale.  Hence all the input features are

@@ -1,8 +1,8 @@
+*.defs
+*.pyc
+*.pyo
 .deps
 Makefile
 Makefile.in
 trayicon.c
 trayicon.defs
-*.pyc
-*.pyo
-*.defs

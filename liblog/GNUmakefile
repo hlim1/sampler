@@ -12,9 +12,9 @@ liblog.so: log.o
 
 log.o: %.o: %.c log.h primitive.h
 
-force:
-.PHONY: force
-
 clean:
 	rm -f *.o *.a *.so
 .PHONY: clean
+
+spotless: clean
+.PHONY: spotless

@@ -12,9 +12,7 @@ let visit func =
   ] in
       
   let doSubphase (title, visitor) =
-    eprintf "  subphase %s begins\n" title;
     ignore (Cil.visitCilFunction visitor func);
-    eprintf "  subphase %s ends\n" title
   in
   
   List.iter doSubphase subphases

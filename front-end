@@ -50,7 +50,6 @@ while ($_ = shift) {
 
 foreach (@source) {
     my $base = basename $_;
-    warn "mangling $base\n";
     sys @cpp, '-o', "$base.i", '-E', "$_.c";
     sys "$FindBin::Bin/main $base.i >$base.inst.c";
     die unless -s "$base.inst.c";

@@ -74,7 +74,6 @@
 of the University of California</property>
   <property name="comments" translatable="yes">Bug isolation report uploader</property>
   <property name="authors">Ben Liblit &lt;liblit@cs.berkeley.edu&gt;</property>
-  <property name="translator_credits" translatable="yes">translator_credits</property>
   <signal name="response" handler="on_dialog_response" last_modification_time="Wed, 03 Sep 2003 06:38:42 GMT"/>
   <signal name="delete_event" handler="on_dialog_delete" last_modification_time="Wed, 03 Sep 2003 06:39:08 GMT"/>
 </widget>

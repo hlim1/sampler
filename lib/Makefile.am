@@ -94,6 +94,7 @@ libsampler_r_a_CFLAGS = -include $(srcdir)/threads.h -pthread
 if WITH_GNOME
 gnome_sources =					\
 	g-object-unref.c			\
+	g-object-unref-classify.c		\
 	g-object-unref-types.h
 endif
 

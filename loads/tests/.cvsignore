@@ -1,7 +1,7 @@
 *.i
 *.inst.c
+*.s
 *.trace
-*.trace.
 
 array
 conditional

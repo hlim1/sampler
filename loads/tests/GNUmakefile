@@ -1,4 +1,5 @@
 CC := ../../front-end ../main $(CC)
+CFLAGS := -save-temps
 
 tests := 					\
 	array					\
@@ -29,8 +30,7 @@ $(decodes): decode-%: %.trace $(decoder)
 .PHONY: $(decodes)
 
 $(traces): %.trace: %
-	./$< 2>$@.
-	mv $@. $@
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 
 $(objects): %.o: %.c ../../liblog/log.h ../../libcountdown/countdown.h ../main
 
@@ -44,5 +44,5 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(traces) $(traces:=.) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i)
+	rm -f $(traces) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i)
 .PHONY: clean

@@ -24,8 +24,8 @@ class visitor isWeighty countdown =
     method result = result
 
     method vstmt stmt =
-      match stmt.skind with
-      | Instr [Call (_, Lval callee, _, location) as call]
+      match IsolateInstructions.isolated stmt with
+      | Some (Call (_, Lval callee, _, location) as call)
 	when isWeighty callee ->
 	  let info = {location = location;
 		      jump = mkEmptyStmt ();
@@ -39,10 +39,6 @@ class visitor isWeighty countdown =
 					info.target]);
 	  result <- info :: result;
 	  SkipChildren
-
-      | Instr (_ :: _ :: _) ->
-	  ignore (bug "instr should have been atomized");
-	  failwith "internal error"
 
       | _ ->
 	  DoChildren

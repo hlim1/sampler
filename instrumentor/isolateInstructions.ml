@@ -19,3 +19,14 @@ class visitor =
 
 let visit func =
   ignore (visitCilFunction new visitor func)
+
+
+let isolated {skind = skind} =
+  match skind with
+  | Instr [singleton] ->
+      Some singleton
+  | Instr (_ :: _ :: _) ->
+      ignore (bug "instr should have been atomized");
+      failwith "internal error"
+  | _ ->
+      None

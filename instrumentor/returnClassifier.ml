@@ -13,8 +13,8 @@ class visitor (tuples : ReturnTuples.builder) func =
       super#normalize
 
     method vstmt stmt =
-      match stmt.skind with
-      | Instr [Call (Some result, callee, args, location)]
+      match IsolateInstructions.isolated stmt with
+      | Some (Call (Some result, callee, args, location))
 	when self#includedStatement stmt ->
 	  let resultType, _, _, _ = splitFunctionType (typeOf callee) in
 	  if isInterestingType resultType then
@@ -29,10 +29,6 @@ class visitor (tuples : ReturnTuples.builder) func =
 	      stmt.skind <- Block (mkBlock [call; site])
 	    end;
 	  SkipChildren
-
-      | Instr (_ :: _ :: _) ->
-	  ignore (bug "instr should have been atomized");
-	  failwith "internal error"
 
       | _ ->
 	  DoChildren

@@ -68,22 +68,18 @@ class visitor (constants : Constants.collection) globals (tuples : CounterTuples
 	Block (mkBlock (first :: !statements))
       in
       
-      match stmt.skind with
-      | Instr [Set (left, expr, location)]
+      match IsolateInstructions.isolated stmt with
+      | Some (Set (left, expr, location))
 	when self#includedStatement stmt && isInterestingLval left ->
 	  let replacement = (fun temp -> Set (temp, expr, location)) in
 	  stmt.skind <- build replacement left location;
 	  SkipChildren
 
-      | Instr [Call (Some left, callee, args, location)]
+      | Some (Call (Some left, callee, args, location))
 	when self#includedStatement stmt && isInterestingLval left ->
 	  let replacement = (fun temp -> Call (Some temp, callee, args, location)) in
 	  stmt.skind <- build replacement left location;
 	  SkipChildren
-
-      | Instr (_ :: _ :: _) ->
-	  ignore (bug "instr should have been atomized");
-	  failwith "internal error"
 
       | _ ->
 	  DoChildren

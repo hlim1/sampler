@@ -76,8 +76,8 @@ class visitor file digest =
 
       (* callees list *)
       begin
-	match statement.skind with
-	| Instr [Call (_, Lval callee, _, _)] ->
+	match IsolateInstructions.isolated statement with
+	|  Some (Call (_, Lval callee, _, _)) ->
 	    begin
 	      match Dynamic.resolve callee with
 	      | Dynamic.Unknown ->
@@ -90,12 +90,8 @@ class visitor file digest =
 		  List.iter addCallee callees
 	    end
 
-	| Instr [Call (_, callee, _, _) as call] ->
+	| Some (Call (_, callee, _, _)) ->
 	    ignore (bug "unexpected non-lval callee: %a" d_exp callee);
-	    failwith "internal error"
-
-	| Instr (_ :: _ :: _) ->
-	    ignore (bug "instr should have been atomized");
 	    failwith "internal error"
 
 	| _ ->

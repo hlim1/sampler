@@ -19,7 +19,7 @@ these concerns is both a moral and a practical imperative.
   \fbox{\parbox{\boxwidth}{\small
       
       \addtolength{\parskip}{1ex}
-
+      
       The Netscape Quality Feedback Agent is a feature that gathers
       predefined technical information about Communicator and sends it
       back to the Netscape software development team so they can
@@ -60,15 +60,15 @@ these concerns is both a moral and a practical imperative.
 
 The experiences of Netscape/Mozilla with crash feedback systems may be
 illustrative.  We have met with members of the Netscape Talkback Team,
-a group of quality assurance engineers who
-manage crash reports from the automated feedback system.
-Considerable effort has gone into designing the client side of this
-system so that users are fully informed.  The system is strictly
-opt-in on a per-failure basis, or may be disabled entirely.  The user
-may optionally examine the contents of the crash report, and no
-information is ever sent to Netscape without explicit authorization.
-\autoref{fig:netscape} shows the sort of information
-presented each time Netscape or Mozilla has crash data to submit.
+a group of quality assurance engineers who manage crash reports from
+the automated feedback system.  Considerable effort has gone into
+designing the client side of this system so that users are fully
+informed.  The system is strictly opt-in on a per-failure basis, or
+may be disabled entirely.  The user may optionally examine the
+contents of the crash report, and no information is ever sent to
+Netscape without explicit authorization.  \autoref{fig:netscape} shows
+the sort of information presented each time Netscape or Mozilla has
+crash data to submit.
 
 Not all users will read or understand these assurances.
 %Furthermore, while one can visually scan a Mozilla crash report for
@@ -89,14 +89,13 @@ little revelatory power.
 Some data, or some parts of execution, may be so sensitive that even
 this diffuse information leakage is unacceptable.  Several type-based
 analyses under the broad heading of secure information flow
-\cite{volpano96:sound,1997:tapsoft:volpano,ZdZhNyMy2001} may be
-helpful here.  Such systems statically identify parts of a
-program that manipulate sensitive data; we can avoid
-inserting instrumentation that reveals such values.  Of course, this
-will make it difficult to track bugs in security-sensitive parts
-of an application, but that trade-off is always present: one can only
-fix bugs about which that the customer is willing to provide useful
-information.  
+\cite{1997:tapsoft:volpano,ZdZhNyMy2001} may be helpful here.  Such
+systems statically identify parts of a program that manipulate
+sensitive data; we can avoid inserting instrumentation that reveals
+such values.  Of course, this will make it difficult to track bugs in
+security-sensitive parts of an application, but that trade-off is
+always present: one can only fix bugs about which that the customer is
+willing to provide useful information.
 %A greater challenge is assuring the correctness of these
 %(or any) type-based approaches in the presence of memory safety bugs,
 %but the \CCured project has shown that this too is possible.

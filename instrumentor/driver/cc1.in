@@ -34,12 +34,12 @@ sub slurp_0 (@) {
 
 
 sub slurp_1 ($) {
-    slurp_0 $_, shift @ARGV;
+    slurp_0 @_, shift @ARGV;
 }
 
 
 sub verbose ($) {
-    slurp_0 $_;
+    slurp_0 @_;
     push @inst, '--show-phase-times';
     $verbose = 1;
 }
@@ -47,7 +47,7 @@ sub verbose ($) {
 
 sub dumpbase ($) {
     my $value = shift @ARGV;
-    push @cc1, $_, $value;
+    push @cc1, @_, $value;
     push @inst, '--dumpbase', $value;
 }
 

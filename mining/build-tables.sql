@@ -19,7 +19,7 @@ CREATE TABLE sites (
 
 CREATE TABLE samples (
   session int NOT NULL CHECK (session > 0),
-  site int NOT NULL CHECK (site > 0),
+  site bigint NOT NULL CHECK (site > 0),
   expression text NOT NULL CHECK (expression <> ''),
   type smallint NOT NULL CHECK (type BETWEEN 1 AND 15),
   value text NOT NULL CHECK (value <> ''),

@@ -3,9 +3,11 @@ import urllib2
 import urlparse
 
 import gnome
+import gtk
 import gtk.glade
 import gtkhtml2
 
+import BlipIcons
 import Paths
 import Signals
 
@@ -21,6 +23,9 @@ class ServerMessage:
         xml = gtk.glade.XML(Paths.glade)
         Signals.autoconnect(self, xml)
         self.__dialog = xml.get_widget('server-message')
+        pixmap = self.__dialog.render_icon(BlipIcons.stock[gtk.TRUE],
+                                           BlipIcons.ICON_SIZE_EMBLEM, '')
+        self.__dialog.set_icon(pixmap)
 
         document = gtkhtml2.Document()
         document.connect('request_url', self.on_request_url)

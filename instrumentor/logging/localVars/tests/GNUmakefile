@@ -1,7 +1,7 @@
 top := ../../../..
 
 front_end := ../../driver/main ../main
-CC := $(front_end) $(CC) -v -g -W -Wall -Werror -save-temps
+CC := $(front_end) -v -g -W -Wall -Werror -save-temps
 
 tests := test
 

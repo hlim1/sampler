@@ -4,7 +4,8 @@ pixmap_links = 					\
 	disabled-48.png				\
 	enabled-16.png				\
 	enabled-32.png				\
-	enabled-48.png
+	enabled-48.png				\
+	enabled-96.png
 
 servers_DATA = Sampler_Monitor.server
 

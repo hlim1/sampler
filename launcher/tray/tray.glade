@@ -69,7 +69,7 @@
 <widget class="GnomeAbout" id="about">
   <property name="destroy_with_parent">False</property>
   <property name="icon">enabled-16.png</property>
-  <property name="logo">enabled-48.png</property>
+  <property name="logo">enabled-96.png</property>
   <property name="copyright" translatable="yes">Copyright © 2003 The Regents
 of the University of California</property>
   <property name="comments" translatable="yes">View and set bug isolation preferences</property>

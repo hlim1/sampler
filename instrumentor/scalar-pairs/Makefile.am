@@ -9,7 +9,8 @@ EXTRA_DIST =					\
 	upcase-good.expected
 
 TESTSUITE = $(srcdir)/testsuite
-check-local: atconfig $(TESTSUITE)
+check_SCRIPTS = $(TESTSUITE)
+check-local: atconfig
 	$(SHELL) $(TESTSUITE)
 
 AUTOTEST = autom4te --language=autotest

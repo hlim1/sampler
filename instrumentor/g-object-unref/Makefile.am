@@ -5,7 +5,8 @@ EXTRA_DIST =					\
 	testsuite.at
 
 TESTSUITE = $(srcdir)/testsuite
-check-local: atconfig atlocal $(TESTSUITE)
+check_SCRIPTS = $(TESTSUITE)
+check-local: atconfig atlocal
 	$(SHELL) $(TESTSUITE)
 
 AUTOTEST = autom4te --language=autotest

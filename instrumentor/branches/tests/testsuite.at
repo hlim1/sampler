@@ -7,7 +7,7 @@ cp $abs_srcdir/simple.c .
 cp $abs_srcdir/simple.expected expout
 $abs_top_builddir/instrumentor/driver/main branches -save-temps -o simple simple.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./simple
-$abs_top_srcdir/tools/resolve-samples simple <trace | cut -f2- | sort
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples simple | cut -f2- | sort
 , 0, expout)
 AT_CLEANUP
 
@@ -19,7 +19,7 @@ cp $abs_srcdir/modular-b.c .
 cp $abs_srcdir/modular.expected expout
 $abs_top_builddir/instrumentor/driver/main branches -save-temps -o modular *.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./modular
-$abs_top_srcdir/tools/resolve-samples modular <trace | cut -f2- | sort
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples modular | cut -f2- | sort
 , 0, expout)
 AT_CLEANUP
 
@@ -37,7 +37,7 @@ $cc -shared -o library.so library.c
 $cc -c sharing.c
 $cc -Wl,-rpath,. -o sharing sharing.o library.so -ldl
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./sharing
-$abs_top_srcdir/tools/resolve-samples sharing library.so plugin.so <trace | cut -f2- | sort
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples sharing library.so plugin.so | cut -f2- | sort
 ], 0, expout)
 AT_CLEANUP
 
@@ -50,6 +50,6 @@ cp $abs_srcdir/threads.expected expout
 if test 'HAVE_THREAD_STORAGE' != 1; then exit 77; fi
 $abs_top_builddir/instrumentor/driver/main branches -save-temps -pthread -o threads threads.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./threads >/dev/null
-$abs_top_srcdir/tools/resolve-samples threads <trace | cut -f2- | sort
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples threads | cut -f2- | sort
 , 0, expout)
 AT_CLEANUP

@@ -114,9 +114,6 @@ tools for collecting and decoding sampled instrumentation reports.
 %{_bindir}/*
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/doc
-%{_datadir}/%{name}/fragments
-%{_datadir}/%{name}/templates
-%{_datadir}/aclocal/*
 %{_datadir}/omf/*
 %{_libdir}/%{name}
 

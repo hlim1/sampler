@@ -217,10 +217,6 @@ Makefile
 applications/Makefile
 applications/evolution/Makefile
 applications/gaim/Makefile
-autotools/Makefile
-autotools/fragments/Makefile
-autotools/fragments/sampler/Makefile
-autotools/templates/Makefile
 benchmarks/Makefile
 benchmarks/ccured/Makefile
 benchmarks/ccured/bh/Makefile

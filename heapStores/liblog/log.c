@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -18,9 +19,10 @@ void logWrite(const char filename[], unsigned line,
 	      const void *address, unsigned size,
 	      const void *data __attribute__((unused)))
 {
-  if (nextLogCountdown > 0)
-    skipLog();
-  else
+  assert(nextLogCountdown > 0);
+  --nextLogCountdown;
+
+  if (nextLogCountdown == 0)
     {
       resetCountdown();
       

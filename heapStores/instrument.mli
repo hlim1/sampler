@@ -1,1 +1,4 @@
-class visitor : Cil.cilVisitor
+open Cil
+
+
+val insert : ClonesMap.clonesMap -> FindSites.map -> unit

@@ -1,3 +1,6 @@
-type set = StmtSet.container
+open Cil
+
+
+type map = (exp * lval * location) StmtMap.container
       
-val visit : Cil.block -> set
+val visit : block -> map

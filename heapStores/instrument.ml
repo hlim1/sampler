@@ -1,39 +1,21 @@
 open Cil
 
 
-let makeLval = function
-  | Lval lval -> lval
-  | _ -> failwith "weird expression"
-	
-	
-class visitor = object (self)
-  inherit FunctionBodyVisitor.visitor
-      
-  method vstmt _ = DoChildren
+let insert clones sites =
 
-  method vinst inst =
-    begin
-      match inst with
-      | Set((Mem addr, NoOffset), data, location) as original ->
-	  self#queueInstr
-	    [Call (None, Lval (var LogWrite.logWrite),
-		   [mkCast (mkString location.file) charConstPtrType;
-		    kinteger IUInt location.line;
-		    mkCast addr LogWrite.voidConstPtrType;
-		    SizeOf(typeOf data);
-		    mkCast (mkAddrOf (makeLval data)) LogWrite.voidConstPtrType],
-		   location)]
-      | _ -> ()
-    end;
-    SkipChildren
-end
+  let insertOne original ((address, data, location) : (exp * lval * location)) =
+    let instrumented = ClonesMap.findCloneOf clones original in
+    let call = Call (None, Lval (var LogWrite.logWrite),
+		     [mkCast (mkString location.file) charConstPtrType;
+		      kinteger IUInt location.line;
+		      mkCast address LogWrite.voidConstPtrType;
+		      SizeOf(typeOfLval data);
+		      mkCast (mkAddrOf data) LogWrite.voidConstPtrType],
+		     location)
+    in
+    let block = Block (mkBlock [mkStmtOneInstr call;
+				mkStmt instrumented.skind]) in
+    instrumented.skind <- block
+  in
 
-
-let visit original =
-  let replacement = visitCilBlock (new visitor) original in
-  assert (replacement == original)
-
-
-let phase =
-  "Instrument",
-  visitCilFileSameGlobals new visitor
+  sites#iter insertOne

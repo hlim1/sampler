@@ -2,7 +2,7 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot harness.$(cma)
-transformers := assignments loads
+transformers := assignments heapStores loads
 subdirs := libcountdown $(transformers)
 
 include rules.mk

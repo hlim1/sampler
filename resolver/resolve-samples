@@ -17,7 +17,19 @@ sub check_signature ($$$) {
 }
 
 
-########################################################################
+sub compare_units ($$) {
+    my ($a, $b) = @_;
+
+    my $siteCounts = @{$a->{sites}} <=> @{$b->{sites}};
+    return $siteCounts if $siteCounts;
+
+    foreach (0 .. $#{$a->{sites}}) {
+	my $descriptions = $a->{sites}->[$_]->{description} cmp $b->{sites}->[$_]->{description};
+	return $descriptions if $descriptions;
+    }
+
+    return 0;
+}
 
 
 my %compilationUnit;
@@ -68,20 +80,24 @@ foreach my $objectName (@ARGV) {
 	my $signature = shift @lines;
 	++$lineno;
 	check_signature $objectName, $lineno, $signature;
-	if (exists $compilationUnit{$signature}) {
-	    warn "warning: duplicate signature: $signature\n";
-	    warn "warning: first defined in \"$compilationUnit{$signature}{name}\"\n";
-	    warn "warning: redefined in \"$objectName\"\n";
-	}
-	my @sites;
+
+	my $unit = { sites => [], name => $objectName };
 	while (@lines) {
 	    my $site = { description => shift @lines };
 	    ++$lineno;
-	    last if $site->{description} eq '';
-	    push @sites, $site;
+	    last unless $site->{description};
+	    push @{$unit->{sites}}, $site;
 	}
-	$compilationUnit{$signature} = { sites => \@sites,
-					 name => $objectName };
+
+	if (exists $compilationUnit{$signature}) {
+	    if (compare_units($compilationUnit{$signature}, $unit)) {
+		warn "error: duplicate signature: $signature\n";
+		warn "        first defined in \"$compilationUnit{$signature}{name}\"\n";
+		die  "        inconsistently redefined in \"$objectName\"\n";
+	    }
+	} else {
+	    $compilationUnit{$signature} = $unit;
+	}
     }
 }
 
@@ -103,9 +119,9 @@ sub skip () {
 }
 
 
-$_ = <STDIN>;
+$_ = <STDIN> || '';
 chomp;
-die "error: malformed report header: $_\n" unless $_ eq '<report id="samples">';
+die "error: malformed report header: $_" unless $_ eq '<report id="samples">';
 
 while (my $signature = <STDIN>) {
     chomp $signature;
@@ -114,10 +130,6 @@ while (my $signature = <STDIN>) {
     check_signature 'standard input', $., $signature;
     my $unit = $compilationUnit{$signature};
     if ($unit) {
-	warn "warning: duplicate signature in report: $signature\n"
-	    if $unit->{seen};
-	$unit->{seen} = 1;
-
 	my @sites = @{$unit->{sites}};
 
 	while (my $tuple = <STDIN>) {
@@ -157,6 +169,6 @@ local ($,, $\) = ("\t", "\n");
 foreach my $signature (sort keys %compilationUnit) {
     my $unit = $compilationUnit{$signature};
     foreach my $site (@{$unit->{sites}}) {
-	print $signature, $unit->{name}, $site->{description}, @{$site->{counters}};
+	print $signature, $unit->{name}, $site->{description}, @{$site->{counters}} if exists $site->{counters};
     }
 }

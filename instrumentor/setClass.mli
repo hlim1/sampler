@@ -7,6 +7,7 @@ class type ['key] s = object
 
   method choose : 'key
   method iter : ('key -> unit) -> unit
+  method fold : ('key -> 'result -> 'result) -> 'result -> 'result
 end
 
 

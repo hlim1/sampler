@@ -10,6 +10,7 @@ class type ['key] s = object
 
   method choose : 'key
   method iter : ('key -> unit) -> unit
+  method fold : ('key -> 'result -> 'result) -> 'result -> 'result
 end
 
 
@@ -17,7 +18,7 @@ module Make (Key : Hashtbl.HashedType) = struct
 
   module Map = MapClass.Make(Key)
 
-  class container = object (self)
+  class container : [Key.t] s = object (self)
 
     val storage = new Map.container
 
@@ -44,5 +45,11 @@ module Make (Key : Hashtbl.HashedType) = struct
     method iter action =
       let mapAction key () = action key in
       storage#iter mapAction
+
+    method fold
+	: 'result . ((_ -> 'result -> 'result) -> 'result -> 'result)
+	= fun folder ->
+	  let mapFolder key () = folder key in
+	  storage#fold mapFolder
   end
 end

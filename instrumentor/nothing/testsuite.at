@@ -1,5 +1,14 @@
 AT_INIT(nothing)
 
+AT_SETUP(last-switch)
+AT_CHECK([
+set -e
+cp $abs_srcdir/last-switch.c .
+cc="$abs_top_builddir/instrumentor/driver/sampler-cc-here"
+$cc -c last-switch.c
+])
+AT_CLEANUP
+
 AT_SETUP(sharing)
 AT_CHECK([
 set -e

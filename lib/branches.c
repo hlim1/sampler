@@ -1,9 +1,9 @@
 #include "branches.h"
-#include "report.h"
+#include "samples.h"
 
 
-void branchesReport(const unsigned char *signature,
-		    unsigned count, const struct SamplerTuple2 sites[])
+void branchesReport(const SamplerUnitSignature signature,
+		    unsigned count, const SamplerTuple2 sites[])
 {
   samplesBegin(signature, "branches");
   samplesDump2(count, sites);

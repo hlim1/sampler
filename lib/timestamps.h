@@ -1,19 +1,25 @@
 #ifndef INCLUDE_sampler_timestamps_h
 #define INCLUDE_sampler_timestamps_h
 
+#include "signature.h"
 
-#ifdef SAMPLER_TIMESTAMPS
 
-#include "clock.h"
-#include "threads.h"
+void timestampsSetFirst(unsigned, unsigned []);
+void timestampsSetLast(unsigned, unsigned []);
+void timestampsSetBoth(unsigned, unsigned [], unsigned []);
 
-#define SAMPLER_TIMESTAMP_FIELD unsigned timestamp
+void timestampsReport(const SamplerUnitSignature,
+		      const char [], const char when[],
+		      unsigned, const unsigned []);
 
-#else  /* no timestamps */
 
-#define SAMPLER_TIMESTAMP_FIELD
-
-#endif /* no timestamps */
-
+#ifdef CIL
+#pragma cilnoremove("timestampsSetFirst")
+#pragma cilnoremove("timestampsSetLast")
+#pragma cilnoremove("timestampsSetBoth")
+#pragma sampler_assume_weightless("timestampsSetFirst")
+#pragma sampler_assume_weightless("timestampsSetLast")
+#pragma sampler_assume_weightless("timestampsSetBoth")
+#endif
 
 #endif /* !INCLUDE_sampler_timestamps_h */

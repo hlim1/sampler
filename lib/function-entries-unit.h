@@ -7,7 +7,17 @@
 
 
 #pragma cilnoremove("functionEntriesCounters")
-static struct SamplerTuple1 functionEntriesCounters[];
+static SamplerTuple1 functionEntriesCounters[];
+
+#ifdef SAMPLER_TIMESTAMP_FIRST
+#pragma cilnoremove("functionEntriesTimestampsFirst");
+static unsigned functionEntriesTimestampsFirst[sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters)];
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+
+#ifdef SAMPLER_TIMESTAMP_LAST
+#pragma cilnoremove("functionEntriesTimestampsLast");
+static unsigned functionEntriesTimestampsLast[sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters)];
+#endif /* SAMPLER_TIMESTAMP_LAST */
 
 
 #pragma cilnoremove("functionEntriesReporter")
@@ -17,6 +27,16 @@ static void functionEntriesReporter()
   functionEntriesReport(samplerUnitSignature,
 		 sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters),
 		 functionEntriesCounters);
+#ifdef SAMPLER_TIMESTAMP_FIRST
+  timestampsReport(samplerUnitSignature, "function-entries", "first",
+		   sizeof(functionEntriesTimestampsFirst) / sizeof(*functionEntriesTimestampsFirst),
+		   functionEntriesTimestampsFirst);
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef SAMPLER_TIMESTAMP_LAST
+  timestampsReport(samplerUnitSignature, "function-entries", "last",
+		   sizeof(functionEntriesTimestampsLast) / sizeof(*functionEntriesTimestampsLast),
+		   functionEntriesTimestampsLast);
+#endif /* SAMPLER_TIMESTAMP_LAST */
 }
 
 

@@ -7,7 +7,17 @@
 
 
 #pragma cilnoremove("branchesCounters")
-static struct SamplerTuple2 branchesCounters[];
+static SamplerTuple2 branchesCounters[];
+
+#ifdef SAMPLER_TIMESTAMP_FIRST
+#pragma cilnoremove("branchesTimestampsFirst");
+static unsigned branchesTimestampsFirst[];
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+
+#ifdef SAMPLER_TIMESTAMP_LAST
+#pragma cilnoremove("branchesTimestampsLast");
+static unsigned branchesTimestampsLast[];
+#endif /* SAMPLER_TIMESTAMP_LAST */
 
 
 #pragma cilnoremove("branchesReporter")
@@ -17,6 +27,16 @@ static void branchesReporter()
   branchesReport(samplerUnitSignature,
 		 sizeof(branchesCounters) / sizeof(*branchesCounters),
 		 branchesCounters);
+#ifdef SAMPLER_TIMESTAMP_FIRST
+  timestampsReport(samplerUnitSignature, "branches", "first",
+		   sizeof(branchesTimestampsFirst) / sizeof(*branchesTimestampsFirst),
+		   branchesTimestampsFirst);
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef SAMPLER_TIMESTAMP_LAST
+  timestampsReport(samplerUnitSignature, "branches", "last",
+		   sizeof(branchesTimestampsLast) / sizeof(*branchesTimestampsLast),
+		   branchesTimestampsLast);
+#endif /* SAMPLER_TIMESTAMP_LAST */
 }
 
 

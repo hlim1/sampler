@@ -1,13 +1,10 @@
 #ifndef INCLUDE_sampelr_tuple_1_h
 #define INCLUDE_sampelr_tuple_1_h
 
-#include "timestamps.h"
 
+typedef unsigned SamplerTuple1;
 
-struct SamplerTuple1 {
-  SAMPLER_TIMESTAMP_FIELD;
-  unsigned count;
-};
+void samplesDump1(unsigned, const SamplerTuple1 []);
 
 
 #endif /* !INCLUDE_sampelr_tuple_1_h */

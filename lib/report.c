@@ -1,4 +1,4 @@
-#define _GNU_SOURCE		/* for PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP */
+#define _GNU_SOURCE    /* for PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP */
 
 #include <errno.h>
 #include <fcntl.h>
@@ -102,7 +102,7 @@ static void reportDebugInfo()
 	      execl(debugger, debugger, arg, 0);
 	      perror("debugger exec failed");
 	    }
-	  
+
 	  exit(errno);
 
 	default:
@@ -159,25 +159,4 @@ __attribute__((constructor)) static void initialize()
 	  }
       }
   });
-}
-
-
-void samplesBegin(const unsigned char *signature, const char scheme[])
-{
-  fprintf(reportFile,
-	  "<samples unit=\""
-	  "%02x%02x%02x%02x%02x%02x%02x%02x"
-	  "%02x%02x%02x%02x%02x%02x%02x%02x"
-	  "\" scheme=\"%s\">\n",
-	  signature[ 0], signature[ 1], signature[ 2], signature[ 3],
-	  signature[ 4], signature[ 5], signature[ 6], signature[ 7],
-	  signature[ 8], signature[ 9], signature[10], signature[11],
-	  signature[12], signature[13], signature[14], signature[15],
-	  scheme);
-}
-
-
-void samplesEnd()
-{
-  fputs("</samples>\n", reportFile);
 }

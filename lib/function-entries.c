@@ -1,9 +1,11 @@
 #include "function-entries.h"
 #include "report.h"
+#include "samples.h"
+#include "tuple-2.h"
 
 
-void functionEntriesReport(const unsigned char *signature,
-			   unsigned count, const struct SamplerTuple1 counts[])
+void functionEntriesReport(const SamplerUnitSignature signature,
+			   unsigned count, const SamplerTuple1 counts[])
 {
   samplesBegin(signature, "function-entries");
   samplesDump1(count, counts);

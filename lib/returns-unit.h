@@ -7,7 +7,17 @@
 
 
 #pragma cilnoremove("returnsCounters")
-static struct SamplerTuple3 returnsCounters[];
+static SamplerTuple3 returnsCounters[];
+
+#ifdef SAMPLER_TIMESTAMP_FIRST
+#pragma cilnoremove("returnsTimestampsFirst");
+static unsigned returnsTimestampsFirst[];
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+
+#ifdef SAMPLER_TIMESTAMP_LAST
+#pragma cilnoremove("returnsTimestampsLast");
+static unsigned returnsTimestampsLast[];
+#endif /* SAMPLER_TIMESTAMP_LAST */
 
 
 #pragma cilnoremove("returnsReporter")
@@ -17,6 +27,16 @@ static void returnsReporter()
   returnsReport(samplerUnitSignature,
 		sizeof(returnsCounters) / sizeof(*returnsCounters),
 		returnsCounters);
+#ifdef SAMPLER_TIMESTAMP_FIRST
+  timestampsReport(samplerUnitSignature, "returns", "first",
+		   sizeof(returnsTimestampsFirst) / sizeof(*returnsTimestampsFirst),
+		   returnsTimestampsFirst);
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef SAMPLER_TIMESTAMP_LAST
+  timestampsReport(samplerUnitSignature, "returns", "last",
+		   sizeof(returnsTimestampsLast) / sizeof(*returnsTimestampsLast),
+		   returnsTimestampsLast);
+#endif /* SAMPLER_TIMESTAMP_LAST */
 }
 
 

@@ -7,7 +7,17 @@
 
 
 #pragma cilnoremove("gObjectUnrefCounters")
-static struct SamplerTuple4 gObjectUnrefCounters[];
+static SamplerTuple4 gObjectUnrefCounters[];
+
+#ifdef SAMPLER_TIMESTAMP_FIRST
+#pragma cilnoremove("gObjectUnrefTimestampsFirst");
+static unsigned gObjectUnrefTimestampsFirst[];
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+
+#ifdef SAMPLER_TIMESTAMP_LAST
+#pragma cilnoremove("gObjectUnrefTimestampsLast");
+static unsigned gObjectUnrefTimestampsLast[];
+#endif /* SAMPLER_TIMESTAMP_LAST */
 
 
 #pragma cilnoremove("gObjectUnrefReporter")
@@ -17,6 +27,16 @@ static void gObjectUnrefReporter()
   gObjectUnrefReport(samplerUnitSignature,
 		    sizeof(gObjectUnrefCounters) / sizeof(*gObjectUnrefCounters),
 		    gObjectUnrefCounters);
+#ifdef SAMPLER_TIMESTAMP_FIRST
+  timestampsReport(samplerUnitSignature, "g-object-unref", "first",
+		   sizeof(gObjectUnrefTimestampsFirst) / sizeof(*gObjectUnrefTimestampsFirst),
+		   gObjectUnrefTimestampsFirst);
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef SAMPLER_TIMESTAMP_LAST
+  timestampsReport(samplerUnitSignature, "g-object-unref", "last",
+		   sizeof(gObjectUnrefTimestampsLast) / sizeof(*gObjectUnrefTimestampsLast),
+		   gObjectUnrefTimestampsLast);
+#endif /* SAMPLER_TIMESTAMP_LAST */
 }
 
 

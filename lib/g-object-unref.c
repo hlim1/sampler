@@ -1,10 +1,11 @@
 #include <glib-object.h>
 #include "g-object-unref.h"
-#include "report.h"
+#include "samples.h"
+#include "tuple-4.h"
 
 
-void gObjectUnrefReport(const unsigned char *signature,
-			unsigned count, const struct SamplerTuple4 tuples[])
+void gObjectUnrefReport(const SamplerUnitSignature signature,
+			unsigned count, const SamplerTuple4 tuples[])
 {
   samplesBegin(signature, "g-object-unref");
   samplesDump4(count, tuples);

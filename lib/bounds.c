@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include "bounds.h"
 #include "report.h"
+#include "samples.h"
 
 
-void boundsReportBegin(const unsigned char *signature)
+void boundsReportBegin(const SamplerUnitSignature signature)
 {
   samplesBegin(signature, "bounds");
 }

@@ -1,4 +1,4 @@
-AC_INIT([sampler],[0.9.1],[liblit@cs.berkeley.edu])
+AC_INIT([sampler],[0.10.0],[liblit@cs.berkeley.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -273,6 +273,7 @@ AC_CONFIG_TESTDIR(instrumentor/g-object-unref)
 AC_CONFIG_TESTDIR(instrumentor/nothing)
 AC_CONFIG_TESTDIR(instrumentor/returns)
 AC_CONFIG_TESTDIR(instrumentor/scalar-pairs)
+AC_CONFIG_TESTDIR(instrumentor/timestamps)
 
 AC_CONFIG_FILES([
 Makefile
@@ -293,6 +294,7 @@ instrumentor/g-object-unref/atlocal
 instrumentor/nothing/Makefile
 instrumentor/returns/Makefile
 instrumentor/scalar-pairs/Makefile
+instrumentor/timestamps/Makefile
 instrumentor/version.ml
 launcher/Makefile
 launcher/common/Makefile

@@ -6,30 +6,23 @@ open SchemeName
 
 class manager name file =
   let counters = FindGlobal.find (name.prefix ^ "Counters") file in
-  let counterField = match counters.vtype with
-  | TArray (TComp ({cstruct = true} as compinfo, _), _, _) ->
-      getCompField compinfo "count"
-  | other ->
-      ignore (bug "unexpected counters type %a\n" d_type other);
-      failwith "internal error"
-  in
 
   object (self)
     val mutable nextId = 0
     val siteInfos = new QueueClass.container
-    val stamper = Timestamp.set file
+    val stamper = Timestamps.set file
 
     method private bump = Threads.bump file
 
     method addSite func selector (description : doc) location =
       let site = (Var counters, Index (integer nextId, NoOffset)) in
-      nextId <- nextId + 1;
-      let stamp = stamper site location in
-      let counter = addOffsetLval (Field (counterField, selector)) site in
+      let stamp = stamper name nextId location in
+      let counter = addOffsetLval selector site in
       let bump = self#bump counter location in
       let result = mkStmt (IsolateInstructions.isolate (bump :: stamp)) in
       Sites.registry#add func (Site.build result);
       siteInfos#push (func, location, description, result);
+      nextId <- nextId + 1;
       result
 
     method patch =

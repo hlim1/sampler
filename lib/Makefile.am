@@ -2,14 +2,12 @@ AM_CFLAGS = -W -Wall -Werror -Wformat=2
 INCLUDES = -ffast-math @GLIB_CFLAGS@
 
 if HAVE_THREAD_STORAGE
-thread_lib = libsampler_r.a
+thread_lib = libsampler-threads.a
 endif
 
 lib_LIBRARIES =					\
-	libdump.a				\
-	libdump-timestamps.a			\
 	libsampler.a				\
-	libschemes.a				\
+	libsampler-no-threads.a			\
 	$(thread_lib)
 
 
@@ -50,10 +48,9 @@ package_include_HEADERS =			\
 ########################################################################
 
 
-sampler_sources =				\
+thread_sources =				\
 	acyclic.c				\
 	acyclic.h				\
-	clock.h					\
 	countdown.c				\
 	countdown.h				\
 	cyclic-size.h				\
@@ -66,34 +63,20 @@ sampler_sources =				\
 	report.c				\
 	report.h				\
 	signature.h				\
+	timestamps-set.c			\
 	threads.h
 
 
-libsampler_a_SOURCES =				\
-	$(sampler_sources)			\
-	clock-no-threads.c			\
-	clock-no-threads.h			\
+libsampler_no_threads_a_SOURCES =		\
+	$(thread_sources)			\
 	no-hijack.c
 
 
-libsampler_r_a_SOURCES =			\
-	$(sampler_sources)			\
-	clock-threads.c				\
-	clock-threads.h				\
+libsampler_threads_a_SOURCES =			\
+	$(thread_sources)			\
 	hijack.c
 
-libsampler_r_a_CFLAGS = -pthread -DSAMPLER_THREADS
-
-
-########################################################################
-
-
-dump_sources = dump.c
-
-libdump_a_SOURCES = $(dump_sources)
-
-libdump_timestamps_a_SOURCES = $(dump_sources)
-libdump_timestamps_a_CFLAGS = -DSAMPLER_TIMESTAMPS
+libsampler_threads_a_CFLAGS = -pthread -DSAMPLER_THREADS
 
 
 ########################################################################
@@ -106,7 +89,7 @@ gnome_sources =					\
 	g-object-unref-classify.h
 endif
 
-libschemes_a_SOURCES =				\
+libsampler_a_SOURCES =				\
 	$(gnome_sources)			\
 	bounds.c				\
 	bounds.h				\
@@ -116,18 +99,30 @@ libschemes_a_SOURCES =				\
 	function-entries.h			\
 	returns.c				\
 	returns.h				\
+	samples.c				\
+	samples.h				\
 	scalar-pairs.c				\
-	scalar-pairs.h
+	scalar-pairs.h				\
+	timestamps.c				\
+	timestamps.h				\
+	tuple-1.c				\
+	tuple-1.h				\
+	tuple-2.c				\
+	tuple-2.h				\
+	tuple-3.c				\
+	tuple-3.h				\
+	tuple-4.c				\
+	tuple-4.h
 
 
 ########################################################################
 
 
 tools_PROGRAMS = precompute
-precompute_LDADD = libsampler.a $(LIBM)
+precompute_LDADD = libsampler.a libsampler-no-threads.a $(LIBM)
 
 noinst_PROGRAMS = mean
-mean_LDADD = libsampler.a $(LIBM)
+mean_LDADD = libsampler.a libsampler-no-threads.a $(LIBM)
 
 countdown-1-1: precompute
 	SAMPLER_SPARSITY=1 ./precompute $@

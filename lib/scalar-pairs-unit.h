@@ -7,7 +7,17 @@
 
 
 #pragma cilnoremove("scalarPairsCounters")
-static struct SamplerTuple3 scalarPairsCounters[];
+static SamplerTuple3 scalarPairsCounters[];
+
+#ifdef SAMPLER_TIMESTAMP_FIRST
+#pragma cilnoremove("scalarPairsTimestampsFirst");
+static unsigned scalarPairsTimestampsFirst[];
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+
+#ifdef SAMPLER_TIMESTAMP_LAST
+#pragma cilnoremove("scalarPairsTimestampsLast");
+static unsigned scalarPairsTimestampsLast[];
+#endif /* SAMPLER_TIMESTAMP_LAST */
 
 
 #pragma cilnoremove("scalarPairsReporter")
@@ -17,6 +27,16 @@ static void scalarPairsReporter()
   scalarPairsReport(samplerUnitSignature,
 		    sizeof(scalarPairsCounters) / sizeof(*scalarPairsCounters),
 		    scalarPairsCounters);
+#ifdef SAMPLER_TIMESTAMP_FIRST
+  timestampsReport(samplerUnitSignature, "scalar-pairs", "first",
+		   sizeof(scalarPairsTimestampsFirst) / sizeof(*scalarPairsTimestampsFirst),
+		   scalarPairsTimestampsFirst);
+#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef SAMPLER_TIMESTAMP_LAST
+  timestampsReport(samplerUnitSignature, "scalar-pairs", "last",
+		   sizeof(scalarPairsTimestampsLast) / sizeof(*scalarPairsTimestampsLast),
+		   scalarPairsTimestampsLast);
+#endif /* SAMPLER_TIMESTAMP_LAST */
 }
 
 

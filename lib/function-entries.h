@@ -1,11 +1,11 @@
 #ifndef INCLUDE_sampler_function_entries_h
 #define INCLUDE_sampler_function_entries_h
 
+#include "signature.h"
+#include "tuple-1.h"
 
-struct SamplerTuple1;
 
-
-void functionEntriesReport(const unsigned char *, unsigned, const struct SamplerTuple1 []);
+void functionEntriesReport(const SamplerUnitSignature, unsigned, const SamplerTuple1 []);
 
 
 #endif /* !INCLUDE_sampler_function_entries_h */

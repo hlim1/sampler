@@ -75,9 +75,9 @@ foreach my $objectName (@ARGV) {
 	}
 	my @sites;
 	while (@lines) {
-	    my $site = shift @lines;
+	    my $site = { description => shift @lines };
 	    ++$lineno;
-	    last if $site eq '';
+	    last if $site->{description} eq '';
 	    push @sites, $site;
 	}
 	$compilationUnit{$signature} = { sites => \@sites,
@@ -95,6 +95,14 @@ sub miscount ($$) {
 }
 
 
+sub skip () {
+    while (<STDIN>) {
+	chomp;
+	last if $_ eq '';
+    }
+}
+
+
 $_ = <STDIN>;
 chomp;
 die "error: malformed report header: $_\n" unless $_ eq '<report id="samples">';
@@ -104,27 +112,34 @@ while (my $signature = <STDIN>) {
     last if $signature eq '</report>';
     
     check_signature 'standard input', $., $signature;
-    my $info = $compilationUnit{$signature};
-    if ($info) {
-	warn "warning: duplicate signature in report: $signature\n" if $info->{seen};
-	my @sites = @{$info->{sites}};
+    my $unit = $compilationUnit{$signature};
+    if ($unit) {
+	warn "warning: duplicate signature in report: $signature\n"
+	    if $unit->{seen};
+	$unit->{seen} = 1;
 
-	while (<STDIN>) {
-	    chomp;
-	    last if $_ eq '';
-	    miscount 'many', $signature unless @sites;
-	    my $site = shift @sites;
-	    print "$site\t$_\n";
+	my @sites = @{$unit->{sites}};
+
+	while (my $tuple = <STDIN>) {
+	    chomp $tuple;
+	    last if $tuple eq '';
+	    if (@sites) {
+		my $site = shift @sites;
+		my @tuple = split /\t/, $tuple;
+		foreach my $slot (0 .. $#tuple) {
+		    $site->{counters}->[$slot] += $tuple[$slot];
+		}
+	    } else {
+		miscount 'many', $signature;
+		skip;
+		last;
+	    }
 	}
 
 	miscount 'few', $signature if @sites;
-	$info->{seen} = 1;
     } else {
-	warn "warning: unrecognized signature in report: $signature\n" unless $info;
-	while (<STDIN>) {
-	    chomp;
-	    last if $_ eq '';
-	}
+	warn "warning: unrecognized signature in report: $signature\n";
+	skip;
     }
 }
 
@@ -133,5 +148,15 @@ while (my $signature = <STDIN>) {
 unless (eof) {
     $_ = <STDIN>;
     chomp;
-    die "error: trailing garbage after report: $_\n";
+    warn "error: trailing garbage after report: $_\n";
+}
+
+
+local ($,, $\) = ("\t", "\n");
+
+foreach my $signature (sort keys %compilationUnit) {
+    my $unit = $compilationUnit{$signature};
+    foreach my $site (@{$unit->{sites}}) {
+	print $signature, $unit->{name}, $site->{description}, @{$site->{counters}};
+    }
 }

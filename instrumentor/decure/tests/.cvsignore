@@ -1,3 +1,4 @@
+*.browser
 Makefile
 Makefile.in
 atconfig

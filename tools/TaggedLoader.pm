@@ -29,7 +29,7 @@ sub foreach ($\&) {
     @_ == 2 or confess 'wrong argument count';
     my ($self, $handler) = @_;
 
-    foreach my $unit (@{$self->{order}}) {
+    foreach my $unit (sort keys %{$self->{sections}}) {
 	foreach my $scheme (sort keys %{$self->{sections}{$unit}}) {
 	    $handler->($unit, $scheme, $self->{sections}{$unit}{$scheme});
 	}
@@ -70,7 +70,6 @@ sub read ($$$) {
 	    die "cannot merge multiple instances of unit $unit, scheme $scheme\n";
 	} else {
 	    $merged = \@lines;
-	    push @{$self->{order}}, $unit;
 	}
 
 	$merged = { source => $source, lines => $merged };

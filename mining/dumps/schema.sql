@@ -79,6 +79,7 @@ CREATE TABLE run (
   exit_signal tinyint(3) unsigned NOT NULL default '0',
   exit_status tinyint(3) unsigned NOT NULL default '0',
   date datetime NOT NULL default '0000-00-00 00:00:00',
+  empty tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (run_id),
   KEY build_id (build_id),
   KEY run_id (run_id,build_id),

@@ -1,3 +1,11 @@
+#profile := 1
+#native := 1
+
+ifdef profile
+native := 1
+ocamlflags := -p
+endif
+
 ifdef native
 ocamlc := ocamlopt.opt
 cma := cmxa

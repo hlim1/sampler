@@ -26,12 +26,14 @@ let rec weigh headers =
   in
 
   let weights = new StmtMap.container in
-
+  let trivial = ref true in
+  
   let compute header =
     let w = weight header in
     weights#add header w;
+    if w != 0 then trivial := false;
     Printf.eprintf "weigher: CFG #%i has weight %i\n" header.sid w
   in
   
   List.iter compute headers;
-  weights
+  if !trivial then None else Some weights

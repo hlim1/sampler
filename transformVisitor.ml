@@ -11,7 +11,7 @@ class virtual visitor = object(self)
 
   method virtual weigh : stmt -> int
   method virtual insertSkips : cilVisitor
-  method virtual insertLogs cilVisitor
+  method virtual insertLogs : cilVisitor
 
   method vfunc func =
     prepareCFG func;

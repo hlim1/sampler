@@ -43,13 +43,17 @@ static FILE *openLogFile()
 	break;
     }
 
-  const int leftovers = strlen(start);
-  obstack_grow0(&obstack, start, leftovers);
+  {
+    const int leftovers = strlen(start);
+    obstack_grow0(&obstack, start, leftovers);
+  }
   
-  char * const filename = (char *) obstack_finish(&obstack);
-  FILE * const logFile = fopen(filename, "w");
-  obstack_free(&obstack, filename);
-  return logFile;
+  {
+    char * const filename = (char *) obstack_finish(&obstack);
+    FILE * const logFile = fopen(filename, "w");
+    obstack_free(&obstack, filename);
+    return logFile;
+  }
 }
 
 
@@ -58,9 +62,9 @@ static void dumpInvariants(int signum)
   FILE * const logFile = openLogFile();
   if (logFile)
     {
-      fprintf(logFile, "%d\n", signum);
-
       const struct Invariant *invariant;
+
+      fprintf(logFile, "%d\n", signum);
       for (invariant = invariants; invariant; invariant = invariant->next)
 	fprintf(logFile, "%s\t%u\t%s\t%s\t%s\t%u\t%u\t%u\t%u\n",
 		invariant->file, invariant->line, invariant->function,

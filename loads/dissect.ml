@@ -68,6 +68,8 @@ and dissect lval = function
   | TPtr _ ->
       primitive lval "p"
 	
-  | TFun _
+  | TFun _ ->
+      OutputSet.empty
+
   | TVoid _ ->
       failwith "unexpected variable type"

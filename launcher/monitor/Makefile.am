@@ -1,3 +1,4 @@
+AM_CFLAGS = -Wall -Werror -Wformat=2
 INCLUDES = $(MONITOR_CFLAGS) -I/usr/include/python2.2
 
 defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
@@ -38,16 +39,16 @@ libmonitor_a_SOURCES =				\
 	monitor-module.h			\
 	monitor-wrap.c
 
-monitor-wrap.c: %-wrap.c: %.defs %.override
+monitor-wrap.c: %-wrap.c: %.override %.defs
 	pygtk-codegen-2.0				\
 	  --prefix $*					\
 	  --register $(defsdir)/gdk-types.defs		\
 	  --register $(defsdir)/gtk-types.defs		\
 	  --register $(defsdir)/bonobo-types.defs	\
-	  --override $*.override			\
-	  $*.defs >$@.tmp
-	mv $@.tmp $@
+	  --override $<					\
+	  $*.defs >$@
 
 monitor.defs: monitor.h
-	python /usr/share/pygtk/2.0/codegen/h2def.py $< >$@.tmp
-	mv $@.tmp $@
+	python /usr/share/pygtk/2.0/codegen/h2def.py $< >$@
+
+.DELETE_ON_ERROR:

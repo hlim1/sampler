@@ -34,12 +34,13 @@ $(BUILT_SOURCES): %: %.in Makefile
 	sed							\
 		-e 's!@''first_timedir@!$(first_timedir)!'	\
 		-e 's!@''commondir@!$(commondir)!'		\
-		<$< >$@.tmp
-	chmod a+x $@.tmp
-	mv $@.tmp $@
+		<$< >$@
+	chmod a+x $@
 
 
 check-am: oaf.dtd
 
 oaf.dtd: %: ../%
 	$(LN_S) $< $@
+
+.DELETE_ON_ERROR:

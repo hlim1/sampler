@@ -25,5 +25,6 @@ Paths.py: %: %.in Makefile
 	sed						\
 		-e 's!@''wrapperdir@!$(wrapperdir)!'	\
 		-e 's!@''commondir@!$(commondir)!'	\
-		<$< >$@.tmp
-	mv $@.tmp $@
+		<$< >$@
+
+.DELETE_ON_ERROR:

@@ -6,7 +6,8 @@ SUBDIRS =					\
 	g-object-unref				\
 	nothing					\
 	returns					\
-	scalar-pairs
+	scalar-pairs				\
+	timestamps
 
 EXTRA_DIST = build-libraries libraries.ml.in
 
@@ -22,8 +23,7 @@ instrumentor_SCRIPTS = main
 
 
 libraries.ml: %: build-libraries %.in
-	./$^ >$@.tmp
-	mv $@.tmp $@
+	./$^ >$@
 
 $(dir $(libcommon))%.cmi: $(libcommon); @:
 $(libcommon): $(force); $(recurse)
@@ -62,12 +62,12 @@ loopless: $(libcil) $(loopless)
 	dot -Tps -Gsize=7.5,10 -Gcenter=1 -o $@ $<
 
 calls.cfg: %.cfg: %.cfg.o
-	$(top_srcdir)/tools/extract-section .debug_sampler_cfg $< >$@.tmp
-	mv $@.tmp $@
+	$(top_srcdir)/tools/extract-section .debug_sampler_cfg $< >$@
 
 calls.cfg.i: %.cfg.i: cfgTest %.c
-	./$^ >$@.tmp
-	mv $@.tmp $@
+	./$^ >$@
 
 %.o: %.i
 	$(CC) -c $<
+
+.DELETE_ON_ERROR:

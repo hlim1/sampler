@@ -20,6 +20,7 @@ Config.py: %: %.in Makefile
 	sed							\
 		-e 's!@''VERSION@!$(VERSION)!'			\
 		-e 's!@''pixmapsdir@!$(pixmapsdir)!'		\
-		<$< >$@.tmp
-	chmod a+x $@.tmp
-	mv $@.tmp $@
+		<$< >$@
+	chmod a+x $@
+
+.DELETE_ON_ERROR:

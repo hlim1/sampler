@@ -1,3 +1,4 @@
+AM_CFLAGS = -W -Wall -Werror -Wformat=2
 INCLUDES = $(BROKEN_CFLAGS) -I/usr/include/python2.2
 
 MOSTLYCLEANFILES = *.so

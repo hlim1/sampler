@@ -44,12 +44,13 @@ $(BUILT_SOURCES): %: %.in Makefile
 		-e 's!@''bindir@!$(bindir)!'			\
 		-e 's!@''commondir@!$(commondir)!'		\
 		-e 's!@''preferencesdir@!$(preferencesdir)!'	\
-		<$< >$@.tmp
-	chmod a+x $@.tmp
-	mv $@.tmp $@
+		<$< >$@
+	chmod a+x $@
 
 
 check-am: oaf.dtd
 
 oaf.dtd: %: ../%
 	$(LN_S) $< $@
+
+.DELETE_ON_ERROR:

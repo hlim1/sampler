@@ -5,12 +5,12 @@
 /**********************************************************************/
 
 
-static void sampler_monitor_init(SamplerMonitor *collector)
+static void sampler_monitor_init(SamplerMonitor *collector __attribute((unused)))
 {
 }
 
 
-static void sampler_monitor_class_init(SamplerMonitorClass *klass)
+static void sampler_monitor_class_init(SamplerMonitorClass *klass __attribute((unused)))
 {
 }
 

@@ -83,10 +83,7 @@ libsampler_threads_a_CFLAGS = -pthread -DSAMPLER_THREADS
 
 
 if WITH_GNOME
-gnome_sources =					\
-	g-object-unref.c			\
-	g-object-unref-report.h			\
-	g-object-unref-classify.h
+gnome_sources =	g-object-unref.c
 endif
 
 libsampler_a_SOURCES =				\

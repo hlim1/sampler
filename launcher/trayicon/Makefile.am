@@ -1,3 +1,5 @@
+AM_CFLAGS = -Wall -Werror -Wformat=2
+
 SUBDIRS = libegg
 
 INCLUDES = $(TRAY_ICON_CFLAGS) -I/usr/include/python2.2
@@ -35,20 +37,20 @@ libtrayicon_a_SOURCES =				\
 	trayicon-module.c			\
 	trayicon-module.h
 
-trayicon-wrap.c: %-wrap.c: %.defs %.override
+trayicon-wrap.c: %-wrap.c: %.override %.defs
 	pygtk-codegen-2.0			\
 	  --prefix $*				\
 	  --register $(defsdir)/gdk-types.defs	\
 	  --register $(defsdir)/gtk-types.defs	\
-	  --override $*.override		\
-	  $*.defs >$@.tmp
-	mv $@.tmp $@
+	  --override $<				\
+	  $*.defs >$@
 
 trayicon.defs: %.defs: libegg/tray/egg%.h
-	python /usr/share/pygtk/2.0/codegen/h2def.py $< >$@.tmp
-	mv $@.tmp $@
+	python /usr/share/pygtk/2.0/codegen/h2def.py $< >$@
 
 libegg/tray/libtray.a: force
 	$(MAKE) -C $(@D) $(@F)
 force:
 .PHONY: force
+
+.DELETE_ON_ERROR:

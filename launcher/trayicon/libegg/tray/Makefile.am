@@ -1,3 +1,4 @@
+AM_CFLAGS = -Wall -Werror -Wformat=2
 noinst_LIBRARIES = libtray.a
 
 libtray_a_SOURCES =				\

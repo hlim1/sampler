@@ -197,25 +197,18 @@ AC_SUBST(DTYPES)
 
 
 AC_MSG_CHECKING(for profiling)
-AC_ARG_ENABLE(profiling, AC_HELP_STRING([--enable-profiling], [Compile OCaml for gprof profiling (implies --enable-native)]))
+AC_ARG_ENABLE(profiling, AC_HELP_STRING([--enable-profiling], [Compile OCaml for gprof profiling (implies --enable-native)]), , enable_profiling=no)
+AM_CONDITIONAL(ENABLE_PROFILING, test "$enable_profiling" = yes)
+AC_MSG_RESULT($enable_profiling)
 if test "$enable_profiling" = yes; then
   enable_native=yes
-  AC_SUBST(ENABLE_PROFILING, 1)
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
 fi
 
 
 AC_MSG_CHECKING(for native compilation)
 AC_ARG_ENABLE(native, AC_HELP_STRING([--disable-native], [Compile OCaml to bytecode (default: compile to native code)]), , enable_native=yes)
 AM_CONDITIONAL(ENABLE_NATIVE, test "$enable_native" = yes)
-if test "$enable_native" = yes; then
-  AC_SUBST(ENABLE_NATIVE, 1)
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-fi
+AC_MSG_RESULT($enable_native)
 
 
 ########################################################################
@@ -342,7 +335,6 @@ mining/Makefile
 mining/populate/Makefile
 mining/queries/Makefile
 ocaml/Makefile
-ocaml/config.mk
 package.m4
 sampler.spec
 tools/Makefile

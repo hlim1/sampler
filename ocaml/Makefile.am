@@ -4,7 +4,7 @@ EXTRA_DIST =					\
 	link-order				\
 	rules.mk
 
-include $(top_srcdir)/ocaml/rules.mk
+include $(top_srcdir)/ocaml.mk.in
 
 
 all-local: common.$(cma)

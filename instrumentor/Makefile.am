@@ -15,7 +15,7 @@ EXTRA_DIST = build-libraries libraries.ml.in
 targets = harness.$(cma)
 extra_impls = libraries version
 
-include $(top_srcdir)/ocaml/rules.mk
+include $(top_srcdir)/ocaml.mk.in
 
 libdirs += $(top_builddir)/ocaml
 syslibs = str.$(cma) unix.$(cma)

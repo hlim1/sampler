@@ -10,8 +10,7 @@ libdaikon_a_SOURCES = daikon.c daikon.h
 
 EXTRA_DIST = $(noinst_DATA)
 
-include $(top_srcdir)/ocaml/rules.mk
-
+include $(top_srcdir)/ocaml.mk.in
 
 libdirs += ..
 syslibs = str.$(cma) unix.$(cma)

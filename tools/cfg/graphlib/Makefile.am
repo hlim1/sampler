@@ -1,6 +1,6 @@
 EXTRA_DIST =
 
-include $(top_srcdir)/ocaml/rules.mk
+include $(top_srcdir)/ocaml.mk.in
 
 libdirs += $(dir $(libcommon))
 

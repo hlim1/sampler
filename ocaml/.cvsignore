@@ -9,4 +9,3 @@
 *.do
 Makefile
 Makefile.in
-config.mk

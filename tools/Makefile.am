@@ -1,9 +1,7 @@
 SUBDIRS = cfg
 
 tools_PROGRAMS =				\
-	decimate-samples			\
-	resolve-samples				\
-	resolve-timestamps
+	decimate-samples
 
 tools_SCRIPTS =					\
 	debuild					\
@@ -17,6 +15,8 @@ tools_SCRIPTS =					\
 	extract-section				\
 	find-sampler-info			\
 	resolve-cfg				\
+	resolve-samples				\
+	resolve-timestamps			\
 	rpmbuild
 
 EXTRA_DIST =					\
@@ -42,16 +42,15 @@ decimate_samples_SOURCES = decimate-samples.l
 decimate_samples_CFLAGS = $(GSL_CFLAGS)
 decimate_samples_LDADD = $(GSL_LIBS) $(LEXLIB)
 
-include $(top_srcdir)/ocaml/rules.mk
+include $(top_srcdir)/ocaml.mk.in
 
 libdirs += $(top_builddir)/ocaml
 syslibs = str.$(cma) unix.$(cma)
 
-resolve_samples_SOURCES =
-resolve_timestamps_SOURCES =
+CLEANFILES += resolve-samples resolve-timestamps
 
-resolve-samples$(EXEEXT): $(libcommon) $(resolve-samples)
+resolve-samples: $(libcommon) $(resolve-samples)
 	$(link)
 
-resolve-timestamps$(EXEEXT): $(libcommon) $(resolve-timestamps)
+resolve-timestamps: $(libcommon) $(resolve-timestamps)
 	$(link)

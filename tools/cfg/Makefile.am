@@ -4,7 +4,7 @@ tools_SCRIPTS = resolve-cfg order-sites find-cliff
 
 EXTRA_DIST =
 
-include $(top_srcdir)/ocaml/rules.mk
+include $(top_srcdir)/ocaml.mk.in
 
 MOSTLYCLEANFILES += $(noinst_SCRIPTS)
 

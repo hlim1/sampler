@@ -1,6 +1,34 @@
 ocamlflags = -warn-error A
 
-include $(top_builddir)/ocaml/config.mk
+OCAMLOPT = @OCAMLOPT@
+OCAMLC = @OCAMLC@
+
+DTYPES = @DTYPES@
+
+cil_libdir = @cil_libdir@
+
+
+########################################################################
+
+
+if ENABLE_PROFILING
+ocamlflags += -p
+endif
+
+if ENABLE_NATIVE
+ocamlc := $(OCAMLOPT)
+cma := cmxa
+cmo := cmx
+else
+ocamlflags += -g $(DTYPES)
+ocamlc := $(OCAMLC)
+cma := cma
+cmo := cmo
+endif
+
+
+########################################################################
+
 
 linkorder = $(top_srcdir)/ocaml/link-order
 
@@ -69,7 +97,7 @@ force:
 .PHONY: force
 
 
-MOSTLYCLEANFILES = $(targets) *.annot *.cma *.cmxa *.cmi *.cmo *.cmx *.o
+MOSTLYCLEANFILES = $(targets) *.annot *.cma *.cmxa *.cmi *.cmo *.cmx *.o *.a
 CLEANFILES = *.d[ilo]
 
 .DELETE_ON_ERROR:

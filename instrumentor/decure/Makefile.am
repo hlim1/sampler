@@ -5,8 +5,7 @@ noinst_SCRIPTS = main
 noinst_DATA = specs
 EXTRA_DIST = $(noinst_DATA)
 
-include $(top_srcdir)/ocaml/rules.mk
-
+include $(top_srcdir)/ocaml.mk.in
 
 libdirs += ..
 syslibs = str.$(cma) unix.$(cma)

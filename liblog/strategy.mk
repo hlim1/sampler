@@ -1,2 +1,2 @@
-strategy := stdio
-#strategy := syscall
+#strategy := stdio
+strategy := syscall

@@ -14,8 +14,6 @@ class visitor = object
   method vinst inst =
     match inst with
     | Set((Mem addr, NoOffset), data, location) as original ->
-	Printf.eprintf "%s:%i: adding instrumentation point\n"
-	  location.file location.line;
 	ChangeTo [Call (None, Lval (var LogWrite.logWrite),
 			[mkCast (mkString location.file) charConstPtrType;
 			 kinteger IUInt location.line;

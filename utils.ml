@@ -20,7 +20,7 @@ let rec stmt_where = function
   | Continue(location) -> location
   | If(_, _, _, location) -> location
   | Switch(_, _, _, location) -> location
-  | Loop(_, location) -> location
+  | Loop(_, location, _, _) -> location
   | Block({bstmts = []}) -> locUnknown
   | Block({bstmts = {skind = skind} :: _}) -> stmt_where skind
 

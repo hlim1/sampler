@@ -11,7 +11,7 @@ class visitor = object
   method vstmt stmt =
     begin
       match stmt.skind with
-      |	Loop({bstmts = header :: _}, _) ->
+      |	Loop({bstmts = header :: _}, _, _, _) ->
 	  loopHeaders := header :: !loopHeaders;
       | _ -> ()
     end;

@@ -43,5 +43,4 @@ mean_LDADD = libacyclic.a libcountdown.a $(LIBM)
 countdown-1-1: precompute
 	SAMPLER_SPARSITY=1 ./precompute $@
 
-clean:
-	rm -f countdown-1-1
+CLEANFILES = countdown-1-1

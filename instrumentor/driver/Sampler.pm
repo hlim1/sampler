@@ -130,12 +130,10 @@ sub extraLibs {
     my $self = shift;
     my @extras;
 
-    if ($self->sampling) {
-	my $_r = $self->threading ? '_r' : '';
-	push @extras, '-Wl,--wrap,pthread_create' if $self->threading;
-	push @extras, "-L$::root/lib", "-lsampler$_r";
-	push @extras, $::libm if $::libm && $self->{countdowns} eq 'acyclic';
-    }
+    my $_r = $self->threading ? '_r' : '';
+    push @extras, '-Wl,--wrap,pthread_create' if $self->threading && $self->sampling;
+    push @extras, "-L$::root/lib", "-lsampler$_r";
+    push @extras, $::libm if $self->sampling && $::libm && $self->{countdowns} eq 'acyclic';
 
     return @extras;
 }

@@ -9,27 +9,15 @@ type context = {
   }
 
 
-(* clear out all edge lists and renumber all nodes *)
-class prepare =
-  object
-    inherit FunctionBodyVisitor.visitor
-
-    val mutable nextId = 0
-
-    method vstmt statement =
-      statement.succs <- [];
-      statement.preds <- [];
-      statement.sid <- nextId;
-      nextId <- nextId + 1;
-      DoChildren
-
-    method vfunc func =
-      let post func =
-	func.smaxstmtid <- Some nextId;
-	func
-      in
-      ChangeDoChildrenPost (func, post)
-  end
+let hasDefault =
+  let hasDefaultLabel case =
+    let isDefaultLabel = function
+      | Default _ -> true
+      | _ -> false
+    in
+    List.exists isDefaultLabel case.labels
+  in	    
+  List.exists hasDefaultLabel
 
 
 let build func =
@@ -131,17 +119,7 @@ let build func =
 	  match context.next with
 	  | None -> ()
 	  | Some next ->
-	      let hasDefault =
-		let hasDefaultLabel case =
-		  let isDefaultLabel = function
-		    | Default _ -> true
-		    | _ -> false
-		  in
-		  List.exists isDefaultLabel case.labels
-		in	    
-		List.exists hasDefaultLabel cases
-	      in
-	      if not hasDefault then
+	      if not (hasDefault cases) then
 		link statement next
 	end;
 
@@ -175,6 +153,11 @@ let build func =
 	failwith "internal error"
   in
 
-  (* away we go! *)
-  ignore (visitCilFunction (new prepare) func);
+  NumberStatements.visit func;
+  let clear stmt =
+    stmt.succs <- [];
+    stmt.preds <- []
+  in
+  List.iter clear func.sallstmts;
+
   scanBlock {next = None; break = None; continue = None} func.sbody

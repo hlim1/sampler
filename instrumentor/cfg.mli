@@ -1,4 +1,6 @@
 open Cil
 
 
-val build : Cil.fundec -> unit
+val hasDefault : stmt list -> bool
+
+val build : fundec -> unit

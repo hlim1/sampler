@@ -7,6 +7,3 @@ instrumentor/logging/loads/tests/multiple is incorrectly printing a
 single value multiple times
 
 figure out what to do about setjmp/longjmp
-
-Transform.visit checks info#isEmpty.  Perhaps empty infos should never
-even be placed in the collection at al?

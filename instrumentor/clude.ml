@@ -7,7 +7,7 @@ type pattern = disposition * string
 
 
 let push patterns disposition template =
-  patterns := (disposition, template) :: !patterns
+  patterns := !patterns @ [disposition, template]
 
 
 let d_pattern (disposition, template) =

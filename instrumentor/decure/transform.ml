@@ -4,7 +4,7 @@ open Classify
 
 class visitor file =
   object
-    inherit TransformVisitor.visitor file as super
+    inherit TransformVisitor.visitor file
 
     method private collector _ = new Find.visitor
     method private prepatchCalls = DecureCalls.prepatch
@@ -15,4 +15,5 @@ class visitor file =
 let phase =
   "Transform",
   fun file ->
-    visitCilFile (new visitor file) file
+    let visitor = new visitor file in
+    visitCilFile visitor file

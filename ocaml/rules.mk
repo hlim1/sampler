@@ -11,7 +11,7 @@ compiler = $(ocamlc) $(ocamlflags)
 depend = ocamldep $(includes) $< >$@.tmp
 compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
-link = $(compiler) -o $@ $(syslibs) $^
+link = $(compiler) $(includes) -o $@ $(syslibs) $^
 
 force ?= force
 recurse = $(MAKE) -C $(@D) $(@F) force=

@@ -343,7 +343,6 @@ instrumentor/nothing/Makefile
 instrumentor/returns/Makefile
 instrumentor/scalar-pairs/Makefile
 instrumentor/timestamps/Makefile
-instrumentor/version.ml
 launcher/Makefile
 launcher/common/Makefile
 launcher/first-time/Makefile
@@ -366,7 +365,6 @@ mining/Makefile
 mining/populate/Makefile
 mining/queries/Makefile
 ocaml/Makefile
-package.m4
 sampler.spec
 tools/Makefile
 tools/cfg/Makefile

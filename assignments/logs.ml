@@ -63,33 +63,24 @@ and dissect lval = function
     -> failwith "unexpected variable type"
 
 
-class visitor logger (sites : FindSites.map) = object (self)
-  inherit FunctionBodyVisitor.visitor
+let insert logger clones sites =
 
-  method vstmt statement =
-    if statement.sid == -1 then
-      DoChildren
-    else
-      try
-	let lval, where = sites#find statement in
-	let formats, arguments = List.split (dissect lval (typeOfLval lval)) in
-	let format = ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
-	let call = 
-	  Call (None, logger,
-		mkString format
-		:: mkString where.file
-		:: kinteger IUInt where.line
-		:: arguments,
-		where)
-	in
-	let block = Block (mkBlock [mkStmt statement.skind;
-				    mkStmtOneInstr call])
-	in
-	let replace stmt =
-	  stmt.skind <- block;
-	  stmt
-	in
-	ChangeDoChildrenPost (statement, replace)
-	
-      with Not_found -> DoChildren
-end
+  let insertOne original (lval, where) =
+    let instrumented = ClonesMap.findCloneOf clones original in
+    let formats, arguments = List.split (dissect lval (typeOfLval lval)) in
+    let format = ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
+    let call = 
+      Call (None, logger,
+	    mkString format
+	    :: mkString where.file
+	    :: kinteger IUInt where.line
+	    :: arguments,
+	    where)
+    in
+    let block = Block (mkBlock [mkStmt instrumented.skind;
+				mkStmtOneInstr call])
+    in
+    instrumented.skind <- block
+  in
+
+  sites#iter insertOne

@@ -8,7 +8,7 @@ class visitor file = object
 
   method findSites = FindSites.visit
   method insertSkips sites countdown = (new InsertSkipsBefore.visitor sites countdown :> cilVisitor)
-  method insertLogs = new Logs.visitor logger
+  method insertLogs = Logs.insert logger
 end
 
 

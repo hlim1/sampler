@@ -1,4 +1,4 @@
 open Cil
 
 
-class visitor : exp -> FindSites.map -> cilVisitor
+val insert : exp -> ClonesMap.clonesMap -> FindSites.map -> unit

@@ -18,8 +18,7 @@ class visitor = object
       | Return (Some expression, location)
       | If (expression, _, _, location) ->
 	  Collect.collect visitCilExpr expression
-      |	Instr (instruction :: instructions) ->
-	  assert (instructions == []);
+      |	Instr [instruction] ->
 	  Collect.collect visitCilInstr instruction
       | _ ->
 	  OutputSet.empty

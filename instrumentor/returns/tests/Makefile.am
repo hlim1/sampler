@@ -16,5 +16,5 @@ $(TESTSUITE): $(srcdir)/testsuite.at
 	$(AUTOTEST) -I $(top_srcdir) -I $(srcdir) $@.at -o $@.tmp
 	mv $@.tmp $@
 
-clean-local:
+clean-local: $(TESTSUITE)
 	$(TESTSUITE) --clean

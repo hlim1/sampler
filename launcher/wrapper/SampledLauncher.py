@@ -34,13 +34,17 @@ class SampledLauncher(Launcher):
             os.environ['SAMPLER_DEBUGGER'] = self.app.debug_reporter()
 
         # away we go!
-        return Launcher.spawn(self)
+        Launcher.spawn(self)
+
+        # close writing end before creating any other subprocesses
+        os.close(self.__pipe[1])
+
+        return
 
     def prep_outcome(self, outcome):
         outcome.sparsity = self.__sparsity
 
         # collect reports
-        os.close(self.__pipe[1])
         outcome.reports = ReportsReader(os.fdopen(self.__pipe[0]))
 
     def wait(self):

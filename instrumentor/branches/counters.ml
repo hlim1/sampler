@@ -12,7 +12,7 @@ class builder file =
       let local = var (makeTempVar func (typeOf expression)) in
 
       let bump =
-	let siteId = self#addSiteInfo { location = location; fundec = func;
+	let siteId = self#addSiteInfo { fundec = func;
 					statement = statement;
 					description = d_exp () expression }
 	in

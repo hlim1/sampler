@@ -1,7 +1,6 @@
 open Cil
 
 
-type t = { location : location;
-	   fundec : fundec;
+type t = { fundec : fundec;
 	   statement : stmt;
 	   description : Pretty.doc }

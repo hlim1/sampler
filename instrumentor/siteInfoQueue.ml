@@ -9,10 +9,12 @@ class container =
 
     method serialize signature =
       let folder prefix site =
+	let location = get_stmtLoc site.statement.skind in
 	prefix
-	  ++ seq (chr '\t') (fun d -> d) [text site.location.file;
-					  num site.location.line;
+	  ++ seq (chr '\t') (fun d -> d) [text location.file;
+					  num location.line;
 					  text site.fundec.svar.vname;
+					  (* num site.statement.sid; *)
 					  site.description]
 	  ++ line
       in

@@ -1,6 +1,9 @@
 Check copyright notice in configure scripts that use SAMPLER_INIT.
 Check both script text as well as "configure --version" output.
 
+Consider adding some sort of "README.sampler" to the documentation for
+each sampled application RPM.
+
 GNOME launcher's server reply dialog has bad tab navigation.  If focus
 is on a hyperlink in the HTML area, you cannot tab out to the "OK"
 button.

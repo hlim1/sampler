@@ -2,9 +2,11 @@ class ['element] container =
   object
     val storage : 'element Queue.t = Queue.create ()
 
-    method add element = Queue.add element storage
+    method push element = Queue.push element storage
+    method pop = Queue.pop storage
 
     method clear = Queue.clear storage
+    method isEmpty = Queue.is_empty storage
 
     method iter iterator = Queue.iter iterator storage
 

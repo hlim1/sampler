@@ -15,7 +15,7 @@ let _ =
 
   Options.registerBoolean
     assumeWeightlessLibraries
-    ~flag:"assume-loopless-libraries"
+    ~flag:"assume-weightless-libraries"
     ~desc:"assume that functions defined in libraries have no sample sites"
     ~ident:"AssumeWeightlessLibraries"
 

@@ -167,8 +167,8 @@ then no samples will be taken on this pass through that part of the
 code.  We can place a countdown threshold check at the top of this
 region.
 
-Cycles that without instrumentation are effectively weightless and may
-be disregarded.  A cycle with instrumentation must also contain a
+Cycles without instrumentation are effectively weightless and may be
+disregarded.  A cycle with instrumentation must also contain a
 threshold check.  This guarantees that if we start at any threshold
 check and execute forward, we cross a finite number of instrumentation
 sites before reaching the next threshold check.  Thus, we can compute

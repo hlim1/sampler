@@ -1,8 +1,8 @@
 class visitor file =
-  let collector = Log.collect file in
+  let collector = new Log.visitor file in
 
   object
     inherit Manager.visitor file
 
-    method private findSites = collector
+    method private statementClassifier = collector
   end

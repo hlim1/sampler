@@ -1,7 +1,7 @@
 open Cil
 
 
-class visitor :
+class visitor : global ->
   object
     inherit FunctionBodyVisitor.visitor
 
@@ -9,5 +9,5 @@ class visitor :
 
     method calls : Calls.infos
     method sites : stmt list
-    method globals : global list
+    method globals : GlobalQueue.container
   end

@@ -2,11 +2,20 @@ open Cil
 open Invariant
 
 
-let isInteresting varinfo =
-  let hasInterestingName () =
+let isInteresting =
+  let hasInterestingType varinfo =
+    isIntegralType varinfo.vtype || isPointerType varinfo.vtype
+  in
+
+  let hasInterestingNameLocal varinfo =
     let regexp =
       let pattern =
-	let names = ["tmp"; "__result"; "__s[12]\\(_len\\)?"] in
+	let names = ["tmp"; "__result";
+		     "__s";
+		     "__s1"; "__s1_len";
+		     "__s2"; "__s2_len";
+		     "__u";
+		     "__c"] in
 	let alpha = "\\(___[0-9]+\\)?" in
 	"\\(" ^ (String.concat "\\|" names) ^ "\\)" ^ alpha ^ "$"
       in
@@ -15,34 +24,44 @@ let isInteresting varinfo =
     not (Str.string_match regexp varinfo.vname 0)
   in
 
-  let hasInterestingType () =
-    isIntegralType varinfo.vtype || isPointerType varinfo.vtype
+  let hasInterestingNameGlobal varinfo =
+    let uninteresting = [
+      "sys_nerr";
+      "gdk_debug_level"; "gdk_show_events"; "gdk_stack_trace"
+    ] in
+    not (List.mem varinfo.vname uninteresting)
   in
 
-  hasInterestingType () && hasInterestingName()
+  fun varinfo ->
+    if hasInterestingType varinfo then
+      let hasInterestingName = if varinfo.vglob then
+	hasInterestingNameGlobal
+      else
+	hasInterestingNameLocal
+      in
+      hasInterestingName varinfo
+    else
+      false
 
 
 class visitor file =
   let invariant = invariant file in
 
-  fun func ->
+  fun global func ->
     let invariant = invariant func in
 
-    object
-      inherit Classifier.visitor as super
+    object (self)
+      inherit Classifier.visitor global as super
 
       val mutable sites = []
       method sites = sites
-
-      val mutable globals = []
-      method globals = globals
 
       val vars =
 	let globalVars =
 	  let rec gather = function
 	    | GVar (varinfo, _, _) :: rest
 	    | GVarDecl (varinfo, _) :: rest
-	      when varinfo.vname <> "sys_nerr" ->
+	      when isInteresting varinfo ->
 		varinfo :: gather rest
 	    | GFun (through, _) :: _ when func == through ->
 		[]
@@ -76,7 +95,7 @@ class visitor file =
 		  let (site, global) = invariant rightOperand in
 		  let site = mkStmt site in
 		  sites <- site :: sites;
-		  globals <- global :: globals;
+		  self#globals#add global;
 		  site
 	      in
 

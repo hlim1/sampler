@@ -1,7 +1,7 @@
 open Cil
 
 
-class virtual visitor file =
+class virtual visitor file () =
   let logger = Logger.call file in
 
   object (self)

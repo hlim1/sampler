@@ -1,4 +1,10 @@
 open Cil
 
 
-val collect : file -> fundec -> stmt list * global list
+class visitor : file -> unit ->
+  object
+    inherit LogCollector.visitor
+
+    method private collectOutputs : stmtkind -> OutputSet.container
+    method private placeInstrumentation : stmt -> stmt -> stmt list
+  end

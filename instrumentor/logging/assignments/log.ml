@@ -1,9 +1,9 @@
 open Cil
 
 
-class visitor file =
+class visitor file () =
   object
-    inherit LogCollector.visitor file
+    inherit LogCollector.visitor file ()
 
     method private collectOutputs = FindOutputs.collect
     method private placeInstrumentation code log = [code; log]

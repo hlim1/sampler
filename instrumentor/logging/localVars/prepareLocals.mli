@@ -5,5 +5,5 @@ class visitor : file ->
   object
     inherit Manager.visitor
 
-    method private findSites : fundec -> stmt list * global list
+    method private statementClassifier : fundec -> Classifier.visitor
   end

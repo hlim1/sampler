@@ -1,4 +1,4 @@
 open Cil
 
 
-class visitor : file -> fundec -> Classifier.visitor
+class visitor : file -> unit -> Classifier.visitor

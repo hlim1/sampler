@@ -54,10 +54,10 @@ class virtual visitor file =
     val mutable infos = new FileInfo.container
 
 
-    method private virtual statementClassifier : fundec -> Classifier.visitor
+    method private virtual statementClassifier : global -> fundec -> Classifier.visitor
 
-    method private classifyStatements func =
-      let visitor = self#statementClassifier func in
+    method private classifyStatements global func =
+      let visitor = self#statementClassifier global func in
       ignore (visitCilFunction (visitor :> cilVisitor) func);
 
       let sites =
@@ -77,7 +77,7 @@ class virtual visitor file =
 
       { sites = sites;
 	calls = visitor#calls;
-	globals = visitor#globals }
+	globals = visitor#globals#fold (fun tail head -> head :: tail) [] }
 
 
     method private normalize func =
@@ -96,9 +96,9 @@ class virtual visitor file =
       | GFun (func, _) as global
 	when self#shouldTransform func ->
 	  self#normalize func;
-	  let info = self#classifyStatements func in
+	  let info = self#classifyStatements global func in
 	  infos#add func info;
-	  ChangeTo (info.globals @ [global])
+	  ChangeTo info.globals
       | _ ->
 	  SkipChildren
 

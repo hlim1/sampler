@@ -1,14 +1,21 @@
 open Cil
 
 
-class visitor =
+class visitor initial =
   object (self)
     inherit FunctionBodyVisitor.visitor
 
     val mutable calls = []
     method calls = calls
+
     method sites : stmt list = []
-    method globals : global list = []
+
+    val globals =
+      let container = new GlobalQueue.container in
+      container#add initial;
+      container
+
+    method globals = globals
 
     method private prepatchCall stmt =
       let info = Calls.prepatch stmt in

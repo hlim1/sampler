@@ -7,17 +7,14 @@ open Invariant
 class visitor file =
   let invariant = invariant file in
 
-  fun func ->
+  fun global func ->
     let invariant = invariant func in
 
-    object
-      inherit Classifier.visitor as super
+    object (self)
+      inherit Classifier.visitor global as super
 
       val mutable sites = []
       method sites = sites
-
-      val mutable globals = []
-      method globals = globals
 
       method vstmt stmt =
 	match stmt.skind with
@@ -33,7 +30,7 @@ class visitor file =
 		let right = { exp = zero; name = "0" } in
 		let (site, global) = invariant location left right in
 		sites <- info.site :: sites;
-		globals <- global :: globals;
+		self#globals#add global;
 		let call = mkStmt stmt.skind in
 		info.site.skind <- site;
 	      end;

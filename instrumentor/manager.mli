@@ -6,7 +6,7 @@ class virtual visitor : file ->
     inherit SkipVisitor.visitor
 
     method private shouldTransform : fundec -> bool
-    method private virtual statementClassifier : fundec -> Classifier.visitor
+    method private virtual statementClassifier : global -> fundec -> Classifier.visitor
 
     method private normalize : fundec -> unit
     method private finalize : unit

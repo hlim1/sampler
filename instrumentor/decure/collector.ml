@@ -2,11 +2,11 @@ open Cil
 open Classify
 
 
-class visitor func =
+class visitor global func =
   let _ = assert (classifyByName func.svar.vname == Generic) in
 
   object
-    inherit Classifier.visitor as super
+    inherit Classifier.visitor global as super
 
     val mutable sites = []
     method sites = sites

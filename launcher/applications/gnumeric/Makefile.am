@@ -1,12 +1,14 @@
 links =						\
-	executable				\
+	stamp-executable			\
 	gdb-commands				\
 	gnome-gnumeric.png			\
 	print-debug-info
 
 all-local: $(links)
 
-executable: ; ln -s ../../../../apps/gnumeric/cvs/branches/src/gnumeric $@
+stamp-executable:
+	ln -s ../../../../apps/gnumeric/cvs/branches/src/gnumeric executable
+	touch $@
 
 gdb-commands: ; ln -s ../../$@ .
 

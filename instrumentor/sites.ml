@@ -16,22 +16,23 @@ let loadScales =
 
 let setScales () =
   if !loadScales <> "" then
-    let index = new StringIntHash.c 1 in
-    registry#iter
-      (fun func site -> index#add (func.svar.vname, site.statement.sid) site);
+    let scales = new HashClass.c 1 in
 
     let scanbuf = from_file !loadScales in
     while not (end_of_input scanbuf) do
-      let process func id scale =
-	Printf.eprintf "set scale: %s() id %d <-- %d\n" func id scale;
-	let site = index#find (func, id) in
-	site.scale <- scale
-      in
-      bscanf scanbuf "%s@\t%d\t%d\n" process
+      bscanf scanbuf "%s@\t%s\t%d\n"
+	(fun func id scale ->
+	  scales#add (func, id) scale)
     done;
+
     registry#iter
-      (fun func site ->
-	Printf.eprintf "site registry: %s() id %d\n" func.svar.vname site.statement.sid)
+      (fun {svar = {vname = vname}} site ->
+	let scale = try scales#find (vname, string_of_int site.statement.sid)
+	with Not_found -> try scales#find (vname, "*")
+	with Not_found -> try scales#find ("*", "*")
+	with Not_found -> 1
+	in
+	site.scale <- scale)
 
 
 let patch clones countdown site =

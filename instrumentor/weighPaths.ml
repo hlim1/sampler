@@ -26,14 +26,7 @@ let weigh func sites headers =
     try cache#find node with
       Not_found ->
 	let me =
-	  try
-	    let weight = { threshold = siteMap#find node; count = 1; } in
-	    ignore (Pretty.eprintf "%a: site with weight %d, id %d, func %s\n"
-		      d_loc (get_stmtLoc node.skind)
-		      weight.threshold
-		      node.sid
-		      func.svar.vname);
-	    weight
+	  try { threshold = siteMap#find node; count = 1; }
 	  with Not_found -> weightless
 	in
 	let children =

@@ -34,7 +34,6 @@ class countdown file =
 
     object (self)
       method decrement location scale =
-	Printf.eprintf "decrement scale: %d\n" scale;
 	Instr [Set (local, increm (Lval local) (- scale), location)]
 
       method export location =

@@ -75,7 +75,7 @@ install-indep:
 	# debian/<package>-doc.
 	#INSTALLDOC#
 
-	dh_install -i
+	dh_install --list-missing --sourcedir=$(CURDIR)/debian/sampler -i
 
 install-arch:
 	dh_testdir
@@ -87,7 +87,7 @@ install-arch:
 	# debian/tmp.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/sampler
 
-	dh_install -a
+	dh_install --list-missing --sourcedir=$(CURDIR)/debian/sampler -a
 # Must not depend on anything. This is to be called by
 # binary-arch/binary-multi
 # in another 'make' thread.
@@ -96,15 +96,13 @@ binary-common:
 	dh_testroot
 	dh_installchangelogs 
 	dh_installdocs
-	dh_installexamples
-	dh_installman
 	dh_link
 	dh_strip
 	dh_compress 
 	dh_fixperms
 	dh_perl
 	dh_python
-	dh_makeshlibs
+	dh_shlibdeps
 	dh_installdeb
 	dh_gencontrol
 	dh_md5sums

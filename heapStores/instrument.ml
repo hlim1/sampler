@@ -6,23 +6,26 @@ let makeLval = function
   | _ -> failwith "weird expression"
 	
 	
-class visitor = object
+class visitor = object (self)
   inherit FunctionBodyVisitor.visitor
       
   method vstmt _ = DoChildren
 
   method vinst inst =
-    match inst with
-    | Set((Mem addr, NoOffset), data, location) as original ->
-	ChangeTo [Call (None, Lval (var LogWrite.logWrite),
-			[mkCast (mkString location.file) charConstPtrType;
-			 kinteger IUInt location.line;
-			 mkCast addr LogWrite.voidConstPtrType;
-			 SizeOf(typeOf data);
-			 mkCast (mkAddrOf (makeLval data)) LogWrite.voidConstPtrType],
-			location);
-		  original]
-    | _ -> SkipChildren
+    begin
+      match inst with
+      | Set((Mem addr, NoOffset), data, location) as original ->
+	  self#queueInstr
+	    [Call (None, Lval (var LogWrite.logWrite),
+		   [mkCast (mkString location.file) charConstPtrType;
+		    kinteger IUInt location.line;
+		    mkCast addr LogWrite.voidConstPtrType;
+		    SizeOf(typeOf data);
+		    mkCast (mkAddrOf (makeLval data)) LogWrite.voidConstPtrType],
+		   location)]
+      | _ -> ()
+    end;
+    SkipChildren
 end
 
 

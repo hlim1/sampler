@@ -12,7 +12,7 @@ class virtual visitor = object(self)
 
   method virtual weigh : stmt -> int
   method virtual insertSkips : cilVisitor
-  method virtual insertLogs : cilVisitor
+  method virtual insertLogs : fundec -> cilVisitor
 
   method vfunc func =
     prepareCFG func;
@@ -37,7 +37,7 @@ class virtual visitor = object(self)
 	  
 	  FunctionEntry.patch func weights instrumented;
 	  visitSameBlock self#insertSkips original;
-	  visitSameBlock self#insertLogs instrumented
+	  visitSameBlock (self#insertLogs func) instrumented
     end;
 
     SkipChildren

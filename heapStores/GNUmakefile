@@ -25,7 +25,7 @@ stores = stores
 ########################################################################
 
 
-main := $(checkSimplicity) $(heapStoresTransform) $(stores) %
+main := $(heapStoresTransform) %
 main: %: $(libcil) $(top)/harness.cma $(addsuffix .$(cmo), $(main))
 	$(link)
 

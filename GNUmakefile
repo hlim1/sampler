@@ -1,6 +1,6 @@
 targets := cfg-to-dot harness.cma
 top := .
-subdirs := heapStores
+subdirs := heapStores localVars
 
 include rules.mk
 

@@ -15,8 +15,8 @@ while read filename; do
     input=$RPM_BUILD_ROOT/$filename
     outbase=/usr/lib/sampler/sites/$filename.sites
     output=$RPM_BUILD_ROOT/$outbase
-    echo "extracting sampler site info from $input"
+    echo "extracting sampler site info from $input" >&3
     mkdir -p `dirname $output`
     $extract $input >$output
-    echo $outbase
-done >$LISTFILE
+    echo $outbase >&3
+done 3>$LISTFILE

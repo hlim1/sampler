@@ -23,11 +23,13 @@ Build-Depends: xsltproc
 Standards-Version: 3.6.1
 
 Package: sampler
-Architecture: all
-Depends: python (>= 2.2)
+Architecture: any
+Depends: ${misc:Depends}
+Depends: ${python:Depends}
+Depends: ${shlibs:Depends}
 Depends: python-glade2
 Depends: python-gnome2
-Description: Support for applications with sampled instrumentation
+Description: support for applications with sampled instrumentation
  This package supports instrumented applications at run time.  It
  includes tools for launching instrumented applications, collecting
  sample and crash reports, and uploading those reports to the central
@@ -35,22 +37,22 @@ Description: Support for applications with sampled instrumentation
 
 Package: sampler-dev
 Architecture: any
-Depends: cinterlang (>= 1.1.2)
-Depends: perl (>= 5.8), perl-modules
-Description: Tools for building applications with sampled instrumentation
+Depends: ${perl:Depends}
+Depends: ${shlibs:Depends}
+Description: tools for building applications with sampled instrumentation
  This package provides tools for building applications with sampled
  instrumentation.  It includes an instrumenting C compiler and utility
  tools for collecting and decoding sampled instrumentation reports.
 
 Package: sampler-doc
 Architecture: all
-Depends: ${misc:Depends}
-Description: Documentation for sampler
+Description: documentation for sampler
  This package contains the documentation files for sampler in general,
  and sampler-dev in particular.
 
 Package: sampler-server
 Architecture: all
+Depends: ${perl:Depends}
 Depends: apache-common
 Recommends: apache-ssl | libapache-mod-ssl
 Description: CGI script to receive uploaded instrumentation reports

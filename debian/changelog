@@ -1,6 +1,5 @@
-sampler (0.1-1) unstable; urgency=low
+sampler (1.1-1) unstable; urgency=low
 
   * Initial Release.
 
- -- Ben Liblit <liblit@cs.berkeley.edu>  Sun,  3 Aug 2003 05:37:33 -0700
-
+ -- Ben Liblit <liblit@cs.wisc.edu>  Sat,  5 Mar 2005 22:08:14 -0600

@@ -6,7 +6,7 @@ DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 
-CFLAGS = -W -Wall -Werror -g
+CFLAGS = -g
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0
@@ -52,7 +52,11 @@ binary: build install
 	dh_install --list-missing --sourcedir=$(CURDIR)/debian/tmp
 	dh_installchangelogs
 	dh_installdocs
+	dh_desktop
+	dh_gconf
+	dh_python
 	dh_scrollkeeper
+	dh_shlibdeps
 	dh_strip
 	dh_compress
 	dh_fixperms

@@ -6,6 +6,6 @@ EXTRA_DIST =					\
 	rules					\
 	sampler-dev.install			\
 	sampler-doc.install			\
-	sampler-gnome.install			\
 	sampler.install				\
+	sampler-server.install			\
 	watch

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!@PERL@ -w
 # -*- cperl -*-
 
 use strict;
@@ -20,10 +20,8 @@ use Getopt::Long;
 my $prefix = '@prefix@';
 my $exec_prefix = "@exec_prefix@";
 my $libdir = "@libdir@";
-my $datadir = "@datadir@";
 my $PACKAGE = '@PACKAGE@';
-my $package_libdir = "@package_libdir@";
-my $package_datadir = "@package_datadir@";
+my $pkglibdir = "@pkglibdir@";
 
 
 ########################################################################
@@ -100,7 +98,7 @@ sub instantiate ($$%) {
 foreach (@ARGV) {
   s{^/*}{/};
   my $original = "$installdir$_";
-  my $wrapped = "$installdir$package_libdir/wrapped$_";
+  my $wrapped = "$installdir$pkglibdir/wrapped$_";
   installdir $wrapped;
   rename $original, $wrapped or die "cannot move $original to $wrapped: $!\n";
   instantiate($template, $original,

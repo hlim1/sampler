@@ -14,8 +14,8 @@ my $bindir = "@bindir@";
 my $PACKAGE = '@PACKAGE@';
 my $libdir = "@libdir@";
 my $datadir = "@datadir@";
-my $pkglibdir = "@package_libdir@";
-my $pkgdatadir = "@package_datadir@";
+my $pkglibdir = "@pkglibdir@";
+my $pkgdatadir = "@pkgdatadir@";
 
 
 ########################################################################

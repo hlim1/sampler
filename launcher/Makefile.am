@@ -8,14 +8,14 @@ SUBDIRS =					\
 	trayicon				\
 	wrapper
 
-package_data_DATA = gdb-commands
-package_data_SCRIPTS = print-debug-info
+pkgdata_DATA = gdb-commands
+pkgdata_SCRIPTS = print-debug-info
 
 schema_DATA = sampler.schemas
 
 EXTRA_DIST =					\
-	$(package_data_DATA)			\
-	$(package_data_SCRIPTS)			\
+	$(pkgdata_DATA)				\
+	$(pkgdata_SCRIPTS)			\
 	$(schema_DATA)				\
 	gconf-1.0.dtd				\
 	oaf.dtd

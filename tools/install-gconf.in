@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!@PERL@ -w
 # -*- cperl -*-
 
 use strict;
@@ -9,21 +9,6 @@ use File::stat;
 use FileHandle;
 use FindBin;
 use Getopt::Long;
-
-
-########################################################################
-#
-#  sampler install directories
-#
-
-
-my $prefix = '@prefix@';
-my $exec_prefix = "@exec_prefix@";
-my $libdir = "@libdir@";
-my $datadir = "@datadir@";
-my $PACKAGE = '@PACKAGE@';
-my $package_libdir = "@package_libdir@";
-my $package_datadir = "@package_datadir@";
 
 
 ########################################################################

@@ -1,2 +1,2 @@
 Weightless.assumeWeightlessExterns := true;
-Phases.main (fun _ -> new PrepareDecure.visitor)
+Phases.main new PrepareDecure.visitor

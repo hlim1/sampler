@@ -1,6 +1,6 @@
 open Calls
 open Cil
-open Prepare
+open FuncInfo
 
 
 let assumeWeightlessExterns = ref false
@@ -23,10 +23,13 @@ let _ =
 (**********************************************************************)
 
 
-type tester = Calls.info -> bool
+type tester = exp -> bool
 
 
-let collect (infos : Prepare.infos) =
+type stmtMap = stmt list FunctionMap.container
+
+
+let collect (infos : FileInfo.container) : tester =
   let weightless = new StringMap.container in
 
   let isWeightlessFunction callee =
@@ -36,12 +39,16 @@ let collect (infos : Prepare.infos) =
       !assumeWeightlessExterns
   in
 
-  let isWeightlessCall call =
-    match call.callee with
+  let isWeightlessCallee = function
     | Lval (Var callee, NoOffset) ->
 	isWeightlessFunction callee
     | _ ->
+	(* !!!: use points-to analysis here *)
 	false
+  in
+
+  let isWeightlessCall info =
+    isWeightlessCallee info.callee
   in
 
   if !assumeWeightlessLibraries then
@@ -50,7 +57,7 @@ let collect (infos : Prepare.infos) =
 
   infos#iter
     (fun func info ->
-      let assumption = info.stmts#isEmpty in
+      let assumption = (info.sites == []) in
       weightless#replace func.svar.vname assumption);
 
   Fixpoint.compute
@@ -84,4 +91,4 @@ let collect (infos : Prepare.infos) =
       if isWeightlessFunction func.svar then
 	infos#remove func);
 
-  isWeightlessCall
+  isWeightlessCallee

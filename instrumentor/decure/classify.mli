@@ -1,4 +1,4 @@
-type classification = Check | Fail | Generic
+type classification = Check | Fail | Init | Generic
 
 
 val classifyByName : string -> classification

@@ -35,7 +35,7 @@ $(traces): %.trace: % $(countdowns)
 	SAMPLER_FILE=$@ SAMPLER_COUNTDOWNS=$(countdowns) ./$<
 	[ -r $@ ]
 
-$(objects): %.o: %.c $(top)/liblog/log.h $(top)/libcountdown/countdown.h $(front_end)
+$(objects): %.o: %.c $(top)/liblog/log.h $(top)/libcountdown/event.h $(front_end)
 
 ../main: $(force)
 	$(recurse)

@@ -1,11 +1,9 @@
 open Cil
 
 
-class virtual visitor : file ->
+class virtual visitor : file -> unit ->
   object
-    inherit FunctionBodyVisitor.visitor
-
-    method result : Sites.info
+    inherit Classifier.visitor
 
     method private virtual collectOutputs : stmtkind -> OutputSet.container
     method private virtual placeInstrumentation : stmt -> stmt -> stmt list

@@ -2,7 +2,7 @@ top := ..
 include $(top)/defs.mk
 
 targets := main filterComplete listCandidates
-#subdirs := tests
+subdirs := tests
 libdirs := $(top)
 
 include $(top)/rules.mk

@@ -17,7 +17,9 @@ let main () =
 	    begin
 	      prepareCFG func;
 	      IsolateInstructions.visit func;
-	      if Find.collect func != [] then
+	      let collector = new Collector.visitor func in
+	      ignore (visitCilFunction (collector :> cilVisitor) func);
+	      if collector#sites != [] then
 		print_endline func.svar.vname
 	    end
 	| _ ->

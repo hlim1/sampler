@@ -2,11 +2,10 @@ open Cil
 open Arg
 
 
-let main preparator =
+let main manager =
   let phases =
     [
-     Choices.phase;
-     "Transform", Interproc.visit preparator;
+     "Transform", (fun file -> (manager file)#visit);
      Idents.phase;
      "dump", dumpFile (new Printer.printer) stdout
    ]

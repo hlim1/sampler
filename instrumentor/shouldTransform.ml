@@ -1,5 +1,18 @@
 open Cil
+open Clude
 
 
-let shouldTransform func =
-  not (hasAttribute "no_instrument_function" func.svar.vattr)
+let functionFilter = ref []
+
+
+let _ =
+  Clude.register
+    ~flag:"function"
+    ~desc:"<function> instrument this function"
+    ~ident:"FilterFunction"
+    functionFilter
+
+
+let shouldTransform { svar = svar } =
+  not (hasAttribute "no_instrument_function" svar.vattr)
+    && filter !functionFilter svar.vname == Include

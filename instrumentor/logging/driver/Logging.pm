@@ -27,7 +27,7 @@ sub new {
 sub setPaths {
     my $self = shift;
 
-    my $root = ;
+    my $root = '../../..';
     my $liblog = "$root/liblog";
     my $libcountdown = "$root/libcountdown";
 

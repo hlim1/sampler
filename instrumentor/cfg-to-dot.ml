@@ -14,4 +14,5 @@ class visitor =
     
 ;;
 
-ignore(TestHarness.main ["cfg-to-dot", visitCilFileSameGlobals new visitor]);
+initCIL ();
+Arg.parse [] (TestHarness.doOne ["cfg-to-dot", visitCilFileSameGlobals new visitor]) "";

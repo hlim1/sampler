@@ -32,10 +32,10 @@ class visitor file =
 
   fun func ->
     object
-      inherit FunctionBodyVisitor.visitor
+      inherit Classifier.visitor
 
-      val mutable sites : Sites.info = []
-      method result = sites
+      val mutable sites = []
+      method sites = sites
 
       val vars =
 	let globals =
@@ -86,7 +86,7 @@ class visitor file =
 						  invariant],
 						 location))
 		in
-		sites <- (call, []) :: sites;
+		sites <- call :: sites;
 		call
 	      in
 	      List.map callLogger invariants
@@ -103,11 +103,3 @@ class visitor file =
 	| _ ->
 	    DoChildren
     end
-
-
-let collect file =
-  let visitor = new visitor file in
-  fun func ->
-    let visitor = visitor func in
-    ignore (visitCilFunction (visitor :> cilVisitor) func);
-    visitor#result

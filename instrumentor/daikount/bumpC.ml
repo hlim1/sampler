@@ -10,4 +10,4 @@ let bump _ location left right counters =
   let offset = Index (bin PlusA ge gt, NoOffset) in
   let counter = addOffsetLval offset counters in
 
-  mkStmtOneInstr (Set (counter, increm (Lval counter) 1, location))
+  Instr [Set (counter, increm (Lval counter) 1, location)]

@@ -1,0 +1,7 @@
+*.browser
+*.i
+*.trace
+*_inst.?
+*cured.c
+.libs
+test

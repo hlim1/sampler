@@ -57,7 +57,7 @@ let invariant file =
 		    initStr "right" right.name;
 		    initNum "id" !id
 		  ])),
-	    location)					  
+	    location)
     in
 
     let bump =
@@ -65,19 +65,12 @@ let invariant file =
       Bump.bump func location left.exp right.exp array
     in
 
-    bump, [declaration]
+    bump, declaration
 
 
 let register file =
   let compInfo = findCompInfo file in
   let callee = FindFunction.find "registerInvariant" file in
-
-  let markRoots file =
-    defaultRootsMarker file;
-    callee.vreferenced <- true;
-    compInfo.creferenced <- true
-  in
-  removeUnusedTemps ~markRoots:markRoots file;
 
   let invariants =
     try

@@ -1,4 +1,1 @@
-open Cil
-
-
-class virtual visitor : file -> Prepare.visitor
+class virtual visitor : Cil.file -> Manager.visitor

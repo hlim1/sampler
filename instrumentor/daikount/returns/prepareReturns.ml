@@ -1,11 +1,12 @@
 class visitor file =
+  let collector = new Collector.visitor file in
+
   object
     inherit PrepareDaikount.visitor file as super
 	
-    val collectSites = Collector.collect file
-    method private collectSites = collectSites
+    method private statementClassifier = collector
 
-    method private prepare func =
+    method private normalize func =
       StoreReturns.visit func;
-      super#prepare func
+      super#normalize func
   end

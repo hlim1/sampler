@@ -1,4 +1,4 @@
 open Cil
 
 
-val collect : file -> fundec -> Sites.info
+val collect : file -> fundec -> stmt list * global list

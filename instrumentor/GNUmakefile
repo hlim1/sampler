@@ -2,7 +2,7 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot checker dump harness.$(cma) loopless
-subdirs := daikon daikount decure logging
+subdirs := daikon daikount decure #logging
 
 include rules.mk
 
@@ -10,27 +10,34 @@ include rules.mk
 ########################################################################
 
 
-cfg-to-dot: $(libcil) $(cfg_to_dot)
+cfg-to-dot: $(libcil) $(cfg-to-dot)
 	$(link)
+live += $(cfg-to-dot)
 
-harness := $(phases)
+harness := $(manager) $(phases)
 harness.$(cma): $(harness)
 	$(archive)
+live += $(harness)
 
 checker: $(libcil) $(checker)
 	$(link)
+live += $(checker)
 
 dump: $(libcil) $(dump)
 	$(link)
+live += $(dump)
 
 removeDeadCode: $(libcil) $(removeDeadCode)
 	$(link)
+live += $(removeDeadCode)
 
 loopless: $(libcil) $(loopless)
 	$(link)
+live += $(loopless)
 
 dumpConstants: $(libcil) $(dumpConstants)
 	$(link)
+live += $(dumpConstants)
 
 %.i: %.c
 	$(CC) $(CPPFLAGS) $< -o $@ -E
@@ -56,3 +63,15 @@ GNUmakefile: libraries.ml
 libraries.ml: %: build-libraries %.in
 	./$< >$@.
 	mv $@. $@
+
+
+########################################################################
+
+
+gc: gc-ml gc-mli
+
+gc-ml:
+	@echo dead ml: $(filter-out $(live:.cmo=.ml), $(wildcard *.ml))
+
+gc-mli:
+	@echo dead mli: $(filter-out $(live:.cmo=.mli), $(wildcard *.mli))

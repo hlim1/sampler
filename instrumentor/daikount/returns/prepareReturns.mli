@@ -5,6 +5,6 @@ class visitor : file ->
   object
     inherit PrepareDaikount.visitor
 
-    method private collectSites : fundec -> Sites.info
-    method private prepare : fundec -> global list * Prepare.info
+    method private statementClassifier : fundec -> Classifier.visitor
+    method private normalize : fundec -> unit
   end

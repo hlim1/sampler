@@ -7,6 +7,6 @@ type operand = {
   }
 
 
-val invariant : file -> fundec -> location -> operand -> operand -> Site.t
+val invariant : file -> fundec -> location -> operand -> operand -> stmtkind * global
 
 val register : file -> unit

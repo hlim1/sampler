@@ -1,6 +1,6 @@
 val assumeWeightlessExterns : bool ref
 
 
-type tester = Calls.info -> bool
+type tester = Cil.exp -> bool
 
-val collect : Prepare.infos -> tester
+val collect : FileInfo.container -> tester

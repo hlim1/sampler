@@ -1,3 +1,4 @@
+open Calls
 open Cil
 open Interesting
 open Invariant
@@ -10,14 +11,18 @@ class visitor file =
     let invariant = invariant func in
 
     object
-      inherit FunctionBodyVisitor.visitor
+      inherit Classifier.visitor as super
 
       val mutable sites = []
-      method result = sites
+      method sites = sites
+
+      val mutable globals = []
+      method globals = globals
 
       method vstmt stmt =
 	match stmt.skind with
 	| Instr [Call (Some result, callee, args, location)] ->
+	    let info = super#prepatchCall stmt in
 	    let resultType, _, _, _ = splitFunctionType (typeOf callee) in
 	    if isInterestingType resultType then
 	      begin
@@ -26,25 +31,14 @@ class visitor file =
 		  name = Pretty.sprint max_int (d_exp () callee)
 		} in
 		let right = { exp = zero; name = "0" } in
-		let site = invariant location left right in
-		sites <- site :: sites;
-		stmt.skind <- Block (mkBlock ([mkStmt stmt.skind; fst site]))
+		let (site, global) = invariant location left right in
+		sites <- info.site :: sites;
+		globals <- global :: globals;
+		let call = mkStmt stmt.skind in
+		info.site.skind <- site;
 	      end;
 	    SkipChildren
 
-	| Instr (_ :: _ :: _) as instr ->
-	    currentLoc := get_stmtLoc instr;
-	    ignore (bug "instr should have been atomized");
-	    SkipChildren
-
 	| _ ->
-	    DoChildren
+	    super#vstmt stmt
     end
-
-
-let collect file =
-  let visitor = new visitor file in
-  fun func ->
-    let visitor = visitor func in
-    ignore (visitCilFunction (visitor :> cilVisitor) func);
-    visitor#result

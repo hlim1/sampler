@@ -1,3 +1,6 @@
+open Cil
+
+
 class weightsMap : [int] StmtMap.container
 
-val weigh : StmtSet.container -> Cil.stmt list -> weightsMap
+val weigh : sites:stmt list -> headers:stmt list -> weightsMap

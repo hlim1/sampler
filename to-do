@@ -1,6 +1,3 @@
-daikount's return value sampler mismanages countdowns just after each
-non-weightless function call
-
 Remember which functions are loopless.  Use this to optimize treatment
 of calls to known loopless functions.
 

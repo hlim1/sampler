@@ -2,13 +2,16 @@ open Cil
 
 
 class virtual visitor file =
+  let logger = Logger.call file in
+
   object (self)
-    inherit FunctionBodyVisitor.visitor
+    inherit Classifier.visitor
 
     val mutable sites = []
-    method result = sites
+    method private sites = sites
 
-    val logger = Logger.call file
+    val mutable globals = []
+    method private globals = globals
 
     method private virtual collectOutputs : stmtkind -> OutputSet.container
     method private virtual placeInstrumentation : stmt -> stmt -> stmt list
@@ -17,9 +20,10 @@ class virtual visitor file =
       let skind = stmt.skind in
       let location = get_stmtLoc skind in
       let original = mkStmt skind in
-      let (instrumentation, _) as site = logger location outputs in
-      let combined = self#placeInstrumentation original instrumentation in
+      let (site, global) = logger location outputs in
+      let combined = self#placeInstrumentation original site in
       sites <- site :: sites;
+      globals <- global @ globals;
       stmt.skind <- Block (mkBlock combined);
       stmt
 

@@ -29,10 +29,13 @@ class visitor file =
     let invariant = invariant func in
 
     object
-      inherit FunctionBodyVisitor.visitor
+      inherit Classifier.visitor as super
 
       val mutable sites = []
-      method result = sites
+      method sites = sites
+
+      val mutable globals = []
+      method globals = globals
 
       val vars =
 	let globalVars =
@@ -70,9 +73,11 @@ class visitor file =
 		    exp = right;
 		    name = Pretty.sprint max_int (d_exp () right)
 		  } in
-		  let (stmt, _) as site = invariant rightOperand in
+		  let (site, global) = invariant rightOperand in
+		  let site = mkStmt site in
 		  sites <- site :: sites;
-		  stmt
+		  globals <- global :: globals;
+		  site
 	      in
 
 	      let rights =
@@ -102,19 +107,6 @@ class visitor file =
 	    stmt.skind <- Block (mkBlock (mkStmt stmt.skind :: bumps));
 	    SkipChildren
 
-	| Instr (_ :: _ :: _) as instr ->
-	    currentLoc := get_stmtLoc instr;
-	    ignore (bug "instr should have been atomized");
-	    SkipChildren
-
 	| _ ->
-	    DoChildren
+	    super#vstmt stmt
     end
-
-
-let collect file =
-  let visitor = new visitor file in
-  fun func ->
-    let visitor = visitor func in
-    ignore (visitCilFunction (visitor :> cilVisitor) func);
-    visitor#result

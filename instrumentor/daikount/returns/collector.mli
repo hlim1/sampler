@@ -1,4 +1,4 @@
 open Cil
 
 
-val collect : file -> fundec -> Sites.info
+class visitor : file -> fundec -> Classifier.visitor

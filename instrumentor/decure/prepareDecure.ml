@@ -2,11 +2,12 @@ open Cil
 open Classify
 
 
-class visitor =
+class visitor file =
   object
-    inherit Prepare.visitor
+    inherit Manager.visitor file as super
 
-    method private collectSites = Find.collect
-    method private prepatcher = new DecureCalls.prepatcher
-    method private shouldTransform = Should.shouldTransform
+    method private shouldTransform func =
+      super#shouldTransform func && Should.shouldTransform func
+
+    method private statementClassifier = new Collector.visitor
   end

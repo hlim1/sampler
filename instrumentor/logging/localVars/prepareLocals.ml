@@ -1,6 +1,8 @@
 class visitor file =
-  object
-    inherit Prepare.visitor
+  let collector = Log.collect file in
 
-    method private collectSites = Log.collect file
+  object
+    inherit Manager.visitor file
+
+    method private findSites = collector
   end

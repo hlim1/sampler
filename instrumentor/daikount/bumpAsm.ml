@@ -13,17 +13,17 @@ let bump func =
 				 NoOffset) in
     let counter = addOffsetLval offset counters in
 
-    mkStmt (Instr
-	      [ Asm ([],
-		     [ "xor %0,%0";
-		       "xor %1,%1";
-		       "cmp %2,%3";
-		       "setge %b0";
-		       "setg %b1" ],
-		     [ "=r,r", lt;
-		       "=r,r", le ],
-		     [ "r,g", left;
-		       "g,r", right],
-		     [ "cc" ],
-		     location);
-		Set (counter, increm (Lval counter) 1, location) ])
+    Instr
+      [ Asm ([],
+	     [ "xor %0,%0";
+	       "xor %1,%1";
+	       "cmp %2,%3";
+	       "setge %b0";
+	       "setg %b1" ],
+	     [ "=r,r", lt;
+	       "=r,r", le ],
+	     [ "r,g", left;
+	       "g,r", right],
+	     [ "cc" ],
+	     location);
+	Set (counter, increm (Lval counter) 1, location) ]

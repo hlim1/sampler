@@ -1,4 +1,4 @@
 open Cil
 
 
-val main : (file -> Prepare.visitor) -> unit
+val main : (file -> Manager.visitor) -> unit

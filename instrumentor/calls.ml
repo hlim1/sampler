@@ -3,49 +3,38 @@ open Cil
 
 type info = {
     export : stmt;
+    call : stmt;
     callee : exp;
     import : stmt;
     jump : stmt;
     landing : stmt;
+    site : stmt;
   }
 
 type infos = info list
 
 
-class prepatcher =
-  object
-    inherit FunctionBodyVisitor.visitor
-
-    val mutable placeholders = []
-    method result = placeholders
-
-    method vstmt stmt =
-      match stmt.skind with
-      | Instr [Call (_, callee, _, _) as call] ->
-	  let info = {
-	    export = mkEmptyStmt ();
-	    callee = callee;
-	    import = mkEmptyStmt ();
-	    jump = mkEmptyStmt ();
-	    landing = mkEmptyStmt ()
-	  }
-	  in
-	  placeholders <- info :: placeholders;
-	  
-	  let block = Block (mkBlock [info.export;
-				      mkStmtOneInstr call;
-				      info.import;
-				      info.jump;
-				      info.landing])
-	  in
-	  stmt.skind <- block;
-	  SkipChildren
-
-      | _ ->
-	  DoChildren
-  end
-
-
-let prepatch visitor {sbody = sbody} =
-  ignore (visitCilBlock (visitor :> cilVisitor) sbody);
-  visitor#result
+let prepatch stmt =
+  match stmt.skind with
+  | Instr [Call (_, callee, _, _) as call] ->
+      let info = {
+	export = mkEmptyStmt ();
+	call = mkStmtOneInstr call;
+	callee = callee;
+	import = mkEmptyStmt ();
+	jump = mkEmptyStmt ();
+	landing = mkEmptyStmt ();
+	site = mkEmptyStmt ();
+      }
+      in
+      let block = Block (mkBlock [info.export;
+				  info.call;
+				  info.import;
+				  info.jump;
+				  info.landing;
+				  info.site])
+      in
+      stmt.skind <- block;
+      info
+  | _ ->
+      failwith "can only prepatch isolated call instructions"

@@ -2,7 +2,7 @@ open Cil
 open Str
 
 
-type classification = Check | Fail | Generic
+type classification = Check | Fail | Init | Generic
 
 
 let classifyByName = function
@@ -59,6 +59,8 @@ let classifyByName = function
   | "lbound_or_ubound_fail"
   | "ubound_or_non_pointer_fail" ->
       Fail
+  | "__ccuredInit" ->
+      Init
   | _ ->
       Generic
 
@@ -75,11 +77,9 @@ let rec classifyStatement = function
     ->
       begin
 	match classifyStatement consequence with
-	| Check
-	| Fail ->
-	    Check
-	| Generic ->
-	    Generic
+	| Check | Fail -> Check
+	| Init -> Init
+	| Generic -> Generic
       end
 
   | If (_,
@@ -91,8 +91,9 @@ let rec classifyStatement = function
 	  classifyStatement consequence,
 	  classifyStatement alternative
 	with
+	| (Init | Generic), _ -> Generic
+	| _, (Init | Generic) -> Generic
 	| (Check | Fail), (Check | Fail) -> Check
-	| _ -> Generic
       end
 
   | _ ->

@@ -1,8 +1,9 @@
 open Cil
 
 
-class visitor :
+class visitor : file ->
   object
-    inherit Prepare.visitor
-    method private collectSites : fundec -> Sites.info
+    inherit Manager.visitor
+
+    method private statementClassifier : fundec -> Classifier.visitor
   end

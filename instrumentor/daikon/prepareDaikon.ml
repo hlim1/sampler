@@ -1,7 +1,8 @@
 class visitor file =
-  object
-    inherit Prepare.visitor
+  let collector = new Collector.visitor file in
 
-    val collectSites = Collector.collect file
-    method private collectSites = collectSites
+  object
+    inherit Manager.visitor file
+
+    method private statementClassifier func = collector func
   end

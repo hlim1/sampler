@@ -4,8 +4,11 @@ open Cil
 class weightsMap = [int] StmtMap.container
 
 
-let rec weigh sites headers =
+let rec weigh ~sites:sites ~headers:headers =
   
+  let siteSet = new StmtSet.container in
+  List.iter siteSet#add sites;
+
   let cache = new weightsMap in
 
   let rec subweight succ =
@@ -17,7 +20,7 @@ let rec weigh sites headers =
   and weight node =
     try cache#find node with
       Not_found ->
-	let myWeight = if sites#mem node then 1 else 0 in
+	let myWeight = if siteSet#mem node then 1 else 0 in
 	let maximize best succ = max best (subweight succ) in
 	let maxChildWeight = List.fold_left maximize 0 node.succs in
 	let total = myWeight + maxChildWeight in
@@ -28,7 +31,8 @@ let rec weigh sites headers =
   let weights = new StmtMap.container in
   
   let record header =
-    weights#add header (weight header)
+    let weight = weight header in
+    weights#add header weight
   in
   
   List.iter record headers;

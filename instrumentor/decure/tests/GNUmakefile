@@ -1,6 +1,6 @@
-tests := test extern
+tests := test
 
-top := ../../..
+top := ../..
 
 front_end := ../driver/main
 CC := $(front_end) -g -W -Wall -Werror -save-temps
@@ -10,7 +10,7 @@ checks := $(tests:=.check)
 
 countdir := $(top)/../libcountdown
 countdowns := $(countdir)/countdown-1-1
-lib := ../../libdaikount/libdaikount.la $(countdir)/libevent.la $(countdir)/libcyclic.la
+lib := $(countdir)/libevent.la $(countdir)/libcyclic.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -26,20 +26,15 @@ check: $(checks)
 .PHONY: check
 
 $(checks): %.check: %.trace
-	[ -s $< ]
+	[ -r $< ]
 .PHONY: $(checks)
 
 $(tests:=.trace): %.trace: % $(countdowns)
-	SAMPLER_FILE=$@ SAMPLER_EVENT_COUNTDOWNS=$(countdowns) ./$<
-	[ -r $@ ]
+	SAMPLER_EVENT_COUNTDOWNS=$(countdowns) ./$<
+	touch $@
 
-test: test.o $(lib) ../main
-	$(LINK.o) $< $(LOADLIBES) $(LDLIBS) -o $@
-
-extern: extern-caller.o extern-callee.o $(lib) ../main
-	$(LINK.o) extern-caller.o extern-callee.o $(LOADLIBES) $(LDLIBS) -o $@
-
-test.o extern-caller.o extern-callee.o: %.o: %.c $(front_end) ../main ../../libdaikount/daikount.h
+test: test.c $(lib) $(front_end) ../main
+	$(LINK.c) $< $(LOADLIBES) $(LDLIBS) -o $@
 
 ../main: $(force)
 	$(recurse)
@@ -54,7 +49,9 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(traces) $(tests) *.[ios] *.inst.c
+	rm -f $(traces) $(tests) *.[ios] *cured.c *_inst.c
+	rm -rf *.browser
+	if [ -d .libs ]; then rmdir .libs; fi
 .PHONY: clean
 
 spotless: clean

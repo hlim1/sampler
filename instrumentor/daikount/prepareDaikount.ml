@@ -1,7 +1,8 @@
-class virtual visitor (file : Cil.file) =
+class virtual visitor file =
   object
-    inherit Prepare.visitor
+    inherit Manager.visitor file as super
 
-    method finalize file =
-      Invariant.register file
+    method private finalize =
+      Invariant.register file;
+      super#finalize
   end

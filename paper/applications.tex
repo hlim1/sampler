@@ -35,7 +35,7 @@ enforce memory safety at run time \cite{POPL_'02*128}.  For our purposes,
 \CCured is simply a source of assertion-dense code.
 The individual assertions are quite small and fast (array bounds
 checks, testing for null, etc.)  but their performance impact can be
-considerable.  We wish to use random sampling to spread this cost
+significant.  We wish to use random sampling to spread this cost
 among many users.
 
 We have applied sampling to \CCured versions of several Olden
@@ -148,9 +148,9 @@ instrumentation overhead of 146\% to only 3\% with sparse sampling.
 \subsubsection{Statically Selective Sampling}
 \label{sec:ccured:single}
 
-Because samples are taken independently, it is not necessary to put
-all instrumentation into a single executable.  One can easily 
-multiple executables where each contains a subset of the complete
+It is not necessary to put
+all instrumentation into a single executable; one can easily 
+create multiple executables where each contains a subset of the complete
 instrumentation.  Partitioning instrumentation by site, by module, by
 function, or by object file are all reasonable schemes.  Any
 individual executable contains less instrumentation and therefore
@@ -170,8 +170,8 @@ over time as debugging needs and intermediate results warrant.
   fully instrumented executables range from 13\%-149\% larger than
   their non-sampling counterparts, average growth for single-function
   instrumented executables is just 12\% for the small Olden benchmarks
-  and 6\% for the larger SPECINT95 applications.  Performance is good:
-  94\% of site-containing functions incur less than 5\% slowdown
+  and 6\% for the larger SPECINT95 applications.  Performance is uniformly good:
+ at \nicefrac{1}{1000} sampling,  94\% of site-containing functions incur less than 5\% slowdown
   versus instrumentation-free code, while even the worst single
   function has less than a 12\% penalty.
 \end{sloppypar}
@@ -380,7 +380,7 @@ where \texttt{file\_exists()} reports that the file exists but
 \texttt{xreadline()} returns a valid response from the user and
 therefore the program does not crash.  If the \texttt{file\_exists()}
 call is sampled on such a run, elimination by \elim{successful
-  counterexample} will correctly conclude that this predicate does not
+  counterexample} correctly concludes that this predicate does not
 imply failure.  It will be eliminated from further consideration, and
 only the true ``smoking gun,'' the call to \texttt{xreadline()}, will
 remain.  Thus we have the ability to identify not only the direct
@@ -493,9 +493,7 @@ of counter triples.  We abandon elimination by \elim{successful
 counterexample}\footnote{Because the bug is non-deterministic, if we
 have enough runs no predicates will satisfy elimination by
 \elim{successful counterexample}.} in favor of statistical modeling to
-identify behavior that is broadly correlated with failure in spite of
-the occasional run that terminates successfully despite triggering the
-bug.
+identify behavior that is broadly correlated with failure.
 
 \subsubsection{Instrumentation Strategy}
 
@@ -638,7 +636,7 @@ only a small number of features from the complete feature set.
 
 Our \texttt{bc} data set consists of 4390 runs with distinct random
 inputs and distinct randomized \nicefrac{1}{1000} sampling.  
-2729 runs are randomly chosen for training, 322 for cross-validation, and 1339
+We randomly chose 2729 runs for training, 322 runs for cross-validation, and 1339 runs
 for testing.  Although there are 30,150 raw features, many can be
 discarded immediately using elimination by \elim{universal falsehood}:
 in the training set 27,242 features are always zero.  Hence the
@@ -726,7 +724,7 @@ renaming.
 
 The logistic regression model points us at the buggy line, the buggy
 variable, and even reveals something of the conditions under which the
-bug will appear.  Having found the bug, it is reasonable to ask
+bug appears.  Having found the bug, it is reasonable to ask
 whether the statistical analysis could have pointed at it even more
 directly.  The mistaken use of \texttt{v\_count} instead of
 \texttt{a\_count} on line 176 means that a buffer overrun occurs when
@@ -775,10 +773,10 @@ the process of finding and fixing bugs more efficient.
   \label{fig:bc:slowdown}
 \end{figure}
 
-Our \texttt{bc} instrumentation is quite dense.  The leftmost bar in
+Our \texttt{bc} instrumentation is fairly dense.  The leftmost bar in
 Figure~\ref{fig:bc:slowdown} shows that if this instrumentation is
-added without sampling, the performance penalty is correspondingly
-large: 13\%.  A sampling density of \nicefrac{1}{100} cuts this in
+added without sampling, the performance penalty is 
+13\%.  A sampling density of \nicefrac{1}{100} cuts this in
 half (6\%).  At the \nicefrac{1}{1000} density used in our statistical
 debugging experiment, the penalty is barely measurable (0.5\%).  Still
 lower densities show small, unexpected speedups relative to

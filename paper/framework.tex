@@ -156,7 +156,7 @@ The scheme for blocks outlined above generalizes to an arbitrary
 control flow graph as follows.  Any region of acyclic code has a
 finite number of possible paths.  Let the maximum number of
 instrumented sites on any path be the region's \termdef{weight}.
-A countdown threshold check can be placed at the top of each
+A countdown threshold check can be placed at the top of each acyclic
 region.  If the next-sample countdown exceeds the weight of an 
 acyclic region $r$ on entry to $r$,
 then no samples are taken on that execution of $r$.
@@ -209,8 +209,8 @@ exactly once per $n$ opportunities, or exactly once per $n$
 instructions) and do not apply region-specific weighting.  Our
 approach imposes more overhead, but offers greater statistical rigor
 in the resultant sampled data.  Arnold and Ryder have studied several
-variant layouts with varying trade-offs of code size versus overhead;
-the same choices and trade-offs are directly applicable here.
+variations with different trade-offs of code size versus overhead;
+the same choices apply here.
 
 \subsection{Function Calls}
 \label{sec:framework:calls}
@@ -230,9 +230,8 @@ simple interprocedural analysis can be used.  A \termdef{weightless
 \item The function only calls other weightless functions.
 \end{itemize}
 
-The set of weightless functions can be computed iteratively, requiring
-no more steps in the worst case than the depth of the deepest
-non-recursive call chain.
+The set of weightless functions can be computed via a standard
+iterative algorithm.
 
 For purposes of identifying acyclic regions and placing threshold
 checks, calls to weightless functions are invisible.  Acyclic regions

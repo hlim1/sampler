@@ -48,7 +48,17 @@ class collectDestinations =
       begin
 	match stmt.skind with
 	| Goto (dest, _) ->
-	    destinations#add !dest
+	    if !dest.sid == -1 then
+	      begin
+		prerr_string "out-of-tree destination for labels:";
+		let printLabel = function
+		  | Label (name, _, _) -> prerr_string (" " ^ name)
+		  | _ -> ()
+		in
+		List.iter printLabel !dest.labels
+	      end
+	    else
+	      destinations#add !dest
 	| _ -> ()
       end;
       DoChildren

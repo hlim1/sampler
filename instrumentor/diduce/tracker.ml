@@ -8,7 +8,7 @@ let trackable = function
 
 class tracker fundec scope typ =
   let makeVar role =
-    let name = role ^ "$" ^ fundec.svar.vname ^ scope in
+    let name = fundec.svar.vname ^ scope ^ "$" ^ role in
     let var = makeGlobalVar name typ in
     var.vstorage <- Static;
     var

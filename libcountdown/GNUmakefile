@@ -1,4 +1,4 @@
-CFLAGS := -W -Wall -Werror -g `gsl-config --cflags`
+CFLAGS := -W -Wall -Werror -O9 `gsl-config --cflags`
 CPPFLAGS := -DHAVE_INLINE
 LOADLIBES := `gsl-config --libs`
 

@@ -50,10 +50,11 @@ implicits := $(filter-out $(ifaces), $(impls))
 
 
 afterCalls = $(functionBodyVisitor) $(logIsImminent) afterCalls
-backwardJumps = $(logIsImminent) backwardJumps
+backwardJumps = $(logIsImminent) $(targets) backwardJumps
+bitFields = bitFields
 cfg = cfg
 cfgToDot = $(dotify) cfgToDot
-checkSimplicity = $(functionBodyVisitor) checkSimplicity
+checkSimplicity = $(bitFields) $(functionBodyVisitor) checkSimplicity
 classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
 countdown = countdown
 dotify = $(utils) dotify
@@ -65,14 +66,14 @@ functionEntry = $(logIsImminent) functionEntry
 identity = identity
 identity = identity
 instrument = $(functionBodyVisitor) $(logWrite) instrument
-instrumentWrites = $(simplifyLefts) $(simplifyReturns) $(simplifyRights) $(checkSimplicity) $(instrument) instrumentWrites
 logIsImminent = logIsImminent
 logWrite = logWrite
 mapClass = mapClass
 patchSites = patchSites
 removeLoops = $(functionBodyVisitor) removeLoops
 setClass = setClass
-simplifyLefts = $(simplifyVisitor) simplifyLefts
+simplify = $(simplifyLefts) $(simplifyReturns) $(simplifyRights) $(checkSimplicity) simplify
+simplifyLefts = $(bitFields) $(simplifyVisitor) simplifyLefts
 simplifyReturns = $(simplifyVisitor) simplifyReturns
 simplifyRights = $(simplifyVisitor) simplifyRights
 simplifyVisitor = $(functionBodyVisitor) simplifyVisitor
@@ -81,8 +82,9 @@ skipWrites = $(countDown) $(functionBodyVisitor) skipWrites
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 stores = stores
+targets = targets
 testHarness = testHarness
-transform = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrumentWrites) $(patchSites) $(removeLoops) $(skipWrites) $(weighPaths) transform
+transform = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrument) $(patchSites) $(removeLoops) $(simplify) $(skipWrites) $(weighPaths) transform
 utils = utils
 weighPaths = $(stmtMap) $(stores) weighPaths
 
@@ -109,6 +111,9 @@ main: %: $(libs) $(addsuffix .$(cmo), $(main))
 	$(link)
 
 checker: %: $(libs) $(addsuffix .$(cmo), %)
+	$(link)
+
+dump: %: $(libs) $(addsuffix .$(cmo), %)
 	$(link)
 
 $(impls:=.$(cmo)): %.$(cmo): %.ml

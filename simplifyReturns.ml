@@ -6,8 +6,8 @@ let returnTypeOf typ =
   return
 
 
-class visitor initialFunction = object(self)
-  inherit SimplifyVisitor.visitor initialFunction
+class visitor = object(self)
+  inherit SimplifyVisitor.visitor
 
   method vinst = function
     | Call (Some result, fname, actuals, location) ->
@@ -25,4 +25,4 @@ end
 
 let phase =
   "SimplifyReturns",
-  visitCilFileSameGlobals (new visitor dummyFunDec)
+  visitCilFileSameGlobals new visitor

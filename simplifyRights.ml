@@ -1,8 +1,8 @@
 open Cil
 
 
-class visitor initialFunction = object(self)
-  inherit SimplifyVisitor.visitor initialFunction
+class visitor = object(self)
+  inherit SimplifyVisitor.visitor
       
   method vinst = function
     | Set ((Mem _, _) as lval, data, location) ->
@@ -20,4 +20,4 @@ end
 
 let phase =
   "SimplifyRights",
-  visitCilFileSameGlobals (new visitor dummyFunDec)
+  visitCilFileSameGlobals new visitor

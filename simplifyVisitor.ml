@@ -1,10 +1,10 @@
 open Cil
 
 
-class virtual visitor initialFunction = object
+class virtual visitor = object
   inherit FunctionBodyVisitor.visitor
 
-  val currentFunction = ref initialFunction
+  val currentFunction = ref dummyFunDec
 
   method vfunc func =
     currentFunction := func;

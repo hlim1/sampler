@@ -2,7 +2,7 @@ open Cil
 
   
 let count_instr = function
-  | Set((Mem(_), _), _, _) -> 1
+  | Set((Mem(_), NoOffset), _, _) -> 1
   | _ -> 0
 	
 	

@@ -8,6 +8,7 @@ let bad message printer thing =
     
 let checkLvalue = function
   | (Mem Lval (Var _, NoOffset), NoOffset) -> ()
+  | (Mem _, offset) when BitFields.present offset -> ()
   | (Var _, _) -> ()
   | other -> bad "complex lvalue: %a" d_lval other
 	

@@ -1,11 +1,12 @@
 open Cil
 
 
-class visitor initialFunction = object(self)
-  inherit SimplifyVisitor.visitor initialFunction
+class visitor = object(self)
+  inherit SimplifyVisitor.visitor
 
-  method vinst = function
-    | Set ((Mem(expr), offset) as lval, data, location) ->
+  method vinst instr =
+    match instr with
+    | Set ((Mem(expr), offset) as lval, data, location) when BitFields.absent offset ->
 	begin
 	  match (expr, offset) with
 	  | (Lval (Var _, NoOffset), NoOffset) ->
@@ -14,8 +15,7 @@ class visitor initialFunction = object(self)
 	      let addr = mkAddrOf lval in
 	      let temp = var (self#makeTempVar "left" (typeOf addr)) in
 	      let mem = mkMem (Lval temp) NoOffset in
-	      ChangeTo [Set (temp, addr, location);
-			Set (mem, data, location)]
+	      ChangeTo [Set (temp, addr, location); Set (mem, data, location)]
 	end
     | _ -> SkipChildren
 end
@@ -23,4 +23,4 @@ end
 
 let phase =
   "SimplifyLefts",
-  visitCilFileSameGlobals (new visitor dummyFunDec)
+  visitCilFileSameGlobals new visitor

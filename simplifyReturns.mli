@@ -1,6 +1,6 @@
 open Cil
 
 
-class visitor : fundec -> cilVisitor
+class visitor : cilVisitor
 
 val phase : TestHarness.phase

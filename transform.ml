@@ -6,6 +6,7 @@ class visitor = object
   inherit FunctionBodyVisitor.visitor
 
   method vfunc func =
+    Simplify.visit func;
     prepareCFG func;
     RemoveLoops.visit func;
     let afterCalls = AfterCalls.split func in
@@ -28,7 +29,7 @@ class visitor = object
 	  
 	  SkipWrites.visit func;
 	  FunctionEntry.patch func weights instrumented;
-	  InstrumentWrites.visit func instrumented
+	  Instrument.visit instrumented
     end;
     
     SkipChildren

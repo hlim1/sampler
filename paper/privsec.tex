@@ -100,18 +100,18 @@ information.  A greater challenge is assuring the correctness of these
 but the \CCured project has shown that this too is possible.
 
 If the ultimate use of sampled data is the sort of data mining used in
-\autoref{sec:applications:mining}, then an attractive mechanism for
-protecting user anonymity becomes available.  Many statistical
-analyses are characterized by a set of \termdef{sufficient
-  statistics}: a collection of values which completely characterize
-the internal state of the analysis.  For example, if one wanted to
-compute the mean of a stream of numbers, a running total and a count
-would be sufficient statistics: the mean can be computed from these
-without retaining the individual numbers in the stream.  Similarly,
-once the logistic regression has been updated with a new trace, the
-trace itself may be discarded.  If the analysis host is compromised,
-the attacker will learn aggregate information about all collected
-traces, but cannot recover the precise details of any single trace.
+\autoref{sec:debug}, then an attractive mechanism for protecting user
+anonymity becomes available.  Many statistical analyses are
+characterized by a set of \termdef{sufficient statistics}: a
+collection of values which completely characterize the internal state
+of the analysis.  For example, if one wanted to compute the mean of a
+stream of numbers, a running total and a count would be sufficient
+statistics: the mean can be computed from these without retaining the
+individual numbers in the stream.  Similarly, once the logistic
+regression has been updated with a new trace, the trace itself may be
+discarded.  If the analysis host is compromised, the attacker will
+learn aggregate information about all collected traces, but cannot
+recover the precise details of any single trace.
 
 A statistical approach designed to cope with noise offers some
 protection against malicious users who might try to poison the central

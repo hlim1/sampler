@@ -1,7 +1,6 @@
 SUBDIRS = libegg
 
-INCLUDES = `pkg-config --cflags libbonobo-2.0 gtk+-2.0 pygtk-2.0` -I/usr/include/python2.2 -DGETTEXT_PACKAGE='"sampler"'
-CFLAGS = -g -Werror
+INCLUDES = $(TRAY_ICON_CFLAGS) $(TRAY_SAMPLER_CFLAGS) -I/usr/include/python2.2
 
 defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
 
@@ -62,7 +61,7 @@ libtrayicon_a_SOURCES =				\
 	trayiconmodule.c
 
 trayicon.so: %.so: lib%.a libegg/tray/libtray.a
-	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive -L/usr/lib/python2.2/config -lpython2.2 -Llibegg/tray -ltray -lutil `pkg-config --libs gdk-2.0 gtk+-2.0` -L/usr/X11R6/lib -lX11 -lpthread
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive -L/usr/lib/python2.2/config -lpython2.2 -ldl -lm -lpthread -lutil -Llibegg/tray -ltray $(EGG_TRAY_LIBS) $(TRAY_ICON_LIBS)
 
 
 ########################################################################
@@ -95,4 +94,4 @@ libsampler_a_SOURCES =				\
 	sampler-wrap.c
 
 sampler.so: %.so: lib%.a
-	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $^ -Wl,--no-whole-archive -L/usr/lib/python2.2/config -lpython2.2 -lutil `pkg-config --libs libbonobo-2.0`
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $^ -Wl,--no-whole-archive -L/usr/lib/python2.2/config -lpython2.2 -lutil $(TRAY_SAMPLER_LIBS)

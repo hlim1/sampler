@@ -1,14 +1,19 @@
-#!/usr/bin/perl -wt
+#!/usr/bin/perl -w
 
 use strict;
 use File::Basename;
 use File::Find;
 use File::Path;
 use File::stat;
+use FileHandle;
 use FindBin;
+use Scalar::Util qw(tainted);
 
 my $buildRoot = shift;
 die "Usage: $0 <rpm-build-root>\n" unless defined $buildRoot;
+
+my $buildDir = $ENV{RPM_BUILD_DIR};
+die "no \$RPM_BUILD_DIR in environment\n" unless defined $buildDir;
 
 my $extract = "$FindBin::Bin/extract-section";
 
@@ -16,40 +21,44 @@ my $extract = "$FindBin::Bin/extract-section";
 sub wanted {
     return unless -f $_;
 
-    my $stat = File::stat $_;
+    my $stat = stat $_;
     my $mode = $stat->mode;
     return unless $mode & 0100 || $mode & 0010 || $mode & 0001;
 
     my $exe = new FileHandle;
-    open $exe, '|-', 'file', $_;
+    $ENV{PATH} = '/usr/bin:/bin';
+    open $exe, '-|', 'file', $_;
     my $magic = $exe->getline;
     return unless $magic =~ /:[ \t]*ELF.*, not stripped/;
     die unless $exe->close;
 
-    die "Found one: {$_}, {$File::Find::name}, {$File::Find::fullname}";
-    print "extracting sampler site info from $_";
-    my $output = "$buildRoot/usr/lib/sampler/sites/$_";
+    my $subpath = $_;
+    die "$subpath is not under $buildRoot" unless $subpath =~ s{^\Q$buildRoot\E/}{};
+
+    print "extracting sampler site info from $_\n";
+    die if tainted $subpath;
+    my $output = "$buildRoot/usr/lib/sampler/sites/$subpath";
     my $outdir = dirname $output;
     mkpath $outdir;
 
     my $sites = new FileHandle "$output.sites", 'w';
     $exe = new FileHandle;
-    open $exe, '|-', $extract, '.debug_site_info', $_;
+    open $exe, '-|', $extract, '.debug_site_info', $File::Find::name;
     while (<$exe>) {
-	s/^$buildRoot/\/usr\/lib\/sampler\/sites/;
-	$sites->print;
+	s{^$buildDir}{/usr/lib/sampler/sites};
+	$sites->print($_);
     }
     die unless $exe->close;
 
-    my $cfg = new FileHandle "$output.sites", 'w';
+    my $cfg = new FileHandle "$output.cfg", 'w';
     $exe = new FileHandle;
-    open $exe, '|-', $extract, '.debug_sampler_cfg', $_;
+    open $exe, '-|', $extract, '.debug_sampler_cfg', $File::Find::name;
     while (<$exe>) {
-	s/(^|\t)$buildRoot/\1\/usr\/lib\/sampler\/sites/;
-	$cfg->print;
+	s{(^|\t)\Q$buildDir\E/}{$1/usr/lib/sampler/sites/};
+	$cfg->print($_);
     }
     die unless $exe->close
 }
 
 
-find \&wanted, $buildRoot;
+find {wanted => \&wanted, no_chdir => 1}, $buildRoot;

@@ -86,16 +86,16 @@ many users; any single run has little revelatory power. \disregard{,
 Some data, or some parts of execution, may be so sensitive that even
 this diffuse information leakage is unacceptable.  Several type-based
 analyses under the broad heading of secure information flow
-\cite{1997:tapsoft:volpano,ZdZhNyMy2001} may be helpful here.  Such
-systems statically identify parts of a program that manipulate
-sensitive data; we can avoid inserting instrumentation that reveals
-such values.  Of course, this will make it difficult to track bugs in
-security-sensitive parts of an application, but that trade-off is
-always present: one can only fix bugs about which that the customer is
-willing to provide useful information.  \disregard{A greater challenge
-  is assuring the correctness of these (or any) type-based approaches
-  in the presence of memory safety bugs, but the \CCured project has
-  shown that this too is possible.}
+\cite{Broadwell:2003:SSGSCI,1997:tapsoft:volpano,ZdZhNyMy2001} may be
+helpful here.  Such systems statically identify parts of a program
+that manipulate sensitive data; we can avoid inserting instrumentation
+that reveals such values.  Of course, this will make it difficult to
+track bugs in security-sensitive parts of an application, but that
+trade-off is always present: one can only fix bugs about which that
+the customer is willing to provide useful information.  \disregard{A
+  greater challenge is assuring the correctness of these (or any)
+  type-based approaches in the presence of memory safety bugs, but the
+  \CCured project has shown that this too is possible.}
 
 When using statistical models such as that of Section~\ref{sec:bc}, an
 attractive mechanism for protecting user anonymity becomes available.

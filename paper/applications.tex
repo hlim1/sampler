@@ -100,7 +100,7 @@ as the baseline.  We report the speedup ($>1$) or slowdown ($<1$)
 relative to this baseline when sampling at various densities.  All
 benchmarks were compiled using \texttt{gcc} 2.96 using standard
 optimization (\texttt{-O2}).  Times were collected on a 550 MHz
-Pentium III Linux machine with two gigabytes of RAM.  Reported
+Pentium III Linux machine with two gigabytes of RAM\@.  Reported
 speedups represent the average of four runs; each run used a different
 pre-generated bank of 1024 geometrically distributed random
 countdowns.
@@ -292,8 +292,8 @@ would like to identify a narrow subset of our 30,150 features which
 are relevant to predicting the succeeded/crashed outcome.  This is
 %% the problem of feature selection in a classification setting.[axz]
 equivalent to the machine learning problem of learning a binary
-classifier with feature selection, i.e. using as few input features as
-possible.
+classifier with feature selection, i.e.\ using as few input features
+as possible.
 
 %% the following paragraphs bear substantial changes from the original
 %% version [axz]
@@ -354,7 +354,7 @@ function $\mu_{\tilde\beta}(x)$ with parameters $\tilde\beta = \{ \beta_0 \in \R
 \in \Real^N \}$.
 %%
 \begin{equation*}
-  P(Y = 1 | x) = \mu_{\tilde \beta} (x) = \frac{1}{ 1 + \exp(- \beta_0 - \beta^T x) }
+  P(Y = 1 | x) = \mu_{\tilde \beta} (x) = \frac{1}{1 + \exp(- \beta_0 - \beta^T x)}
 \end{equation*}
 %%
 The logistic parameters $\beta_0$ and $\beta$ take on the respective roles
@@ -372,7 +372,7 @@ function is:
 \begin{equation*}
   \begin{split}
     LL (\tilde\beta | \mathcal{D}, \lambda ) \:=\:
-    & \sum_{i=1}^M y_i \log \mu_{ \tilde \beta } (x_i) + (1 - y_i) \log (1 - \mu_{ \tilde \beta } (x_i)) \\
+    & \sum_{i=1}^M y_i \log \mu_{\tilde \beta} (x_i) + (1 - y_i) \log (1 - \mu_{ \tilde \beta } (x_i)) \\
     & - \lambda \norm{\beta}_1
   \end{split}
 \end{equation*}

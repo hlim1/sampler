@@ -38,8 +38,8 @@ TESTS_ENVIRONMENT = ../test-by-extension
 
 
 install-data-hook:
-	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.py)
-	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.pyc)
+	rm -f $(all_python:%.py=$(DESTDIR)$(traydir)/%.py)
+	rm -f $(all_python:%.py=$(DESTDIR)$(traydir)/%.pyc)
 
 
 $(BUILT_SOURCES): %: %.in Makefile

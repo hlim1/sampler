@@ -29,8 +29,8 @@ MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
 
 install-data-hook:
-	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.py)
-	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.pyc)
+	rm -f $(all_python:%.py=$(DESTDIR)$(wrapperdir)/%.py)
+	rm -f $(all_python:%.py=$(DESTDIR)$(wrapperdir)/%.pyc)
 
 Paths.py: %: %.in Makefile
 	sed						\

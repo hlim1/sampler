@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.15
+
+** Fix duplicate symbol errors in bounds scheme.
+
 * sampler-0.14
 
 ** Ignore program constants in excluded files.

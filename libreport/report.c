@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "anchor.h"
+#include "lock.h"
 #include "report.h"
 #include "requires.h"
 #include "unit.h"
@@ -112,11 +113,13 @@ static void reportDebugInfo()
 
 static void finalize()
 {
-  if (reportFile)
-    {
-      reportAllCompilationUnits();
-      closeReportFile();
-    }
+  CRITICAL_REGION({
+    if (reportFile)
+      {
+	reportAllCompilationUnits();
+	closeReportFile();
+      }
+  });
 }
 
 
@@ -124,13 +127,15 @@ static void handleSignal(int signum)
 {
   signal(signum, SIG_DFL);
 
-  if (reportFile)
-    {
-      reportAllCompilationUnits();
-      reportDebugInfo();
-      fclose(reportFile);
-      reportFile = 0;
-    }
+  CRITICAL_REGION({
+    if (reportFile)
+      {
+	reportAllCompilationUnits();
+	reportDebugInfo();
+	fclose(reportFile);
+	reportFile = 0;
+      }
+  });
 
   raise(signum);
 }
@@ -138,17 +143,19 @@ static void handleSignal(int signum)
 
 __attribute__((constructor)) static void initialize()
 {
-  if (!reportInitCount++)
-    {
-      openReportFile();
-      if (reportFile)
-	{
-	  atexit(finalize);
-	  signal(SIGABRT, handleSignal);
-	  signal(SIGBUS, handleSignal);
-	  signal(SIGFPE, handleSignal);
-	  signal(SIGSEGV, handleSignal);
-	  signal(SIGTRAP, handleSignal);
-	}
-    }
+  CRITICAL_REGION({
+    if (!reportInitCount++)
+      {
+	openReportFile();
+	if (reportFile)
+	  {
+	    atexit(finalize);
+	    signal(SIGABRT, handleSignal);
+	    signal(SIGBUS, handleSignal);
+	    signal(SIGFPE, handleSignal);
+	    signal(SIGSEGV, handleSignal);
+	    signal(SIGTRAP, handleSignal);
+	  }
+      }
+  });
 }

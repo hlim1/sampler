@@ -8,7 +8,12 @@ SUBDIRS =					\
 	libcountdown				\
 	libreport
 
-DIST_SUBDIRS = $(SUBDIRS) benchmarks libtuples mining
+DIST_SUBDIRS =					\
+	$(SUBDIRS)				\
+	benchmarks				\
+	libthreads				\
+	libtuples				\
+	mining
 
 EXTRA_DIST =					\
 	package.m4				\

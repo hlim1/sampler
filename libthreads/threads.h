@@ -1,5 +1,5 @@
-#ifndef INCLUDE_libcountdown_threads_h
-#define INCLUDE_libcountdown_threads_h
+#ifndef INCLUDE_libthreads_threads_h
+#define INCLUDE_libthreads_threads_h
 
 
 #define SAMPLER_THREAD_LOCAL __thread
@@ -8,4 +8,4 @@
 #define SAMPLER_THREADS
 
 
-#endif /* !INCLUDE_libcountdown_threads_h */
+#endif /* !INCLUDE_libthreads_threads_h */

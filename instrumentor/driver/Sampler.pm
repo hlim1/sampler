@@ -107,7 +107,7 @@ sub extraHeaders {
 
     my $dir = "$::root/libcountdown";
     push @extras, '-DCIL';
-    push @extras, '-include', ($self->{threads} ? "$dir/threads.h" : "$dir/no-threads.h");
+    push @extras, '-include', "$::root/libthreads/" . ($self->{threads} ? 'threads.h' : 'no-threads.h');
     push @extras, '-include', "$dir/countdown.h" if $self->sampling;
     push @extras, '-include', "$dir/$self->{countdowns}.h" if $self->{sample_events};
 

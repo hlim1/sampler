@@ -6,7 +6,7 @@ class visitor file = object
 
   method findSites = FindSites.visit
   method insertSkips sites countdown = (new InsertSkipsBefore.visitor sites countdown :> cilVisitor)
-  method insertLogs = Instrument.insert
+  method insertLogs _ = Instrument.insert
 
   method vfunc func =
     Simplify.visit func;

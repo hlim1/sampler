@@ -1,4 +1,4 @@
 open Cil
 
 
-class visitor : exp -> fundec -> cilVisitor
+val insert : exp -> fundec -> ClonesMap.clonesMap -> FindSites.sites -> unit

@@ -12,9 +12,9 @@ include $(top)/rules.mk
 
 
 findLogger = findLogger
+findSites = findSites
 logs = $(where) logs
-skips = $(functionBodyVisitor) skips
-transform = $(findLogger) $(logs) $(skips) transform
+transform = $(findLogger) $(findSites) $(logs) transform
 where = where
 
 

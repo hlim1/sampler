@@ -5,15 +5,16 @@ class visitor file =
   let logger = FindLogger.find file in
 
   object
-    inherit TransformVisitor.visitor file
+    inherit [FindSites.sites] TransformVisitor.visitor file
 
     method weigh {skind = skind} =
       match skind with
-      | Instr instrs -> List.length instrs
+      | Instr [_] -> 1
       | _ -> 0
 
-    method insertSkips = new Skips.visitor
-    method insertLogs = new Logs.visitor logger fundec
+    method findSites = FindSites.visit
+    method insertSkips sites countdown = (new InsertSkipsBefore.visitor sites countdown :> cilVisitor)
+    method insertLogs = Logs.insert logger
   end
 
 

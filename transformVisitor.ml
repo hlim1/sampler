@@ -13,7 +13,7 @@ class virtual ['siteInfo] visitor file = object(self)
       
   method virtual findSites : block -> 'siteInfo
   method virtual insertSkips : 'siteInfo -> Countdown.countdown -> cilVisitor
-  method virtual insertLogs : ClonesMap.clonesMap -> 'siteInfo -> unit
+  method virtual insertLogs : fundec -> ClonesMap.clonesMap -> 'siteInfo -> unit
 
   method vfunc func =
     prepareCFG func;
@@ -42,7 +42,7 @@ class virtual ['siteInfo] visitor file = object(self)
 	  FunctionEntry.patch func weights countdown instrumented;
 	  visitSameBlock (self#insertSkips sites countdown) original;
 
-	  self#insertLogs clones sites;
+	  self#insertLogs func clones sites;
 	  Calls.postpatch func countdown;
     end;
 

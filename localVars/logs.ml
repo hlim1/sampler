@@ -7,10 +7,9 @@ let multimap transformer =
   List.fold_left (fun prefix input -> prefix @ transformer input) []
 
 
-class visitor logger func = object (self)
-  inherit FunctionBodyVisitor.visitor
+let insert logger func clones sites =
 
-  val callLogger =
+  let callLogger =
     let dissectVar varinfo =
       let var = Var varinfo in
       
@@ -82,18 +81,22 @@ class visitor logger func = object (self)
     let formats, arguments = List.split outputs in
     let format = mkString ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
     
-    fun inst ->
-      let where = get_instrLoc inst in
+    fun statement ->
+      let where = get_stmtLoc statement in
       Call (None, logger,
 	    format
 	    :: mkString where.file
 	    :: kinteger IUInt where.line
 	    :: arguments,
 	    where)
+  in
+  
+  let insertOne original =
+    let instrumented = ClonesMap.findCloneOf clones original in
+    let call = callLogger instrumented.skind in
+    let block = Block (mkBlock [mkStmtOneInstr call;
+				mkStmt instrumented.skind]) in
+    instrumented.skind <- block
+  in
 
-  method vstmt _ = DoChildren
-
-  method vinst inst =
-    self#queueInstr [callLogger inst];
-    SkipChildren
-end
+  sites#iter insertOne

@@ -47,5 +47,5 @@ let main stages =
   initCIL ();
   (* printLnComment := true; *)
 
-  let filenames = List.tl (Array.to_list Sys.argv) in
-  List.iter (doOne stages) filenames
+  let filenames = Array.sub Sys.argv 1 (Array.length Sys.argv - 1) in
+  Array.iter (doOne stages) filenames

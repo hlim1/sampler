@@ -24,20 +24,23 @@ let makeLval fundec = function
   | _ -> failwith "weird expression"
 	
 
+let vinst func = function
+  | Set((Mem addr, _), data, location) as original ->
+      ChangeTo [Call (None, Lval (var logWrite),
+		      [mkString location.file;
+		       kinteger IUInt location.line;
+		       mkCast addr voidPtrType;
+		       SizeOf(typeOf data);
+		       mkCast (mkAddrOf (makeLval func data)) voidPtrType],
+		      location);
+		original]
+  | _ -> SkipChildren
+	
+	
 class visitor = object
   inherit CurrentFunctionVisitor.visitor
 
-  method vinst = function
-    | Set((Mem addr, _), data, location) as original ->
-	ChangeTo [Call (None, Lval (var logWrite),
-			[mkString location.file;
-			 kinteger IUInt location.line;
-			 mkCast addr voidPtrType;
-			 SizeOf(typeOf data);
-			 mkCast (mkAddrOf (makeLval !currentFunction data)) voidPtrType],
-			location);
-		  original]
-    | _ -> SkipChildren
+  method vinst = vinst !currentFunction
 end
 
 

@@ -12,7 +12,7 @@ let weightless = {
 
 let max a b = {
   threshold = Pervasives.max a.threshold b.threshold;
-  count = a.count + b.count;
+  count = Pervasives.max a.count b.count;
 }
 
 

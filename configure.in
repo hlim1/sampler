@@ -36,10 +36,10 @@ AC_EGREP_CPP(inline, inline,
 AM_CONFIG_HEADER(config.h)
 AC_OUTPUT(
 Makefile
+benchmarks/ccured/config.mk
 fuzz/Makefile
 instrumentor/daikon/libdaikon/Makefile
 instrumentor/daikount/libdaikount/Makefile
-instrumentor/decure/benchmarks/config.mk
 libcountdown/Makefile
 liblog/Makefile
 mining/Makefile

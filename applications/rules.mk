@@ -20,7 +20,7 @@ cpu := $(shell rpm -E %{_target_cpu})
 ########################################################################
 
 
-overlay_files :=				\
+overlay_files =					\
 	$(wrapper_in)				\
 	interface.glade				\
 	../config.in				\

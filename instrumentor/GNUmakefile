@@ -2,7 +2,7 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot checker dump harness.$(cma)
-transformers := assignments diduce heapStores loads localVars
+transformers := assignments decure diduce heapStores loads localVars
 subdirs := $(transformers)
 
 include rules.mk
@@ -65,7 +65,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libcil) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-harness := $(dissect) $(findFunction) $(logger) $(phases) $(transformVisitor)
+harness := $(dissect) $(findFunction) $(logger) $(phases) $(setClass) $(transformVisitor)
 harness.$(cma): $(addsuffix .$(cmo), $(harness))
 	$(archive)
 

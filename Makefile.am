@@ -6,13 +6,13 @@ SUBDIRS =					\
 	instrumentor				\
 	launcher				\
 	lib					\
-	tools
+	tools					\
+	www
 
 DIST_SUBDIRS =					\
 	$(SUBDIRS)				\
 	benchmarks				\
-	debian					\
-	www
+	debian
 
 EXTRA_DIST =					\
 	$(PACKAGE).spec				\

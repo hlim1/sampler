@@ -1,5 +1,4 @@
-type t = int64
+type key = int64
 
-let equal = (=)
-    
-let hash = Hashtbl.hash
+
+class ['value] c = [key, 'value] HashClass.c

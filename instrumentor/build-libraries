@@ -26,6 +26,8 @@ foreach my $library (@libraries) {
     }
 }
 
+my $count = keys %funcs;
+
 
 ########################################################################
 
@@ -33,9 +35,10 @@ foreach my $library (@libraries) {
 my $template = new FileHandle 'libraries.ml.in';
 
 while (<$template>) {
-    if ($_ =~ /^(\s*)\(\* \@LIBRARY_FUNCTIONS\@ \*\)$/) {
+    if ($_ =~ /^(\s*)\@LIBRARY_FUNCTIONS\@$/) {
 	print "$1\"$_\";\n" while $_ = each %funcs;
     } else {
+	$_ =~ s/\@LIBRARY_COUNT\@/$count/g;
 	print $_;
     }
 }

@@ -1,7 +1,7 @@
 open Cil
 
 
-type collection = Int64Set.container
+type collection = unit Int64Hash.c
 
 
 let compareToConstants =
@@ -21,7 +21,7 @@ class visitor collection =
 	match isInteger (constFold true exp) with
 	| Some constant ->
 	    if not (collection#mem constant) then
-	      collection#add constant
+	      collection#add constant ()
 	| None ->
 	    ()
       end;
@@ -30,8 +30,8 @@ class visitor collection =
 
 
 let collect file =
-  let collection = new Int64Set.container in
-  collection#add Int64.zero;
+  let collection = new Int64Hash.c 1 in
+  collection#add Int64.zero ();
   if !compareToConstants then
     begin
       let visitor = new visitor collection in

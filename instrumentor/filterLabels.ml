@@ -41,7 +41,7 @@ class collectDestinations =
   object
     inherit FunctionBodyVisitor.visitor
 
-    val destinations = new StmtSet.container
+    val destinations = new StmtIdHash.c 0
     method result = destinations
 
     method vstmt stmt =
@@ -58,7 +58,7 @@ class collectDestinations =
 		List.iter printLabel !dest.labels
 	      end
 	    else
-	      destinations#add !dest
+	      destinations#add !dest ()
 	| _ -> ()
       end;
       DoChildren

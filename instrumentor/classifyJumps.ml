@@ -8,7 +8,7 @@ class visitor =
   object
     inherit FunctionBodyVisitor.visitor
 
-    val seen = new StmtSet.container
+    val seen = new StmtIdHash.c 0
 	
     val mutable forwards = []
     val mutable backwards = []
@@ -24,7 +24,7 @@ class visitor =
 	      forwards <- stmt :: forwards
 	| _ -> ()
       end;
-      seen#add stmt;
+      seen#add stmt ();
       DoChildren
   end
 

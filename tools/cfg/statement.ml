@@ -44,7 +44,7 @@ let isReturn node =
   node.successors = []
 
 
-let registry = new HashClass.t 0
+let registry = new HashClass.c 0
 
 
 let findNode subkey =

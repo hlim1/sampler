@@ -1,1 +1,1 @@
-val functions : StringSet.container
+val functions : unit StringHash.c

@@ -1,9 +1,9 @@
 let functions =
-  let collection = new StringSet.container in
+  let collection = new StringHash.c @LIBRARY_COUNT@ in
 
   let functions = [
-    (* @LIBRARY_FUNCTIONS@ *)
+    @LIBRARY_FUNCTIONS@
   ] in
 
-  List.iter collection#add functions;
+  List.iter (fun func -> collection#add func ()) functions;
   collection

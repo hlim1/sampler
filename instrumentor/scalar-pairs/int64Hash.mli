@@ -1,5 +1,1 @@
-type t = int64
-
-val equal : t -> t -> bool
-
-val hash : t -> int
+include HashClass.S with type key = int64

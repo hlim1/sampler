@@ -1,13 +1,13 @@
 open Cil
 
 
-class weightsMap = [int] StmtMap.container
+class weightsMap = [int] StmtIdHash.c 0
 
 
 let rec weigh ~sites:sites ~headers:headers =
   
-  let siteSet = new StmtSet.container in
-  List.iter siteSet#add sites;
+  let siteSet = new StmtIdHash.c 0 in
+  List.iter (fun site -> siteSet#add site ()) sites;
 
   let cache = new weightsMap in
 

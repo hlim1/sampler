@@ -1,5 +1,1 @@
-type t = string
-
-val equal : t -> t -> bool
-
-val hash : t -> int
+class ['value] c : int -> [string, 'value] HashClass.t

@@ -67,7 +67,7 @@ class visitor file (constants : Constants.collection) (tuples : PairTuples.build
 		else
 		  IULongLong
 		in
-		let folder number results =
+		let folder number () results =
 		  kinteger64 kind number :: results
 		in
 		constants#fold folder []

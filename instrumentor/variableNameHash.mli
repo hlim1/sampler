@@ -1,5 +1,1 @@
-type t = Cil.varinfo
-
-val equal : t -> t -> bool
-
-val hash : t -> int
+include HashClass.S with type key = Cil.varinfo

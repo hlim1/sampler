@@ -1,3 +1,3 @@
-type collection = Int64Set.container
+type collection = unit Int64Hash.c
 
 val collect : Cil.file -> collection

@@ -6,11 +6,11 @@ type ('node, 'edge) edge = ('node * 'edge * 'node)
 
 class ['node, 'nodeData, 'edge] graph =
   object (self)
-    val mutable nodes = new HashClass.t 0
-    val mutable edges = new HashClass.t 0
+    val mutable nodes = new HashClass.c 0
+    val mutable edges = new HashClass.c 0
 
-    val mutable succs = new HashClass.t 0
-    val mutable preds = new HashClass.t 0
+    val mutable succs = new HashClass.c 0
+    val mutable preds = new HashClass.c 0
 
 
     method addNode (node : 'node) (data : 'nodeData) =

@@ -2,12 +2,13 @@ open Cil
 
 
 module Key = struct
-  type t = varinfo
+  type t = stmt
 
   let equal = (==)
       
-  let hash var =
-    Hashtbl.hash var.vname
+  let hash {sid = sid} =
+    assert (sid != -1);
+    sid
 end
 
 

@@ -1,8 +1,1 @@
-open Cil
-
-
-type t = string
-
-let equal = (=)
-    
-let hash = Hashtbl.hash
+class ['value] c = [string, 'value] HashClass.c

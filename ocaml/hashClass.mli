@@ -1,4 +1,4 @@
-class ['key, 'value] t : int ->
+class type ['key, 'value] t =
   object ('self)
     method copy : 'self
 
@@ -10,4 +10,18 @@ class ['key, 'value] t : int ->
     method mem : 'key -> bool
 
     method iter : ('key -> 'value -> unit) -> unit
+    method fold : ('key -> 'value -> 'result -> 'result) -> 'result -> 'result
   end
+
+
+class ['key, 'value] c : int -> ['key, 'value] t
+
+
+module type S = sig
+  type key
+  class ['value] c : int -> [key, 'value] t
+end
+
+
+module Make (Key : Hashtbl.HashedType) : S
+    with type key = Key.t

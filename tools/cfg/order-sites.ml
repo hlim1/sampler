@@ -19,7 +19,7 @@ let sites =
   let parseAll = sequence Stream.empty parseOne in
 
   let list = parseAll (Stream.of_channel stdin) in
-  let table = new HashClass.t 2 in
+  let table = new HashClass.c 2 in
 
   let insert ((func, id) as site) =
     try

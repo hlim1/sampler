@@ -15,7 +15,7 @@ include $(top_srcdir)/ocaml/rules.mk
 MOSTLYCLEANFILES += main
 
 
-libdirs += ..
+libdirs += .. $(top_srcdir)/ocaml
 syslibs = str.$(cma) unix.$(cma)
 
 $(dir $(libharness))/%.cmi: $(libharness)

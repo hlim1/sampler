@@ -29,10 +29,10 @@ let debugWeighty =
 
 
 let hasDefinition file =
-  let defined = new VarinfoSet.container in
+  let defined = new VariableNameHash.c 0 in
   let iterator = function
     | GFun (func, _) ->
-	defined#add func.svar
+	defined#add func.svar ()
     | _ -> ()
   in
   iterGlobals file iterator;
@@ -40,10 +40,10 @@ let hasDefinition file =
 
 
 let hasPragmaWeightless file =
-  let assumed = new StringSet.container in
+  let assumed = new StringHash.c 0 in
   let iterator = function
     | GPragma (Attr ("sampler_assume_weightless", [AStr (funcname)]), location) ->
-	assumed#add funcname;
+	assumed#add funcname ();
 	if !debugWeighty then
 	  ignore (Pretty.eprintf "%a: function %s is assumed weightless by pragma@!" d_loc location funcname)
     | _ -> ()
@@ -139,10 +139,10 @@ let collect file allSites =
     (fun () ->
       let hasDefinition = hasDefinition file in
       let hasPragmaWeightless = hasPragmaWeightless file in
-      let weighty = new VarinfoSet.container in
+      let weighty = new VariableNameHash.c 0 in
 
       let prepopulate ({svar = svar}, _) =
-	weighty#add svar;
+	weighty#add svar ();
 	if !debugWeighty then
 	  Printf.eprintf "function %s is weighty: has sites\n" svar.vname
       in
@@ -156,7 +156,7 @@ let collect file allSites =
 		try
 		  ignore (visitCilFunction visitor func)
 		with ContainsWeightyCall (location, callee) ->
-		  weighty#add func.svar;
+		  weighty#add func.svar ();
 		  madeProgress := true;
 		  if !debugWeighty then
 		    ignore (Pretty.eprintf "%a: function %s is weighty: has weighty call to %a@!"

@@ -4,7 +4,7 @@ open Types.Function
 class t =
   object (self)
     val table : (extension, (key * data)) HashClass.t
-	= new HashClass.t 1
+	= new HashClass.c 1
 
     method add name value =
       if table#mem name then

@@ -1,15 +1,14 @@
 open Cil
 
-let visitOneOne file visitor =
-  visitCilFileSameGlobals visitor file
-
-let visitOne visitors arg =
-  Printf.printf "%s:\n" arg;
-  let file = Frontc.parse arg () in
-  (* Rmtmps.removeUnusedTemps file; *)
-  List.iter (visitOneOne file) visitors;
-  file
+let check = Check.checkFile []
     
-let main visitors =
+let doOne stages filename =
+  Printf.printf "%s:\n" filename;
+  let file = Frontc.parse filename () in
+  (* Rmtmps.removeUnusedTemps file; *)
+  check file;
+  List.iter (fun stage -> stage file; check file) stages
+    
+let main stages =
   let filenames = List.tl (Array.to_list Sys.argv) in
-  List.map (visitOne visitors) filenames
+  List.iter (doOne stages) filenames

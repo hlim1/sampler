@@ -1,3 +1,3 @@
 open Cil
 
-val main : cilVisitor list -> file list
+val main : (file -> unit) list -> unit

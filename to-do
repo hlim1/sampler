@@ -1,10 +1,6 @@
 Document --{no-,}assume-weightless-{libraries,externs} and hook them
 up in the Perl driver.
 
-Should use something other than 1024 for size of cyclic countdowns, as
-that's too obvious a power of two.  What's the largest prime number
-smaller than 1024?
-
 let uploader tell server whether it wants text/html or text/plain in
 replies
 

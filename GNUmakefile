@@ -16,6 +16,7 @@ cilobjdir := $(cildir)/obj/x86_LINUX
 includes := -I $(cilobjdir)
 compiler := $(ocamlc) $(ocamlflags)
 
+depend = ocamldep $< | $(fixdeps) >$@
 compile = $(compiler) $(includes) -c $<
 link = $(compiler) -o $@ $(syslibs) $^
 
@@ -62,10 +63,10 @@ $(impls:=.$(cmo)): %.$(cmo): %.ml
 	$(compile)
 
 $(impls:=.do): %.do: %.ml $(fixdeps)
-	ocamldep $(includes) $< | $(fixdeps) >$@
+	$(depend)
 
 $(ifaces:=.di): %.di: %.mli $(fixdeps)
-	ocamldep $(includes) $< | $(fixdeps) >$@
+	$(depend)
 
 $(libcil): $(force)
 	$(MAKE) -C $(cildir) -f Makefile.cil NATIVE=$(native) cillib

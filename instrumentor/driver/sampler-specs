@@ -6,6 +6,7 @@
 
 *cpp:
 + -DCIL %(cpp_threads) -include sampler/countdown.h %(cpp_cyclic) -include sampler/embedded-cfg.h
+%{fsampler-scheme=*:-include sampler/include/%*.h}
 
 *cc1:
 + %{save-temps} %{v}
@@ -20,3 +21,4 @@
 
 *lib:
 %(lib_threads) %(old_lib)
+%{fsampler-scheme=*:-l%*}

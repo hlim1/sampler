@@ -1,11 +1,5 @@
 #!/bin/sh
 
-scheme=$1 shift
-case $scheme in
-    (-*|*.c'') echo "Usage: $0 <scheme> [<gcc flags> ...]" 1>&1; exit 2 ;;
-esac
-
-instrumentordir=`dirname $0`/..
 driverdir=`dirname $0`
 
-exec gcc -B $driverdir -I$instrumentordir/$scheme -I$driverdir -L$instrumentordir/$scheme -specs=$instrumentordir/$scheme/specs -specs=sampler-specs -fsampler-scheme=$scheme "$@"
+exec gcc -B $driverdir -I$driverdir -specs=sampler-specs "$@"

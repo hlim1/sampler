@@ -1,0 +1,53 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Basename;
+use File::Temp qw(tmpnam);
+use FindBin;
+
+
+########################################################################
+
+
+sub sys (@) {
+    print "=== @_\n";
+    system @_;
+}
+
+
+my $compiler = shift;
+my @cpp = ($compiler);
+my @cc = ($compiler);
+my @source;
+
+
+while ($_ = shift) {
+    if (/^-/) {
+	if (/^-D/) {
+	    push @cpp, $_;
+	} elsif (/^-I/) {
+	    push @cpp, $_;
+	} else {
+	    push @cc, $_;
+	}
+    } elsif (/(.*)\.c$/) {
+	push @source, $1;
+	my $base = basename $1;
+	push @cc, "$base.inst.c";
+    } elsif (/\.o$/) {
+    } else {
+	die "unrecognized command-line option: $_\n";
+    }
+}
+
+
+foreach (@source) {
+    my $base = basename $_;
+    warn "mangling $base\n";
+    sys @cpp, '-o', "$base.i", '-E', "$_.c";
+    sys "$FindBin::Bin/main $base.i >$base.inst.c";
+    die unless -s "$base.inst.c";
+}
+
+
+sys @cc;

@@ -16,6 +16,10 @@ If server offered a reply message, launcher doesn't seem to end
 connection from server until reply message dialog has been dismissed.
 We should disconnect sooner.
 
+For long-lived processes, perhaps we need to send periodic interim
+reports (e.g. daily) instead of waiting for termination.  This will
+require support from the client application too, though.
+
 * packaging
 
 Check copyright notice in configure scripts that use SAMPLER_INIT.

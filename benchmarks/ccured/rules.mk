@@ -189,7 +189,7 @@ times: $(times)
 .PHONY: times
 
 $(ccuredTimes): ../run-trials $(workExec)
-	./$< 1 './$(workExec) $(runArgs)' >$@. 2>&1
+	./$< 1 '$(workExec) $(runArgs)' >$@. 2>&1
 	mv $@. $@
 
 %.times: when       = $(word 1, $(subst -, , $*))

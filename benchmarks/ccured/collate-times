@@ -20,6 +20,7 @@ my %suite = (
 sub collate_log ($$) {
     my ($suite, $logName) = @_;
 
+    return if $logName =~ /\/ccured\.times$/;
     $logName =~ /^(.+)\/(.+)-(.+)-(.+)\.times$/
 	or die "malformed log name: $logName";
     my ($benchmark, $when, $where, $sparsity) = ($1, $2, $3, $4);

@@ -1,0 +1,13 @@
+[application]
+executable: executable
+debug-reporter: ../../print-debug-info
+
+[upload-headers]
+accept: text/html
+application-name: @PACKAGE@
+application-version: @VERSION@
+instrumentation-type: @SAMPLER_SCHEME@
+instrumentation-version: 0.1
+
+[user]
+gconf-root: /apps/@PACKAGE@/sampler/branches

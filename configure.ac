@@ -143,6 +143,7 @@ fi
 
 AC_PROG_CC
 AC_PROG_RANLIB
+AC_PROG_LN_S
 
 AC_MSG_CHECKING(format string type modifer j)
 AC_COMPILE_IFELSE(
@@ -237,8 +238,6 @@ instrumentor/branches/tests/Makefile
 instrumentor/daikon/Makefile
 instrumentor/decure/Makefile
 instrumentor/decure/tests/Makefile
-instrumentor/driver/main-subst
-instrumentor/driver/sampler-cc
 instrumentor/driver/Makefile
 instrumentor/nothing/Makefile
 instrumentor/nothing/tests/Makefile
@@ -249,6 +248,7 @@ instrumentor/scalar-pairs/tests/Makefile
 launcher/Makefile
 launcher/python/Makefile
 launcher/applications/Makefile
+launcher/applications/gaim/Makefile
 launcher/applications/gnumeric/Makefile
 launcher/applications/gnumeric-non-gui/Makefile
 lib/Makefile
@@ -257,8 +257,11 @@ package.m4
 sampler.spec
 tools/Makefile
 tools/find-driver.pl
-tools/debuild
-tools/rpmbuild
 ])
+
+AC_CONFIG_FILES([instrumentor/driver/main], [chmod +x $ac_file])
+AC_CONFIG_FILES([instrumentor/driver/sampler-cc], [chmod +x $ac_file])
+AC_CONFIG_FILES([tools/debuild], [chmod +x $ac_file])
+AC_CONFIG_FILES([tools/rpmbuild], [chmod +x $ac_file])
 
 AC_OUTPUT

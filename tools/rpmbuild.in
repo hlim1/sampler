@@ -2,8 +2,6 @@
 
 use strict;
 
-use FindBin;
-
 
 ########################################################################
 
@@ -19,43 +17,50 @@ $ENV{CC} = "$driver $scheme";
 
 
 my %macros = (
-	      __cc => "'%{_sampler_home}/instrumentor/driver/main %{_sampler_scheme}'",
-	      _sampler_tools => $FindBin::Bin,
-	      _sampler_home => "%{_sampler_tools}/..",
-	      _sampler_scheme => $scheme,
-	      _sampler_install_post => '%{_sampler_tools}/find-sampler-info %{_builddir}/%{?buildsubdir}',
+	      sampler_scheme => $scheme,
 
-	      _sampler_package => <<'EOF',
-%ifnarch noarch\
-%package samplerinfo\
-Summary: Sampler information for package %{name}\
-Group: Development/Debug\
-AutoReqProv: 0\
-%description samplerinfo\
-This package provides sampler information for package %{name}, built\
-using the "%{_sampler_scheme}" instrumentation scheme.\
-%files samplerinfo -f samplerfiles.list\
-%defattr(-,root,root)\
-%endif\
-%{nil}
+	      sampler_tags => <<'EOF',
+Requires: sampler-gnome
+BuildRequires: sampler-devel
+Source1: %{name}-sampler.tar.gz
 EOF
 
-	      __spec_install_post => <<'EOF',
-%{_sampler_install_post}\
-%{?__debug_package:%{__debug_install_post}}\
-%{__arch_install_post}\
-%{__os_install_post}\
-%{nil}
+	      sampler_description => 'This package has been built with sampled %{sampler_scheme} instrumentation.',
+
+	      sampler_package => <<'EOF',
+%package samplerinfo
+Summary: Sampler information for package %{name}
+Group: Development/Debug
+AutoReqProv: 0
+%description samplerinfo
+This package provides sampler information for package %{name}, built
+using the "%{sampler_scheme}" instrumentation scheme.  You do not need
+this to use %{name}.  Most users have no need to install this package.
+%files samplerinfo
+%defattr(-,root,root)
+%{_libdir}/sampler/sites/*
 EOF
 
-	      install => <<'EOF'
-%{?buildsubdir:%{_sampler_package}}\
-%{?_enable_debug_packages:%{?buildsubdir:%{debug_package}}}\
-%%install\
-LANG=C\
-export LANG\
-%{nil}
+	      sampler_setup => '%setup -n %{name}-sampler -T -c -a 1',
+
+	      'sampler_install(x:)' => <<'EOF',
+install -d %{buildroot}%{_libdir}/sampler/applications/%{name}
+for file in config %{name}-sampler.schemas interface.glade wrapper; do
+  install %{_builddir}/%{name}-sampler/$file %{buildroot}%{_libdir}/sampler/applications/%{name}
+done
+mv %{buildroot}%{-x:-x*}%{!-x:%{_bindir}/%{name}} %{buildroot}%{_libdir}/sampler/applications/%{name}/executable
+ln -s %{_libdir}/sampler/applications/%{name}/wrapper %{buildroot}%{-x:-x*}%{!-x:%{_bindir}/%{name}}
+install -d %{buildroot}%{_sysconfdir}/gconf/schemas
+install %{_builddir}/%{name}-sampler/%{name}-sampler.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
+%{_libdir}/sampler/tools/find-sampler-info %{_builddir}/%{?buildsubdir}
 EOF
+
+	      sampler_files => <<'EOF',
+%{_libdir}/sampler/applications/%{name}
+%{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas
+EOF
+
+	      sampler_post => 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas >/dev/null'
 );
 
 
@@ -63,6 +68,7 @@ EOF
 
 
 while (my ($name, $value) = each %macros) {
+    $value =~ s/\n(?=.)/\\\n/g;
     unshift @ARGV, '--define', "$name $value";
 }
 

@@ -1,7 +1,7 @@
 # RPM specfile for nautilus module
 # Generated Tue Jun 10 18:19:26 2003 GMT by Ximian build system
-# $Id: nautilus.spec,v 1.2 2003/08/13 22:20:59 liblit Exp $
-# from $Id: nautilus.spec,v 1.2 2003/08/13 22:20:59 liblit Exp $
+# $Id: nautilus.spec,v 1.3 2003/08/14 22:23:38 liblit Exp $
+# from $Id: nautilus.spec,v 1.3 2003/08/14 22:23:38 liblit Exp $
 
 %define nam	nautilus
 %define ver	2.2.4
@@ -74,10 +74,10 @@ Prereq:	GConf2
 Prereq:	scrollkeeper
 Conflicts:	nautilus-suggested
 Conflicts:	nautilus2 < %{version}-%{release}
-Conflicts:	nautilus-devel < 2.2.4-0.ximian.6.5
-Conflicts:	nautilus-devel > 2.2.4-0.ximian.6.5
-Conflicts:	nautilus-printers < 2.2.4-0.ximian.6.5
-Conflicts:	nautilus-printers > 2.2.4-0.ximian.6.5
+Conflicts:	nautilus-devel < %{version}-%{release}
+Conflicts:	nautilus-devel > %{version}-%{release}
+Conflicts:	nautilus-printers < %{version}-%{release}
+Conflicts:	nautilus-printers > %{version}-%{release}
 %sampler_tags
 
 %description
@@ -139,7 +139,7 @@ ldconfig
 %package -n nautilus-printers
 Summary:	Printer view for Nautilus
 Group:		User Interface/Desktop
-Requires:	nautilus = 2.2.4-0.ximian.6.5
+Requires:	nautilus = %{version}-%{release}
 Requires:	cups
 Provides:	ximian-nautilus-printers = %{?epoch:%{epoch}:}%{version}-%{?ximrev:%{ximrev}}%{!?ximrev:%{release}}
 
@@ -157,7 +157,7 @@ This package provides a view for managing printers in nautilus.
 %package -n nautilus-devel
 Summary:	Libraries and include files for developing Nautilus components
 Group:		Development/Libraries
-Requires:	nautilus = 2.2.4-0.ximian.6.5
+Requires:	nautilus = %{version}-%{release}
 Requires:	eel2-devel
 Requires:	librsvg2-devel
 Requires:	libgnomeui-devel

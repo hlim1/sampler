@@ -21,6 +21,7 @@ BuildRequires: gcc
 Buildrequires: gsl-devel
 BuildRequires: gtk2-devel
 BuildRequires: libbonobo-devel
+BuildRequires: lsb
 BuildRequires: ocaml
 BuildRequires: perl
 BuildRequires: pygtk2-devel

@@ -10,24 +10,30 @@ AM_INIT_AUTOMAKE
 
 AC_MSG_CHECKING(for distribution)
 
-for vendor in fedora redhat; do
-  if test -f /etc/$vendor-release; then
-    DISTRO_NAME=$vendor
-    DISTRO_VERSION="`rpm -q --qf '%{version}' $vendor-release`"
-    DISTRO_ARCH="`rpm -q --qf '%{arch}' $vendor-release`"
-    DISTRO_BASIS=rpm
-    break
-  fi
-done
+DISTRO_NAME="`lsb_release -is 2>/dev/null | tr A-Z a-z`"
+DISTRO_VERSION="`lsb_release -rs`"
 
-if test -z "$DISTRO_NAME"; then
-  DISTRO_NAME="`lsb_release -is 2>/dev/null | tr A-Z a-z`"
-  if test -n "$DISTRO_NAME"; then
-    DISTRO_VERSION="`lsb_release -rs`"
-    DISTRO_ARCH="`dpkg-architecture -s -qDEB_BUILD_ARCH`"
+case "$DISTRO_NAME" in
+  (fedoracore)
+    DISTRO_NAME=fedora
+    DISTRO_BASIS=rpm
+    ;;
+  (redhat|tao)
+    DISTRO_BASIS=rpm
+    ;;
+  (ubuntu)
     DISTRO_BASIS=debian
-  fi
-fi
+    ;;
+esac
+
+case "$DISTRO_BASIS" in
+  (rpm)
+    DISTRO_ARCH="`rpm -q --qf '%{arch}' -f /etc/issue`"
+    ;;
+  (debian)
+    DISTRO_ARCH="`dpkg-architecture -s -qDEB_BUILD_ARCH`"
+    ;;
+esac
 
 : ${DISTRO_NAME:=unknown}
 : ${DISTRO_VERSION:=unknown}
@@ -140,14 +146,13 @@ AC_SUBST(wrapperdir, '${package_datadir}/wrapper')
 
 AC_SUBST(wwwdir, '${localstatedir}/www')
 
-find_driver_fragment=tools/find-driver.pl
-AC_SUBST_FILE(find_driver_fragment)
-
 
 AC_MSG_CHECKING(for mining support)
 AC_ARG_ENABLE(mining, AC_HELP_STRING([--enable-mining], [Add rules for mining a local feedback database]), , enable_mining=no)
 AM_CONDITIONAL(ENABLE_MINING, test "$enable_mining" = yes)
 AC_MSG_RESULT($enable_mining)
+
+AC_PATH_PROG(PERL, perl)
 
 
 ########################################################################
@@ -373,6 +378,9 @@ AC_CONFIG_FILES([instrumentor/driver/as], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/cc1], [chmod +x $ac_file])
 AC_CONFIG_FILES([launcher/templates/install-wrappers], [chmod +x $ac_file])
 AC_CONFIG_FILES([launcher/test-by-extension], [chmod +x $ac_file])
+AC_CONFIG_FILES([mining/populate/insert-builds.pl], [chmod +x $ac_file])
+AC_CONFIG_FILES([mining/populate/insert-runs.pl], [chmod +x $ac_file])
+AC_CONFIG_FILES([mining/populate/integrity-checks.pl], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/rpmbuild], [chmod +x $ac_file])
 
 AC_OUTPUT

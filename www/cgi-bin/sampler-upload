@@ -17,9 +17,10 @@ my $query = new CGI;
 
 exists $ENV{UNIQUE_ID} or die "\$UNIQUE_ID missing from environment\n";
 $ENV{UNIQUE_ID} =~ /^([-0-9A-Za-z@]+)$/ or die "\$UNIQUE_ID looks suspicious: \"$ENV{UNIQUE_ID}\"\n";
-print($query->header({-unique_id => $ENV{UNIQUE_ID}}));
+my $uid = $1;
+print($query->header({-unique_id => $uid}));
 
-my $dir = "/var/www/sampler-uploads/$1";
+my $dir = "/var/www/sampler-uploads/$uid";
 mkdir $dir or die "cannot build upload directory $dir: $!\n";
 END { rmdir $dir if $dir; }
 
@@ -50,4 +51,9 @@ stash_file $_ foreach $query->param;
 print($query->start_html('Server Reply Demo'),
       $query->h1('Server Reply Demo'),
       $query->p('This is a demonstration of presenting server reply messages to the client.  Ordinarily we would only use this if there was some important piece of information we needed to communicate to all clients.'),
+      $query->p('Replies can make full use of HTML features such as',
+		$query->a({href => 'http://www.cs.berkeley.edu/~liblit/sampler/'}, 'hyperlinks'),
+		'and inline images',
+		$query->img({src => 'http://www.cs.berkeley.edu/icons/balls/redball.gif'}),
+		'.'),
       $query->end_html);

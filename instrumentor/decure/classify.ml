@@ -23,6 +23,7 @@ let classifyByName = function
   | "__CHECK_FSEQARITH2SAFE"
   | "__CHECK_NULL"
   | "__CHECK_RTTICAST"
+  | "CHECK_UNIONTAG"
   | "__CHECK_WILDPOINTERREAD"
     (* lib/ccuredlib.c *)
   | "wildp_verify_atleast"

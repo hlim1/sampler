@@ -20,9 +20,9 @@ SUBDIRS =					\
 all-local: package.m4
 
 install-data-local:
-	mkdir $(DESTDIR)$(package_libdir)/sites
-	mkdir $(DESTDIR)$(package_libdir)/wrapped
-	mkdir $(DESTDIR)$(package_datadir)/applications
+	$(mkinstalldirs) $(DESTDIR)$(package_libdir)/sites
+	$(mkinstalldirs) $(DESTDIR)$(package_libdir)/wrapped
+	$(mkinstalldirs) $(DESTDIR)$(package_datadir)/applications
 
 rpms: dist sampler.spec
 	rm -rf redhat

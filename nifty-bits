@@ -1,0 +1,5 @@
+special handling of region with 0 sample sites
+
+special handling of region with 1 sample site
+
+try to keep countdown in local variable

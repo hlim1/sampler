@@ -15,11 +15,12 @@ sub check_copy ($$) {
 }
 
 
+my $ccrypt = shift or die "Usage: $0 <ccrypt>";
+
 my $home = dirname $0;
 my $pristine = "$home/pristine";
 my $cleartext = "$home/cleartext";
 my $cyphertext = "$home/cyphertext";
-my $ccrypt = "$home/standard/src/ccrypt";
 my @files = ();
 
 rmtree [$pristine, $cyphertext];

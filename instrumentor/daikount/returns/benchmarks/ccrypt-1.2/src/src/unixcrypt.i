@@ -1,7 +1,31 @@
 # 1 "../../src/src/unixcrypt.c"
 # 1 "<built-in>"
 # 1 "<command line>"
-# 1 "/var/local/liblit/forensics/sampler/instrumentor/daikount/libdaikount/daikount.h" 1
+# 1 "/home/cs/liblit/research/forensics/sampler/libcountdown/event.h" 1
+
+
+
+# 1 "/home/cs/liblit/research/forensics/sampler/libcountdown/cyclic-size.h" 1
+# 5 "/home/cs/liblit/research/forensics/sampler/libcountdown/event.h" 2
+
+
+extern const unsigned *nextEventPrecomputed;
+extern unsigned nextEventCountdown;
+extern unsigned nextEventSlot;
+
+
+static inline unsigned getNextEventCountdown() __attribute__((no_instrument_function));
+
+static inline unsigned getNextEventCountdown()
+{
+  unsigned slot = nextEventSlot;
+  const unsigned result = nextEventPrecomputed[slot];
+  slot = (slot + 1) % 1024;
+  nextEventSlot = slot;
+  return result;
+}
+# 2 "<command line>" 2
+# 1 "/home/cs/liblit/research/forensics/sampler/instrumentor/daikount/libdaikount/daikount.h" 1
 
 
 
@@ -30,7 +54,7 @@ static inline void registerInvariant(struct Invariant *invariant)
   invariant->next = invariants;
   invariants = invariant;
 }
-# 2 "<command line>" 2
+# 3 "<command line>" 2
 # 1 "../../src/src/unixcrypt.c"
 # 9 "../../src/src/unixcrypt.c"
 # 1 "/usr/include/string.h" 1 3
@@ -39,9 +63,9 @@ static inline void registerInvariant(struct Invariant *invariant)
 # 291 "/usr/include/features.h" 3
 # 1 "/usr/include/sys/cdefs.h" 1 3
 # 292 "/usr/include/features.h" 2 3
-# 320 "/usr/include/features.h" 3
+# 314 "/usr/include/features.h" 3
 # 1 "/usr/include/gnu/stubs.h" 1 3
-# 321 "/usr/include/features.h" 2 3
+# 315 "/usr/include/features.h" 2 3
 # 27 "/usr/include/string.h" 2 3
 
 
@@ -186,19 +210,21 @@ extern void __bzero (void *__s, size_t __n) ;
 # 38 "/usr/include/endian.h" 2 3
 # 53 "/usr/include/bits/string2.h" 2 3
 # 1 "/usr/include/bits/types.h" 1 3
-# 29 "/usr/include/bits/types.h" 3
+# 28 "/usr/include/bits/types.h" 3
+# 1 "/usr/include/bits/wordsize.h" 1 3
+# 29 "/usr/include/bits/types.h" 2 3
+
+
 # 1 "/usr/lib/gcc-lib/i386-redhat-linux/3.2/include/stddef.h" 1 3
-# 30 "/usr/include/bits/types.h" 2 3
+# 32 "/usr/include/bits/types.h" 2 3
 
 
 typedef unsigned char __u_char;
-typedef unsigned short __u_short;
+typedef unsigned short int __u_short;
 typedef unsigned int __u_int;
-typedef unsigned long __u_long;
+typedef unsigned long int __u_long;
 
-__extension__ typedef unsigned long long int __u_quad_t;
-__extension__ typedef long long int __quad_t;
-# 49 "/usr/include/bits/types.h" 3
+
 typedef signed char __int8_t;
 typedef unsigned char __uint8_t;
 typedef signed short int __int16_t;
@@ -206,39 +232,45 @@ typedef unsigned short int __uint16_t;
 typedef signed int __int32_t;
 typedef unsigned int __uint32_t;
 
+
+
+
 __extension__ typedef signed long long int __int64_t;
 __extension__ typedef unsigned long long int __uint64_t;
 
-typedef __quad_t *__qaddr_t;
 
-typedef __u_quad_t __dev_t;
-typedef __u_int __uid_t;
-typedef __u_int __gid_t;
-typedef __u_long __ino_t;
-typedef __u_int __mode_t;
-typedef __u_int __nlink_t;
+
+
+
+__extension__ typedef long long int __quad_t;
+__extension__ typedef unsigned long long int __u_quad_t;
+# 128 "/usr/include/bits/types.h" 3
+# 1 "/usr/include/bits/typesizes.h" 1 3
+# 129 "/usr/include/bits/types.h" 2 3
+
+
+typedef unsigned long long int __dev_t;
+typedef unsigned int __uid_t;
+typedef unsigned int __gid_t;
+typedef unsigned long int __ino_t;
+typedef unsigned long long int __ino64_t;
+typedef unsigned int __mode_t;
+typedef unsigned int __nlink_t;
 typedef long int __off_t;
-typedef __quad_t __loff_t;
+typedef long long int __off64_t;
 typedef int __pid_t;
-typedef int __ssize_t;
-typedef __u_long __rlim_t;
-typedef __u_quad_t __rlim64_t;
-typedef __u_int __id_t;
-
-typedef struct
-  {
-    int __val[2];
-  } __fsid_t;
-
-
-typedef int __daddr_t;
-typedef char *__caddr_t;
+typedef struct { int __val[2]; } __fsid_t;
+typedef long int __clock_t;
+typedef unsigned long int __rlim_t;
+typedef unsigned long long int __rlim64_t;
+typedef unsigned int __id_t;
 typedef long int __time_t;
 typedef unsigned int __useconds_t;
 typedef long int __suseconds_t;
-typedef long int __swblk_t;
 
-typedef long int __clock_t;
+typedef int __daddr_t;
+typedef long int __swblk_t;
+typedef int __key_t;
 
 
 typedef int __clockid_t;
@@ -247,42 +279,29 @@ typedef int __clockid_t;
 typedef int __timer_t;
 
 
-
-
-
-
-typedef int __key_t;
-
-
-typedef unsigned short int __ipc_pid_t;
-
-
-
 typedef long int __blksize_t;
 
 
 
 
 typedef long int __blkcnt_t;
-typedef __quad_t __blkcnt64_t;
+typedef long long int __blkcnt64_t;
 
 
-typedef __u_long __fsblkcnt_t;
-typedef __u_quad_t __fsblkcnt64_t;
+typedef unsigned long int __fsblkcnt_t;
+typedef unsigned long long int __fsblkcnt64_t;
 
 
-typedef __u_long __fsfilcnt_t;
-typedef __u_quad_t __fsfilcnt64_t;
+typedef unsigned long int __fsfilcnt_t;
+typedef unsigned long long int __fsfilcnt64_t;
 
 
-typedef __u_quad_t __ino64_t;
 
 
-typedef __loff_t __off64_t;
-
-
-typedef long int __t_scalar_t;
-typedef unsigned long int __t_uscalar_t;
+typedef int __ssize_t;
+typedef __off64_t __loff_t;
+typedef __quad_t *__qaddr_t;
+typedef char *__caddr_t;
 
 
 typedef int __intptr_t;
@@ -1049,14 +1068,100 @@ enum
   };
 
 
-
-
-
 enum
   {
     _CS_PATH,
-# 563 "/usr/include/bits/confname.h" 3
-    _CS_V6_WIDTH_RESTRICTED_ENVS
+
+
+    _CS_V6_WIDTH_RESTRICTED_ENVS,
+
+
+    _CS_GNU_LIBC_VERSION,
+
+    _CS_GNU_LIBPTHREAD_VERSION,
+
+
+    _CS_LFS_CFLAGS = 1000,
+
+    _CS_LFS_LDFLAGS,
+
+    _CS_LFS_LIBS,
+
+    _CS_LFS_LINTFLAGS,
+
+    _CS_LFS64_CFLAGS,
+
+    _CS_LFS64_LDFLAGS,
+
+    _CS_LFS64_LIBS,
+
+    _CS_LFS64_LINTFLAGS,
+
+
+    _CS_XBS5_ILP32_OFF32_CFLAGS = 1100,
+
+    _CS_XBS5_ILP32_OFF32_LDFLAGS,
+
+    _CS_XBS5_ILP32_OFF32_LIBS,
+
+    _CS_XBS5_ILP32_OFF32_LINTFLAGS,
+
+    _CS_XBS5_ILP32_OFFBIG_CFLAGS,
+
+    _CS_XBS5_ILP32_OFFBIG_LDFLAGS,
+
+    _CS_XBS5_ILP32_OFFBIG_LIBS,
+
+    _CS_XBS5_ILP32_OFFBIG_LINTFLAGS,
+
+    _CS_XBS5_LP64_OFF64_CFLAGS,
+
+    _CS_XBS5_LP64_OFF64_LDFLAGS,
+
+    _CS_XBS5_LP64_OFF64_LIBS,
+
+    _CS_XBS5_LP64_OFF64_LINTFLAGS,
+
+    _CS_XBS5_LPBIG_OFFBIG_CFLAGS,
+
+    _CS_XBS5_LPBIG_OFFBIG_LDFLAGS,
+
+    _CS_XBS5_LPBIG_OFFBIG_LIBS,
+
+    _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS,
+
+
+    _CS_POSIX_V6_ILP32_OFF32_CFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFF32_LDFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFF32_LIBS,
+
+    _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS,
+
+    _CS_POSIX_V6_ILP32_OFFBIG_LIBS,
+
+    _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS,
+
+    _CS_POSIX_V6_LP64_OFF64_CFLAGS,
+
+    _CS_POSIX_V6_LP64_OFF64_LDFLAGS,
+
+    _CS_POSIX_V6_LP64_OFF64_LIBS,
+
+    _CS_POSIX_V6_LP64_OFF64_LINTFLAGS,
+
+    _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS,
+
+    _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS,
+
+    _CS_POSIX_V6_LPBIG_OFFBIG_LIBS,
+
+    _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS
 
   };
 # 501 "/usr/include/unistd.h" 2 3
@@ -1118,9 +1223,9 @@ extern int getgroups (int __size, __gid_t __list[]) ;
 extern int setuid (__uid_t __uid) ;
 # 630 "/usr/include/unistd.h" 3
 extern int setgid (__gid_t __gid) ;
-# 647 "/usr/include/unistd.h" 3
+# 665 "/usr/include/unistd.h" 3
 extern __pid_t fork (void) ;
-# 660 "/usr/include/unistd.h" 3
+# 678 "/usr/include/unistd.h" 3
 extern char *ttyname (int __fd) ;
 
 
@@ -1130,9 +1235,9 @@ extern int ttyname_r (int __fd, char *__buf, size_t __buflen) ;
 
 
 extern int isatty (int __fd) ;
-# 679 "/usr/include/unistd.h" 3
+# 697 "/usr/include/unistd.h" 3
 extern int link (__const char *__from, __const char *__to) ;
-# 693 "/usr/include/unistd.h" 3
+# 711 "/usr/include/unistd.h" 3
 extern int unlink (__const char *__name) ;
 
 
@@ -1148,7 +1253,7 @@ extern int tcsetpgrp (int __fd, __pid_t __pgrp_id) ;
 
 
 extern char *getlogin (void) ;
-# 726 "/usr/include/unistd.h" 3
+# 744 "/usr/include/unistd.h" 3
 # 1 "../../src/src/getopt.h" 1 3
 # 47 "../../src/src/getopt.h" 3
 extern char *optarg;
@@ -1165,8 +1270,8 @@ extern int opterr;
 extern int optopt;
 # 145 "../../src/src/getopt.h" 3
 extern int getopt (int __argc, char *const *__argv, const char *__shortopts);
-# 727 "/usr/include/unistd.h" 2 3
-# 741 "/usr/include/unistd.h" 3
+# 745 "/usr/include/unistd.h" 2 3
+# 759 "/usr/include/unistd.h" 3
 extern int sethostname (__const char *__name, size_t __len) ;
 
 
@@ -1232,7 +1337,7 @@ extern char *getpass (__const char *__prompt) ;
 
 
 extern int fsync (int __fd) ;
-# 946 "/usr/include/unistd.h" 3
+# 964 "/usr/include/unistd.h" 3
 extern char *crypt (__const char *__key, __const char *__salt) ;
 
 
@@ -1254,7 +1359,7 @@ extern void swab (__const void *__restrict __from, void *__restrict __to,
 
 
 extern char *ctermid (char *__s) ;
-# 988 "/usr/include/unistd.h" 3
+# 1006 "/usr/include/unistd.h" 3
 
 # 11 "../../src/src/unixcrypt.c" 2
 # 1 "/usr/include/stdlib.h" 1 3
@@ -1403,7 +1508,7 @@ atol (__const char *__nptr)
   return strtol (__nptr, (char **) ((void *)0), 10);
 }
 
-# 469 "/usr/include/stdlib.h" 3
+# 471 "/usr/include/stdlib.h" 3
 
 
 extern int rand (void) ;
@@ -1436,7 +1541,7 @@ extern long int jrand48 (unsigned short int __xsubi[3]) ;
 extern void srand48 (long int __seedval) ;
 extern unsigned short int *seed48 (unsigned short int __seed16v[3]) ;
 extern void lcong48 (unsigned short int __param[7]) ;
-# 552 "/usr/include/stdlib.h" 3
+# 554 "/usr/include/stdlib.h" 3
 
 
 extern void *malloc (size_t __size) __attribute__ ((__malloc__));
@@ -1454,7 +1559,7 @@ extern void *realloc (void *__ptr, size_t __size) __attribute__ ((__malloc__));
 
 extern void free (void *__ptr) ;
 
-# 590 "/usr/include/stdlib.h" 3
+# 592 "/usr/include/stdlib.h" 3
 
 
 extern void abort (void) __attribute__ ((__noreturn__));
@@ -1463,14 +1568,14 @@ extern void abort (void) __attribute__ ((__noreturn__));
 
 extern int atexit (void (*__func) (void)) ;
 
-# 606 "/usr/include/stdlib.h" 3
+# 608 "/usr/include/stdlib.h" 3
 
 
 
 
 extern void exit (int __status) __attribute__ ((__noreturn__));
 
-# 622 "/usr/include/stdlib.h" 3
+# 624 "/usr/include/stdlib.h" 3
 
 
 extern char *getenv (__const char *__name) ;
@@ -1485,12 +1590,12 @@ extern char *__secure_getenv (__const char *__name) ;
 
 
 extern int putenv (char *__string) ;
-# 692 "/usr/include/stdlib.h" 3
+# 694 "/usr/include/stdlib.h" 3
 
 
 extern int system (__const char *__command) ;
 
-# 720 "/usr/include/stdlib.h" 3
+# 722 "/usr/include/stdlib.h" 3
 typedef int (*__compar_fn_t) (__const void *, __const void *);
 
 
@@ -1530,7 +1635,7 @@ extern div_t div (int __numer, int __denom)
 extern ldiv_t ldiv (long int __numer, long int __denom)
      __attribute__ ((__const__));
 
-# 819 "/usr/include/stdlib.h" 3
+# 821 "/usr/include/stdlib.h" 3
 
 
 
@@ -1552,9 +1657,9 @@ extern size_t wcstombs (char *__restrict __s,
                         __const wchar_t *__restrict __pwcs, size_t __n)
      ;
 
-# 866 "/usr/include/stdlib.h" 3
+# 868 "/usr/include/stdlib.h" 3
 extern void setkey (__const char *__key) ;
-# 882 "/usr/include/stdlib.h" 3
+# 884 "/usr/include/stdlib.h" 3
 extern int grantpt (int __fd) ;
 
 
@@ -1565,7 +1670,7 @@ extern int unlockpt (int __fd) ;
 
 
 extern char *ptsname (int __fd) ;
-# 914 "/usr/include/stdlib.h" 3
+# 916 "/usr/include/stdlib.h" 3
 
 # 12 "../../src/src/unixcrypt.c" 2
 # 1 "/usr/include/errno.h" 1 3
@@ -1707,6 +1812,9 @@ typedef int (*__gconv_fct) (struct __gconv_step *, struct __gconv_step_data *,
                             unsigned char **, size_t *, int, int);
 
 
+typedef wint_t (*__gconv_btowc_fct) (struct __gconv_step *, unsigned char);
+
+
 typedef int (*__gconv_init_fct) (struct __gconv_step *);
 typedef void (*__gconv_end_fct) (struct __gconv_step *);
 
@@ -1755,6 +1863,7 @@ struct __gconv_step
   char *__to_name;
 
   __gconv_fct __fct;
+  __gconv_btowc_fct __btowc_fct;
   __gconv_init_fct __init_fct;
   __gconv_end_fct __end_fct;
 

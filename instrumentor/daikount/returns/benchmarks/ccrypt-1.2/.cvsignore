@@ -1,4 +1,6 @@
 Makefile
 Makefile.in
+inputs
 pristine
 pristine-stamp
+times

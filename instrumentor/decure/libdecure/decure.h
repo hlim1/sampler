@@ -2,7 +2,9 @@
 #define INCLUDE_libdecure_decure_h
 
 
-inline unsigned resetCountdown()
+static inline unsigned resetCountdown() __attribute__((no_instrument_function));
+
+static inline unsigned resetCountdown()
 {
   return getNextCountdown();
 }

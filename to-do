@@ -1,7 +1,5 @@
 -*- outline -*-
 
-Remove temporary hack symlink on koan in /usr/lib/bonobo/servers/sampler.server
-
 * launcher
 
 GNOME launcher's server reply dialog has bad tab navigation.  If focus

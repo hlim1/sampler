@@ -70,7 +70,7 @@ EOF
 
 	      sampler_install => <<'EOF',
 install -d %{buildroot}%{_sampler_libdir}/applications/%{name}
-install -m 644 sampler/config sampler/%{name}-sampler.schemas sampler/interface.glade %{buildroot}%{_sampler_libdir}/applications/%{name}
+install -m 644 sampler/config sampler/interface.glade %{buildroot}%{_sampler_libdir}/applications/%{name}
 install sampler/wrapper %{buildroot}%{_sampler_libdir}/applications/%{name}
 mv %{buildroot}%{sampler_wrapped} %{buildroot}%{_sampler_libdir}/applications/%{name}/executable
 ln -s %{_sampler_libdir}/applications/%{name}/wrapper %{buildroot}%{sampler_wrapped}

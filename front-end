@@ -10,7 +10,6 @@ use FindBin;
 
 
 sub sys (@) {
-    print "=== @_\n";
     system @_;
 }
 
@@ -20,21 +19,29 @@ my @cpp = ($compiler);
 my @cc = ($compiler);
 my @source;
 
+my $linking = 1;
+
 
 while ($_ = shift) {
     if (/^-/) {
-	if (/^-D/) {
+	if (/^-D./) {
 	    push @cpp, $_;
-	} elsif (/^-I/) {
+	} elsif (/^-I./) {
 	    push @cpp, $_;
+	} elsif ($_ eq '-o') {
+	    push @cc, $_, shift;
+	} elsif ($_ eq '-c') {
+	    $linking = 0;
+	    push @cc, $_;
 	} else {
 	    push @cc, $_;
 	}
     } elsif (/(.*)\.c$/) {
 	push @source, $1;
 	my $base = basename $1;
-	push @cc, "$base.inst.c";
-    } elsif (/\.o$/) {
+	push @cc, '-o', "$base.o", "$base.inst.c";
+    } elsif (/\.([ao]|so)$/) {
+	push @cc, $_;
     } else {
 	die "unrecognized command-line option: $_\n";
     }
@@ -50,4 +57,5 @@ foreach (@source) {
 }
 
 
+push @cc, "$FindBin::Bin/liblog/liblog.a" if $linking;
 sys @cc;

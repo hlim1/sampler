@@ -3,7 +3,7 @@
 * sampler-0.14.1
 
 ** Fix duplicate symbol errors in bounds scheme.
-** Fix GCC prototype warning.
+** Avoid several GCC warnings.
 
 * sampler-0.14
 

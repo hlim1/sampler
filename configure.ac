@@ -278,6 +278,10 @@ launcher/trayicon/libegg/tray/Makefile
 launcher/wrapper/Makefile
 lib/Makefile
 lib/cyclic-size.h
+mining/dumps/Makefile
+mining/Makefile
+mining/populate/Makefile
+mining/queries/Makefile
 package.m4
 sampler.spec
 tools/Makefile

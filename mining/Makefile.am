@@ -1,1 +1,1 @@
-SUBDIRS = libodbc++ populate
+SUBDIRS = dumps populate queries

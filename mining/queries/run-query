@@ -1,0 +1,13 @@
+#!/bin/sh
+
+site=../site-config.sh
+if [ -e $site ]; source $site; fi
+
+{
+  echo 'USE sampler;'
+  for sql in "$@"; do
+    cat $sql
+    echo \;
+  done
+} |
+mysql $mysql_flags

@@ -11,7 +11,8 @@ SUBDIRS =					\
 
 DIST_SUBDIRS =					\
 	$(SUBDIRS)				\
-	debian
+	debian					\
+	mining
 
 EXTRA_DIST =					\
 	$(PACKAGE).spec				\

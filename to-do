@@ -14,7 +14,8 @@ catching and discarding the exception, but that's not a real fix.
 Server reply dialog has bad tab navigation.  If focus is on a
 hyperlink in the HTML area, you cannot tab out to the "OK" button.
 
-How does wrapper propagate SIGINT (^C) down to child?
+How does wrapper propagate SIGINT (^C) down to child?  Restore temporary
+passing of SIGINT down, even thought it is less than perfect.
 
 Add some sort of upper bound on upload lengths to prevent things from
 getting completely out of hand if the instrumented application gets

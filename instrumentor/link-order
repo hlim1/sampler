@@ -14,6 +14,7 @@ sub parse_dependencies ($$) {
 
 
 $_ = <>;
+exit unless defined $_;
 
 die unless /^([^ ]+)\.cmo:(.*[^\\])\\?\n$/;
 my $target = $1;

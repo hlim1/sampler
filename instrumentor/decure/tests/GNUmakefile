@@ -1,20 +1,15 @@
 cildir := ../../../../cil
 
-#CFLAGS := -W -Wall -Werror
-
-all: echo-cured echo-decured
+check: echo-cured echo-decured
 
 %-cured: CC := $(cildir)/bin/ccured
-%-cured: %.c
+%-decured: CC := ../driver/main
+
+echo-cured: echo.c main.c
 	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
-%-decured.c: %-cured
-	cp $*cured.i $@
-
-%-decured: CC := ../front-end $(CC)
-
-#../main: force
-#	$(MAKE) -C $(@D) $(@F)
+echo-decured: echo.c main.c
+	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 force:
 .PHONY: force

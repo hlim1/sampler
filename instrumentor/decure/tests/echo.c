@@ -1,16 +1,23 @@
 #include <stdio.h>
+#include "echo.h"
 
 
-int main(int argc, char *argv[])
+void echo(char ** strings)
 {
-  int scan;
-  for (scan = 1; scan < argc; ++scan)
-    {
-      if (scan > 1) putc(' ', stdout);
-      fputs(argv[scan], stdout);
-    }
+  int printed = 0;
+  
+  if (strings)
+    while (*strings)
+      {
+	if (printed)
+	  putc(' ', stdout);
+	else
+	  printed = 1;
+	
+	fputs(*strings, stdout);
+	++strings;
+      }
 
-  putc('\n', stdout);
-
-  return 0;
+  if (printed)
+    putc('\n', stdout);
 }

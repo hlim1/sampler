@@ -7,7 +7,7 @@ impact of sampling as well as to show that sampling can offer novel
 insights into program (mis)behavior.
 
 \subsection{Sharing the Cost of Assertions}
-\label{sec:share}
+\label{sec:ccured}
 
 In conventional usage, C \texttt{assert()} calls are used during
 program development but are disabled (``\texttt{-DNDEBUG}'') when the
@@ -213,7 +213,7 @@ the performance benefit from sampling, both for single-function as
 well as whole-program instrumentation.
 
 \subsection{Bug Isolation Using Feature Elimination}
-\label{subsec:ccrypt}
+\label{sec:ccrypt}
 
 %% \aside{Story to tell here:
 
@@ -228,7 +228,7 @@ well as whole-program instrumentation.
 %%   filtering function return values.
 
 %%   We didn't have the \texttt{ccrypt} experiment when we first wrote up
-%%   the \texttt{bc} experiment, so \autoref{sec:debug} already spends
+%%   the \texttt{bc} experiment, so \autoref{sec:bc} already spends
 %%   some time introducing the idea of counter triples, randomized input
 %%   to simulate a large user community, etc.  Some of that text should
 %%   probably be lifted up and placed here instead.}
@@ -275,7 +275,7 @@ poses a sanity check for the automatic bug-hunting approach: one
 would hope that there is a very simple solution to catch these
 simple deterministic bugs.  Our solution, as it turns out, does not
 even require the heavy statistical machinery needed in
-\autoref{sec:debug}; it is based on straightforward logical
+\autoref{sec:bc}; it is based on straightforward logical
 reasoning.
 
 Since we do not have ready access to thousands of users, we simulate
@@ -416,7 +416,7 @@ a more elusive bug and describe powerful statistical techniques used
 to catch it.
 
 \subsection{Statistical Debugging}
-\label{sec:debug}
+\label{sec:bc}
 
 %% this paragraph no longer fits the flow here, perhaps we can make
 %% this point elsewhere in the paper?  [axz]
@@ -589,10 +589,10 @@ randomly chosen for training, 322 for validation, and 1339 for
 testing.  Although there are 30,150 raw features, many can be
 discarded immediately: in the training set 27,242 features are always
 zero.  Hence the effective number of features used in training is
-2908.  (Applying rule 2 described in \autoref{subsec:ccrypt}
-can eliminate another 647 features that are zero for all failed runs.
-But the presence or absence of these 647 features turn out not to
-affect the quality of the regularized logistic regression results.)
+2908.  (Applying rule 2 described in \autoref{sec:ccrypt} can
+eliminate another 647 features that are zero for all failed runs.  But
+the presence or absence of these 647 features turn out not to affect
+the quality of the regularized logistic regression results.)
 Furthermore, to make the magnitude of the $\beta$ parameters
 comparable, the feature values have to be on the same scale.  Hence
 all the input features are shifted and scaled to lie between $[0,1]$,

@@ -295,23 +295,23 @@ remote monitoring.  As usual the performance penalty imposed by the
 extra monitoring code is a concern, but so is the use of local storage
 to hold results (even temporarily) on a user's machine, the use of
 network bandwidth to transmit results, and finally the stoage needed
-to hold results on a central server for analysis.  For example,
-if we wish to keep all results, then the storage requirements for
-the central server grow linearly with the number of executions
-even if the data collected from each execution is constant size.\cite{In 
-\autoref{sec:applications} we give an example of an analysis that does not
+to hold results on a central server for analysis.  For example, if we
+wish to keep all results, then the storage requirements for the
+central server grow linearly with the number of executions even if the
+data collected from each execution is constant size.  In
+\autoref{sec:ccured} we give an example of an analysis that does not
 require retention of the data on the server.  However, we expect it
 will often be desirable to be able to perform a new analysis on
 previously gathered data and in this situation at least some data
-would need to be retained.}
+would need to be retained.
 
 Our solution is to sample the number of observations of each of a very
-large, but fixed, set of predicates (see \autoref{sec:applications}).
-The final form of the data is a vector of integers, with position $i$
-containing the number of times we observed that the $i$th predicate
-was true.  For example, a typical entry might be that the predicate $x
-> y$ at a particular program point was observed to be true 42 times in
-one execution.
+large, but fixed, set of predicates (see Sections \autoref{sec:ccrypt}
+and \ref{sec:bc}).  The final form of the data is a vector of
+integers, with position $i$ containing the number of times we observed
+that the $i$th predicate was true.  For example, a typical entry might
+be that the predicate $x > y$ at a particular program point was
+observed to be true 42 times in one execution.
 
 Maintaining a vector of counters produces data for an execution whose
 size is largely independent of the sampling density or running time.

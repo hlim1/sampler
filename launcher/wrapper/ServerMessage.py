@@ -65,6 +65,7 @@ class ServerMessage:
         full = urlparse.urljoin(document.base, url)
         reply = urllib2.urlopen(full)
         stream.write(reply.read())
+        stream.close()
 
     def on_set_base(self, document, base):
         document.base = urlparse.urljoin(document.base, base)

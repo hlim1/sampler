@@ -29,7 +29,3 @@ $(top)/%.cma: force
 
 $(top)/%.cmi: force
 	$(recurse)
-
-run: main $(infile).i
-	./$^
-.PHONY: run

@@ -147,7 +147,7 @@ $UNIQUE_ID environment variable.
 %setup -q
 
 %build
-%configure
+%configure --without-cil-sibling
 make %{?_smp_mflags}
 %{?do_check:make check}
 

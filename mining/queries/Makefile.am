@@ -17,7 +17,7 @@ EXTRA_DIST =					\
 	run-query				\
 	untabbify
 
-$(query_out): %.out: run-query %.sql
-	./$^ >$@
+$(query_out): %.out: run-query %.sql ../populate/sync-stamp
+	./$< $*.sql >$@
 
 .DELETE_ON_ERROR:

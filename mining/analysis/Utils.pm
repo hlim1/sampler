@@ -1,3 +1,5 @@
+# -*- cperl -*-
+
 package Utils;
 
 use diagnostics;
@@ -179,7 +181,7 @@ sub convert_reports ($\@@) {
     foreach my $run_num (0 .. $#_) {
 	local $_ = $_[$run_num];
 	die "suspicious run id: $_" if /\//;
-	my $old_dir = "../populate/sampler-uploads/$_";
+	my $old_dir = "/afs/cs.wisc.edu/p/cbi/uploads/reports/$_";
 	my $env_name = "$old_dir/environment";
 	my $environment = new FileHandle $env_name
 	    or die "cannot read $env_name: $!\n";
@@ -231,15 +233,20 @@ sub convert_reports ($\@@) {
 sub analyze_reports ($\@\@\@\@) {
     my ($outdir, $schemes, $runs, $sites, $debugs) = @_;
     check_outdir $outdir;
-    my $numRuns = @$runs;
 
-    system ('make',
-	    #'-s',
-	    '-C', $outdir,
-	    '-f', "$FindBin::Bin/one.mk",
-	    "sites=@$sites",
-	    "numRuns=$numRuns",
-	    "schemes=all @$schemes");
+    my $numRuns = @runs;
+    my $makefile = new FileHandle "$outdir/GNUmakefile", 'w'
+	or die "cannot write $outdir/GNUmakefile: $!\n";
+    $makefile->print(<<EOT);
+sites = @$sites
+schemes = all @$schemes
+numRuns = $numRuns
+
+include $FindBin::Bin/one.mk
+EOT
+    $makefile->close;
+
+    system ('make', '-C', $outdir);
     exit($? & 127 || $? >> 8 || 1) if $?;
 }
 
@@ -267,6 +274,7 @@ sub clean ($) {
 	"$outdir/compute-results",
 	"$outdir/convert-reports",
 	"$outdir/gen-views",
+	"$outdir/GNUmakefile",
 	glob("$outdir/*.tmp.txt");
 
     if (-z "$outdir/preds.txt") {

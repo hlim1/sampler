@@ -1,4 +1,5 @@
-#!/usr/bin/perl -w
+#!@PERL@ -w
+#line 3 one.in
 
 use strict;
 
@@ -69,13 +70,12 @@ my $dbh = Common::connect;
 my @runs =
     @{$dbh->selectcol_arrayref(q{
 	SELECT run_id
-	    FROM run NATURAL JOIN build
+	    FROM run NATURAL JOIN build NATURAL LEFT JOIN run_suppress
 	    WHERE application_name = ?
 	    AND application_version = ?
 	    AND application_release = ?
 	    AND build_distribution = ?
-	    AND run_suppress IS NULL
-	    AND run_id != 'itPCJH8AAAEAACvQfX8AAAAE'
+	    AND reason IS NULL
 	},
 			       undef, $name, $version, $release, $distro)};
 

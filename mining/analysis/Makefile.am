@@ -11,7 +11,7 @@ overview.xml: $(stamps)
 	find results/*/*/preds.txt -size +0 | ./overview.pl >$@
 	xmllint --valid --noout $@
 
-stamps.mk: stamps.pl
+stamps.mk: stamps.pl $(top_builddir)/config.status
 if ENABLE_MINING
 	./$< >$@
 else

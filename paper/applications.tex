@@ -188,15 +188,17 @@ larger proportion of users for more intensive study.  Given a suitable
 dynamic instrumentation infrastructure, sites can be added or removed
 over time as debugging needs and intermediate results warrant.
 
-We have experimented with variants of the \CCured benchmarks in which
-only a single function is instrumented at a time.  Whereas fully
-instrumented executables range from 13\%-149\% larger than their
-non-sampling counterparts, average growth for singe-function
-instrumented executables is just 12\% for the small Olden benchmarks
-and 6\% for the larger SPECINT95 applications.  Performance is good:
-94\% of site-containing functions incur less than 5\% slowdown versus
-instrumentation-free code, while even the worst single function has
-less than a 12\% penalty.
+\begin{sloppypar}
+  We have experimented with variants of the \CCured benchmarks in
+  which only a single function is instrumented at a time.  Whereas
+  fully instrumented executables range from 13\%-149\% larger than
+  their non-sampling counterparts, average growth for singe-function
+  instrumented executables is just 12\% for the small Olden benchmarks
+  and 6\% for the larger SPECINT95 applications.  Performance is good:
+  94\% of site-containing functions incur less than 5\% slowdown
+  versus instrumentation-free code, while even the worst single
+  function has less than a 12\% penalty.
+\end{sloppypar}
 
 \subsection{Bug Isolation Using Predicate Elimination}
 \label{sec:ccrypt}

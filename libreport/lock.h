@@ -10,8 +10,9 @@ extern pthread_mutex_t reportLock;
 
 #define CRITICAL_REGION(block)								\
 do {											\
+  int reportLockError;									\
   pthread_cleanup_push((void (*)(void *)) pthread_mutex_unlock, (void *) &reportLock);	\
-  const int reportLockError = pthread_mutex_lock(&reportLock);				\
+  reportLockError = pthread_mutex_lock(&reportLock);					\
   if (reportLockError)									\
     {											\
       char buffer[128];									\

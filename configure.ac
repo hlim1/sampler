@@ -237,6 +237,7 @@ launcher/python/Makefile
 launcher/applications/Makefile
 launcher/applications/gnumeric/Makefile
 lib/Makefile
+lib/cyclic-size.h
 package.m4
 sampler.spec
 tools/Makefile

@@ -8,7 +8,7 @@
 
 struct SamplerUnit samplerUnitAnchor = { &samplerUnitAnchor,
 					 &samplerUnitAnchor,
-					 0, 0 };
+					 0 };
 
 unsigned samplerUnitCount;
 
@@ -42,18 +42,7 @@ void samplerUnregisterUnit(struct SamplerUnit *unit)
 	if (samplerUnitCount)
 	  {
 	    if (reportFile)
-	      {
-		unsigned scan;
-
-		fputs("<report id=\"samples\">\n<unit id=\"", reportFile);
-		for (scan = 0; scan < sizeof(SamplerUnitSignature); ++scan)
-		  fprintf(reportFile, "%02x", unit->signature[scan]);
-		fputs("\">\n", reportFile);
-
-		unit->reporter();
-
-		fputs("</unit>\n</report>\n", reportFile);
-	      }
+	      unit->reporter();
 
 	    --samplerUnitCount;
 	  }

@@ -11,6 +11,15 @@ use FindBin;
 ########################################################################
 
 
+die "Usage: $0 <scheme> [<object-file> | <sites-file> ...]\n"
+    unless @ARGV;
+
+my $scheme = shift;
+
+
+########################################################################
+
+
 my $problem = 0;
 
 
@@ -48,7 +57,7 @@ my %compilationUnit;
 foreach my $objectName (@ARGV) {
     my $handle;
 
-    if ($objectName =~ /\.sites$/) {
+    if ($objectName =~ /\.$scheme\.sites$/) {
 	$handle = new FileHandle $objectName, 'r';
 	unless ($handle) {
 	    error "warning: cannot read $objectName: $!\n";
@@ -61,7 +70,7 @@ foreach my $objectName (@ARGV) {
     } else {
 	$handle = new FileHandle;
 	my $extractor = "$FindBin::Bin/extract-section";
-	if (! open $handle, '-|', $extractor, '.debug_site_info', $objectName) {
+	if (! open $handle, '-|', $extractor, ".debug.sampler.site_info.$scheme", $objectName) {
 	    error "warning: cannot run $extractor for $objectName: $!\n";
 	    next;
 	}
@@ -114,7 +123,8 @@ sub skip () {
 
 while (my $signature = <STDIN>) {
     chomp $signature;
-    check_signature 'standard input', $., $signature;
+    $signature =~ s/\A<unit id="([0-9a-f]{32})">\z/$1/
+	or die "standard input:$.: malformed unit header: $signature\n";
 
     my $unit = $compilationUnit{$signature};
     if ($unit) {

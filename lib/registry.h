@@ -7,7 +7,6 @@
 struct SamplerUnit {
   struct SamplerUnit *next;
   struct SamplerUnit *prev;
-  const unsigned char *signature;
   void (*reporter)(void);
 };
 

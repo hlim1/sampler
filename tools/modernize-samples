@@ -9,15 +9,12 @@ my $scheme = shift;
 
 while (my $signature = <STDIN>) {
     chomp $signature;
-    print "<unit id=\"$signature\">\n";
-    print "<scheme id=\"$scheme\">\n";
+    print "<samples unit=\"$signature\" scheme=\"$scheme\">\n";
 
-    while (1) {
-	my $tuple = <STDIN>;
+    while (my $tuple = <STDIN>) {
 	last if $tuple eq "\n";
 	print $tuple;
     }
 
-    print "</scheme>\n";
-    print "</unit>\n";
+    print "</samples>\n";
 }

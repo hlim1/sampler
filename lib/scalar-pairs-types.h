@@ -5,7 +5,7 @@
 typedef unsigned ScalarPairTuple[3];
 
 
-void scalarPairsReport(unsigned, const ScalarPairTuple []);
+void scalarPairsReport(const unsigned char *, unsigned, const ScalarPairTuple []);
 
 
 #endif /* !INCLUDE_sampler_scalar_pairs_report_h */

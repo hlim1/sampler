@@ -54,6 +54,9 @@ static void openReportFile()
 
   unsetenv("SAMPLER_REPORT_FD");
   unsetenv("SAMPLER_FILE");
+
+  if (reportFile)
+    fputs("<report id=\"samples\">\n", reportFile);
 }
 
 
@@ -72,6 +75,7 @@ static void reportAllCompilationUnits()
   if (reportFile)
     {
       samplerUnregisterAllUnits();
+      fputs("</report>\n", reportFile);
       fflush(reportFile);
     }
 }
@@ -155,4 +159,48 @@ __attribute__((constructor)) static void initialize()
 	  }
       }
   });
+}
+
+
+void samplesBegin(const unsigned char *signature, const char scheme[])
+{
+  fprintf(reportFile,
+	  "<samples unit=\""
+	  "%02x%02x%02x%02x%02x%02x%02x%02x"
+	  "%02x%02x%02x%02x%02x%02x%02x%02x"
+	  "\" scheme=\"%s\">\n",
+	  signature[ 0], signature[ 1], signature[ 2], signature[ 3],
+	  signature[ 4], signature[ 5], signature[ 6], signature[ 7],
+	  signature[ 8], signature[ 9], signature[10], signature[11],
+	  signature[12], signature[13], signature[14], signature[15],
+	  scheme);
+}
+
+
+void samplesDump2(unsigned count, const unsigned tuples[][2])
+{
+  unsigned scan;
+
+  for (scan = 0; scan < count; ++scan)
+    fprintf(reportFile, "%u\t%u\n",
+	    tuples[scan][0],
+	    tuples[scan][1]);
+}
+
+
+void samplesDump3(unsigned count, const unsigned tuples[][3])
+{
+  unsigned scan;
+
+  for (scan = 0; scan < count; ++scan)
+    fprintf(reportFile, "%u\t%u\t%u\n",
+	    tuples[scan][0],
+	    tuples[scan][1],
+	    tuples[scan][2]);
+}
+
+
+void samplesEnd()
+{
+  fputs("</samples>\n", reportFile);
 }

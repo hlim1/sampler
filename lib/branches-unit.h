@@ -2,7 +2,7 @@
 #define INCLUDE_sampler_branches_unit_h
 
 #include "branches-types.h"
-#include "registry.h"
+#include "unit-signature.h"
 
 
 #pragma cilnoremove("branchesCounterTuples")
@@ -17,7 +17,8 @@ static const char branchesSiteInfo[] __attribute__((section(".debug.sampler.site
 #pragma sampler_exclude_function("branchesReporter")
 static void branchesReporter()
 {
-  branchesReport(sizeof(branchesCounterTuples) / sizeof(BranchTuple),
+  branchesReport(samplerUnitSignature,
+		 sizeof(branchesCounterTuples) / sizeof(BranchTuple),
 		 branchesCounterTuples);
 }
 

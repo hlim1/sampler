@@ -2,7 +2,7 @@
 #define INCLUDE_sampler_returns_unit_h
 
 #include "returns-types.h"
-#include "registry.h"
+#include "unit-signature.h"
 
 
 #pragma cilnoremove("returnsCounterTuples")
@@ -17,7 +17,8 @@ static const char returnsSiteInfo[] __attribute__((section(".debug.sampler.site_
 #pragma sampler_exclude_function("returnsDestructor")
 static void returnsReporter()
 {
-  returnsReport(sizeof(returnsCounterTuples) / sizeof(ReturnTuple),
+  returnsReport(samplerUnitSignature,
+		sizeof(returnsCounterTuples) / sizeof(ReturnTuple),
 		returnsCounterTuples);
 }
 

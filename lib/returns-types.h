@@ -5,7 +5,7 @@
 typedef unsigned ReturnTuple[3];
 
 
-void returnsReport(unsigned, const ReturnTuple []);
+void returnsReport(const unsigned char *, unsigned, const ReturnTuple []);
 
 
 #endif /* !INCLUDE_sampler_returns_report_h */

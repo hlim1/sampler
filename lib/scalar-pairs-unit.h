@@ -2,7 +2,7 @@
 #define INCLUDE_sampler_scalar_pairs_unit_h
 
 #include "scalar-pairs-types.h"
-#include "registry.h"
+#include "unit-signature.h"
 
 
 #pragma cilnoremove("scalarPairsCounterTuples")
@@ -10,14 +10,15 @@ static ScalarPairTuple scalarPairsCounterTuples[];
 
 
 #pragma cilnoremove("scalarPairsSiteInfo")
-static const char scalarPairsSiteInfo[] __attribute__((section(".debug.sampler.site_info.scalar_pairs")));
+static const char scalarPairsSiteInfo[] __attribute__((section(".debug.sampler.site_info.scalar-pairs")));
 
 
 #pragma cilnoremove("scalarPairsReporter")
 #pragma sampler_exclude_function("scalarPairsReporter")
 static void scalarPairsReporter()
 {
-  scalarPairsReport(sizeof(scalarPairsCounterTuples) / sizeof(ScalarPairTuple),
+  scalarPairsReport(samplerUnitSignature,
+		    sizeof(scalarPairsCounterTuples) / sizeof(ScalarPairTuple),
 		    scalarPairsCounterTuples);
 }
 

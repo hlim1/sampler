@@ -1,5 +1,5 @@
-#ifndef INCLUDE_sampler_unit_late_h
-#define INCLUDE_sampler_unit_late_h
+#ifndef INCLUDE_sampler_unit_h
+#define INCLUDE_sampler_unit_h
 
 #include "registry.h"
 
@@ -13,9 +13,8 @@ static void samplerReporter()
 #pragma cilnoremove("samplerCFG")
 static const char samplerCFG[] __attribute__((unused, section(".debug_sampler_cfg")));
 
-static const SamplerUnitSignature samplerUnitSignature;
 
-static struct SamplerUnit samplerUnit = { 0, 0, samplerUnitSignature, samplerReporter };
+static struct SamplerUnit samplerUnit = { 0, 0, samplerReporter };
 
 
 #pragma sampler_exclude_function("samplerConstructor")
@@ -49,4 +48,4 @@ static inline void atomicIncrementCounter(unsigned *counter)
 #endif /* SAMPLER_THREADS */
 
 
-#endif /* !INCLUDE_sampler_unit_late_h */
+#endif /* !INCLUDE_sampler_unit_h */

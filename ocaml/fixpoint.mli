@@ -1,1 +1,1 @@
-val compute : (bool ref -> unit) -> unit
+val compute : (bool ref -> 'result) -> 'result

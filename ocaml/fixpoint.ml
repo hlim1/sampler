@@ -1,6 +1,7 @@
-let compute refine =
-  let madeProgress = ref true in
-  while !madeProgress do
-    madeProgress := false;
-    refine madeProgress
-  done
+let rec compute refine =
+  let madeProgress = ref false in
+  let result = refine madeProgress in
+  if !madeProgress then
+    compute refine
+  else
+    result

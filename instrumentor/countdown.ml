@@ -25,11 +25,11 @@ class countdown (global, reset) fundec =
     method decrement location =
       Instr [Set (local, increm (Lval local) (-1), location)]
 
-    method beforeCall location =
-      Set (global, (Lval local), location)
+    method beforeCall =
+      Set (global, (Lval local), locUnknown)
 
-    method afterCall location =
-      Set (local, (Lval global), location)
+    method afterCall =
+      Set (local, (Lval global), locUnknown)
 
     method checkThreshold location weight instrumented original =
       let within = kinteger IUInt weight in

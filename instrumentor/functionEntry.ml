@@ -9,7 +9,7 @@ let find func =
 
 let patch func weights countdown instrumented =
   let entry = find func in
-  let import = mkStmtOneInstr (countdown#afterCall locUnknown) in
+  let import = mkStmtOneInstr countdown#afterCall in
   let weight = weights#find entry in
 
   let body =

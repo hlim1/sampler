@@ -7,8 +7,8 @@ class patcher countdown =
 
     method vstmt stmt =
       match stmt.skind with
-      | Return (_, location) ->
-	  let export = countdown#beforeCall location in
+      | Return _ ->
+	  let export = countdown#beforeCall in
 	  stmt.skind <- Block (mkBlock [mkStmtOneInstr export; mkStmt stmt.skind]);
 	  SkipChildren
 

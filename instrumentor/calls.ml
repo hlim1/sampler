@@ -1,7 +1,7 @@
 open Cil
 
 
-type placeholders = stmt list
+type placeholders = (stmt * stmt) list
 
 
 class prepatcher =
@@ -13,16 +13,14 @@ class prepatcher =
 
     method vstmt stmt =
       match stmt.skind with
-      | Instr [Call (_, _, _, location) as call] ->
-	  let placeholder = mkEmptyStmt () in
-	  let block = Block (mkBlock [mkStmtOneInstr call; placeholder]) in
-	  placeholders <- placeholder :: placeholders;
+      | Instr [Call _ as call] ->
+	  let slotBefore = mkEmptyStmt () in
+	  let slotAfter = mkEmptyStmt () in
+	  placeholders <- (slotBefore, slotAfter) :: placeholders;
 	  
-	  let replace stmt =
-	    stmt.skind <- block;
-	    stmt
-	  in
-	  ChangeDoChildrenPost (stmt, replace)
+	  let block = Block (mkBlock [slotBefore; mkStmtOneInstr call; slotAfter]) in
+	  stmt.skind <- block;
+	  SkipChildren
 
       | _ ->
 	  DoChildren
@@ -49,7 +47,7 @@ let nextLabels _ =
 
 
 let patch clones weights countdown =
-  let patchOne standardAfter =
+  let patchOne (_, standardAfter) =
     let weight = weights#find standardAfter in
     if weight != 0 then
       let instrumentedAfter = ClonesMap.findCloneOf clones standardAfter in
@@ -76,22 +74,20 @@ let patch clones weights countdown =
 
 
 let postpatch clones countdown =
-  let postpatchOne stmt =
-    match stmt.skind with
-    | Instr [Call (_, _, _, location) as call] ->
-	let before = countdown#beforeCall location in
-	let after = countdown#afterCall location in
-	let instructions = [before; call; after] in
-	stmt.skind <- Instr instructions;
-    | _ ->
-	currentLoc := get_stmtLoc stmt.skind;
-	ignore (bug ("non-call on afterCalls list"))
+  let postpatchOne before after =
+    before.skind <- Instr [countdown#beforeCall];
+    after.skind <- Instr [countdown#afterCall]
   in
 
-  let postpatchBoth standardAfter =
-    let instrumentedAfter = ClonesMap.findCloneOf clones standardAfter in
-    postpatchOne standardAfter;
-    postpatchOne instrumentedAfter
+  let findClone =
+    ClonesMap.findCloneOf clones
+  in
+
+  let postpatchBoth (standardBefore, standardAfter) =
+    let instrumentedBefore = findClone standardBefore in
+    let instrumentedAfter = findClone standardAfter in
+    postpatchOne standardBefore standardAfter;
+    postpatchOne instrumentedBefore instrumentedAfter
   in
 
   List.iter postpatchBoth

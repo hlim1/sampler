@@ -25,6 +25,9 @@ BUILT_SOURCES = tray Paths.py Sampler_Monitor.server
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
+TESTS = $(servers_DATA)
+TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
+
 
 dist-hook:
 	rm $(BUILT_SOURCES:%=$(distdir)/%)

@@ -21,9 +21,6 @@ MOSTLYCLEANFILES =				\
 	*.so					\
 	Sampler_Monitor.h
 
-TESTS = Sampler_Monitor.server
-TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
-
 traylib_DATA = monitor.so
 
 

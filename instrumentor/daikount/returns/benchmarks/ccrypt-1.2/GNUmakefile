@@ -36,7 +36,7 @@ times := $(alwaysTimes) $(sampleTimes)
 
 collated-times.txt: collate-times $(times)
 	./$< times >times/$@
-	cphost times/$@ $@
+	cp times/$@ $@
 
 $(alwaysTimes): times/%.times: %/src/ccrypt run-trials $(seeds:%=inputs/%.noise)
 	[ -d $(@D) ] || mkdir $(@D)

@@ -41,10 +41,6 @@ sub slurp_1 ($) {
 
 my %flag_specs =
     (
-     # Sampler Options
-     '-fthreads' => sub { },
-     '-fno-threads' => sub { },
-
      # Overall Options
      '-o' => sub { slurp_1 $_; $cpp0_output_slot = \$cpp0[@cpp0 - 1]; },
      '-v' => sub { slurp_0 $_; $verbose = 1 },
@@ -97,6 +93,8 @@ while (@ARGV) {
 	    $scheme = $1;
 	} elsif (/^-f((in|ex)clude-(file|function))=(.*)/) {
 	    push @inst, "--$1", $4
+	} elsif (/^-f/) {
+	    push @cc1, $_
 	} else {
 	    slurp_0 $_;
 	}

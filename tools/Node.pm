@@ -21,7 +21,7 @@ sub new ($$) {
     chomp;
     return if $_ eq '';
 
-    /^(.+)\t(\d+)$/ or $self->malformed('function header');
+    /^(.+)\t(\d+)$/ or $self->malformed('node header');
     ($self->{filename}, $self->{line}) = ($1, $2);
     
     $_ = <$handle>;

@@ -1,0 +1,23 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+
+die "Usage: $0 <scheme>\n" unless @ARGV == 1;
+my $scheme = shift;
+
+
+while (my $signature = <STDIN>) {
+    chomp $signature;
+    print "<unit id=\"$signature\">\n";
+    print "<scheme id=\"$scheme\">\n";
+
+    while (1) {
+	my $tuple = <STDIN>;
+	last if $tuple eq "\n";
+	print $tuple;
+    }
+
+    print "</scheme>\n";
+    print "</unit>\n";
+}

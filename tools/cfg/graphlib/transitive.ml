@@ -1,14 +1,6 @@
 exception Reached
 
 
-type ('node, 'edge) follow = 'node -> ('edge * 'node) list
-
-type 'node trace = 'node -> unit
-
-
-let silent origin midpoint destination = ()
-
-
 let reach trace succ origin destination =
   let worklist = new QueueClass.container in
   let visited = HashClass.create 2 in

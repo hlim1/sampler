@@ -1,3 +1,5 @@
+SUBDIRS = cfg
+
 tools_SCRIPTS =					\
 	debuild					\
 	Embedded.pm				\

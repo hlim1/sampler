@@ -253,8 +253,6 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 
 AC_CONFIG_FILES([
 Makefile
-cfg/Makefile
-cfg/graphlib/Makefile
 config.m4
 debian/Makefile
 doc/Makefile
@@ -299,6 +297,8 @@ ocaml/config.mk
 package.m4
 sampler.spec
 tools/Makefile
+tools/cfg/Makefile
+tools/cfg/graphlib/Makefile
 tools/find-driver.pl
 www/Makefile
 www/cgi-bin/Makefile

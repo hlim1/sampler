@@ -3,4 +3,4 @@ type ('node, 'edge) follow = 'node -> ('edge * 'node) list
 type 'node trace = 'node -> unit
 
 
-val reach : 'node trace -> ('node, _) follow -> 'node -> 'node -> bool
+type ('node, 'edge) probe = 'node trace -> ('node, 'edge) follow -> 'node -> 'node -> bool

@@ -67,7 +67,7 @@ let addNodes key data =
 let addEdges statics ((func, _) as originKey) data =
   let addFlow destinationId =
     let destinationKey = (func, destinationId) in
-    graph#addEdge (After, originKey) () (Before, destinationKey)
+    graph#addEdge (After, originKey) Flow (Before, destinationKey)
   in
   List.iter addFlow data.successors;
 
@@ -88,10 +88,10 @@ let addEdges statics ((func, _) as originKey) data =
 	    in
 
 	    let entryNode = (fst callee, 0) in
-	    graph#addEdge (Before, originKey) () (Before, entryNode);
+	    graph#addEdge (Before, originKey) Call (Before, entryNode);
 
 	    let addReturnEdge return =
-	      graph#addEdge (After, (fst callee, return)) () (After, originKey)
+	      graph#addEdge (After, (fst callee, return)) Return (After, originKey)
 	    in
 	    List.iter addReturnEdge (snd callee).Types.Function.returns
 
@@ -102,4 +102,4 @@ let addEdges statics ((func, _) as originKey) data =
   end;
 
   if !shortcut then
-    graph#addEdge (Before, originKey) () (After, originKey)
+    graph#addEdge (Before, originKey) Flow (After, originKey)

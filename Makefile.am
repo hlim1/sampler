@@ -1,7 +1,6 @@
 AUTOMAKE_OPTIONS = foreign 1.6
 
 SUBDIRS =					\
-	cfg					\
 	doc					\
 	fuzz					\
 	instrumentor				\

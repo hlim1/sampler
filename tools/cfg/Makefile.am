@@ -1,6 +1,6 @@
 SUBDIRS = graphlib
 
-noinst_SCRIPTS = resolve-cfg order-sites
+tools_SCRIPTS = resolve-cfg order-sites
 
 EXTRA_DIST =
 

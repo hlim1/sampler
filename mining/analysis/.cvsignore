@@ -2,5 +2,6 @@
 Makefile
 Makefile.in
 modernize
+modernize.cc
 results
 stamps.mk

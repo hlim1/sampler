@@ -77,9 +77,10 @@ my %flag_specs =
      # Preprocessor Options
      '-A' => \&slurp_1,
      '-D' => \&slurp_1,
-     '-MT' => \&slurp_1,
-     '-MQ' => \&slurp_1,
      '-MF' => sub { push @cpp0, $_, shift @ARGV },
+     '-MP' => sub { push @cpp0, $_ },
+     '-MT' => sub { push @cpp0, $_, shift @ARGV },
+     '-MQ' => sub { push @cpp0, $_, shift @ARGV },
      '-MD' => sub { push @cpp0, $_, shift @ARGV },
      '-MMD' => sub { push @cpp0, $_, shift @ARGV },
      '-idirafter' => \&slurp_1,

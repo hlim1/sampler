@@ -32,12 +32,6 @@ trace stream in real time, as the program runs
 \cite{Demsky:RBEOOP:2002,ICSE01*221}.  It may be difficult to directly
 adapt dynamic trace analysis techniques to a domain where the trace is
 sampled and therefore incomplete.  
-%However, it may be possible to
-%combine these approaches so that one fairly and randomly samples short
-%trace ``bursts'', with complete data collection within each burst.
-%This would allow us to examine sequences of interrelated events, a
-%task which is difficult under our current, strictly Bernoullian
-%regime.
 
 Our effort to understand and debug programs by selecting predicates is
 partly inspired by Daikon \cite{ernst2001}.  Like Daikon, we begin
@@ -59,10 +53,16 @@ as the first time a predicate transitioned from true to false.  Our
 approach is more probabilistic: we wish to identify broad trends over
 time that correlate predicate violations with increased likelihood of
 failure.  
-%Our approach explicitly accommodates the possibility of
-%``getting lucky'', such as overrunning a buffer but not actually
-%crashing.  DIDUCE works in the context of a safe language (Java) in
-%which most forms of getting lucky cannot happen.
 
+Software tomography as realized through the GAMMA system
+\cite{PASTE'02*2} shares our goal of low-overhead distributed
+monitoring of deployed code.  Applications to date have focused on
+code coverage and traditional performance monitoring tasks, whereas
+our primary interest is bug isolation.  Our strategy uses
+randomization within a single instrumented binary, while GAMMA
+emphasizes choices in initial probe placement and iterative refinement
+over time.  Our earlier discussion of statically selective sampling
+(Section~\ref{sec:ccured:single}) suggests that these two
+considerations are complementary.
 
 %% LocalWords:  DIDUCE

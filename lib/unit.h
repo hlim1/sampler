@@ -4,6 +4,10 @@
 #include "registry.h"
 
 
+#pragma cilnoremove("samplerSiteInfo")
+static const char samplerSiteInfo[] __attribute__((section(".debug_site_info")));
+
+
 #pragma sampler_exclude_function("samplerReporter")
 static void samplerReporter()
 {

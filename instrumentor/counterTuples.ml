@@ -1,4 +1,5 @@
 open Cil
+open EmbedSiteInfo
 open Pretty
 open SchemeName
 
@@ -28,41 +29,40 @@ class virtual basis name file =
       result
 
     method finalize digest =
+      let startTag =
+	sprint max_int
+	  (seq nil text
+	     ["<sites unit=\"";
+	      Digest.to_hex (Lazy.force digest);
+	      "\" scheme=\""; name.flag; "\">\n"])
+      in
+
+      let serializer (func, location, description, statement) =
+	let fields = [text location.file;
+		      num location.line;
+		      text func.svar.vname;
+		      num statement.sid;
+		      description]
+	in
+	let row = seq (chr '\t') (fun doc -> doc) fields in
+	let text = sprint max_int (row ++ chr '\n') in
+	accumulator#addString text
+      in
+
+      accumulator#addString startTag;
+      siteInfos#iter serializer;
+      accumulator#addString "</sites>\n";
+
       mapGlobals file
 	begin
 	  function
 	    | GVar ({vtype = TArray (elementType, _, attributes)} as varinfo, initinfo, location)
 	      when varinfo == tuples
 	      ->
-		GVar ({varinfo with vtype = TArray (elementType, Some (integer nextId), attributes)},
+		GVar ({varinfo with vtype = TArray (elementType,
+						    Some (integer nextId),
+						    attributes)},
 		      initinfo, location)
-
-	    | GVar ({vname = vname}, initinfo, _) as global
-	      when vname = name.prefix ^ "SiteInfo"
-	      ->
-		let buffer = new BufferClass.c 33 in
-		buffer#addString
-		  (sprint max_int
-		     (seq nil text
-			["<sites unit=\"";
-			 Digest.to_hex (Lazy.force digest);
-			 "\" scheme=\""; name.flag; "\">\n"]));
-
-		let serializer (func, location, description, statement) =
-		  let fields = [text location.file;
-				num location.line;
-				text func.svar.vname;
-				num statement.sid;
-				description]
-		  in
-		  let row = seq (chr '\t') (fun doc -> doc) fields in
-		  let text = sprint max_int (row ++ chr '\n') in
-		  buffer#addString text
-		in
-		siteInfos#iter serializer;
-
-		initinfo.init <- Some (SingleInit (mkString buffer#contents));
-		global
 
 	    | GFun ({svar = {vname = "samplerReporter"}; sbody = sbody}, _) as global
 	      when nextId > 0 ->

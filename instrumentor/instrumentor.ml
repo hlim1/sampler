@@ -33,6 +33,7 @@ let phase =
     EmbedSignature.visit file digest;
     EmbedCFG.visit file digest;
     List.iter (fun scheme -> scheme#embedInfo digest) schemes;
+    EmbedSiteInfo.visit file;
 
     if !sample then
       begin

@@ -1,13 +1,22 @@
 open Cil
 
 
-exception Missing of string
-
-
 let find name file =
-  let predicate = function
-    | {vname = vname; vtype = TFun _} when vname = name -> true
-    | _ -> false
+
+  let lval =
+    let rec findEither = function
+      | GFun ({svar = {vname = vname; vinline = true} as varinfo}, _) :: _
+	when vname = name ^ "__extinline" ->
+	  var varinfo
+      | _ :: rest ->
+	  findEither rest
+      | [] ->
+	  let predicate = function
+	    | TFun _ -> true
+	    | _ -> false
+	  in
+	  FindGlobal.find predicate name file
+    in
+    findEither file.globals
   in
-  try Lval (FindGlobal.find predicate file)
-  with Not_found -> raise (Missing name)
+  Lval lval

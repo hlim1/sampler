@@ -1,4 +1,4 @@
 open Cil
 
 
-val find : (varinfo -> bool) -> file -> lval
+val find : (typ -> bool) -> string -> file -> lval

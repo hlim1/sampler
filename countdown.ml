@@ -6,10 +6,10 @@ type token = lval * exp
 
 let findGlobal =
   let predicate = function
-    | {vname = "nextLogCountdown"; vtype = TInt _} -> true
+    | TInt _ -> true
     | _ -> false
   in
-  FindGlobal.find predicate
+  FindGlobal.find predicate "nextLogCountdown"
 
 
 let findReset = FindFunction.find "resetCountdown"

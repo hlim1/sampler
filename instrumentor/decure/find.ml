@@ -81,13 +81,13 @@ class visitor =
 	  ignore (bug "non-singleton Instr");
 	  SkipChildren
 
-      | If (Lval (Var p, NoOffset),
+      | If (p,
 	    { battrs = [];
 	      bstmts = [
 	      { skind = If (BinOp (Shiftrt,
 				   BinOp (MinusPP,
 					  Lval (Var _, NoOffset),
-					  Lval (Var p', NoOffset),
+					  CastE (TPtr (TInt (IChar, []), []), p'),
 					  TInt (IInt, [])),
 				   Const (CInt64 (twentyOne, IInt, _)),
 				   TInt (IInt, [])),
@@ -96,9 +96,11 @@ class visitor =
 			      { skind = Block { battrs = [];
 						bstmts = [
 						{ skind = Instr [
-						  Call (_, Lval (Var {vname = "fp_fail"},
+						  Call (None, Lval (Var {vname = "fp_fail"},
 								 NoOffset),
-							Const (CInt64 (zero, IInt, _)) :: _,
+							[ Const (CInt64 (zero, IInt, _));
+							  Const (CStr _);
+							  Const (CInt64 (_, IInt, _)) ],
 							_) ] };
 						{ skind = Instr [] } ] } } ] },
 			    _) } ] },
@@ -106,7 +108,7 @@ class visitor =
 	    _)
 	when twentyOne = Int64.of_int 21
 	    && zero = Int64.zero
-	    && p == p'
+	    && p = p'
 	->
 	  (* CHECK_RETURNPTR *)
 	  sites <- stmt :: sites;

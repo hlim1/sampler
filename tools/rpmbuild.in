@@ -27,8 +27,8 @@ my %macros = (
 	      sampler_cc_flags => '%{nil}',
 
 	      'sampler_tags(s:)' => <<'EOF',
-Requires: sampler >= 0.4
-BuildRequires: sampler-devel >= 0.4
+Requires: sampler >= 0.6
+BuildRequires: sampler-devel >= 0.6
 %global _sampler_source %{-s*}%{!-s:1}
 Source%{_sampler_source}: %{name}-sampler.tar.gz
 %{nil}

@@ -434,15 +434,24 @@
 
 	<varlistentry>
 	  <term><envar>$SAMPLER_FILE</envar></term>
+	  <term><envar>$SAMPLER_REPORT_FD</envar></term>
 	  <listitem>
-	    <para>If set, names a file into which the sampler report
-	    will be written at program exit time.</para>
+	    <para><envar>$SAMPLER_FILE</envar> names a file into which
+	    the sampler report will be written at program exit time.
+	    <envar>$SAMPLER_REPORT_FD</envar> gives the number of a
+	    file descriptor which is to receive the report.  This file
+	    descriptor must already be open, and will be closed once
+	    the report is complete.</para>
 
-	    <para>If not set, no post-execution report will be
+	    <para>If neither is set, no post-execution report will be
 	    produced.  This does not disable sampling while the
 	    program runs, but it does mean that the results of the
 	    sampling will not be recorded anywhere once the program
 	    exits.</para>
+
+	    <para>If both are set, <envar>$SAMPLER_FILE</envar> is
+	    used and <envar>$SAMPLER_REPORT_FD</envar> is
+	    disregarded.</para>
 	  </listitem>
 	</varlistentry>
 

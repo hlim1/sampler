@@ -1,6 +1,7 @@
 #define _GNU_SOURCE		/* for PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP */
 
 #include <errno.h>
+#include <fcntl.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <sys/wait.h>
@@ -18,11 +19,41 @@ FILE *reportFile;
 pthread_mutex_t reportLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
+static void closeOnExec(int fd)
+{
+  int flags = fcntl(fileno(reportFile), F_GETFD, 0);
+
+  if (flags >= 0)
+    {
+      flags |= FD_CLOEXEC;
+      fcntl(fd, F_SETFD, flags);
+    }
+}
+
+
 static void openReportFile()
 {
-  const char *filename = getenv("SAMPLER_FILE");
-  reportFile = fopen(filename, "w");
+  const char *envar;
+
+  if ((envar = getenv("SAMPLER_FILE")))
+    {
+      reportFile = fopen(envar, "w");
+      closeOnExec(fileno(reportFile));
+    }
+
+  else if ((envar = getenv("SAMPLER_REPORT_FD")))
+    {
+      char *tail;
+      const int fd = strtol(envar, &tail, 0);
+      if (*tail == '\0')
+	{
+	  reportFile = fdopen(fd, "w");
+	  closeOnExec(fd);
+	}
+    }
+
   unsetenv("SAMPLER_FILE");
+  unsetenv("SAMPLER_REPORT_FD");
 
   if (reportFile)
     fputs("<report id=\"samples\">\n", reportFile);

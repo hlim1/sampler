@@ -40,3 +40,11 @@ spec95-density.tex : ccured-density.pl $(spec95_density)
 	./$< $(patsubst %, $(dir)/%, $(spec95)) >$@ || rm -f $@
 	@[ -r $@ ]
 
+
+########################################################################
+
+
+all:: perimeter.eps
+
+perimeter.eps: decure-only-one-function.sxc
+	$(error please re-export $@ from $<)

@@ -63,28 +63,33 @@ let invariant file =
 
 
 let register file =
+  let compInfo = findCompInfo file in
   let callee = FindFunction.find "registerInvariant" file in
 
   let markRoots file =
     defaultRootsMarker file;
-    callee.vreferenced <- true
+    callee.vreferenced <- true;
+    compInfo.creferenced <- true
   in
   removeUnusedTemps ~markRoots:markRoots file;
 
   let invariants =
-    let target = findCompInfo file in
+    try
+      let target = findCompInfo file in
 
-    let rec filter = function
-      | GVar ({ vtype = TComp (compinfo, _) } as varinfo, _, _) :: globals
-	when compinfo == target ->
-	  varinfo :: filter globals
-      | _ :: globals ->
-	  filter globals
-      | [] ->
-	  []
-    in
+      let rec filter = function
+	| GVar ({ vtype = TComp (compinfo, _) } as varinfo, _, _) :: globals
+	  when compinfo == target ->
+	    varinfo :: filter globals
+	| _ :: globals ->
+	    filter globals
+	| [] ->
+	    []
+      in
 
-    filter file.globals
+      filter file.globals
+
+    with Not_found -> []
   in
 
   if invariants != [] then

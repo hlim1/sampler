@@ -46,7 +46,10 @@ $(addsuffix .cmi, $(ifaces)): %.cmi: %.mli
 $(addsuffix .cmi, $(implicits)): %.cmi: %.ml
 	$(compile)
 
-$(addsuffix .$(cmo), $(impls)): %.$(cmo): %.ml
+$(addsuffix .cmo, $(impls)): %.cmo: %.ml
+	$(compile)
+
+$(addsuffix .cmx, $(impls)): %.cmx: %.ml
 	$(compile)
 
 $(addsuffix .di, $(ifaces)): %.di: %.mli

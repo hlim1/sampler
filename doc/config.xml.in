@@ -1,2 +1,3 @@
 <!ENTITY samplerdir "@ABSOLUTE_BUILDDIR@">
+<!ENTITY buildhost "@BUILD_HOST@">
 <!ENTITY cycliccount "@PRECOMPUTE_COUNT@">

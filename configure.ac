@@ -18,6 +18,10 @@ AC_MSG_CHECKING(for absolute build directory)
 AC_SUBST(ABSOLUTE_BUILDDIR, $PWD)
 AC_MSG_RESULT($PWD)
 
+AC_MSG_CHECKING(for build host name)
+AC_SUBST(BUILD_HOST, `hostname`)
+AC_MSG_RESULT($BUILD_HOST)
+
 
 ########################################################################
 #

@@ -16,8 +16,8 @@
       <title>Getting and Installing the Sampler</title>
 
       <remark>Not yet written.  Tools are currently built and
-      installed on <literal>ash.cs.berkeley.edu</literal> under
-      <filename class="directory">&samplerdir;</filename>.</remark>
+      installed on <literal>&buildhost;</literal> under <filename
+      class="directory">&samplerdir;</filename>.</remark>
     </section>
     
     <section>

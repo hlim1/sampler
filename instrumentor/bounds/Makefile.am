@@ -1,12 +1,8 @@
 EXTRA_DIST =					\
-	late-global.c				\
-	late-global.expected			\
+	enum.c					\
+	enum.expected				\
 	testsuite				\
-	testsuite.at				\
-	upcase-bad.c				\
-	upcase-bad.expected			\
-	upcase-good.c				\
-	upcase-good.expected
+	testsuite.at
 
 TESTSUITE = $(srcdir)/testsuite
 check-local: atconfig $(TESTSUITE)

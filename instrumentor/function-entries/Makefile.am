@@ -1,7 +1,4 @@
 EXTRA_DIST =					\
-	extern-callee.c				\
-	extern-caller.c				\
-	extern.expected				\
 	test.c					\
 	test.expected				\
 	testsuite				\

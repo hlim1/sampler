@@ -26,7 +26,7 @@ let visit isWeightlessCall countdownToken func info =
     let headers = entry :: jumps.backward @ afterCalls in
     let weights = WeighPaths.weigh info.sites headers in
     
-    let countdown = new Countdown.countdown countdownToken func in
+    let countdown = countdownToken func in
     let original, instrumented, clones = Duplicate.duplicateBody func in
     
     ForwardJumps.patch clones jumps.forward;

@@ -17,5 +17,5 @@ let visit preparator file =
   if !sample then
     let infos = visitor#infos in
     let tester = Weightless.collect infos in
-    let countdown = Countdown.find file in
+    let countdown = new Countdown.countdown file in
     infos#iter (Transform.visit tester countdown)

@@ -1,11 +1,7 @@
 open Cil
     
 
-type token
-
-val find : file -> token
-
-class countdown : token -> fundec -> object
+class countdown : file -> fundec -> object
   method decrement : location -> stmtkind
   method export : instr
   method import : instr

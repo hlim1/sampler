@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!@PERL@ -w
 
 use strict;
 
@@ -32,7 +32,9 @@ my $count = keys %funcs;
 ########################################################################
 
 
-my $template = new FileHandle 'libraries.ml.in';
+my $srcdir = '@srcdir@';
+my $template = new FileHandle "$srcdir/libraries.ml.in"
+    or die "cannot read $srcdir/libraries.ml.in: $!\n";
 
 while (<$template>) {
     if ($_ =~ /^(\s*)\@LIBRARY_FUNCTIONS\@$/) {

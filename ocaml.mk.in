@@ -33,11 +33,12 @@ endif
 linkorder = $(top_srcdir)/ocaml/link-order
 
 libdirs = $(cil_libdir)
-includes = $(foreach dir, $(libdirs), -I $(dir))
+includes = -I $(srcdir) $(libdirs:%=-I %)
 compiler = $(ocamlc) $(ocamlflags)
 
-depend = ocamldep $(includes) $< >$@
-compile = $(compiler) $(includes) -c $<
+#depend = ( cd $(<D) && ocamldep $(includes) $(<F); ) >$@
+depend = ocamldep $(includes) $(F) >$@
+compile = $(compiler) $(includes) -o $@ -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) $(includes) -o $@ $(syslibs) $^
 
@@ -68,25 +69,25 @@ implicits = $(filter-out $(ifaces), $(impls))
 ########################################################################
 
 
-$(addsuffix .cmi, $(ifaces)): %.cmi: %.mli
+$(ifaces:%=%.cmi): %.cmi: %.mli
 	$(compile)
 
-$(addsuffix .cmi, $(implicits)): %.cmi: %.ml
+$(implicits:%=%.cmi): %.cmi: %.ml
 	$(compile)
 
-$(addsuffix .cmo, $(impls)): %.cmo: %.ml
+$(impls:%=%.cmo): %.cmo: %.ml
 	$(compile)
 
-$(addsuffix .cmx, $(impls)): %.cmx: %.ml
+$(impls:%=%.cmx): %.cmx: %.ml
 	$(compile)
 
-$(addsuffix .di, $(ifaces)): %.di: %.mli
+$(ifaces:%=%.di): %.di: %.mli
 	$(depend)
 
-$(addsuffix .do, $(impls)): %.do: %.ml
+$(impls:%=%.do): %.do: %.ml
 	$(depend)
 
-$(addsuffix .dl, $(impls)): %.dl: %.do $(linkorder)
+$(impls:%=%.dl): %.dl: %.do $(linkorder)
 	$(linkorder) <$< >$@
 
 browse: force
@@ -106,6 +107,10 @@ CLEANFILES = *.d[ilo]
 ########################################################################
 
 
--include $(ifaces:=.di)
--include $(impls:=.do)
--include $(impls:=.dl)
+peek:
+	@echo $(ifaces:=.di)
+
+
+-include $(ifaces:%=%.di)
+-include $(impls:%=%.do)
+-include $(impls:%=%.dl)

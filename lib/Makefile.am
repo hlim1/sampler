@@ -19,6 +19,7 @@ gnome_headers =					\
 	g-object-unref-unit.h
 endif
 
+nodist_package_include_HEADERS = cyclic-size.h
 package_include_HEADERS =			\
 	$(gnome_headers)			\
 	acyclic.h				\
@@ -27,7 +28,6 @@ package_include_HEADERS =			\
 	branches.h				\
 	branches-unit.h				\
 	countdown.h				\
-	cyclic-size.h				\
 	cyclic.h				\
 	function-entries.h			\
 	function-entries-unit.h			\
@@ -58,7 +58,6 @@ thread_sources =				\
 	acyclic.h				\
 	countdown.c				\
 	countdown.h				\
-	cyclic-size.h				\
 	cyclic.c				\
 	cyclic.h				\
 	lifetime.h				\
@@ -72,11 +71,13 @@ thread_sources =				\
 	threads.h
 
 
+nodist_libsampler_no_threads_a_SOURCES = cyclic-size.h
 libsampler_no_threads_a_SOURCES =		\
 	$(thread_sources)			\
 	no-hijack.c
 
 
+nodist_libsampler_threads_a_SOURCES = cyclic-size.h
 libsampler_threads_a_SOURCES =			\
 	$(thread_sources)			\
 	hijack.c
@@ -131,4 +132,8 @@ mean_LDADD = libsampler.a libsampler-no-threads.a $(LIBM)
 countdown-1-1: precompute
 	SAMPLER_SPARSITY=1 ./precompute $@
 
-CLEANFILES = countdown-1-1
+
+########################################################################
+
+
+CLEANFILES = countdown-1-1 cyclic-size.h

@@ -2,14 +2,25 @@ servers_DATA = Sampler_Monitor.server
 
 tray_DATA = tray.glade
 
-tray_PYTHON = $(sort $(wildcard *.py) Paths.py)
+nodist_tray_PYTHON = Paths.py
+tray_PYTHON =					\
+	AboutDialog.py				\
+	BusyCursor.py				\
+	control.py				\
+	Factory.py				\
+	LazyDialog.py				\
+	LazyWidget.py				\
+	Main.py					\
+	PopupMenu.py				\
+	PreferencesDialog.py			\
+	UploaderTrayIcon.py
 
 tray_SCRIPTS = tray
 
 EXTRA_DIST =					\
 	$(servers_DATA:=.in)			\
 	$(tray_DATA)				\
-	$(filter-out Paths.py, $(tray_PYTHON))	\
+	$(tray_PYTHON)				\
 	Paths.py.in				\
 	tray.gladep				\
 	tray.in

@@ -1,4 +1,4 @@
-AC_INIT([sampler],[0.12.2],[liblit@cs.berkeley.edu])
+AC_INIT([sampler],[0.12.3],[liblit@cs.berkeley.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -13,13 +13,16 @@ AC_MSG_CHECKING(Linux distribution)
 for vendor in fedora redhat; do
   if test -f /etc/$vendor-release; then
     DISTRO=`rpm -q --qf '%{name}-%{version}-%{arch}\n' $vendor-release | sed s/-release//`
+    RPM_ARCH=`rpm -q --qf '%{arch}\n' $vendor-release | sed s/-release//`
     break
   fi
 done
 
 : ${DISTRO:=unknown}
+: ${RPM_ARCH:=unknown}
 
 AC_SUBST(DISTRO)
+AC_SUBST(RPM_ARCH)
 AC_MSG_RESULT($DISTRO)
 
 

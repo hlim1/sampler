@@ -10,6 +10,7 @@ SUBDIRS =					\
 	scalar-pairs				\
 	timestamps
 
+nodist_ml = libraries.ml version.ml
 EXTRA_DIST = build-libraries libraries.ml.in
 
 targets = harness.$(cma)

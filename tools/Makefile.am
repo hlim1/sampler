@@ -28,7 +28,6 @@ EXTRA_DIST =					\
 	Unit.pm					\
 	extract-report				\
 	extract-section				\
-	find-driver.pl				\
 	find-sampler-info			\
 	resolve-cfg				\
 	skip-test

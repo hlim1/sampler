@@ -2,16 +2,20 @@ servers_DATA = Sampler_FirstTime.server
 
 first_time_DATA = first-time.glade
 
-first_time_PYTHON = $(sort $(wildcard *.py) Paths.py)
+nodist_first_time_PYTHON = Paths.py
+first_time_PYTHON =				\
+	Factory.py				\
+	FirstTime.py				\
+	Main.py
 
 first_time_SCRIPTS = first-time
 
-EXTRA_DIST =						\
-	$(servers_DATA:=.in)				\
-	$(first_time_DATA)				\
-	$(filter-out Paths.py, $(first_time_PYTHON))	\
-	Paths.py.in					\
-	first-time.gladep				\
+EXTRA_DIST =					\
+	$(servers_DATA:=.in)			\
+	$(first_time_DATA)			\
+	$(first_time_PYTHON)			\
+	Paths.py.in				\
+	first-time.gladep			\
 	first-time.in
 
 BUILT_SOURCES =					\

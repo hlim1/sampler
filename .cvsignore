@@ -12,6 +12,7 @@ config.status
 configure
 instrumentor
 package.m4
+redhat
 sampler-*.*
 sampler.spec
 stamp-h

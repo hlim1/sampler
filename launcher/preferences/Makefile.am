@@ -2,7 +2,15 @@ servers_DATA = Sampler_Preferences.server
 
 preferences_DATA = preferences.glade
 
-preferences_PYTHON = $(sort $(wildcard *.py) Paths.py)
+nodist_preferences_PYTHON = Paths.py
+preferences_PYTHON =				\
+	AppFinder.py				\
+	Application.py				\
+	AppModel.py				\
+	Factory.py				\
+	Main.py					\
+	PreferencesDialog.py
+
 
 preferences_SCRIPTS = preferences
 
@@ -11,14 +19,14 @@ bin_SCRIPTS = sampler-preferences
 cappletdir = ${datadir}/control-center-2.0/capplets
 capplet_DATA = sampler-preferences.desktop
 
-EXTRA_DIST =						\
-	$(capplet_DATA)					\
-	$(preferences_DATA)				\
-	$(servers_DATA:=.in)				\
-	$(filter-out Paths.py, $(preferences_PYTHON))	\
-	Paths.py.in					\
-	preferences.gladep				\
-	preferences.in					\
+EXTRA_DIST =					\
+	$(capplet_DATA)				\
+	$(preferences_DATA)			\
+	$(servers_DATA:=.in)			\
+	$(preferences_PYTHON)			\
+	Paths.py.in				\
+	preferences.gladep			\
+	preferences.in				\
 	sampler-preferences.in
 
 BUILT_SOURCES =					\

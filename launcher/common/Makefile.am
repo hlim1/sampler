@@ -1,14 +1,20 @@
-common_PYTHON = $(sort $(wildcard *.py) Config.py)
+nodist_common_PYTHON = Config.py
+common_PYTHON =					\
+	BlipIcons.py				\
+	GConfDir.py				\
+	GConfNotifier.py			\
+	Keys.py					\
+	LazyIcon.py				\
+	MasterNotifier.py			\
+	Signals.py				\
+	StatusIcon.py				\
+	WindowIcon.py
 
-EXTRA_DIST = $(wildcard *.py) Config.py.in
+EXTRA_DIST = $(common_PYTHON) Config.py.in
 
 BUILT_SOURCES = Config.py
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
-
-
-dist-hook:
-	rm $(BUILT_SOURCES:%=$(distdir)/%)
 
 
 install-data-hook:

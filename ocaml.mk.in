@@ -58,7 +58,7 @@ libharness = $(error harness library is no longer used)
 
 ml = $(notdir $(wildcard $(srcdir)/*.ml))
 mli = $(notdir $(wildcard $(srcdir)/*.mli))
-EXTRA_DIST += $(sort $(ml) $(mli))
+EXTRA_DIST += $(filter-out $(nodist_ml), $(sort $(ml) $(mli)))
 
 impls = $(sort $(extra_impls) $(ml:.ml=))
 ifaces = $(mli:.mli=)

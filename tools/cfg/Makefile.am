@@ -6,7 +6,7 @@ EXTRA_DIST =
 
 include $(top_srcdir)/ocaml.mk.in
 
-MOSTLYCLEANFILES += $(noinst_SCRIPTS)
+MOSTLYCLEANFILES += $(tools_SCRIPTS)
 
 libgraph = graphlib/graphlib.$(cma)
 

@@ -17,6 +17,7 @@ results/stamp:
 stamps.mk: stamps.pl
 	./$< >$@
 
+CLEANFILES = stamps.mk
 clean-local:
 	rm -rf results
 

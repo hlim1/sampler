@@ -1,20 +1,29 @@
 wrapper_DATA = wrapper.glade
 
-wrapper_PYTHON = $(sort $(wildcard *.py) Paths.py)
+nodist_wrapper_PYTHON = Paths.py
+wrapper_PYTHON =				\
+	AppConfig.py				\
+	Launcher.py				\
+	Main.py					\
+	Outcome.py				\
+	RedirectHandler.py			\
+	ReportsReader.py			\
+	SampledLauncher.py			\
+	ServerMessage.py			\
+	UnsampledLauncher.py			\
+	Uploader.py				\
+	Upload.py				\
+	UserConfig.py
 
-EXTRA_DIST =						\
-	$(wrapper_DATA)					\
-	$(filter-out Paths.py, $(wrapper_PYTHON))	\
-	Paths.py.in					\
+EXTRA_DIST =					\
+	$(wrapper_DATA)				\
+	$(wrapper_PYTHON)			\
+	Paths.py.in				\
 	wrapper.gladep
 
 BUILT_SOURCES = Paths.py
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
-
-
-dist-hook:
-	rm $(BUILT_SOURCES:%=$(distdir)/%)
 
 
 install-data-hook:

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.12.3
+
+** Various makefile tweaks for cleaner packaging.
+
 * sampler-0.12.2
 
 ** If the first-time dialog is dismissed using the window manager

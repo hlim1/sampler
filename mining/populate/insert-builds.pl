@@ -98,7 +98,7 @@ foreach my $package (@ARGV) {
 
     # unpack site information
     print "\tunpack cpio\n";
-    my $tempdir = tempdir(CLEANUP => 0);
+    my $tempdir = tempdir(CLEANUP => 1);
     $ENV{package} = $package;
     system("rpm2cpio \$package | ( cd $tempdir && cpio -id --quiet --no-absolute-filenames '*.sites' '*.cfg'; )") == 0
 	or die "cpio extraction failed: $?\n";

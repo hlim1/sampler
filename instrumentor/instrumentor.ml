@@ -1,4 +1,5 @@
 open Cil
+open Scanners
 
 
 let sample =
@@ -18,15 +19,19 @@ let schemes = [
 
 
 let phase =
-  "instrumening",
+  "instrumenting",
   fun file ->
     Dynamic.analyze file;
     FunctionFilter.filter#collectPragmas file;
+
+    iterFuncs file RemoveLoops.visit;
+    iterFuncs file IsolateInstructions.visit;
 
     let schemes = List.map (fun scheme -> scheme file) schemes in
     List.iter (fun scheme -> scheme#findAllSites) schemes;
 
     let digest = lazy (Digest.file file.fileName) in
+    EmbedSignature.visit file digest;
     EmbedCFG.visit file digest;
     List.iter (fun scheme -> scheme#embedInfo digest) schemes;
 

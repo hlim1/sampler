@@ -3,20 +3,24 @@ open Cil
 
 let _ =
 
-  let phases =
-    [
-     "removing unused symbols (early)", (fun file -> Rmtmps.removeUnusedTemps file);
-     Instrumentor.phase;
-     "removing unused symbols (late)", (fun file -> Rmtmps.removeUnusedTemps file);
-     Idents.phase;
-     "printing transformed code", dumpFile (new Printer.printer) stdout
-   ]
-  in
+  try
+    let phases =
+      [
+       "removing unused symbols (early)", (fun file -> Rmtmps.removeUnusedTemps file);
+       Instrumentor.phase;
+       "removing unused symbols (late)", (fun file -> Rmtmps.removeUnusedTemps file);
+       Idents.phase;
+       "printing transformed code", dumpFile (new Printer.printer) stdout
+     ]
+    in
 
-  initCIL ();
-  Ptranal.conservative_undefineds := false;
-  lineDirectiveStyle := Some LinePreprocessorOutput;
+    initCIL ();
+    Ptranal.conservative_undefineds := false;
+    lineDirectiveStyle := Some LinePreprocessorOutput;
 
-  Arg.parse (Options.argspecs ())
-    (TestHarness.doOne phases)
-    ("Usage:" ^ Sys.executable_name ^ " [<flag> | <source>] ...")
+    Arg.parse (Options.argspecs ())
+      (TestHarness.doOne phases)
+      ("Usage:" ^ Sys.executable_name ^ " [<flag> | <source>] ...")
+
+  with Errormsg.Error ->
+    exit 2

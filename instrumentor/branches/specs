@@ -1,5 +1,0 @@
-*cpp:
-+ -include branches.h -include sampler/unit.h -include sampler/tuples-cil.h
-
-*lib:
-+ -lbranches

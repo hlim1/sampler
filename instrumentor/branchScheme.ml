@@ -3,7 +3,7 @@ let name = "branches"
 
 class c file =
   object
-    inherit Scheme.c file
+    inherit Scheme.c name file
 
     val tuples = CounterTuples.build name file
 

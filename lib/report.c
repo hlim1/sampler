@@ -7,8 +7,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "lock.h"
+#include "registry.h"
 #include "report.h"
-#include "unit.h"
 
 
 const void * const providesLibReport;
@@ -74,7 +74,7 @@ static void reportAllCompilationUnits()
 {
   if (reportFile)
     {
-      unregisterAllCompilationUnits();
+      samplerUnregisterAllUnits();
       fputs("</report>\n", reportFile);
       fflush(reportFile);
     }

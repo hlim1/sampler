@@ -6,6 +6,7 @@ endif
 
 lib_LIBRARIES =					\
 	libsampler.a				\
+	libschemes.a				\
 	$(thread_lib)
 
 
@@ -14,10 +15,8 @@ package_include_HEADERS =			\
 	countdown.h				\
 	cyclic-size.h				\
 	cyclic.h				\
-	embedded-cfg.h				\
 	no-threads.h				\
 	threads.h				\
-	tuples-cil.h				\
 	unit.h
 
 
@@ -34,10 +33,10 @@ common_sources =				\
 	cyclic.h				\
 	lifetime.h				\
 	lock.h					\
+	registry.c				\
+	registry.h				\
 	report.c				\
-	report.h				\
-	unit.c					\
-	unit.h
+	report.h
 
 
 ########################################################################
@@ -60,6 +59,18 @@ libsampler_r_a_SOURCES =			\
 	threads.h
 
 libsampler_r_a_CFLAGS = -include $(srcdir)/threads.h -pthread
+
+
+########################################################################
+
+
+libschemes_a_SOURCES =				\
+	branches.c				\
+	branches-types.h			\
+	returns.c				\
+	returns-types.h				\
+	scalar-pairs.c				\
+	scalar-pairs-types.h
 
 
 ########################################################################

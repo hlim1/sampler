@@ -1,5 +1,0 @@
-*cpp:
-+ -include returns.h -include sampler/unit.h -include sampler/tuples-cil.h
-
-*lib:
-+ -lreturns

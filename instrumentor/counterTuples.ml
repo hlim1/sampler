@@ -24,8 +24,24 @@ class virtual basis prefix file =
       result
 
     method finalize (_ : Digest.t Lazy.t) =
-      (* !!!: implement me *)
-      ()
+      mapGlobals file
+	begin
+	  function
+	    | GVar ({vtype = TArray (elementType, _, attributes)} as varinfo, initinfo, location)
+	      when varinfo == tuples
+	      ->
+		GVar ({varinfo with vtype = TArray (elementType, Some (integer nextId), attributes)},
+		      initinfo, location)
+
+	    | GFun ({svar = {vname = "samplerReporter"}; sbody = sbody}, _) as global ->
+		let schemeReporter = FindFunction.find (prefix ^ "Reporter") file in
+		let call = Call (None, Lval (var schemeReporter), [], locUnknown) in
+		sbody.bstmts <- mkStmtOneInstr call :: sbody.bstmts;
+		global
+
+	    | other ->
+		other
+	end
   end
 
 

@@ -3,13 +3,8 @@
 
 #include <stdio.h>
 
-struct CompilationUnit;
-
 
 extern FILE *reportFile;
-
-
-void reportCompilationUnit(const struct CompilationUnit *);
 
 
 #endif /* !INCLUDE_libreport_report_h */

@@ -32,7 +32,6 @@ let visit file isWeightyCallee countdown =
     match Sites.registry#findAll func with
     | [] -> ()
     | sites ->
-	IsolateInstructions.visit func;
 	let entry = mkStmt (Block func.sbody) in
 	func.sbody <- mkBlock [entry];
 

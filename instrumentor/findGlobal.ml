@@ -17,3 +17,16 @@ let find name {globals = globals} =
 	raise (Missing.Missing name)
   in
   findAmong globals
+
+
+let findInit name {globals = globals} =
+  let rec findAmong = function
+    | GVar ({vname = vname}, initinfo, _) :: _
+      when vname = name ->
+	initinfo
+    | _ :: rest ->
+	findAmong rest
+    | [] ->
+	raise (Missing.Missing name)
+  in
+  findAmong globals

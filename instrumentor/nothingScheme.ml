@@ -3,7 +3,7 @@ let name = "nothing"
 
 class c file =
   object
-    inherit Scheme.c file
+    inherit Scheme.c name file
 
     method findAllSites = ()
     method private findSites = ignore

@@ -1,3 +1,4 @@
+from fcntl import *
 import os
 
 from Launcher import Launcher
@@ -36,15 +37,17 @@ class SampledLauncher(Launcher):
         # away we go!
         Launcher.spawn(self)
 
-        # close writing end before creating any other subprocesses
+        # tidy up pipe ends
         os.close(self.__pipe[1])
+        flags = fcntl(self.__pipe[0], F_GETFD)
+        if flags >= 0:
+            flags |= FD_CLOEXEC
+            fcntl(self.__pipe[0], F_SETFD, flags)
 
         return
 
     def prep_outcome(self, outcome):
         outcome.sparsity = self.__sparsity
-
-        # collect reports
         outcome.reports = ReportsReader(os.fdopen(self.__pipe[0]))
 
     def wait(self):

@@ -51,11 +51,11 @@ class visitor = object
     weights#iter (fun _ weight -> if weight != 0 then incr nonzero);
     printf "    weighed %i regions; %i nonzero\n" weights#size !nonzero;
 
-    let printWeight node weight =
-      printf "    weight below %i: %i" node.sid weight;
-      print_newline ()
-    in
-
-    weights#iter printWeight;
+    weights#iter begin
+      fun node weight ->
+	printf "    weight below %i: %i" node.sid weight;
+	print_newline ()
+    end;
+    
     SkipChildren
 end

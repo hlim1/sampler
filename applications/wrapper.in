@@ -3,7 +3,7 @@
 import os.path
 import sys
 
-sys.path[0:0] = [sys.path[0], '@_launcherdir@']
+sys.path[0:0] = [sys.path[0], '@sampler_datadir@/launcher']
 
 import GnomeMain
 GnomeMain.main(os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'config'))

@@ -1,6 +1,6 @@
 [application]
 executable: executable
-debug-reporter: @_datadir@/sampler/print-debug-info
+debug-reporter: @sampler_datadir@/print-debug-info
 
 [upload-headers]
 application-name: @name@

@@ -2,9 +2,8 @@
 #define INCLUDE_libreturns_returns_h
 
 
-struct CounterTuple {
-  unsigned values[3];
-};
+#pragma cilnoremove("returnsCounterTuples")
+static unsigned returnsCounterTuples[][3];
 
 
 #endif /* !INCLUDE_libreturns_returns_h */

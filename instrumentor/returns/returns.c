@@ -12,9 +12,9 @@ void reportCompilationUnit(const struct CompilationUnit *unit)
 
   for (scan = 0; scan < unit->count; ++scan)
     fprintf(reportFile, "\n%u\t%u\t%u",
-	    unit->tuples[scan].values[0],
-	    unit->tuples[scan].values[1],
-	    unit->tuples[scan].values[2]);
+	    unit->tuples[scan][0],
+	    unit->tuples[scan][1],
+	    unit->tuples[scan][2]);
 
   fputs("\n\n", reportFile);
 }

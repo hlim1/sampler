@@ -37,7 +37,10 @@ if test "$with_gnome" = yes; then
   AC_SUBST(EGG_TRAY_LIBS)
 
   AM_PATH_GLIB_2_0(, , , gobject)
+
   AM_PATH_PYTHON
+  AC_SUBST(PYTHON_CFLAGS, '-I/usr/include/python${PYTHON_VERSION}')
+  AC_SUBST(PYTHON_LIBS, '-L/usr/lib/python${PYTHON_VERSION}/config -lpython${PYTHON_VERSION}')
 fi
 
 AM_GCONF_SOURCE_2

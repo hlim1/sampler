@@ -1,5 +1,5 @@
 AM_CFLAGS = -Wall -Werror -Wformat=2
-INCLUDES = $(MONITOR_CFLAGS) -I/usr/include/python2.2
+INCLUDES = $(MONITOR_CFLAGS) $(PYTHON_CFLAGS)
 
 defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
 
@@ -27,7 +27,7 @@ dist-hook:
 
 
 monitor.so: %.so: lib%.a
-	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(MONITOR_LIBS) -L/usr/lib/python2.2/config -lpython2.2 -lutil
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(MONITOR_LIBS) $(PYTHON_LIBS) -lutil
 
 
 noinst_LIBRARIES = libmonitor.a

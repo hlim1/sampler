@@ -2,7 +2,7 @@ AM_CFLAGS = -Wall -Werror -Wformat=2
 
 SUBDIRS = libegg
 
-INCLUDES = $(TRAY_ICON_CFLAGS) -I/usr/include/python2.2
+INCLUDES = $(TRAY_ICON_CFLAGS) $(PYTHON_CFLAGS)
 
 defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
 
@@ -28,7 +28,7 @@ dist-hook:
 
 
 trayicon.so: %.so: lib%.a libegg/tray/libtray.a
-	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(TRAY_ICON_LIBS) -L/usr/lib/python2.2/config -lpython2.2 -lpthread -lutil -Llibegg/tray -ltray -L/usr/X11R6/lib -lX11
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(TRAY_ICON_LIBS) $(PYTHON_LIBS) -lpthread -lutil -Llibegg/tray -ltray -L/usr/X11R6/lib -lX11
 
 noinst_LIBRARIES = libtrayicon.a
 

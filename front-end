@@ -239,6 +239,7 @@ while ($_ = shift) {
 	# link options
 	if ($key =~ /^l/) {
 	    push @ld, $_;
+	    $has_inputs = 1;
 	    next;
 	}
 	if ($key =~ /^Wl,/) {

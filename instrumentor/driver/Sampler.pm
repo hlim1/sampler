@@ -64,6 +64,7 @@ sub runShellOut {
 
     close STDOUT;
     open STDOUT, '>&OLDOUT' or die "cannot restore stdout: $!\n";
+    tell OLDOUT;		# avoid single-use warning
 }
 
 

@@ -6,8 +6,9 @@
 *.pyc
 *.pyo
 .deps
+Config.py
 Makefile
 Makefile.in
+Sampler_ReportCollector.h
 trayicon.c
 trayicon.defs
-Sampler_ReportCollector.h

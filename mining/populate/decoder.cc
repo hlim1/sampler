@@ -1,49 +1,65 @@
+#include <cassert>
+#include <climits>
 #include <clocale>
+#include <iomanip>
 #include <liblog/decoder.h>
 #include <liblog/primitive.h>
 #include <sstream>
 #include "database.h"
+#include "require.h"
+#include "session.h"
 
 
-static const char *file;
-static unsigned line;
+static unsigned sampleCounter = 0;
+static string file;
+static string expression;
+
+
+static string quote(const char *suspicious)
+{
+  ostringstream result;
+  result << oct << setfill('0') << '\'';
+  
+  for (const char *scan = suspicious; *scan; ++scan)
+    if (isprint(*scan) && *scan != '\'')
+      result << *scan;
+    else
+      result << '\\' << setw(3) << (int) *scan;
+
+  result << '\'';
+  return result.str();
+}
+
+
+void siteCountdown(unsigned countdown)
+{
+  require(UINT_MAX - sampleCounter >= countdown, "samples counter has wrapped around");
+  sampleCounter += countdown;
+}
 
 
 void siteFile(const char *file)
 {
-  ::file = file;
+  ::file = quote(file);
 }
 
 
 void siteLine(unsigned line)
 {
-  ::line = line;
-  const ExecStatusType status = database.Exec("COPY import_site FROM STDIN");
-  require(status == PGRES_COPY_IN);
-}
-
-
-void siteEnd()
-{
-  database.PutLine("\\.\n");
-  const int error = database.EndCopy();
-  require(!error);
-
-  require(database.ExecCommandOk("TRUNCATE import_site"));
-  
+  ostringstream command;
+  command << "INSERT INTO sites (session, sample, file, line) VALUES ("
+	  << sessionId << ", " << sampleCounter << ", " << file << ", " << line
+	  << ')';
+  require(database.ExecCommandOk(command.str().c_str()));
 }
 
 
 ////////////////////////////////////////////////////////////////////////
 
 
-void sampleExpr(const char *value)
+void sampleExpr(const char *expression)
 {
-  for (const char *scan = value; *scan; ++scan)
-    if (!isprint(*scan))
-      cerr << "warning: suspicious character '" << *scan << "' in sampled expression" << endl;
-
-  database.PutLine(value);
+  ::expression = quote(expression);
 }
 
 
@@ -52,11 +68,11 @@ void sampleExpr(const char *value)
 
 template<class T> void sampleValue(PrimitiveType typeCode, T value)
 {
-  ostringstream formatter;
-  formatter << '\t' << typeCode
-	    << '\t' << value
-	    << '\n';
-  database.PutLine(formatter.str().c_str());
+  ostringstream command;
+  command << "INSERT INTO samples (session, sample, expression, type, value) VALUES ("
+	  << sessionId << ", " << sampleCounter << ", "
+	  << expression << ", " << typeCode << ", '" << value << "')";
+  require(database.ExecCommandOk(command.str().c_str()));
 }
 
 

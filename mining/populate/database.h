@@ -6,7 +6,5 @@
 
 extern PgDatabase database;
 
-void require(bool);
-
 
 #endif // !INCLUDE_populate_database_h

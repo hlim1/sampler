@@ -1,3 +1,6 @@
+*.i
+*.inst.c
+*.s
 *.trace
 .libs
 simple

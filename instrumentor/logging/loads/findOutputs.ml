@@ -19,24 +19,6 @@ class visitor outputs =
 
 let collect instr =
   let outputs = new OutputSet.container in
-
-  let descend visit root =
-    let visitor = new visitor outputs in
-    ignore (visit visitor root)
-  in
-
-  begin
-    match instr with
-    | Return (Some expression, _)
-    | If (expression, _, _, _) ->
-	descend visitCilExpr expression
-    | Instr [instruction] ->
-	descend visitCilInstr instruction
-    | Instr (_ :: _ :: _) ->
-	failwith "instr should have been atomized"
-    | Switch _ ->
-	failwith "switch should have been removed by Cil.prepareCFG"
-    | _ ->
-	()
-  end;
+  let visitor = new visitor outputs in
+  ignore (visit visitCilInstr instr);
   outputs

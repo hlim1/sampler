@@ -77,9 +77,9 @@
 	    <varlistentry>
 	      <term><option>scalar-pairs</option></term>
 	      <listitem>
-		<para>At each direct scalar assignment, count how many
-		times the assigned value is less than, equal to, or
-		greater than each other same-typed in-scope
+		<para>At each assignment of a scalar value, count how
+		many times the assigned value is less than, equal to,
+		or greater than each other same-typed in-scope
 		variable. Each such comparable variable at each such
 		assignment induces one instrumentation point with a
 		triple of counters.  This is the scheme used for the
@@ -91,9 +91,18 @@
 		expression seen in the program.  This can be useful to
 		trap problems relating to fixed-size buffers,
 		structure sizes, or other <quote>magic</quote> values.
-		To turn on constant expression comparisons, add
-		<option>--compare-constants</option> to the compiler
-		command line.</para>
+		To turn on constant expression comparisons, add <link
+		linkend="compare-constants"><option>--compare-constants</option></link>
+		to the compiler command line.</para>
+
+		<para>See also the <link
+		linkend="assign-across-pointer"><option>--assign-across-pointer</option></link>,
+		<link
+		linkend="assign-into-field"><option>--assign-into-field</option></link>,
+		and <link
+		linkend="assign-into-index"><option>--assign-into-index</option></link>
+		flags for ways to customize which kinds of assignments
+		are instrumented.</para>
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>
@@ -279,7 +288,7 @@
 	</listitem>
       </varlistentry>
 
-      <varlistentry>
+      <varlistentry id="compare-constants">
 	<term><option>--compare-constants</option></term>
 	<term><option>--no-compare-constants</option></term>
 	<listitem>
@@ -292,6 +301,51 @@
 	  increase the amount of instrumentation in the code.
 	  Defaults to not comparing with constant
 	  expressions.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry id="assign-across-pointer">
+	<term><option>--assign-across-pointer</option></term>
+	<term><option>--no-assign-across-pointer</option></term>
+	<listitem>
+	  <para>When using the <option>scalar-pairs</option>
+	  instrumentation scheme, instrument an assignment whose
+	  left-hand side crosses a pointer.  Defaults to not
+	  instrumenting pointer-crossing assignments.</para>
+
+	  <remark>Clarification is needed here about treatment of
+	  complex lvalues with a mix of pointer, field, and array
+	  accesses.</remark>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry id="assign-into-field">
+	<term><option>--assign-into-field</option></term>
+	<term><option>--no-assign-into-field</option></term>
+	<listitem>
+	  <para>When using the <option>scalar-pairs</option>
+	  instrumentation scheme, instrument an assignment whose
+	  left-hand side is a structure field access.  Defaults to not
+	  instrumenting structure field assignments.</para>
+
+	  <remark>Clarification is needed here about treatment of
+	  complex lvalues with a mix of pointer, field, and array
+	  accesses.</remark>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry id="assign-into-index">
+	<term><option>--assign-into-index</option></term>
+	<term><option>--no-assign-into-index</option></term>
+	<listitem>
+	  <para>When using the <option>scalar-pairs</option>
+	  instrumentation scheme, instrument an assignment whose
+	  left-hand side is an array index access.  Defaults to not
+	  instrumenting indexed array assignments.</para>
+
+	  <remark>Clarification is needed here about treatment of
+	  complex lvalues with a mix of pointer, field, and array
+	  accesses.</remark>
 	</listitem>
       </varlistentry>
 

@@ -1,6 +1,30 @@
 open Cil
 
 
+let assignAcrossPointer =
+  Options.registerBoolean
+    ~flag:"assign-across-pointer"
+    ~desc:"instrument assignments across pointers"
+    ~ident:"AssignAcrossPointer"
+    ~default:false
+
+
+let assignIntoField =
+  Options.registerBoolean
+    ~flag:"assign-into-field"
+    ~desc:"instrument assignments into structure fields"
+    ~ident:"AssignIntoField"
+    ~default:false
+
+
+let assignIntoIndex =
+  Options.registerBoolean
+    ~flag:"assign-into-index"
+    ~desc:"instrument assignments into indexed array slots"
+    ~ident:"AssignIntoIndex"
+    ~default:false
+
+
 let isInterestingType typ =
   isIntegralType typ || isPointerType typ
 
@@ -41,13 +65,19 @@ let isInterestingLval lval =
     | Var var ->
 	hasInterestingName var
     | Mem expr ->
-	false
+	!assignAcrossPointer
   in
 
-  let isInterestingOffset = function
+  let rec isInterestingOffset = function
     | NoOffset -> true
-    | Field _ -> false
-    | Index _ -> false
+    | Field (_, NoOffset) -> !assignIntoField
+    | Index (_, NoOffset) -> !assignIntoIndex
+    | Field (_, rest)
+    | Index (_, rest) ->
+      if !assignIntoField || !assignIntoIndex then
+	isInterestingOffset rest
+      else
+	false
   in
 
   isInterestingType (typeOfLval lval) &&

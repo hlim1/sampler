@@ -14,3 +14,6 @@
 * ocaml-native-compilers
 ** used at instrumentor build time only
 ** recommended, but not strictly needed
+
+* mod_ssl
+** recommended but not required by sampler-server

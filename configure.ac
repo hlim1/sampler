@@ -10,7 +10,8 @@ AM_INIT_AUTOMAKE
 
 for vendor in fedora redhat; do
   AC_MSG_CHECKING(for $vendor)
-  if version="`rpm -q --qf '%{version}' $vendor-release`"; then
+  if test -f /etc/$vendor-release; then
+    version="`rpm -q --qf '%{version}' $vendor-release`"
     DISTRO="$vendor-$version"
     AC_MSG_RESULT($version)
     AC_MSG_CHECKING(RPM build architecture)

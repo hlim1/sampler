@@ -1,1 +1,1 @@
-val visit : Cil.fundec -> unit
+val visit : Cil.block -> unit

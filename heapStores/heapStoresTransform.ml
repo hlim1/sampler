@@ -6,7 +6,11 @@ class visitor = object
 
   method vfunc func =
     Simplify.visit func;
-    Transform.transform Stores.count_stmt SkipWrites.visit func;
+    Transform.transform
+      Stores.count_stmt
+      SkipWrites.visit
+      Instrument.visit
+      func;
     SkipChildren
 end
 

@@ -19,5 +19,5 @@ class visitor = object
 end
 
 
-let visit func =
-  ignore (visitCilFunction new visitor func)
+let visit block =
+  ignore (visitCilBlock new visitor block)

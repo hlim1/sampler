@@ -28,7 +28,6 @@ functionBodyVisitor = $(skipVisitor) functionBodyVisitor
 functionEntry = $(logIsImminent) functionEntry
 identity = identity
 identity = identity
-instrument = $(functionBodyVisitor) $(logWrite) instrument
 logIsImminent = $(countdown) logIsImminent
 logWrite = logWrite
 mapClass = mapClass
@@ -39,7 +38,7 @@ skipVisitor = skipVisitor
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 testHarness = testHarness
-transform = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrument) $(patchSites) $(removeLoops) $(weighPaths) transform
+transform = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(patchSites) $(removeLoops) $(weighPaths) transform
 utils = utils
 weighPaths = $(stmtMap) weighPaths
 

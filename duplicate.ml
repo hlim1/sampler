@@ -34,5 +34,5 @@ end
 
 let duplicateBody {sbody = original} =
   let visitor = new visitor in
-  let clonedBody = visitCilBlock (visitor :> cilVisitor) original in
-  (clonedBody, visitor#result)
+  let clone = visitCilBlock (visitor :> cilVisitor) original in
+  (original, clone, visitor#result)

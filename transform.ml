@@ -2,7 +2,7 @@ open Cil
 open Printf
 
 
-let transform scale insertSkips func =
+let transform scale insertSkips instrument func =
   prepareCFG func;
   RemoveLoops.visit func;
   let afterCalls = AfterCalls.split func in
@@ -17,13 +17,13 @@ let transform scale insertSkips func =
     match WeighPaths.weigh scale headers with
     | None -> ()
     | Some weights ->    
-	let instrumented, clones = Duplicate.duplicateBody func in
+	let original, instrumented, clones = Duplicate.duplicateBody func in
 	
 	ForwardJumps.patch clones forwardJumps;
 	BackwardJumps.patch clones weights backwardJumps;
 	AfterCalls.patch clones weights afterCalls;
 	
-	insertSkips func;
+	insertSkips original;
 	FunctionEntry.patch func weights instrumented;
-	Instrument.visit instrumented
+	instrument instrumented
   end

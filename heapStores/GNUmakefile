@@ -10,7 +10,8 @@ include $(top)/rules.mk
 
 bitFields = bitFields
 checkSimplicity = $(bitFields) checkSimplicity
-heapStoresTransform = $(simplify) $(skipWrites) $(stores) heapStoresTransform
+heapStoresTransform = $(instrument) $(simplify) $(skipWrites) $(stores) heapStoresTransform
+instrument = $(functionBodyVisitor) $(logWrite) instrument
 simplify = $(simplifyLefts) $(simplifyReturns) $(simplifyRights) $(checkSimplicity) simplify
 simplifyLefts = $(bitFields) $(simplifyVisitor) simplifyLefts
 simplifyReturns = $(simplifyVisitor) simplifyReturns

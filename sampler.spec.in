@@ -15,7 +15,7 @@ URL: http://www.cs.berkeley.edu/~liblit/sampler/
 Source: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: binutils
-BuildRequires: camlp4
+BuildRequires: %_bindir/camlp4
 BuildRequires: cil-devel >= 1.2.6
 BuildRequires: gcc
 Buildrequires: gsl-devel

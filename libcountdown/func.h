@@ -1,7 +1,6 @@
 #ifndef INCLUDE_libcountdown_func_h
 #define INCLUDE_libcountdown_func_h
 
-#include "cyclic.h"
 #include "cyclic-size.h"
 
 

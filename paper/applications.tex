@@ -35,6 +35,9 @@ by \CCured's designers, but the memory safety bugs they discovered
 have been fixed.  Thus all programs run to completion and we are
 simply measuring the overhead of performing the dynamic checks.
 
+\subsubsection{Whole-Program Sampling}
+\label{sec:ccured:whole}
+
 \begin{table*}[tb]
   \centering
   \begin{tabular}{|l|rrr|rrr|}
@@ -53,14 +56,14 @@ simply measuring the overhead of performing the dynamic checks.
 \end{table*}
 
 \autoref{tab:ccured-static} summarizes static aspects of the sampling
-transformation.  For each benchmark, we give the total number of
-non-library functions and the number of these which are weightless.
-\CCured is a whole-program analysis, so weightless function
-identification has the advantage of being able to examine every
-function body.  We also count the number of functions which directly
-contain at least one instrumentation site.  (What remains are those
-functions which contain no sites of their own but which call other
-functions that do have sites.)
+transformation when applied to the entirety of each benchmark.  For
+each program, we give the total number of non-library functions and
+the number of these which are weightless.  \CCured is a whole-program
+analysis, so weightless function identification has the advantage of
+being able to examine every function body.  We also count the number
+of functions which directly contain at least one instrumentation site.
+(What remains are those functions which contain no sites of their own
+but which call other functions that do have sites.)
 
 Considering just the functions which directly contain at least one
 instrumentation site, \autoref{tab:ccured-static} also presents the
@@ -92,13 +95,14 @@ amortizing the cost of countdown checks over multiple sites.
 
 \autoref{tab:ccured-density} shows the performance effect of various
 sampling densities.  We take the running time of standard \CCured code
-as the baseline.  We report the speedup (>1) or slowdown (<1) relative
-to this baseline when sampling at various densities.  All benchmarks
-were compiled using \texttt{gcc} 2.96 using standard optimization
-(\texttt{-O2}).  Times were collected on a \unknown MHz Pentium III
-Linux machine with one gigabyte of RAM.  Reported speedups represent
-the average of four runs; each run used a different pre-generated bank
-of 1024 geometrically distributed random countdowns.
+as the baseline.  We report the speedup ($>1$) or slowdown ($<1$)
+relative to this baseline when sampling at various densities.  All
+benchmarks were compiled using \texttt{gcc} 2.96 using standard
+optimization (\texttt{-O2}).  Times were collected on a \unknown MHz
+Pentium III Linux machine with one gigabyte of RAM.  Reported speedups
+represent the average of four runs; each run used a different
+pre-generated bank of 1024 geometrically distributed random
+countdowns.
 
 Even at a fairly high sampling density of 1/100, more than two thirds
 of our benchmarks run faster then they would if all checks were
@@ -126,18 +130,119 @@ density to 1/10,000 shows little change, and by the time we reach
 One benchmark continues to run slower than standard \CCured; two run
 at the same speed; the remaining ten run 2\% - 39\% faster.
 
-\aside{I've helped the user interpret the table, but I don't really
-  say anything deep about \emph{why} the numbers turn out the way they
-  do.  Should I?  Do I actually know what to say by way of
-  explanation?}
+\subsubsection{Single-Function Sampling}
 
-\aside{Might be nice to present speedup of code with all samples
-  statically removed.  This represents the best we could ever possibly
-  hope to do.}
+In an effort to better understand the sources of overhead, we have
+performed additional experiments in which only a single function is
+instrumented at a time.  This also approximates a more realistic
+approach to managing code size.  The fully instrumented executables
+from \autoref{sec:ccured:whole} range from 2\%-76\% larger than their
+non-sampling counterparts.  When only a single function is
+instrumented, code expansion is small enough to not be a concern.
 
-\aside{Present and interpret single-function sampling data.}
+A fully deployed system might use dynamic instrumentation to randomly
+instrument a single selected function \textit{du jour}.  For the
+present research, we build one executable for each site-containing
+function as counted in \autoref{tab:ccured-static}.  All sites in
+other functions are removed.  This, in turn, allows us to discover
+many more weightless functions: any function which cannot transitively
+call the one function being instrumented is weightless.  Thus, a suite
+of single-function sampling executables may perform better, over all,
+than a single executable with sampling in all functions.
 
-\subsection{Finding Bugs Using Data Mining}
+\begin{figure}
+  \centering
+  \includegraphics{applications/perimeter}
+  \caption{\texttt{perimeter} tunning times with single-function
+    instrumentation}
+  \label{fig:ccured-perimeter}
+\end{figure}
+
+In the interest of space, we report only on \texttt{perimeter}: the
+stubborn worst performer from the preceding experiment.  This
+benchmark's small function count also makes overall results easier to
+visualize.  \autoref{fig:ccured-perimeter} shows absolute running
+times in seconds, with 1/100 sampling.  The two leftmost ``all'' bars
+represent instrumenting all functions, either with checks always done
+or with checks sampled.  The solo ``none'' bar represents the extreme
+limit of performance: all instrumentation statically removed from all
+functions.  No instrumentation scheme, with or without sampling, can
+run faster than this.  The remaining bars show the running time for
+each site-containing function, with sites either checked always or
+sampled 1/100.
+
+Note that the vertical baseline is nine seconds, not zero, which
+magnifies fairly small differences: the two leftmost bars differ by
+only 4\%, the same difference reported in the ``$10^{-2}$'' column for
+\texttt{perimeter} in \autoref{tab:ccured-density}.
+
+Among the site-containing functions, \texttt{Child()} gains a small
+performance boot from sampling, while the others slow down.  Examining
+each of these in turn, we find:
+
+\begin{description}
+\item[\texttt{CountTree()} and \texttt{sum\_adjacent()}] each contain
+  only a single instrumentation site.  Thus, threshold checks yield no
+  amortization benefit and in fact are optimized away.  Furthermore,
+  each function is self recursive (four and two times, respectively),
+  and each such call incurs countdown export/import overhead.  This
+  could be remedied by transforming each function to pass the local
+  countdown to itself as an additional parameter on recursive calls.
+  
+\item[\texttt{gtequal\_adj\_neighbor()}] is singly self recursive, and
+  could benefit form a similar transformation.  Threshold checks
+  achieve modest amortization with three instrumentation sites.  Note
+  that \texttt{perimeter} overall shows the smallest average threshold
+  weight in \autoref{tab:ccured-static}.
+  
+\item[\texttt{MakeTree()} and \texttt{perimeter()}] achieve good
+  amortization from their function-entry threshold checks (weights
+  twenty four and five, respectively), but subsequently waste time on
+  export/import with four self recursive calls.
+\end{description}
+
+Countdown export and import around recursive calls is clearly a
+problem, but one with a fairly straightforward solution.  It is worth
+noting that \texttt{child()}, which does show speedup, is the only
+function of these six which is not self recursive.
+
+Benchmarks that are less dominated by recursion suggest additional
+areas for improvement.  Recurring trends we have observed include:
+
+\begin{itemize}
+\item Poor amortization due to lightweight regions in fixed-bound
+  loops.  A loop with fixed iteration count $i$ and body weight $w$
+  could be treated as an acyclic region of weight $iw$.  This would be
+  similar to using loop unrolling to improve instruction scheduling,
+  though literal unrolling is not strictly necessary: merely adjusting
+  the weight calculation is sufficient.
+  
+\item Poor amortization due to lightweight regions in loops with
+  bounds fixed on entry.  A similar optimization applies, except that
+  the effective region weight $iw$ would be computed from $i$ on each
+  new entry into the loop.
+  
+\item Overly conservative identification of weightless functions.
+  Calls through function pointers or to externally-defined code are
+  assumed to potentially recurse back to the caller.  Points-to
+  analyses can improve the former; a checkable \texttt{weightless}
+  annotation on function prototypes would resolve the later.
+\end{itemize}
+
+When multiple functions are being instrumented, we find another area
+for improvement.  Some callees may not be weightless, but can never
+cross more than some finite number of sites per call.  The caller of a
+finite-weight function can exploit this upper limit, effectively
+treating the callee as a cluster of sites of appropriate weight.  Just
+as the loop optimizations resemble loop unrolling without the literal
+code change, here we exploit a sort of virtual inlining, but of
+weights instead of code.
+
+We expect that these and other optimizations will continue to shrink
+the sampling overhead, both for single-function as well as
+whole-program instrumentation.
+
+\subsection{Statistical Debugging}
 \label{sec:applications:mining}
 
 Sampled information about program behavior can be thought of as a

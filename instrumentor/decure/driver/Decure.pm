@@ -23,7 +23,7 @@ sub setDefaultArguments {
 
 sub collectOneArgument {
     my $self = shift;
-    my ($arg) = @_;
+    my ($arg, $pargs) = @_;
 
     if ($arg eq '--only') {
 	$self->{only} = shift @{$pargs};

@@ -1,5 +1,13 @@
 -*- outline -*-
 
+* sampler-0.6
+
+** Internal bug fixes to report reader/writer pipe management.
+
+** Extract global control flow / call graphs from instrumented code.
+   Supports certain experimental analyses which are still under
+   development.
+
 * sampler-0.5.6
 
 ** Driver bug fixes when running out of build tree.

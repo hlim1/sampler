@@ -7,8 +7,6 @@
 #include "decoder.h"
 #include "primitive.h"
 
-static char recentFile[PATH_MAX];
-
 #define sampleValue(typecode, type)				\
  do								\
    {								\
@@ -29,7 +27,6 @@ static char recentFile[PATH_MAX];
 %x COUNTDOWN
 %x COUNTDOWN0
 %x FILENAME
-%x FILENAME0
 %x LINE
 %x EXPR
 %x EXPR0
@@ -49,26 +46,14 @@ signature  \212sam\r\n\032\n
   BEGIN COUNTDOWN;
 }
 
-<COUNTDOWN>{byte}{4} {
+<COUNTDOWN,COUNTDOWN0>{byte}{4} {
   assert(yyleng == sizeof(unsigned));
   siteCountdown(* (const unsigned *) yytext);
   BEGIN FILENAME;
 }
 
-<COUNTDOWN0>{byte}{4} {
-  assert(yyleng == sizeof(unsigned));
-  siteCountdown(* (const unsigned *) yytext);
-  BEGIN FILENAME0;
-}
-
-<FILENAME,FILENAME0>{string} {
-  strncpy(recentFile, yytext, sizeof(recentFile) - 1);
-  siteFile(recentFile);
-  BEGIN LINE;
-}
-
-<FILENAME0>{null} {
-  siteFile(recentFile);
+<FILENAME>{string} {
+  siteFile(yytext);
   BEGIN LINE;
 }
 
@@ -136,7 +121,7 @@ signature  \212sam\r\n\032\n
   sampleValue(Pointer32, void *);
 }
 
-<FILENAME,FILENAME0>\377{signature} {
+<FILENAME>\377{signature} {
   BEGIN END;
 }
 
@@ -144,11 +129,7 @@ signature  \212sam\r\n\032\n
   return Normal;
 }
 
-<FILENAME,FILENAME0,EXPR,EXPR0><<EOF>> {
-  return Abnormal;
-}
-
-<LINE,VALUE><<EOF>> {
+<<EOF>> {
   return Abnormal;
 }
 

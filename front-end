@@ -253,11 +253,8 @@ while ($_ = shift) {
 	push @ld, undef;
 	push @holes, \$ld[$#ld];
 	
-    } elsif (/\.(a|lo|o|so)$/) {
-	push @ld, $_;
-	
     } else {
-	die "unrecognized command-line argument: $_\n";
+	push @ld, $_;
     }
 }
 

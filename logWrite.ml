@@ -1,11 +1,14 @@
 open Cil
   
 
+let voidConstPtrType = TPtr (voidType, [Attr ("const", [])])
+
+
 let logWrite =
   makeGlobalVar "logWrite" (TFun (TVoid [],
 				  Some [ "file", charConstPtrType, [];
 					 "line", uintType, [];
-					 "address", voidPtrType, [];
+					 "address", voidConstPtrType, [];
 					 "size", uintType, [];
 					 "data", voidPtrType, [] ],
 				  false,

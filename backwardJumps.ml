@@ -1,16 +1,23 @@
 open Cil
 
 
-let patch clones weights =
+let patch clones weights func =
 
   let choice weight jump =
     match jump.skind with
     | Goto (dest, location) ->
-	let dest' = clones#find !dest in
-	If (integer weight,
-	    mkBlock [mkStmt jump.skind],
-	    mkBlock [mkStmt (Goto (ref dest', location))],
-	    location)
+	let imminent = makeTempVar func ~name:"imminent" intType in
+	let lval = (Var imminent, NoOffset) in
+	let call = Call (Some lval, Lval (var LogIsImminent.logIsImminent), [kinteger IUInt weight], location) in
+	let branch =
+	  let dest' = clones#find !dest in
+	  If (Lval lval,
+	      mkBlock [mkStmt jump.skind],
+	      mkBlock [mkStmt (Goto (ref dest', location))],
+	      location)
+	in
+	Block (mkBlock [mkStmtOneInstr call; mkStmt branch])
+	
     | _ ->
 	failwith "unexpected statement kind in backward jumps list"
   in

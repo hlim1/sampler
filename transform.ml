@@ -15,7 +15,7 @@ class visitor = object
     let instrumented, clones = Duplicate.duplicateBody func in
 
     ForwardJumps.patch clones forwards;
-    BackwardJumps.patch clones weights backwards;
+    BackwardJumps.patch clones weights func backwards;
     InstrumentWrites.visit func instrumented;
     
     let predicate = zero in
@@ -29,5 +29,6 @@ end
 let phase _ =
   ("Transform",
    fun file ->
+     LogIsImminent.addPrototype file;
      LogWrite.addPrototype file;
      visitCilFileSameGlobals new visitor file)

@@ -17,9 +17,9 @@ class visitor = object
 	Printf.eprintf "%s:%i: adding instrumentation point\n"
 	  location.file location.line;
 	ChangeTo [Call (None, Lval (var LogWrite.logWrite),
-			[mkString location.file;
+			[mkCast (mkString location.file) charConstPtrType;
 			 kinteger IUInt location.line;
-			 mkCast addr voidPtrType;
+			 mkCast addr LogWrite.voidConstPtrType;
 			 SizeOf(typeOf data);
 			 mkCast (mkAddrOf (makeLval data)) voidPtrType],
 			location);

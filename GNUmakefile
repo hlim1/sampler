@@ -40,7 +40,7 @@ ifaces := $(basename $(wildcard *.mli))
 ########################################################################
 
 
-backwardJumps = backwardJumps
+backwardJumps = $(logIsImminent) backwardJumps
 cfg = cfg
 cfgToDot = $(dotify) cfgToDot
 checkSimplicity = $(functionBodyVisitor) checkSimplicity
@@ -53,7 +53,8 @@ identity = identity
 identity = identity
 instrument = $(functionBodyVisitor) $(logWrite) instrument
 instrumentWrites = $(simplifyLefts) $(simplifyReturns) $(simplifyRights) $(checkSimplicity) $(instrument) instrumentWrites
-logWrite = logWrite
+logIsImminent = logIsImminent
+logIsImminent = logIsImminent
 logWrite = logWrite
 mapClass = mapClass
 removeLoops = $(functionBodyVisitor) removeLoops
@@ -68,7 +69,7 @@ stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 stores = stores
 testHarness = testHarness
-transform = $(backwardJumps) $(cfgToDot) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(instrumentWrites) $(logWrite) $(removeLoops) $(weighPaths) transform
+transform = $(backwardJumps) $(cfgToDot) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(instrumentWrites) $(logIsImminent) $(logWrite) $(removeLoops) $(weighPaths) transform
 utils = utils
 weighPaths = $(stmtMap) $(stores) weighPaths
 

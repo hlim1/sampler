@@ -1,3 +1,6 @@
+/usr/lib/sampler/applications/gaim/* are all marked executable in gaim
+RPM.
+
 Check copyright notice in configure scripts that use SAMPLER_INIT.
 Check both script text as well as "configure --version" output.
 

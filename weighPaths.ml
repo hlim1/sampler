@@ -1,5 +1,4 @@
 open Cil
-open Printf
 
 
 type weightsMap = int StmtMap.container
@@ -32,6 +31,5 @@ let rec weigh headers =
     weights#add header (weight header)
   in
   
-  eprintf "weighing %i headers\n" (List.length headers);
   List.iter compute headers;
   weights

@@ -102,7 +102,7 @@ foreach my $package (@ARGV) {
 
 	    my @fields = (@app_id, $module_name, $unit_signature);
 	    Common::escape @fields;
-	    print @fields;
+	    print $upload @fields;
 	}
     }
 

@@ -34,7 +34,7 @@ loopless: $(libcil) $(loopless)
 	$(link)
 
 %.i: %.c
-	$(CC) $(CPPFLAGS) -E $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -E $< -o $@
 
 %.cfg.dot: cfg-to-dot %.i
 	./$^ >$@

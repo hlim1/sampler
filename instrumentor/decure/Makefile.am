@@ -1,7 +1,9 @@
 SUBDIRS = tests
-targets = main
 
-EXTRA_DIST = Driver.pm
+scheme = decure
+noinst_SCRIPTS = main
+noinst_DATA = Driver.pm
+EXTRA_DIST = $(noinst_DATA)
 
 include ../rules.mk
 

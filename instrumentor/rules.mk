@@ -36,8 +36,6 @@ implicits = $(filter-out $(ifaces), $(impls))
 ########################################################################
 
 
-all-local: $(targets)
-
 $(addsuffix .cmi, $(ifaces)): %.cmi: %.mli
 	$(compile)
 

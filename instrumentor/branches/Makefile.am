@@ -1,7 +1,9 @@
 SUBDIRS = libbranches tests
-targets = main
 
-EXTRA_DIST = Driver.pm
+scheme = branches
+scheme_SCRIPTS = main
+scheme_DATA = Driver.pm
+EXTRA_DIST = $(scheme_DATA)
 
 include ../rules.mk
 

@@ -1,7 +1,6 @@
 package CillySampler;
 
 use strict;
-use FindBin;
 use File::Basename qw(fileparse);
 
 use Cilly;

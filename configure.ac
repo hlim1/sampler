@@ -37,10 +37,12 @@ AC_SUBST(BUILD_HOST, `hostname`)
 AC_MSG_RESULT($BUILD_HOST)
 
 
-AC_SUBST(package_libdir, '$(libdir)/$(PACKAGE)')
-AC_SUBST(toolsdir, '$(package_libdir)/tools')
-AC_SUBST(package_datadir, '$(datadir)/$(PACKAGE)')
-AC_SUBST(launcherdir, '$(package_datadir)/launcher')
+AC_SUBST(package_libdir,  '${libdir}/${PACKAGE}')
+AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
+AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
+AC_SUBST(toolsdir, '${package_libdir}/tools')
+AC_SUBST(package_datadir, '${datadir}/${PACKAGE}')
+AC_SUBST(launcherdir, '${package_datadir}/launcher')
 
 find_driver_fragment=tools/find-driver.pl
 AC_SUBST_FILE(find_driver_fragment)
@@ -199,6 +201,7 @@ instrumentor/daikon/libdaikon/Makefile
 instrumentor/decure/Makefile
 instrumentor/decure/tests/Makefile
 instrumentor/driver/main-subst
+instrumentor/driver/sampler-cc
 instrumentor/driver/Makefile
 instrumentor/nothing/Makefile
 instrumentor/nothing/tests/Makefile

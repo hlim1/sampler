@@ -1,7 +1,10 @@
 SUBDIRS = libdaikon
 targets = main
 
-EXTRA_DIST = Driver.pm
+scheme = daikon
+noinst_SCRIPTS = main
+noinst_DATA = Driver.pm
+EXTRA_DIST = $(noinst_DATA)
 
 include ../rules.mk
 

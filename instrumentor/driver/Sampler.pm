@@ -1,7 +1,6 @@
 package Sampler;
 
 use strict;
-use FindBin;
 
 use CilConfig;
 

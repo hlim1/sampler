@@ -8,6 +8,8 @@ extra_impls = libraries
 include rules.mk
 
 
+all-local: harness.$(cma)
+
 libraries.ml: %: build-libraries %.in
 	./$^ >$@.tmp
 	mv $@.tmp $@

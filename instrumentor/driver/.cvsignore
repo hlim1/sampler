@@ -2,3 +2,4 @@ Makefile
 Makefile.in
 main
 main-subst
+sampler-cc

@@ -114,6 +114,7 @@ reports.
 %files devel
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING
+%{_bindir}/*
 %{_libdir}/%{name}
 
 

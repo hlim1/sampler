@@ -114,7 +114,7 @@ clean::
 
 
 $(sampleExecs): CC := libtool $(CC)
-$(sampleExecs): LOADLIBES += -L$(sampler)/libcountdown -levent -lcyclic `gsl-config --libs`
+$(sampleExecs): LOADLIBES += -L$(sampler)/libcountdown -levent -lcyclic
 
 
 $(sampleExecs): %.exe: %.c

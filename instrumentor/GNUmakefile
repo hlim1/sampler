@@ -2,7 +2,7 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot checker dump harness.$(cma)
-transformers := assignments deduce heapStores loads localVars
+transformers := assignments diduce heapStores loads localVars
 subdirs := $(transformers)
 
 include rules.mk

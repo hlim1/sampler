@@ -40,10 +40,6 @@ matter.
 Document --{no-,}assume-weightless-{libraries,externs} and hook them
 up in the Perl driver.
 
-PairClassifier.visitor does a lot of redundant work to re-scan for
-globals from the start of the file for each new instance.  We should
-be able to accumulate this incrementally as we go along.
-
 Remember which functions are loopless.  Use this to optimize treatment
 of calls to known loopless functions.
 

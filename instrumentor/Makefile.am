@@ -7,7 +7,7 @@ extra_impls = libraries version
 
 include $(top_srcdir)/ocaml/rules.mk
 
-libdirs += $(top_builddir)/ocaml branches nothing returns scalar-pairs
+libdirs += $(top_builddir)/ocaml
 syslibs = str.$(cma) unix.$(cma)
 
 
@@ -17,30 +17,10 @@ libraries.ml: %: build-libraries %.in
 	./$^ >$@.tmp
 	mv $@.tmp $@
 
-harness = $(counterTuples) $(scheme) $(schemes) $(siteFinder)
-harness.$(cma): $(harness)
-	$(archive)
-
 $(dir $(libcommon))%.cmi: $(libcommon); @:
 $(libcommon): $(force); $(recurse)
 
-libbranches := branches/branches.cma
-$(dir $(libbranches))%.cmi: $(libbranches); @:
-$(libbranches): $(force); $(recurse)
-
-libnothing := nothing/nothing.cma
-$(dir $(libnothing))%.cmi: $(libnothing); @:
-$(libnothing): $(force); $(recurse)
-
-libreturns := returns/returns.cma
-$(dir $(libreturns))%.cmi: $(libreturns); @:
-$(libreturns): $(force); $(recurse)
-
-libscalarPairs := scalar-pairs/scalar-pairs.cma
-$(dir $(libscalarPairs))%.cmi: $(libscalarPairs); @:
-$(libscalarPairs): $(force); $(recurse)
-
-main: $(libcil) $(libcommon) harness.$(cma) $(libbranches) $(libnothing) $(libreturns) $(libscalarPairs) $(main)
+main: $(libcil) $(libcommon) $(main)
 	$(link)
 
 cfgTest: $(libcil) $(cfgTest)

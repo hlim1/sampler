@@ -8,19 +8,3 @@ scheme_HEADERS = branches.h
 libbranches_a_SOURCES = branches.c branches.h
 
 EXTRA_DIST = $(scheme_DATA)
-
-include $(top_srcdir)/ocaml/rules.mk
-
-MOSTLYCLEANFILES += $(scheme).$(cma)
-
-libdirs += $(dir $(libharness)) $(dir $(libcommon))
-syslibs = str.$(cma) unix.$(cma)
-
-$(dir $(libharness))%.cmi: $(libharness); @:
-$(dir $(libcommon))%.cmi: $(libcommon); @:
-
-$(libharness): $(force); $(recurse)
-$(libcommon): $(force); $(recurse)
-
-all-local: $(scheme).$(cma)
-$(scheme).$(cma): $(branchScheme); $(archive)

@@ -1,13 +1,17 @@
-CPPFLAGS := -include ../liblog/log.h
+prologue := ../liblog/log.h
+CPPFLAGS := -include $(prologue)
 
 all: run
 .PHONY: all
 
-run: ../main test.i
-	$^
+run: test.inst
+	./$^
 .PHONY: run
 
-%.i: %.c
+test.inst.c: ../main test.i
+	$^ >$@
+
+%.i: %.c $(prologue)
 	$(CPP) $(CPPFLAGS) $< >$@
 
 ../main: force

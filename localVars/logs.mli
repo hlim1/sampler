@@ -1,4 +1,4 @@
 open Cil
 
 
-class visitor : Loggers.loggers -> fundec -> cilVisitor
+class visitor : exp -> fundec -> cilVisitor

@@ -4,7 +4,7 @@ open Cil
 class visitor file = object
   inherit TransformVisitor.visitor
 
-  val loggers = FindLoggers.find file
+  val logger = FindLogger.find file
 
   method weigh {skind = skind} =
     match skind with
@@ -12,7 +12,7 @@ class visitor file = object
     | _ -> 0
 
   method insertSkips = new Skips.visitor
-  method insertLogs fundec = new Logs.visitor loggers fundec
+  method insertLogs fundec = new Logs.visitor logger fundec
 end
 
 

@@ -1,73 +1,69 @@
 open Cil
-open Loggers
+open Pretty
 
 
-let multimap transformer inputs =
-  List.fold_left (fun prefix input -> prefix @ transformer input) [] inputs
+let multimap transformer =
+  List.fold_left (fun prefix input -> prefix @ transformer input) []
 
 
-class visitor loggers func = object
+class visitor logger func = object (self)
   inherit FunctionBodyVisitor.visitor
 
-  initializer
+  val callLogger =
     let dissectVar varinfo =
       let var = Var varinfo in
       
-      let primitive logger location offset =
+      let primitive format offset =
 	let expr = Lval (var, offset) in
-	[Call (None, logger,
-	       [mkString location.file;
-		kinteger IUInt location.line;
-		mkString (Pretty.sprint 80 (d_exp () expr));
-		expr],
-	       location)]
+	[(Pretty.sprint 80 (d_exp () expr ++ text " == %" ++ text format),
+	  expr)]
       in
 
       let rec dissectField offset field =
 	if field.fname == missingFieldName then
 	  []
 	else
-	  dissect (Field (field, offset)) field.ftype
+	  dissect (addOffset (Field (field, NoOffset)) offset) field.ftype
 
       and dissect offset = function
 	| TArray _ ->
-      (* fix me *)
+          (* fix me *)
 	    []
 	| TBuiltin_va_list _ ->
 	    []
 	| TComp ({cfields = cfields}, _) ->
 	    multimap (dissectField offset) cfields
 	| TEnum _ ->
-      (* fix me *)
+          (* fix me *)
 	    []
 	| TFloat (fkind, _) ->
 	    let format =
 	      match fkind with
-	      | FFloat -> loggers.double
-	      | FDouble -> loggers.double
-	      | FLongDouble -> loggers.longDouble
+	      | FFloat -> "g"
+	      | FDouble -> "g"
+	      | FLongDouble -> "Lg"
 	    in
-	    primitive format locUnknown offset
+	    primitive format offset
 	| TInt (ikind, _) ->
 	    let format =
 	      match ikind with
-	      | IChar -> loggers.char
-	      | ISChar -> loggers.char
-	      | IUChar -> loggers.char
-	      | IShort -> loggers.short
-	      | IUShort -> loggers.unsignedShort
-	      | IInt -> loggers.int
-	      | IUInt -> loggers.unsignedInt
-	      | ILong -> loggers.long
-	      | IULong -> loggers.unsignedLong
-	      | ILongLong -> loggers.longLong
-	      | IULongLong -> loggers.unsignedLongLong
+	      | IChar -> "c"
+	      | ISChar -> "c"
+	      | IUChar -> "c"
+	      | IShort -> "hd"
+	      | IUShort -> "hu"
+	      | IInt -> "d"
+	      | IUInt -> "u"
+	      | ILong -> "ld"
+	      | IULong -> "lu"
+	      | ILongLong -> "lld"
+	      | IULongLong -> "llu"
 	    in
-	    primitive format locUnknown offset
+	    primitive format offset
 	| TNamed ({ttype = ttype}, _) ->
 	    dissect offset ttype
 	| TPtr _ ->
-	    primitive loggers.pointer locUnknown offset
+	    primitive "p" offset
 	| TFun _
 	| TVoid _
 	  -> failwith "unexpected variable type"
@@ -75,12 +71,22 @@ class visitor loggers func = object
       dissect NoOffset varinfo.vtype
     in
     
-    let calls = multimap dissectVar (func.sformals @ func.slocals) in
-    let stmt = mkStmt (Instr calls) in
-    dumpStmt defaultCilPrinter stderr 3 stmt
+    let outputs = multimap dissectVar (func.sformals @ func.slocals) in
+    let formats, arguments = List.split outputs in
+    let format = mkString ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
+    
+    fun inst ->
+      let where = Where.locationOf inst in
+      Call (None, logger,
+	    format
+	    :: mkString where.file
+	    :: kinteger IUInt where.line
+	    :: arguments,
+	    where)
 
   method vstmt _ = DoChildren
 
   method vinst inst =
-    ChangeTo [inst; SkipLog.call (Where.locationOf inst)]
+    self#queueInstr [callLogger inst];
+    SkipChildren
 end

@@ -8,11 +8,10 @@ include $(top)/rules.mk
 ########################################################################
 
 
-findLoggers = $(loggers) findLoggers
-loggers = loggers
+findLogger = findLogger
 logs = $(where) logs
 skips = $(functionBodyVisitor) skips
-transform = $(findLoggers) $(logs) $(skips) transform
+transform = $(findLogger) $(logs) $(skips) transform
 where = where
 
 

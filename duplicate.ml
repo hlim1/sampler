@@ -3,8 +3,8 @@ open Identity
 
 
 let cloneLabel = function
-  | Label (name, location, _) ->
-      Label (name ^ "__dup", location, true)
+  | Label (name, location, fromSource) ->
+      Label (name ^ "__dup", location, fromSource)
   | other -> other
 
 

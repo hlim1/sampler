@@ -2,8 +2,26 @@ open Cil
 open Printf
 
 
-type phase = file -> unit
+let debugPhaseTimes =
+  Options.registerBoolean
+    ~flag:"debug-phase-times"
+    ~desc:"print the length of time taken to complete each phase"
+    ~ident:""
+    ~default:false
 
+
+type phase = string * (file -> unit)
+
+
+let time description action =
+  if !debugPhaseTimes then
+    let before = Unix.gettimeofday () in
+    let result = action () in
+    let after = Unix.gettimeofday () in
+    Printf.eprintf "%s: %f sec\n" description (after -. before);
+    result
+  else
+    action ()
 
 let doChecks = false
 
@@ -13,14 +31,14 @@ let check file =
       raise Errormsg.Error
 
 
-let doOneOne file action =
-  action file;
+let doOneOne file (description, action) =
+  time description (fun () -> action file);
   if ! Errormsg.hadErrors then
     raise Errormsg.Error;
   check file
 
 
-let doOne stages filename =
-  let file = Frontc.parse filename () in
+let doOne phases filename =
+  let file = time "parsing" (Frontc.parse filename) in
   check file;
-  List.iter (doOneOne file) stages
+  List.iter (doOneOne file) phases

@@ -34,6 +34,12 @@ sub collectOneArgument {
 	push @{$self->{instrumentor}}, $arg;
 	$self->{sample_events} = 1;
 	return 1;
+    } elsif ($arg eq '--debug-phase-times') {
+	push @{$self->{instrumentor}}, $arg;
+	return 1;
+    } elsif ($arg eq '--debug-weighty') {
+	push @{$self->{instrumentor}}, $arg;
+	return 1;
     } elsif ($arg =~ /^--(a?cyclic)$/) {
 	$self->{countdowns} = $1;
 	return 1;

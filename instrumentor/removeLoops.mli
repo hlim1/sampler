@@ -3,6 +3,6 @@ open Cil
 
 class visitor : cilVisitor
 
-val phase : TestHarness.phase
+val phase : file -> unit
 
 val visit : fundec -> unit

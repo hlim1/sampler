@@ -4,11 +4,11 @@ open Cil
 let main manager =
   let phases =
     [
-     Unused.removeUnusedFunctions;
-     (fun file -> ignore (manager file));
-     (fun file -> Rmtmps.removeUnusedTemps file);
+     "removing unused functions", Unused.removeUnusedFunctions;
+     "instrumenting", (fun file -> ignore (manager file));
+     "removind unused symbols", (fun file -> Rmtmps.removeUnusedTemps file);
      Idents.phase;
-     dumpFile (new Printer.printer) stdout
+     "printing transformed code", dumpFile (new Printer.printer) stdout
    ]
   in
   

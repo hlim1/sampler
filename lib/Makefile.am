@@ -14,6 +14,7 @@ package_include_HEADERS =			\
 	countdown.h				\
 	cyclic-size.h				\
 	cyclic.h				\
+	embedded-cfg.h				\
 	no-threads.h				\
 	threads.h				\
 	tuples-cil.h				\

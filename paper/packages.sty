@@ -5,6 +5,7 @@
 %% standard tetex distribution
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{moreverb}
 
 \ifpdf{\usepackage[bookmarks,pdftitle={Bug Isolation via Remote
     Program Sampling},pdfauthor={Ben Liblit, Alex Aiken, Alice X.
@@ -12,16 +13,6 @@
 {\usepackage[bookmarks,pdftitle={Bug Isolation via Remote Program
     Sampling},pdfauthor={Ben Liblit, Alex Aiken, Alice X.  Zheng, and
     Michael I. Jordan},pdfpagemode=UseOutlines,ps2pdf]{hyperref}}
-
-\usepackage{listings}
-\lstloadlanguages{C}
-\lstset{language=C}
-\newlength{\abovecaptionskip}
-\newlength{\belowcaptionskip}
-\setlength{\abovecaptionskip}{\baselineskip}
-\setlength{\belowcaptionskip}{0pt}
-
-\usepackage{moreverb}
 
 \ifpdf{\usepackage[arrow,curve,frame,matrix]{xy}}
 {\usepackage[arrow,curve,frame,matrix,dvips]{xy}}

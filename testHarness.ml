@@ -29,5 +29,6 @@ let doOne stages filename =
   List.iter (doOneOne file) stages
     
 let main stages =
+  initCIL ();
   let filenames = List.tl (Array.to_list Sys.argv) in
   List.iter (doOne stages) filenames

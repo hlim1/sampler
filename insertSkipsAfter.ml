@@ -1,15 +1,9 @@
 open Cil
 
 
-class visitor sites skipLog = object (self)
-  inherit InsertSkipsVisitor.visitor sites skipLog
+class visitor sites countdown = object (self)
+  inherit InsertSkipsVisitor.visitor sites countdown
       
   method insertSkip skip statement =
-    let statements = [statement; mkStmtOneInstr skip] in
-    let block = Block (mkBlock statements) in
-    let replace statement =
-      statement.skind <- block;
-      statement
-    in
-    ChangeDoChildrenPost (statement, replace)
+    [mkStmt statement.skind; mkStmtOneInstr skip]
 end

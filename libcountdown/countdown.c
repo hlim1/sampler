@@ -11,8 +11,7 @@ __attribute__((constructor)) void resetCountdown()
 {
   unsigned countUp = 1;
   
-#if 0
-  while (random() % 4096 != 0)
+  while (random() % (1 << 20) != 0)
     {
       ++countUp;
       if (countUp == 0)
@@ -21,14 +20,6 @@ __attribute__((constructor)) void resetCountdown()
 	break;
       }
     }
-#endif
 
   nextLogCountdown = countUp;
-}
-
-
-void skipLog()
-{
-  assert(nextLogCountdown > 1);
-  --nextLogCountdown;
 }

@@ -7,7 +7,7 @@ class visitor file = object
   val logger = FindLogger.find file
 
   method findSites = FindSites.visit
-  method insertSkips sites skipLog = (new InsertSkipsBefore.visitor sites skipLog :> cilVisitor)
+  method insertSkips sites countdown = (new InsertSkipsBefore.visitor sites countdown :> cilVisitor)
   method insertLogs = new Logs.visitor logger
 end
 

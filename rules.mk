@@ -53,6 +53,9 @@ $(impls:=.do): %.do: %.ml $(fixdeps)
 $(ifaces:=.di): %.di: %.mli $(fixdeps)
 	$(depend)
 
+$(libcil): force
+	$(MAKE) -C $(cildir) -f Makefile.cil NATIVECAML=$(native) cillib
+
 force:
 .PHONY: force
 

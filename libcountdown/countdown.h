@@ -5,8 +5,6 @@
 extern unsigned nextLogCountdown;
 
 
-void skipLog();
-
 void resetCountdown();
 
 

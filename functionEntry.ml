@@ -20,8 +20,9 @@ let patch func weights countdown instrumented =
 	mkStmt (Block instrumented);
 	finis ]
     else
-      let choice = LogIsImminent.choose locUnknown weight countdown instrumented func.sbody in
-      [ mkStmt choice ]
+      let import = countdown#afterCall locUnknown in
+      let choice = countdown#choose locUnknown weight instrumented func.sbody in
+      [mkStmtOneInstr import; mkStmt choice]
   in
   
   func.sbody <- mkBlock body

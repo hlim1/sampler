@@ -9,18 +9,18 @@ let visitSameBlock visitor original =
 class virtual ['siteInfo] visitor file = object(self)
   inherit FunctionBodyVisitor.visitor
 
-  val skipLog = SkipLog.find file
-  val countdown = Countdown.find file
+  val globalCountdown = Countdown.findGlobal file
       
   method virtual findSites : block -> 'siteInfo
-  method virtual insertSkips : 'siteInfo -> SkipLog.closure -> cilVisitor
+  method virtual insertSkips : 'siteInfo -> Countdown.countdown -> cilVisitor
   method virtual insertLogs : 'siteInfo -> cilVisitor
 
   method vfunc func =
     prepareCFG func;
     RemoveLoops.visit func;
     IsolateInstructions.visit func;
-    let afterCalls = AfterCalls.split func in
+    let countdown = new Countdown.countdown globalCountdown func in
+    let afterCalls = Calls.prepatch func in
     ignore (computeCFGInfo func false);
     
     let forwardJumps, backwardJumps = ClassifyJumps.visit func in
@@ -37,11 +37,12 @@ class virtual ['siteInfo] visitor file = object(self)
 	  
 	  ForwardJumps.patch clones forwardJumps;
 	  BackwardJumps.patch clones weights countdown backwardJumps;
-	  AfterCalls.patch clones weights countdown afterCalls;
-	  
+	  Calls.patch clones weights countdown afterCalls;
+
 	  FunctionEntry.patch func weights countdown instrumented;
-	  visitSameBlock (self#insertSkips sites skipLog) original;
-	  visitSameBlock (self#insertLogs sites) instrumented
+	  visitSameBlock (self#insertSkips sites countdown) original;
+	  visitSameBlock (self#insertLogs sites) instrumented;
+	  Calls.postpatch func countdown;
     end;
 
     SkipChildren

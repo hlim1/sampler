@@ -1,13 +1,24 @@
 CC := ../front-end $(CC)
 
-all: run
+tests := 					\
+	array					\
+	conditional				\
+	deep-pointers				\
+	multiple				\
+	return					\
+	structures
+
+runs := $(addprefix run-, $(tests))
+objects := $(tests:=.o)
+
+all: $(runs)
 .PHONY: all
 
-run: test
-	LD_LIBRARY_PATH=../liblog:../../libcountdown ./$^
-.PHONY: run
+$(runs): run-%: %
+	./$^
+.PHONY: $(runs)
 
-test.o: test.c ../liblog/log.h ../main
+$(objects): %.o: %.c ../liblog/log.h ../../libcountdown/countdown.h ../main
 
 ../main: force
 	$(MAKE) -C $(@D) $(@F)
@@ -16,5 +27,5 @@ force:
 .PHONY: force
 
 clean:
-	rm -f test test.o
+	rm -f $(tests) $(objects)
 .PHONY: clean

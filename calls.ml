@@ -1,26 +1,35 @@
 open Cil
 
 
-class visitor = object
+type placeholders = stmt list
+
+
+class prepatcher = object
   inherit FunctionBodyVisitor.visitor
 
-  val mutable afterCalls = []
-  method result = afterCalls
+  val mutable placeholders = []
+  method result = placeholders
 
   method vstmt stmt =
     match stmt.skind with
-    | Instr [Call _] as call ->
+    | Instr [Call (_, _, _, location) as call] ->
 	let placeholder = mkEmptyStmt () in
-	let block = Block (mkBlock [mkStmt call; placeholder]) in
-	afterCalls <- placeholder :: afterCalls;
-	let replace stmt = stmt.skind <- block; stmt in
+	let block = Block (mkBlock [mkStmtOneInstr call; placeholder]) in
+	placeholders <- placeholder :: placeholders;
+	
+	let replace stmt =
+	  stmt.skind <- block;
+	  stmt
+	in
 	ChangeDoChildrenPost (stmt, replace)
-    | _ -> DoChildren
+
+    | _ ->
+	DoChildren
 end
 
 
-let split {sbody = sbody} =
-  let visitor = new visitor in
+let prepatch {sbody = sbody} =
+  let visitor = new prepatcher in
   ignore (visitCilBlock (visitor :> cilVisitor) sbody);
   visitor#result
 
@@ -52,10 +61,40 @@ let patch clones weights countdown =
       
       let gotoStandard = mkBlock [mkStmt (Goto (ref standardLanding, locUnknown))] in
       let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumentedLanding, locUnknown))] in
-      let choice = LogIsImminent.choose locUnknown weight countdown gotoInstrumented gotoStandard in
+      let choice = countdown#choose locUnknown weight gotoInstrumented gotoStandard in
       
       standardAfter.skind <- Block (mkBlock [mkStmt choice; standardLanding]);
       instrumentedAfter.skind <- Block (mkBlock [mkStmt choice; instrumentedLanding])
   in
   
   List.iter patchOne
+
+
+(**********************************************************************)
+
+
+class postpatcher countdown = object
+  inherit FunctionBodyVisitor.visitor
+
+  method vstmt stmt =
+    match stmt.skind with
+    | Instr [Call (_, _, _, location) as call] ->
+	let before = countdown#beforeCall location in
+	let after = countdown#afterCall location in
+	let instructions = [before; call; after] in
+	stmt.skind <- Instr instructions;
+	SkipChildren
+
+    | Return (_, location) ->
+	let export = countdown#beforeCall location in
+	stmt.skind <- Block (mkBlock [mkStmtOneInstr export; mkStmt stmt.skind]);
+	SkipChildren
+
+    | _ ->
+	DoChildren
+end
+
+
+let postpatch {sbody = sbody} countdown =
+  let visitor = new postpatcher countdown in
+  ignore (visitCilBlock (visitor :> cilVisitor) sbody)

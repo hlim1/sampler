@@ -47,7 +47,7 @@ let doOne stages filename =
     
 let main stages =
   initCIL ();
-  (* printLnComment := true; *)
+  printLnComment := true;
 
   let filenames = List.tl (Array.to_list Sys.argv) in
   List.iter (doOne stages) filenames

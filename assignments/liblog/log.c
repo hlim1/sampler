@@ -7,7 +7,7 @@
 
 void logVars(const char *format, ...)
 {
-  skipLog();
+  --nextLogCountdown;
 
   if (nextLogCountdown == 0)
     {

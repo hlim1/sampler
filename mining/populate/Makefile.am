@@ -3,6 +3,5 @@ EXTRA_DIST =					\
 	freshen-builds				\
 	freshen-runs				\
 	insert-builds.pl			\
-	insert-run-samples.pl			\
 	insert-runs.pl				\
 	sync-from-www

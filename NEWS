@@ -4,6 +4,8 @@
 
 ** Merge Fedora Core 1 port branch back onto trunk
 
+** Various and sundry bug fixes.
+
 * sampler-0.7.1
 
 ** Back-port the instrumentor to OCaml-3.06.

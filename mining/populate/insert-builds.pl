@@ -11,6 +11,8 @@ use POSIX qw(strftime);
 use Common;
 use Upload;
 
+my $dry_run = $ARGV[0] eq '--dry-run' ? shift : undef;
+
 my $dbh = Common::connect;
 
 
@@ -119,15 +121,17 @@ foreach my $package (@ARGV) {
 	next if -d $extracted;
 
 	my $contents = new FileHandle($extracted);
-	while (my $unit_signature = <$contents>) {
-	    chomp $unit_signature;
-	    Common::check_signature $extracted, $contents->input_line_number, $unit_signature;
+	while (my $unit_header = <$contents>) {
+	    chomp $unit_header;
+	    my $unit_signature = Common::parse_signature 'sites', $extracted, $contents->input_line_number, $unit_header;
 
 	    my $site_order = 0;
 
 	    while (my $description = <$contents>) {
 		chomp $description;
-		last unless $description;
+		last if $description eq '';
+		last if $description eq '</sites>';
+
 		my @description = split /\t/, $description;
 		my $source_name = shift @description;
 		my $line_number = shift @description;
@@ -137,11 +141,11 @@ foreach my $package (@ARGV) {
 		my $operand_1 = shift @description;
 
 		my $where = "$extracted:" . $contents->input_line_number;
-		die "$where: extra descriptive fields" if @description;
-		die "$where: empty source file name" unless $source_name;
-		die "$where: bad source line number" unless $line_number =~ /^\d+$/;
-		die "$where: empty function name" unless $function;
-		die "$where: empty operand 0" unless defined $operand_0;
+		die "$where: extra descriptive fields\n" if @description;
+		die "$where: empty source file name\n" unless $source_name;
+		die "$where: bad source line number\n" unless $line_number =~ /^\d+$/;
+		die "$where: empty function name\n" unless $function;
+		die "$where: empty operand 0\n" unless defined $operand_0;
 
 		my @fields = (@app_id, $unit_signature, $site_order, $source_name,
 			      $line_number, $function, $cfg, $operand_0, $operand_1);
@@ -238,46 +242,50 @@ $upload_site->send($dbh, 'upload_site');
 #
 
 
-print "insert\n";
+unless ($dry_run) {
 
-print "\tbuild: ", $upload_build->count, " new\n";
+    print "insert\n";
 
-$dbh->do(q{
-    INSERT INTO build
-	(application_name,
-	 application_version,
-	 application_release,
-	 instrumentation_type,
-	 build_date)
+    print "\tbuild: ", $upload_build->count, " new\n";
 
-	SELECT *
-	FROM upload_build
-    }) or die;
+    $dbh->do(q{
+	INSERT INTO build
+	    (application_name,
+	     application_version,
+	     application_release,
+	     instrumentation_type,
+	     build_date)
 
-
-print "\tmodule: ", $upload_module->count, " new\n";
-
-$dbh->do(q{
-    INSERT INTO build_module
-	(build_id, module_name, unit_signature)
-
-	SELECT build_id, module_name, unit_signature
-	FROM build NATURAL JOIN upload_module
-    }) or die;
+	    SELECT *
+	    FROM upload_build
+	}) or die;
 
 
-print "\tsite: ", $upload_site->count, " new\n";
+    print "\tmodule: ", $upload_module->count, " new\n";
 
-$dbh->do(q{
-    INSERT IGNORE INTO build_site
-	(build_id, unit_signature, site_order,
-	 source_name, line_number, function, cfg, operand_0, operand_1)
+    $dbh->do(q{
+	INSERT INTO build_module
+	    (build_id, module_name, unit_signature)
 
-	SELECT build_id, unit_signature, site_order,
-	source_name, line_number, function, cfg, operand_0, operand_1
+	    SELECT build_id, module_name, unit_signature
+	    FROM build NATURAL JOIN upload_module
+	}) or die;
 
-	FROM build NATURAL JOIN upload_site
-    }) or die;
+
+    print "\tsite: ", $upload_site->count, " new\n";
+
+    $dbh->do(q{
+	INSERT IGNORE INTO build_site
+	    (build_id, unit_signature, site_order,
+	     source_name, line_number, function, cfg, operand_0, operand_1)
+
+	    SELECT build_id, unit_signature, site_order,
+	    source_name, line_number, function, cfg, operand_0, operand_1
+
+	    FROM build NATURAL JOIN upload_site
+	}) or die;
+
+}
 
 
 ########################################################################

@@ -30,10 +30,11 @@ sub read_app_id ($) {
 }
 
 
-sub check_signature ($$$) {
-    my ($filename, $lineno, $signature) = @_;
-    die "$filename:$lineno: malformed signature: $signature\n"
-	unless $signature =~ /^[0-9A-Fa-f]{32}\z/;
+sub parse_signature ($$$$) {
+    my ($tag, $filename, $lineno, $signature) = @_;
+    return $1 if $signature =~ /^([0-9A-Fa-f]{32})\z/;
+    return $1 if $signature =~ qr{^<$tag unit="([0-9A-Fa-f]{32})" scheme="[-a-z]+">\z};
+    die "$filename:$lineno: malformed signature: $signature\n";
 }
 
 

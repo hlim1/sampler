@@ -13,6 +13,8 @@ use POSIX qw(strftime);
 use Common;
 use Upload;
 
+my $dry_run = $ARGV[0] eq '--dry-run' ? shift : undef;
+
 my $dbh = Common::connect;
 
 
@@ -147,7 +149,7 @@ foreach my $dir (@ARGV) {
 
     while (my $unit_signature = <$samples_handle>) {
 	chomp $unit_signature;
-	Common::check_signature $samples_filename, $samples_handle->input_line_number, $unit_signature;
+	Common::parse_signature 'samples', $samples_filename, $samples_handle->input_line_number, $unit_signature;
 
 	my $site_order = 0;
 
@@ -155,6 +157,8 @@ foreach my $dir (@ARGV) {
 	    unless ($counts =~ /^0(\t0)*$/) {
 		chomp $counts;
 		last if $counts eq '';
+		last if $counts eq '</samples>';
+
 		my @counts = split /\t/, $counts;
 		foreach my $predicate (0 .. $#counts) {
 		    my $count = $counts[$predicate];
@@ -221,35 +225,37 @@ $upload_sample->send($dbh, 'upload_sample');
 #
 
 
-print "insert\n";
+unless ($dry_run) {
 
-print "\trun: ", $upload_run->count, " new\n";
+    print "insert\n";
 
-$dbh->do(q{
-    INSERT INTO run
-	SELECT
-	run_id,
-	build_id,
-	version,
-	sparsity,
-	exit_signal,
-	exit_status,
-	date,
-	0
+    print "\trun: ", $upload_run->count, " new\n";
 
-	FROM upload_run
-	NATURAL LEFT JOIN build
-	WHERE suppress IS NULL
-    }) or die;
+    $dbh->do(q{
+	INSERT INTO run
+	    SELECT
+	    run_id,
+	    build_id,
+	    version,
+	    sparsity,
+	    exit_signal,
+	    exit_status,
+	    date,
+	    0
+
+	    FROM upload_run
+	    NATURAL LEFT JOIN build
+	    WHERE suppress IS NULL
+	}) or die;
 
 
-print "\tsample: ", $upload_sample->count, " new\n";
+    print "\tsample: ", $upload_sample->count, " new\n";
 
-$dbh->do(q{
-    INSERT run_sample
-	SELECT *
-	FROM upload_sample
-    }) or die;
+    $dbh->do(q{
+	INSERT run_sample
+	    SELECT *
+	    FROM upload_sample
+	}) or die;
 
 
 ########################################################################
@@ -258,17 +264,19 @@ $dbh->do(q{
 #
 
 
-if (@empties) {
-    my @placeholders = map '?', @empties;
-    my $placeholders = join ',', @placeholders;
+    if (@empties) {
+	my @placeholders = map '?', @empties;
+	my $placeholders = join ',', @placeholders;
 
-    $dbh->do(qq{
-	UPDATE run
-	    SET empty = 1
-	    WHERE run_id IN ($placeholders)},
-	     undef, @empties);
+	$dbh->do(qq{
+	    UPDATE run
+		SET empty = 1
+		WHERE run_id IN ($placeholders)},
+		 undef, @empties);
 
-    print "marked ", scalar @empties, " new empties\n";
+	print "marked ", scalar @empties, " new empties\n";
+    }
+
 }
 
 

@@ -21,7 +21,7 @@ import monitor
 ########################################################################
 
 
-gnome.program_init('sampler', Config.version)
+gnome.program_init('tray', Config.version)
 client = gconf.client_get_default()
 dir = GConfDir(client, Keys.root, gconf.CLIENT_PRELOAD_ONELEVEL)
 

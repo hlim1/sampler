@@ -40,6 +40,7 @@ ifaces := $(basename $(wildcard *.mli))
 ########################################################################
 
 
+afterCalls = $(functionBodyVisitor) $(logIsImminent) afterCalls
 backwardJumps = $(logIsImminent) backwardJumps
 cfg = cfg
 cfgToDot = $(dotify) cfgToDot
@@ -67,12 +68,11 @@ simplifyRights = $(simplifyVisitor) simplifyRights
 simplifyVisitor = $(functionBodyVisitor) simplifyVisitor
 skipVisitor = skipVisitor
 skipWrites = $(countDown) $(functionBodyVisitor) skipWrites
-splitAfterCalls = $(functionBodyVisitor) splitAfterCalls
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 stores = stores
 testHarness = testHarness
-transform = $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrumentWrites) $(patchSites) $(removeLoops) $(skipWrites) $(splitAfterCalls) $(weighPaths) transform
+transform = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrumentWrites) $(patchSites) $(removeLoops) $(skipWrites) $(weighPaths) transform
 utils = utils
 weighPaths = $(stmtMap) $(stores) weighPaths
 

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!@PERL@ -w
 
 use strict;
 use 5.008;			# for safe pipe opens using list form of open
@@ -50,11 +50,28 @@ print 'already known: ', scalar keys %known, "\n";
 
 ########################################################################
 #
+#  prepare receiving area for bulk upload
+#
+
+
+$dbh->do(q{
+    CREATE TEMPORARY TABLE upload_build
+	(application_name VARCHAR(50) NOT NULL,
+	 application_version VARCHAR(50) NOT NULL,
+	 application_release VARCHAR(50) NOT NULL,
+	 build_distribution VARCHAR(50) NOT NULL,
+	 build_date TIMESTAMP NOT NULL)
+    }) or die;
+
+
+
+########################################################################
+#
 #  insert any new builds
 #
 
 
-my $upload_build = new Upload;
+my $upload_build = new Upload($dbh, 'upload_build');
 
 sub insert_build ($) {
     my $package = shift;
@@ -93,7 +110,7 @@ sub insert_build ($) {
 
     # add to uploads for build table
     my @fields = (@app_id, $build_date);
-    $upload_build->print(@fields);
+    $upload_build->row(@fields);
 }
 
 
@@ -107,27 +124,7 @@ if (@ARGV) {
 }
 
 
-########################################################################
-#
-#  bulk upload
-#
-
-
-print "upload\n";
-
-print "\tbuild: ", $upload_build->count, " new\n";
-
-$dbh->do(q{
-    CREATE TEMPORARY TABLE upload_build
-	(application_name VARCHAR(50) NOT NULL,
-	 application_version VARCHAR(50) NOT NULL,
-	 application_release VARCHAR(50) NOT NULL,
-	 build_distribution VARCHAR(50) NOT NULL,
-	 build_date DATETIME NOT NULL)
-	TYPE=InnoDB
-    }) or die;
-
-$upload_build->send($dbh, 'upload_build');
+$upload_build->done;
 
 
 ########################################################################

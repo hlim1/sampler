@@ -7,29 +7,31 @@ use DBI;
 use File::Temp qw(tempfile);
 use FileHandle;
 
+use Site;
+
 
 ########################################################################
 
 
-sub new ($) {
-    @_ == 1 or confess 'wrong argument count';
-    my ($proto) = @_;
+sub new ($$$) {
+    @_ == 3 or confess 'wrong argument count';
+    my ($proto, $dbh, $table) = @_;
     my $class = ref($proto) || $proto;
 
-    my ($handle, $filename) = tempfile(UNLINK => 1);
-    my $self = {handle => $handle, filename => $filename, count => 0};
+    $dbh->do("COPY $table FROM STDIN") or die;
 
+    my $self = {dbh => $dbh, table => $table, count => 0};
     bless $self, $class;
 }
 
 
-sub print ($@) {
+sub row ($@) {
     @_ >= 1 or confess 'wrong argument count';
     my ($self, @fields) = @_;
     ++$self->{count};
     Common::escape @fields;
-    local ($,, $\) = ("\t", "\n");
-    $self->{handle}->print(@fields);
+    my $row = join "\t", @fields;
+    $self->{dbh}->func("$row\n", 'putline');
 }
 
 
@@ -40,13 +42,12 @@ sub count ($) {
 }
 
 
-sub send ($$$) {
-    @_ == 3 or confess 'wrong argument count';
-    my ($self, $dbh, $table) = @_;
-    $self->{handle}->flush;
-    $dbh->do("LOAD DATA LOCAL INFILE ? INTO TABLE $table",
-	     undef, $self->{filename}, $table)
-	or die;
+sub done ($) {
+    @_ == 1 or confess 'wrong argument count';
+    my ($self) = @_;
+
+    $self->{dbh}->func("\\.\n", 'putline');
+    $self->{dbh}->func('endcopy');
 }
 
 

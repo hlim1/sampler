@@ -12,7 +12,7 @@ use Site;
 
 sub connect () {
     my %options = (AutoCommit => 0, RaiseError => 1);
-    return DBI->connect("DBI:mysql:$Site::database", $Site::user, $Site::password, \%options);
+    return DBI->connect('DBI:Pg:dbname=cbi', undef, undef, \%options);
 }
 
 
@@ -29,6 +29,8 @@ sub escape (\@) {
     foreach (@{$fields}) {
 	if (defined $_) {
 	    $_ =~ s/\\/\\\\/g;
+	    $_ =~ s/\t/\\t/g;
+	    $_ =~ s/\n/\\n/g;
 	    $_ =~ s/[^[:print:]]/\\$&/g;
 	} else {
 	    $_ = '\N';

@@ -1,5 +1,5 @@
 #!/bin/sh -e
 
 cd "`dirname $0`"
-find $HOME/public_html/sampler/downloads/rpm -type f -name '*-samplerinfo-*.rpm' -print | ./insert-builds.pl "$@"
+find /afs/cs.wisc.edu/p/cbi/public/html/downloads/rpm -type f -name '*-samplerinfo-*.rpm' -print | ./insert-builds.pl "$@"
 touch sync-stamp

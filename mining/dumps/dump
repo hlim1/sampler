@@ -1,6 +1,0 @@
-#!/bin/sh
-
-site=../site-config.sh
-if [ -e $site ]; then source $site; fi
-
-exec mysqldump $mysql_flags --opt "$@" $mysql_database

@@ -1,5 +1,7 @@
 Makefile
 Makefile.in
 Site.pm
+insert-builds.pl
+insert-runs.pl
 sampler-uploads
 sync-stamp

@@ -8,6 +8,5 @@ SELECT
     sum(!!exit_signal) AS crash,
     sum(!!exit_signal) / sum(!exit_status AND !exit_signal) AS crash_rate
 FROM run NATURAL JOIN build
-WHERE build_suppress IS NULL
 GROUP BY application_name
 ORDER BY crash_rate DESC

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec rsync -rlto -v beryl:/var/www/sampler-uploads .
+exec rsync -rlto -v sampler.cs.berkeley.edu:/var/www/sampler-uploads .

@@ -1,80 +1,227 @@
--- MySQL dump 10.8
 --
--- Host: localhost    Database: sampler
--- ------------------------------------------------------
--- Server version	4.1.7-standard
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE="NO_AUTO_VALUE_ON_ZERO" */;
-
---
--- Table structure for table `build`
+-- PostgreSQL database dump
 --
 
-DROP TABLE IF EXISTS `build`;
-CREATE TABLE `build` (
-  `build_id` int(10) unsigned NOT NULL auto_increment,
-  `application_name` varchar(50) NOT NULL default '',
-  `application_version` varchar(50) NOT NULL default '',
-  `application_release` varchar(50) NOT NULL default '',
-  `build_distribution` varchar(50) NOT NULL default '',
-  `build_date` datetime NOT NULL default '0000-00-00 00:00:00',
-  `build_suppress` varchar(255) default NULL,
-  PRIMARY KEY  (`build_id`),
-  UNIQUE KEY `application_name` (`application_name`,`application_version`,`application_release`,`build_distribution`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+SET search_path = public, pg_catalog;
 
+ALTER TABLE ONLY public.build DROP CONSTRAINT build_distribution;
+ALTER TABLE ONLY public.build_suppress DROP CONSTRAINT build_suppress_id;
+ALTER TABLE ONLY public.run DROP CONSTRAINT run_build_id;
+ALTER TABLE ONLY public.scheme DROP CONSTRAINT scheme_pkey;
+ALTER TABLE ONLY public.distribution DROP CONSTRAINT distribution_pkey;
+ALTER TABLE ONLY public.run_suppress DROP CONSTRAINT run_suppress_pkey;
+ALTER TABLE ONLY public.run DROP CONSTRAINT run_pkey;
+ALTER TABLE ONLY public.build DROP CONSTRAINT build_application_name_key;
+ALTER TABLE ONLY public.build DROP CONSTRAINT build_pkey;
+DROP INDEX public.run_exit_signal;
+DROP INDEX public.run_run_id_build_id;
+DROP INDEX public.run_build_id;
+DROP TABLE public.distribution;
+DROP TABLE public.foo;
+DROP TABLE public.build_suppress;
+DROP TABLE public.run_suppress;
+DROP TABLE public.run;
+DROP TABLE public.build;
+DROP TABLE public.scheme;
 --
--- Table structure for table `instrumentation`
---
-
-DROP TABLE IF EXISTS `instrumentation`;
-CREATE TABLE `instrumentation` (
-  `instrumentation_type` enum('branches','returns','scalar-pairs') NOT NULL default 'branches',
-  `predicates_per_site` tinyint(3) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`instrumentation_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Table structure for table `run`
+-- TOC entry 4 (OID 62143717)
+-- Name: scheme; Type: TABLE; Schema: public; Owner: liblit
 --
 
-DROP TABLE IF EXISTS `run`;
-CREATE TABLE `run` (
-  `run_id` varchar(24) NOT NULL default '',
-  `build_id` int(10) unsigned NOT NULL default '0',
-  `version` varchar(255) default '',
-  `sparsity` int(10) unsigned NOT NULL default '0',
-  `exit_signal` tinyint(3) unsigned NOT NULL default '0',
-  `exit_status` tinyint(3) unsigned NOT NULL default '0',
-  `date` datetime NOT NULL default '0000-00-00 00:00:00',
-  PRIMARY KEY  (`run_id`),
-  KEY `build_id` (`build_id`),
-  KEY `run_id` (`run_id`,`build_id`),
-  KEY `exit_signal` (`exit_signal`),
-  CONSTRAINT `0_2172` FOREIGN KEY (`build_id`) REFERENCES `build` (`build_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE scheme (
+    scheme_name character varying(16) NOT NULL,
+    predicates_per_site smallint NOT NULL,
+    CONSTRAINT scheme_predicates_per_site CHECK ((predicates_per_site > 0))
+);
+
 
 --
--- Table structure for table `run_suppress`
+-- TOC entry 5 (OID 62143722)
+-- Name: build; Type: TABLE; Schema: public; Owner: liblit
 --
 
-DROP TABLE IF EXISTS `run_suppress`;
-CREATE TABLE `run_suppress` (
-  `run_id` varchar(24) NOT NULL default '',
-  `reason` varchar(255) NOT NULL default '',
-  PRIMARY KEY  (`run_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE build (
+    build_id serial NOT NULL,
+    application_name character varying(50) NOT NULL,
+    application_version character varying(50) NOT NULL,
+    application_release character varying(50) NOT NULL,
+    build_distribution character varying(50) NOT NULL,
+    build_date timestamp without time zone NOT NULL
+);
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+--
+-- TOC entry 6 (OID 62143725)
+-- Name: run; Type: TABLE; Schema: public; Owner: liblit
+--
+
+CREATE TABLE run (
+    run_id character varying(24) NOT NULL,
+    build_id integer NOT NULL,
+    "version" character varying(255),
+    sparsity integer NOT NULL,
+    exit_signal smallint NOT NULL,
+    exit_status smallint NOT NULL,
+    date timestamp without time zone NOT NULL,
+    CONSTRAINT run_exit_choice CHECK (((exit_status = 0) OR (exit_signal = 0))),
+    CONSTRAINT run_exit_signal CHECK ((exit_signal >= 0)),
+    CONSTRAINT run_exit_status CHECK ((exit_status >= 0)),
+    CONSTRAINT run_sparsity CHECK ((sparsity > 0))
+);
+
+
+--
+-- TOC entry 7 (OID 62143731)
+-- Name: run_suppress; Type: TABLE; Schema: public; Owner: liblit
+--
+
+CREATE TABLE run_suppress (
+    run_id character varying(24) NOT NULL,
+    reason character varying(255) NOT NULL
+);
+
+
+--
+-- TOC entry 8 (OID 62144182)
+-- Name: build_suppress; Type: TABLE; Schema: public; Owner: liblit
+--
+
+CREATE TABLE build_suppress (
+    build_id integer NOT NULL,
+    reason character varying(255) NOT NULL
+);
+
+
+--
+-- TOC entry 9 (OID 62228194)
+-- Name: foo; Type: TABLE; Schema: public; Owner: liblit
+--
+
+CREATE TABLE foo (
+    date timestamp without time zone
+);
+
+
+--
+-- TOC entry 10 (OID 62228287)
+-- Name: distribution; Type: TABLE; Schema: public; Owner: liblit
+--
+
+CREATE TABLE distribution (
+    distribution_name character varying(50) NOT NULL
+);
+
+
+--
+-- TOC entry 14 (OID 62143733)
+-- Name: run_build_id; Type: INDEX; Schema: public; Owner: liblit
+--
+
+CREATE INDEX run_build_id ON run USING btree (build_id);
+
+
+--
+-- TOC entry 17 (OID 62143734)
+-- Name: run_run_id_build_id; Type: INDEX; Schema: public; Owner: liblit
+--
+
+CREATE INDEX run_run_id_build_id ON run USING btree (run_id, build_id);
+
+
+--
+-- TOC entry 15 (OID 62143735)
+-- Name: run_exit_signal; Type: INDEX; Schema: public; Owner: liblit
+--
+
+CREATE INDEX run_exit_signal ON run USING btree (exit_signal);
+
+
+--
+-- TOC entry 13 (OID 62143738)
+-- Name: build_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY build
+    ADD CONSTRAINT build_pkey PRIMARY KEY (build_id);
+
+
+--
+-- TOC entry 12 (OID 62143740)
+-- Name: build_application_name_key; Type: CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY build
+    ADD CONSTRAINT build_application_name_key UNIQUE (application_name, application_version, application_release, build_distribution);
+
+
+--
+-- TOC entry 16 (OID 62143742)
+-- Name: run_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY run
+    ADD CONSTRAINT run_pkey PRIMARY KEY (run_id);
+
+
+--
+-- TOC entry 18 (OID 62143744)
+-- Name: run_suppress_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY run_suppress
+    ADD CONSTRAINT run_suppress_pkey PRIMARY KEY (run_id);
+
+
+--
+-- TOC entry 19 (OID 62228289)
+-- Name: distribution_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY distribution
+    ADD CONSTRAINT distribution_pkey PRIMARY KEY (distribution_name);
+
+
+--
+-- TOC entry 11 (OID 62228368)
+-- Name: scheme_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY scheme
+    ADD CONSTRAINT scheme_pkey PRIMARY KEY (scheme_name);
+
+
+--
+-- TOC entry 21 (OID 62143746)
+-- Name: run_build_id; Type: FK CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY run
+    ADD CONSTRAINT run_build_id FOREIGN KEY (build_id) REFERENCES build(build_id);
+
+
+--
+-- TOC entry 22 (OID 62144493)
+-- Name: build_suppress_id; Type: FK CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY build_suppress
+    ADD CONSTRAINT build_suppress_id FOREIGN KEY (build_id) REFERENCES build(build_id);
+
+
+--
+-- TOC entry 20 (OID 62228431)
+-- Name: build_distribution; Type: FK CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY build
+    ADD CONSTRAINT build_distribution FOREIGN KEY (build_distribution) REFERENCES distribution(distribution_name);
+
+
+--
+-- TOC entry 2 (OID 2200)
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+-- COMMENT ON SCHEMA public IS 'Standard public namespace';
+
 

@@ -2,10 +2,10 @@
 
 cd "`dirname $0`"
 
-./sync-from-www
+#./sync-from-www
 
-backup=$HOME/research/forensics
-tar cf - sampler-uploads | gpg --encrypt --recipient=liblit >$backup/sampler-uploads.tar.gpg
+#backup=$HOME/research
+#tar cf - sampler-uploads | gpg --encrypt --recipient=liblit >$backup/sampler-uploads.tar.gpg
 
 find sampler-uploads -maxdepth 1 | { read; cat; } | ./insert-runs.pl "$@"
 

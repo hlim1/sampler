@@ -63,8 +63,8 @@ install -d %{buildroot}%{_libdir}/sampler/applications/%{name}
 for file in config %{name}-sampler.schemas interface.glade wrapper; do
   install sampler/$file %{buildroot}%{_libdir}/sampler/applications/%{name}
 done
-mv %1 %{buildroot}%{_libdir}/sampler/applications/%{name}/executable
-ln -s %{_libdir}/sampler/applications/%{name}/wrapper %1
+mv %{buildroot}%{sampler_wrapped} %{buildroot}%{_libdir}/sampler/applications/%{name}/executable
+ln -s %{_libdir}/sampler/applications/%{name}/wrapper %{buildroot}%{sampler_wrapped}
 install -d %{buildroot}%{_sysconfdir}/gconf/schemas
 install sampler/%{name}-sampler.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
 %{_libdir}/sampler/tools/find-sampler-info $RPM_BUILD_ROOT

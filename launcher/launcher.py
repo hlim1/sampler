@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
 import gconf
+import gnome
 import gobject
 import gtk
 import gtk.glade
+import gtkhtml2
 import pango
 
 import ConfigParser
@@ -15,6 +17,7 @@ import re
 import struct
 import sys
 import urllib2
+import urlparse
 import xreadlines
 
 
@@ -97,7 +100,7 @@ gconfig = GnomeConfig()
 
 ########################################################################
 #
-#  Radio button group management
+#  GUI callbacks and helpers: opt-in dialog
 #
 
 
@@ -118,6 +121,32 @@ def on_yes_toggled(yes):
     global enabled
     enabled = yes.get_active()
     yesno_set()
+
+
+########################################################################
+#
+#  GUI callbacks and helpers: server-message dialog
+#
+
+
+def on_request_url(document, url, stream):
+    full = urlparse.urljoin(document.base, url)
+    # !!!: support GNOME-configured proxy (example at end of http://mail.python.org/pipermail/python-dev/2002-December/030927.html)
+    reply = urllib2.urlopen(full)
+    stream.write(reply.read())
+
+
+def on_set_base(document, base):
+    document.base = urlparse.urljoin(document.base, base)
+
+
+def on_link_clicked(document, link):
+    full = urlparse.urljoin(document.base, link)
+    gnome.url_show(full)
+
+
+def on_title_changed(document, title):
+    document.dialog.set_title(title)
 
 
 ########################################################################
@@ -173,12 +202,49 @@ def main():
 
     global xml
     xml = gtk.glade.XML(os.path.join(application.dir, 'interface.glade'))
+    xml.signal_autoconnect(globals())
+
+    docu = gtkhtml2.Document()
+    view = gtkhtml2.View()
+    port = xml.get_widget('html-scroll')
+    port.add(view)
+    dialog = xml.get_widget('server-message')
+
+    view.set_document(docu)
+    docu.dialog = dialog
+    docu.base = ''
+    on_set_base(docu, 'http://www.google.com/')
+    docu.connect('request_url', on_request_url)
+    docu.connect('set_base', on_set_base)
+    docu.connect('link_clicked', on_link_clicked)
+    docu.connect('title_changed', on_title_changed)
+
+    docu.open_stream('text/html')
+    docu.write_stream('<html><head><meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"><title>Google</title><style><!--\
+body,td,a,p,.h{font-family:arial,sans-serif;}\
+.h{font-size: 20px;}\
+.q{text-decoration:none; color:#0000cc;}\
+//-->\
+</style>\
+<script>\
+<!--\
+function sf(){document.f.q.focus();}\
+// -->\
+</script>\
+</head><body bgcolor=#ffffff text=#000000 link=#0000cc vlink=#551a8b alink=#ff0000 onLoad=sf()><center><table border=0 cellspacing=0 cellpadding=0><tr><td><img src="/images/logo.gif" width=276 height=110 alt="Google"></td></tr></table><br>\
+<table border=0 cellspacing=0 cellpadding=0><tr><td width=15>&nbsp;</td><td id=0 bgcolor=#3366cc align=center width=95 nowrap><font color=#ffffff size=-1><b>Web</b></font></td><td width=15>&nbsp;</td><td id=1 bgcolor=#efefef align=center width=95 nowrap onClick="" style=cursor:pointer;cursor:hand;><a id=1a class=q href="/imghp?hl=en&tab=wi&ie=UTF-8"><font size=-1>Images</font></a></td><td width=15>&nbsp;</td><td id=2 bgcolor=#efefef align=center width=95 nowrap onClick="" style=cursor:pointer;cursor:hand;><a id=2a class=q href="/grphp?hl=en&tab=wg&ie=UTF-8"><font size=-1>Groups</font></a></td><td width=15>&nbsp;</td><td id=3 bgcolor=#efefef align=center width=95 nowrap onClick="" style=cursor:pointer;cursor:hand;><a id=3a class=q href="/dirhp?hl=en&tab=wd&ie=UTF-8"><font size=-1>Directory</font></a></td><td width=15>&nbsp;</td><td id=4 bgcolor=#efefef align=center width=95 nowrap onClick="" style=cursor:pointer;cursor:hand;><a id=4a class=q href="/nwshp?hl=en&tab=wn&ie=UTF-8"><font size=-1>News</font></a></td><td width=15>&nbsp;</td></tr><tr><td colspan=12 bgcolor=#3366cc><img width=1 height=1 alt=""></td></tr></table><br><form action="/search" name=f><table cellspacing=0 cellpadding=0><tr><td width=75>&nbsp;</td><td align=center><input type=hidden name=hl value=en><span id=hf></span><input type=hidden name=ie value="ISO-8859-1"><input maxLength=256 size=55 name=q value=""><br><input type=submit value="Google Search" name=btnG><input type=submit value="I\'m Feeling Lucky" name=btnI></td><td valign=top nowrap><font size=-2>&nbsp;&#8226;&nbsp;<a href=/advanced_search?hl=en>Advanced&nbsp;Search</a><br>&nbsp;&#8226;&nbsp;<a href=/preferences?hl=en>Preferences</a><br>&nbsp;&#8226;&nbsp;<a href=/language_tools?hl=en>Language Tools</a></font></td></tr></table></form><br>\
+<br><font size=-1><a href="/ads/">Advertise&nbsp;with&nbsp;Us</a> - <a href="/services/">Business&nbsp;Solutions</a> - <a href="/options/">Services&nbsp;&amp;&nbsp;Tools</a> - <a href=/about.html>Jobs,&nbsp;Press,&nbsp;&amp;&nbsp;Help</a></font><p><font size=-2>&copy;2003 Google - Searching 3,083,324,652 web pages</font></p></center></body></html>')
+    docu.close_stream()
+    view.show()
+    dialog.run()
+    dialog.hide()
 
     if not gconfig['asked']:
-        xml.signal_autoconnect(globals())
         yesno_set()
 
-        response = xml.get_widget('opt-in').run()
+        dialog = xml.get_widget('opt-in')
+        response = dialog.run()
+        dialog.hide()
         if response != gtk.RESPONSE_OK:
             sys.exit(1)
 
@@ -283,6 +349,7 @@ def main():
 
             dialog = xml.get_widget('view-before-sending')
             response = dialog.run()
+            dialog.hide()
             if response != gtk.RESPONSE_OK:
                 sys.exit(exitSignal or exitStatus)
 
@@ -302,7 +369,7 @@ def main():
             headers['Sampler-' + header] = synopsis[header]
 
         request = urllib2.Request(reportingUrl, multipart.getvalue(), headers)
-        # !!!: support GNOME-configured proxy
+        # !!!: support GNOME-configured proxy (example at end of http://mail.python.org/pipermail/python-dev/2002-December/030927.html)
         reply = urllib2.urlopen(request)
         # !!!: present result in HTML widget if non-empty
         # !!!: check for sparsity update

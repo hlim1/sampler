@@ -12,7 +12,8 @@ compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) -o $@ $(syslibs) $^
 
-recurse = $(MAKE) -C $(@D) $(@F)
+force ?= force
+recurse = $(MAKE) -C $(@D) $(@F) force=
 
 
 ########################################################################
@@ -54,6 +55,9 @@ $(addsuffix .dl, $(impls)): %.dl: %.do $(linkorder)
 browse: force
 	ocamlbrowser $(includes)
 .PHONY: browse
+
+force:
+.PHONY: force
 
 
 MOSTLYCLEANFILES = $(targets) *.cma *.cmxa *.cmi *.cmo *.cmx *.o

@@ -34,7 +34,7 @@ class visitor file =
     object
       inherit FunctionBodyVisitor.visitor
 
-      val mutable sites = []
+      val mutable sites : Sites.info = []
       method result = sites
 
       val vars =
@@ -79,17 +79,19 @@ class visitor file =
 
 	    let calls =
 	      let callLogger invariant =
-		mkStmtOneInstr (Call (None, logger,
-				      [mkString (sprint max_int (d_loc () location));
-				       mkString func.svar.vname;
-				       mkString (sprint max_int (d_exp () invariant));
-				       invariant],
-				      location))
+		let call = mkStmtOneInstr (Call (None, logger,
+						 [mkString (sprint max_int (d_loc () location));
+						  mkString func.svar.vname;
+						  mkString (sprint max_int (d_exp () invariant));
+						  invariant],
+						 location))
+		in
+		sites <- (call, []) :: sites;
+		call
 	      in
 	      List.map callLogger invariants
 	    in
-
-	    sites <- calls @ sites;
+	    
 	    stmt.skind <- Block (mkBlock (mkStmt stmt.skind :: calls));
 	    SkipChildren
 
@@ -108,4 +110,4 @@ let collect file =
   fun func ->
     let visitor = visitor func in
     ignore (visitCilFunction (visitor :> cilVisitor) func);
-    visitor#result, []
+    visitor#result

@@ -96,14 +96,14 @@ $(alwaysExecs): %.exe: %.c
 always-%.c: runDecure += --no-sample
 
 always-only-%.c: decurable.i
-	$(runDecure) --only $* $< >$@ || rm -f $@
+	$(runDecure) --include-function $* --exclude-function \* $< >$@ || rm -f $@
 	[ -r $@ ]
 
 always-all.c: decurable.i
 	$(runDecure) $< >$@ || rm -f $@
 
 always-none.c: decurable.i
-	$(runDecure) --only @ $< >$@ || rm -f $@
+	$(runDecure) --exclude-function \* $< >$@ || rm -f $@
 
 
 clean::
@@ -125,7 +125,7 @@ $(sampleExecs): %.exe: %.c
 sample-%.c: runDecure += --sample
 
 sample-only-%.c: decurable.i
-	$(runDecure) --only $* $< >$@ || rm -f $@
+	$(runDecure) --include-function $* --exclude-function \* $< >$@ || rm -f $@
 	[ -r $@ ]
 
 sample-all.c: decurable.i

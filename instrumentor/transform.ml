@@ -18,13 +18,13 @@ let _ =
 
 
 let visit isWeightlessCall countdownToken func info =
-  if not info.sites#isEmpty then
+  if not info.stmts#isEmpty then
     let entry = FunctionEntry.find func in
     let jumps = ClassifyJumps.visit func in
     let weightyCalls = List.filter (fun call -> not (isWeightlessCall call)) info.calls in
     let afterCalls = List.map (fun info -> info.landing) weightyCalls in
     let headers = entry :: jumps.backward @ afterCalls in
-    let weights = WeighPaths.weigh info.sites headers in
+    let weights = WeighPaths.weigh info.stmts headers in
     
     let countdown = countdownToken func in
     let original, instrumented, clones = Duplicate.duplicateBody func in
@@ -34,12 +34,12 @@ let visit isWeightlessCall countdownToken func info =
     CallsPatch.patch clones weights countdown weightyCalls;
     FunctionEntry.patch func weights countdown instrumented;
     Returns.patch func countdown;
-    info.sites#iter (Sites.patch clones countdown);
+    info.stmts#iter (Sites.patch clones countdown);
 
     if !Stats.showStats then
       begin
 	let siteCount =
-	  info.sites#fold (fun _ count -> count + 1) 0
+	  info.stmts#fold (fun _ count -> count + 1) 0
 	in
 
 	let headerTotal, headerCount =

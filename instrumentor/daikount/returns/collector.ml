@@ -13,8 +13,7 @@ class visitor file =
       inherit FunctionBodyVisitor.visitor
 
       val mutable sites = []
-      val mutable globals = []
-      method result : Sites.info = sites, globals
+      method result = sites
 
       method vstmt stmt =
 	match stmt.skind with
@@ -27,10 +26,9 @@ class visitor file =
 		  name = Pretty.sprint max_int (d_exp () callee)
 		} in
 		let right = { exp = zero; name = "0" } in
-		let (global, site) = invariant location left right in
-		globals <- global :: globals;
+		let site = invariant location left right in
 		sites <- site :: sites;
-		stmt.skind <- Block (mkBlock ([mkStmt stmt.skind; site]))
+		stmt.skind <- Block (mkBlock ([mkStmt stmt.skind; fst site]))
 	      end;
 	    SkipChildren
 

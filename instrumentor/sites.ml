@@ -1,7 +1,7 @@
 open Cil
 
 
-type info = stmt list * global list
+type info = Site.t list
 
 
 let patch clones countdown original =

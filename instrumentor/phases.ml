@@ -7,7 +7,7 @@ let main preparator =
     [
      Choices.phase;
      "Transform", Interproc.visit preparator;
-     Options.phase;
+     Idents.phase;
      "dump", dumpFile (new Printer.printer) stdout
    ]
   in

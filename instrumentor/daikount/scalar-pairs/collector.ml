@@ -32,8 +32,7 @@ class visitor file =
       inherit FunctionBodyVisitor.visitor
 
       val mutable sites = []
-      val mutable globals = []
-      method result : Sites.info = sites, globals
+      method result = sites
 
       val vars =
 	let globalVars =
@@ -71,10 +70,9 @@ class visitor file =
 		    exp = right;
 		    name = Pretty.sprint max_int (d_exp () right)
 		  } in
-		  let global, site = invariant rightOperand in
-		  globals <- global :: globals;
+		  let (stmt, _) as site = invariant rightOperand in
 		  sites <- site :: sites;
-		  site
+		  stmt
 	      in
 
 	      let rights =

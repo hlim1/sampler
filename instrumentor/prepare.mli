@@ -2,7 +2,7 @@ open Cil
 
 
 type info = {
-    sites : StmtSet.container;
+    stmts : StmtSet.container;
     calls : Calls.infos;
   }
 

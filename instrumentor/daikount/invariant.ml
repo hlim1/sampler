@@ -65,7 +65,7 @@ let invariant file =
       Bump.bump func location left.exp right.exp array
     in
 
-    declaration, bump
+    bump, [declaration]
 
 
 let register file =

@@ -1,4 +1,4 @@
 open Cil
 
 
-val call : file -> global list ref -> location -> OutputSet.container -> instr list
+val call : file -> location -> OutputSet.container -> Site.t

@@ -1,22 +1,37 @@
 open Cil
+open Clude
 
 
-let only = ref ""
+let functionFilter = ref []
 
 
 let _ =
-  Options.registerString
-    ~flag:"only"
-    ~desc:"<function> sample only in this function"
-    ~ident:"Only"
-    only
+  Clude.register
+    ~flag:"function"
+    ~desc:"<function> instrument this function"
+    ~ident:"FilterFunction"
+    functionFilter
+
+
+(**********************************************************************)
+
+
+let fileFilter = ref []
+
+
+let _ =
+  Clude.register
+    ~flag:"file"
+    ~desc:"<file-name> instrument this file"
+    ~ident:"FilterFile"
+    fileFilter
 
 
 (**********************************************************************)
 
 
 type info = {
-    sites : StmtSet.container;
+    stmts : StmtSet.container;
     calls : Calls.infos;
   }
 
@@ -43,20 +58,35 @@ class virtual visitor =
       IsolateInstructions.visit func;
 
       let calls = Calls.prepatch self#prepatcher func in
-      let sitesList, globals = self#collectSites func in
-      let sites = new StmtSet.container in
-      let info = { sites = sites; calls = calls } in
+      let sites = self#collectSites func in
+      let stmts = new StmtSet.container in
+      let info = { stmts = stmts; calls = calls } in
 
-      if !only = "" || !only = func.svar.vname then
-	begin
-	  ignore (computeCFGInfo func false);
-	  List.iter sites#add sitesList;
-	  globals, info
-	end
-      else
-	let removeStmt stmt = stmt.skind <- Instr [] in
-	List.iter removeStmt sitesList;
-	[], info
+      let selected =
+	match filter !functionFilter func.svar.vname with
+	| Include ->
+	    ignore (computeCFGInfo func false);
+	    fun stmt ->
+	      filter !fileFilter (get_stmtLoc stmt.skind).file == Include
+	| Exclude ->
+	    fun _ -> false
+      in
+
+      let folder otherGlobals (stmt, globals) =
+	if selected stmt then
+	  begin
+	    stmts#add stmt;
+	    globals @ otherGlobals
+	  end
+	else
+	  begin
+	    stmt.skind <- Instr [];
+	    otherGlobals
+	  end
+      in
+
+      let globals = List.fold_left folder [] sites in
+      globals, info
 
     method vglob = function
       | GFun (func, _) as global

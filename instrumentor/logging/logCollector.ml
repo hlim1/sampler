@@ -6,8 +6,7 @@ class virtual visitor file =
     inherit FunctionBodyVisitor.visitor
 
     val mutable sites = []
-    val globals = ref []
-    method result = sites, !globals
+    method result = sites
 
     val logger = Logger.call file
 
@@ -18,9 +17,9 @@ class virtual visitor file =
       let skind = stmt.skind in
       let location = get_stmtLoc skind in
       let original = mkStmt skind in
-      let instrumentation = mkStmt (Instr (logger globals location outputs)) in
+      let (instrumentation, _) as site = logger location outputs in
       let combined = self#placeInstrumentation original instrumentation in
-      sites <- instrumentation :: sites;
+      sites <- site :: sites;
       stmt.skind <- Block (mkBlock combined);
       stmt
 

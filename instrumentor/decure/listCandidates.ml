@@ -17,9 +17,8 @@ let main () =
 	    begin
 	      prepareCFG func;
 	      IsolateInstructions.visit func;
-	      match fst (Find.collect func) with
-	      | [] -> ()
-	      | _ -> print_endline func.svar.vname
+	      if Find.collect func != [] then
+		print_endline func.svar.vname
 	    end
 	| _ ->
 	    ()

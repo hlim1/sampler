@@ -100,7 +100,7 @@ let call file =
 	failwith "internal error"
   in
 
-  fun globals location (lvals : OutputSet.container) ->
+  fun location (lvals : OutputSet.container) ->
     
     let rawBuffer name exp =
       let baseType = typeOf exp in
@@ -177,11 +177,6 @@ let call file =
       CompoundInit (tableauType, build tableauInfo.cfields buffers)
     in
 
-    globals :=
-      GCompTag (tableauInfo, location)
-      :: GVar (tableau, Some inits, location)
-      :: !globals;
-
     let callLogger = Call (None, logTableau,
 			   [ mkAddrOf (tableauVar, NoOffset);
 			     SizeOf tableauType ],
@@ -206,4 +201,9 @@ let call file =
       build tableauInfo.cfields buffers
     in
 
-    instrs
+    let stmt = mkStmt (Instr instrs) in
+    let globals = [GCompTag (tableauInfo, location);
+		   GVar (tableau, Some inits, location)]
+    in
+
+    stmt, globals

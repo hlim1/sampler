@@ -50,7 +50,7 @@ let collect (infos : Prepare.infos) =
 
   infos#iter
     (fun func info ->
-      let assumption = info.sites#isEmpty in
+      let assumption = info.stmts#isEmpty in
       weightless#replace func.svar.vname assumption);
 
   Fixpoint.compute

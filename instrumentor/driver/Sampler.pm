@@ -23,7 +23,7 @@ sub collectOneArgument {
     my $self = shift;
     my ($arg, $pargs) = @_;
 
-    if ($arg eq '--only') {
+    if ($arg =~ '--(in|ex)clude-(function|file)') {
 	push @{$self->{instrumentor}}, $arg, shift @{$pargs};
 	return 1;
     } elsif ($arg eq '--no-sample') {

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.9.2
+
+** Minor bug fixes to developer tools.
+
 * sampler-0.9.1
 
 ** More robust cleanup of compiler temporary files.

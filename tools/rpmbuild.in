@@ -23,10 +23,10 @@ my %macros = (
 	      sampler_cc_flags => '%{nil}',
 	      sampler_cc_version => '%(rpm -q --qf "%%{version}" sampler-devel)',
 
+	      _sampler_source => '%{?sampler_source}%{!?sampler_source:1}',
 	      'sampler_tags(s:)' => <<'EOF',
 Requires: sampler >= 0.4
 BuildRequires: sampler-devel >= 0.7.4
-%global _sampler_source %{-s*}%{!-s:1}
 Source%{_sampler_source}: %{name}-sampler.tar.gz
 %{nil}
 EOF

@@ -1,6 +1,8 @@
-libdecoder = ../../liblog/libdecoder.a
+libdecoder = $(top_builddir)/liblog/libdecoder.a
 
 noinst_PROGRAMS = populate
+INCLUDES = -I$(top_srcdir)
+
 populate_LDADD = -lcurses -lpq++ $(libdecoder)
 populate_SOURCES =				\
 	File.cc					\

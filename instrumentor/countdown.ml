@@ -16,6 +16,13 @@ let specializeSingletonRegions =
     ~ident:"SpecializeSingletonRegions"
     ~default:true
 
+let cacheCountdown =
+  Options.registerBoolean
+    ~flag:"cache-countdown"
+    ~desc:"cache the global countdown in local variables"
+    ~ident:"CacheCountdown"
+    ~default:true
+
 
 let findGlobal = FindGlobal.find "nextEventCountdown"
 
@@ -30,7 +37,12 @@ class countdown file =
   let global = var (findGlobal file) in
   let reset = findReset file in
   fun fundec ->
-    let local = var (Locals.makeTempVar fundec ~name:"localEventCountdown" uintType) in
+    let local =
+      if !cacheCountdown then
+	var (Locals.makeTempVar fundec ~name:"localEventCountdown" uintType)
+      else
+	global
+    in
 
     object (self)
       method decrement location scale =

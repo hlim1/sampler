@@ -91,6 +91,8 @@ my %flag_specs =
      '-fno-relative-paths' => \&inst_toggle,
      '-fbalance-paths' => \&inst_toggle,
      '-fno-balance-paths' => \&inst_toggle,
+     '-fcache-countdown' => \&inst_toggle,
+     '-fno-cache-countdown' => \&inst_toggle,
      '-fsave-cfg' => \&inst_embed,
      '-fsave-site-info' => \&inst_embed,
      '-finstrumentor-input' => sub { $instrumentor_input = shift @ARGV },

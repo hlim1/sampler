@@ -2,7 +2,14 @@
 
 * sampler-0.13
 
-** Add support for non-random, fixed-period sampling.
+** Add support for tweaking various optimizations.  These are all
+   intended for use with the "Performance and Optimization" section of
+   my dissertation, and will be of little interest to the typical
+   developer.
+
+*** Add support for non-random, fixed-period sampling.
+
+*** Add support for disabling local countdown caching.
 
 * sampler-0.12.4
 

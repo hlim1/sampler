@@ -6,6 +6,7 @@
 *.di
 *.dl
 *.do
+*.dot
 Makefile
 Makefile.in
 resolve-cfg

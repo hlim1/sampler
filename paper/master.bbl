@@ -177,13 +177,13 @@ D.~M. Volpano and G.~Smith.
   Practice of Software Development}, volume 1214 of {\em Lecture Notes in
   Computer Science}, pages 607--621. Springer-Verlag, 1997.
 
-\balancecolumns
-
 \bibitem{Whaley:337483}
 J.~Whaley.
 \newblock A portable sampling-based profiler for {Java} virtual machines.
 \newblock In {\em Proceedings of the ACM 2000 conference on Java Grande}, pages
   78--87. ACM Press, 2000.
+
+\balancecolumns
 
 \bibitem{ZdZhNyMy2001}
 S.~Zdancewic, L.~Zheng, N.~Nystrom, and A.~C. Myers.

@@ -2,10 +2,17 @@ open Cil
 open Str
 
 
-let checkPattern = regexp "^__CHECK_"
+let isCheck =
+  let pattern = regexp "__CHECK_" in
+  fun candidate -> string_match pattern candidate 0
 
 
-type classification = Check | Fail | DoNotInstrument | Generic
+let isWrapper =
+  let pattern = regexp ".*_wrapper_[sfqiwrv]+$" in
+  fun candidate -> string_match pattern candidate 0
+
+
+type classification = Check | Fail | Generic
 
 let classify = function
   | "__CHECK_BOUNDS_LEN"
@@ -33,11 +40,9 @@ let classify = function
   | "lbound_or_ubound_fail"
   | "ubound_or_non_pointer_fail" ->
       Fail
-  | "qsort_wrapper_wsww"
-  | "strcpy_wrapper_sff" ->
-      DoNotInstrument
   | _ ->
       Generic
+
 
 
 class visitor =
@@ -48,14 +53,16 @@ class visitor =
     method sites = sites
     method globals : global list = []
 
-    method vfunc func =
-      match classify func.svar.vname with
+    method vfunc { svar = { vname = vname } } =
+      match classify vname with
       | Check
-      | Fail
-      | DoNotInstrument ->
+      | Fail ->
 	  SkipChildren
       | Generic ->
-	  DoChildren
+	  if isWrapper vname then
+	    SkipChildren
+	  else
+	    DoChildren
 
     method vstmt ({skind = skind} as stmt) =
       match skind with
@@ -67,9 +74,8 @@ class visitor =
 	    | Fail ->
 		currentLoc := get_stmtLoc skind;
 		ignore (bug "found raw call to failure routine %s(); missed containing check?" vname);
-	    | DoNotInstrument
 	    | Generic ->
-		if string_match checkPattern vname 0 then
+		if isCheck vname then
 		  begin
 		    currentLoc := get_stmtLoc skind;
 		    ignore (warn "suspicious non-check call: %s\n" vname)

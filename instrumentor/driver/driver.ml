@@ -1,12 +1,6 @@
 open Unix
 
 
-type plan = string * string list
-
-
-let identity thing = thing
-
-
 class virtual c arguments =
   object (self)
     val mutable verbose = false

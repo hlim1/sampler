@@ -17,6 +17,7 @@ my $libcountdown = "$FindBin::Bin/../../../libcountdown";
 sub setDefaultArguments {
     my $self = shift;
     $self->SUPER::setDefaultArguments;
+    $self->{only} = '';
     $self->{LD} = "libtool $self->{LD}";
 }
 

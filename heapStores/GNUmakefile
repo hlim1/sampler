@@ -3,6 +3,7 @@ include $(top)/defs.mk
 
 targets := main
 libdirs := $(top)
+subdirs := liblog
 
 include $(top)/rules.mk
 

@@ -5,19 +5,16 @@ launcher = launcher
 endif
 
 SUBDIRS =					\
+	debian					\
 	doc					\
 	fuzz					\
 	instrumentor				\
 	$(launcher)				\
 	lib					\
+	mining					\
+	ocaml					\
 	tools					\
 	www
-
-DIST_SUBDIRS =					\
-	$(SUBDIRS)				\
-	debian					\
-	mining					\
-	ocaml
 
 EXTRA_DIST =					\
 	$(PACKAGE).spec				\

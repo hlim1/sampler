@@ -2,7 +2,6 @@
 #include <libpq++/pgdatabase.h>
 #include <sstream>
 #include "Session.h"
-#include "progress.h"
 #include "require.h"
 
 
@@ -25,16 +24,16 @@ static int decode(unsigned short signum)
       if (signum)
 	{
 	  cout << "good: terminated abnormally with signal " << signum << '\n';
-	  return 2;
+	  return 0;
 	}
       else
 	{
 	  cout << "bad: terminated abnormally, but no signal\n";
-	  return 3;
+	  return 2;
 	}
     default:
       cout << "bad: garbled trace\n";
-      return 4;
+      return 3;
     }
 }
 
@@ -58,7 +57,9 @@ int main(int argc, char *argv[])
 
   require(database.ExecCommandOk("BEGIN"), database);
   Session::singleton.upload(database, signum);
+  cerr << "commit: " << flush;
   require(database.ExecCommandOk("COMMIT"), database);
+  cerr << "done" << endl;
 
   return 0;
 }

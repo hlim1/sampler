@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set() {
+    gconftool-2 --set --type=$2 /apps/gnumeric/bug-isolation/$1 $3
+}
+
+set asked bool false
+set compression-level int 6
+set enabled bool true
+set reporting-url string http://brawnix.cs.berkeley.edu/cgi-bin/sampler-upload
+set sparsity int 1000
+set view-before-sending bool true

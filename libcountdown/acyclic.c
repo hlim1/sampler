@@ -45,7 +45,7 @@ __attribute__((constructor)) static void initialize()
 }
   
 
-__attribute__((destructor)) static void shutdown()
+__attribute__((destructor)) static void finalize()
 {
   assert(!generator == !gen);
 

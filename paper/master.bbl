@@ -1,0 +1,196 @@
+\ifx \k \undefined \let \k = \c \fi\ifx\send\undefined\newcommand{\send}[1]{
+  \footnotesize\Longrightarrow #1
+  \hspace{0.4cm}}\fi\ifx\xor\undefined\newcommand{\xor}{\oplus}\fi\ifx\random\%
+undefined\newcommand{\random}{\mathbin{\in_{\cal
+  R}}}\fi\makeatletter\@ifundefined{send}{\newcommand{\send}{\Longrightarrow\h%
+space{0.4cm}}}{} \@ifundefined{xor}{\newcommand{\xor}{\oplus}}{}
+  \@ifundefined{random}{\newcommand{\random}{\ensuremath{\in_{\cal R}}}}{}
+  \@ifundefined{Z}{\newcommand{\Z}[1]{\ensuremath{{\mathbb{Z}_{#1}}}}}{}
+  \@ifundefined{mathbb}{\newcommand{\mathbb}[1]{\ensuremath{{\rm #1\!\!#1}}}}{}
+  \makeatother\input bibnames.sty \input path.sty \input bibnames.sty
+\begin{thebibliography}{10}
+
+\bibitem{Anderson:1997:CPW}
+J.~M. Anderson, L.~M. Berc, J.~Dean, S.~Ghemawat, M.~R. Henzinger, S.-T.~A.
+  Leung, R.~L. Sites, M.~T. Vandevoorde, C.~A. Waldspurger, and W.~E. Weihl.
+\newblock Continuous profiling: Where have all the cycles gone?
+\newblock {\em ACM Transactions on Computer Systems}, 15(4):357--390, Nov.
+  1997.
+
+\bibitem{Arnold:2001:FRC}
+M.~Arnold and B.~Ryder.
+\newblock A framework for reducing the cost of instrumented code.
+\newblock {\em ACM SIG{\-}PLAN Notices}, 36(5):168--179, May 2001.
+
+\bibitem{Arnold:2000:ACCTS}
+M.~Arnold and P.~F. Sweeney.
+\newblock Approximating the calling context tree via sampling.
+\newblock Research report RC 21789 (98099), IBM T.J. Watson Research Center,
+  Yorktown Heights, New York, July 7 2000.
+
+\bibitem{ICSE2002}
+Association for Computing Machinery.
+\newblock {\em Proceedings of the International Conference on Software
+  Engineering}, Buenos Aires, Argentina, May 2002.
+
+\bibitem{PASTE'02*2}
+J.~Bowring, A.~Orso, and M.~J. Harrold.
+\newblock Monitoring deployed software using software tomography.
+\newblock In M.~B. Dwyer, editor, {\em Proceedings of the 2002 ACM
+  SIGPLAN-SIGSOFT workshop on Program analysis for software tools and
+  engineering (PASTE-02)}, volume 28, 1 of {\em SOFTWARE ENGINEERING NOTES},
+  pages 2--9. ACM Press, 2002.
+
+\bibitem{00000048}
+L.~{Breiman}, J.~H. {Friedman}, R.~A. {Olshen}, and C.~J. {Stone}.
+\newblock {\em Classification and Regression Trees}.
+\newblock Statistics/Probability Series. Wadsworth Publishing Company, Belmont,
+  California, U.S.A., 1984.
+
+\bibitem{Broadwell:2003:SSGSCI}
+P.~Broadwell, M.~Harren, and N.~Sastry.
+\newblock Scrash: A system for generating secure crash information.
+\newblock In {\em Proceedings of the 11th USENIX Security Symposium},
+  Washington, DC, Aug. 4--8 2003.
+\newblock To appear.
+
+\bibitem{Burrows:2000:EFV}
+M.~Burrows, U.~Erlingson, S.-T. Leung, M.~Vandevoorde, C.~Waldspurger,
+  K.~Walker, and B.~Weihl.
+\newblock Efficient and flexible value sampling.
+\newblock {\em ACM SIG{\-}PLAN Notices}, 35(11):160--167, Nov. 2000.
+
+\bibitem{Canny2002}
+J.~Canny.
+\newblock Collaborative filtering with privacy.
+\newblock In {\em Proceedings of the {IEEE} Symposium on Research in Security
+  and Privacy}, pages 45--57, Oakland, CA, May 2002. {IEEE} Computer Society,
+  Technical Committee on Security and Privacy, {IEEE} Computer Society Press.
+
+\bibitem{Carlisle:1996:OPPWDDSDMM}
+M.~C. Carlisle.
+\newblock {\em {Olden}: Parallelizing Programs with Dynamic Data Structures on
+  Distributed-Memory Machines}.
+\newblock PhD thesis, Department of Computer Science, Princeton University,
+  June 1996.
+
+\bibitem{EC00*150}
+C.~Dellarocas.
+\newblock Immunizing online reputation reporting systems against unfair ratings
+  and discriminatory behavior.
+\newblock In {\em Proceedings of the 2nd {ACM} Conference on Electronic
+  Commerce (EC-00)}, pages 150--157. ACM, 2000.
+
+\bibitem{Demsky:RBEOOP:2002}
+B.~Demsky and M.~C. Rinard.
+\newblock Role-based exploration of object-oriented programs.
+\newblock In {\em Proceedings of the International Conference on Software
+  Engineering\/} \cite{ICSE2002}.
+
+\bibitem{ernst2001}
+M.~D. Ernst, J.~Cockrell, W.~G. Griswold, and D.~Notkin.
+\newblock Dynamically discovering likely program invariants to support program
+  evolution.
+\newblock {\em IEEE Transactions on Software Engineering}, 27(2):1--25, Feb.
+  2001.
+
+\bibitem{Esler:2001:WVR}
+D.~Esler.
+\newblock Welcome to the virtual ramp.
+\newblock {\em Overhaul \& Maintenance}, VII(2):55, Mar. 2001.
+
+\bibitem{Golub:MCC:1999}
+T.~R. Golub, D.~K. Slonim, P.~Tamayo, C.~Huard, M.~Gaasenbeek, J.~P. Mesirov,
+  H.~Coller, M.~L. Loh, J.~R. Downing, M.~A. Caligiuri, C.~D. Bloomfield, and
+  E.~S. Lander.
+\newblock Molecular classification of cancer: class discovery and class
+  prediction by gene expression monitoring.
+\newblock {\em Science}, 286(5439):531--537, 1999.
+
+\bibitem{Hangal:DIDUCE:2002}
+S.~Hangal and M.~S. Lam.
+\newblock Tracking down software bugs using automatic anomaly detection.
+\newblock In {\em Proceedings of the International Conference on Software
+  Engineering\/} \cite{ICSE2002}, pages 291--301.
+
+\bibitem{Hastie01}
+T.~Hastie, R.~Tibshirani, and J.~Friedman.
+\newblock {\em The Elements of Statistical Learning.}
+\newblock Stats. Springer, 2001.
+
+\bibitem{Hirzel:2001:BT-FLOTP}
+M.~Hirzel and T.~Chilimbi.
+\newblock Bursty tracing: A framework for low-overhead temporal profiling.
+\newblock In {\em 4th ACM Workshop on Feedback-Directed and Dynamic
+  Optimization}, Austin, Texas, Dec. 1 2001.
+
+\bibitem{Microsoft:2002:AR-F10K}
+{Microsoft Corp.}
+\newblock Microsoft 2002 annual report and form {10-K}.
+\newblock Available at \url{http://www.microsoft.com/msft/ar02/}, Redmond,
+  Washington, 2002.
+
+\bibitem{MKLMMNS95}
+B.~Miller, D.~Koski, C.~P. Lee, V.~Maganty, R.~Murthy, A.~Natarajan, and
+  J.~Steidl.
+\newblock Fuzz revisited: A re-examination of the reliability of {UNIX}
+  utilities and services.
+\newblock Technical report, Computer Science Department, University of
+  Wisconsin, Madison, WI, 1995.
+
+\bibitem{POPL_'02*128}
+G.~Necula, S.~{McPeak}, and W.~Weimer.
+\newblock \textsc{CCured}: Type-safe retrofitting of legacy code.
+\newblock In C.~Norris and J.~James B.~Fenwick, editors, {\em Proceedings of
+  the 2002 ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages
+  (POPL-02)}, volume 37, 1 of {\em ACM SIGPLAN Notices}, pages 128--139. ACM
+  Press, 2002.
+
+\bibitem{ICSE01*221}
+S.~P. Reiss and M.~Renieris.
+\newblock Encoding program executions.
+\newblock In {\em Proceedings of the 23rd International Conference on Software
+  Engeneering (ICSE-01)}, pages 221--232. IEEE Computer Society, 2001.
+
+\bibitem{SPEC95}
+{SPEC 95}.
+\newblock {Standard Performance Evaluation Corporation Benchmarks}.
+\newblock \url{http://www.spec.org/osg/cpu95/CINT95/}, July 1995.
+
+\bibitem{Tibshirani2002}
+R.~Tibshirani, T.~Hastie, B.~Narasimhan, and G.~Chu.
+\newblock {Diagnosis of multiple cancer types by shrunken centroids of gene
+  expression}.
+\newblock {\em PNAS}, 99(10):6567--6572, 2002.
+
+\bibitem{Traub:200:EILPP}
+O.~Traub, S.~Schechter, and M.~D. Smith.
+\newblock Ephemeral instrumentation for lightweight program profiling.
+\newblock Unpublished technical report, Department of Electrical Engineering
+  and Computer Science, Hardward University, Cambridge, Massachusetts, June
+  2000.
+
+\bibitem{1997:tapsoft:volpano}
+D.~M. Volpano and G.~Smith.
+\newblock A type-based approach to program security.
+\newblock In M.~Bidoit and M.~Dauchet, editors, {\em {TAPSOFT}~'97: Theory and
+  Practice of Software Development}, volume 1214 of {\em Lecture Notes in
+  Computer Science}, pages 607--621. Springer-Verlag, 1997.
+
+\balancecolumns
+
+\bibitem{Whaley:337483}
+J.~Whaley.
+\newblock A portable sampling-based profiler for {Java} virtual machines.
+\newblock In {\em Proceedings of the ACM 2000 conference on Java Grande}, pages
+  78--87. ACM Press, 2000.
+
+\bibitem{ZdZhNyMy2001}
+S.~Zdancewic, L.~Zheng, N.~Nystrom, and A.~C. Myers.
+\newblock Untrusted hosts and confidentiality: Secure program partitioning.
+\newblock In {\em Proceedings of the 18th {ACM} Symposium on Operating Systems
+  Principles (SOSP'01)}, pages 1--14. Chateau Lake Louise, Banff, Alberta,
+  Canada, Oct. 2001.
+\newblock Appeared as {ACM} Operating Systems Review 35.5.
+
+\end{thebibliography}

@@ -9,6 +9,9 @@
 enum { StringMax = PATH_MAX };
 
 
+int normalExit;
+
+
 static void slurp(void *buffer, size_t bytes)
 {
   fread(buffer, bytes, 1, stdin);
@@ -57,6 +60,8 @@ static void file()
   slurpString(recentFile);
   if (!feof(stdin))
     printf("%s:", recentFile);
+  else if (recentFile[0] == -1 && recentFile[1] == 0)
+    normalExit = 1;
 }
 
 
@@ -211,19 +216,31 @@ static void value()
 
 int main()
 {
-  const int character = getchar();
-  assert(character != 0);
-  ungetc(character, stdin);
+  int peek;
+  peek = getchar();
 
-  do
+  if (peek == 0)
     {
-      file();
-      line();
-
-      while (name())
-	value();
+      fputs("cannot omit first file name\n", stderr);
+      abort();
     }
-  while (!feof(stdin));
+  else
+    {
+      ungetc(peek, stdin);
+      
+      while (!feof(stdin))
+	{
+	  file();
+	  line();
+      
+	  while (name())
+	    value();
+	}
+    }
+  
+  puts(normalExit
+       ? "\n(terminated normally)"
+       : "\n(terminated abnormally)");
   
   return 0;
 }

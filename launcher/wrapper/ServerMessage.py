@@ -1,4 +1,5 @@
 import cgi
+import sys
 import urllib2
 import urlparse
 
@@ -8,6 +9,7 @@ import gtk.glade
 import gtkhtml2
 
 import BlipIcons
+import Config
 import Paths
 import Signals
 
@@ -20,6 +22,11 @@ import Signals
 
 class ServerMessage:
     def __init__(self, base, content_type, body):
+        argv = sys.argv
+        sys.argv = [sys.argv[0]]
+        gnome.program_init('wrapper', Config.version)
+        sys.argv = argv
+
         xml = gtk.glade.XML(Paths.glade)
         Signals.autoconnect(self, xml)
         self.__dialog = xml.get_widget('server-message')

@@ -30,7 +30,7 @@ clean:
 
 config.status: configure
 	dh_testdir
-	CFLAGS="$(CFLAGS)" ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr $(configflags)
+	CFLAGS="$(CFLAGS)" ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr $(configflags) --sysconfdir=/etc --localstatedir=/var --disable-schemas-install 
 
 build: debian/build-stamp
 debian/build-stamp: config.status

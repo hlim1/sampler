@@ -1,5 +1,5 @@
-This package was debianized by Ben Liblit <liblit@cs.wisc.edu> on Sun,
-3 Aug 2003 05:37:33 -0700.
+This package is maintained by Ben Liblit <liblit@cs.wisc.edu> with
+debianizing help from Jesus M. Gonzalez-Barahona <jgb@debian.org>.
 
 It was downloaded from http://www.cs.wisc.edu/cbi/
 
@@ -7,7 +7,7 @@ Upstream Author: Ben Liblit <liblit@cs.wisc.edu>
 
 Copyright:
 
-Copyright (c) 2003 The Regents of the University of California.
+Copyright (c) 2003-2004 The Regents of the University of California.
 All rights reserved.
 
 Permission to use, copy, modify, and distribute this software for any

@@ -11,3 +11,14 @@ $cc -Wl,-rpath,. -o main main.o library.so -ldl
 SAMPLER_SPARSITY=1 ./main
 ], 0)
 AT_CLEANUP
+
+AT_SETUP(cfg)
+AT_CHECK([
+set -e
+cp $abs_srcdir/cfg.expected expout
+cp $abs_srcdir/cfg.c .
+cc="$abs_top_builddir/instrumentor/driver/sampler-cc-here nothing"
+$cc -c cfg.c
+$abs_top_srcdir/tools/resolve-cfg cfg.o
+], 0, expout)
+AT_CLEANUP

@@ -4,7 +4,9 @@ dir=`dirname $0`
 make -C $dir main
 
 src=../gimp-1.2.3
-( cd $src && find . -name '*.i' ) |
-fgrep -v -x ./plug-ins/print/print-dither.i |
-sed "s:^\./:$src/:" |
-xargs -r -t -n 1 ./main
+find $src/* -name '*.i' -print |
+while read source; do
+  base="`echo $source | sed 's/\.i$//'`"
+  ./main $source >$base.inst.c
+done
+

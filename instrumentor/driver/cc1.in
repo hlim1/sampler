@@ -77,10 +77,12 @@ my %flag_specs =
      # Preprocessor Options
      '-A' => \&slurp_1,
      '-D' => \&slurp_1,
-     '-MT' => \&slurp_1,
-     '-MQ' => \&slurp_1,
-     '-MD' => \&slurp_1,
-     '-MF' => \&slurp_1,
+     '-MF' => sub { push @cpp0, $_, shift @ARGV },
+     '-MP' => sub { push @cpp0, $_ },
+     '-MT' => sub { push @cpp0, $_, shift @ARGV },
+     '-MQ' => sub { push @cpp0, $_, shift @ARGV },
+     '-MD' => sub { push @cpp0, $_, shift @ARGV },
+     '-MMD' => sub { push @cpp0, $_, shift @ARGV },
      '-idirafter' => \&slurp_1,
      '-include' => \&slurp_1,
      '-imacros' => \&slurp_1,
@@ -100,7 +102,7 @@ my %flag_specs =
 while (@ARGV) {
     local $_ = shift;
 
-    if (/^-/) {
+    if (/^-./) {
 	if (exists $flag_specs{$_}) {
 	    my $handler = $flag_specs{$_};
 	    $handler->($_);
@@ -119,14 +121,10 @@ while (@ARGV) {
 	} else {
 	    slurp_0 $_;
 	}
-    } elsif (/\.[ci]$/) {
+    } else {
 	push @inputs, $_;
 	slurp_0 $_;
 	$cc1_input_slot = \$cc1[@cc1 - 1];
-    } else {
-	warn "warning: unhandled option: $_\n";
-	push @cpp0, $_;
-	push @cc1, $_;
     }
 }
 

@@ -35,6 +35,9 @@ live += $(loopless)
 loopless: $(libcil) $(loopless)
 	$(link)
 
+dumpConstants: $(libcil) $(dumpConstants)
+	$(link)
+
 %.i: %.c
 	$(CC) $(CPPFLAGS) $< -o $@ -E
 

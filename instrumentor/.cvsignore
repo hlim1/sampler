@@ -9,5 +9,6 @@
 cfg-to-dot
 checker
 dump
+dumpConstants
 loopless
 removeDeadCode

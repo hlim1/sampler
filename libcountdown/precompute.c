@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 	  writeCountdown(outfile);
 	  writeEnv(outfile, "SamplerSparsity", "SAMPLER_SPARSITY");
 	  writeEnv(outfile, "GslRngType", "GSL_RNG_TYPE");
-	  writeEnv(outfile, "GslRngSeed", "GSL_RNG_SEED");
+	  writeEnv(outfile, "SamplerSeed", "SAMPLER_SEED");
 	  fclose(outfile);
 	}
     }

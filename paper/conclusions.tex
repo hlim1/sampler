@@ -5,8 +5,9 @@ We have described a sampling infrastructure for gathering information
 about software from the set of runs produced by its user community.
 To ensure that rare events are accurately represented, we use a
 Bernoulli process to do the sampling, and we have described an
-efficient implementation of that process.  We have also presented two
-sample applications: sharing the overhead of assertions, and using
-logistic regression of a large number of sampled runs to help isolate
-the location of a bug.
+efficient implementation of that process.  We have also presented
+several sample applications: sharing the overhead of assertions,
+predicate guessing and elimination to isolate a deterministic bug, and
+regularized logistic regression to isolate a non-deterministic memory
+corruption error.
 

@@ -11,13 +11,18 @@ let _ =
     target
 
 
+let foundTarget = ref false
+
 class visitor file =
   object
     inherit Transform.visitor file as super
 
     method private transform func =
       if func.svar.vname = !target then
-	super#transform func
+	begin
+	  foundTarget := true;
+	  super#transform func
+	end
       else
 	begin
 	  IsolateInstructions.visit func;
@@ -34,4 +39,9 @@ let phase =
       raise (Arg.Bad "must identify sampled function")
     else
       let visitor = new visitor file in
-      visitCilFile visitor file
+      visitCilFile visitor file;
+      if not !foundTarget then
+	begin
+	  prerr_endline ("no function named " ^ !target);
+	  exit 3
+	end

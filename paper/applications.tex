@@ -4,36 +4,32 @@
 We have used the transformation framework to inject different forms of
 instrumentation into several programs, both to assess the performance
 impact of sampling as well as to show that sampling can offer novel
-insights into program (mis)behavior.  We report on our findings here.
+insights into program (mis)behavior. 
 
 \subsection{Sharing the Cost of Assertions}
 \label{sec:share}
 
 In conventional usage, C \texttt{assert()} calls are used during
 program development but are disabled (``\texttt{-DNDEBUG}'') when the
-code ships in order to boost performance.  However, we all know that
-shipping release 1.0 does not magically make our code bug-free.
-Deployed programs will fail in unanticipated ways, and it would be
-helpful to retain some level of assertion checking if the performance
-penalty were not excessive.
+code ships to boost performance.  However, deployed programs fail in
+unanticipated ways, and it would be helpful to retain some level of
+assertion checking if the performance penalty were not excessive.
 
-As an extreme example of assertion-dense code, consider software built
-using the \CCured instrumenting translator \cite{POPL_'02*128}.
+Programs produced by the  \CCured instrumenting translator \cite{POPL_'02*128} are
+extreme examples of assertion-dense code.
 \CCured analyses programs written in C and attempts to prove,
 statically, that most pointer operations are memory safe.  Where this
 cannot be done, \CCured inserts dynamic checks to enforce memory
-safety at run time.  For purposes of our research, \CCured may be
-thought of as a source of highly assertion-dense code.  The individual
-assertions are quite small and fast: array bounds checks, testing for
-null, etc.  However, in large numbers, their performance impact can be
-considerable.  We wish to use random sampling to share this cost
-fairly among many users.
+safety at run time.  For purposes of our research, \CCured is simply a
+source of highly assertion-dense code.  The individual assertions are
+quite small and fast: array bounds checks, testing for null, etc.
+However, in large numbers, their performance impact can be
+considerable.  We wish to use random sampling to spread this cost
+among many users.
 
 We have applied sampling to several benchmarks taken from the
 SPECINT95 \cite{SPEC95} and Olden \cite{Carlisle:1996:OPPWDDSDMM}
-benchmark suites.  These are the same benchmarked originally examined
-by \CCured's designers, but the memory safety bugs they discovered
-have been fixed.  Thus all programs run to completion and we are
+benchmark suites.  All programs run to completion and we are
 simply measuring the overhead of performing the dynamic checks.
 
 \subsubsection{Whole-Program Sampling}
@@ -60,7 +56,7 @@ simply measuring the overhead of performing the dynamic checks.
 \autoref{tab:share:static} summarizes static aspects of the sampling
 transformation when applied to the entirety of each benchmark.  For
 each program, we give the total number of non-library functions and
-the number of these which are weightless.  \CCured is a whole-program
+the number of these that are weightless.  \CCured is a whole-program
 analysis, so weightless function identification has the advantage of
 being able to examine every function body.  We also count the number
 of functions which directly contain at least one instrumentation site.
@@ -112,15 +108,12 @@ countdowns.
 Even at a fairly high sampling density of 1/100, more than two thirds
 of our benchmarks run faster then they would if all checks were
 performed.  Because each single check is so small and fast, this
-suggests that we have largely been successful in amortizing our
-sampling overhead.  We are, in a sense, hiding the sampling overhead
-in the time that would otherwise have been taken to run 99/100 checks.
-The most dramatic speedups are seen in \texttt{ijpeg} (24\% faster)
-and \texttt{compress} (32\%) faster.  On the other hand, three of the
+suggests that we have been successful in amortizing our sampling
+overhead.  The most dramatic speedups are seen in \texttt{ijpeg} (24\%
+faster) and \texttt{compress} (32\%) faster.  On the other hand, three
 benchmarks do run slower, with \texttt{go} showing the largest
 penalty.  In these cases, the time recovered by skipping 99/100 checks
-is not enough to mask the added overhead of the sampling
-infrastructure.
+is not enough to mask the added overhead of sampling.
 
 As we reduce the sampling density to 1/1000, \texttt{power} reaches a
 balance point of no measurable speedup or slowdown, while
@@ -128,7 +121,7 @@ balance point of no measurable speedup or slowdown, while
 benchmark crosses over and is now slightly faster with sampling.
 Other benchmarks, which already showed speedups at 1/100, either
 retain their position (\texttt{treeadd} and \texttt{tsp}) or show
-additional boots, with \texttt{compress} reaching an overall 38\%
+additional boosts, with \texttt{compress} reaching an overall 38\%
 speedup versus standard \CCured.  Further reducing the sampling
 density to 1/10,000 shows little change, and by the time we reach
 1/1,000,000 it is clear that we have reached a performance ceiling.
@@ -182,35 +175,28 @@ only 4\%, the same difference reported in the ``$10^{-2}$'' column for
 \texttt{perimeter} in \autoref{tab:share:density}.
 
 Among the site-containing functions, \texttt{child()} gains a small
-performance boot from sampling.  The remaining five share a common
-quality not yet fully exploited by our current implementation: self
-recursion.  Each of the five contains between one and four recursive
-calls.  Our current system treats each of these as a call to a
-non-weightless function: the countdown must be exported before the
-call and imported after.  A faster approach would be to transform each
-function to pass the local countdown down to its recursive callees,
-and accept an updated countdown back as a returned value.  Such a
-countdown management strategy would be applicable any time both callee
-and caller can agree on the API change; the case of self-recursive
-calls is particularly straightforward.  It is worth noting that
+performance boost from sampling.  The remaining five are all
+self-recursive, with between one and four recursive calls.  Our
+current system treats each of these as a call to a non-weightless
+function: the countdown must be exported before the call and imported
+after.  A faster approach would be to transform each function to pass
+the local countdown down to its recursive callees, and accept an
+updated countdown back as a returned value.  Such a countdown
+management strategy would be applicable any time both callee and
+caller can agree on the API change; the case of self-recursive calls
+is particularly straightforward.  It is worth noting that
 \texttt{child()}, which does show sampling speedup, is the only
-function of these six which is not self recursive.
+function of these six which is not self-recursive.
 
 Benchmarks that are less dominated by recursion suggest additional
 areas for improvement.  Recurring trends include:
 
 \begin{itemize}
-\item Low amortization due to lightweight regions in fixed-bound
-  loops.  A loop with fixed iteration count $i$ and body weight $w$
-  could be treated as an acyclic region of weight $iw$.  This would be
-  similar to using loop unrolling to improve instruction scheduling,
-  though literal unrolling is not strictly necessary: merely adjusting
-  the weight calculation is sufficient.
   
-\item Low amortization due to lightweight regions in loops with bounds
-  fixed on entry.  A similar optimization applies, except that the
-  effective region weight $iw$ would be computed from $i$ on each new
-  entry into the loop.
+\item Low amortization due to lightweight regions in loops with bounds that
+  are constant or fixed on entry.  A loop with iteration count $i$ and
+  body weight $w$ could be treated as an acyclic region of weight
+  $iw$.
   
 \item Conservative identification of weightless functions.  Calls
   through function pointers or to externally-defined code are assumed
@@ -223,10 +209,7 @@ When multiple functions are being instrumented, we find another area
 for improvement.  Some callees may not be weightless, but can never
 cross more than some finite number of sites per call.  The caller of a
 finite-weight function can exploit this upper limit, effectively
-treating the callee as a cluster of sites of appropriate weight.  Just
-as the loop optimizations resemble loop unrolling without the literal
-code change, here we exploit a sort of virtual inlining, but of
-weights instead of code.
+treating the callee as a cluster of sites of appropriate weight.
 
 We expect that these and other optimizations will continue to improve
 the performance benefit from sampling, both for single-function as
@@ -247,11 +230,12 @@ a large user community by using randomly generated inputs in the
 spirit of the Fuzz project~\cite{MKLMMNS95}.  Our selected target is
 version 1.06 of the GNU implementation of \texttt{bc}.  We find that
 feeding \texttt{bc} nine megabytes of random input causes it to crash
-roughly one time in four.  While this would be an unusually high
-failure rate for shipping software under normal usage patterns, we
-expect that users experiencing crashes will be more likely to opt-in
-to a trace reporting system.  Thus, this may be a reasonable ratio to
-expect if most crashes and a few non-crashes are reported.
+roughly one time in four.  
+%While this would be an unusually high
+%failure rate for shipping software under normal usage patterns, we
+%expect that users experiencing crashes will be more likely to opt-in
+%to a trace reporting system.  Thus, this may be a reasonable ratio to
+%expect if most crashes and a few non-crashes are reported.
 
 Quick perusal of the stack trace at a typical failure is discouraging.
 The crash occurs several frames deep inside the C library's
@@ -264,7 +248,7 @@ of possible invariants.  Our goal is to identify predicates that hold
 when the program succeeds, but which are violated when the program
 crashes.  We cast an extremely broad net, but with an eye toward
 pointer use errors and buffer overruns.  For pointer use, null
-pointers are clearly of interest.  Relative sizes of pointers may be
+pointers are clearly of interest.  Relative addresses of pointers may be
 interesting as well, as this may capture cases where one pointer scans
 within a second pointed-to buffer.  Checking pointer/pointer equality
 may reveal aliasing which, when not anticipated by the programmer, can
@@ -340,7 +324,7 @@ local maximum of the penalized log likelihood.  Let $\mu(x) = P(Y = 1
 While other ways of doing feature selection exist, none of them are
 particularly well-suited for this problem.  Some methods
 \cite{Golub:MCC:1999,Tibshirani2002} calculate a univariate
-correlation coeffient independently for each feature; other methods
+correlation coefficient independently for each feature; other methods
 are more computationally intensive \cite{Breiman:RFRF:1999,Hastie01}.
 In our dataset, the features are clearly not independent of each
 other, and the size of the problem is too large for more
@@ -359,7 +343,7 @@ some non-zero constant.  Hence the effective number of features used
 in training is 7260.  Sparser sampling drives counts lower: at 1/1000,
 the effective number of interesting features drops to 6738.  Beyond
 simplifying the statistical analysis, this degree of regularity means
-that counter reports are highly compressible: good news for deployed
+that counter reports are highly compressible, good news for deployed
 users with small hard drives or slow modems.
 
 In our experiments, the model converged after roughly four iterations
@@ -467,8 +451,7 @@ fix bugs.  But it does suggest where to start looking, and what sort
 of scenarios (large \texttt{indx}) to consider.  Although we are still
 learning about the capabilities of this system, and how to interpret
 its results, we believe that statistically guided debugging has the
-potential to become a powerful new tool in the arsenal of the
-professional software engineer.
+potential to make the process of finding and fixing bugs more efficient.
 
 \begin{figure}
   \centering

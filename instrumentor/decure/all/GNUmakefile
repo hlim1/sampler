@@ -1,9 +1,8 @@
-top := ..
+top := ../..
 include $(top)/defs.mk
 
-targets := decure.cma
-subdirs := all one
-libdirs := $(top)
+targets := main
+libdirs := .. $(top)
 
 include $(top)/rules.mk
 
@@ -11,8 +10,11 @@ include $(top)/rules.mk
 ########################################################################
 
 
-decure.$(cma): $(transform)
-	$(archive)
+main: $(libcil) $(top)/harness.$(cma) ../decure.$(cma) $(main)
+	$(link)
 
 $(top)/%.cmi: $(force)
+	$(recurse)
+
+../%.cmi: $(force)
 	$(recurse)

@@ -1,7 +1,7 @@
-*.cma
 *.cmi
 *.cmo
 *.cmx
 *.di
 *.do
 *.o
+main

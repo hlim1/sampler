@@ -16,13 +16,11 @@ class visitor = object
     let headers = entry :: backwardJumps @ afterCalls in
     let weights = WeighPaths.weigh headers in
     
-    let backwardPatchSites = BackwardJumps.prepatch weights backwardJumps in
-    let afterCallsPatchSites = AfterCalls.prepatch weights afterCalls in
     let instrumented, clones = Duplicate.duplicateBody func in
     
     ForwardJumps.patch clones forwardJumps;
-    BackwardJumps.patch clones backwardPatchSites;
-    AfterCalls.patch clones afterCallsPatchSites;
+    BackwardJumps.patch clones weights backwardJumps;
+    AfterCalls.patch clones weights afterCalls;
     
     SkipWrites.visit func;
     FunctionEntry.patch func weights instrumented;

@@ -1,6 +1,6 @@
 open Cil
 
-  
+
 class visitor = object
   inherit FunctionBodyVisitor.visitor
 
@@ -58,36 +58,35 @@ let split {sbody = sbody} =
 
 let nextLabelNum = ref 0
 
-let nextLabel _ =
+let label name = Label (name, locUnknown, false)
+
+let nextLabels _ =
   incr nextLabelNum;
-  Label ("postCall" ^ string_of_int !nextLabelNum, locUnknown, false)
+  let basis = "postCall" ^ string_of_int !nextLabelNum in
+  label basis, label (basis ^ "__dup")
 
 
-let prepatch weights =
-  let prepatchOne after =
-    match after.skind with
-    | Block block ->
-	let landing = mkStmt (Instr []) in
-	landing.labels <- [nextLabel ()];
+let patch clones weights =
+  let patchOne standardAfter =
+    match standardAfter.skind with
+    | Block standardBlock ->
+	let instrumentedAfter = clones#find standardAfter in
 	
-	let patchSite = ref landing in
-	let gotoStandard = mkBlock [mkStmt (Goto (ref landing, locUnknown))] in
-	let gotoInstrumented = mkBlock [mkStmt (Goto (patchSite, locUnknown))] in
-	let weight = weights#find after in
+	let standardLabel, instrumentedLabel = nextLabels () in
+	let standardLanding = mkStmt (Instr []) in
+	let instrumentedLanding = mkStmt (Instr []) in
+	standardLanding.labels <- [standardLabel];
+	instrumentedLanding.labels <- [instrumentedLabel];
+	
+	let gotoStandard = mkBlock [mkStmt (Goto (ref standardLanding, locUnknown))] in
+	let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumentedLanding, locUnknown))] in
+	let weight = weights#find standardAfter in
+	
 	let choice = LogIsImminent.choose locUnknown weight gotoInstrumented gotoStandard in
-	
-	block.bstmts <- [mkStmt choice; landing];
-	patchSite
+	standardBlock.bstmts <- [mkStmt choice; standardLanding];
+	instrumentedAfter.skind <- Block (mkBlock [mkStmt choice; instrumentedLanding])
 	    
     | _ -> failwith "unexpected statement kind in after calls list"
   in
-
-  List.map prepatchOne
-
-
-(**********************************************************************)
-
-
-let patch clones =
-  let patchOne dest = dest := clones#find !dest in
+  
   List.iter patchOne

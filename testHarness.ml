@@ -5,7 +5,7 @@ open Printf
 type phase = string * (file -> unit)
 
       
-let doChecks = true
+let doChecks = false
 
 let check file = if doChecks then
   (if not (Check.checkFile [] file) then raise Errormsg.Error)

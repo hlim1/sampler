@@ -32,6 +32,7 @@ static double probability;
 }
 
 <SAMPLES>^<\/samples>\n	{
+  fputs(yytext, stdout);
   BEGIN(INITIAL);
 }
 

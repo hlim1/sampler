@@ -34,8 +34,8 @@ def main(configdir):
             outcome = Launcher.run_with_sampling(app, sparsity)
             if user.enabled():
                 Uploader.upload(app, user, outcome, 'text/html')
-            else:
-                outcome = Launcher.run_without_sampling(app)
+        else:
+            outcome = Launcher.run_without_sampling(app)
 
     finally:
         try:

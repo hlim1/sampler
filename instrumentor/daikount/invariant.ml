@@ -99,12 +99,15 @@ let register file =
   in
 
   if invariants != [] then
-    let call invariant = Call (None, Lval (var callee), [mkAddrOf (var invariant)], invariant.vdecl) in
-    let calls = List.map call invariants in
-    
-    let func = emptyFunction "registerInvariants" in
-    func.svar.vstorage <- Static;
-    func.svar.vattr <- [Attr ("constructor", [])];
-    func.sbody.bstmts <- [mkStmt (Instr calls)];
+    begin
+      let call invariant = Call (None, Lval (var callee), [mkAddrOf (var invariant)], invariant.vdecl) in
+      let calls = List.map call invariants in
+      
+      let func = emptyFunction "registerInvariants" in
+      func.svar.vstorage <- Static;
+      func.svar.vattr <- [Attr ("constructor", [])];
+      func.sbody.bstmts <- [mkStmt (Instr calls)];
 
-    file.globinit <- Some func
+      assert (file.globinit == None);
+      file.globinit <- Some func
+    end

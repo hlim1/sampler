@@ -5,9 +5,6 @@
 Use ORBit_small_{,un}listen_for_broken() to clean up after dead
 clients.
 
-libegg code is licensed under LGPL, while we use BSD.  Figure out the
-right thing to do about this.
-
 * wrapper
 
 The last client to call monitor.unref() sometimes gets a

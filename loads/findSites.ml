@@ -2,35 +2,25 @@ open Cil
 open OutputSet
 
 
-class sites = [OutputSet.t] StmtMap.container
-      
+class visitor logger = object
+  inherit Sites.visitor
 
-class visitor = object
-  inherit FunctionBodyVisitor.visitor
-
-  val sites = new sites
-  method result = sites
-
-  method vstmt statement =
+  method consider skind =
     let outputs =
-      match statement.skind with
+      match skind with
 	(* Switch has been removed by Cil.prepareCFG *)
-      | Return (Some expression, location)
-      | If (expression, _, _, location) ->
+      | Return (Some expression, _)
+      | If (expression, _, _, _) ->
 	  Collect.collect visitCilExpr expression
-      |	Instr [instruction] ->
+      | Instr [instruction] ->
 	  Collect.collect visitCilInstr instruction
       | _ ->
 	  OutputSet.empty
     in
-    if not (OutputSet.is_empty outputs) then
-      sites#add statement outputs;
-    
-    DoChildren
+    if OutputSet.is_empty outputs then
+      None
+    else
+      let location = get_stmtLoc skind in
+      let instrumentation = Logs.build logger outputs location in
+      Some instrumentation
 end
-
-
-let visit block =
-  let visitor = new visitor in
-  ignore (visitCilBlock (visitor :> cilVisitor) block);
-  visitor#result

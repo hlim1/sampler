@@ -12,10 +12,9 @@ include $(top)/rules.mk
 
 
 findLogger = findLogger
-findSites = findSites
-logs = $(where) logs
-transform = $(findLogger) $(findSites) $(logs) transform
-where = where
+findSites = $(logs) findSites
+logs = logs
+transform = $(findLogger) $(findSites) transform
 
 
 ########################################################################

@@ -25,6 +25,7 @@ choices = choices
 classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
 clonesMap = clonesMap
 countdown = $(choices) $(findGlobal) countdown
+dissect = $(outputSet) dissect
 dotify = $(utils) dotify
 duplicate = $(functionBodyVisitor) $(identity) $(stmtMap) duplicate
 filterLabels = $(functionBodyVisitor) $(stmtSet) filterLabels
@@ -34,21 +35,20 @@ forwardJumps = $(clonesMap) forwardJumps
 functionBodyVisitor = $(skipVisitor) functionBodyVisitor
 functionEntry = functionEntry
 identity = identity
-insertSkipsAfter = $(insertSkipsVisitor) insertSkipsAfter
-insertSkipsBefore = $(insertSkipsVisitor) insertSkipsBefore
-insertSkipsVisitor = $(functionBodyVisitor) insertSkipsVisitor
 isolateInstructions = $(functionBodyVisitor) isolateInstructions
 mapClass = mapClass
+outputSet = outputSet
 patchSites = patchSites
 phases = $(filterLabels) $(testHarness) phases
 printer = $(choices) $(filterLabels) printer
 removeLoops = $(functionBodyVisitor) removeLoops
 setClass = setClass
+sites = sites
 skipVisitor = skipVisitor
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 testHarness = testHarness
-transformVisitor = $(backwardJumps) $(calls) $(classifyJumps) $(countdown) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(insertSkipsVisitor) $(isolateInstructions) $(removeLoops) $(weighPaths) transformVisitor
+transformVisitor = $(backwardJumps) $(calls) $(classifyJumps) $(countdown) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(isolateInstructions) $(removeLoops) $(sites) $(weighPaths) transformVisitor
 utils = utils
 weighPaths = $(stmtMap) weighPaths
 
@@ -60,7 +60,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libcil) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-harness := $(findFunction) $(insertSkipsAfter) $(insertSkipsBefore) $(phases) $(transformVisitor)
+harness := $(dissect) $(findFunction) $(phases) $(transformVisitor)
 harness.$(cma): $(addsuffix .$(cmo), $(harness))
 	$(archive)
 

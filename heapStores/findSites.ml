@@ -1,28 +1,13 @@
 open Cil
 
 
-type map = (exp * lval * location) StmtMap.container
-
-
 class visitor = object
-  inherit FunctionBodyVisitor.visitor
+  inherit Sites.visitor
 
-  val map = new StmtMap.container
-  method result = map
-
-  method vstmt statement =
-    begin
-      match statement.skind with
-      |	Instr [Set((Mem address, NoOffset), Lval data, location)] ->
-	  map#add statement (address, data, location)
-      | _ ->
-	  ()
-    end;
-    DoChildren
+  method consider = function
+    | Instr [Set((Mem address, NoOffset), Lval data, location)] ->
+	let instrumentation = Instrument.build address data location in
+	Some instrumentation
+    | _ ->
+	None
 end
-
-
-let visit block =
-  let visitor = new visitor in
-  ignore (visitCilBlock (visitor :> cilVisitor) block);
-  visitor#result

@@ -2,13 +2,12 @@ open Cil
 
 
 class visitor file = object
-  inherit [FindSites.sites] TransformVisitor.visitor file
+  inherit TransformVisitor.visitor file
 
   val logger = FindLogger.find file
 
-  method findSites = FindSites.visit
-  method insertSkips sites countdown = (new InsertSkipsBefore.visitor sites countdown :> cilVisitor)
-  method insertLogs _ = Logs.insert logger
+  method findSites _ = new FindSites.visitor logger
+  method placeInstrumentation code log = [log; code]
 end
 
 

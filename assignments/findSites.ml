@@ -1,29 +1,14 @@
 open Cil
 
 
-class sites = [lval * location] StmtMap.container
+class visitor logger = object
+  inherit Sites.visitor
 
-
-class visitor = object
-  inherit FunctionBodyVisitor.visitor
-
-  val sites = new sites
-  method result = sites
-
-  method vstmt statement =
-    begin
-      match statement.skind with
-      |	Instr [Set (lval, _, location)]
-      |	Instr [Call (Some lval, _, _, location)] ->
-	  sites#add statement (lval, location)
-      | _ ->
-	  ()
-    end;
-    DoChildren
+  method consider = function
+    | Instr [Set (lval, _, location)]
+    | Instr [Call (Some lval, _, _, location)] ->
+	let instrumentation = Logs.build logger lval location in
+	Some instrumentation
+    | _ ->
+	None
 end
-
-
-let visit block =
-  let visitor = new visitor in
-  ignore (visitCilBlock (visitor :> cilVisitor) block);
-  visitor#result

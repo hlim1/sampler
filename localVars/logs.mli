@@ -1,4 +1,4 @@
 open Cil
 
 
-val insert : exp -> fundec -> ClonesMap.clonesMap -> FindSites.sites -> unit
+val build : exp -> fundec -> location -> instr

@@ -6,8 +6,6 @@ let instr_what = function
   | Call(_, _, _, location) -> "Call"
   | Asm(_, _, _, _, _, location) -> "Asm"
 
-let stmt_where skind = get_stmtLoc skind
-
 let stmt_what = function
   | Instr(instrs) -> Printf.sprintf "Instr × %i" (List.length instrs)
   | Return(_) -> "Return"
@@ -20,11 +18,11 @@ let stmt_what = function
   | Block({bstmts = bstmts}) -> Printf.sprintf "Block × %i" (List.length bstmts)
 
 let stmt_describe stmt =
-  let where = stmt_where stmt in
+  let where = get_stmtLoc stmt in
   Printf.sprintf "%s:%i: %s" where.file where.line (stmt_what stmt)
     
 let d_stmt _ stmt =
-  dprintf "%a: CFG #%i: %s" d_loc (stmt_where stmt.skind) stmt.sid (stmt_what stmt.skind)
+  dprintf "%a: CFG #%i: %s" d_loc (get_stmtLoc stmt.skind) stmt.sid (stmt_what stmt.skind)
     
 let d_stmts _ stmts =
   seq line (d_stmt ()) stmts

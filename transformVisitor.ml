@@ -6,14 +6,13 @@ let visitSameBlock visitor original =
   assert (replacement == original)
 
 
-class virtual ['siteInfo] visitor file = object(self)
+class virtual visitor file = object(self)
   inherit FunctionBodyVisitor.visitor
 
   val globalCountdown = Countdown.findGlobal file
-      
-  method virtual findSites : block -> 'siteInfo
-  method virtual insertSkips : 'siteInfo -> Countdown.countdown -> cilVisitor
-  method virtual insertLogs : fundec -> ClonesMap.clonesMap -> 'siteInfo -> unit
+
+  method virtual findSites : fundec -> Sites.visitor
+  method virtual placeInstrumentation : stmt -> stmt -> stmt list
 
   method vfunc func =
     prepareCFG func;
@@ -26,7 +25,10 @@ class virtual ['siteInfo] visitor file = object(self)
     
     let entry = FunctionEntry.find func in
     let headers = entry :: backwardJumps @ afterCalls in
-    let sites = self#findSites func.sbody in
+
+    let sitesVisitor = self#findSites func in
+    ignore (visitCilFunction (sitesVisitor :> cilVisitor) func);
+    let sites = sitesVisitor#result in
     
     begin
       match WeighPaths.weigh sites headers with
@@ -38,11 +40,26 @@ class virtual ['siteInfo] visitor file = object(self)
 	  ForwardJumps.patch clones forwardJumps;
 	  BackwardJumps.patch clones weights countdown backwardJumps;
 	  Calls.patch clones weights countdown afterCalls;
-
 	  FunctionEntry.patch func weights countdown instrumented;
-	  visitSameBlock (self#insertSkips sites countdown) original;
-
-	  self#insertLogs func clones sites;
+	  
+	  let combine code instrumentation =
+	    let codeStmt = mkStmt code.skind in
+	    let instStmt = mkStmtOneInstr instrumentation in
+	    let combined = self#placeInstrumentation codeStmt instStmt in
+	    code.skind <- Block (mkBlock combined)
+	  in
+	  
+	  let instrument original instrumentation =
+	    let location = get_stmtLoc original.skind in
+	    let skip = countdown#decrement location in
+	    combine original skip;
+	    
+	    let clone = ClonesMap.findCloneOf clones original in
+	    combine clone instrumentation
+	  in
+	  
+	  sites#iter instrument;
+	  
 	  Calls.postpatch func countdown;
     end;
 

@@ -1,29 +1,14 @@
 open Cil
 
 
-class sites = StmtSet.container
+class visitor logger fundec = object
+  inherit Sites.visitor
 
-
-class visitor = object
-  inherit FunctionBodyVisitor.visitor
-
-  val sites = new sites
-  method result = sites
-
-  method vstmt statement =
-    begin
-      match statement.skind with
-      | Instr [_] ->
-	  sites#add statement
-      | _ ->
-	  ()
-    end;
-
-    DoChildren
+  method consider = function
+    | Instr [instruction] ->
+	let location = get_instrLoc instruction in
+	let instrumentation = Logs.build logger fundec location in
+	Some instrumentation
+    | _ ->
+	None
 end
-
-
-let visit block =
-  let visitor = new visitor in
-  ignore (visitCilBlock (visitor :> cilVisitor) block);
-  visitor#result

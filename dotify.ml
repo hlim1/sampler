@@ -10,7 +10,7 @@ let d_node _ stmt =
   dprintf "%a [label=\"CFG #%i%cn%a%cn%s\"];@!"
     d_sid stmt.sid
     stmt.sid '\\'
-    d_loc (stmt_where stmt.skind) '\\'
+    d_loc (get_stmtLoc stmt.skind) '\\'
     (stmt_what stmt.skind)
 
 let d_edge _ source destination =

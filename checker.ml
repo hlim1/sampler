@@ -7,8 +7,9 @@ let process filename =
   let file = Frontc.parse filename () in
   check file
 
-let main =
-  initCIL ();
-  let filenames = List.tl (Array.to_list Sys.argv) in
-  let valid = List.fold_left (fun valid name -> process name && valid) true filenames in
-  if not valid then raise Errormsg.Error
+;;
+
+initCIL ();
+let filenames = List.tl (Array.to_list Sys.argv) in
+let valid = List.fold_left (fun valid name -> process name && valid) true filenames in
+if not valid then raise Errormsg.Error

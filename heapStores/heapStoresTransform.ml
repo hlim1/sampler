@@ -2,11 +2,10 @@ open Cil
 
 
 class visitor file = object
-  inherit [FindSites.map] TransformVisitor.visitor file as super
+  inherit TransformVisitor.visitor file as super
 
-  method findSites = FindSites.visit
-  method insertSkips sites countdown = (new InsertSkipsBefore.visitor sites countdown :> cilVisitor)
-  method insertLogs _ = Instrument.insert
+  method findSites _ = new FindSites.visitor
+  method placeInstrumentation code log = [log; code]
 
   method vfunc func =
     Simplify.visit func;

@@ -13,12 +13,10 @@ include $(top)/rules.mk
 
 
 collect = $(dissect) $(outputSet) collect
-dissect = $(outputSet) dissect
 findLogger = findLogger
-findSites = $(collect) $(outputSet) findSites
-logs = $(findSites) $(outputSet) $(where) logs
-outputSet = outputSet
-transform = $(findLogger) $(findSites) $(logs) transform
+findSites = $(collect) $(logs) $(outputSet) findSites
+logs = $(outputSet) logs
+transform = $(findLogger) $(findSites) transform
 
 
 ########################################################################

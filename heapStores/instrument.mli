@@ -1,4 +1,4 @@
 open Cil
 
 
-val insert : ClonesMap.clonesMap -> FindSites.map -> unit
+val build : exp -> lval -> location -> instr

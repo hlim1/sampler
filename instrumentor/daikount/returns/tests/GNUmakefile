@@ -1,4 +1,4 @@
-tests := test
+tests := test extern
 
 top := ../../..
 
@@ -30,11 +30,14 @@ $(checks): %.check: %.trace
 	[ -s $< ]
 .PHONY: $(checks)
 
-test.trace: %.trace: % $(countdowns)
+$(tests:=.trace): %.trace: % $(countdowns)
 	SAMPLER_FILE=$@ SAMPLER_EVENT_COUNTDOWNS=$(countdowns) ./$<
 	[ -r $@ ]
 
-$(tests): %: %.o $(lib)
+test: test.o $(lib)
+
+extern: extern-caller.o extern-callee.o $(lib)
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 $(objects): %.o: %.c $(front_end) ../main ../../libdaikount/daikount.h
 

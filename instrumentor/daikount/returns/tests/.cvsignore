@@ -2,4 +2,5 @@
 *.inst.?
 *.trace
 .libs
+extern
 test

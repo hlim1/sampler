@@ -7,12 +7,12 @@ const unsigned *nextFuncPrecomputed = 0;
 unsigned nextFuncCountdown = UINT_MAX;
 unsigned nextFuncSlot = 0;
 
-static unsigned initCount;
+unsigned funcInitCount;
 
 
 __attribute__((constructor)) static void initialize()
 {
-  if (!initCount++)
+  if (!funcInitCount++)
     {
       nextFuncPrecomputed = loadCountdowns("SAMPLER_FUNC_COUNTDOWNS");
       nextFuncCountdown = getNextFuncCountdown();
@@ -22,6 +22,6 @@ __attribute__((constructor)) static void initialize()
 
 __attribute__((destructor)) static void finalize()
 {
-  if (!--initCount)
+  if (!--funcInitCount)
     unloadCountdowns(nextFuncPrecomputed);
 }

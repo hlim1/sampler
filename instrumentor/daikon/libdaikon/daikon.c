@@ -3,20 +3,20 @@
 #include "daikon.h"
 
 
-static FILE *logFile;
-static unsigned initCount;
+FILE *daikonLogFile;
+unsigned daikonInitCount;
 
 
 __attribute__((constructor)) static void initialize()
 {
-  if (!initCount++)
+  if (!daikonInitCount++)
     {
       const char * const filename = getenv("SAMPLER_FILE");
   
       if (filename)
 	{
-	  logFile = fopen(filename, "w");
-	  if (!logFile) perror("logger: fopen error");
+	  daikonLogFile = fopen(filename, "w");
+	  if (!daikonLogFile) perror("logger: fopen error");
 	}
       else
 	fputs("logger: not recording samples; no $SAMPLER_FILE given in environment\n", stderr);
@@ -26,20 +26,20 @@ __attribute__((constructor)) static void initialize()
 
 __attribute__((destructor)) static void storeShutdown()
 {
-  if (!--initCount && logFile)
+  if (!--daikonInitCount && daikonLogFile)
     {
-      const int error = fclose(logFile);
+      const int error = fclose(daikonLogFile);
       if (error) perror("logger: fclose error");
-      logFile = 0;
+      daikonLogFile = 0;
     }
 }
 
 
 void checkInvariant(const char location[], const char function[], const char expr[], intmax_t value)
 {
-  if (logFile)
+  if (daikonLogFile)
     {
-      fprintf(logFile, "%s\t%s\t%s\t%jd\n", location, function, expr, value);
-      fflush(logFile);
+      fprintf(daikonLogFile, "%s\t%s\t%s\t%jd\n", location, function, expr, value);
+      fflush(daikonLogFile);
     }
 }

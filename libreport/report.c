@@ -13,6 +13,7 @@
 
 
 const void * const providesLibReport;
+unsigned reportInitCount;
 
 
 static const char *logFileName()
@@ -128,9 +129,7 @@ static void handleSignal(int signum)
 
 __attribute__((constructor)) static void initialize()
 {
-  static unsigned initCount;
-
-  if (!initCount++)
+  if (!reportInitCount++)
     if (logFileName())
       {
 	atexit(finalize);

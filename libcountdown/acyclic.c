@@ -8,17 +8,15 @@
 
 
 const void * const providesLibAcyclic;
+int acyclicInitCount;
 
-double density;
-void *generator;
-static gsl_rng *gen;
-
-static int initCount;
+double acyclicDensity;
+void *acyclicGenerator;
 
 
 __attribute__((constructor)) static void initialize()
 {
-  if (!initCount++)
+  if (!acyclicInitCount++)
     {
       const char * const environ = getenv("SAMPLER_SPARSITY");
       if (environ)
@@ -37,8 +35,8 @@ __attribute__((constructor)) static void initialize()
 	    }
 	  else
 	    {
-	      density = 1 / sparsity;
-	      generator = gen = gsl_rng_alloc(gsl_rng_env_setup());
+	      acyclicDensity = 1 / sparsity;
+	      acyclicGenerator = gsl_rng_alloc(gsl_rng_env_setup());
 	      nextEventCountdown = getNextEventCountdown();
 	    }
 	}
@@ -48,14 +46,9 @@ __attribute__((constructor)) static void initialize()
 
 __attribute__((destructor)) static void finalize()
 {
-  if (!--initCount)
+  if (!--acyclicInitCount && acyclicGenerator)
     {
-      assert(!generator == !gen);
-
-      if (gen)
-	{
-	  gsl_rng_free(gen);
-	  generator = gen = 0;
-	}
+      gsl_rng_free(acyclicGenerator);
+      acyclicGenerator = 0;
     }
 }

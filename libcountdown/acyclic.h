@@ -18,11 +18,14 @@ static inline unsigned getNextEventCountdown() __attribute__((no_instrument_func
 
 static inline unsigned getNextEventCountdown()
 {
-  extern double density;
-  extern void *generator;
+  extern double acyclicDensity;
+  extern void *acyclicGenerator;
   extern unsigned gsl_ran_geometric();
 
-  return generator ? gsl_ran_geometric(generator, density) : (unsigned) -1;
+  if (__builtin_expect(!acyclicGenerator, 0))
+    return (unsigned) -1;
+  else
+    return gsl_ran_geometric(acyclicGenerator, acyclicDensity);
 }
 
 

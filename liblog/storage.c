@@ -13,12 +13,12 @@ const char logSignature[] = {
   '\n'
 };
 
-static unsigned initCount;
+unsigned logInitCount;
 
 
 __attribute__((constructor)) static void initialize()
 {
-  if (!initCount++)
+  if (!logInitCount++)
     {
       const char * const filename = getenv("SAMPLER_FILE");
   
@@ -36,7 +36,7 @@ __attribute__((constructor)) static void initialize()
 
 __attribute__((destructor)) static void finalize()
 {
-  if (!--initCount)
+  if (!--logInitCount)
     {
       const char terminator = -1;
       logTableau(&terminator, sizeof(terminator));

@@ -19,7 +19,7 @@ const void * const providesLibCyclic;
 const unsigned *nextEventPrecomputed = 0;
 unsigned nextEventSlot = 0;
 
-static unsigned initCount;
+unsigned cyclicInitCount;
 
 
 static void failed(const char function[])
@@ -56,7 +56,7 @@ static int checkedOpen(const char filename[])
 
 __attribute__((constructor)) static void initialize()
 {
-  if (!initCount++)
+  if (!cyclicInitCount++)
     {
       const char envar[] = "SAMPLER_EVENT_COUNTDOWNS";
       const char * const environ = getenv(envar);
@@ -87,7 +87,7 @@ __attribute__((constructor)) static void initialize()
 
 __attribute__((destructor)) static void finalize()
 {
-  if (!--initCount)
+  if (!--cyclicInitCount)
     if (nextEventPrecomputed)
       munmap((void *) nextEventPrecomputed, MAP_SIZE);
 }

@@ -7,12 +7,12 @@ const unsigned *nextEventPrecomputed = 0;
 unsigned nextEventCountdown = UINT_MAX;
 unsigned nextEventSlot = 0;
 
-static unsigned initCount;
+unsigned eventInitCount;
 
 
 __attribute__((constructor)) static void initialize()
 {
-  if (!initCount++)
+  if (!eventInitCount++)
     {
       nextEventPrecomputed = loadCountdowns("SAMPLER_EVENT_COUNTDOWNS");
       nextEventCountdown = getNextEventCountdown();
@@ -22,6 +22,6 @@ __attribute__((constructor)) static void initialize()
 
 __attribute__((destructor)) static void finalize()
 {
-  if (!--initCount)
+  if (!--eventInitCount)
     unloadCountdowns(nextEventPrecomputed);
 }

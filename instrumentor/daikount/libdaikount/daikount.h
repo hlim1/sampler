@@ -1,8 +1,6 @@
 #ifndef INCLUDE_libdaikon_daikon_h
 #define INCLUDE_libdaikon_daikon_h
 
-#include <stdint.h>
-
 
 struct Invariant
 {

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.12.1
+
+** More work on multiple wrapped executables in a single package.
+
 * sampler-0.12
 
 ** Improved developer documentation.

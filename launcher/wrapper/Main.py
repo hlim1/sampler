@@ -23,8 +23,8 @@ import Uploader
 ########################################################################
 
 
-def main(configdir):
-    app = AppConfig(configdir)
+def main(configdir, wrapped = 'executable'):
+    app = AppConfig(configdir, wrapped)
     user = UserConfig(configdir, app)
 
     sparsity = user.sparsity()

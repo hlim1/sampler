@@ -6,10 +6,11 @@ from ConfigParser import ConfigParser
 class AppConfig:
     '''Static configuration information about a single instrumented application'''
 
-    def __init__(self, configdir):
+    def __init__(self, configdir, executable):
         '''Find application information in the given configuration file.'''
         self.__dir = configdir
-        filename = os.path.join(configdir, 'config')
+        self.__executable = self.__path(executable)
+        filename = self.__path('config')
         self.config = ConfigParser()
         self.config.readfp(file(filename))
 
@@ -23,7 +24,7 @@ class AppConfig:
 
     def executable(self):
         '''Path to the real instrumented executable.'''
-        return self.__path('executable')
+        return self.__executable
 
     def debug_reporter(self):
         '''Path to script that prints post-crash debug reports.'''
@@ -34,7 +35,7 @@ class AppConfig:
 
     def upload_headers(self):
         '''Extra headers to be included in all report uploads.'''
-        headers = {}
+        headers = {'executable-path' : self.executable()}
         for key in self.config.options('upload-headers'):
             headers[key] = self.get('upload-headers', key)
         return headers

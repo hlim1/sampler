@@ -1,6 +1,6 @@
 open Cil
 
 
-type map = (lval * location) StmtMap.container
+type sites = (lval * location) StmtMap.container
       
-val visit : block -> map
+val visit : block -> sites

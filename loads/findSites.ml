@@ -2,14 +2,14 @@ open Cil
 open OutputSet
 
 
-type map = OutputSet.t StmtMap.container
+class sites = [OutputSet.t] StmtMap.container
       
 
 class visitor = object
   inherit FunctionBodyVisitor.visitor
 
-  val map = new StmtMap.container
-  method result = map
+  val sites = new sites
+  method result = sites
 
   method vstmt statement =
     let outputs =
@@ -24,7 +24,7 @@ class visitor = object
 	  OutputSet.empty
     in
     if not (OutputSet.is_empty outputs) then
-      map#add statement outputs;
+      sites#add statement outputs;
     
     DoChildren
 end

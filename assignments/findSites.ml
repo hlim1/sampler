@@ -1,13 +1,13 @@
 open Cil
 
 
-type map = (lval * location) StmtMap.container
+class sites = [lval * location] StmtMap.container
 
 
 class visitor = object
   inherit FunctionBodyVisitor.visitor
 
-  val sites = new StmtMap.container
+  val sites = new sites
   method result = sites
 
   method vstmt statement =

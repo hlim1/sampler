@@ -1,3 +1,3 @@
-type map = OutputSet.OutputSet.t StmtMap.container
+type sites = OutputSet.OutputSet.t StmtMap.container
       
-val visit : Cil.block -> map
+val visit : Cil.block -> sites

@@ -355,10 +355,10 @@ inputs and distinct randomized 1/100 sampling.  We partition these
 runs into 2704 to be used for training and 1354 for testing.  Although
 there are 40,326 raw features, many can be discarded immediately: in
 the training set \unknown[I have this for the complete traces, but
-what is it for 1/100 sampling?] features never take on a non-zero
-value and \unknown[I have this for the complete traces, but what is it
-for 1/100 sampling?] of them are always some non-zero constant.  Hence
-the effective number of features used in training is 7260.  Sparser
+what is it for 1/100 sampling?] features are always zero value and
+\unknown[I have this for the complete traces, but what is it for 1/100
+sampling?] of them are always some non-zero constant.  Hence the
+effective number of features used in training is 7260.  Sparser
 sampling drives counts lower: at 1/1000, the effective number of
 interesting features drops to 6738.  Beyond simplifying the
 statistical analysis, this degree of regularity means that counter

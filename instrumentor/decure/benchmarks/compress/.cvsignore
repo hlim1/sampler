@@ -1,5 +1,6 @@
-basis-cured.c
-basis-cured.i
+*.c
+*.exe
 decurable.i
 functions-list
 functions.mk
+loopless

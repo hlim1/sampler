@@ -1,4 +1,4 @@
-AC_INIT(sampler,0.7.1,liblit@cs.berkeley.edu)
+AC_INIT([sampler],[0.7.1],[liblit@cs.berkeley.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -8,6 +8,8 @@ AM_INIT_AUTOMAKE
 #  GNOME and GTK+ configuration
 #
 
+
+AM_PATH_PYTHON
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 AM_CONDITIONAL(WITH_GNOME, test "$PKG_CONFIG" != no)
@@ -278,9 +280,6 @@ fuzz/Makefile
 instrumentor/Makefile
 instrumentor/bounds/Makefile
 instrumentor/branches/Makefile
-instrumentor/daikon/Makefile
-instrumentor/decure/Makefile
-instrumentor/decure/tests/Makefile
 instrumentor/driver/Makefile
 instrumentor/function-entries/Makefile
 instrumentor/nothing/Makefile

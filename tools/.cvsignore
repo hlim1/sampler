@@ -1,4 +1,5 @@
 Makefile
 Makefile.in
 debuild
+find-driver.pl
 rpmbuild

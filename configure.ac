@@ -256,6 +256,7 @@ lib/cyclic-size.h
 package.m4
 sampler.spec
 tools/Makefile
+tools/find-driver.pl
 tools/debuild
 tools/rpmbuild
 ])

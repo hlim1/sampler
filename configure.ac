@@ -5,21 +5,24 @@ AM_INIT_AUTOMAKE
 
 ########################################################################
 #
+#  Basic C configuration
+#
+
+AC_PROG_CC
+AC_PROG_RANLIB
+AM_PROG_LEX
+AC_PROG_LN_S
+
+
+########################################################################
+#
 #  GNOME and GTK+ configuration
 #
 
 
-AM_PATH_PYTHON
+AC_ARG_WITH(gnome, AC_HELP_STRING([--without-gnome], [do not build GNOME-based GUI tools]), , with_gnome=yes)
 
-AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
-AM_CONDITIONAL(WITH_GNOME, test "$PKG_CONFIG" != no)
-
-if test "$PKG_CONFIG" = no; then
-  AC_MSG_WARN(cannot find pkg-config in \$PATH)
-  AC_MSG_WARN(GNOME-based user tools will not be built)
-  AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, false)
-
-else
+if test "$with_gnome" = yes; then
 
   PKG_CHECK_MODULES(TRAY_ICON, gtk+-2.0 pygtk-2.0)
   AC_SUBST(TRAY_ICON_CFLAGS)
@@ -34,10 +37,14 @@ else
   AC_SUBST(EGG_TRAY_LIBS)
 
   AM_PATH_GLIB_2_0(, , , gobject)
-
-  AM_GCONF_SOURCE_2
-
+  AM_PATH_PYTHON
 fi
+
+AM_GCONF_SOURCE_2
+
+AC_MSG_CHECKING(for GNOME support)
+AM_CONDITIONAL(WITH_GNOME, test "$with_gnome" = yes)
+AC_MSG_RESULT($with_gnome)
 
 
 ########################################################################
@@ -189,13 +196,9 @@ fi
 
 ########################################################################
 #
-#  C configuration
+#  Advanced C configuration
 #
 
-AC_PROG_CC
-AC_PROG_RANLIB
-AC_PROG_LN_S
-AM_PROG_LEX
 
 AC_MSG_CHECKING(for cpp0)
 AC_SUBST(cpp0, `$CC -print-prog-name=cpp0`)

@@ -7,6 +7,9 @@ clients.
 
 * wrapper
 
+Activate first-time dialog from here, rather than from the tray.  This
+will be more robust against tray failures.
+
 The last client to call monitor.unref() sometimes gets a
 CORBA.COMM_FAILURE exception.  Not sure why.  We work around it by
 catching and discarding the exception, but that's not a real fix.
@@ -26,9 +29,6 @@ reports (e.g. daily) instead of waiting for termination.  This will
 require support from the client application too, though.
 
 * packaging
-
-Check copyright notice in configure scripts that use SAMPLER_INIT.
-Check both script text as well as "configure --version" output.
 
 Consider adding some sort of "README.sampler" to the documentation for
 each sampled application RPM.

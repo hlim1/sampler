@@ -13,7 +13,7 @@ sub setDefaultArguments {
     my $self = shift;
 
     $self->{sample_events} = 1;
-    $self->{sample_funcs} = 1;
+    $self->{sample_funcs} = 0;
     $self->{LD} = "libtool $self->{LD}";
     $self->{TRACE_COMMANDS} = 0;
 }

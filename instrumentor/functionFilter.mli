@@ -1,7 +1,7 @@
 open Cil
 
 
-class filter : flag:string -> desc:string -> ident:string ->
+class type filter =
   object
     inherit Clude.filter
 

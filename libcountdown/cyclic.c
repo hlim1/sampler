@@ -57,8 +57,9 @@ const unsigned *loadCountdowns(const char envar[])
     }
   else
     {
+      int fd;
       fprintf(stderr, "%s: no countdowns file named in $%s; using extreme sparsity\n",  __FUNCTION__, envar);
-      const int fd = checkedOpen("/dev/zero");
+      fd = checkedOpen("/dev/zero");
       mapping = checkedMmap(PROT_READ | PROT_WRITE, fd);
       memset(mapping, -1, MAP_SIZE);
       mapping = mremap(mapping, MAP_SIZE, MAP_SIZE, PROT_READ);

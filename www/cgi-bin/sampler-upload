@@ -19,7 +19,7 @@ print header();
 my $query = new CGI;
 
 exists $ENV{UNIQUE_ID} or die "\$UNIQUE_ID missing from environment\n";
-$ENV{UNIQUE_ID} =~ /^([-A-Za-z0-9@]+)$/ or die "\$UNIQUE_ID looks suspicious: \"$ENV{UNIQUE_ID}\"\n";
+$ENV{UNIQUE_ID} =~ /^([-0-9A-Za-z@]+)$/ or die "\$UNIQUE_ID looks suspicious: \"$ENV{UNIQUE_ID}\"\n";
 my $dir = "/var/www/uploads/$1";
 mkdir $dir or die "cannot build upload directory $dir: $!\n";
 END { rmdir $dir if $dir; }
@@ -37,8 +37,11 @@ sub stash_environ () {
 
 sub stash_file ($) {
     my $name = shift;
-    my $handle = $query->upload($name);
-    copy($handle, "$dir/$name.gz") if $handle;
+    $name =~ /^([-_0-9A-Za-z]+)$/ or die "uploaded file name looks suspicious: $name\n";
+    my $filename = $1;
+    my $in = $query->upload($name) or die "cannot read uploaded file: $!\n";
+    my $out = new FileHandle "$dir/$filename.gz", 'w' or die "cannot stash uploaded file: $!\n";
+    copy($in, $out);
 }
 
 

@@ -32,7 +32,7 @@ let collect instr =
 	descend visitCilExpr expression
     | Instr [instruction] ->
 	descend visitCilInstr instruction
-    | Instr _ ->
+    | Instr (_ :: _ :: _) ->
 	failwith "instr should have been atomized"
     | Switch _ ->
 	failwith "switch should have been removed by Cil.prepareCFG"

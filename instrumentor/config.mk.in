@@ -2,4 +2,25 @@ ENABLE_PROFILING = @ENABLE_PROFILING@
 ENABLE_NATIVE = @ENABLE_NATIVE@
 CIL_HOME = @CIL_HOME@
 
-include $(top_srcdir)/instrumentor/defs.mk
+OCAMLOPT = @OCAMLOPT@
+OCAMLC = @OCAMLC@
+
+
+########################################################################
+
+
+ifdef ENABLE_PROFILING
+ENABLE_NATIVE := 1
+ocamlflags += -p
+endif
+
+ifdef ENABLE_NATIVE
+ocamlc := $(OCAMLOPT)
+cma := cmxa
+cmo := cmx
+else
+ocamlflags += -g
+ocamlc := $(OCAMLC)
+cma := cma
+cmo := cmo
+endif

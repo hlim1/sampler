@@ -7,6 +7,8 @@ extra_impls = libraries
 
 include $(top_srcdir)/ocaml/rules.mk
 
+libdirs += $(top_builddir)/ocaml
+
 
 all-local: harness.$(cma)
 
@@ -17,6 +19,11 @@ libraries.ml: %: build-libraries %.in
 harness = $(manager) $(phases) $(tuples) $(bumper) $(bumpSign) $(describedExpression) $(int64Set)
 harness.$(cma): $(harness)
 	$(archive)
+
+$(dir $(libcommon)): $(libcommon)
+
+$(libcommon): $(force)
+	$(recurse)
 
 cfgTest: $(libcil) $(cfgTest)
 	$(link)

@@ -16,16 +16,13 @@ let addPrototype file =
   file.globals <- GVarDecl (logWrite, logWrite.vdecl) :: file.globals
 
 
-let makeLval fundec = function
+let makeLval = function
   | Lval lval -> lval
-  | Const _ as const ->
-      let temp = makeTempVar fundec ~name:"const" (typeOf const) in
-      var temp
   | _ -> failwith "weird expression"
 	
 	
 class visitor = object
-  inherit CurrentFunctionVisitor.visitor
+  inherit FunctionBodyVisitor.visitor
 
   method vinst = function
     | Set((Mem addr, _), data, location) as original ->
@@ -34,10 +31,7 @@ class visitor = object
 			 kinteger IUInt location.line;
 			 mkCast addr voidPtrType;
 			 SizeOf(typeOf data);
-			 mkCast
-			   (mkAddrOf
-			      (makeLval !currentFunction data))
-			   voidPtrType],
+			 mkCast (mkAddrOf (makeLval data)) voidPtrType],
 			location);
 		  original]
     | _ -> SkipChildren

@@ -10,6 +10,7 @@ import pango
 
 import ConfigParser
 import cStringIO
+import email
 import gzip
 import os
 import random
@@ -204,41 +205,6 @@ def main():
     xml = gtk.glade.XML(os.path.join(application.dir, 'interface.glade'))
     xml.signal_autoconnect(globals())
 
-    docu = gtkhtml2.Document()
-    view = gtkhtml2.View()
-    port = xml.get_widget('html-scroll')
-    port.add(view)
-    dialog = xml.get_widget('server-message')
-
-    view.set_document(docu)
-    docu.dialog = dialog
-    docu.base = ''
-    on_set_base(docu, 'http://www.google.com/')
-    docu.connect('request_url', on_request_url)
-    docu.connect('set_base', on_set_base)
-    docu.connect('link_clicked', on_link_clicked)
-    docu.connect('title_changed', on_title_changed)
-
-    docu.open_stream('text/html')
-    docu.write_stream('<html><head><meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"><title>Google</title><style><!--\
-body,td,a,p,.h{font-family:arial,sans-serif;}\
-.h{font-size: 20px;}\
-.q{text-decoration:none; color:#0000cc;}\
-//-->\
-</style>\
-<script>\
-<!--\
-function sf(){document.f.q.focus();}\
-// -->\
-</script>\
-</head><body bgcolor=#ffffff text=#000000 link=#0000cc vlink=#551a8b alink=#ff0000 onLoad=sf()><center><table border=0 cellspacing=0 cellpadding=0><tr><td><img src="/images/logo.gif" width=276 height=110 alt="Google"></td></tr></table><br>\
-<table border=0 cellspacing=0 cellpadding=0><tr><td width=15>&nbsp;</td><td id=0 bgcolor=#3366cc align=center width=95 nowrap><font color=#ffffff size=-1><b>Web</b></font></td><td width=15>&nbsp;</td><td id=1 bgcolor=#efefef align=center width=95 nowrap onClick="" style=cursor:pointer;cursor:hand;><a id=1a class=q href="/imghp?hl=en&tab=wi&ie=UTF-8"><font size=-1>Images</font></a></td><td width=15>&nbsp;</td><td id=2 bgcolor=#efefef align=center width=95 nowrap onClick="" style=cursor:pointer;cursor:hand;><a id=2a class=q href="/grphp?hl=en&tab=wg&ie=UTF-8"><font size=-1>Groups</font></a></td><td width=15>&nbsp;</td><td id=3 bgcolor=#efefef align=center width=95 nowrap onClick="" style=cursor:pointer;cursor:hand;><a id=3a class=q href="/dirhp?hl=en&tab=wd&ie=UTF-8"><font size=-1>Directory</font></a></td><td width=15>&nbsp;</td><td id=4 bgcolor=#efefef align=center width=95 nowrap onClick="" style=cursor:pointer;cursor:hand;><a id=4a class=q href="/nwshp?hl=en&tab=wn&ie=UTF-8"><font size=-1>News</font></a></td><td width=15>&nbsp;</td></tr><tr><td colspan=12 bgcolor=#3366cc><img width=1 height=1 alt=""></td></tr></table><br><form action="/search" name=f><table cellspacing=0 cellpadding=0><tr><td width=75>&nbsp;</td><td align=center><input type=hidden name=hl value=en><span id=hf></span><input type=hidden name=ie value="ISO-8859-1"><input maxLength=256 size=55 name=q value=""><br><input type=submit value="Google Search" name=btnG><input type=submit value="I\'m Feeling Lucky" name=btnI></td><td valign=top nowrap><font size=-2>&nbsp;&#8226;&nbsp;<a href=/advanced_search?hl=en>Advanced&nbsp;Search</a><br>&nbsp;&#8226;&nbsp;<a href=/preferences?hl=en>Preferences</a><br>&nbsp;&#8226;&nbsp;<a href=/language_tools?hl=en>Language Tools</a></font></td></tr></table></form><br>\
-<br><font size=-1><a href="/ads/">Advertise&nbsp;with&nbsp;Us</a> - <a href="/services/">Business&nbsp;Solutions</a> - <a href="/options/">Services&nbsp;&amp;&nbsp;Tools</a> - <a href=/about.html>Jobs,&nbsp;Press,&nbsp;&amp;&nbsp;Help</a></font><p><font size=-2>&copy;2003 Google - Searching 3,083,324,652 web pages</font></p></center></body></html>')
-    docu.close_stream()
-    view.show()
-    dialog.run()
-    dialog.hide()
-
     if not gconfig['asked']:
         yesno_set()
 
@@ -275,7 +241,7 @@ function sf(){document.f.q.focus();}\
         os.close(pipe[1])
         reportsFile = os.fdopen(pipe[0])
         reportsLines = xreadlines.xreadlines(reportsFile)
-        reportText = {}
+        reports = {}
 
         startTag = re.compile('^<report id="([^"]+)">\n$')
         print 'reading reports'
@@ -284,26 +250,23 @@ function sf(){document.f.q.focus();}\
             if match:
                 reportId = match.group(1)
                 print '  reading report:', reportId
-                if reportId in reportText:
+
+                if reportId in reports:
                     print >>sys.stderr, 'duplicate report id:', reportId
-                # !!!: sanity check report id against expected list
-                reportText[reportId] = cStringIO.StringIO()
+
+                reports[reportId] = cStringIO.StringIO()
                 for line in reportsLines:
                     if line == '</report>\n':
                         print '  reading report:', reportId, '... done'
                         break
                     else:
-                        reportText[reportId].write(line)
+                        reports[reportId].write(line)
 
         print 'reading reports: done'
-        for reportId in reportText:
-            reportText[reportId] = reportText[reportId].getvalue()
 
         [pid, exitCodes] = os.wait()
         exitStatus = os.WIFEXITED(exitCodes) and os.WEXITSTATUS(exitCodes)
         exitSignal = os.WIFSIGNALED(exitCodes) and os.WTERMSIG(exitCodes)
-
-        # !!!: check that 'samples' report has been provided
 
         synopsis = {'Version' : '0.1',
                    'Program-Name' : application.name,
@@ -332,20 +295,15 @@ function sf(){document.f.q.focus();}\
             synopsisWidget.append_column(column)
             synopsisWidget.set_model(model)
 
-            samplesWidget = xml.get_widget('samples')
-            samplesWidget.get_buffer().set_text(reportText['samples'])
-
-            sharedLibsWidget = xml.get_widget('shared-libraries')
-            if 'shared-libraries' in reportText:
-                sharedLibsWidget.get_buffer().set_text(reportText['shared-libraries'])
-            else:
-                sharedLibsWidget.get_parent().hide()
-
-            stackTraceWidget = xml.get_widget('stack-trace')
-            if 'stack-trace' in reportText:
-                stackTraceWidget.get_buffer().set_text(reportText['stack-trace'])
-            else:
-                stackTraceWidget.get_parent().hide()
+            notebook = xml.get_widget('reports-notebook')
+            for reportId in reports:
+                label = gtk.Label('Report: ' + reportId)
+                view = gtk.TextView()
+                view.get_buffer().set_text(reports[reportId].getvalue())
+                scroll = gtk.ScrolledWindow()
+                scroll.add(view)
+                scroll.show_all()
+                notebook.append_page(scroll, label)
 
             dialog = xml.get_widget('view-before-sending')
             response = dialog.run()
@@ -371,11 +329,36 @@ function sf(){document.f.q.focus();}\
         request = urllib2.Request(reportingUrl, multipart.getvalue(), headers)
         # !!!: support GNOME-configured proxy (example at end of http://mail.python.org/pipermail/python-dev/2002-December/030927.html)
         reply = urllib2.urlopen(request)
-        # !!!: present result in HTML widget if non-empty
-        # !!!: check for sparsity update
-        print reply.read()
 
-        sys.exit(exitSignal or exitStatus)
+        # !!!: check for sparsity update
+        message = email.message_from_file(reply)
+        payload = message.get_payload()
+
+        if payload:
+            docu = gtkhtml2.Document()
+            docu.connect('request_url', on_request_url)
+            docu.connect('set_base', on_set_base)
+            docu.connect('link_clicked', on_link_clicked)
+            docu.connect('title_changed', on_title_changed)
+
+            dialog = xml.get_widget('server-message')
+            docu.dialog = dialog
+            docu.base = ''
+            on_set_base(docu, reply.geturl())
+
+            docu.open_stream(message.get_content_type())
+            docu.write_stream(payload)
+            docu.close_stream()
+
+            view = gtkhtml2.View()
+            view.set_document(docu)
+            port = xml.get_widget('html-scroll')
+            port.add(view)
+            view.show()
+            dialog.run()
+            dialog.hide()
+
+            sys.exit(exitSignal or exitStatus)
 
     else:
         os.execv(application.executable, sys.argv)

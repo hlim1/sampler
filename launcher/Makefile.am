@@ -4,6 +4,7 @@ SUBDIRS =					\
 	first-time				\
 	monitor					\
 	pixmaps					\
+	preferences				\
 	tray					\
 	trayicon				\
 	wrapper

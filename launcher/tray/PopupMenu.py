@@ -6,14 +6,17 @@ from MasterNotifier import MasterNotifier
 
 import Keys
 import Paths
+import PreferencesDialog
+
+
+########################################################################
 
 
 class PopupMenu(LazyWidget):
-    def __init__(self, client, preferences):
+    def __init__(self, client):
         LazyWidget.__init__(self, 'popup')
         self.__about = AboutDialog(client)
         self.__client = client
-        self.__preferences = preferences
 
     def populate(self, xml, widget):
         self.__master = xml.get_widget('menu-master')
@@ -28,7 +31,7 @@ class PopupMenu(LazyWidget):
         self.__client.set_bool(Keys.master, active)
 
     def on_preferences_activate(self, item):
-        self.__preferences.present()
+        PreferencesDialog.present()
 
     def on_about_activate(self, item):
         self.__about.present()

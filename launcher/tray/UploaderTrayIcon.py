@@ -1,12 +1,12 @@
 import gtk
 
 from BusyCursor import BusyCursor
-from PreferencesDialog import PreferencesDialog
 from PopupMenu import PopupMenu
 from StatusIcon import StatusIcon
 
 import Keys
 import Paths
+import PreferencesDialog
 import Signals
 import trayicon
 
@@ -16,7 +16,7 @@ class UploaderTrayIcon(trayicon.TrayIcon):
     def on_button_press(self, widget, event):
         if event.type == gtk.gdk.BUTTON_PRESS:
             if event.button == 1:
-                self.__preferences.present()
+                PreferencesDialog.present()
             elif event.button == 3:
                 self.__popup.popup(event)
 
@@ -25,8 +25,7 @@ class UploaderTrayIcon(trayicon.TrayIcon):
         BusyCursor.top = self
 
         self.__busy = None
-        self.__preferences = PreferencesDialog(client)
-        self.__popup = PopupMenu(client, self.__preferences)
+        self.__popup = PopupMenu(client)
 
         xml = gtk.glade.XML(Paths.glade, 'eventbox')
         Signals.autoconnect(self, xml)

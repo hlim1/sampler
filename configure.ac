@@ -1,4 +1,4 @@
-AC_INIT(sampler,0.4.5,liblit@cs.berkeley.edu)
+AC_INIT(sampler,0.5,liblit@cs.berkeley.edu)
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -78,6 +78,7 @@ AC_SUBST(commondir, '${package_datadir}/common')
 AC_SUBST(first_timedir, '${package_datadir}/first-time')
 AC_SUBST(launcherdir, '${package_datadir}/launcher')
 AC_SUBST(pixmapsdir, '${package_datadir}/pixmaps')
+AC_SUBST(preferencesdir, '${package_datadir}/preferences')
 AC_SUBST(traydir, '${package_datadir}/tray')
 AC_SUBST(wrapperdir, '${package_datadir}/wrapper')
 
@@ -269,6 +270,7 @@ launcher/common/Makefile
 launcher/first-time/Makefile
 launcher/monitor/Makefile
 launcher/pixmaps/Makefile
+launcher/preferences/Makefile
 launcher/tray/Makefile
 launcher/trayicon/Makefile
 launcher/trayicon/libegg/Makefile

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Bug Isolation
+Comment=Change feedback settings for the Bug Isolation Project
+Icon=../sampler/pixmaps/enabled-48.png
+Exec=sampler-preferences
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Application;Settings;System;X-Ximian-Settings;

@@ -143,9 +143,6 @@ fi
 #  C configuration
 #
 
-: ${CFLAGS:=-O9 -W -Wall -Werror}
-: ${CXXFLAGS:=-O9 -W -Wall -Werror}
-
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S

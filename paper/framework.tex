@@ -137,9 +137,9 @@ characterize the expected inter-arrival times of a Bernoulli process.
 However, repeated tossing of a biased coin is not necessary:
 geometrically distributed random numbers can be generated directly
 using a standard uniform random generator and some simple
-floating-point operations.\footnote{In theory, a countdown may need to
-  be arbitrarily large.  However, the odds of a \nicefrac{1}{100}
-  countdown exceeding $2^{32}-1$ are less than one in $10^{10^7}$.}
+floating-point operations.  (In theory, a countdown may need to
+be arbitrarily large.  However, the odds of a \nicefrac{1}{100}
+countdown exceeding $2^{32}-1$ are less than one in $10^{10^7}$.)
 
 As can be seen in the instrumented slow path, the countdown is reset
 once it reaches zero.  Thus, we consume next-sample countdowns

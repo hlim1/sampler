@@ -6,7 +6,15 @@ GNOME launcher's server reply dialog has bad tab navigation.  If focus
 is on a hyperlink in the HTML area, you cannot tab out to the "OK"
 button.
 
-how does launcher propagate SIGINT (^C) down to child?
+How does launcher propagate SIGINT (^C) down to child?
+
+Add some sort of upper bound on upload lengths to prevent things from
+getting completely out of hand if the instrumented application gets
+into a bad loop.
+
+If server offered a reply message, launcher doesn't seem to end
+connection from server until reply message dialog has been dismissed.
+We should disconnect sooner.
 
 * packaging
 
@@ -15,6 +23,12 @@ Check both script text as well as "configure --version" output.
 
 Consider adding some sort of "README.sampler" to the documentation for
 each sampled application RPM.
+
+* runtime libraries
+
+Add some sort of integrity checking to the linked list of compilation
+units.  For example, keep a running count of how many there should be
+and then verify that the list is that long before dumping.
 
 * instrumentor
 

@@ -2,7 +2,8 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot harness.$(cma)
-subdirs := assignments libcountdown loads
+transformers := assignments loads
+subdirs := libcountdown $(transformers)
 
 include rules.mk
 
@@ -39,7 +40,7 @@ insertSkipsVisitor = $(functionBodyVisitor) insertSkipsVisitor
 isolateInstructions = $(functionBodyVisitor) isolateInstructions
 mapClass = mapClass
 patchSites = patchSites
-phases = $(testHarness) phases
+phases = $(filterLabels) $(testHarness) phases
 printer = $(choices) $(filterLabels) printer
 removeLoops = $(functionBodyVisitor) removeLoops
 setClass = setClass

@@ -11,12 +11,8 @@ class visitor =
     method sites = sites
 
     method vfunc { svar = { vname = vname } } =
-      match classifyByName vname with
-      | Check
-      | Fail ->
-	  SkipChildren
-      | Generic ->
-	  DoChildren
+      assert (classifyByName vname == Generic);
+      DoChildren
 
     method vstmt ({skind = skind} as stmt) =
       match classifyStatement skind with

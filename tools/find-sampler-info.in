@@ -33,14 +33,14 @@ EOT
 }
 
 sub parse_edit ($) {
-  usage unless $_[0] =~ /(.*)::(.*)/;
+  usage unless $_[1] =~ /(.*)::(.*)/;
   @edit = ($1, $2);
   map { s{/+$}{} } @edit;
 }
 
 my $result = GetOptions ('extract=s' => \$extractdir,
 			 'save=s' => \$savedir,
-			 'edit-source-root=s' => \&parse_edit);
+			 'edit-source=s' => \&parse_edit);
 
 usage unless $result;
 usage unless $extractdir;

@@ -266,7 +266,6 @@ instrumentor/scalar-pairs/tests/Makefile
 launcher/Makefile
 launcher/broken/Makefile
 launcher/common/Makefile
-launcher/common/Config.py
 launcher/first-time/Makefile
 launcher/monitor/Makefile
 launcher/pixmaps/Makefile

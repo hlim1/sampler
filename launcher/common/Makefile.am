@@ -1,8 +1,15 @@
 common_PYTHON = $(sort $(wildcard *.py) Config.py)
 
-EXTRA_DIST = $(wildcard *.py)
+EXTRA_DIST = $(wildcard *.py) Config.py.in
 
-MOSTLYCLEANFILES = *.pyc *.pyo
+BUILT_SOURCES = Config.py
+
+MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
+
+
+dist-hook:
+	rm $(BUILT_SOURCES:%=$(distdir)/%)
+
 
 install-data-hook:
 	rm -f $(common_PYTHON:%=$(DESTDIR)$(commondir)/%)

@@ -13,6 +13,10 @@ BUILT_SOURCES = Paths.py
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
 
+dist-hook:
+	rm $(BUILT_SOURCES:%=$(distdir)/%)
+
+
 install-data-hook:
 	rm -f $(wrapper_PYTHON:%=$(DESTDIR)$(wrapperdir)/%)
 	rm -f $(wrapper_PYTHON:%.py=$(DESTDIR)$(wrapperdir)/%.pyc)

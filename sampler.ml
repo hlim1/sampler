@@ -38,5 +38,5 @@ end
     
 ;;
 
-let file = TestHarness.main new visitor in
+let file = TestHarness.main [new visitor] in
 printFile defaultCilPrinter stdout file

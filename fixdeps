@@ -17,7 +17,7 @@ while (<>) {
     my @F = split;
     print "@F\n";
     
-    if ($F[0] =~ s/\.cmo:$/.d:/) {
+    if ($F[0] =~ s/\.cm([io]):$/.d$1:/) {
 	foreach (@F) {
 	    s/\.cmi$/.mli/;
 	    s/\.cmo$/.ml/;

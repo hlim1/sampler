@@ -20,23 +20,24 @@ syslibs := unix.cma
 
 infile := hello
 
-targets := sampler cfg-to-dot dom-to-dot findLoopsAST findLoopsCFG findBackEdges weighPaths
-parts := $(basename $(wildcard *.ml))
+targets := sampler cfg-to-dot dom-to-dot findLoopsAST findLoopsCFG findBackEdges weighPaths collectHeaders
+impls := $(basename $(wildcard *.ml))
+ifaces := $(basename $(wildcard *.mli))
 
 all: $(targets)
 .PHONY: all
 
-parts: $(parts:=.cmo)
+parts: $(impls:=.cmo) $(ifaces:=.cmi)
 .PHONY: parts
 
-run: weighPaths $(infile).i
-	./$<
+run: collectHeaders $(infile).i
+	./$^
 .PHONY: run
 
 sampler: %: $(libs) $(addsuffix .cmo, utils testHarness %)
 	$(link)
 
-cfg-to-dot: %: $(libs) $(addsuffix .cmo, utils dotify testHarness %)
+cfg-to-dot: %: $(libs) $(addsuffix .cmo, utils dotify splitAfterCalls testHarness %)
 	$(link)
 
 dom-to-dot: %: $(libs) $(addsuffix .cmo, foreach mapClass setClass utils dominators dotify testHarness %)
@@ -45,7 +46,10 @@ dom-to-dot: %: $(libs) $(addsuffix .cmo, foreach mapClass setClass utils dominat
 findBackEdges: %: $(libs) $(addsuffix .cmo, setClass utils foreach testHarness %)
 	$(link)
 
-weighPaths: %: $(libs) $(addsuffix .cmo, mapClass setClass utils foreach testHarness %)
+weighPaths: %: $(libs) $(addsuffix .cmo, mapClass setClass utils foreach testHarness stores %)
+	$(link)
+
+collectHeaders: %: $(libs) $(addsuffix .cmo, setClass foreach splitAfterCalls testHarness %)
 	$(link)
 
 findLoopsAST: %: $(libs) $(addsuffix .cmo, utils testHarness %)
@@ -54,13 +58,16 @@ findLoopsAST: %: $(libs) $(addsuffix .cmo, utils testHarness %)
 findLoopsCFG: %: $(libs) $(addsuffix .cmo, utils mapClass setClass stackClass foreach dominators testHarness %)
 	$(link)
 
-$(parts:=.cmi): %.cmi: %.mli
+$(ifaces:=.cmi): %.cmi: %.mli
 	$(compile)
 
-$(parts:=.cmo): %.cmo: %.ml
+$(impls:=.cmo): %.cmo: %.ml
 	$(compile)
 
-$(parts:=.d): %.d: %.ml $(fixdeps)
+$(impls:=.do): %.do: %.ml $(fixdeps)
+	ocamldep $(includes) $< | $(fixdeps) >$@
+
+$(ifaces:=.di): %.di: %.mli $(fixdeps)
 	ocamldep $(includes) $< | $(fixdeps) >$@
 
 $(libcil): $(force)
@@ -91,8 +98,9 @@ clean: force
 .PHONY: clean
 
 spotless: clean force
-	rm -f *.d
+	rm -f *.d *.di *.do
 .PHONY: spotless
 
--include $(parts:=.d)
+-include $(impls:=.do)
+-include $(ifaces:=.di)
 -include $(infile).d

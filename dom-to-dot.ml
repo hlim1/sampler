@@ -25,5 +25,5 @@ end
 ;;
 
 print_string "digraph Dominators {\n";
-ignore(TestHarness.main new visitor);
+ignore(TestHarness.main [new visitor]);
 print_string "}\n"

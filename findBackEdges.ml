@@ -38,4 +38,4 @@ end
 ;;
 
 let visitor = new visitor in
-ignore(TestHarness.main visitor)
+ignore(TestHarness.main [visitor])

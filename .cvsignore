@@ -1,10 +1,16 @@
 *.cmi
 *.cmo
-*.d
+*.di
+*.do
 
-hello.i
+*.cfg.dot
+*.cfg.ps
+*.dom.dot
+*.d
+*.i
 
 cfg-to-dot
+collectHeaders
 dom-to-dot
 findBackEdges
 findLoopsAST

@@ -22,5 +22,5 @@ end
 ;;
 
 print_string "digraph CFG {\n";
-ignore(TestHarness.main new visitor);
+ignore(TestHarness.main [new SplitAfterCalls.visitor; new visitor]);
 print_string "}\n"

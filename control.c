@@ -1,14 +1,25 @@
+int *pointer;
+
+
 void foo(int flag)
 {
   while (flag)
     while (flag)
-      ++flag;
+      {
+	++*pointer;
+	foo(flag);
+	foo(flag);
+	++*pointer;
+      }
   
   if (flag)
-    ++flag;
+    ++*pointer;
 
   do
-    ++flag;
+    {
+      ++*pointer;
+      foo(flag);
+    }
   while(flag);
 
   return;

@@ -1,5 +1,4 @@
 open Cil
-open Identity
 
 
 let cloneLabel = function

@@ -6,7 +6,7 @@ let embedCFG =
     ~flag:"embed-cfg"
     ~desc:"embed control flow graphs in executables"
     ~ident:"EmbedCFG"
-    ~default:true
+    ~default:false
 
 
 class visitor =

@@ -47,6 +47,9 @@ include $(top_srcdir)/ocaml/rules.mk
 libdirs += $(top_builddir)/ocaml
 syslibs = str.$(cma) unix.$(cma)
 
+resolve_samples_SOURCES =
+resolve_timestamps_SOURCES =
+
 resolve-samples: $(libcommon) $(resolve-samples)
 	$(link)
 

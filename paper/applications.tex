@@ -256,24 +256,28 @@ roles; relationships among scalars may reveal buffer overruns,
 unanticipated consequences of negative values, invalid enumeration
 constants, or a variety of other problems.
 
-At any direct assignment to a scalar variable $x$, we identify all
-other local or global variables $\{ y_1, y_2, \dots, y_n \}$ which are
-also in scope and which have the same type.  We then compare $x$ to
-each $y_i$, and note whether $x$ was smaller, equal to, or greater
-than $y_i$.  Even with very sparse sampling, a direct trace of these
+%% changed x and y_i to a and b_i to avoid confusion with the logistic
+%% regression notation later on [axz]
+At any direct assignment to a scalar variable $a$, we identify all
+other local or global variables $\{ b_1, b_2, \dots, b_n \}$ which are
+also in scope and which have the same type.  We then compare $a$ to
+each $b_i$, and note whether $a$ was smaller, equal to, or greater
+than $b_i$.  Even with very sparse sampling, a direct trace of these
 comparisons would overwhelm both client, network, and server.
 Instead, we locally reduce the trace by merely counting how often each
 of the three relative orderings appeared.  We compare pointers to
 same-typed pointers as well, and additionally compare each pointer for
-equality with null.  One comparison between $x$ and $y_i$, which bumps
+equality with null.  One comparison between $a$ and $b_i$, which bumps
 one of three counters, is considered to be one instrumentation site
 subject to random sampling.  When an instrumented application
 terminates, it emits the vector of counter triples along with a flag
 indicating whether it completed successfully or was aborted by a fatal
 signal.
 
+%% changed number of counter triples to reflect the dataset without
+%% bison/lex lines
 As expected, this gives us a large number of candidate predicates:
-13,442 counter triples, or 40,326 counters in all.  Because our
+10,050 counter triples, or 30,150 counters in all.  Because our
 guesses are so crude, the vast majority of these are of no interest:
 either they compare completely unrelated variables, or they express
 relationships which behave indistinguishably in both successful and
@@ -281,84 +285,145 @@ failed runs.
 
 To find the few predicates that do count, we recast the bug hunt as a
 statistical analysis problem.  Each run of \texttt{bc} constitutes one
-sample point consisting of 40,326 observed \termdef{features} and one
+sample point consisting of 30,150 observed \termdef{features} and one
 binary \termdef{outcome} ($0 = \text{succeeded}, 1 = \text{crashed}$).
 In C, a misbehaving program can sometimes ``get lucky'': it may
 violate memory safety yet not crash.  Hence the outcome label is
-stochastic.  Given numerous data points (sampled runs), we would like
-to identify a narrow subset of our 40,326 features which are relevant
-to predicting the succeeded/crashed outcome.  This is the problem of
-feature selection in a classification setting.
+%%stochastic. [axz]
+non-deterministic.  Given numerous data points (sampled runs), we
+would like to identify a narrow subset of our 30,150 features which
+are relevant to predicting the succeeded/crashed outcome.  This is
+%% the problem of feature selection in a classification setting.[axz]
+equivalent to the machine learning problem of learning a binary
+classifier with feature selection, i.e. using as few input features as
+possible.
 
-\termdef{Logistic regression} \cite{Hastie01} is a discriminative
-binary classification method.  It is akin to linear regression, but
-uses the logistic function instead of the linear output function.  Let
-$x \in \Real^N$ be our input data, and $Y = \{0, 1\}$ be the output
-label.  The output distribution is modeled as the logistic function:
-%%
-\begin{equation*}
-  P(Y = 1 | X = x) = \frac{1}{ 1 + \exp(- \beta_0 - \vec\beta^T x) }
-\end{equation*}
+%% the following paragraphs bear substantial changes from the original
+%% version [axz]
+In the classification setting, we take a set of data
+with known binary output (a training set), and attempt to learn a
+binary classifier that gives good predictions on a test set.  The
+learning process usually involves additional parameters whose values can
+be determined using a validation set.  In our case, the end goal is to
+narrow down the set of features, hence our method will have to balance
+good classification performance with aggressive feature selection.
 
-In our setting, the input data are the predicate counters, normalized
-to have unit sample variance.  The $\beta$ values essentially weigh
-the relative importance of each feature in the final outcome.  Since
-we have many more parameters than data points, we constrain the
-possible set of parameter values by penalizing large $\beta$ values
-using the L1-norm, $\norm{\vec\beta}_1 = \sum_j \abs{\beta_j}$.  The
-model is then trained using stochastic gradient ascent to reach a
-local maximum of the penalized log likelihood.  Let $\mu(x) = P(Y = 1
-| x)$.  Then:
+A binary classifier takes feature values as inputs, and outputs a
+prediction of either $0$ or $1$.  \termdef{Logistic regression}
+\cite{Hastie01} is a method of learning a binary classifier where the
+output function is assumed to be logistic.  The logistic function is a
+continuous ``S''-shaped curve approaching 0 on one end, and 1 on the
+other.  The output can be interpreted as a probability measure of how
+likely the data point falls within class 0 or 1.  Quantizing the
+logistic function output then gives us a binary classifier: if the
+output is greater than $1/2$, then the data point is classified as
+class 1 (a crash), otherwise it falls under class 0 (successful run).
+Feature selection can be achieved by \termdef{regularizing} the
+function parameters to ignore most input features.
+
+%% this paragraph should be revisited after we finish the experimental
+%% results
+While other ways of combined classification and feature selection exist,
+none of them are particularly well-suited for this problem.  Some methods
+\cite{Golub:MCC:1999,Tibshirani2002} calculate a univariate
+correlation coefficient independently for each feature;
+other methods, such as decision trees \cite{00000048}, are more
+computationally intensive.  In our dataset, the features are clearly
+not independent of each other, and the size of the problem can
+potentially be too large for more computationally intensive methods.
+Furthermore, logistic regression is a discriminative classification
+method, and thus does not make any assumptions about the underlying
+distribution of the input.  This is crucial since our features arise
+from a decidedly artificial process and would be difficult to
+characterize using simple distributions.
+
+Suppose our training set $\mathcal{D}$ consists of $M$ data points
+$(x_1,y_1), \ldots, (x_M, y_M) $, where $x_i \in \Real^N$ denotes the vector of
+input predicate counters, and $y_i = \{0, 1\}$ the output label.  To
+learn a good classifier, we can maximize the \termdef{log likelihood}
+of the training set.
 %%
 \begin{equation*}
   \begin{split}
-    LL_\lambda (x, y, \{\beta_j\}) \:=\:
-    & y \log \mu(x) + (1 - y) \log (1 - \mu(x)) \\
-    & - \lambda \norm{\vec\beta}_1
+    LL( \mathcal{D} ) \:=\:
+    & \sum_{i=1}^M y_i \log P(Y = 1 | x) \\
+    & \hskip12pt + (1 - y_i) \log (1 - P(Y = 1 | x))
   \end{split}
 \end{equation*}
+Here the output labels $y_i$ are used as indicater functions to zero
+out exactly one of the two terms in each summand.  In logistic
+regression, the distribution $P(Y=1|x)$ is modeled as the logistic
+function $\mu_{\tilde\beta}(x)$ with parameters $\tilde\beta = \{ \beta_0 \in \Real, \beta
+\in \Real^N \}$.
+%%
+\begin{equation*}
+  P(Y = 1 | x) = \mu_{\tilde \beta} (x) = \frac{1}{ 1 + \exp(- \beta_0 - \beta^T x) }
+\end{equation*}
+%%
+The logistic parameters $\beta_0$ and $\beta$ take on the respective roles
+as the intercept and slope of the classifier, and essentially weigh
+the relative importance of each feature in the final outcome.  We
+expect most of the input features to have no influence over the
+success or final crash of the program, so we place an additional
+constraint that forces most of the $\tilde \beta$'s toward zero.  This is
+accomplished by subtracting a penalty term based on the L1-norm
+$\norm{\tilde \beta }_1 = \sum_{j=0}^M \abs{\beta_j}$.  We can tune the
+importance of this \termdef{regularization} term through a
+\termdef{regularization parameter} $\lambda$.  The penalized log likelihood
+function is:
+%%
+\begin{equation*}
+  \begin{split}
+    LL (\tilde\beta | \mathcal{D}, \lambda ) \:=\:
+    & \sum_{i=1}^M y_i \log \mu_{ \tilde \beta } (x_i) + (1 - y_i) \log (1 - \mu_{ \tilde \beta } (x_i)) \\
+    & - \lambda \norm{\beta}_1
+  \end{split}
+\end{equation*}
+%%
 
-While other ways of doing feature selection exist, none of them are
-particularly well-suited for this problem.  Some methods
-\cite{Golub:MCC:1999,Tibshirani2002} calculate a univariate
-correlation coefficient independently for each feature; other methods,
-such as decision trees \cite{00000048}, are more computationally
-intensive.  In our dataset, the features are clearly not independent
-of each other, and the size of the problem is too large for more
-computationally intensive methods.  Furthermore, logistic regression,
-being a discriminative training method, does not require modeling the
-distribution of the input features.  This is crucial, since our
-features arise from a decidedly artificial process and would be
-difficult to characterize using traditional statistical distributions.
+Some experimental details are in order.  Our \texttt{bc} dataset
+consists of 4390 runs with distinct random inputs and distinct
+randomized $1/1000$ sampling, of which 2729 are randomly chosen for
+training, 322 for validation, and 1339 for testing.  Although there
+are 30,150 raw features, many can be discarded immediately: in the
+training set 27,242 features are always zero.  Hence the effective
+number of features used in training is 2908.  (Beyond simplifying the
+statistical analysis, this degree of regularity means that counter
+reports are highly compressible, good news for deployed users with
+small hard drives or slow modems.)  Furthermore, to make the magnitude
+of the $\beta$ parameters comparable, the feature values have to be on the
+same scale.  Hence all the input features are shifted and scaled to
+lie between $[0,1]$, then normalized to have unit sample
+variance. The value of the regularization parameter $\lambda$ is determined
+through validation to be $0.3$.  The model is then trained using
+stochastic gradient ascent to reach a local maximum of the penalized
+log likelihood.  Using a learning rate of $10^{-5}$, the model usually
+converges within 60 iteration through the training set.  This takes
+roughly 30 minutes in MATLAB on a 1.8 GHz Pentium 4 CPU with 1 GB of
+RAM.
 
-Our \texttt{bc} dataset consists of 4058 runs with distinct random
-inputs and distinct randomized 1/100 sampling.  We partition these
-runs into 2704 to be used for training and 1354 for testing.  Although
-there are 40,326 raw features, many can be discarded immediately: in
-the training set 32,044 features are always zero and 1011 are always
-some non-zero constant.  Hence the effective number of features used
-in training is 7260.  Sparser sampling drives counts lower: at 1/1000,
-the effective number of interesting features drops to 6738.  Beyond
-simplifying the statistical analysis, this degree of regularity means
-that counter reports are highly compressible, good news for deployed
-users with small hard drives or slow modems.
+%% Our \texttt{bc} dataset consists of 4058 runs with distinct random
+%% inputs and distinct randomized 1/100 sampling.  We partition these
+%% runs into 2704 to be used for training and 1354 for testing.  Sparser
+%% sampling drives counts lower: at 1/1000,
+%% the effective number of interesting features drops to 6738.
 
-In our experiments, the model converged after roughly four iterations
-through the training dataset, using learning rate = $10^{-6}$ and
-$\lambda = 5$.  This took fourteen minutes in MATLAB on a 1.8 GHz
-Pentium 4 CPU with 1 GB of RAM.
 
 Once the model has been trained, predicates with the largest $\beta$
-coefficients suggest where to begin looking for the bug.  The top four
-ranked predicates show a clear trend:
+coefficients suggest where to begin looking for the bug.  In our case,
+the top five ranked coefficients are well-separated in magnitude from
+the rest, and show an unmistakable trend:
 
 \newcounter{feature}
 \begin{list}{\arabic{feature}.}{\usecounter{feature}\setlength{\itemsep}{0pt}\setlength{\parsep}{0in}\ttfamily\small}
-\item storage.c:171: more\_arrays(): indx > break\_label
-\item storage.c:171: more\_arrays(): indx < next\_func
-\item storage.c:176: more\_arrays(): indx > optind
-\item storage.c:171: more\_arrays(): indx > out\_col
+\item storage.c:176: more\_arrays(): indx > scale
+\item storage.c:176: more\_arrays(): indx > use\_math
+\item storage.c:176: more\_arrays(): indx > opterr
+\item storage.c:176: more\_arrays(): indx > next\_func
+\item storage.c:176: more\_arrays(): indx > i\_base
 \end{list}
+
+%% end edit [axz]
 
 The source code for \texttt{more\_arrays()} appears in
 \autoref{fig:bc:more-arrays}.  An earlier comment suggests that this

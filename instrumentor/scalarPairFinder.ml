@@ -22,7 +22,7 @@ class visitor (constants : Constants.collection) globals (tuples : CounterTuples
 	let statements = ref [last] in
 
 	let selector right =
-	  let compare op = BinOp (op, Lval left, right, intType) in
+	  let compare op = BinOp (op, Lval newLeft, right, intType) in
 	  BinOp (PlusA, compare Gt, compare Ge, intType)
 	in
 

@@ -1,6 +1,5 @@
 import cStringIO
 import re
-import xreadlines
 
 
 ########################################################################
@@ -11,10 +10,9 @@ import xreadlines
 
 class ReportsReader (dict):
     def __init__(self, source):
-        lines = xreadlines.xreadlines(source)
-
         startTag = re.compile('^<report id="([^"]+)">\n$')
-        for line in lines:
+
+        for line in source:
             match = startTag.match(line)
             if match:
                 name = match.group(1)

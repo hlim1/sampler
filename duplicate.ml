@@ -8,45 +8,60 @@ let cloneLabel = function
   | other -> other
 
 
-class visitor = object(self)
+(**********************************************************************)
+
+
+class visitor = object
   inherit SkipVisitor.visitor
 
-  val nextId = ref (-1)
-  method nextId = incr nextId; !nextId
-
-  val forwardJumps = ref []
   val clones = new StmtMap.container
+  val mutable forwardJumps = []
 
   method patchJumps =
     let patchJump dest =
       dest := clones#find !dest
     in
-    List.iter patchJump !forwardJumps
+    List.iter patchJump forwardJumps
+
 
   method vblock block =
     let duplicate = { block with bstmts = block.bstmts } in
     ChangeDoChildrenPost (duplicate, identity)
 
-  method vstmt stmt =
-    if stmt.sid != -1 then
-      ignore (bug "statement sid already set by someone else");
-    
-    let newSkind =
-      match stmt.skind with
-      | Goto ({contents = {sid = -1} as dest}, location) ->
-	  let indirect = ref dest in
-	  forwardJumps := indirect :: !forwardJumps;
-	  Goto (indirect, location);
-      | other -> other
-    in
-    
-    let newLabels = mapNoCopy cloneLabel stmt.labels in
-    let clone = mkStmt newSkind in
-    clone.labels <- newLabels;
 
-    stmt.sid <- self#nextId;
-    clones#add stmt clone;
-    ChangeDoChildrenPost (clone, identity)
+  method vstmt stmt =
+    if stmt.sid == -1 then
+      SkipChildren
+    else
+      let clone = { stmt with
+		    labels = mapNoCopy cloneLabel stmt.labels;
+		    sid = -1 }
+      in
+      
+      begin
+	match clone.skind with
+	| Goto (dest, location) ->
+	    begin
+	      try
+		let clonedDest = clones#find !dest in
+		let choice = If (zero,
+				 mkBlock [mkStmt (Goto (ref clonedDest, location))],
+				 mkBlock [mkStmt clone.skind],
+				 locUnknown) in
+		clone.skind <- choice;
+		stmt.skind <- choice
+	      with
+		Not_found ->
+		  let patchSite = ref !dest in
+		  clone.skind <- Goto (patchSite, location);
+		  forwardJumps <- patchSite :: forwardJumps
+	    end
+	      
+	| _ -> ()
+      end;
+
+      clones#add stmt clone;
+      ChangeDoChildrenPost (clone, Identity.identity)
 end
 
 

@@ -1,4 +1,4 @@
 open Cil
 
 
-let find = FindFunction.find "log"
+let find = FindFunction.find "samplerLog"

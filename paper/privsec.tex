@@ -2,15 +2,15 @@
 \label{sec:privsec}
 
 As noted in our introduction, the most important program behaviors are
-those exhibited by deployed software in the hands of real end users.
-However, any scheme for monitoring software post-deployment
-necessarily raises important privacy and security concerns.  The
-issues are complex, and as much social as technical.  However, our
-approach will only succeed to the extent that users feel safe
-contributing to the shared data pool.  Thus, addressing these concerns
-is both a moral and a practical imperative.
+those exhibited by deployed software in the hands of users.  However,
+any scheme for monitoring software post-deployment necessarily raises
+privacy and security concerns.  The issues are complex, and as much
+social as technical.  However, our approach can only succeed if users
+feel safe contributing to the shared data pool.  Thus, addressing
+these concerns is both a moral and a practical imperative.
 
 \begin{figure}
+  \small
   \centering
   \newlength{\boxwidth}
   \setlength{\boxwidth}{\columnwidth}
@@ -60,47 +60,49 @@ is both a moral and a practical imperative.
 
 The experiences of Netscape/Mozilla with crash feedback systems may be
 illustrative.  We have met with members of the Netscape Talkback Team,
-a group of quality assurance engineers specifically tasked with
-managing crash reports from the automated feedback system.
+a group of quality assurance engineers who
+manage crash reports from the automated feedback system.
 Considerable effort has gone into designing the client side of this
 system so that users are fully informed.  The system is strictly
 opt-in on a per-failure basis, or may be disabled entirely.  The user
 may optionally examine the contents of the crash report, and no
-information is ever sent to Netscape without explicit authorization
-from the user.  \autoref{fig:netscape} shows the sort of information
+information is ever sent to Netscape without explicit authorization.
+\autoref{fig:netscape} shows the sort of information
 presented each time Netscape or Mozilla has crash data to submit.
 
-Of course, not all users will read or understand these assurances.
-Furthermore, while one can visually scan a Mozilla crash report for
-incriminating strings, users cannot be expected to make informed
-privacy judgments about a predicate counters report that reveals that
-\texttt{indx} was found to be greater than \texttt{a\_count} 5280
-times.
-
+Not all users will read or understand these assurances.
+%Furthermore, while one can visually scan a Mozilla crash report for
+%incriminating strings, users cannot be expected to make informed
+%privacy judgments about a predicate counters report that reveals that
+%\texttt{indx} was found to be greater than \texttt{a\_count} 5280
+%times.
+%
 Even so, there are some technical measures we can take to protect the
 privacy of even non-technically savvy users.  The very nature of the
 sampling process itself affords a degree of anonymity.  We collect a
 small bit of information from many, many users; any single run has
-little revelatory power, and the information which is revealed will
-generally be so randomly scattered as to make coherent reassembly of a
-compound value, such as a password string, infeasible.
+little revelatory power.
+%, and the information which is revealed will
+%generally be so randomly scattered as to make coherent reassembly of a
+%compound value, such as a password string, infeasible.
 
 Some data, or some parts of execution, may be so sensitive that even
 this diffuse information leakage is unacceptable.  Several type-based
 analyses under the broad heading of secure information flow
 \cite{volpano96:sound,1997:tapsoft:volpano,ZdZhNyMy2001} may be
-helpful here.  Such systems statically identify those parts of a
-program that manipulate secure or sensitive data; we can avoid
+helpful here.  Such systems statically identify parts of a
+program that manipulate sensitive data; we can avoid
 inserting instrumentation that reveals such values.  Of course, this
-will make it difficult to track down bugs in security-sensitive parts
+will make it difficult to track bugs in security-sensitive parts
 of an application, but that trade-off is always present: one can only
 fix bugs about which that the customer is willing to provide useful
-information.  A greater challenge is assuring the correctness of these
-(or any) type-based approaches in the presence of memory safety bugs,
-but the \CCured project has shown that this too is possible.
+information.  
+%A greater challenge is assuring the correctness of these
+%(or any) type-based approaches in the presence of memory safety bugs,
+%but the \CCured project has shown that this too is possible.
 
-If the ultimate use of sampled data is the sort of data mining used in
-\autoref{sec:debug}, then an attractive mechanism for protecting user
+In the context of statistical analyses in the style of
+\autoref{sec:debug} an attractive mechanism for protecting user
 anonymity becomes available.  Many statistical analyses are
 characterized by a set of \termdef{sufficient statistics}: a
 collection of values which completely characterize the internal state
@@ -109,8 +111,7 @@ stream of numbers, a running total and a count would be sufficient
 statistics: the mean can be computed from these without retaining the
 individual numbers in the stream.  Similarly, once the logistic
 regression has been updated with a new trace, the trace itself may be
-discarded.  If the analysis host is compromised, the attacker will
-learn aggregate information about all collected traces, but cannot
+discarded.  If the analysis host is compromised, an attacker cannot
 recover the precise details of any single trace.
 
 A statistical approach designed to cope with noise offers some

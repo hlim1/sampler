@@ -13,35 +13,60 @@
 #define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(unsigned))
 
 
+static void failed(const char function[])
+{
+  fprintf(stderr, "%s failed: %s\n", function, strerror(errno));
+  exit(2);
+}
+
+
+static void *checkedMmap(int prot, int fd)
+{
+  void * const mapping = mmap(0, MAP_SIZE, prot, MAP_PRIVATE, fd, 0);
+
+  if (mapping == (void *) -1)
+    failed("mmap");
+
+  if (close(fd))
+    failed("close");
+
+  return mapping;
+}
+
+
+static int checkedOpen(const char filename[])
+{
+  const int fd = open(filename, O_RDONLY);
+
+  if (fd == -1)
+    fprintf(stderr, "open of %s failed: %s\n", filename, strerror(errno));
+
+  return fd;
+}
+
+
 const unsigned *loadCountdowns(const char envar[])
 {
   const char * const environ = getenv(envar);
-  if (!environ)
+  void *mapping;
+  
+  if (environ)
     {
-      fprintf(stderr, "%s: must name precomputed countdowns file in $%s\n",  __FUNCTION__, envar);
-      exit(2);
+      const int fd = checkedOpen(environ);
+      mapping = checkedMmap(PROT_READ, fd);
     }
   else
     {
-      const int fd = open(environ, O_RDONLY);
-      if (fd == -1)
-	{
-	  fprintf(stderr, "%s: cannot open \"%s\": %s\n", __FUNCTION__, environ, strerror(errno));
-	  exit(2);
-	}
-      else
-	{
-	  void * const mapping = mmap(0, MAP_SIZE, PROT_READ, MAP_PRIVATE, fd, 0);
-	  if (mapping == (void *) -1)
-	    {
-	      fprintf(stderr, "%s: cannot mmap \"%s\": %s\n",  __FUNCTION__, environ, strerror(errno));
-	      exit(2);
-	    }
-
-	  close(fd);
-	  return (const unsigned *) mapping;
-	}
+      fprintf(stderr, "%s: no countdowns file named in $%s; using extreme sparsity\n",  __FUNCTION__, envar);
+      const int fd = checkedOpen("/dev/zero");
+      mapping = checkedMmap(PROT_READ | PROT_WRITE, fd);
+      memset(mapping, -1, MAP_SIZE);
+      mapping = mremap(mapping, MAP_SIZE, MAP_SIZE, PROT_READ);
+      if (mapping == (void *) -1)
+	failed("mremap");
     }
+
+  return (const unsigned *) mapping;
 }
 
 

@@ -22,7 +22,7 @@ my $outfile;
 my $verbose;
 
 my @chaff;
-#END { unlink @chaff; }
+END { unlink @chaff; }
 
 
 ########################################################################
@@ -166,6 +166,10 @@ while ($_ = shift) {
 
 	# link options
 	if ($key =~ /^l/) {
+	    push @ld, $_;
+	    next;
+	}
+	if ($key =~ /^Wl,/) {
 	    push @ld, $_;
 	    next;
 	}

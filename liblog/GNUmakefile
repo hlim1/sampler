@@ -2,14 +2,14 @@ CPPFLAGS := -D_GNU_SOURCE
 CFLAGS := -W -Wall -Werror -O9
 libs := log log-stdio log-syscall
 targets := $(foreach lib, $(libs), lib$(lib).so lib$(lib).a)
-strategy := stdio
-#strategy := syscall
+
+-include strategy.mk
 
 
 all: decoder $(targets)
 .PHONY: all
 
-liblog.%: liblog-$(strategy).%
+liblog.%: liblog-$(strategy).% strategy.mk
 	rm -f $@
 	ln -s $< $@
 

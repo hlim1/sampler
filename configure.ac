@@ -1,4 +1,4 @@
-AC_INIT([sampler],[0.9.2],[liblit@cs.berkeley.edu])
+AC_INIT([sampler],[0.9.1],[liblit@cs.berkeley.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -213,16 +213,6 @@ AC_MSG_RESULT($cc1)
 AC_MSG_CHECKING(for as)
 AC_SUBST(as, `$CC -print-prog-name=as`)
 AC_MSG_RESULT($as)
-
-AC_MSG_CHECKING(format string type modifer j)
-AC_COMPILE_IFELSE(
-  AC_LANG_PROGRAM(
-    [#include <stdint.h>
-     #include <stdio.h>],
-    [printf("%jd\n", (intmax_t) 0);]),
-  AC_DEFINE(HAVE_FORMAT_STRING_TYPE_MODIFIER_j, 1, [Define if C compiler supports format string type modifier "j"])
-  AC_MSG_RESULT(yes),
-  AC_MSG_RESULT(no))
 
 
 AC_MSG_CHECKING(for thread-local storage qualifier)

@@ -1,6 +1,6 @@
 olden := bh bisort em3d health mst perimeter power treeadd tsp
 spec95 := compress go ijpeg li
-benchmarks := $(strip $(olden) $(spec95))
+benchmarks := $(sort $(olden) $(spec95))
 
 
 recurse = $(MAKE) -C $(@D) $(@F)

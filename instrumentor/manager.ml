@@ -30,7 +30,7 @@ class virtual visitor schemeName file =
     method private finalize = ()
 
     initializer
-      Idents.register ("scheme", fun () -> schemeName);
+      Idents.register ("Scheme", fun () -> schemeName);
       Dynamic.analyze file;
       FunctionFilter.filter#collectPragmas file;
 

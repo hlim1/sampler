@@ -75,7 +75,7 @@ class visitor logger (sites : FindSites.set) = object (self)
 	
 	let formats, arguments = List.split (dissect lval (typeOfLval lval)) in
 	let format = ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
-	let where = Where.instruction instr in
+	let where = get_instrLoc instr in
 	let call = 
 	  Call (None, logger,
 		mkString format

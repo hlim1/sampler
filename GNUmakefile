@@ -34,7 +34,7 @@ functionEntry = functionEntry
 identity = identity
 insertSkipsAfter = $(insertSkipsVisitor) insertSkipsAfter
 insertSkipsBefore = $(insertSkipsVisitor) insertSkipsBefore
-insertSkipsVisitor = $(functionBodyVisitor) $(where) insertSkipsVisitor
+insertSkipsVisitor = $(functionBodyVisitor) insertSkipsVisitor
 isolateInstructions = $(functionBodyVisitor) isolateInstructions
 mapClass = mapClass
 patchSites = patchSites
@@ -47,7 +47,6 @@ testHarness = testHarness
 transformVisitor = $(backwardJumps) $(calls) $(classifyJumps) $(countdown) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(insertSkipsVisitor) $(isolateInstructions) $(removeLoops) $(weighPaths) transformVisitor
 utils = utils
 weighPaths = $(stmtMap) weighPaths
-where = where
 
 
 ########################################################################

@@ -1,28 +1,12 @@
 open Cil
 open Pretty
 
-let instr_where = function
-  | Set(_, _, location) -> location
-  | Call(_, _, _, location) -> location
-  | Asm(_, _, _, _, _, location) -> location
-
 let instr_what = function
   | Set(_, _, location) -> "Set"
   | Call(_, _, _, location) -> "Call"
   | Asm(_, _, _, _, _, location) -> "Asm"
 
-let rec stmt_where = function
-  | Instr([]) -> locUnknown
-  | Instr(head::_) -> instr_where head
-  | Return(_, location) -> location
-  | Goto(_, location) -> location
-  | Break(location) -> location
-  | Continue(location) -> location
-  | If(_, _, _, location) -> location
-  | Switch(_, _, _, location) -> location
-  | Loop(_, location, _, _) -> location
-  | Block({bstmts = []}) -> locUnknown
-  | Block({bstmts = {skind = skind} :: _}) -> stmt_where skind
+let stmt_where skind = get_stmtLoc skind
 
 let stmt_what = function
   | Instr(instrs) -> Printf.sprintf "Instr × %i" (List.length instrs)

@@ -8,7 +8,7 @@ class virtual visitor sites countdown = object (self)
 
   method vstmt statement =
     if statement.sid != -1 && sites#mem statement then
-      let replacements = self#insertSkip (countdown#decrement (Where.statement statement)) statement in
+      let replacements = self#insertSkip (countdown#decrement (get_stmtLoc statement.skind)) statement in
       let block = Block (mkBlock replacements) in
       let replace stmt =
 	stmt.skind <- block;

@@ -83,7 +83,7 @@ class visitor logger func = object (self)
     let format = mkString ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
     
     fun inst ->
-      let where = Where.locationOf inst in
+      let where = get_instrLoc inst in
       Call (None, logger,
 	    format
 	    :: mkString where.file

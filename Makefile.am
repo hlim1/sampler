@@ -33,8 +33,8 @@ $(srcdir)/package.m4: $(top_srcdir)/configure.ac
 	} >$@
 
 install-data-local:
-	$(mkinstalldirs) $(DESTDIR)$(package_libdir)/sites
-	$(mkinstalldirs) $(DESTDIR)$(package_libdir)/wrapped
+	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)/sites
+	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)/wrapped
 
 rpms: dist sampler.spec
 	rm -rf redhat

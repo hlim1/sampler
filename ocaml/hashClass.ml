@@ -1,8 +1,10 @@
-class ['key, 'value] t (storage : ('key, 'value) Hashtbl.t) =
+class ['key, 'value] t initial =
   object
+    val storage : ('key, 'value) Hashtbl.t =
+      Hashtbl.create initial
+
     method copy =
-      let clone = Hashtbl.copy storage in
-      new t clone
+      {< storage = Hashtbl.copy storage >}
 
     method add = Hashtbl.add storage
 
@@ -16,8 +18,3 @@ class ['key, 'value] t (storage : ('key, 'value) Hashtbl.t) =
 
     method iter visitor = Hashtbl.iter visitor storage
   end
-
-
-let create initial =
-  let storage = Hashtbl.create initial in
-  new t storage

@@ -1,5 +1,5 @@
 let memoize worker =
-  let known = HashClass.create 0 in
+  let known = new HashClass.t 0 in
   fun arg ->
     try
       let result = known#find arg in

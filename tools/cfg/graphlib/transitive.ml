@@ -3,7 +3,7 @@ exception Reached
 
 let reach trace succ origin destination =
   let worklist = new QueueClass.container in
-  let visited = HashClass.create 2 in
+  let visited = new HashClass.t 0 in
 
   let reached midpoint =
     trace midpoint;

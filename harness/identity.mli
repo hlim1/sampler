@@ -1,1 +1,0 @@
-val identity : 'a -> 'a

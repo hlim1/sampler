@@ -10,5 +10,3 @@ figure out what to do about setjmp/longjmp
 
 Transform.visit checks info#isEmpty.  Perhaps empty infos should never
 even be placed in the collection at al?
-
-post-call threshold checks are not being branch-predicted properly???

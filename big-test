@@ -1,8 +1,10 @@
-#!/bin/sh -x
+#!/bin/sh
 
 dir=`dirname $0`
 make -C $dir main
 
-src=/var/local/liblit/downloads/gimp-1.2.3/pp
-# find $src -name '*.i' -print0 | xargs -0 -r -t $dir/main
-find $src -name '*.i' -print | while read name; do $dir/main $name; done
+src=../gimp-1.2.3
+( cd $src && find . -name '*.i' ) |
+fgrep -v -x ./plug-ins/print/print-dither.i |
+sed "s:^\./:$src/:" |
+xargs -r -t -n 1 ./main

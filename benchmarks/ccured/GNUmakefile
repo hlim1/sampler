@@ -44,15 +44,11 @@ config.mk: %: ../../config.status %.in
 ########################################################################
 
 
-times: collated-times-all.txt collated-times-only.txt
+times: collated-times.txt
 .PHONY: times
 
-collated-times-all.txt: $(benchmarks:=/times)
-	./collate-times-all >$@.
-	mv $@. $@
-
-collated-times-only.txt: $(benchmarks:=/times)
-	./collate-times-only >$@.
+collated-times.txt: $(benchmarks:=/times)
+	./collate-times >$@.
 	mv $@. $@
 
 $(benchmarks:=/times):

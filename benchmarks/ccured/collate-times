@@ -1,0 +1,69 @@
+#!/usr/bin/perl -w
+
+use strict;
+use FileHandle;
+
+
+local $, = "\t";
+local $\ = "\n";
+print('suite', 'benchmark', 'when', 'where', 'seed',
+      'user', 'system', 'elapsed', 'cpu', 'text', 'data', 'max',
+      'inputs', 'outputs', 'major', 'minor', 'swaps');
+
+
+my %suite = (
+	     olden => ['bh', 'bisort', 'em3d', 'health', 'mst', 'perimeter', 'power', 'treeadd', 'tsp'],
+	     spec95 => ['compress', 'go', 'ijpeg', 'li']
+	     );
+
+
+sub collate_log ($$) {
+    my ($suite, $logName) = @_;
+
+    $logName =~ /^(.+)\/([^-]+)-(.+)\.times$/
+	or die "malformed log name: $logName";
+    my ($benchmark, $when, $where) = ($1, $2, $3);
+
+    my $file = new FileHandle $logName, 'r';
+    while (not $file->eof) {
+	my $seed;
+	my ($user, $system, $elapsedMin, $elapsedSec, $cpu, $text, $data, $max);
+	my ($inputs, $outputs, $major, $minor, $swaps);
+	
+	while (local $_ = $file->getline) {
+	    $seed = $1
+		if /SAMPLER_EVENT_COUNTDOWNS=\.\.\/countdowns\/\d+-(\d+)\.counts/;
+	    ($user, $system, $elapsedMin, $elapsedSec, $cpu, $text, $data, $max) = ($1, $2, $3, $4, $5, $6, $7, $8)
+		if /\b(\d+\.\d+)user (\d+\.\d+)system (\d+):(\d+\.\d+)elapsed (\d+)%CPU \((\d+)avgtext\+(\d+)avgdata (\d+)maxresident\)k/;
+	    ($inputs, $outputs, $major, $minor, $swaps) = ($1, $2, $3, $4, $5)
+		if /\b(\d+)inputs\+(\d+)outputs \((\d+)major\+(\d+)minor\)pagefaults (\d+)swaps/;
+
+	    last if defined $inputs;
+	}
+
+	if (defined $seed || defined $user || defined $inputs) {
+	    die unless defined $seed;
+	    die unless defined $user;
+	    die unless defined $inputs;
+	    
+	    my $elapsed = 60 * $elapsedMin + $elapsedSec;
+	    print($suite, $benchmark, $when, $where, $seed,
+		  $user, $system, $elapsed, $cpu, $text, $data, $max,
+		  $inputs, $outputs, $major, $minor, $swaps);
+	}
+    }
+}
+
+
+sub collate_suite ($@) {
+    my $suite = shift;
+    
+    foreach my $benchmark (@{$suite{$suite}}) {
+	foreach my $log (glob "$benchmark/*.times") {
+	    collate_log $suite, $log;
+	}
+    }
+}
+
+
+collate_suite $_ foreach ('olden', 'spec95');

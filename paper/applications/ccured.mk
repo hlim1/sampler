@@ -21,7 +21,7 @@ spec95-static.tex: ccured-static.pl $(spec95_static)
 
 tex += ccured-density
 
-ccured-density.tex: %.tex: %.pl $(ccured)/collated-times-all.txt
+ccured-density.tex: %.tex: %.pl $(ccured)/collated-times.txt
 	./$^ >$@.
 	mv $@. $@
 
@@ -31,7 +31,7 @@ ccured-density.tex: %.tex: %.pl $(ccured)/collated-times-all.txt
 
 tex += ccured-size
 
-ccured-size.tex: %.tex: %.pl $(ccured)/collated-times-all.txt
+ccured-size.tex: %.tex: %.pl $(ccured)/collated-times.txt
 	./$< >$@.
 	mv $@. $@
 
@@ -40,9 +40,3 @@ ccured-size.tex: %.tex: %.pl $(ccured)/collated-times-all.txt
 
 
 eps += perimeter
-
-decure-only-one-function.sxc: collated-times.txt
-	$(error please refresh $< in $@)
-
-perimeter.eps: decure-only-one-function.sxc
-	$(error please re-export $@ from $<)

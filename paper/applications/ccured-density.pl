@@ -1,4 +1,4 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/perl -w
 
 use strict;
 use FileHandle;
@@ -16,9 +16,10 @@ my $collated = new FileHandle $ARGV[0];
 $collated->getline;
 
 while ($_ = <$collated>) {
-    my ($suite, $benchmark, $form, $seed, $user, $system, $elapsed, $cpu, $text, $data, $max, $inputs, $outputs, $major, $minor, $swaps) = split;
-    die if exists $elapsed{$benchmark}{$form}{$seed};
-    $elapsed{$benchmark}{$form}{$seed} = $elapsed;
+    my ($suite, $benchmark, $when, $where, $seed, $user, $system, $elapsed, $cpu, $text, $data, $max, $inputs, $outputs, $major, $minor, $swaps) = split;
+    next if $where =~ /^only-/;
+    die if exists $elapsed{$benchmark}{$when}{$where}{$seed};
+    $elapsed{$benchmark}{$when}{$where}{$seed} = $elapsed;
 }
 
 
@@ -30,10 +31,10 @@ sub slowdown ($$) {
 }
 
 
-sub print_time ($$) {
-    my ($form, $elapsed) = @_;
-    my $me = slowdown $elapsed->{$form}, $elapsed->{'always-none'};
-    my $all = slowdown $elapsed->{'always-all'}, $elapsed->{'always-none'};
+sub print_time ($$$) {
+    my ($when, $where, $elapsed) = @_;
+    my $me = slowdown $elapsed->{$when}{$where}, $elapsed->{always}{none};
+    my $all = slowdown $elapsed->{always}{all}, $elapsed->{always}{none};
 
     if ($me < $all) {
 	printf " & \\textit{%.2f}", $me;
@@ -46,9 +47,9 @@ sub print_time ($$) {
 foreach my $suite ('olden', 'spec95') {
     foreach my $benchmark (@{$suite{$suite}}) {
 	print $benchmark;
-	print_time 'always-all', $elapsed{$benchmark};
+	print_time 'always', 'all', $elapsed{$benchmark};
 	foreach my $sparsity (100, 1000, 10000, 1000000) {
-	    print_time "sample-all-$sparsity", $elapsed{$benchmark};
+	    print_time 'sample', "all-$sparsity", $elapsed{$benchmark};
 	}
 	print " \\\\\n";
     }

@@ -41,6 +41,7 @@ fuzz/Makefile
 instrumentor/branches/libbranches/Makefile
 instrumentor/daikon/libdaikon/Makefile
 instrumentor/daikount/libdaikount/Makefile
+instrumentor/returns/libreturns/Makefile
 launcher/Makefile
 launcher/applications/Makefile
 launcher/applications/gnumeric/Makefile

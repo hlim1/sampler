@@ -3,7 +3,7 @@ include $(top)/defs.mk
 
 targets := daikount.$(cma)
 libdirs := $(top)
-subdirs := libdaikount returns scalar-pairs
+subdirs := libdaikount scalar-pairs
 
 include $(top)/rules.mk
 

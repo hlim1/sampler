@@ -5,7 +5,7 @@ open SiteInfo
 type slice = lval
 
 
-class builder file =
+class virtual builder file =
   object (self)
     val mutable nextId = 0
     val sites = new SiteInfoQueue.container

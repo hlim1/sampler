@@ -1,15 +1,17 @@
 tests := test extern
 
-top := ../../..
+top := ../..
 
 front_end := ../driver/main
-CC := $(front_end) -g -W -Wall -Werror
+cyclic := acyclic
+CC := $(front_end) --$(cyclic)
+CFLAGS := -g -W -Wall -Werror -save-temps
 
 traces := $(tests:=.trace)
-checks := $(tests:=.check)
+reports := $(tests:=.report)
 
 countdir := $(top)/../libcountdown
-lib := ../../libdaikount/libdaikount.la $(countdir)/libacyclic.la
+lib := ../libreturns/libreturns.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -21,14 +23,14 @@ recurse = $(MAKE) -C $(@D) $(@F)
 all:
 .PHONY: all
 
-check: $(checks)
+check: $(reports)
 .PHONY: check
 
-$(checks): %.check: %.trace
-	[ -s $< ]
-.PHONY: $(checks)
+$(reports): %.report: $(top)/../resolver/resolve-samples % %.trace
+	$< $* <$*.trace >$@.
+	mv $@. $@
 
-$(tests:=.trace): %.trace: %
+$(traces): %.trace: %
 	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 	[ -r $@ ]
 
@@ -38,12 +40,9 @@ test: test.o $(lib) ../main
 extern: extern-caller.o extern-callee.o $(lib) ../main
 	$(LINK.o) extern-caller.o extern-callee.o $(LOADLIBES) $(LDLIBS) -o $@
 
-test.o extern-caller.o extern-callee.o: %.o: %.c $(front_end) ../main ../../libdaikount/daikount.h
+test.o extern-caller.o extern-callee.o: %.o: %.c $(front_end) ../main ../libreturns/returns.h ../libreturns/returns-cil.h
 
 ../main: $(force)
-	$(recurse)
-
-$(countdowns): $(force)
 	$(recurse)
 
 $(lib): $(force)
@@ -53,7 +52,8 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(traces) $(tests) *.[ios] *.inst.c
+	libtool --mode=clean 'rm -f' $(tests)
+	rm -f $(reports) $(reports:=.) $(traces) *.[ios] *.inst.c
 .PHONY: clean
 
 spotless: clean

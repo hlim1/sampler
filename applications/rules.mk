@@ -63,7 +63,7 @@ sam_rpm = RPMS/$(cpu)/$(name)-samplerinfo-$(version)-$(release).sam.$(sam_releas
 rpm: $(sam_rpm)
 .PHONY: rpm
 $(sam_rpm): $(sam_srpm) $(rpmbuild) BUILD/.stamp RPMS/.stamp
-	time $(rpmenv) $(rpmbuild) '$(scheme)' $(rpmbuild_flags) --rebuild $<
+	$(rpmenv) time $(rpmbuild) '$(scheme)' $(rpmbuild_flags) --rebuild $<
 	[ -e $@ ]
 
 

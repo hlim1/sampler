@@ -16,8 +16,11 @@ let visit func =
       in
       mark entry;
 
-      let removeUnmarked stmt =
-	if stmt.sid != -2 then
-	  stmt.skind <- Instr []
+      let removeUnmarked = function
+	| { skind = Block _ }
+	| { sid = -2 } ->
+	    ()
+	| stmt ->
+	    stmt.skind <- Instr []
       in
       List.iter removeUnmarked stmts

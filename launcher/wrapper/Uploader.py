@@ -56,5 +56,6 @@ def upload(app, user, outcome, accept):
         if message:
             base = reply.geturl()
             content_type = reply.info()['content-type']
+            del reply
             dialog = ServerMessage(base, content_type, message)
             dialog.run()

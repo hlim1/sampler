@@ -8,23 +8,23 @@ import sys
 
 
 def run_without_sampling(app):
-    """Run an application with sampling forced off.
+    '''Run an application with sampling forced off.
 
     This function does not return!
-    """
+    '''
 
     # force sampling off
-    if "SAMPLER_SPARSITY" in os.environ:
-        del os.environ["SAMPLER_SPARSITY"]
+    if 'SAMPLER_SPARSITY' in os.environ:
+        del os.environ['SAMPLER_SPARSITY']
 
     # away we go!
     os.execv(app.executable(), sys.argv)
 
 
 def run_with_sampling(app, sparsity):
-    """Run an application with sampling according to user preferences.
+    '''Run an application with sampling according to user preferences.
 
-    Returns an Outcome object describing the outcome of the run."""
+    Returns an Outcome object describing the outcome of the run.'''
 
     outcome = Outcome.Outcome()
 

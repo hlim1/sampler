@@ -26,7 +26,7 @@ class ServerMessage (DialogWrapper):
         document.dialog = self.dialog
         document.base = ''
         self.on_set_base(document, reply.geturl())
-        [type, options] = cgi.parse_header(reply.info()["Content-type"])
+        [type, options] = cgi.parse_header(reply.info()['Content-type'])
         document.open_stream(type)
         document.write_stream(reply.read())
         document.close_stream()

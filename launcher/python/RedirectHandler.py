@@ -3,8 +3,8 @@ import urlparse
 
 
 class RedirectHandler (HTTPRedirectHandler):
-    """Custom urllib2 handler that captures information about
-    permanent redirections."""
+    '''Custom urllib2 handler that captures information about
+    permanent redirections.'''
 
     def __init__(self):
         self.permanent = None

@@ -35,7 +35,7 @@ class Upload:
 
         # pick a boundy that never appears in any report
         self.__boundary = self.__pick_boundary()
-        self.headers = {"Content-type" : 'multipart/form-data; boundary="' + self.__boundary + '"'}
+        self.headers = {'Content-type' : 'multipart/form-data; boundary="' + self.__boundary + '"'}
 
     def __pick_boundary(self):
         candidate = ('=' * 15) + repr(random.random()).split('.')[1] + '=='

@@ -3,7 +3,7 @@ import Uploader
 
 
 def main(app, user):
-    """Run the given application and possibly upload the results."""
+    '''Run the given application and possibly upload the results.'''
     if user.enabled() and user.sparsity() > 0:
         sparsity = user.sparsity()
         if sparsity > 0:

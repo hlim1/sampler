@@ -7,11 +7,11 @@ import urllib2
 def __add_headers(upload, prefix, contributor):
     contribution = contributor.upload_headers()
     for key in contribution:
-        upload.headers["Sampler-" + prefix + "-" + key] = contribution[key]
+        upload.headers['Sampler-' + prefix + '-' + key] = contribution[key]
 
 
 def upload(app, user, outcome):
-    """Upload the results of a single run."""
+    '''Upload the results of a single run.'''
 
     reporting_url = user.reporting_url()
     if reporting_url:
@@ -23,9 +23,9 @@ def upload(app, user, outcome):
         upload = Upload.Upload(outcome.reports, compress_level)
 
         # collect headers from various contributors
-        upload.headers["sampler-uploader-version"] = "0.1"
-        __add_headers(upload, "application", app)
-        __add_headers(upload, "outcome", outcome)
+        upload.headers['sampler-uploader-version'] = '0.1'
+        __add_headers(upload, 'application', app)
+        __add_headers(upload, 'outcome', outcome)
 
         # install our special redirect hander
         redirect = RedirectHandler.RedirectHandler()
@@ -42,11 +42,11 @@ def upload(app, user, outcome):
             user.change_reporting_url(redirect.permanent)
 
         # server may have requested a sparsity change
-        if reply.info().has_key("Change-sparsity"):
+        if reply.info().has_key('Change-sparsity'):
             # !!!: sanity check this before applying it
             # !!!: don't apply change if it is the same as the old value
-            user.change_sparsity(int(reply.info()["Change-sparsity"]))
+            user.change_sparsity(int(reply.info()['Change-sparsity']))
 
         # server may have posted a message for the user
-        if int(reply.info()["Content-length"]):
+        if int(reply.info()['Content-length']):
             user.show_server_message(reply)

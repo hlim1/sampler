@@ -1,1 +1,5 @@
-val isInterestingVar : Cil.varinfo -> bool
+open Cil
+
+
+val isInterestingVar  : varinfo -> bool
+val isInterestingLval : lval    -> bool

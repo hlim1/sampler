@@ -28,58 +28,59 @@ class visitor file (constants : Constants.collection) (tuples : PairTuples.build
       globalVars @ localVars
 
     method vstmt stmt =
-      match stmt.skind with
-      | Instr [Set ((Var left, NoOffset), _, location)]
-      | Instr [Call (Some (Var left, NoOffset), _, _, location)]
-	when isInterestingVar left && self#includedStatement stmt ->
-	  let bumps =
+      let build replacement left location =
 
-	    let build =
-	      let leftOperand = {
-		exp = Lval (var left);
-		doc = text left.vname
+	let leftType = typeOfLval left in
+	let newLeft = var (makeTempVar func leftType) in
+
+	let bumps =
+
+	  let build =
+	    let leftOperand = {
+	      exp = Lval newLeft;
+	      doc = d_lval () left
+	    } in
+	    let bump = tuples#bump func location in
+	    fun right ->
+	      let rightOperand = {
+		exp = right;
+		doc = d_exp () right
 	      } in
-	      let bump = tuples#bump func location in
-	      fun right ->
-		let rightOperand = {
-		  exp = right;
-		  doc = d_exp () right
-		} in
-		let site = mkEmptyStmt () in
-		let bump = bump site leftOperand rightOperand in
-		site.skind <- bump;
-		sites <- site :: sites;
-		site
-	    in
+	      let site = mkEmptyStmt () in
+	      let bump = bump site leftOperand rightOperand in
+	      site.skind <- bump;
+	      sites <- site :: sites;
+	      site
+	  in
 
-	    let rights =
-	      let isComparable =
-		let signature = typeSig left.vtype in
-		fun right ->
-		  left != right &&
-		  signature = typeSig right.vtype
-	      in
-	      let rec filter =
-		let flattenConstants signed =
-		  let kind = if signed then
-		    ILongLong
-		  else
-		    IULongLong
-		  in
-		  let folder number results =
-		    kinteger64 kind number :: results
-		  in
-		  constants#fold folder []
+	  let rights =
+	    let isComparable =
+	      let signature = typeSig leftType in
+	      fun right ->
+		left <> var right &&
+		signature = typeSig right.vtype
+	    in
+	    let rec filter =
+	      let flattenConstants signed =
+		let kind = if signed then
+		  ILongLong
+		else
+		  IULongLong
 		in
-		function
+		let folder number results =
+		  kinteger64 kind number :: results
+		in
+		constants#fold folder []
+	      in
+	      function
 		| right :: rights when isComparable right ->
 		    Lval (var right) :: filter rights
 		| _ :: rights ->
 		    filter rights
 		| [] ->
-		    match unrollType left.vtype with
+		    match unrollType leftType with
 		    | TPtr _ ->
-			[mkCast zero left.vtype]
+			[mkCast zero leftType]
 		    | TInt (ikind, _) ->
 			flattenConstants (isSigned ikind)
 		    | TEnum _ ->
@@ -87,14 +88,28 @@ class visitor file (constants : Constants.collection) (tuples : PairTuples.build
 		    | other ->
 			ignore (bug "unexpected left operand type: %a\n" d_type other);
 			[]
-	      in
-	      filter vars
 	    in
-
-	    List.map build rights
+	    filter vars
 	  in
 
-	  stmt.skind <- Block (mkBlock (mkStmt stmt.skind :: bumps));
+	  List.map build rights
+	in
+	Block (mkBlock (mkStmt (Instr [replacement newLeft])
+			:: bumps
+			@ [mkStmt (Instr [Set (left, Lval newLeft, location)])]))
+      in
+
+      match stmt.skind with
+      | Instr [Set (left, expr, location)]
+	when self#includedStatement stmt && isInterestingLval left ->
+	  let replacement = (fun temp -> Set (temp, expr, location)) in
+	  stmt.skind <- build replacement left location;
+	  SkipChildren
+
+      | Instr [Call (Some left, callee, args, location)]
+	when self#includedStatement stmt && isInterestingLval left ->
+	  let replacement = (fun temp -> Call (Some temp, callee, args, location)) in
+	  stmt.skind <- build replacement left location;
 	  SkipChildren
 
       | Instr (_ :: _ :: _) ->

@@ -17,6 +17,7 @@ CREATE TABLE build (
   instrumentation_type enum('branches','returns','scalar-pairs') NOT NULL default 'branches',
   instrumentation_version varchar(50) NOT NULL default '',
   build_date datetime NOT NULL default '0000-00-00 00:00:00',
+  suppress varchar(255) default NULL,
   PRIMARY KEY  (build_id),
   UNIQUE KEY application_name (application_name,application_version,application_release),
   KEY instrumentation_type (instrumentation_type),

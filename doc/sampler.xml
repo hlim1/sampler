@@ -286,6 +286,39 @@
 	  </listitem>
 	</varlistentry>
       </variablelist>
+
+      <section>
+	<title>Multithreaded Applications</title>
+
+	<para>The instrumentor generates single-threaded code by
+	default.  Code suitable for multithreaded execution will be
+	generated instead if any of the following flags are observed
+	on the command line:
+
+	<itemizedlist spacing="compact" mark="none">
+	  <listitem><para><option>-pthread</option></para></listitem>
+	  <listitem><para><option>-D_REENTRANT</option></para></listitem>
+	  <listitem><para><option>-D_THREAD_SAFE</option></para></listitem>
+	  <listitem><para><option>-lpthread</option></para></listitem>
+	</itemizedlist></para>
+
+	<para>If the instrumentor is operating in multithreaded mode,
+	it must do so both at compile time and at link time.  For this
+	reason, the <option>-pthread</option> flag is preferred: it
+	can be used both when compiling and when linking and adds the
+	other necessary macro definitions and link libraries
+	automatically.</para>
+
+	<para>Multithreaded code requires a native C compiler with
+	support for thread-local storage:
+	<application>GCC</application> 3.2 at a minimum, 3.3
+	preferred.  Linux distributions with support for the Native
+	POSIX Threads Library (<acronym>NPTL</acronym>) will offer the
+	best performance.  Even so, there will be some additional
+	overhead beyond that of single-threaded code, so do not enable
+	multithreaded code generation unless your application is
+	really multithreaded.</para>
+      </section>
     </section>
   </section>
 

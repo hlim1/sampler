@@ -1,8 +1,6 @@
 Document --{no-,}assume-weightless-{libraries,externs} and hook them
 up in the Perl driver.
 
-add listener for changes to gconf 'enabled' key
-
 how does launcher propagate SIGINT (^C) down to child?
 
 PairClassifier.visitor does a lot of redundant work to re-scan for

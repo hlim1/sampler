@@ -55,3 +55,7 @@ class SamplerConfig:
 
     def __setitem__(self, name, value):
         SamplerConfig.__handlers[name]['set'](self, name, value)
+
+    def notify_add(self, name, handler):
+        return self.client.notify_add (self.__key(name),
+                                       lambda client, connection, entry, data: handler())

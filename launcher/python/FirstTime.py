@@ -22,10 +22,10 @@ class FirstTime (DialogWrapper):
         linkParent.add(newLink)
         newLink.show()
 
-        # set initial state for yes/no radio buttons and associated labels
+        # hook up gconf notifications and set initial state
         self.__gconfig = gconfig
-        self.__enabled = gconfig['enabled']
-        self.__yesno_set()
+        gconfig.notify_add('enabled', self.gconf_on_enabled)
+        self.gconf_on_enabled()
 
     def __yesno_update(self, name, active):
         radio = self.get_widget(name)
@@ -41,6 +41,10 @@ class FirstTime (DialogWrapper):
         self.__enabled = yes.get_active()
         self.__yesno_set()
         self.__gconfig['enabled'] = self.__enabled
+
+    def gconf_on_enabled(self):
+        self.__enabled = self.__gconfig['enabled']
+        self.__yesno_set()
 
     def enabled(self):
         return self.__enabled

@@ -2,11 +2,14 @@ package TaggedLoader;
 
 use strict;
 
+use Carp;
+
 
 ########################################################################
 
 
 sub new ($$) {
+    @_ == 2 or confess 'wrong argument count';
     my ($proto, $element) = @_;
     my $class = ref($proto) || $proto;
     my $self = { element => $element };
@@ -15,24 +18,29 @@ sub new ($$) {
 
 
 sub find ($$$) {
+    @_ == 3 or confess 'wrong argument count';
     my ($self, $unit, $scheme) = @_;
-    return @{$self->{lines}{$unit}{$scheme}};
+
+    return $self->{sections}{$unit}{$scheme};
 }
 
 
 sub foreach ($\&) {
+    @_ == 2 or confess 'wrong argument count';
     my ($self, $handler) = @_;
 
-    foreach my $unit (sort keys %{$self->{lines}}) {
-	foreach my $scheme (sort keys %{$self->{lines}{$unit}}) {
-	    $handler->($unit, $scheme, @{$self->{lines}{$unit}{$scheme}});
+    foreach my $unit (sort keys %{$self->{sections}}) {
+	foreach my $scheme (sort keys %{$self->{sections}{$unit}}) {
+	    $handler->($unit, $scheme, $self->{sections}{$unit}{$scheme});
 	}
     }
 }
 
 
 sub decode_start_tag ($$) {
+    @_ == 2 or confess 'wrong argument count';
     my ($self, $received) = @_;
+
     $received =~ /\A<$self->{element} unit="([0-9a-f]{32})" scheme="([-a-z]+)">\Z/
 	or die "malformed $self->{element} start tag: $received\n";
 
@@ -40,8 +48,9 @@ sub decode_start_tag ($$) {
 }
 
 
-sub read ($$) {
-    my ($self, $handle) = @_;
+sub read ($$$) {
+    @_ == 3 or confess 'wrong argument count';
+    my ($self, $source, $handle) = @_;
 
     while (my $tag = <$handle>) {
 	my ($unit, $scheme) = $self->decode_start_tag($tag);
@@ -53,17 +62,18 @@ sub read ($$) {
 	    push @lines, $line;
 	}
 
-	my $prior = $self->{lines}{$unit}{$scheme};
+	my $prior = $self->{sections}{$unit}{$scheme};
 	my $merged;
 
 	if (defined $prior) {
-	    $merged = $self->merge($unit, $scheme, $prior, \@lines);
+	    $merged = $self->merge($unit, $scheme, $prior->{lines}, \@lines);
 	    die "cannot merge multiple instances of unit $unit, scheme $scheme\n";
 	} else {
 	    $merged = \@lines;
 	}
 
-	$self->{lines}{$unit}{$scheme} = $merged;
+	$merged = { source => $source, lines => $merged };
+	$self->{sections}{$unit}{$scheme} = $merged;
     }
 }
 

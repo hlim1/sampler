@@ -3,6 +3,7 @@
 use strict;
 use 5.008;			# for safe pipe opens using list form of open
 
+#use Data::Dumper;
 use Fcntl qw(SEEK_SET);
 use FileHandle;
 use FindBin;
@@ -17,21 +18,23 @@ use SiteInfo;
 
 my $siteInfo = new SiteInfo;
 $siteInfo->load($_) foreach @ARGV;
+#print Dumper($siteInfo);
 
 my $rawSamples = new RawSamples;
-$rawSamples->read(\*STDIN);
+$rawSamples->read('stdin', \*STDIN);
+#print Dumper($rawSamples);
 
 
-sub dump ($$@) {
-    my ($unit, $scheme, @tuples) = @_;
-    my @sites = $siteInfo->find($unit, $scheme);
+sub dump ($$\%) {
+    my ($unit, $scheme, $tuples) = @_;
+    my $sites = $siteInfo->find($unit, $scheme);
 
-    @tuples == @sites
+    @{$tuples->{lines}} == @{$sites->{lines}}
 	or die "mismatched count of samples and sites for unit $unit, scheme $scheme\n";
 
     local ($,, $\) = ("\t", "\n");
-    foreach (0 .. $#tuples) {
-	print $unit, $scheme, $sites[$_], $tuples[$_];
+    foreach (0 .. $#{$tuples->{lines}}) {
+	print $unit, $scheme, $sites->{source}, $sites->{lines}->[$_], $tuples->{lines}->[$_];
     }
 }
 

@@ -124,7 +124,7 @@ print "upload\n";
 
 $dbh->do(q{
     CREATE TEMPORARY TABLE upload
-	(application_name ENUM('evolution', 'gaim', 'gimp', 'gnumeric', 'nautilus') NOT NULL,
+	(application_name VARCHAR(50) NOT NULL,
 	 application_version VARCHAR(50) NOT NULL,
 	 application_release VARCHAR(50) NOT NULL,
 

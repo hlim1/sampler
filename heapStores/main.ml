@@ -5,7 +5,7 @@ let phases =
    Countdown.phase;
    LogWrite.phase;
    SkipWrite.phase;
-   Transform.phase;
+   HeapStoresTransform.phase;
    "RemoveUnusedTemps", Rmtmps.removeUnusedTemps;
    FilterLabels.phase;
    "dump", dumpFile defaultCilPrinter stdout

@@ -1,0 +1,36 @@
+top := ..
+targets := main
+libdirs := $(top)
+
+include $(top)/rules.mk
+
+
+########################################################################
+
+
+bitFields = bitFields
+checkSimplicity = $(bitFields) checkSimplicity
+heapStoresTransform = $(simplify) $(skipWrites) $(stores) heapStoresTransform
+simplify = $(simplifyLefts) $(simplifyReturns) $(simplifyRights) $(checkSimplicity) simplify
+simplifyLefts = $(bitFields) $(simplifyVisitor) simplifyLefts
+simplifyReturns = $(simplifyVisitor) simplifyReturns
+simplifyRights = $(simplifyVisitor) simplifyRights
+simplifyVisitor = simplifyVisitor
+skipWrites = $(skipWrite) skipWrites
+skipWrite = skipWrite
+stores = stores
+
+
+########################################################################
+
+
+main := $(checkSimplicity) $(heapStoresTransform) $(stores) %
+main: %: $(libcil) $(top)/harness.cma $(addsuffix .$(cmo), $(main))
+	$(link)
+
+$(top)/%.cma: force
+	$(recurse)
+
+run: main $(infile).i
+	./$^
+.PHONY: run

@@ -1,3 +1,4 @@
+*.cma
 *.cmi
 *.cmo
 *.cmx
@@ -20,6 +21,5 @@ dump
 findBackEdges
 findLoopsAST
 findLoopsCFG
-main
 sampler
 weighPaths

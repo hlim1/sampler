@@ -13,6 +13,8 @@ class ['key] container indexer = object(self)
       
   method isEmpty = !storage == []
 
+  method clear = storage := []
+
   method size = List.length !storage
 
   method choose = snd (List.hd !storage)

@@ -1,0 +1,28 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+while (<>) {
+    my $line;
+    my $long;
+
+    do {
+	chomp;
+	$long = s/\\$//;
+	$line .= $_;
+	$_ = <> if $long;
+    } while $long;
+
+    $_ = $line;
+    my @F = split;
+    print "@F\n";
+    
+    if ($F[0] =~ s/\.cmo:$/.d:/) {
+	foreach (@F) {
+	    s/\.cmi$/.mli/;
+	    s/\.cmo$/.ml/;
+	}
+	print "@F\n";
+	print "@F[1 .. $#F]:\n";
+    }
+}

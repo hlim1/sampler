@@ -71,13 +71,13 @@ connectivity.  Netscape/Mozilla, Microsoft, GNOME, and KDE have all
 deployed automated, opt-in crash reporting systems.  These systems
 gather key information about program state after a failure has
 occurred: stack trace, register contents, and the like.  By sending
-this information back to the development organization, the community
-helps developers effectively triage bugs that cause crashes and focus
-on the problems experienced by the most users.
+this information back to the development organization, the user
+community helps developers effectively triage bugs that cause crashes
+and focus on the problems experienced by the most users.
 
-We believe this is progress in the right direction, but we also
-believe that existing approaches only scratch the surface of what is
-possible when developers and users are connected by a network.  For
+We believe crash reporting is progress in the right direction, but we
+also believe that existing approaches only scratch the surface of what
+is possible when developers and users are connected by a network.  For
 example, the crash-reporting systems do not gather any information
 about what happened before the crash.  Trace information leading up to
 the failure may contain critical clues to the actual problem.  Also,
@@ -103,22 +103,20 @@ analysis (Section~\ref{sec:applications}).
 
 Our infrastructure is designed to gather information about a large
 number of program executions taking place remotely from a central site
-where data is collected.  Any such design must solve two critical
-problems.
+where data is collected.  Any such design must solve two problems.
 
-The first problem is that the method for gathering information must be
-sufficiently lightweight that it has a negligible impact on the
-performance of the user's program.  Our approach, discussed in
-Section~\ref{sec:framework}, is based on sampling.  Classical sampling
-for measuring program performance searches for the ``elephant in the
-haystack'': it is looking for the biggest consumers of time.  In
-contrast, we are looking for needles (bugs) that may occur very
-rarely, and furthermore our sampling rates may be very low to maintain
-client performance.  This leads us to be concerned with guaranteeing
-that the sampling is statistically fair, so that we can rely on the
-reported frequencies of rare events.  We also develop new ways to
-reduce the overhead of the necessary additional code that determines
-whether to take a sample or not.
+The first problem is that the method for gathering information must
+have only a modest impact on the performance of the user's program.
+Our approach, discussed in Section~\ref{sec:framework}, is based on
+sampling.  Classical sampling for measuring program performance
+searches for the ``elephant in the haystack'': it is looking for the
+biggest consumers of time.  In contrast, we are looking for needles
+(bugs) that may occur very rarely, and furthermore our sampling rates
+may be very low to maintain client performance.  This leads us to be
+concerned with guaranteeing that the sampling is statistically fair,
+so that we can rely on the reported frequencies of rare events.  We
+also develop new ways to reduce the overhead of the necessary
+additional code that determines whether to take a sample or not.
 
 The second problem is that information from the client must be
 transmitted over the network to the central database.  Gathering even
@@ -128,26 +126,35 @@ to discard information about the order in which program statements execute
 to achieve sufficiently compact representations of sampled data
 (see Section~\ref{sec:compression}).
 
-Section~\ref{sec:applications} presents several different applications
-of our framework.  In Section~\ref{sec:ccured} we consider how we can
+Section~\ref{sec:applications} presents three applications
+of increasing sophistication:
+\begin{itemize}
+\item   We show how to
 share the cost of program assertions over a large user base through
 sampling.  Each user only executes a fraction of the assertions, and
 thus sees good performance, but in the aggregate bugs due to assertion
-failures are still extremely likely to be detected.  In
-Section~\ref{sec:ccrypt} we pursue a bug without the benefit of
-explicit assertions.  Instead, an initial set of broad guesses is
-whittled down over time as sampled executions reveal which behaviors
-do and do not coincide with program failure.  Section~\ref{sec:bc}
-further generalizes our approach to deal with non-deterministic
-failures.  We sample information on the relationship between pairs of
-integer variables in a program from both successful and failing runs
-and use statistical regression techniques to identify those predicates
-that are highly predictive of program failure.
+failures are still extremely likely to be detected (Section~\ref{sec:ccured}). 
 
-\aside{A very similar road map appears at the top of
-  Section~\ref{sec:applications}.  Are both needed?}
+\item We show how to isolate {\em deterministic bugs} without the
+benefit of explicit assertions.  A bug is deterministic with respect
+to a predicate $P$ if whenever $P$ is true, the program is guaranteed
+to crash at some future point.  An initially large set of predicates
+hypothesized to capture the cause of the crash is gradually reduced
+over time as sampled executions reveal which predicates predict
+program failure (Section~\ref{sec:ccrypt}).
 
-Of course, monitoring of user executions raises some important privacy
+
+\item We generalize our approach to the isolation of
+{\em non-deterministic bugs}.  A bug is non-deterministic with respect
+to a set of program predicates if it is not deterministic for any
+predicate in the set (i.e., none of the considered predicates
+perfectly predicts program crashes).  We use statistical regression
+techniques to identify predicates highly correlated with program
+failure (Section~\ref{sec:bc}).
+
+\end{itemize}
+
+Finally, monitoring of user executions raises privacy
 and security concerns.  The problems are both social and technical; a
 discussion of these issues appears in Section~\ref{sec:privsec}.
 

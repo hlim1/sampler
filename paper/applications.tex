@@ -1,17 +1,23 @@
 \section{Applications and Experiments}
 \label{sec:applications}
 
-We have used our transformation framework to inject different forms of
-instrumentation into several programs, both to assess the performance
-impact of sampling as well as to show that sampling can offer novel
-insights into program (mis)behavior.  We begin with the relatively
-simple case of sampling explicit assertions.  When assertions are not
-present, but failure is a deterministic consequence of some buggy
-behavior, we show how broad guesses followed by elimination can
-identify the incorrect code.  Lastly, we demonstrate the use of
-statistical modeling techniques to isolate a previously unreported
-memory corruption bug that cannot even be depended upon to reliably
-cause a crash each time it occurs.
+As outlined in Section~\ref{sec:introduction}, we report on three
+applications of our framework.  From the least to the most sophisticated,
+these are:
+\begin{itemize}
+\item sharing the cost of assertions among many users (Section~\ref{sec:ccured});
+
+\item isolating a bug that is deterministic with respect to a predicate
+(Section~\ref{sec:ccrypt});
+
+\item using statistical regression techniques to isolate a bug that is non-deterministic with respect to every considered predicate (Section~\ref{sec:bc}).
+\end{itemize}
+For each application we report on the overhead of instrumentation.
+For the last two applications we also quanitfy how effectively and efficiently
+the bugs are isolated.  While the bug isolation examples presented here
+are based on finding particular bugs in specific programs, we wish to stress
+that the techniques are general.
+
 
 \subsection{Sharing the Cost of Assertions}
 \label{sec:ccured}
@@ -26,8 +32,8 @@ Programs produced by the \CCured translator are extreme examples of
 assertion-dense code.  \CCured analyzes programs written in C and
 attempts to prove, statically, that most pointer operations are memory
 safe.  Where this cannot be done, \CCured inserts dynamic checks to
-enforce memory safety at run time \cite{POPL_'02*128}.  For purposes
-of our research, \CCured is simply a source of highly assertion-dense
+enforce memory safety at run time \cite{POPL_'02*128}.  For our purposes, 
+\CCured is simply a source of assertion-dense
 code.  The individual assertions are quite small and fast: array
 bounds checks, testing for null, etc.  However, in large numbers,
 their performance impact can be considerable.  We wish to use random
@@ -438,6 +444,15 @@ we must conservatively assume that any cross-object function call is
 not weightless.  Thus, for much of \texttt{ccrypt}, our sampling
 transformation devolves to a simpler but slower pattern of checking
 the next-sample countdown at each and every site.
+
+%\begin{figure}
+%  \centering
+%  \small
+%  \includegraphics[width=\columnwidth]{applications/ccrypt_density}
+%  \caption{Relative performance of \texttt{ccrypt} with unconditional or
+%    sampled instrumentation}
+%  \label{fig:ccrypt:slowdown}
+%\end{figure}
 
 In spite of this, the performance impact of sampled instrumentation is
 minimal.  Using an experimental setup similar to that described

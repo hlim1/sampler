@@ -11,12 +11,12 @@ static SamplerTuple3 scalarPairsCounters[];
 
 #ifdef SAMPLER_TIMESTAMP_FIRST
 #pragma cilnoremove("scalarPairsTimestampsFirst");
-static unsigned scalarPairsTimestampsFirst[];
+static unsigned scalarPairsTimestampsFirst[sizeof(scalarPairsCounters) / sizeof(*scalarPairsCounters)];
 #endif /* SAMPLER_TIMESTAMP_FIRST */
 
 #ifdef SAMPLER_TIMESTAMP_LAST
 #pragma cilnoremove("scalarPairsTimestampsLast");
-static unsigned scalarPairsTimestampsLast[];
+static unsigned scalarPairsTimestampsLast[sizeof(scalarPairsCounters) / sizeof(*scalarPairsCounters)];
 #endif /* SAMPLER_TIMESTAMP_LAST */
 
 

@@ -11,12 +11,12 @@ static SamplerTuple4 gObjectUnrefCounters[];
 
 #ifdef SAMPLER_TIMESTAMP_FIRST
 #pragma cilnoremove("gObjectUnrefTimestampsFirst");
-static unsigned gObjectUnrefTimestampsFirst[];
+static unsigned gObjectUnrefTimestampsFirst[sizeof(gObjectUnrefCounters) / sizeof(*gObjectUnrefCounters)];
 #endif /* SAMPLER_TIMESTAMP_FIRST */
 
 #ifdef SAMPLER_TIMESTAMP_LAST
 #pragma cilnoremove("gObjectUnrefTimestampsLast");
-static unsigned gObjectUnrefTimestampsLast[];
+static unsigned gObjectUnrefTimestampsLast[sizeof(gObjectUnrefCounters) / sizeof(*gObjectUnrefCounters)];
 #endif /* SAMPLER_TIMESTAMP_LAST */
 
 

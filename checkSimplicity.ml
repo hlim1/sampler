@@ -1,5 +1,4 @@
 open Cil
-open Printf
 
 
 let bad message printer thing =

@@ -2,11 +2,6 @@
 #define INCLUDE_liblog_log_h
 
 
-extern unsigned nextLogCountdown;
-
-
-void skipWrite();
-
 void logWrite(const char *, unsigned, const void *, unsigned, const void *);
 
 

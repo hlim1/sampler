@@ -1,7 +1,6 @@
 package Driver;
 
 use strict;
-use FindBin;
 
 use CCured;
 use Sampler

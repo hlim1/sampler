@@ -53,7 +53,7 @@ force:
 
 clean:
 	libtool --mode=clean 'rm -f' $(tests)
-	rm -f $(checks) $(checks:=.) $(traces) *.[ios] *.inst.c
+	rm -f $(reports) $(reports:=.) $(traces) *.[ios] *.inst.c
 .PHONY: clean
 
 spotless: clean

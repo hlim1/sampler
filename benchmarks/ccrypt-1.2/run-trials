@@ -31,7 +31,7 @@ foreach my $seed (1 .. 4) {
 	my $counts = "inputs/$sparsity-$seed.counts";
 	$ENV{SAMPLER_EVENT_COUNTDOWNS} = $counts;
 	$ENV{SAMPLER_SPARSITY} = $sparsity;
-	$ENV{GSL_RNG_SEED} = $seed;
+	$ENV{SAMPLER_SEED} = $seed;
 	check_system '../../libcountdown/precompute', $counts
 	    unless -r $counts;
 	check_copy $counts, '/dev/null';

@@ -1,12 +1,9 @@
-#!/bin/sh
-
-site=../site-config.sh
-if [ -e $site ]; then source $site; fi
+#!/bin/sh -e
 
 {
-  for sql in "$@"; do
-    cat $sql
-    echo \;
-  done
+    echo '\set ON_ERROR_STOP 1'
+    for sql in "$@"; do
+	echo "\i $sql"
+    done
 } |
-mysql $mysql_flags sampler
+psql

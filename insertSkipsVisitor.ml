@@ -7,7 +7,7 @@ class virtual visitor sites skipLog = object (self)
   method virtual insertSkip : instr -> stmt -> stmt visitAction
 
   method vstmt statement =
-    if sites#mem statement then
+    if statement.sid != -1 && sites#mem statement then
       self#insertSkip (skipLog (Where.statement statement)) statement
     else
       DoChildren

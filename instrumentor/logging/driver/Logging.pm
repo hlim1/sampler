@@ -35,23 +35,6 @@ sub setDefaultArguments {
     my $self = shift;
     $self->SUPER::setDefaultArguments;
     $self->{LD} = "libtool $self->{LD}";
-    $self->{cycle} = 'acyclic';
-}
-
-
-sub collectOneArgument {
-    my $self = shift;
-    my ($arg) = @_;
-
-    if ($arg eq '--cyclic') {
-	$self->{cycle} = 'cyclic';
-	return 1;
-    } elsif ($arg eq '--acyclic') {
-	$self->{cycle} = 'acyclic';
-	return 1;
-    } else {
-	$self->SUPER::collectOneArgument(@_);
-    }
 }
 
 
@@ -60,7 +43,7 @@ sub preprocess_before_cil {
     my @ppargs = @{(pop)};
 
     push @ppargs, ('-include', "$libcountdown/countdown.h",
-		   '-include', "$libcountdown/$self->{cycle}.h",
+		   '-include', "$libcountdown/cyclic.h",
 		   '-include', "$liblog/log.h",
 		   '-include', "$liblog/primitive.h");
     
@@ -84,8 +67,7 @@ sub link_after_cil {
     my @ldargs = @{(pop)};
 
     push @ldargs, ("-L$liblog", '-llog-syscall', '-llog-storage', '-llog-syscall',
-		   "-L$libcountdown", '-lcountdown', "-l$self->{cycle}",
-		   `gsl-config --libs`);
+		   "-L$libcountdown", '-lcyclic');
 
     $self->SUPER::link_after_cil(@_, \@ldargs);
 }

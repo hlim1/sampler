@@ -10,10 +10,12 @@ static inline unsigned getNextCountdown() __attribute__((no_instrument_function)
 static inline unsigned getNextCountdown()
 {
   extern unsigned nextCountdownSlot;
-  extern unsigned precomputedCountdowns[];
+  extern const unsigned *precomputedCountdowns;
 
-  const unsigned result = precomputedCountdowns[nextCountdownSlot];
-  nextCountdownSlot = (nextCountdownSlot + 1) % PRECOMPUTE_COUNT;
+  unsigned slot = nextCountdownSlot;
+  const unsigned result = precomputedCountdowns[slot];
+  slot = (slot + 1) % PRECOMPUTE_COUNT;
+  nextCountdownSlot = slot;
   return result;
 }
 

@@ -1,21 +1,62 @@
-#include <gsl/gsl_randist.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <unistd.h>
 #include "countdown.h"
 #include "cyclic.h"
-#include "internals.h"
 
 
-#define PRECOMPUTE_COUNT 1024
+unsigned nextEventCountdown = UINT_MAX;
 
-unsigned precomputedCountdowns[PRECOMPUTE_COUNT];
+const unsigned *precomputedCountdowns = 0;
 unsigned nextCountdownSlot = 0;
 
 
-void precomputeCountdowns(double density, gsl_rng * const generator)
-{
-  int slot = PRECOMPUTE_COUNT;
-  while (slot--)
-    precomputedCountdowns[slot] = gsl_ran_geometric(generator, density);
+#define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(*precomputedCountdowns))
 
-  gsl_rng_free(generator);
-  nextEventCountdown = getNextCountdown();
+
+__attribute__((constructor)) static void initialize()
+{
+  const char * const environ = getenv("SAMPLER_COUNTDOWNS");
+  if (!environ)
+    {
+      fputs("countdown/cyclic: must name precomputed countdowns file in $SAMPLER_COUNTDOWNS\n", stderr);
+      exit(2);
+    }
+  else
+    {
+      const int fd = open(environ, O_RDONLY);
+      if (fd == -1)
+	{
+	  fprintf(stderr, "countdown/cyclic: cannot open \"%s\": %s\n", environ, strerror(errno));
+	  exit(2);
+	}
+      else
+	{
+	  void * const mapping = mmap(0, MAP_SIZE, PROT_READ, MAP_PRIVATE, fd, 0);
+	  if (mapping == (void *) -1)
+	    {
+	      fprintf(stderr, "countdown/cyclic: cannot mmap \"%s\": %s\n", environ, strerror(errno));
+	      exit(2);
+	    }
+
+	  close(fd);
+	  precomputedCountdowns = (const unsigned *) mapping;
+	  nextEventCountdown = getNextCountdown();
+	}
+    }
+}
+
+
+__attribute__((destructor)) static void shutdown()
+{
+  if (precomputedCountdowns != 0)
+    {
+      munmap((void *) precomputedCountdowns, MAP_SIZE);
+      precomputedCountdowns = 0;
+    }
 }

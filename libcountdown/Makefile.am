@@ -9,7 +9,7 @@ cyclic = -DSAMPLER_CYCLIC
 acyclic = -DSAMPLER_ACYCLIC
 
 nothreads = -include no-threads.h
-libacyclic_a_SOURCES = acyclic.c acyclic.h countdown.h
+libacyclic_a_SOURCES = acyclic.c acyclic.h countdown.h lifetime.h
 libacyclic_a_CFLAGS = $(nothreads) -ffast-math
 libcyclic_a_SOURCES = countdown.h cyclic.c cyclic.h cyclic-size.h
 libcyclic_a_CFLAGS = $(nothreads)
@@ -40,6 +40,7 @@ noinst_PROGRAMS = mean
 mean_CFLAGS = $(nothreads)
 mean_LDADD = libacyclic.a libcountdown.a $(LIBM)
 
+noinst_HEADERS = no-threads.h threads.h
 
 countdown-1-1: precompute
 	SAMPLER_SPARSITY=1 ./precompute $@

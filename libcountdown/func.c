@@ -7,15 +7,21 @@ const unsigned *nextFuncPrecomputed = 0;
 unsigned nextFuncCountdown = UINT_MAX;
 unsigned nextFuncSlot = 0;
 
+static unsigned initCount;
+
 
 __attribute__((constructor)) static void initialize()
 {
-  nextFuncPrecomputed = loadCountdowns("SAMPLER_FUNC_COUNTDOWNS");
-  nextFuncCountdown = getNextFuncCountdown();
+  if (!initCount++)
+    {
+      nextFuncPrecomputed = loadCountdowns("SAMPLER_FUNC_COUNTDOWNS");
+      nextFuncCountdown = getNextFuncCountdown();
+    }
 }
 
 
 __attribute__((destructor)) static void finalize()
 {
-  unloadCountdowns(nextFuncPrecomputed);
+  if (!--initCount)
+    unloadCountdowns(nextFuncPrecomputed);
 }

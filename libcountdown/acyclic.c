@@ -13,30 +13,34 @@ double density;
 void *generator;
 static gsl_rng *gen;
 
+static int initCount;
+
 
 __attribute__((constructor)) static void initialize()
 {
-  const char * const environ = getenv("SAMPLER_SPARSITY");
-
-  if (environ)
+  if (!initCount++)
     {
-      char *end;
-      const double sparsity = strtod(environ, &end);
-      if (*end != '\0')
+      const char * const environ = getenv("SAMPLER_SPARSITY");
+      if (environ)
 	{
-	  fprintf(stderr, "countdown/acyclic: trailing garbage in $SAMPLER_SPARSITY: %s", end);
-	  exit(2);
-	}
-      else if (sparsity < 1)
-	{
-	  fputs("countdown/acyclic: $SAMPLER_SPARSITY must be at least 1", stderr);
-	  exit(2);
-	}
-      else
-	{
-	  density = 1 / sparsity;
-	  generator = gen = gsl_rng_alloc(gsl_rng_env_setup());
-	  nextEventCountdown = getNextEventCountdown();
+	  char *end;
+	  const double sparsity = strtod(environ, &end);
+	  if (*end != '\0')
+	    {
+	      fprintf(stderr, "countdown/acyclic: trailing garbage in $SAMPLER_SPARSITY: %s", end);
+	      exit(2);
+	    }
+	  else if (sparsity < 1)
+	    {
+	      fputs("countdown/acyclic: $SAMPLER_SPARSITY must be at least 1", stderr);
+	      exit(2);
+	    }
+	  else
+	    {
+	      density = 1 / sparsity;
+	      generator = gen = gsl_rng_alloc(gsl_rng_env_setup());
+	      nextEventCountdown = getNextEventCountdown();
+	    }
 	}
     }
 }
@@ -44,11 +48,14 @@ __attribute__((constructor)) static void initialize()
 
 __attribute__((destructor)) static void finalize()
 {
-  assert(!generator == !gen);
-
-  if (gen)
+  if (!--initCount)
     {
-      gsl_rng_free(gen);
-      generator = gen = 0;
+      assert(!generator == !gen);
+
+      if (gen)
+	{
+	  gsl_rng_free(gen);
+	  generator = gen = 0;
+	}
     }
 }

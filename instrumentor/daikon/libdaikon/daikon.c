@@ -4,25 +4,29 @@
 
 
 static FILE *logFile;
+static unsigned initCount;
 
 
 __attribute__((constructor)) static void initialize()
 {
-  const char * const filename = getenv("SAMPLER_FILE");
-  
-  if (filename)
+  if (!initCount++)
     {
-      logFile = fopen(filename, "w");
-      if (!logFile) perror("logger: fopen error");
+      const char * const filename = getenv("SAMPLER_FILE");
+  
+      if (filename)
+	{
+	  logFile = fopen(filename, "w");
+	  if (!logFile) perror("logger: fopen error");
+	}
+      else
+	fputs("logger: not recording samples; no $SAMPLER_FILE given in environment\n", stderr);
     }
-  else
-    fputs("logger: not recording samples; no $SAMPLER_FILE given in environment\n", stderr);
 }
 
 
 __attribute__((destructor)) static void storeShutdown()
 {
-  if (logFile)
+  if (!--initCount && logFile)
     {
       const int error = fclose(logFile);
       if (error) perror("logger: fclose error");

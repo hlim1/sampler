@@ -13,26 +13,34 @@ const char logSignature[] = {
   '\n'
 };
 
+static unsigned initCount;
+
 
 __attribute__((constructor)) static void initialize()
 {
-  const char * const filename = getenv("SAMPLER_FILE");
-  
-  if (filename)
+  if (!initCount++)
     {
-      storeInitialize(filename);
-      logTableau(logSignature, sizeof(logSignature));
-      logTableau(&nextEventCountdown, sizeof nextEventCountdown);
+      const char * const filename = getenv("SAMPLER_FILE");
+  
+      if (filename)
+	{
+	  storeInitialize(filename);
+	  logTableau(logSignature, sizeof(logSignature));
+	  logTableau(&nextEventCountdown, sizeof nextEventCountdown);
+	}
+      else
+	fputs("logger: not recording samples; no $SAMPLER_FILE given in environment\n", stderr);
     }
-  else
-    fputs("logger: not recording samples; no $SAMPLER_FILE given in environment\n", stderr);
 }
 
 
 __attribute__((destructor)) static void finalize()
 {
-  const char terminator = -1;
-  logTableau(&terminator, sizeof(terminator));
-  logTableau(logSignature, sizeof(logSignature));
-  storeShutdown();
+  if (!--initCount)
+    {
+      const char terminator = -1;
+      logTableau(&terminator, sizeof(terminator));
+      logTableau(logSignature, sizeof(logSignature));
+      storeShutdown();
+    }
 }

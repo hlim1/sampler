@@ -19,6 +19,8 @@ const void * const providesLibCyclic;
 const unsigned *nextEventPrecomputed = 0;
 unsigned nextEventSlot = 0;
 
+static unsigned initCount;
+
 
 static void failed(const char function[])
 {
@@ -54,34 +56,38 @@ static int checkedOpen(const char filename[])
 
 __attribute__((constructor)) static void initialize()
 {
-  const char envar[] = "SAMPLER_EVENT_COUNTDOWNS";
-  const char * const environ = getenv(envar);
-  void *mapping;
+  if (!initCount++)
+    {
+      const char envar[] = "SAMPLER_EVENT_COUNTDOWNS";
+      const char * const environ = getenv(envar);
+      void *mapping;
   
-  if (environ)
-    {
-      const int fd = checkedOpen(environ);
-      mapping = checkedMmap(PROT_READ, fd);
-    }
-  else
-    {
-      int fd;
-      fprintf(stderr, "%s: no countdowns file named in $%s; using extreme sparsity\n",  __FUNCTION__, envar);
-      fd = checkedOpen("/dev/zero");
-      mapping = checkedMmap(PROT_READ | PROT_WRITE, fd);
-      memset(mapping, -1, MAP_SIZE);
-      mapping = mremap(mapping, MAP_SIZE, MAP_SIZE, PROT_READ);
-      if (mapping == (void *) -1)
-	failed("mremap");
-    }
+      if (environ)
+	{
+	  const int fd = checkedOpen(environ);
+	  mapping = checkedMmap(PROT_READ, fd);
+	}
+      else
+	{
+	  int fd;
+	  fprintf(stderr, "%s: no countdowns file named in $%s; using extreme sparsity\n",  __FUNCTION__, envar);
+	  fd = checkedOpen("/dev/zero");
+	  mapping = checkedMmap(PROT_READ | PROT_WRITE, fd);
+	  memset(mapping, -1, MAP_SIZE);
+	  mapping = mremap(mapping, MAP_SIZE, MAP_SIZE, PROT_READ);
+	  if (mapping == (void *) -1)
+	    failed("mremap");
+	}
 
-  nextEventPrecomputed = (const unsigned *) mapping;
-  nextEventCountdown = getNextEventCountdown();
+      nextEventPrecomputed = (const unsigned *) mapping;
+      nextEventCountdown = getNextEventCountdown();
+    }
 }
 
 
 __attribute__((destructor)) static void finalize()
 {
-  if (nextEventPrecomputed != 0)
-    munmap((void *) nextEventPrecomputed, MAP_SIZE);
+  if (!--initCount)
+    if (nextEventPrecomputed)
+      munmap((void *) nextEventPrecomputed, MAP_SIZE);
 }

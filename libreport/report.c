@@ -128,13 +128,16 @@ static void handleSignal(int signum)
 
 __attribute__((constructor)) static void initialize()
 {
-  if (logFileName())
-    {
-      atexit(finalize);
-      signal(SIGABRT, handleSignal);
-      signal(SIGBUS, handleSignal);
-      signal(SIGFPE, handleSignal);
-      signal(SIGSEGV, handleSignal);
-      signal(SIGTRAP, handleSignal);
-    }
+  static unsigned initCount;
+
+  if (!initCount++)
+    if (logFileName())
+      {
+	atexit(finalize);
+	signal(SIGABRT, handleSignal);
+	signal(SIGBUS, handleSignal);
+	signal(SIGFPE, handleSignal);
+	signal(SIGSEGV, handleSignal);
+	signal(SIGTRAP, handleSignal);
+      }
 }

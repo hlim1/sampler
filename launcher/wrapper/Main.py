@@ -15,7 +15,7 @@ def main(configdir, wrapped = 'executable'):
     config = ConfigParser()
     config.readfp(file(configfile))
 
-    name = config.get('application', 'name')
+    name = config.get('upload-headers', 'application-name')
     wrapped = os.path.join(configdir, wrapped)
     debug_reporter = config.get('application', 'debug-reporter')
 

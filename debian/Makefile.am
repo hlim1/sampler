@@ -5,8 +5,7 @@ EXTRA_DIST =					\
 	copyright				\
 	rules					\
 	sampler-dev.install			\
-	sampler-doc.doc-base			\
-	sampler-doc.docs			\
+	sampler-doc.install			\
 	sampler-gnome.install			\
 	sampler.install				\
 	watch

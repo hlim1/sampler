@@ -50,8 +50,8 @@ syslibs = str.$(cma) unix.$(cma)
 resolve_samples_SOURCES =
 resolve_timestamps_SOURCES =
 
-resolve-samples: $(libcommon) $(resolve-samples)
+resolve-samples$(EXEEXT): $(libcommon) $(resolve-samples)
 	$(link)
 
-resolve-timestamps: $(libcommon) $(resolve-timestamps)
+resolve-timestamps$(EXEEXT): $(libcommon) $(resolve-timestamps)
 	$(link)

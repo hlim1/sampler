@@ -40,3 +40,7 @@ class visitor = object
     
     SkipChildren
 end
+
+
+let phase _ =
+  ("CheckSimplicity", visitCilFileSameGlobals new visitor)

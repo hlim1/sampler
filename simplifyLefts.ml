@@ -25,3 +25,7 @@ class visitor = object
 	end
     | _ -> SkipChildren
 end
+
+
+let phase _ =
+  ("SimplifyLefts", visitCilFileSameGlobals new visitor)

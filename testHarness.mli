@@ -1,3 +1,5 @@
 open Cil
 
-val main : (file -> unit) list -> unit
+type phase = string * (file -> unit)
+
+val main : phase list -> unit

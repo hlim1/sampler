@@ -36,3 +36,9 @@ class visitor = object
 		  original]
     | _ -> SkipChildren
 end
+
+
+let phase _ =
+  ("Instrument", fun file ->
+    addPrototype file;
+    visitCilFileSameGlobals new visitor file)

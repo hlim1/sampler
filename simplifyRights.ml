@@ -16,3 +16,7 @@ class visitor = object
 	end
     | _ -> SkipChildren
 end
+
+
+let phase _ =
+  ("SimplifyRights", visitCilFileSameGlobals new visitor)

@@ -1,16 +1,15 @@
 open Cil
 
-let stages =
+let phases =
   [
-   visitCilFileSameGlobals new SimplifyReturns.visitor;
-   visitCilFileSameGlobals new SimplifyLefts.visitor;
-   visitCilFileSameGlobals new SimplifyRights.visitor;
-   visitCilFileSameGlobals new CheckSimplicity.visitor;
-   Instrument.addPrototype;
-   visitCilFileSameGlobals new Instrument.visitor;
-   dumpFile defaultCilPrinter stdout
+   SimplifyReturns.phase ();
+   SimplifyLefts.phase ();
+   SimplifyRights.phase ();
+   CheckSimplicity.phase ();
+   Instrument.phase ();
+   "dump", dumpFile defaultCilPrinter stdout
  ]
     
 ;;
 
-ignore(TestHarness.main stages)
+ignore(TestHarness.main phases)

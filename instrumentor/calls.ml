@@ -75,29 +75,23 @@ let patch clones weights countdown =
 (**********************************************************************)
 
 
-class postpatcher countdown =
-  object
-    inherit FunctionBodyVisitor.visitor
+let postpatch clones countdown =
+  let postpatchOne stmt =
+    match stmt.skind with
+    | Instr [Call (_, _, _, location) as call] ->
+	let before = countdown#beforeCall location in
+	let after = countdown#afterCall location in
+	let instructions = [before; call; after] in
+	stmt.skind <- Instr instructions;
+    | _ ->
+	currentLoc := get_stmtLoc stmt.skind;
+	ignore (bug ("non-call on afterCalls list"))
+  in
 
-    method vstmt stmt =
-      match stmt.skind with
-      | Instr [Call (_, _, _, location) as call] ->
-	  let before = countdown#beforeCall location in
-	  let after = countdown#afterCall location in
-	  let instructions = [before; call; after] in
-	  stmt.skind <- Instr instructions;
-	  SkipChildren
+  let postpatchBoth standardAfter =
+    let instrumentedAfter = ClonesMap.findCloneOf clones standardAfter in
+    postpatchOne standardAfter;
+    postpatchOne instrumentedAfter
+  in
 
-      | Return (_, location) ->
-	  let export = countdown#beforeCall location in
-	  stmt.skind <- Block (mkBlock [mkStmtOneInstr export; mkStmt stmt.skind]);
-	  SkipChildren
-
-      | _ ->
-	  DoChildren
-  end
-
-
-let postpatch {sbody = sbody} countdown =
-  let visitor = new postpatcher countdown in
-  ignore (visitCilBlock visitor sbody)
+  List.iter postpatchBoth

@@ -9,11 +9,13 @@ class virtual visitor file =
 
     method private virtual collector : fundec -> Collector.visitor
 
+    method private prepatchCalls = Calls.prepatch
+
     method private transform func =
       prepareCFG func;
       RemoveLoops.visit func;
       IsolateInstructions.visit func;
-      let afterCalls = Calls.prepatch func in
+      let afterCalls = self#prepatchCalls func in
       let collector = self#collector func in
       ignore (visitCilFunction (collector :> cilVisitor) func);
 
@@ -37,7 +39,7 @@ class virtual visitor file =
 	    Calls.patch clones weights countdown afterCalls;
 	    FunctionEntry.patch func weights countdown instrumented;
 	    Returns.patch func countdown;
-	    Calls.postpatch func countdown;
+	    Calls.postpatch clones countdown afterCalls;
 	    
 	    let instrument original =
 	      let location = get_stmtLoc original.skind in

@@ -9,8 +9,8 @@ int logIsImminent(unsigned within __attribute__((unused)))
 
 
 void logWrite(const char filename[], unsigned line,
-	      void *address, unsigned size,
-	      void *data __attribute__((unused)))
+	      const void *address, unsigned size,
+	      const void *data __attribute__((unused)))
 {
   fprintf(stderr, "%s:%u: write %p for %u bytes\n",
 	  filename, line, address, size);

@@ -9,7 +9,7 @@ let logWrite =
 					 "line", uintType, [];
 					 "address", voidConstPtrType, [];
 					 "size", uintType, [];
-					 "data", voidPtrType, [] ],
+					 "data", voidConstPtrType, [] ],
 				  false,
 				  []))
 

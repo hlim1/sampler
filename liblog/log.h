@@ -4,7 +4,7 @@
 
 int logIsImminent(unsigned);
 
-void logWrite(const char *, unsigned, void *, unsigned, void *);
+void logWrite(const char *, unsigned, const void *, unsigned, const void *);
 
 
 #endif /* !INCLUDE_liblog_log_h */

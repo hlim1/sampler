@@ -21,7 +21,7 @@ class visitor = object
 			 kinteger IUInt location.line;
 			 mkCast addr LogWrite.voidConstPtrType;
 			 SizeOf(typeOf data);
-			 mkCast (mkAddrOf (makeLval data)) voidPtrType],
+			 mkCast (mkAddrOf (makeLval data)) LogWrite.voidConstPtrType],
 			location);
 		  original]
     | _ -> SkipChildren

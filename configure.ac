@@ -280,9 +280,6 @@ fuzz/Makefile
 instrumentor/Makefile
 instrumentor/bounds/Makefile
 instrumentor/branches/Makefile
-instrumentor/daikon/Makefile
-instrumentor/decure/Makefile
-instrumentor/decure/tests/Makefile
 instrumentor/driver/Makefile
 instrumentor/function-entries/Makefile
 instrumentor/nothing/Makefile

@@ -8,6 +8,7 @@ tests := 					\
 	bumpy					\
 	conditional				\
 	deep-pointers				\
+	funcall					\
 	loop					\
 	multiple				\
 	return					\

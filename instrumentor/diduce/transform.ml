@@ -2,7 +2,7 @@ open Cil
 open Mapconcat
 
 
-class visitor = object (self)
+class visitor = object
   inherit SkipVisitor.visitor
 
   method vglob global =

@@ -50,7 +50,9 @@ class virtual visitor file =
 	      clone.skind <- countdown#decrementAndCheckZero clone.skind
 	    in
 	    
-	    sites#iter instrument
+	    sites#iter instrument;
+
+	    (* DeadCode.visit func *)
       end;
 
       collector#globals

@@ -23,6 +23,9 @@ checker: $(libcil) $(checker)
 dump: $(libcil) $(dump)
 	$(link)
 
+removeDeadCode: $(libcil) $(removeDeadCode)
+	$(link)
+
 %.i: %.c
 	$(CC) $(CPPFLAGS) $< -o $@ -E
 

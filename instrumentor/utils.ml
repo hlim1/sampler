@@ -50,3 +50,10 @@ let d_labels () {labels = labels} =
 	  ~doit:text
 	  ~elements:(labelNames labels))
     ++ chr ']'
+
+
+let d_preds () {preds = preds} =
+  seq
+    ~sep:(text "; ")
+    ~doit:(fun stmt -> num stmt.sid)
+    ~elements:preds

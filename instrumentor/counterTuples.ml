@@ -18,7 +18,7 @@ class virtual basis prefix file =
 
     method private virtual bump : lval -> location -> instr
 
-    method addSite func selector (description : doc) (location : location) =
+    method addSite func selector description location =
       let counter = (Var tuples, Index (integer nextId, Index (selector, NoOffset))) in
       nextId <- nextId + 1;
       let result = mkStmtOneInstr (self#bump counter location) in
@@ -26,7 +26,7 @@ class virtual basis prefix file =
       siteInfos#push (func, location, description, result);
       result
 
-    method finalize (_ : Digest.t Lazy.t) =
+    method finalize digest =
       mapGlobals file
 	begin
 	  function
@@ -39,7 +39,10 @@ class virtual basis prefix file =
 	    | GVar ({vname = vname}, initinfo, _) as global
 	      when vname = prefix ^ "SiteInfo"
 	      ->
-		let buffer = new BufferClass.c 16 in
+		let buffer = new BufferClass.c 33 in
+		buffer#addString (Digest.to_hex (Lazy.force digest));
+		buffer#addChar '\n';
+
 		let serializer (func, location, description, statement) =
 		  let fields = [text location.file;
 				num location.line;
@@ -52,6 +55,7 @@ class virtual basis prefix file =
 		  buffer#addString text
 		in
 		siteInfos#iter serializer;
+
 		initinfo.init <- Some (SingleInit (mkString buffer#contents));
 		global
 

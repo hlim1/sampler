@@ -2,6 +2,7 @@ cildir := ../../cil
 link = $(LINK.c) $(filter-out ../main, $^) $(LOADLIBES) $(LDLIBS) -o $@
 
 tests := echo static crasher
+force := force
 
 all:
 .PHONY: all
@@ -21,7 +22,7 @@ crasher-cured crasher-decured: crasher.c ../main
 static-cured static-decured: static-1.c static-2.c static-main.c ../main
 	$(link)
 
-../main: force
+../main: $(force)
 	$(MAKE) -C $(@D) $(@F)
 
 force:
@@ -32,4 +33,5 @@ clean:
 	rm -f *-decured *-decured.c
 	rm -f *_inst.c
 	rm -f  *.[ios]
+	rm -rf .libs
 .PHONY: clean

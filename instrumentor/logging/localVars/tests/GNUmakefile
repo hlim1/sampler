@@ -11,6 +11,7 @@ objects := $(tests:=.o)
 
 decoder := $(top)/liblog/print-trace
 
+force := force
 recurse = $(MAKE) -C $(@D) $(@F)
 
 
@@ -32,10 +33,10 @@ $(traces): %.trace: %
 
 $(objects): %.o: %.c $(top)/liblog/log.h $(top)/libcountdown/countdown.h $(front_end)
 
-$(front_end): force
+$(front_end): $(force)
 	$(recurse)
 
-$(decoder): force
+$(decoder): $(force)
 	$(recurse)
 
 force:

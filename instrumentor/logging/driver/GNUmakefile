@@ -14,14 +14,14 @@ include $(top)/rules.mk
 main: $(driverdir)/driver.cma $(main)
 	$(link)
 
-$(top)/%.cma: force
+$(top)/%.cma: $(force)
 	$(recurse)
 
-$(top)/%.cmi: force
+$(top)/%.cmi: $(force)
 	$(recurse)
 
-$(driverdir)/%.cma: force
+$(driverdir)/%.cma: $(force)
 	$(recurse)
 
-$(driverdir)/%.cmi: force
+$(driverdir)/%.cmi: $(force)
 	$(recurse)

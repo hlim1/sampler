@@ -15,8 +15,8 @@ logging := $(dissect) $(logCollector)
 logging.$(cma): $(logging)
 	$(archive)
 
-$(top)/%.cma: force
+$(top)/%.cma: $(force)
 	$(recurse)
 
-$(top)/%.cmi: force
+$(top)/%.cmi: $(force)
 	$(recurse)

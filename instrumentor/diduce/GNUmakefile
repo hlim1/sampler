@@ -14,8 +14,8 @@ main := $(transform) %
 main: %: $(libcil) $(top)/harness.$(cma) $(main)
 	$(link)
 
-$(top)/%.cma: force
+$(top)/%.cma: $(force)
 	$(recurse)
 
-$(top)/%.cmi: force
+$(top)/%.cmi: $(force)
 	$(recurse)

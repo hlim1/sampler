@@ -1,9 +1,7 @@
-*.i
-*cured.c
-*cured.i
-
-*_combcured_inst.c
-
 *-cured
 *-decured
-
+*.i
+*_combcured_inst.c
+*cured.c
+*cured.i
+.libs

@@ -4,6 +4,7 @@ checker := ../checker
 CFLAGS := -W -Wall -Werror
 LOADLIBES := ../liblog/liblog.a
 
+force := force
 recurse = $(MAKE) -C $(@D) $(@F)
 
 
@@ -24,14 +25,13 @@ reverse.inst.c: %.inst.c: $(instrumenter) %.i
 reverse.i: %.i: %.c
 	$(CC) $(CPPFLAGS) $< $(OUTPUT_OPTION) -E
 
-$(instrumenter) $(checker): force
+$(instrumenter) $(checker): $(force)
 	$(recurse)
 
-../liblog/liblog.a: force
+../liblog/liblog.a: $(force)
 	$(recurse)
 
 force:
-
 .PHONY: force
 
 clean:

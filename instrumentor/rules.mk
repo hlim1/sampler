@@ -11,6 +11,7 @@ compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) -o $@ $(syslibs) $^
 
+force := force
 recurse = $(MAKE) -C $(@D) $(@F)
 
 
@@ -53,7 +54,7 @@ $(impls:=.do): %.do: %.ml $(fixdeps)
 $(ifaces:=.di): %.di: %.mli $(fixdeps)
 	$(depend)
 
-$(libcil): force
+$(libcil): $(force)
 	$(MAKE) -C $(cildir) -f Makefile.cil NATIVECAML=$(native) cillib
 
 force:

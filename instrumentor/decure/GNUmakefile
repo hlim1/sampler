@@ -14,16 +14,16 @@ include $(top)/rules.mk
 main: %: $(libcil) $(top)/harness.$(cma) $(main)
 	$(link)
 
-$(top)/%.cma: force
+$(top)/%.cma: $(force)
 	$(recurse)
 
-$(top)/%.cmi: force
+$(top)/%.cmi: $(force)
 	$(recurse)
 
-../%.cma: force
+../%.cma: $(force)
 	$(recurse)
 
-../%.cmi: force
+../%.cmi: $(force)
 	$(recurse)
 
 

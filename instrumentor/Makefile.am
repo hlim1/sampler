@@ -1,6 +1,6 @@
 SUBDIRS = driver branches daikon decure nothing returns scalar-pairs #logging
 
-EXTRA_DIST = build-libraries libraries.ml.in link-order rules.mk
+EXTRA_DIST = build-libraries libraries.ml.in
 
 targets = harness.$(cma)
 extra_impls = libraries version

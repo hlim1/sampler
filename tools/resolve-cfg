@@ -105,7 +105,7 @@ foreach my $objectName (@ARGV) {
 }
 
 
-my $exports = new SymbolTable 'exports';
+my $exports = new SymbolTable;
 $_->collectExports($exports) foreach @objects;
 $_->resolveCallees($exports) foreach @objects;
 

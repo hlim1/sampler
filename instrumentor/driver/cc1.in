@@ -14,11 +14,12 @@ my $countdowns = 'acyclic';
 my $verbose;
 my $save_temps;
 my $preprocessed;
+my $preprocessing;
 
 my @inputs;
 my $input;
 
-my @cpp0 = ("@cpp0@");
+my @cpp0 = ("@cc1@", '-E', '-quiet');
 my $cpp0_output_slot;
 
 my @cc1 = ("@cc1@", '-fpreprocessed');
@@ -78,6 +79,7 @@ my %flag_specs =
      '-fno-compare-constants' => \&inst_toggle,
 
      # Overall Options
+     '-E' => sub { $preprocessing = 1; },
      '-o' => sub { slurp_1 $_; $cpp0_output_slot = \$cpp0[@cpp0 - 1]; },
      '-v' => \&verbose,
 
@@ -109,6 +111,7 @@ my %flag_specs =
      '-U' => \&slurp_1,
 
      # Undocumented Options
+     '-auxbase' => \&slurp_1,
      '-dumpbase' => \&dumpbase,
      '-quiet' => sub { push @cc1, $_ }
      );
@@ -153,8 +156,21 @@ while (@ARGV) {
     }
 }
 
+
+########################################################################
+
+
+sub run_stage (@) {
+    warn "  @_\n" if $verbose;
+    system {$_[0]} @_;
+    exit ($? >> 8 || $? & 127 || 1) if $?;
+}
+
 	
-if (@inputs == 1) {
+if ($preprocessing) {
+    run_stage @cpp0;
+    exit 0;
+} elsif (@inputs == 1) {
     $input = shift @inputs;
 } else {
     warn "expected one input file, but got: @inputs\n";
@@ -174,13 +190,6 @@ sub tempfile ($$) {
     } else {
 	return File::Temp::tempfile(SUFFIX => $suffix, UNLINK => 1);
     }
-}
-
-
-sub run_stage (@) {
-    warn "  @_\n" if $verbose;
-    system {$_[0]} @_;
-    exit ($? >> 8 || $? & 127 || 1) if $?;
 }
 
 

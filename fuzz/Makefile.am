@@ -1,2 +1,2 @@
 noinst_PROGRAMS = fuzz
-fuzz_SOURCES = fuzz.cc
+fuzz_SOURCES = fuzz.c

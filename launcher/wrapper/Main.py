@@ -23,9 +23,9 @@ import Uploader
 ########################################################################
 
 
-def main(configdir, wrapped = 'executable'):
-    app = AppConfig(configdir, wrapped)
-    user = UserConfig(configdir, app)
+def main(name, wrapped, debug_reporter, upload_headers):
+    app = AppConfig(name wrapped, debug_reporter, upload_headers)
+    user = UserConfig(name)
 
     sparsity = user.sparsity()
     if sparsity > 0:

@@ -31,7 +31,7 @@ $(dir $(libgraph))/%.cmi: $(libgraph); @:
 $(libcommon) $(libgraph): $(force)
 	$(recurse)
 
-cfg := /usr/lib/sampler/sites/usr/lib/sampler/applications/evolution/executable.cfg
+cfg := /usr/lib/sampler/sites/usr/lib/sampler/wrapped/usr/bin/evolution.cfg
 sites := evolution-sites.txt
 
 #cfg := tiny.cfg

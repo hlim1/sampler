@@ -16,7 +16,7 @@ class Launcher:
         self.app = app
 
     def spawn(self):
-        self.__pid = os.spawnv(os.P_NOWAIT, self.app.executable(), sys.argv)
+        self.__pid = os.spawnv(os.P_NOWAIT, self.app.executable, sys.argv)
 
     def prep_outcome(self, outcome):
         pass

@@ -1,0 +1,16 @@
+#!/usr/bin/python -O
+
+import sys
+sys.path.insert(1, '@pkgdatadir@/wrapper')
+
+import Main
+Main.main(name = '@name@',
+          wrapped = '@pkglibdir@/wrapped@path@',
+          debug_reporter = '@pkgdatadir@/print-debug-info',
+          upload_headers = {
+    'application-version': '@version@',
+    'application-release': '@release@',
+    'instrumentor-version': '@PACKAGE_VERSION@',
+    'build-distribution': '@DISTRO_NAME@-@DISTRO_VERSION@-@DISTRO_ARCH@'
+    }
+          )

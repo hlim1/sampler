@@ -130,7 +130,6 @@ AC_SUBST(package_libdir, '${libdir}/${PACKAGE}')
 AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
 AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
 AC_SUBST(driverdir, '${instrumentordir}/driver')
-AC_SUBST(templatesdir, '${package_libdir}/templates')
 AC_SUBST(toolsdir, '${package_libdir}/tools')
 AC_SUBST(traylibdir, '${package_libdir}/tray')
 AC_SUBST(package_includedir, '${driverdir}/sampler')
@@ -349,7 +348,6 @@ launcher/first-time/Makefile
 launcher/monitor/Makefile
 launcher/pixmaps/Makefile
 launcher/preferences/Makefile
-launcher/templates/Makefile
 launcher/tray/Makefile
 launcher/trayicon/Makefile
 launcher/trayicon/libegg/Makefile
@@ -367,7 +365,6 @@ sampler.spec
 tools/Makefile
 tools/cfg/Makefile
 tools/cfg/graphlib/Makefile
-tools/find-driver.pl
 www/Makefile
 www/cgi-bin/Makefile
 ])
@@ -376,11 +373,15 @@ AC_CONFIG_FILES([instrumentor/driver/sampler-cc], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/sampler-cc-here], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/as], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/cc1], [chmod +x $ac_file])
-AC_CONFIG_FILES([launcher/templates/install-wrappers], [chmod +x $ac_file])
 AC_CONFIG_FILES([launcher/test-by-extension], [chmod +x $ac_file])
 AC_CONFIG_FILES([mining/populate/insert-builds.pl], [chmod +x $ac_file])
 AC_CONFIG_FILES([mining/populate/insert-runs.pl], [chmod +x $ac_file])
 AC_CONFIG_FILES([mining/populate/integrity-checks.pl], [chmod +x $ac_file])
+AC_CONFIG_FILES([tools/add-depends], [chmod +x $ac_file])
+AC_CONFIG_FILES([tools/build-control], [chmod +x $ac_file])
+AC_CONFIG_FILES([tools/find-sampler-info], [chmod +x $ac_file])
+AC_CONFIG_FILES([tools/install-gconf], [chmod +x $ac_file])
+AC_CONFIG_FILES([tools/install-wrappers], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/rpmbuild], [chmod +x $ac_file])
 
 AC_OUTPUT

@@ -10,10 +10,15 @@
 .deps
 Makefile
 Makefile.in
+add-depends
+install-gconf
+build-control
 debuild
 decimate-samples
 decimate-samples.c
 find-driver.pl
+install-wrappers
 resolve-samples
 resolve-timestamps
 rpmbuild
+wrapper.in

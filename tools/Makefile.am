@@ -6,6 +6,9 @@ endif
 
 if DISTRO_BASIS_DEBIAN
 distro_data = sampler.mk
+distro_scripts =				\
+	add-depends				\
+	build-control
 endif
 
 tools_PROGRAMS =				\
@@ -18,26 +21,30 @@ tools_DATA =					\
 	Node.pm					\
 	Object.pm				\
 	SymbolTable.pm				\
-	Unit.pm
+	Unit.pm					\
+	application.schemas.in			\
+	wrapper.in
 
 tools_SCRIPTS =					\
 	$(distro_scripts)			\
 	extract-report				\
 	extract-section				\
 	find-sampler-info			\
+	install-gconf				\
+	install-wrappers			\
 	resolve-cfg				\
 	resolve-samples				\
 	resolve-timestamps
 
 EXTRA_DIST =					\
 	$(tools_DATA)				\
+	application.schemas.in			\
 	extract-report				\
 	extract-section				\
 	find-sampler-info			\
 	resolve-cfg				\
-	skip-test
-
-rpmbuild debuild: find-driver.pl
+	skip-test				\
+	wrapper.in.in
 
 AM_LFLAGS = -f -p
 AM_CFLAGS = -W -Wall -Werror
@@ -58,3 +65,13 @@ resolve-samples: $(libcommon) $(resolve-samples)
 
 resolve-timestamps: $(libcommon) $(resolve-timestamps)
 	$(link)
+
+wrapper.in: %: %.in
+	sed							\
+		-e 's!@''pkgdatadir@!$(pkgdatadir)!'		\
+		-e 's!@''pkglibdir@!$(pkglibdir)!'		\
+		-e 's!@''PACKAGE_VERSION@!$(PACKAGE_VERSION)!'		\
+		-e 's!@''DISTRO_NAME@!$(DISTRO_NAME)!'		\
+		-e 's!@''DISTRO_VERSION@!$(DISTRO_VERSION)!'		\
+		-e 's!@''DISTRO_ARCH@!$(DISTRO_ARCH)!'		\
+		<$< >$@

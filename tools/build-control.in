@@ -1,0 +1,63 @@
+#!@PERL@ -w
+# -*- cperl -*-
+
+use strict;
+
+use FileHandle;
+
+
+########################################################################
+#
+#  command line processing
+#
+
+
+sub usage () {
+  die <<"EOT";
+Usage: $0 {packages}
+
+At least one package is required.
+EOT
+}
+
+usage unless @ARGV;
+
+
+########################################################################
+#
+#  copy some fields from standard control file
+#
+
+
+my $control = new FileHandle 'debian/control', 'r'
+  or die "cannot read debian/control: $!\n";
+
+while (<$control>) {
+  last if $_ eq "\n";
+  print $_ if /^(Source|Maintainer|Uploaders):/;
+}
+
+print <<EOT;
+Section: devel
+Priority: extra
+
+EOT
+
+
+########################################################################
+#
+#  main activity
+#
+
+
+foreach (@ARGV) {
+  print <<EOT;
+
+Package: $_-samplerinfo
+Architecture: any
+Description: sampler information for package $_
+ This package provides sampler information for package $_.  You do
+ not need this to use $_.  Most users have no need to install this
+ package.
+EOT
+}

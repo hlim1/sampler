@@ -9,11 +9,10 @@ import Keys
 class UserConfig:
     '''User preferences for an instrumened application.'''
 
-    def __init__(self, dir, app):
+    def __init__(self, name):
         '''Look for preferences under GConf area for the given application.'''
         self.__client = gconf.client_get_default()
-        self.__app = app
-        self.__namespace = app.get('application', 'gconf-root')
+        self.__namespace = '/apps/sampler/applications/' + name
 
     def __key(self, extension):
         return self.__namespace + '/' + extension

@@ -23,7 +23,6 @@ all-local: package.m4
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(package_libdir)/sites
 	$(mkinstalldirs) $(DESTDIR)$(package_libdir)/wrapped
-	$(mkinstalldirs) $(DESTDIR)$(package_datadir)/applications
 
 rpms: dist sampler.spec
 	rm -rf redhat

@@ -7,9 +7,6 @@ clients.
 
 * wrapper
 
-Activate first-time dialog from here, rather than from the tray.  This
-will be more robust against tray failures.
-
 The last client to call monitor.unref() sometimes gets a
 CORBA.COMM_FAILURE exception.  Not sure why.  We work around it by
 catching and discarding the exception, but that's not a real fix.

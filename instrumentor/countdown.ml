@@ -4,6 +4,19 @@ open Cil
 let specializeEmptyRegions = ref true
 let specializeSingletonRegions = ref true
 
+let _ =
+  Options.registerBoolean
+    specializeEmptyRegions
+    ~flag:"specialize-empty-regions"
+    ~desc:"specialize countdown checks for regions with no sampling sites"
+    ~ident:"SpecializeEmptyRegions";
+
+  Options.registerBoolean
+    specializeSingletonRegions
+    ~flag:"specialize-singleton-regions"
+    ~desc:"specialize countdown checks for regions with exactly one sampling site"
+    ~ident:"SpecializeSingletonRegions"
+
 
 type token = lval * exp
 

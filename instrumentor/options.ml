@@ -2,20 +2,19 @@ open Cil
 open Arg
 
 
-let options = [
-  "remove-dead-code", TransformVisitor.removeDeadCode, "remove dead code", "RemoveDeadCode";
-  "specialize-empty-regions", Countdown.specializeEmptyRegions, "specialize countdown checks for regions with no sampling sites", "SpecializeEmptyRegions";
-  "specialize-singleton-regions", Countdown.specializeSingletonRegions, "specialize countdown checks for regions with exactly one sampling site", "SpecializeSingletonRegions"
-]
+let args = ref []
+let idents = ref []
 
 
-let argspecs =
-  let extract specs (flag, value, desc, _) =
+let registerBoolean value ~flag ~desc ~ident =
+  args :=
     ("--" ^ flag, Set value, desc ^ " [default]")
     :: ("--no-" ^ flag, Clear value, "")
-    :: specs
-  in
-  List.fold_left extract [] options
+    :: !args;
+  idents := (ident, value) :: !idents
+
+
+let argspecs () = !args
 
 
 let phase =
@@ -28,10 +27,10 @@ let phase =
     varinfo.vstorage <- Static;
 
     let text =
-      let folder prefix (_, value, _, name) =
-	prefix ^ "$Sampler" ^ name ^ ": " ^ string_of_bool !value ^ " $"
+      let folder prefix (ident, value) =
+	prefix ^ "$Sampler" ^ ident ^ ": " ^ string_of_bool !value ^ " $"
       in
-      List.fold_left folder "" options
+      List.fold_left folder "" !idents
     in
 
     let init = SingleInit (mkString text) in

@@ -3,6 +3,13 @@ open Cil
 
 let removeDeadCode = ref true
 
+let _ =
+  Options.registerBoolean
+    removeDeadCode
+    ~flag:"remove-dead-code"
+    ~desc:"remove dead code"
+    ~ident:"RemoveDeadCode"
+
 
 class virtual visitor file =
   object (self)

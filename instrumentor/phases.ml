@@ -14,6 +14,7 @@ let main transformer =
   in
   
   initCIL ();
-  parse Options.argspecs
+  prerr_endline "about to parse argv";
+  parse (Options.argspecs ())
     (TestHarness.doOne phases)
     ("Usage:" ^ Sys.executable_name ^ " [<flag> | <source>] ...")

@@ -48,11 +48,10 @@ let collect (infos : FileInfo.container) =
 
   let isWeightlessLval callee =
     match Dynamic.resolve callee with
-    | [] ->
+    | Dynamic.Unknown ->
 	false
-    | resolved ->
-	let d_varinfo () var = Pretty.text var.vname in
-	List.for_all isWeightlessVarinfo resolved
+    | Dynamic.Known possibilities ->
+	List.for_all isWeightlessVarinfo possibilities
   in
 
   let isWeightlessCall info =

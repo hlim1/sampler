@@ -1,5 +1,6 @@
 open Cil
 
+type resolution = Unknown | Known of varinfo list
 
 val analyze : file -> unit
-val resolve : lval -> varinfo list
+val resolve : lval -> resolution

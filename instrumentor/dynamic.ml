@@ -2,6 +2,9 @@ open Cil
 open Ptranal
 
 
+type resolution = Unknown | Known of varinfo list
+
+
 let usePointsTo = ref false
 
 let _ =
@@ -12,15 +15,31 @@ let _ =
     ~ident:"UsePointsTo"
 
 
-let analyze =
+let analyze file =
   if !usePointsTo then
-    analyze_file
-  else
-    ignore
+    begin
+      prerr_endline "=== Points-to analysis active!";
+      analyze_file file;
+      compute_results false
+    end
 
 
 let resolve = function
   | (Var varinfo, NoOffset) ->
-      [varinfo]
-  | _ ->
-      []
+      Known [varinfo]
+  | (Mem expression, NoOffset) ->
+      if !usePointsTo then
+	try
+	  let result = resolve_exp expression in
+	  ignore (Pretty.eprintf "=== pta: %a --> [%a]\n"
+		    d_exp expression
+		    (Pretty.d_list ", " (fun () varinfo -> Pretty.text varinfo.vname)) result);
+	  Known result
+	with UnknownLocation ->
+	  ignore (Pretty.eprintf "=== pta: %a --> ???\n" d_exp expression);
+	  Unknown
+      else
+	Unknown
+  | other ->
+      ignore (bug "unexpected callee: %a\n" d_lval other);
+      failwith "internal error"

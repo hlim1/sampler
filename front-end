@@ -291,6 +291,8 @@ if ($mode eq 'special') {
 		my $o = $outfile || (resuffix $_, '.s');
 		trace_system @cc, '-o', $o, $c_name;
 	    } else {
+		die "internal error: hole mismatch\n"
+		    if defined $ld[$holes[0]];
 		$ld[shift @holes] = $c_name;
 	    }
 	}

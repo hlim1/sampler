@@ -36,7 +36,7 @@ sub new ($$) {
     chomp $self->{signature};
 
     $self->{handle} = $handle;
-    $self->{functions} = new SymbolTable $self->name;
+    $self->{functions} = new SymbolTable;
 
     warn 'reading ', $self->name, "\n" if $verbose;
 
@@ -75,7 +75,7 @@ sub dump ($) {
     my $self = shift;
 
     print "\tunit $self->{name}\n";
-    $_->dump foreach values %{$self->{functions}};
+    $_->dump foreach $self->{functions}->sort;
 }
 
 

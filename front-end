@@ -69,6 +69,12 @@ sub handle_save_temps ($) {
 }
 
 
+sub handle_S ($) {
+    &push_all;
+    $mode = 'codegen';
+}
+
+
 sub handle_special ($) {
     push @cc, @_;
     $mode = 'special';
@@ -92,6 +98,7 @@ sub handle_x ($) {
 my %flag_spec = (
 		 # overall options
 		 'c' => \&handle_c,
+		 'S' => \&handle_S,
 		 'o' => \&handle_o,
 		 'v' => \&handle_v,
 
@@ -190,7 +197,7 @@ sub temp ($$) {
 	my $name = "$suggested.$suffix";
 	return (new FileHandle($name, 'w'), $name);
     } else {
-	return tempfile(SUFFIX => $suffix, UNLINK => 1);
+	return tempfile(SUFFIX => ".$suffix", UNLINK => 1);
     }
 }
 
@@ -267,6 +274,9 @@ if ($mode eq 'special') {
 	
 	if ($mode eq 'compile') {
 	    my $o = $outfile || (resuffix $_, '.o');
+	    trace_system @cc, '-o', $o, $c_name;
+	} elsif ($mode eq 'codegen') {
+	    my $o = $outfile || (resuffix $_, '.s');
 	    trace_system @cc, '-o', $o, $c_name;
 	} else {
 	    warn "ld hole filling: before: @ld\n";

@@ -5,17 +5,17 @@ import bonobo
 import uploader
 
 
-class Uploader:
+class Uppy(uploader.Uploader):
     def bigify(self):
         print 'Python bigify'
 
     def __init__(self):
-        self.uppy = uploader.Uploader()
-        self.uppy.set_closure(self.bigify)
+        uploader.Uploader.__init__(self)
+        self.set_closure(self.bigify)
 
 
 def builder(factory, product):
-    return Uploader().uppy
+    return Uppy()
 
 
 def bonobo_generic_factory_main(act_iid, factory_cb):

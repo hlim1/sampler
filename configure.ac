@@ -39,6 +39,17 @@ AC_SUBST(CIL_HOME)
 AC_MSG_RESULT($CIL_HOME)
 
 
+AC_CHECK_PROGS(OCAMLOPT, ocamlopt.opt ocamlopt)
+if test -z "$OCAMLOPT"; then
+  AC_MSG_ERROR(cannot find OCaml native compiler; please set \$OCAMLOPT)
+fi
+
+AC_CHECK_PROGS(OCAMLC, ocamlc.opt ocamlc)
+if test -z "$OCAMLC"; then
+  AC_MSG_ERROR(cannot find OCaml bytecode compiler; please set \$OCAMLC)
+fi
+
+
 AC_MSG_CHECKING(for profiling)
 AC_ARG_ENABLE(profiling, [  --enable-profiling      Compile OCaml for gprof profiling (implies --enable-native)])
 if test "$enable_profiling" = yes; then

@@ -107,69 +107,69 @@ designing a data gathering infrastructure that would scale is
 non-trivial.  As a result, this paper discusses mostly the design
 and implementation of the system that gathers the data from user
 executions. We do give a non-trivial example of subsequent data analysis
-in Section~\ref{sec:applications}.
+in \autoref{sec:applications}.
 
 Our infrastructure is designed to gather information about a
 large number of program executions taking place remotely from
 the central database.  We believe any design must take into account
 the following:
+%%
 \begin{enumerate}
-
-\item {\em Client performance}  Whatever information is gathered,
-it should be sufficiently lightweight that it has a negligible impact
-on the performance of the user's program.  More precisely, we would
-like a design that allows the performance penalty for our
-instrumentation to be tuned to be arbitrarily small at the expense of
-gathering less information.
-
-\item {\em Network bandwidth}  Information from the client must
-be transmitted over the network to the central database.  Simply
-generating traces, or partial traces, is simply too expensive in
-network bandwidth even in cases where the performance impact on the
-client is negligible.  The data must be highly compressed in some way.
-
-\item {\em Server storage}  Gathering even a relatively small amount of data 
-on a regular basis from a large number of clients can quickly 
-overwhelm the storage capacity of the central server.  Another level
-of summarization is needed in combining the information from 
-multiple runs of different clients.
+  
+\item \label{num:issues:client} \emph{Client performance.}  Whatever
+  information is gathered, it should be sufficiently lightweight that
+  it has a negligible impact on the performance of the user's program.
+  More precisely, we would like a design that allows the performance
+  penalty for our instrumentation to be tuned to be arbitrarily small
+  at the expense of gathering less information.
+  
+\item \label{num:issues:network} \emph{Network bandwidth.}
+  Information from the client must be transmitted over the network to
+  the central database.  Simply generating traces, or partial traces,
+  is simply too expensive in network bandwidth even in cases where the
+  performance impact on the client is negligible.  The data must be
+  highly compressed in some way.
+  
+\item \label{num:issues:server} \emph{Server storage.}  Gathering even
+  a relatively small amount of data on a regular basis from a large
+  number of clients can quickly overwhelm the storage capacity of the
+  central server.  Another level of summarization is needed in
+  combining the information from multiple runs of different clients.
 
 \end{enumerate}
 
 The relative importance of these three concerns varies from
-application to application.  We use sampling to solve problem (1).
-Classical sampling for measuring program performance searches for the
-``elephant in the haystack''---we are looking for the biggest users of
-time.  In contrast, we are looking for needles (bugs) that may occur
-very rarely, and furthermore our sampling rates may be very low to
-maintain client performance.  This leads us to be concerned with
-guaranteeing that our sampling is statistically accurate, so that we
-can rely on the reported frequencies of events.  Besides the problem
-of sampling accurately, we also develop new ways to reduce the
+application to application.  We use sampling to solve problem
+(\ref{num:issues:client}).  Classical sampling for measuring program
+performance searches for the ``elephant in the haystack'': the biggest
+users of time.  In contrast, we are looking for needles (bugs) that
+may occur very rarely, and furthermore our sampling rates may be very
+low to maintain client performance.  This leads us to be concerned
+with guaranteeing that our sampling is statistically accurate, so that
+we can rely on the reported frequencies of events.  Besides the
+problem of sampling accurately, we also develop new ways to reduce the
 overhead of the necessary additional code that determines whether to
 take a sample or not.
 
-Section~\ref{sec:applications} presents two different applications of
-our framework.  In Section~\ref{sec:share} we consider how we can
-share the cost of program assertions over a large user base through
-sampling.  Each user only executes a fraction of the assertions, and
-thus sees good performance, but in the aggregate bugs due to assertion
-failures are still extremely likely to be detected.  In
-Section~\ref{sec:applications:mining} we show how we can use
-statistical techniques to identify the source of a likely bug from
-samples taken from a few thousand executions.  We sample information
-on the relationship between all pairs of integer program variables in
-a program (for each variable whether $i < j$, $i = j$, or $i > j$)
-from both successful and failing runs.  This choice is critical to
-solving problems (2) and (3) above; as we discuss in Section~\ref{sec:applications:mining}
-this information is both highly compressible and sufficient to
-carry out the data analysis.  We use statistical
-regression techniques to identify the predicates that are highly
-predictive of program failure.
+\autoref{sec:applications} presents two different applications of our
+framework.  In \autoref{sec:share} we consider how we can share the
+cost of program assertions over a large user base through sampling.
+Each user only executes a fraction of the assertions, and thus sees
+good performance, but in the aggregate bugs due to assertion failures
+are still extremely likely to be detected.  In \autoref{sec:debug} we
+show how we can use statistical techniques to identify the source of a
+likely bug from samples taken from a few thousand executions.  We
+sample information on the relationship between pairs of integer
+variables in a program (for each variable whether $i < j$, $i = j$, or
+$i > j$) from both successful and failing runs.  This choice is
+critical to solving problems (\ref{num:issues:network}) and
+(\ref{num:issues:network}) above; as we discuss in \autoref{sec:debug}
+this information is both highly compressible and sufficient to carry
+out the data analysis.  We use statistical regression techniques to
+identify the predicates that are highly predictive of program failure.
 
-Finally, monitoring of user executions raises some important
-privacy and security concerns.  The problems are both social and technical; 
-a discussion of these issues appears in \autoref{sec:privsec}.
+Finally, monitoring of user executions raises some important privacy
+and security concerns.  The problems are both social and technical; a
+discussion of these issues appears in \autoref{sec:privsec}.
 
-
-
+%% LocalWords:  privsec

@@ -15,7 +15,6 @@ let main () =
 	| GFun (func, _)
 	  when Should.shouldTransform func ->
 	    begin
-	      prepareCFG func;
 	      IsolateInstructions.visit func;
 	      let collector = new Collector.visitor func in
 	      ignore (visitCilFunction (collector :> cilVisitor) func);

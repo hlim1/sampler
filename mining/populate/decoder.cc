@@ -10,8 +10,6 @@ static unsigned long long sampleCounter = 0;
 static string file;
 static string expression;
 
-Session session;
-
 
 void siteCountdown(unsigned countdown)
 {
@@ -28,7 +26,7 @@ void siteFile(const char *file)
 
 void siteLine(unsigned line)
 {
-  session.push_back(Site(sampleCounter, file, line));
+  Session::singleton.push_back(Site(sampleCounter, file, line));
 }
 
 
@@ -53,7 +51,7 @@ template<class T> void sampleValue(PrimitiveType typeCode, T value)
 {
   ostringstream stringify;
   stringify << value;
-  session.back().push_back(Sample(expression, typeCode, stringify.str()));
+  Session::singleton.back().push_back(Sample(expression, typeCode, stringify.str()));
 }
 
 

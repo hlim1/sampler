@@ -1,6 +1,3 @@
-Is GSL actually getting to see the HAVE_INLINE macro in config.h?
-Where are we supposed to be including this header?
-
 ShowStats doesn't need ident string, as it has no effect on the
 built binary.
 

@@ -139,6 +139,11 @@ rm -rf ${RPM_BUILD_ROOT}
 
 #---------------------------------------------------------------------
 
+%post
+%{?sampler_post}
+
+#---------------------------------------------------------------------
+
 %changelog
 * Sun Aug 17 2003 Ben Liblit <liblit@cs.berkeley.edu> - 1.3.18-0.fdr.5.rh90.sam.1
 - Added hooks for sampled instrumentation.

@@ -5,8 +5,10 @@ class visitor = object
   inherit FunctionBodyVisitor.visitor
 
   val seen = new StmtSet.container
+      
   val mutable forwards = []
   val mutable backwards = []
+  method result = (forwards, backwards)
 
   method vfunc _ =
     ignore(bug "ClassifyJumps.visitor can only be used within a function body");
@@ -24,8 +26,6 @@ class visitor = object
     end;
     seen#add stmt;
     DoChildren
-
-  method result = (forwards, backwards)
 end
 
 

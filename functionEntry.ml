@@ -10,5 +10,5 @@ let find func =
 let patch func weights instrumented =
   let entry = find func in
   let weight = weights#find entry in
-  let choice = LogIsImminent.choose func locUnknown weight func.sbody instrumented in
-  func.sbody <- choice
+  let choice = LogIsImminent.choose locUnknown weight instrumented func.sbody in
+  func.sbody <- mkBlock [mkStmt choice]

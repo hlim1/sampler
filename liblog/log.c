@@ -1,11 +1,9 @@
+#include <limits.h>
 #include <stdio.h>
 #include "log.h"
 
 
-int logIsImminent(unsigned within __attribute__((unused)))
-{
-  return 1;
-}
+unsigned nextLogCountdown = 0;
 
 
 void logWrite(const char filename[], unsigned line,

@@ -25,7 +25,9 @@ class visitor = object
 		  labels = mapNoCopy cloneLabel stmt.labels }
     in
 
-    clones#add stmt clone;
+    if stmt.sid != -1 then
+      clones#add stmt clone;
+    
     ChangeDoChildrenPost (clone, identity)
 end
 

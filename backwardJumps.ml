@@ -1,36 +1,22 @@
 open Cil
 
 
-let patch clones weights func =
-
-  let choice weight jump =
+let prepatch weights =
+  let patchOne jump =
     match jump.skind with
-    | Goto (dest, location) ->
-	let branch =
-	  let dest' = clones#find !dest in
-	  LogIsImminent.choose func location weight
-	    (mkBlock [mkStmt jump.skind])
-	    (mkBlock [mkStmt (Goto (ref dest', location))])
-	in
-	Block branch
-	
-    | _ ->
-	failwith "unexpected statement kind in backward jumps list"
+    | Goto (destination, location) ->
+	let patchSite = ref !destination in
+	let gotoStandard = mkBlock [mkStmt jump.skind] in
+	let gotoInstrumented = mkBlock [mkStmt (Goto (patchSite, location))] in
+	let weight = weights#find jump in
+	let choice = LogIsImminent.choose location weight gotoInstrumented gotoStandard in
+	jump.skind <- choice;
+	patchSite
+    | _ -> failwith "unexpected statement kind in backward jumps list"
   in
+  List.map patchOne
 
-  let patchOne choice jump =
-	jump.skind <- choice
-  in
-  
-  let patchBoth jump =
-    let weight = weights#find jump in
-    Printf.eprintf "patcher: CFG #%i has weight %i\n" jump.sid weight;
-    if weight != 0 then
-      begin
-	let choice = choice weight jump in
-	patchOne choice jump;
-	patchOne choice (clones#find jump)
-      end
-  in
 
-  List.iter patchBoth
+let patch clones =
+  let patchOne dest = dest := clones#find !dest in
+  List.iter patchOne

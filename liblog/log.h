@@ -2,7 +2,7 @@
 #define INCLUDE_liblog_log_h
 
 
-int logIsImminent(unsigned);
+extern unsigned nextLogCountdown;
 
 void logSkip();
 

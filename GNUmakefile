@@ -40,11 +40,11 @@ ifaces := $(basename $(wildcard *.mli))
 ########################################################################
 
 
-backwardJumps = $(logIsImminent) backwardJumps
+backwardJumps = $(functionBodyVisitor) $(stmtSet) backwardJumps
 cfg = cfg
 cfgToDot = $(dotify) cfgToDot
 checkSimplicity = $(functionBodyVisitor) checkSimplicity
-classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
+classifyJumps = $(functionBodyVisitor) classifyJumps
 dotify = $(utils) dotify
 duplicate = $(functionBodyVisitor) $(identity) $(stmtMap) duplicate
 forwardJumps = forwardJumps
@@ -58,6 +58,7 @@ logIsImminent = logIsImminent
 logSkip = logSkip
 logWrite = logWrite
 mapClass = mapClass
+patchSites = patchSites
 removeLoops = $(functionBodyVisitor) removeLoops
 setClass = setClass
 simplifyLefts = $(simplifyVisitor) simplifyLefts
@@ -71,7 +72,7 @@ stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 stores = stores
 testHarness = testHarness
-transform = $(backwardJumps) $(cfgToDot) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrumentWrites) $(removeLoops) $(skipWrites) $(splitAfterCalls) $(weighPaths) transform
+transform = $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrumentWrites) $(patchSites) $(removeLoops) $(skipWrites) $(splitAfterCalls) $(weighPaths) transform
 utils = utils
 weighPaths = $(stmtMap) $(stores) weighPaths
 

@@ -1,24 +1,21 @@
 open Cil
   
 
-let logIsImminent =
-  makeGlobalVar "logIsImminent" (TFun (intType,
-				       Some [ "within", uintType, [] ],
-				       false,
-				       []))
+let nextLogCountdown =
+  makeGlobalVar "nextLogCountdown" uintType
 
 
-let choose func location weight original instrumented =
-  let imminent = makeTempVar func ~name:"imminent" intType in
-  let lval = (Var imminent, NoOffset) in
-  let call = Call (Some lval, Lval (var logIsImminent), [kinteger IUInt weight], location) in
-  let branch = If (Lval lval, instrumented, original, location) in
-  mkBlock [mkStmtOneInstr call; mkStmt branch]
+let choose location weight instrumented original =
+  let within = kinteger IUInt weight in
+  let countdown = Lval (var nextLogCountdown) in
+  let predicate = BinOp (Le, within, countdown, intType) in
+  If (predicate, original, instrumented, location)
     
     
 let addPrototype file =
-  file.globals <- GVarDecl (logIsImminent, logIsImminent.vdecl) :: file.globals
+  file.globals <- GVarDecl (nextLogCountdown, nextLogCountdown.vdecl) :: file.globals
+
 
 let phase =
-  "LogWrite",
+  "LogIsImminent",
   addPrototype

@@ -1,6 +1,6 @@
 open Cil
 
 
-val choose : fundec -> location -> int -> block -> block -> block
+val choose : location -> int -> block -> block -> stmtkind
 
 val phase : TestHarness.phase

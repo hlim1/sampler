@@ -1,5 +1,7 @@
 open Cil
+open PatchSites
 
 
-val patch : Duplicate.clonesMap -> WeighPaths.weightsMap -> fundec -> stmt list -> unit
+val prepatch : WeighPaths.weightsMap -> stmt list -> patchSites
 
+val patch : Duplicate.clonesMap -> patchSites -> unit

@@ -2,18 +2,13 @@ open Cil
 
 
 let patch clones =
-
   let patchOne jump =
     match jump.skind with
-    | Goto (dest, location) ->
-	let dest' = clones#find !dest in
-	jump.skind <- Goto (ref dest', location)
+    | Goto (destination, location) ->
+	let clonedJump = clones#find jump in
+	let clonedDest = clones#find !destination in
+	clonedJump.skind <- Goto (ref clonedDest, location)
     | _ ->
 	failwith "unexpected statement kind in forward jumps list"
   in
-  
-  let patchClone jump =
-    patchOne (clones#find jump)
-  in
-
-  List.iter patchClone
+  List.iter patchOne

@@ -1,16 +1,6 @@
-py := $(wildcard *.py)
-pyc = $(py:=c)
-pyo = $(py:=o)
-
-launcher_DATA = $(pyc) $(pyo)
-
-EXTRA_DIST = $(py)
+launcher_PYTHON := $(wildcard *.py)
+EXTRA_DIST = $(launcher_PYTHON)
 MOSTLYCLEANFILES = *.pyc *.pyo
 
-compile = -c 'import py_compile; py_compile.compile("$<");'
-
-$(pyc): %.pyc: %.py
-	python $(compile)
-
-$(pyo): %.pyo: %.py
-	python -O $(compile)
+install-data-hook:
+	rm -f $(launcher_PYTHON:%=$(DESTDIR)$(launcherdir)/%)

@@ -11,5 +11,5 @@ class WindowIcon:
         self.__notify = MasterNotifier(client, self.__enabled_refresh)
 
     def __enabled_refresh(self, enabled):
-        pixbuf = self.__widget.render_icon(BlipIcons.stock[enabled], gtk.ICON_SIZE_MENU, "")
+        pixbuf = self.__widget.render_icon(BlipIcons.stock[enabled], BlipIcons.ICON_SIZE_EMBLEM, "")
         self.__widget.set_icon(pixbuf)

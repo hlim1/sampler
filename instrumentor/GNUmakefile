@@ -1,7 +1,7 @@
 top := .
 include defs.mk
 
-targets := cfg-to-dot checker dump harness.$(cma)
+targets := cfg-to-dot checker dump harness.$(cma) loopless
 subdirs := daikon daikount decure logging
 
 include rules.mk

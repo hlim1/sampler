@@ -1,6 +1,7 @@
 SUBDIRS =					\
 	gaim					\
-	evolution
+	evolution				\
+	nautilus
 
 EXTRA_DIST =					\
 	.rpmmacros				\

@@ -26,7 +26,15 @@ class Launcher:
         self.prep_outcome(outcome)
         
         [pid, exit_codes] = os.waitpid(self.__pid, 0)
-        outcome.status = os.WIFEXITED(exit_codes) and os.WEXITSTATUS(exit_codes)
-        outcome.signal = os.WIFSIGNALED(exit_codes) and os.WTERMSIG(exit_codes)
+
+        if os.WIFEXITED(exit_codes):
+            outcome.status = os.WEXITSTATUS(exit_codes)
+        else:
+            outcome.status = 0
+
+        if os.WIFSIGNALED(exit_codes):
+            outcome.signal = os.WTERMSIG(exit_codes)
+        else:
+            outcome.signal = 0
 
         return outcome

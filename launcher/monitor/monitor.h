@@ -1,8 +1,8 @@
 #ifndef INCLUDE_monitor_h
 #define INCLUDE_monitor_h
 
-#include <bonobo/bonobo-object.h>
 #include <Python.h>
+#include <bonobo/bonobo-object.h>
 
 G_BEGIN_DECLS
 

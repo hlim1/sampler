@@ -1,3 +1,4 @@
+#include <Python.h>
 #include <libbonobo.h>
 #include "monitor.h"
 

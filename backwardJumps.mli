@@ -1,4 +1,5 @@
 open Cil
 
 
-val patch : Duplicate.clonesMap -> stmt list -> unit
+val patch : Duplicate.clonesMap -> WeighPaths.weightsMap -> stmt list -> unit
+

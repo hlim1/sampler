@@ -7,11 +7,10 @@ class map = [instrumentation] StmtMap.container
 
 
 class virtual visitor =
-  let sites = new map in
-  
   object (self)
     inherit FunctionBodyVisitor.visitor
 	
+    val sites = new map
     method result = sites
 
     method virtual consider : stmtkind -> instrumentation

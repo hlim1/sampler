@@ -11,7 +11,7 @@ lib_LIBRARIES =					\
 
 
 if WITH_GNOME
-gnome_headers =
+gnome_headers =					\
 	g-object-unref-types.h			\
 	g-object-unref-unit.h
 endif

@@ -8,4 +8,5 @@ class countdown : file -> fundec ->
     method import : location -> instr
     method checkThreshold : location -> Weight.t -> stmt -> stmt -> stmtkind
     method decrementAndCheckZero : stmtkind -> int -> stmtkind
+    method printStats : unit
   end

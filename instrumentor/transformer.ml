@@ -59,7 +59,8 @@ let visit file isWeightyCallee countdown =
 		(0, 0)
 	    in
 	    Printf.eprintf "stats: transform: %s has sites: %d sites, %d headers, %d total header weights\n"
-	      func.svar.vname siteCount headerCount headerTotal
+	      func.svar.vname siteCount headerCount headerTotal;
+	    countdown#printStats
 	  end;
 
 	FilterLabels.visit func

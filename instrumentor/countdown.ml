@@ -45,6 +45,14 @@ class countdown file =
     in
 
     object (self)
+      val emptyRegionCount = ref 0
+      val singletonRegionCount = ref 0
+      val otherRegionCount = ref 0
+
+      method printStats =
+	Printf.eprintf "stats: countdown: %s has %d empty regions, %d singleton regions, %d other regions\n"
+	  fundec.svar.vname !emptyRegionCount !singletonRegionCount !otherRegionCount
+
       method decrement location scale =
 	Instr [Set (local, increm (Lval local) (- scale), location)]
 
@@ -63,9 +71,14 @@ class countdown file =
 	let gotoOriginal = Goto (ref original, location) in
 	let gotoInstrumented = Goto (ref instrumented, location) in
 	match weight.count with
-	| 0 when !specializeEmptyRegions -> gotoOriginal
-	| 1 when !specializeSingletonRegions -> gotoInstrumented
+	| 0 when !specializeEmptyRegions ->
+	    incr emptyRegionCount;
+	    gotoOriginal
+	| 1 when !specializeSingletonRegions ->
+	    incr singletonRegionCount;
+	    gotoInstrumented
 	| _ ->
+	    incr otherRegionCount;
 	    let within = kinteger IUInt weight.threshold in
 	    let predicate = BinOp (Gt, Lval local, within, intType) in
 	    let choice = If (predicate,

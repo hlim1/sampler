@@ -1,6 +1,7 @@
 open Cil
 open Interesting
 open Pretty
+open ScalarPairSiteInfo
 
 
 let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
@@ -21,6 +22,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	let leftDoc = d_columns
 	    [d_lval () left; text host; text off]
 	in
+	let siteInfo = new ScalarPairSiteInfo.c func location (left, host, off) in
 
 	let newLeft = var (Locals.makeTempVar func leftType) in
 	let last = mkStmt (Instr [Set (left, Lval newLeft, location)]) in
@@ -36,7 +38,8 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	    let selector = selector (Lval (var right)) in
 	    let detail = if right.vglob then "global" else "local" in
 	    let description = d_columns [leftDoc; text right.vname; text detail] in
-	    let bump = tuples#addSite func selector description location in
+	    let siteInfo = siteInfo (Variable right) in
+	    let bump = tuples#addSite siteInfo selector in
 	    statements := bump :: !statements
 	in
 	List.iter compareToVarMaybe globals;
@@ -47,7 +50,8 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	  let compareToConst right =
 	    let selector = selector right in
 	    let description = d_columns [leftDoc; d_exp () right; text "const"] in
-	    let bump = tuples#addSite func selector description location in
+	    let siteInfo = siteInfo (Constant right) in
+	    let bump = tuples#addSite siteInfo selector in
 	    statements := bump :: !statements
 	  in
 

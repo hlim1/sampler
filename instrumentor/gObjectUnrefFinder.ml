@@ -19,7 +19,8 @@ class visitor file =
 	    let slot = var (makeTempVar func uintType) in
 	    let classify = Call (Some slot, classifier, [chaff], location) in
 	    let selector = Index (Lval slot, NoOffset) in
-	    let bump = tuples#addSite func selector (d_exp () chaff) location in
+	    let siteInfo = new ExprSiteInfo.c func location chaff in
+	    let bump = tuples#addSite siteInfo selector in
 	    let replacement = Block (mkBlock [mkStmtOneInstr classify;
 					      bump;
 					      mkStmt stmt.skind])

@@ -14,16 +14,19 @@ class manager name file =
 
     method private bump = Threads.bump file
 
-    method addSite func selector (description : doc) location =
+    method addSite (siteInfo : SiteInfo.c) selector =
       let site = (Var counters, Index (integer nextId, NoOffset)) in
+      let func = siteInfo#fundec in
+      let location = siteInfo#inspiration in
       let stamp = stamper name nextId location in
       let counter = addOffsetLval selector site in
       let bump = self#bump counter location in
-      let result = mkStmt (IsolateInstructions.isolate (bump :: stamp)) in
-      Sites.registry#add func (Site.build result);
-      siteInfos#push (func, location, description, result);
+      let implementation = siteInfo#implementation in
+      implementation.skind <- IsolateInstructions.isolate (bump :: stamp);
+      Sites.registry#add func (Site.build implementation);
+      siteInfos#push siteInfo;
       nextId <- nextId + 1;
-      result
+      implementation
 
     method patch =
       mapGlobals file
@@ -53,18 +56,10 @@ class manager name file =
 	(Digest.to_hex (Lazy.force digest)) name.flag;
 
       siteInfos#iter
-	(fun (func, location, description, statement) ->
-	  let description =
-	    if description = Pretty.nil then
-	      ""
-	    else
-	      Pretty.sprint max_int (chr '\t' ++ description)
-	  in
-	  fprintf channel "%s\t%d\t%s\t%d%s\n"
-	    location.file location.line
-	    func.svar.vname
-	    statement.sid
-	    description);
+	(fun siteInfo ->
+	  Pretty.fprint channel max_int
+	    ((seq (chr '\t') (fun doc -> doc) siteInfo#print)
+	       ++ line));
 
       output_string channel "</sites>\n"
   end

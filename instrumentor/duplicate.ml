@@ -34,6 +34,7 @@ class visitor pairs =
 
     method vstmt stmt =
       let clone = { stmt with labels = mapNoCopy cloneLabel stmt.labels } in
+      assert (stmt.sid >= 0);
       pairs.(stmt.sid) <- (stmt, clone);
       ChangeDoChildrenPost (clone, self#fixup)
   end

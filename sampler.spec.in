@@ -145,7 +145,7 @@ $UNIQUE_ID environment variable.
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING
 %{_localstatedir}/www/cgi-bin/*
-%{_localstatedir}/www/sampler-uploads
+%attr(750,apache,apache) %dir %{_localstatedir}/www/sampler-uploads
 
 
 ########################################################################

@@ -4,6 +4,7 @@ class c : string -> string list ->
 
     val saveTemps : bool
     val flags : string list
+    val mutable finalFlags : string list
 
     method private extraLibs : string list
 

@@ -18,6 +18,10 @@ class virtual c homeDir instrumentor compiler arguments =
   object (self)
     inherit GccDriver.c compiler arguments as super
 
+    method private parse =
+      finalFlags <- "-Wno-unused-label" :: finalFlags;
+      super#parse
+
     method private extraLibs =
       let dir = homeDir ^ "/libcountdown" in
       ["-Wl,-rpath," ^ dir; "-L" ^ dir; "-lcountdown"]

@@ -187,7 +187,7 @@ per hundred executions.  To achieve 90\% confidence of observing this
 bug in at least one run, we need at least
 %%
 \[\log{(1-0.90)} / \log{\left( 1 - \frac{1}{100 \times 1000}\right)} = \text{230,258 runs.}\]
-%%
+
 While this is a large number, consider that sixty million Office XP
 licenses were sold in its first year on the market
 \cite{Microsoft:2002:AR-F10K}.  Assuming each licensee runs Microsoft
@@ -251,8 +251,8 @@ is hypothesized to behave differently in successful versus crashed
 runs.  Specifically, we pose the problem as follows:
 \begin{quote}
   Assume that predicates capture incorrect behavior.  That is, assume
-  that each predicate $p$ should always be false during correct
-  execution.  When $p$ is true, the program either fails (a deterministic
+  that each predicate $P$ should always be false during correct
+  execution.  When $P$ is true, the program either fails (a deterministic
 bug) or is at
   increased risk of failing (a non-deterministic bug).
 \end{quote}
@@ -329,11 +329,11 @@ elimination strategy independently to the counter traces:
 \item[\elim{Universal falsehood}] discards 1569 counters that are
   zero on all runs, leaving 141 candidate predicates.
   
-\item[\elim{Lack of failing example}] discards 1665 counters that are
-  zero on all crashes, leaving 45 candidate predicates.
-  
 \item[\elim{Lack of failing coverage}] discards 526 counter triples
   that are all zero on all crashes, leaving 132 candidate predicates.
+  
+\item[\elim{Lack of failing example}] discards 1665 counters that are
+  zero on all crashes, leaving 45 candidate predicates.
   
 \item[\elim{Successful counterexample}] discards 139 counters that
   are non-zero on any successful run, leaving 1571 candidate
@@ -399,7 +399,7 @@ to combine with \elim{successful counterexample}.  Doing so in the
 case of \texttt{ccrypt} leaves us with exactly the same two features,
 though in general one might find different results.  Elimination by
 \elim{lack of failing coverage}, on the other hand, is an inherently
-weaker strategy; when combined with \elim{successful counterexample},
+weaker strategy: when combined with \elim{successful counterexample},
 we are still left with 86 features.
 
 \subsubsection{Refinement over time}
@@ -596,7 +596,7 @@ we can maximize the \termdef{log likelihood} of the training set.
   \begin{split}
     LL(\mathcal{D}) \:=\:
     \sum_{i=1}^M \, [ & y_i \log P(Y = 1 | x) \\
-    + & (1 - y_i) \log (1 - P(Y = 1 | x)) ]
+    + & (1 - y_i) \log (1 - P(Y = 1 | x)) ].
   \end{split}
 \end{equation*}
 
@@ -607,7 +607,7 @@ function $\mu_{\tilde{\beta}}(x)$ with parameters $\tilde{\beta} = \langle \beta
 \Real, \beta \in \Real^N \rangle$.
 %%
 \begin{equation*}
-  P(Y = 1 | x) = \mu_{\tilde{\beta}} (x) = \frac{1}{1 + \exp(- \beta_0 - \beta^T x)}
+  P(Y = 1 | x) = \mu_{\tilde{\beta}} (x) = \frac{1}{1 + \exp(- \beta_0 - \beta^T x)}.
 \end{equation*}
 
 The logistic parameters $\beta_0$ and $\beta$ take on the respective roles as
@@ -625,7 +625,7 @@ subtracting a penalty term based on the $\ell_1$ norm $\norm{\tilde{\beta}}_1 =
   \begin{split}
     LL (\tilde{\beta} | \mathcal{D}, \lambda ) \:=\:
     & \sum_{i=1}^M \, [y_i \log \mu_{\tilde{\beta}} (x_i) + (1 - y_i) \log (1 - \mu_{\tilde{\beta}} (x_i))] \\
-    & - \lambda \norm{\tilde{\beta}}_1
+    & - \lambda \norm{\tilde{\beta}}_1.
   \end{split}
 \end{equation*}
 

@@ -4,7 +4,7 @@
 We have used the transformation framework to inject different forms of
 instrumentation into several programs, both to assess the performance
 impact of sampling as well as to show that sampling can offer novel
-insights into program (mis)behavior. 
+insights into program (mis)behavior.
 
 \subsection{Sharing the Cost of Assertions}
 \label{sec:share}
@@ -15,8 +15,8 @@ code ships to boost performance.  However, deployed programs fail in
 unanticipated ways, and it would be helpful to retain some level of
 assertion checking if the performance penalty were not excessive.
 
-Programs produced by the  \CCured instrumenting translator \cite{POPL_'02*128} are
-extreme examples of assertion-dense code.
+Programs produced by the \CCured instrumenting translator
+\cite{POPL_'02*128} are extreme examples of assertion-dense code.
 \CCured analyses programs written in C and attempts to prove,
 statically, that most pointer operations are memory safe.  Where this
 cannot be done, \CCured inserts dynamic checks to enforce memory
@@ -29,8 +29,8 @@ among many users.
 
 We have applied sampling to several benchmarks taken from the
 SPECINT95 \cite{SPEC95} and Olden \cite{Carlisle:1996:OPPWDDSDMM}
-benchmark suites.  All programs run to completion and we are
-simply measuring the overhead of performing the dynamic checks.
+benchmark suites.  All programs run to completion and we are simply
+measuring the overhead of performing the dynamic checks.
 
 \subsubsection{Whole-Program Sampling}
 \label{sec:share:whole}
@@ -192,12 +192,11 @@ Benchmarks that are less dominated by recursion suggest additional
 areas for improvement.  Recurring trends include:
 
 \begin{itemize}
-  
-\item Low amortization due to lightweight regions in loops with bounds that
-  are constant or fixed on entry.  A loop with iteration count $i$ and
-  body weight $w$ could be treated as an acyclic region of weight
-  $iw$.
-  
+\item Low amortization due to lightweight regions in loops with bounds
+  that are constant or fixed on entry.  A loop with iteration count
+  $i$ and body weight $w$ could be treated as an acyclic region of
+  weight $iw$.
+
 \item Conservative identification of weightless functions.  Calls
   through function pointers or to externally-defined code are assumed
   to potentially recurse back to the caller.  Points-to analyses can
@@ -230,7 +229,7 @@ a large user community by using randomly generated inputs in the
 spirit of the Fuzz project~\cite{MKLMMNS95}.  Our selected target is
 version 1.06 of the GNU implementation of \texttt{bc}.  We find that
 feeding \texttt{bc} nine megabytes of random input causes it to crash
-roughly one time in four.  
+roughly one time in four.
 %While this would be an unusually high
 %failure rate for shipping software under normal usage patterns, we
 %expect that users experiencing crashes will be more likely to opt-in
@@ -248,15 +247,15 @@ of possible invariants.  Our goal is to identify predicates that hold
 when the program succeeds, but which are violated when the program
 crashes.  We cast an extremely broad net, but with an eye toward
 pointer use errors and buffer overruns.  For pointer use, null
-pointers are clearly of interest.  Relative addresses of pointers may be
-interesting as well, as this may capture cases where one pointer scans
-within a second pointed-to buffer.  Checking pointer/pointer equality
-may reveal aliasing which, when not anticipated by the programmer, can
-lead to dangling ``wild'' pointer bugs.  Scalar variables serve as
-array indexes, pointer offsets, and in many other roles; relationships
-among scalars may reveal buffer overruns, unanticipated consequences
-of negative values, invalid enumeration constants, or a variety of
-other problems.
+pointers are clearly of interest.  Relative addresses of pointers may
+be interesting as well, as this may capture cases where one pointer
+scans within a second pointed-to buffer.  Checking pointer/pointer
+equality may reveal aliasing which, when not anticipated by the
+programmer, can lead to dangling ``wild'' pointer bugs.  Scalar
+variables serve as array indexes, pointer offsets, and in many other
+roles; relationships among scalars may reveal buffer overruns,
+unanticipated consequences of negative values, invalid enumeration
+constants, or a variety of other problems.
 
 At any direct assignment to a scalar variable $x$, we identify all
 other local or global variables $\{ y_1, y_2, \dots, y_n \}$ which are
@@ -451,7 +450,8 @@ fix bugs.  But it does suggest where to start looking, and what sort
 of scenarios (large \texttt{indx}) to consider.  Although we are still
 learning about the capabilities of this system, and how to interpret
 its results, we believe that statistically guided debugging has the
-potential to make the process of finding and fixing bugs more efficient.
+potential to make the process of finding and fixing bugs more
+efficient.
 
 \begin{figure}
   \centering

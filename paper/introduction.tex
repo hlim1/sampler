@@ -10,56 +10,57 @@ by the team responsible for producing the software.
 
 This paper is about making lemonade from lemons.  Given that deployed
 software has problems, perhaps we can speed up the process of
-identifying and eliminating those problems by learning something
-from the enormous number of executions performed
-by the software's user community.  We propose an infrastructure where 
-some information about each user execution of a program is 
-transmitted to a central database.  The data 
-gathered from all executions is analyzed to extract information
-that helps engineers to find and fix problems more quickly.
-In our view, such an infrastructure has several benefits:
+identifying and eliminating those problems by learning something from
+the enormous number of executions performed by the software's user
+community.  We propose an infrastructure where some information about
+each user execution of a program is transmitted to a central database.
+The data gathered from all executions is analyzed to extract
+information that helps engineers to find and fix problems more
+quickly.  In our view, such an infrastructure has several benefits:
 \begin{itemize}
-
-\item For deployed software systems, the number of executions
-in actual use dwarfs the number of executions produced in testing by
-orders of magnitude.  For many software systems today, essentially all
-of the information from actual executions is discarded, because there
-is no mechanism for feedback.  Retaining even a small portion of that
-information could be valuable.
-
-\item Gathering information from all, or at least a representative sample,
-of user executions gives an accurate picture of how the software is
-actually used, allowing better decisions about how to spend scarce
-resources on modifications. In particular, bugs that affect a great
-number of users are higher priority than bugs that are very rare.
-This kind of information is almost impossible to obtain from anywhere
-other than actual user executions.
-
+  
+\item For deployed software systems, the number of executions in
+  actual use dwarfs the number of executions produced in testing by
+  orders of magnitude.  For many software systems today, essentially
+  all of the information from actual executions is discarded, because
+  there is no mechanism for feedback.  Retaining even a small portion
+  of that information could be valuable.
+  
+\item Gathering information from all, or at least a representative
+  sample, of user executions gives an accurate picture of how the
+  software is actually used, allowing better decisions about how to
+  spend scarce resources on modifications. In particular, bugs that
+  affect a great number of users are higher priority than bugs that
+  are very rare.  This kind of information is almost impossible to
+  obtain from anywhere other than actual user executions.
+  
 \item While our primary interest is in finding and fixing quality
-problems, information gathered from user executions could be useful
-for other purposes.  For example, software authors may simply wish to
-know which features are most commonly used.
-
-\item Traditional user feedback about problems often involves a call 
-from a relatively unsophisticated user to a perhaps only somewhat
-more sophisticated technical support center.  In a networked world,
-it is simply more efficient and accurate to gather this information
-automatically.
-
+  problems, information gathered from user executions could be useful
+  for other purposes.  For example, software authors may simply wish
+  to know which features are most commonly used.
+  
+\item Traditional user feedback about problems often involves a call
+  from a relatively unsophisticated user to a perhaps only somewhat
+  more sophisticated technical support center.  In a networked world,
+  it is simply more efficient and accurate to gather this information
+  automatically.
+  
 \item Many bugs sit on open bug lists of products for an extended
-period of time before an engineer is available to work on the bug.
-Automatically gathering data from user executions allows for automated
-analysis, without human intervention.  Thus, when an engineer is
-finally available to work on a problem, the results of automated
-analysis done in the interim may help the engineer to identify and fix
-the problem more quickly.
-
-%\item Based on the current state of automatic analysis, clients can be
-%instructed to focus attention in data gathering on different aspects
-%of the software.  For example, if there appears to be a problem
-%with a particular function $f$, we may wish clients to disproportionately
-%report information about $f$ for a period of time, to speed up
-%the process of gathering enough data for analysis.
+  period of time before an engineer is available to work on the bug.
+  Automatically gathering data from user executions allows for
+  automated analysis, without human intervention.  Thus, when an
+  engineer is finally available to work on a problem, the results of
+  automated analysis done in the interim may help the engineer to
+  identify and fix the problem more quickly.
+  
+  \disregard{
+  \item Based on the current state of automatic analysis, clients can
+    be instructed to focus attention in data gathering on different
+    aspects of the software.  For example, if there appears to be a
+    problem with a particular function $f$, we may wish clients to
+    disproportionately report information about $f$ for a period of
+    time, to speed up the process of gathering enough data for
+    analysis.}
 
 \end{itemize}
 
@@ -106,17 +107,16 @@ the system that gathers the data from user executions
 (\autoref{sec:framework}). We do give a non-trivial example of
 subsequent data analysis in \autoref{sec:applications}.
 
-
-Our infrastructure is designed to gather information about a
-large number of program executions taking place remotely from
-a central site where data is collected.  Any such design must solve
-two critical problems.  
+Our infrastructure is designed to gather information about a large
+number of program executions taking place remotely from a central site
+where data is collected.  Any such design must solve two critical
+problems.
 
 The first problem is that the method for gathering information must be
 sufficiently lightweight that it has a negligible impact on the
 performance of the user's program.  Our approach, discussed in
-\autoref{sec:framework}, is based on sampling.  Classical sampling
-for measuring program performance searches for the ``elephant in the
+\autoref{sec:framework}, is based on sampling.  Classical sampling for
+measuring program performance searches for the ``elephant in the
 haystack''---it is looking for the biggest consumers of time.  In
 contrast, we are looking for needles (bugs) that may occur very
 rarely, and furthermore our sampling rates may be very low to maintain
@@ -127,14 +127,14 @@ reduce the overhead of the necessary additional code that determines
 whether to take a sample or not.
 
 The second problem is that information from the client must be
-transmitted over the network to the central database.  
-Generating traces, or even partial traces, is simply too expensive in
-network bandwidth even in cases where the performance impact on the
-client is negligible.  Furthermore, gathering a relatively small
-amount of data periodically from a large number of clients can
-quickly overwhelm the storage capacity of a central server.  In our
-experience, compression of the data must always be designed in to
-the analysis; we discuss this further in \autoref{sec:applications}. 
+transmitted over the network to the central database.  Generating
+traces, or even partial traces, is simply too expensive in network
+bandwidth even in cases where the performance impact on the client is
+negligible.  Furthermore, gathering a relatively small amount of data
+periodically from a large number of clients can quickly overwhelm the
+storage capacity of a central server.  In our experience, compression
+of the data must always be designed in to the analysis; we discuss
+this further in \autoref{sec:applications}.
 
 \autoref{sec:applications} presents two different applications of our
 framework.  In \autoref{sec:share} we consider how we can share the
@@ -146,8 +146,8 @@ show how we can use statistical techniques to identify the source of a
 likely bug from samples taken from a few thousand executions.  We
 sample information on the relationship between pairs of integer
 variables in a program from both successful and failing runs and use
-statistical regression techniques to identify those predicates that are
-highly predictive of program failure.
+statistical regression techniques to identify those predicates that
+are highly predictive of program failure.
 
 Finally, monitoring of user executions raises some important privacy
 and security concerns.  The problems are both social and technical; a

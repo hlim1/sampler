@@ -1,10 +1,10 @@
 \section{Sampling Framework}
 \label{sec:framework}
 
-This section describes our sampling framework.  We begin
-with sampling of basic blocks and gradually add features
-until we can describe how to perform sampling for entire
-programs.  Suppose we start with the following C code:
+This section describes our sampling framework.  We begin with sampling
+of basic blocks and gradually add features until we can describe how
+to perform sampling for entire programs.  Suppose we start with the
+following C code:
 
 \begin{code}
   \{\+ \\
@@ -36,15 +36,14 @@ in a loop, for example, one of the checks would execute on every
 fiftieth iteration while the other would never execute.  We wish
 sampling to be fair and random: each check should independently have a
 1/100 chance of being sampled.  This is a so-called \termdef{Bernoulli
-process}, the most common example of which is repeatedly tossing a
+  process}, the most common example of which is repeatedly tossing a
 coin.  We wish to sample based on the outcome of tossing a coin which
 is biased to come up heads only one time in a hundred.
 
-A \naive approach would be to use a simple random number
-generator.  Suppose \texttt{rnd($n$)} yields
-a random integer uniformly distributed between 0 and $n-1$.  Then the
-following code gives us fair random sampling at the desired
-density:
+A \naive approach would be to use a simple random number generator.
+Suppose \texttt{rnd($n$)} yields a random integer uniformly
+distributed between 0 and $n-1$.  Then the following code gives us
+fair random sampling at the desired density:
 
 \begin{code}
   \{\+ \\
@@ -68,9 +67,9 @@ $(99/100)^2 \approx 98\%$ chance that both instrumentation sites will
 be skipped.  If we could determine, upon reaching the top of a basic
 block, that no site in that block will be sampled, then we could
 branch off into fast-path code from which all conditionally-guarded
-checks have been removed.  This requires two versions of the code:
-one with sampled instrumentation, one without.  It also requires that
-we be able to predict how many future sampling opportunities will be
+checks have been removed.  This requires two versions of the code: one
+with sampled instrumentation, one without.  It also requires that we
+be able to predict how many future sampling opportunities will be
 skipped before the next one is taken.
 
 Anticipating future samples requires a change in randomization
@@ -128,45 +127,45 @@ The instrumented code must do some extra work to manage the
 next-sample countdown, but the fast path is much improved.  The only
 overhead is a single compare/branch and a constant decrement, and this
 overhead is amortized over the entire block.  In larger blocks with
-more instrumentation sites, the initial countdown check has a
-larger threshold, but that one check suffices to predict a larger
-number of skipped sampling opportunities.
+more instrumentation sites, the initial countdown check has a larger
+threshold, but that one check suffices to predict a larger number of
+skipped sampling opportunities.
 
 Consider the distribution of likely countdown values.  With a sampling
-density of 1/100, there is a 1/100 chance that we sample at the
-very next opportunity.  There is a $(99/100) \times (1/100)$ that the
-next chance is skipped but that the one after that is taken.
-A countdown of three appears on a $(99/100)^2 \times (1/100)$ chance,
-and so on.  These numbers form a \termdef{geometric distribution}
-whose mean value is the inverse of the sampling density (that is,
-100).  Numbers in a geometric distribution characterize the expected
-inter-arrival times of a Bernoulli process.  However, repeated tossing
-of a biased coin is not necessary: geometrically distributed random
-numbers can be generated directly using a standard (uniform) random
-generator and some simple floating-point operations.\footnote{In
-  theory, a countdown may need to be arbitrarily large.  However, the
-  odds of a 1/100 countdown exceeding $2^{32}-1$ are less than one in
-  $10^{10^7}$.  This divisor vastly exceeds any reasonable estimate of
-  the number of elementary particles in the universe.}
+density of 1/100, there is a 1/100 chance that we sample at the very
+next opportunity.  There is a $(99/100) \times (1/100)$ that the next
+chance is skipped but that the one after that is taken.  A countdown
+of three appears on a $(99/100)^2 \times (1/100)$ chance, and so on.
+These numbers form a \termdef{geometric distribution} whose mean value
+is the inverse of the sampling density (that is, 100).  Numbers in a
+geometric distribution characterize the expected inter-arrival times
+of a Bernoulli process.  However, repeated tossing of a biased coin is
+not necessary: geometrically distributed random numbers can be
+generated directly using a standard (uniform) random generator and
+some simple floating-point operations.\footnote{In theory, a countdown
+  may need to be arbitrarily large.  However, the odds of a 1/100
+  countdown exceeding $2^{32}-1$ are less than one in $10^{10^7}$.
+  This divisor vastly exceeds any reasonable estimate of the number of
+  elementary particles in the universe.}
 
 As can be seen in the instrumented slow path, the countdown must be
 reset once it reaches zero.  Thus, we consume next-sample countdowns
-gradually over time.  However, the rate of consumption is slower
-than that for raw coin tosses: $n$ countdowns for $1/d$ sampling
-encode, on average, $nd$ tosses.  A bank of pre-generated random
-countdowns, then, is quite reasonable and will exhaust or repeat $d$
-times more slowly than would a similar bank of raw coin tosses.
+gradually over time.  However, the rate of consumption is slower than
+that for raw coin tosses: $n$ countdowns for $1/d$ sampling encode, on
+average, $nd$ tosses.  A bank of pre-generated random countdowns,
+then, is quite reasonable and will exhaust or repeat $d$ times more
+slowly than would a similar bank of raw coin tosses.
 
 \subsection{From Blocks to Functions}
 
-The block amortizing scheme outlined generalizes to an
-arbitrary control flow graph as follows.  Any region of
-acyclic code has a finite number of possible paths.
-We call the maximum number of instrumented sites on any path the
-\termdef{weight} of that region.  If the next-sample countdown exceeds
-the weight of an acyclic region, then no samples will be taken on this
-pass through that part of the code.  We can place a countdown
-threshold check at the top of this region.
+The block amortizing scheme outlined generalizes to an arbitrary
+control flow graph as follows.  Any region of acyclic code has a
+finite number of possible paths.  We call the maximum number of
+instrumented sites on any path the \termdef{weight} of that region.
+If the next-sample countdown exceeds the weight of an acyclic region,
+then no samples will be taken on this pass through that part of the
+code.  We can place a countdown threshold check at the top of this
+region.
 
 Cycles that without instrumentation are effectively weightless and may
 be disregarded.  A cycle with instrumentation must also contain a
@@ -175,12 +174,12 @@ check and execute forward, we cross a finite number of instrumentation
 sites before reaching the next threshold check.  Thus, we can compute
 a finite weight for each threshold check.
 
-There is some flexibility regarding exactly where
-a threshold check is placed.  For simplicity, our present system
-places one threshold check at function entry and one along each loop back
-edge.  Weights may be computed in a single bottom-up traversal of each
-function's control flow graph.  If any threshold check is found to
-have zero weight, it is simply discarded.
+There is some flexibility regarding exactly where a threshold check is
+placed.  For simplicity, our present system places one threshold check
+at function entry and one along each loop back edge.  Weights may be
+computed in a single bottom-up traversal of each function's control
+flow graph.  If any threshold check is found to have zero weight, it
+is simply discarded.
 
 We produce two complete copies of the function body.  One contains
 full instrumentation, with each possible sample guarded by a decrement
@@ -191,7 +190,6 @@ threshold check points: at the top of each acyclic region, we decide
 whether a sample is imminent.  If it is, we branch into the
 instrumented code.  If the next sample is far off, we continue in the
 fast path code instead.
-
 
 \begin{figure}
   \centering
@@ -205,19 +203,18 @@ function containing one conditional and one loop.  Dotted nodes
 represent instrumentation sites; these are reduced to countdown
 decrements in the fast path.  The boxed nodes represent threshold
 checks; we have added one at function entry and one along the back
-edge of the loop.  This code layout strategy is a
-variation on that used by Arnold and Ryder to reduce the cost of code
-instrumented for performance profiling \cite{Arnold:2001:FRC}.  The
-principal change in our transformation is the use of geometrically
-distributed countdowns in conjunction with acyclic region weights to
-choose between the two code variants.  Arnold and Ryder use fixed
-sampling periods (e.g., exactly once per $n$ opportunities, or exactly
-once per $n$ instructions) and do not apply region-specific weighting.
-Our approach imposes more overhead, but offers greater statistical
-rigor in the resultant sampled data.  Arnold and Ryder have studied
-several variant layouts with varying trade-offs of code size versus
-overhead; the same choices and trade-offs are directly applicable
-here.
+edge of the loop.  This code layout strategy is a variation on that
+used by Arnold and Ryder to reduce the cost of code instrumented for
+performance profiling \cite{Arnold:2001:FRC}.  The principal change in
+our transformation is the use of geometrically distributed countdowns
+in conjunction with acyclic region weights to choose between the two
+code variants.  Arnold and Ryder use fixed sampling periods (e.g.,
+exactly once per $n$ opportunities, or exactly once per $n$
+instructions) and do not apply region-specific weighting.  Our
+approach imposes more overhead, but offers greater statistical rigor
+in the resultant sampled data.  Arnold and Ryder have studied several
+variant layouts with varying trade-offs of code size versus overhead;
+the same choices and trade-offs are directly applicable here.
 
 \subsection{Function Calls}
 
@@ -228,8 +225,8 @@ function call.  This treatment is appropriate if, e.g., the callee is
 being compiled separately.
 
 However, if the callee is known and available for examination, a
-simple interprocedural analysis can be used.  A
-\termdef{weightless function} has the following properties:
+simple interprocedural analysis can be used.  A \termdef{weightless
+  function} has the following properties:
 
 \begin{itemize}
 \item The function contains no instrumentation sites.
@@ -283,3 +280,4 @@ export at entry and exit, since they always leave the countdown
 unchanged.  With this change, the conventional native C compiler can
 coalesce decrements and perform other standard but important
 optimizations.
+

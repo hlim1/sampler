@@ -1,0 +1,15 @@
+#include <Bonobo.idl>
+
+
+module Sampler {
+  typedef unsigned long signature[4];
+  typedef sequence <unsigned long> counts;
+  
+  interface ReportCollector : Bonobo::Unknown {
+    unsigned long sparsity();
+    
+    oneway void reportUnit(in signature signature, in counts counts);
+    oneway void exitStatus(in octet status);
+    oneway void exitSignal(in octet signal);
+  };
+};

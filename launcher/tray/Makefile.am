@@ -1,28 +1,35 @@
 SUBDIRS = corba libegg
 
-noinst_LIBRARIES = libtrayicon.a
+INCLUDES = `pkg-config --cflags libbonobo-2.0 gtk+-2.0 pygtk-2.0` -I/usr/include/python2.2 -DGETTEXT_PACKAGE='"sampler"'
+CFLAGS = -g
 
-libtrayicon_a_SOURCES =				\
-	trayicon.c				\
-	trayiconmodule.c
+defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
 
-libtrayicon_a_LIBADD = libegg/tray/libtray.a
-
-BUILT_SOURCES = trayicon.c
 EXTRA_DIST = trayicon.override
 
-INCLUDES = $(LAUNCHER_TRAY_CFLAGS) -I/usr/include/python2.2 -DGETTEXT_PACKAGE='"sampler"'
-CFLAGS = -O9 -Wall -Werror
-LDFLAGS = $(LAUNCHER_TRAY_LIBS)
+noinst_LIBRARIES = libtrayicon.a libsampler.a
+
+MOSTLYCLEANFILES =				\
+	*-common.c				\
+	*-skels.c				\
+	*-wrap.c				\
+	*.defs					\
+	*.so					\
+	Sampler_ReportCollector.h		\
+	trayicon.c
+
+
+all-local: trayicon.so sampler.so
+
+
+########################################################################
+
 
 trayicon.defs: %.defs: libegg/tray/egg%.h
 	python /usr/share/pygtk/2.0/codegen/h2def.py $< >$@.tmp
 	mv $@.tmp $@
 
-
-defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
-
-trayicon.c: %.c: %.defs %.override
+trayicon-wrap.c: %-wrap.c: %.defs %.override
 	pygtk-codegen-2.0			\
 	  --prefix $*				\
 	  --register $(defsdir)/gdk-types.defs	\
@@ -36,13 +43,40 @@ libegg/tray/libtray.a: force
 force:
 .PHONY: force
 
-trayicon.so: %.so: %.o %module.o $(libtrayicon_a_LIBADD)
-	$(CC) $(CFLAGS) $(LDFLAGS) -shared $^ -o $@
+libtrayicon_a_SOURCES =				\
+	trayicon-wrap.c				\
+	trayiconmodule.c
 
-all-local: trayicon.so
+trayicon.so: %.so: lib%.a libegg/tray/libtray.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive -L/usr/lib/python2.2/config -lpython2.2 -Llibegg/tray -ltray -lutil `pkg-config --libs gdk-2.0 gtk+-2.0` -L/usr/X11R6/lib -lX11 -lpthread
 
 
-MOSTLYCLEANFILES =				\
-	trayicon.so				\
-	trayicon.c				\
-	trayicon.defs
+########################################################################
+
+
+Sampler_ReportCollector.h Sampler_ReportCollector-skels.c Sampler_ReportCollector-common.c: Sampler_ReportCollector.idl
+	orbit-idl-2 --nostubs $(patsubst %, --include %, $(shell pkg-config --variable idlinclude libbonobo-2.0)) $<
+
+sampler.defs: collector.h
+	python /usr/share/pygtk/2.0/codegen/h2def.py $< >$@.tmp
+	mv $@.tmp $@
+
+sampler-wrap.c: %-wrap.c: %.defs %.override
+	pygtk-codegen-2.0				\
+	  --prefix $*					\
+	  --register $(defsdir)/gdk-types.defs		\
+	  --register $(defsdir)/gtk-types.defs		\
+	  --register $(defsdir)/bonobo-types.defs	\
+	  --override $*.override			\
+	  $*.defs >$@.tmp
+	mv $@.tmp $@
+
+libsampler_a_SOURCES =				\
+	Sampler_ReportCollector-common.c	\
+	Sampler_ReportCollector-skels.c		\
+	collector.c				\
+	sampler-module.c			\
+	sampler-wrap.c
+
+sampler.so: %.so: lib%.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $^ -Wl,--no-whole-archive -L/usr/lib/python2.2/config -lpython2.2 -lutil `pkg-config --libs libbonobo-2.0`

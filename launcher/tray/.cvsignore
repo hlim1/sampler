@@ -3,3 +3,6 @@ Makefile
 Makefile.in
 trayicon.c
 trayicon.defs
+*.pyc
+*.pyo
+*.defs

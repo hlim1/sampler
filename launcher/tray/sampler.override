@@ -1,0 +1,16 @@
+/*-*- c -*-*/
+%%
+headers
+
+#include <pygtk/pygtk.h>
+#include "closures.h"
+#include "collector.h"
+
+void init_pyorbit();
+%%
+modulename sampler
+%%
+import bonobo.Object as PyBonoboObject_Type
+%%
+ignore-glob
+  *_get_type

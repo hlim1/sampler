@@ -26,11 +26,11 @@ sub collectOneArgument {
     if ($arg eq '--only') {
 	push @{$self->{instrumentor}}, $arg, shift @{$pargs};
 	return 1;
-    } elsif ($arg eq '--no-sample-events') {
+    } elsif ($arg eq '--no-sample') {
 	push @{$self->{instrumentor}}, $arg;
 	$self->{sample_events} = 0;
 	return 1;
-    } elsif ($arg eq '--sample-events') {
+    } elsif ($arg eq '--sample') {
 	push @{$self->{instrumentor}}, $arg;
 	$self->{sample_events} = 1;
 	return 1;

@@ -9,7 +9,7 @@ Release: 1
 License: BSD
 Group: Applications/System
 Packager: Ben Liblit <@PACKAGE_BUGREPORT@>
-URL: http://www.cs.berkeley.edu/~liblit/bug-isolation/
+URL: http://www.cs.berkeley.edu/~liblit/sampler/
 Source: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: binutils

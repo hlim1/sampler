@@ -42,6 +42,12 @@ sub collectOneArgument {
 	push @{$self->{instrumentor}}, $arg;
 	$self->{sample_funcs} = 1;
 	return 1;
+    } elsif ($arg eq '--no-show-stats') {
+	push @{$self->{instrumentor}}, $arg;
+	return 1;
+    } elsif ($arg eq '--show-stats') {
+	push @{$self->{instrumentor}}, $arg;
+	return 1;
     } else {
 	return 0;
     }

@@ -66,6 +66,3 @@ class FirstTime:
         result = self.__dialog.run()
         self.__dialog.destroy()
         return result
-
-    def __del__(self):
-        print 'FirstTime.__del__:', self

@@ -10,7 +10,7 @@ static ReturnTuple returnsCounterTuples[];
 
 
 #pragma cilnoremove("returnsSiteInfo")
-static const char returnsSiteInfo[] __attribute__((section(".debug.site_info.returns")));
+static const char returnsSiteInfo[] __attribute__((section(".debug.sampler.site_info.returns")));
 
 
 #pragma cilnoremove("returnsReporter")

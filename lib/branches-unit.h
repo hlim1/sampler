@@ -10,7 +10,7 @@ static BranchTuple branchesCounterTuples[];
 
 
 #pragma cilnoremove("branchesSiteInfo")
-static const char branchesSiteInfo[] __attribute__((section(".debug.site_info.branches")));
+static const char branchesSiteInfo[] __attribute__((section(".debug.sampler.site_info.branches")));
 
 
 #pragma cilnoremove("branchesReporter")

@@ -10,7 +10,7 @@ static ScalarPairTuple scalarPairsCounterTuples[];
 
 
 #pragma cilnoremove("scalarPairsSiteInfo")
-static const char scalarPairsSiteInfo[] __attribute__((section(".debug.site_info.scalar_pairs")));
+static const char scalarPairsSiteInfo[] __attribute__((section(".debug.sampler.site_info.scalar_pairs")));
 
 
 #pragma cilnoremove("scalarPairsReporter")

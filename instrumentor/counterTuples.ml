@@ -1,10 +1,11 @@
 open Cil
+open Pretty
 
 
 class type manager =
   object
     method private bump : lval -> location -> instr
-    method addSite : fundec -> exp -> Pretty.doc -> location -> stmt
+    method addSite : fundec -> exp -> doc -> location -> stmt
     method finalize : Digest.t Lazy.t -> unit
   end
 
@@ -13,14 +14,16 @@ class virtual basis prefix file =
   object (self)
     val tuples = FindGlobal.find (prefix ^ "CounterTuples") file
     val mutable nextId = 0
+    val siteInfos = new QueueClass.container
 
     method private virtual bump : lval -> location -> instr
 
-    method addSite func selector (description : Pretty.doc) (location : location) =
+    method addSite func selector (description : doc) (location : location) =
       let counter = (Var tuples, Index (integer nextId, Index (selector, NoOffset))) in
       nextId <- nextId + 1;
       let result = mkStmtOneInstr (self#bump counter location) in
       Sites.registry#add func result;
+      siteInfos#push (func, location, description, result);
       result
 
     method finalize (_ : Digest.t Lazy.t) =
@@ -32,6 +35,25 @@ class virtual basis prefix file =
 	      ->
 		GVar ({varinfo with vtype = TArray (elementType, Some (integer nextId), attributes)},
 		      initinfo, location)
+
+	    | GVar ({vname = vname}, initinfo, _) as global
+	      when vname = prefix ^ "SiteInfo"
+	      ->
+		let buffer = new BufferClass.c 16 in
+		let serializer (func, location, description, statement) =
+		  let fields = [text location.file;
+				num location.line;
+				text func.svar.vname;
+				num statement.sid;
+				description]
+		  in
+		  let row = seq (chr '\t') (fun doc -> doc) fields in
+		  let text = sprint max_int (row ++ chr '\n') in
+		  buffer#addString text
+		in
+		siteInfos#iter serializer;
+		initinfo.init <- Some (SingleInit (mkString buffer#contents));
+		global
 
 	    | GFun ({svar = {vname = "samplerReporter"}; sbody = sbody}, _) as global ->
 		let schemeReporter = FindFunction.find (prefix ^ "Reporter") file in

@@ -34,8 +34,9 @@ sampleTimes := $(sparsities:%=times/sample-all-%.times)
 alwaysTimes := $(patsubst %, times/always-%.times, none all)
 times := $(alwaysTimes) $(sampleTimes)
 
-collated-times: collate-times $(times)
-	./$<
+collated-times.txt: collate-times $(times)
+	./$< times >times/$@
+	cphost times/$@ $@
 
 $(alwaysTimes): times/%.times: %/src/ccrypt run-trials $(seeds:%=inputs/%.noise)
 	[ -d $(@D) ] || mkdir $(@D)
@@ -49,8 +50,8 @@ $(sampleTimes): times/sample-all-%.times: sample-all/src/ccrypt run-trials $(see
 
 inputs/%.noise: ../../../../../fuzz/fuzz
 	[ -d $(@D) ] || mkdir $(@D)
-	$< $* 4 $@
+	$< $* 30 $@
 
 clean::
-	rm -f collated-times
+	rm -f collated-times.txt
 	rm -rf inputs times

@@ -3,6 +3,8 @@
 use strict;
 use FileHandle;
 
+@ARGV == 1 or die "Usage: $0 <times-dir>\n";
+my $times = shift;
 
 local $, = "\t";
 local $\ = "\n";
@@ -15,7 +17,7 @@ my @sparsity = (100, 1000, 10000, 1000000);
 my @form = ('always-none', map("sample-all-$_", @sparsity), 'always-all');
 
 foreach my $form (@form) {
-    my $file = new FileHandle("times/$form.times", 'r') or die;
+    my $file = new FileHandle("$times/$form.times", 'r') or die;
 
     while (not $file->eof) {
 	my $seed;

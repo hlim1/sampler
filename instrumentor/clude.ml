@@ -29,9 +29,13 @@ let register ~flag ~desc ~ident value =
   Idents.register (ident, fun () -> string_of_patterns !value)
 
 
-let rec filter patterns focus =
-  match patterns with
-  | [] -> Include
-  | (disposition, "*") :: _ -> disposition
-  | (disposition, template) :: _ when template = focus -> disposition
-  | _ :: remainder -> filter remainder focus
+let selected patterns focus =
+  let rec dispose = function
+    | [] -> Include
+    | (disposition, "*") :: _ -> disposition
+    | (disposition, template) :: _ when template = focus -> disposition
+    | _ :: remainder -> dispose remainder
+  in
+  match dispose patterns with
+  | Include -> true
+  | Exclude -> false

@@ -2,10 +2,15 @@ open Cil
 
 
 let skipCall location =
-  Call (None, Lval (var LogSkip.logSkip), [], location)
+  Set (Countdown.lval,
+       BinOp (MinusA,
+	      Lval Countdown.lval,
+	      one,
+	      uintType),
+       location)
 	
 	
-class visitor = object(self)
+class visitor = object
   inherit FunctionBodyVisitor.visitor
       
   method vstmt _ = DoChildren

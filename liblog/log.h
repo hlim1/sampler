@@ -4,8 +4,6 @@
 
 extern unsigned nextLogCountdown;
 
-void logSkip();
-
 void logWrite(const char *, unsigned, const void *, unsigned, const void *);
 
 

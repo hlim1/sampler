@@ -40,11 +40,12 @@ ifaces := $(basename $(wildcard *.mli))
 ########################################################################
 
 
-backwardJumps = $(functionBodyVisitor) $(stmtSet) backwardJumps
+backwardJumps = $(logIsImminent) backwardJumps
 cfg = cfg
 cfgToDot = $(dotify) cfgToDot
 checkSimplicity = $(functionBodyVisitor) checkSimplicity
-classifyJumps = $(functionBodyVisitor) classifyJumps
+classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
+countdown = countdown
 dotify = $(utils) dotify
 duplicate = $(functionBodyVisitor) $(identity) $(stmtMap) duplicate
 forwardJumps = forwardJumps
@@ -55,7 +56,6 @@ identity = identity
 instrument = $(functionBodyVisitor) $(logWrite) instrument
 instrumentWrites = $(simplifyLefts) $(simplifyReturns) $(simplifyRights) $(checkSimplicity) $(instrument) instrumentWrites
 logIsImminent = logIsImminent
-logSkip = logSkip
 logWrite = logWrite
 mapClass = mapClass
 patchSites = patchSites
@@ -66,7 +66,7 @@ simplifyReturns = $(simplifyVisitor) simplifyReturns
 simplifyRights = $(simplifyVisitor) simplifyRights
 simplifyVisitor = $(functionBodyVisitor) simplifyVisitor
 skipVisitor = skipVisitor
-skipWrites = $(functionBodyVisitor) $(logSkip) skipWrites
+skipWrites = $(countDown) $(functionBodyVisitor) skipWrites
 splitAfterCalls = $(functionBodyVisitor) splitAfterCalls
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
@@ -94,7 +94,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-main := $(logIsImminent) $(logSkip) $(logWrite) $(transform) $(testHarness) %
+main := $(countdown) $(logWrite) $(transform) $(testHarness) %
 main: %: $(libs) $(addsuffix .$(cmo), $(main))
 	$(link)
 

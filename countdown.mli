@@ -1,3 +1,3 @@
-val logSkip : Cil.varinfo
+val lval : Cil.lval
 
 val phase : TestHarness.phase

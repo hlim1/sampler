@@ -2,8 +2,7 @@ open Cil
 
 let phases =
   [
-   LogIsImminent.phase;
-   LogSkip.phase;
+   Countdown.phase;
    LogWrite.phase;
    Transform.phase;
    "dump", dumpFile defaultCilPrinter stdout

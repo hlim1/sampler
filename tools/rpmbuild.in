@@ -27,7 +27,7 @@ my %macros = (
 	      sampler_cc_flags => '%{nil}',
 
 	      'sampler_tags(s:)' => <<'EOF',
-Requires: sampler-gnome
+Requires: sampler >= 0.5
 BuildRequires: sampler-devel >= 0.5
 %global _sampler_source %{-s*}%{!-s:1}
 Source%{_sampler_source}: %{name}-sampler.tar.gz

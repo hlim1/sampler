@@ -22,7 +22,5 @@ let analyze =
 let resolve = function
   | (Var varinfo, NoOffset) ->
       [varinfo]
-  | (Mem (Lval lval), NoOffset) ->
-      Ptranal.resolve_lval lval
   | _ ->
-      failwith "cannot resolve offset lvalue"
+      []

@@ -8,6 +8,8 @@ release ?= $(error release not set)
 sam_release ?= $(error sam_release not set)
 scheme ?= $(error scheme not set)
 
+wrapper_in ?= ../wrapper.in
+
 spec = $(name).spec
 cpu := $(shell rpm -E %{_target_cpu})
 
@@ -19,10 +21,10 @@ cpu := $(shell rpm -E %{_target_cpu})
 
 
 overlay_files :=				\
+	$(wrapper_in)				\
 	interface.glade				\
 	../config.in				\
-	../sampler.schemas.in			\
-	../wrapper.in
+	../sampler.schemas.in
 
 overlay = $(name)-sampler.tar.gz
 overlay: $(overlay)
@@ -36,7 +38,7 @@ $(overlay): $(overlay_files)
 
 
 EXTRA_DIST =					\
-	interface.glade				\
+	$(filter-out ../%, $(overlay_files))	\
 	interface.gladep			\
 	$(spec)					\
 	$(extra_sources)

@@ -1,8 +1,10 @@
-name = gimp2
+name = gimp
 version = 1.3.18
-release = 0.fdr.5.rh90
+release = 1
 sam_release = 1
-extra_sources = fatal-signals.patch
+extra_sources =
 scheme = branches
+
+wrapper_in = wrapper.in
 
 include ../rules.mk

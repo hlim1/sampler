@@ -1,0 +1,11 @@
+#!/usr/bin/python -O
+
+import os.path
+import sys
+
+sys.path.insert(1, '@sampler_datadir@/launcher')
+
+sys.argv[1:1] = ['--enable-stack-trace', 'never']
+
+import GnomeMain
+GnomeMain.main(os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), 'config'))

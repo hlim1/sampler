@@ -12,7 +12,7 @@
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">/usr/share/pixmaps/gimp2.png</property>
+  <property name="icon">/usr/share/pixmaps/gnome-gimp.png</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">
@@ -181,7 +181,7 @@
 	  <child>
 	    <widget class="GtkImage" id="">
 	      <property name="visible">True</property>
-	      <property name="pixbuf">/usr/share/pixmaps/gimp2.png</property>
+	      <property name="pixbuf">/usr/share/pixmaps/gnome-gimp.png</property>
 	      <property name="xalign">0.5</property>
 	      <property name="yalign">0</property>
 	      <property name="xpad">0</property>

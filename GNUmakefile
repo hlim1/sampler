@@ -37,8 +37,7 @@ skipVisitor = skipVisitor
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 testHarness = testHarness
-transform = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(patchSites) $(removeLoops) $(weighPaths) transform
-transformVisitor = $(functionBodyVisitor) $(transform) transformVisitor
+transformVisitor = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(removeLoops) $(weighPaths) transformVisitor
 utils = utils
 weighPaths = $(stmtMap) weighPaths
 

@@ -44,7 +44,10 @@ spec95-density.tex : ccured-density.pl $(spec95_density)
 ########################################################################
 
 
-all:: perimeter.eps
+all:: $(addprefix perimeter., eps pdf)
 
 perimeter.eps: decure-only-one-function.sxc
 	$(error please re-export $@ from $<)
+
+perimeter.pdf: %.pdf: %.eps
+	epstopdf --outfile=$@ $<

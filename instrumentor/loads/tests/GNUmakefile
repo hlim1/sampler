@@ -1,5 +1,5 @@
 CC := ../../front-end ../main $(CC)
-CFLAGS := -W -Wall -Werror -save-temps
+CFLAGS := -g -W -Wall -Werror -save-temps
 
 tests := 					\
 	array					\
@@ -17,7 +17,7 @@ decodes := $(addprefix decode-, $(tests))
 traces := $(tests:=.trace)
 objects := $(tests:=.o)
 
-decoder := ../../liblog/decoder
+decoder := ../../../liblog/print-trace
 
 recurse = $(MAKE) -C $(@D) $(@F)
 
@@ -35,7 +35,7 @@ $(decodes): decode-%: %.trace $(decoder)
 $(traces): %.trace: %
 	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 
-$(objects): %.o: %.c ../../liblog/log.h ../../libcountdown/countdown.h ../main
+$(objects): %.o: %.c ../../../liblog/log.h ../../../libcountdown/countdown.h ../main
 
 ../main: force
 	$(recurse)

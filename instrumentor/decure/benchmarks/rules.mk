@@ -22,21 +22,24 @@ workExec := $(workDir)/$(testDir)/$(exec)
 workComb := $(workExec)_comboptimcured.i
 
 -include functions.mk
-onlyForms := $(addprefix only-, $(functions))
-onlyExecs := $(onlyForms:=.exe)
-onlySrcs  := $(onlyForms:=.c)
+alwaysForms := $(addprefix always-only-, $(functions))
+alwaysExecs := $(addsuffix .exe, $(alwaysForms) always-all always-none)
+alwaysSrcs  := $(alwaysForms:=.c)
 
-basisForms := $(addprefix basis-, cured no-checks)
-basisExecs := $(basisForms:=.exe)
-basisSrcs  := $(basisForms:=.c)
+sampleForms := $(addprefix sample-only-, $(functions))
+sampleExecs := $(addsuffix .exe, $(sampleForms) sample-all)
+sampleSrcs  := $(sampleForms:=.c)
 
-allForms := $(basisForms) $(onlyForms)
-allExecs := $(basisExecs) $(onlyExecs)
+allForms := $(alwaysForms) $(sampleForms)
+allExecs := $(alwaysExecs) $(sampleExecs)
 allTimes := $(foreach seed, $(seeds), $(allForms:=.$(seed).time))
 
 CFLAGS := -O2
 LOADLIBES := $(trusted:%=$(workDir)/$(testDir)/%) $(workHome)/obj/x86_LINUX/ccured_GNUCC_releaselib.a -lm
 link = $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+decureMain := $(decure)/main
+runDecure := $(decureMain)
 
 
 ########################################################################
@@ -45,14 +48,16 @@ link = $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 all: loopless execs
 .PHONY: all
 
-execs: basis only
+execs: always sample
 .PHONY: execs
 
-basis: $(basisExecs)
-.PHONY: basis
+always: $(sort $(alwaysExecs))
+.PHONY: always
 
-only: $(sort $(onlyExecs))
-.PHONY: only
+sample: $(sort $(sampleExecs))
+.PHONY: sample
+
+source: $(sort $(allExecs:.exe=.c))
 
 $(workComb):
 	$(MAKE) -C $(workDir) ITERATIONS=0 $(name)
@@ -62,45 +67,56 @@ basis-cured.c: $(decure)/filterComplete $(workComb)
 	$^  >$@ || rm -f $@
 	@[ -r $@ ]
 
-basis-cured.i: %.i: %.c
-	$(CPP) $< >$@ || rm -f $@
-	@[ -r $@ ]
-
-basis-cured.exe: basis-cured.i
-	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
-
 decurable.i: basis-cured.c
-	$(CPP) -include $(sampler)/libcountdown/countdown.h $(sampler)/libcountdown/acyclic.h $(decure)/libdecure/decure.h $< >$@ || rm -f $@
+	$(CPP) -include $(sampler)/libcountdown/countdown.h $(sampler)/libcountdown/cyclic.h $(decure)/libdecure/decure.h $< >$@ || rm -f $@
 	@[ -r $@ ]
-
-basis-no-checks.c: decurable.i
-	$(decure)/main $< >$@ || rm -f $@
-	@[ -r $@ ]
-
-basis-no-checks.exe: %.exe: %.c
-	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 
 ########################################################################
 
 
-$(onlyExecs): CC := libtool $(CC)
-$(onlyExecs): LOADLIBES += -L$(sampler)/libcountdown -lcountdown -lacyclic -lcountdown `gsl-config --libs`
-
-
-$(onlyExecs): %.exe: %.c
+$(alwaysExecs): %.exe: %.c
 	$(link)
 
 
-$(onlySrcs): only-%.c: $(decure)/main decurable.i
-	$< --only $* decurable.i >$@ || rm -f $@
+always-%.c: runDecure += --no-sample
+
+$(alwaysSrcs): always-only-%.c: decurable.i $(decureMain)
+	$(runDecure) --only $* $< >$@ || rm -f $@
 	@[ -r $@ ]
+
+always-all.c: decurable.i $(decureMain)
+	$(runDecure) $< >$@ || rm -f $@
+
+always-none.c: decurable.i $(decureMain)
+	$(runDecure) --only @ $< >$@ || rm -f $@
 
 
 ########################################################################
 
 
-loopless: $(instrumentor)/loopless basis-no-checks.c
+$(sampleExecs): CC := libtool $(CC)
+$(sampleExecs): LOADLIBES += -L$(sampler)/libcountdown -lcyclic `gsl-config --libs`
+
+
+$(sampleExecs): %.exe: %.c
+	$(link)
+
+
+sample-%.c: runDecure += --sample
+
+$(sampleSrcs): sample-only-%.c: decurable.i $(decureMain)
+	$(runDecure) --only $* $< >$@ || rm -f $@
+	@[ -r $@ ]
+
+sample-all.c: decurable.i $(decureMain)
+	$(runDecure) $< >$@ || rm -f $@
+
+
+########################################################################
+
+
+loopless: $(instrumentor)/loopless decurable.i
 	$^ >$@ || rm -f $@
 	@[ -r $@ ]
 
@@ -108,7 +124,7 @@ loopless: $(instrumentor)/loopless basis-no-checks.c
 ########################################################################
 
 
-functions-list: $(decure)/listCandidates basis-cured.i
+functions-list: $(decure)/listCandidates decurable.i
 	$^ >$@ || rm -f $@
 	@[ -r $@ ]
 
@@ -121,13 +137,12 @@ clean:
 	rm -f *.*.time
 	rm -f *.*.time.
 	rm -f *.exe
+	rm -f always-*.c
 	rm -f only-*.c
-	rm -f basis-no-checks.c
-	rm -f decurable.i
 	rm -f loopless
 
 spotless: clean
-	rm -f functions.mk functions-list basis-cured.c basis-cured.i
+	rm -f functions.mk functions-list basis-cured.c decurable.i
 
 
 ########################################################################

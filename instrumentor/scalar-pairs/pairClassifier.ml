@@ -62,10 +62,7 @@ class visitor file (tuples : PairTuples.builder) func =
 		| _ :: rights ->
 		    filter rights
 		| [] ->
-		    if isPointerType left.vtype then
-		      [mkCast zero left.vtype]
-		    else
-		      []
+		    [mkCast zero left.vtype]
 	      in
 	      filter vars
 	    in

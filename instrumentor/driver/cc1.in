@@ -63,6 +63,7 @@ sub inst_toggle ($) {
 my %flag_specs =
     (
      # Sampler Options
+     '-fsampler-scheme=nothing' => sub { },
      '-fthreads' => sub { },
      '-fno-threads' => sub { },
      '-fsample' => \&inst_toggle,
@@ -100,6 +101,7 @@ my %flag_specs =
      '-MF' => sub { push @cpp0, $_, shift @ARGV },
      '-MD' => sub { push @cpp0, $_ },
      '-MMD' => sub { push @cpp0, $_ },
+     '-I' => \&slurp_1,
      '-idirafter' => \&slurp_1,
      '-include' => \&slurp_1,
      '-imacros' => \&slurp_1,

@@ -9,12 +9,12 @@ let patch clones weights countdown =
     let instrumentedJump = findClone standard.jump in
     let instrumentedLanding = findClone standard.landing in
 
-    let export () = Instr [countdown#export] in
+    let export () = Instr [countdown#export locUnknown] in
     let instrumentedExport = findClone standard.export in
     standard.export.skind <- export ();
     instrumentedExport.skind <- export ();
 
-    let import () = Instr [countdown#import] in
+    let import () = Instr [countdown#import locUnknown] in
     standard.import.skind <- import ();
     instrumentedImport.skind <- import ();
 

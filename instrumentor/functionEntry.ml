@@ -9,7 +9,7 @@ let find func =
 
 let patch func weights countdown instrumented =
   let entry = find func in
-  let import = mkStmtOneInstr countdown#import in
+  let import = mkStmtOneInstr (countdown#import locUnknown) in
 
   let original = mkStmt (Block func.sbody) in
   let instrumented = mkStmt (Block instrumented) in

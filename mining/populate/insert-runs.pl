@@ -76,7 +76,6 @@ my %suppressed = get_suppressed $dbh;
 my @slot = ('HTTP_SAMPLER_APPLICATION_NAME',
 	    'HTTP_SAMPLER_APPLICATION_VERSION',
 	    'HTTP_SAMPLER_APPLICATION_RELEASE',
-	    'HTTP_SAMPLER_INSTRUMENTATION_TYPE',
 	    'HTTP_SAMPLER_VERSION',
 	    'HTTP_SAMPLER_SPARSITY',
 	    'HTTP_SAMPLER_EXIT_SIGNAL',
@@ -88,7 +87,7 @@ sub read_environment ($\%) {
     my ($dir, $known) = @_;
 
     my $filename = "$dir/environment";
-    my $file = new FileHandle($filename) or die;
+    my $file = new FileHandle($filename) or die "cannot read $filename: $!";
     my %environment;
 
     while (my $line = <$file>) {
@@ -110,7 +109,14 @@ sub read_environment ($\%) {
 
 sub environment_fields (\%) {
     my ($environment) = @_;
-    return map { $environment->{$_} } @slot;
+    my @result;
+
+    foreach (@slot) {
+	exists $environment->{$_} or die "missing environment field: $_";
+	push @result, $environment->{$_};
+    }
+
+    return @result;
 }
 
 
@@ -192,7 +198,6 @@ $dbh->do(q{
 	 application_name VARCHAR(50) NOT NULL,
 	 application_version VARCHAR(50) NOT NULL,
 	 application_release VARCHAR(50) NOT NULL,
-	 instrumentation_type ENUM('branches','returns','scalar-pairs') NOT NULL,
 	 version VARCHAR(255),
 	 sparsity INTEGER UNSIGNED NOT NULL,
 	 exit_signal TINYINT UNSIGNED NOT NULL,

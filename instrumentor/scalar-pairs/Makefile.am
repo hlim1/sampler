@@ -10,11 +10,15 @@ libscalar_pairs_a_SOURCES = scalar-pairs.c scalar-pairs.h
 
 EXTRA_DIST = $(scheme_DATA)
 
-include ../rules.mk
+include $(top_srcdir)/ocaml/rules.mk
+
+MOSTLYCLEANFILES += main
 
 
+libcil = $(cil_libdir)/cil.$(cma)
 libharness = ../harness.$(cma)
 libdirs += ..
+syslibs = str.$(cma) unix.$(cma)
 
 ../%.cmi: $(libharness)
 

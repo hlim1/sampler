@@ -5,7 +5,7 @@ EXTRA_DIST = build-libraries libraries.ml.in link-order rules.mk
 targets = harness.$(cma)
 extra_impls = libraries
 
-include rules.mk
+include $(top_srcdir)/ocaml/rules.mk
 
 
 all-local: harness.$(cma)

@@ -1,0 +1,1 @@
+val next : unit -> int

@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS = foreign 1.6
 
 SUBDIRS =					\
+	cfg					\
 	doc					\
 	fuzz					\
 	instrumentor				\
@@ -12,7 +13,8 @@ SUBDIRS =					\
 DIST_SUBDIRS =					\
 	$(SUBDIRS)				\
 	debian					\
-	mining
+	mining					\
+	ocaml
 
 EXTRA_DIST =					\
 	$(PACKAGE).spec				\

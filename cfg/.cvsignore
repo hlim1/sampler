@@ -1,0 +1,11 @@
+*.annot
+*.cfg
+*.cmi
+*.cmo
+*.cmx
+*.di
+*.dl
+*.do
+Makefile
+Makefile.in
+resolve-cfg

@@ -253,6 +253,7 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 
 AC_CONFIG_FILES([
 Makefile
+cfg/Makefile
 config.m4
 debian/Makefile
 doc/Makefile
@@ -261,7 +262,6 @@ doc/sampler-guide/Makefile
 doc/sampler-guide/C/Makefile
 fuzz/Makefile
 instrumentor/Makefile
-instrumentor/config.mk
 instrumentor/branches/Makefile
 instrumentor/branches/tests/Makefile
 instrumentor/daikon/Makefile
@@ -292,6 +292,8 @@ mining/dumps/Makefile
 mining/Makefile
 mining/populate/Makefile
 mining/queries/Makefile
+ocaml/Makefile
+ocaml/config.mk
 package.m4
 sampler.spec
 tools/Makefile

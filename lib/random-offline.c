@@ -49,7 +49,10 @@ static int checkedOpen(const char filename[])
   const int fd = open(filename, O_RDONLY);
 
   if (fd == -1)
-    fprintf(stderr, "open of %s failed: %s\n", filename, strerror(errno));
+    {
+      fprintf(stderr, "open of %s failed: %s\n", filename, strerror(errno));
+      exit(2);
+    }
 
   return fd;
 }

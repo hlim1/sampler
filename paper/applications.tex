@@ -286,24 +286,20 @@ sample point consisting of 30,150 observed \termdef{features} and one
 binary \termdef{outcome} ($0 = \text{succeeded}, 1 = \text{crashed}$).
 In C, a misbehaving program can sometimes ``get lucky'': it may
 violate memory safety yet not crash.  Hence the outcome label is
-%%stochastic. [axz]
 non-deterministic.  Given numerous data points (sampled runs), we
 would like to identify a narrow subset of our 30,150 features which
 are relevant to predicting the succeeded/crashed outcome.  This is
-%% the problem of feature selection in a classification setting.[axz]
 equivalent to the machine learning problem of learning a binary
 classifier with feature selection, i.e.\ using as few input features
 as possible.
 
-%% the following paragraphs bear substantial changes from the original
-%% version [axz]
-In the classification setting, we take a set of data
-with known binary output (a training set), and attempt to learn a
-binary classifier that gives good predictions on a test set.  The
-learning process usually involves additional parameters whose values can
-be determined using a validation set.  In our case, the end goal is to
-narrow down the set of features, hence our method will have to balance
-good classification performance with aggressive feature selection.
+In the classification setting, we take a set of data with known binary
+output (a training set), and attempt to learn a binary classifier that
+gives good predictions on a test set.  The learning process usually
+involves additional parameters whose values can be determined using a
+validation set.  In our case, the end goal is to narrow down the set
+of features.  Hence our method will have to balance good
+classification performance with aggressive feature selection.
 
 A binary classifier takes feature values as inputs, and outputs a
 prediction of either $0$ or $1$.  \termdef{Logistic regression}
@@ -314,8 +310,8 @@ other.  The output can be interpreted as a probability measure of how
 likely the data point falls within class 0 or 1.  Quantizing the
 logistic function output then gives us a binary classifier: if the
 output is greater than $1/2$, then the data point is classified as
-class 1 (a crash), otherwise it falls under class 0 (successful run).
-Feature selection can be achieved by \termdef{regularizing} the
+class 1 (a crash), otherwise it falls under class 0 (a successful
+run).  Feature selection can be achieved by \termdef{regularizing} the
 function parameters to ignore most input features.
 
 %% this paragraph should be revisited after we finish the experimental

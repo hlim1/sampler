@@ -23,5 +23,5 @@ end
 ;;
 
 print_string "digraph CFG {\n";
-ignore(TestHarness.main [new visitor]);
+ignore(TestHarness.main [visitCilFileSameGlobals new visitor]);
 print_string "}\n"

@@ -27,5 +27,5 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(tests) $(objects)
+	rm -f $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i)
 .PHONY: clean

@@ -1,6 +1,6 @@
-upcase-bad	upcase-bad.c	15	main	chr	(char *)0	0	0	13
-upcase-bad	upcase-bad.c	15	main	chr	(char *)0	0	1	4
-upcase-bad	upcase-bad.c	8	main	arg	0LL	0	0	1
-upcase-bad	upcase-bad.c	8	main	arg	0LL	0	0	4
-upcase-bad	upcase-bad.c	8	main	arg	argc	1	0	0
-upcase-bad	upcase-bad.c	8	main	arg	argc	3	1	0
+upcase-bad	upcase-bad.c	15	main	12	chr	(char *)0	0	1	4
+upcase-bad	upcase-bad.c	15	main	22	chr	(char *)0	0	0	13
+upcase-bad	upcase-bad.c	8	main	2	arg	argc	1	0	0
+upcase-bad	upcase-bad.c	8	main	27	arg	argc	3	1	0
+upcase-bad	upcase-bad.c	8	main	28	arg	0LL	0	0	4
+upcase-bad	upcase-bad.c	8	main	3	arg	0LL	0	0	1

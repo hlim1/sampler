@@ -25,7 +25,6 @@ test_init (GTypeInstance *instance, gpointer g_class)
 static void
 test_finalize (Test *self)
 {
-  g_message ("finalizing");
   g_object_unref (self);
 }
 

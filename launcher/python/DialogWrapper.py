@@ -1,8 +1,7 @@
 import new
 import types
 
-import pygtk
-pygtk.require('2.0')
+import GtkImporter
 import gtk.glade
 
 

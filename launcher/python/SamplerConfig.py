@@ -1,5 +1,4 @@
-import pygtk
-pygtk.require('2.0')
+import GtkImporter
 import gconf
 
 

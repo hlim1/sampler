@@ -2,8 +2,7 @@ import cgi
 import urllib2
 import urlparse
 
-import pygtk
-pygtk.require('2.0')
+import GtkImporter
 import gnome
 import gtkhtml2
 

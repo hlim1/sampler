@@ -10,28 +10,22 @@ include rules.mk
 ########################################################################
 
 
-live += $(cfg_to_dot)
 cfg-to-dot: $(libcil) $(cfg_to_dot)
 	$(link)
 
 harness := $(phases)
-live += $(harness)
 harness.$(cma): $(harness)
 	$(archive)
 
-live += $(checker)
 checker: $(libcil) $(checker)
 	$(link)
 
-live += $(dump)
 dump: $(libcil) $(dump)
 	$(link)
 
-live += $(removeDeadCode)
 removeDeadCode: $(libcil) $(removeDeadCode)
 	$(link)
 
-live += $(loopless)
 loopless: $(libcil) $(loopless)
 	$(link)
 
@@ -52,3 +46,11 @@ dumpConstants: $(libcil) $(dumpConstants)
 
 %.ps: %.dot
 	dot -Tps -Gsize=7.5,10 -Gcenter=1 -o $@ $<
+
+
+########################################################################
+
+
+libraries.ml: %: build-libraries %.in
+	./$< >$@.
+	mv $@. $@

@@ -34,6 +34,9 @@ each sampled application RPM.
 
 ** general
 
+Change List.map to List.rev_map in cases where the order doesn't
+matter.
+
 Document --{no-,}assume-weightless-{libraries,externs} and hook them
 up in the Perl driver.
 

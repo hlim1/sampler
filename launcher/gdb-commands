@@ -5,8 +5,11 @@ echo <report id="shared-libraries">\n
 info sharedlibrary
 echo </report>\n
 
-echo <report id="stack-trace">\n
+echo <report id="main-stack-trace">\n
 backtrace
+echo </report>\n
+
+echo <report id="threads-stack-trace">\n
 thread apply all backtrace full
 echo </report>\n
 

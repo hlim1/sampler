@@ -1,5 +1,5 @@
 open Cil
-open Interesting
+open InterestingReturn
 
 
 class visitor func =

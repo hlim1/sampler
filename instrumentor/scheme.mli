@@ -8,6 +8,3 @@ class virtual c : file ->
 
     method findAllSites : unit
   end
-
-
-val register : string -> (file -> c) -> unit

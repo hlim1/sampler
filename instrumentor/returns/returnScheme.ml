@@ -16,4 +16,4 @@ class c file =
   end
 
 
-let register () = Scheme.register name new c
+let register () = Schemes.register name new c

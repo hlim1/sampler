@@ -1,11 +1,10 @@
 open Cil
 
 
-class virtual c file =
+class virtual c (file : file) =
   object (self)
-    method virtual private findSites : fundec -> unit
-    method virtual embedInfo : Digest.t Lazy.t -> unit
-
     method findAllSites =
       Scanners.iterFuncs file self#findSites
+
+    method virtual embedInfo : Digest.t Lazy.t -> unit
   end

@@ -1,7 +1,6 @@
 SUBDIRS = tests
 
 scheme = scalar-pairs
-scheme_SCRIPTS = main
 scheme_DATA = specs
 scheme_LIBRARIES = libscalar-pairs.a
 scheme_HEADERS = scalar-pairs.h
@@ -12,24 +11,19 @@ EXTRA_DIST = $(scheme_DATA)
 
 include $(top_srcdir)/ocaml/rules.mk
 
-MOSTLYCLEANFILES += main
+MOSTLYCLEANFILES += $(scheme).$(cma)
 
-
-libdirs += .. $(top_srcdir)/ocaml
+libdirs += $(dir $(libharness)) $(dir $(libcommon))
 syslibs = str.$(cma) unix.$(cma)
 
-$(dir $(libharness))/%.cmi: $(libharness); :
-$(dir $(libcommon))/%.cmi: $(libcommon); :
+$(dir $(libharness))%.cmi: $(libharness); @:
+$(dir $(libcommon))%.cmi: $(libcommon); @:
 
-%.cma: $(force)
-	$(recurse)
+$(libharness): $(force); $(recurse)
+$(libcommon): $(force); $(recurse)
 
-
-main: $(libcil) $(libcommon) $(libharness) $(main)
-	$(link)
+all-local: $(scheme).$(cma)
+$(scheme).$(cma): $(scalarPairScheme); $(archive)
 
 dumpConstants: $(libcil) $(dumpConstants)
 	$(link)
-
-const: const.c main
-	../driver/main scalar-pairs --compare-constants -save-temps -W -Wall $<

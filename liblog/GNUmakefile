@@ -23,6 +23,9 @@ log.o: %.o: %.c %.h primitive.h storage.h
 storage.o: %.o: %.c %.h
 stdio.o syscall.o: %.o: %.c primitive.h storage.h
 
+decoder.c: decoder.lex
+	$(LEX) -o$@ $<
+
 clean:
 	rm -f *.o *.a *.so
 .PHONY: clean

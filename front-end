@@ -262,46 +262,42 @@ while ($_ = shift) {
 }
 
 
-if ($mode eq 'special') {
+if ($mode eq 'special' || !@source) {
     trace_system @cc;
 
-} else {
-    usage unless @source;
+} elsif ($mode eq 'preprocess') {
+    foreach (@source) {
+	my @out = ('-o', $outfile) if $outfile;
+	trace_system @cpp, @out, $_;
+    }
     
-    if ($mode eq 'preprocess') {
-	foreach (@source) {
-	    my @out = ('-o', $outfile) if $outfile;
-	    trace_system @cpp, @out, $_;
-	}
+} else {
+
+    foreach (@source) {
+	my $base = basename $_, '.c';
+	my ($i_handle, $i_name) = temp $base, 'i';
+	trace_redirect $i_handle, $i_name, @cpp, '-E', $_;
 	
-    } else {
-
-	foreach (@source) {
-	    my $base = basename $_, '.c';
-	    my ($i_handle, $i_name) = temp $base, 'i';
-	    trace_redirect $i_handle, $i_name, @cpp, '-E', $_;
-	    
-	    my ($c_handle, $c_name) = temp "$base.inst", 'c';
-	    trace_redirect $c_handle, $c_name, $transformer, $i_name;
-	    
-	    if ($mode eq 'compile') {
-		my $o = $outfile || (resuffix $_, '.o');
-		trace_system @cc, '-o', $o, $c_name;
-	    } elsif ($mode eq 'codegen') {
-		my $o = $outfile || (resuffix $_, '.s');
-		trace_system @cc, '-o', $o, $c_name;
-	    } else {
-		die "internal error: hole mismatch\n"
-		    if defined $ld[$holes[0]];
-		$ld[shift @holes] = $c_name;
-	    }
+	my ($c_handle, $c_name) = temp "$base.inst", 'c';
+	trace_redirect $c_handle, $c_name, $transformer, $i_name;
+	
+	if ($mode eq 'compile') {
+	    my $o = $outfile || (resuffix $_, '.o');
+	    trace_system @cc, '-o', $o, $c_name;
+	} elsif ($mode eq 'codegen') {
+	    my $o = $outfile || (resuffix $_, '.s');
+	    trace_system @cc, '-o', $o, $c_name;
+	} else {
+	    die "internal error: hole mismatch\n"
+		if defined $ld[$holes[0]];
+	    $ld[shift @holes] = $c_name;
 	}
+    }
 
-	if ($mode eq 'link') {
-	    my @out = ('-o', $outfile) if $outfile;
-	    push_library "$FindBin::Bin/libcountdown", 'countdown';
-	    push_library "$FindBin::Bin/liblog", 'log';
-	    trace_system @ld, @out;
-	}
+    if ($mode eq 'link') {
+	my @out = ('-o', $outfile) if $outfile;
+	push_library "$FindBin::Bin/libcountdown", 'countdown';
+	push_library "$FindBin::Bin/liblog", 'log';
+	trace_system @ld, @out;
     }
 }

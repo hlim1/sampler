@@ -1,12 +1,22 @@
 open Cil
 
 
-class visitor file target =
+let target = ref ""
+
+let _ =
+  Options.registerString
+    ~flag:"only"
+    ~desc:"<function> sample only in this function [required]"
+    ~ident:"Only"
+    target
+
+
+class visitor file =
   object
     inherit Transform.visitor file as super
 
     method private transform func =
-      if func.svar.vname = target then
+      if func.svar.vname = !target then
 	super#transform func
       else
 	begin
@@ -14,10 +24,14 @@ class visitor file target =
 	  RemoveChecks.visit func;
 	  []
 	end
-end
+  end
 
 
 let phase =
   "Transform",
   fun file ->
-    visitCilFile (new visitor file "cureMe") file
+    if (!target = "") then
+      raise (Arg.Bad "must identify sampled function")
+    else
+      let visitor = new visitor file in
+      visitCilFile visitor file

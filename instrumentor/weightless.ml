@@ -1,6 +1,7 @@
 open Calls
 open Cil
 open FuncInfo
+open Str
 
 
 let assumeWeightlessExterns = ref false
@@ -29,6 +30,12 @@ type tester = exp -> bool
 type stmtMap = stmt list FunctionMap.container
 
 
+let isBuiltin =
+  let pattern = regexp "^__builtin_" in
+  fun var -> 
+    string_match pattern var.vname 0
+
+
 let collect (infos : FileInfo.container) : tester =
   let weightless = new StringMap.container in
 
@@ -36,7 +43,7 @@ let collect (infos : FileInfo.container) : tester =
     try
       weightless#find callee.vname
     with Not_found ->
-      !assumeWeightlessExterns
+      isBuiltin callee || !assumeWeightlessExterns
   in
 
   let isWeightlessCallee = function

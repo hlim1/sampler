@@ -21,8 +21,11 @@ class visitor = object(self)
 
   method vstmt stmt =
     let originals = stmt.labels in
-    let replacements = List.map cloneLabel originals in
-    ChangeTo { stmt with labels = replacements }
+    let replacements = mapNoCopy cloneLabel originals in
+    if replacements == originals then
+      SkipChildren
+	else
+      ChangeTo { stmt with labels = replacements }
 end
 
 

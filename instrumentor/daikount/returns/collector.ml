@@ -1,8 +1,9 @@
 open Cil
+open Invariant
 
 
 class visitor file =
-  let invariant = Invariant.invariant file in
+  let invariant = invariant file in
 
   fun func ->
     let invariant = invariant func in
@@ -17,7 +18,12 @@ class visitor file =
       method vstmt stmt =
 	match stmt.skind with
 	| Instr [Call (Some result, callee, args, location)] ->
-	    let (global, site) = invariant location result zero in
+	    let left = {
+	      exp = Lval result;
+	      name = Pretty.sprint max_int (d_exp () callee)
+	    } in
+	    let right = { exp = zero; name = "0" } in
+	    let (global, site) = invariant location left right in
 	    globals <- global :: globals;
 	    sites <- site :: sites;
 	    stmt.skind <- Block (mkBlock ([mkStmt stmt.skind; site]));

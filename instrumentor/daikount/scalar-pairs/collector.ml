@@ -1,4 +1,5 @@
 open Cil
+open Invariant
 
 
 let isInteresting varinfo =
@@ -22,7 +23,7 @@ let isInteresting varinfo =
 
 
 class visitor file =
-  let invariant = Invariant.invariant file in
+  let invariant = invariant file in
 
   fun func ->
     let invariant = invariant func in
@@ -60,9 +61,17 @@ class visitor file =
 	    let bumps =
 
 	      let build =
-		let invariant = invariant location (var left) in
+		let leftOperand = {
+		  exp = Lval (var left);
+		  name = left.vname
+		} in
+		let invariant = invariant location leftOperand in
 		fun right ->
-		  let global, site = invariant right in
+		  let rightOperand = {
+		    exp = right;
+		    name = Pretty.sprint max_int (d_exp () right)
+		  } in
+		  let global, site = invariant rightOperand in
 		  globals <- global :: globals;
 		  sites <- site :: sites;
 		  site

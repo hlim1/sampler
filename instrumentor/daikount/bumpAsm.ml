@@ -22,7 +22,7 @@ let bump func =
 		       "setg %b1" ],
 		     [ "=r,r", lt;
 		       "=r,r", le ],
-		     [ "r,g", Lval left;
+		     [ "r,g", left;
 		       "g,r", right],
 		     [ "cc" ],
 		     location);

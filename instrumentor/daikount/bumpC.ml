@@ -3,7 +3,7 @@ open Cil
 
 let bump _ location left right counters =
   let bin op a b = BinOp (op, a, b, intType) in
-  let cmp op = bin op (Lval left) right in
+  let cmp op = bin op left right in
   let ge = cmp Ge in
   let gt = cmp Gt in
   

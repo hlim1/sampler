@@ -1,6 +1,12 @@
 open Cil
 
 
-val invariant : file -> fundec -> location -> lval -> exp -> global * stmt
+type operand = {
+    exp : exp;
+    name : string;
+  }
+
+
+val invariant : file -> fundec -> location -> operand -> operand -> global * stmt
 
 val register : file -> unit

@@ -2,6 +2,12 @@ open Cil
 open Rmtmps
 
 
+type operand = {
+    exp : exp;
+    name : string;
+  }
+
+
 let id = ref 0
 
 
@@ -47,8 +53,8 @@ let invariant file =
 		    initStr "file" location.file;
 		    initNum "line" location.line;
 		    initStr "function" func.svar.vname;
-		    initStr "left" (Pretty.sprint max_int (d_lval () left));
-		    initStr "right" (Pretty.sprint max_int (d_exp () right));
+		    initStr "left" left.name;
+		    initStr "right" right.name;
 		    initNum "id" !id
 		  ])),
 	    location)					  
@@ -56,7 +62,7 @@ let invariant file =
 
     let bump =
       let array = (Var global, arrayOffset) in
-      Bump.bump func location left right array
+      Bump.bump func location left.exp right.exp array
     in
 
     declaration, bump

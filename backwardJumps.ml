@@ -15,8 +15,9 @@ let patch clones weights =
 	  
 	  let choice = LogIsImminent.choose location weight gotoInstrumented gotoStandard in
 	  
-	  jump.skind <- choice
-	      
+	  jump.skind <- choice;
+	  (clones#find jump).skind <- choice;
+	  
       | _ -> failwith "unexpected statement kind in backward jumps list"
   in
   

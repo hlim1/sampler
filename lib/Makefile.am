@@ -37,7 +37,8 @@ common_sources =				\
 	registry.c				\
 	registry.h				\
 	report.c				\
-	report.h
+	report.h				\
+	signature.h
 
 
 ########################################################################

@@ -2,7 +2,7 @@ py := $(wildcard *.py)
 pyc = $(py:=c)
 pyo = $(py:=o)
 
-MOSTLYCLEANFILES = $(pyc)
+MOSTLYCLEANFILES = *.pyc *.pyo
 
 all-local: $(pyc) $(pyo)
 

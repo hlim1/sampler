@@ -7,6 +7,7 @@
 #include <liblog/primitive.h>
 #include <sstream>
 #include "database.h"
+#include "progress.h"
 #include "require.h"
 #include "session.h"
 
@@ -52,6 +53,13 @@ void siteLine(unsigned line)
 	  << sessionId << ", " << sampleCounter << ", " << file << ", " << line
 	  << ')';
   require(database.ExecCommandOk(command.str().c_str()));
+  
+  ++tasksCompleted;
+  if (progressUpdateNeeded)
+    {
+      progressUpdateNeeded = false;
+      displayProgress();
+    }
 }
 
 

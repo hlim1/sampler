@@ -2,6 +2,7 @@
 #include <sstream>
 #include "liblog/decoder.h"
 #include "database.h"
+#include "progress.h"
 #include "require.h"
 #include "session.h"
 
@@ -15,6 +16,8 @@ static int populate(unsigned short signum)
   require(database.ExecTuplesOk("SELECT currval('session_seq')"));
   sessionId = database.GetValue(0, 0);
       
+  initializeAlarm();
+
   switch (yylex())
     {
     case Normal:

@@ -28,4 +28,6 @@ $stamp: $File::Find::name
 EOT
 }
 
-find \&wanted, "$ENV{HOME}/public_html/sampler/downloads/rpm";
+
+my $rpmdir = "$ENV{HOME}/public_html/sampler/downloads/rpm";
+find \&wanted, $rpmdir if -d $rpmdir;

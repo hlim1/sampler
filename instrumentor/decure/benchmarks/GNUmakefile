@@ -9,32 +9,32 @@ recurse = $(MAKE) -C $(@D) $(@F)
 all: $(benchmarks:=/all)
 .PHONY: all
 $(benchmarks:=/all):
-	$(recurse)
+	+$(recurse)
 
 basis: $(benchmarks:=/basis)
 .PHONY: basis
 $(benchmarks:=/basis):
-	$(recurse)
+	+$(recurse)
 
 times: $(benchmarks:=/times)
 .PHONY: times
 $(benchmarks:=/times):
-	$(recurse)
+	+$(recurse)
 
 loopless: $(benchmarks:=/loopless)
 .PHONY: loopless
 $(benchmarks:=/loopless): force
-	$(recurse)
+	+$(recurse)
 
 clean: $(benchmarks:=/clean)
 .PHONY: clean
 $(benchmarks:=/clean): force
-	$(recurse)
+	+$(recurse)
 
 spotless: $(benchmarks:=/spotless)
 .PHONY: spotless
 $(benchmarks:=/spotless): force
-	$(recurse)
+	+$(recurse)
 
 force:
 .PHONY: force

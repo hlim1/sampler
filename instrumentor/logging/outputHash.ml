@@ -1,5 +1,5 @@
 type t = Cil.lval
 
-let equal = (==)
+let equal = (=)
     
 let hash = Hashtbl.hash

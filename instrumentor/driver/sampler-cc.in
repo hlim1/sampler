@@ -7,6 +7,5 @@ exec_prefix="@exec_prefix@"
 libdir="@libdir@"
 package_libdir="@package_libdir@"
 instrumentordir="@instrumentordir@"
-driverdir="@driverdir@"
 
-exec "$driverdir/sampler-cc-here" "$@"
+exec gcc -B $instrumentordir -specs=sampler-specs "$@"

@@ -54,7 +54,6 @@ class visitor file digest =
       self#addChar '\t';
       self#addLocation fundec.svar.vdecl;
 
-      IsolateInstructions.visit fundec;
       Cfg.build fundec;
       expectedSid := 0;
 
@@ -112,16 +111,10 @@ let visit file digest =
   if !embedCFG then
     TestHarness.time "  embedding CFG"
       (fun () ->
-	Dynamic.analyze file;
 	let visitor = new visitor file digest in
 	visitCilFileSameGlobals (visitor :> cilVisitor) file;
 	visitor#addChar '\n';
 	let contents = visitor#contents in
 
-	let init = SingleInit (mkString contents) in
-	let varinfo = makeGlobalVar "samplerCFG" (TArray (TInt (IChar, [Attr ("const", [])]), None, [])) in
-	varinfo.vstorage <- Static;
-	varinfo.vattr <- [Attr("section", [AStr ".debug_sampler_cfg"]); Attr("unused", [])];
-	let global = GVar (varinfo, {init = Some init}, locUnknown) in
-
-	file.globals <- global :: file.globals)
+	let initinfo = FindGlobal.findInit "samplerCFG" file in
+	initinfo.init <- Some (SingleInit (mkString contents)))

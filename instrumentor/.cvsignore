@@ -15,5 +15,6 @@ config.mk
 dump
 libraries.ml
 loopless
+main
 removeDeadCode
 version.ml

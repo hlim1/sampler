@@ -21,7 +21,7 @@ recurse = $(MAKE) -C $(@D) $(@F) force=
 
 libcil = $(cil_libdir)/cil.$(cma)
 libcommon = $(top_builddir)/ocaml/common.$(cma)
-libharness = $(top_builddir)/instrumentor/harness.$(cma)
+libharness = $(error harness library is no longer used)
 
 
 ########################################################################

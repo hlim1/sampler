@@ -1,29 +1,51 @@
-#ifndef INCLUDE_libreport_unit_h
-#define INCLUDE_libreport_unit_h
+#ifndef INCLUDE_sampler_unit_h
+#define INCLUDE_sampler_unit_h
+
+#include "registry.h"
 
 
-struct CounterTuple;
-
-
-struct CompilationUnit
+#pragma sampler_exclude_function("samplerReporter")
+static void samplerReporter()
 {
-  struct CompilationUnit *prev;
-  struct CompilationUnit *next;
-  
-  const unsigned char signature[128 / 8];
-  const unsigned count;
-  struct CounterTuple * const tuples;
-};
+}
 
 
-#ifdef CIL
-#pragma sampler_assume_weightless("registerCompilationUnit")
-#pragma sampler_assume_weightless("unregisterCompilationUnit")
+#pragma cilnoremove("samplerCFG")
+static const char samplerCFG[] __attribute__((unused, section(".debug_sampler_cfg")));
+
+
+static struct SamplerUnit samplerUnit = { 0, 0, samplerReporter };
+
+
+#pragma sampler_exclude_function("samplerConstructor")
+static void samplerConstructor() __attribute__((constructor))
+{
+  samplerRegisterUnit(&samplerUnit);
+}
+
+
+#pragma sampler_exclude_function("samplerDestructor")
+static void samplerDestructor() __attribute__((destructor))
+{
+  samplerUnregisterUnit(&samplerUnit);
+}
+
+
+#ifdef SAMPLER_THREADS
+#pragma cilnoremove("atomicIncrementCounter")
+#pragma sampler_exclude_function("atomicIncrementCounter")
+static inline void atomicIncrementCounter(unsigned *counter)
+{
+#if __i386__
+  asm ("lock incl %0"
+       : "+m" (*counter)
+       :
+       : "cc");
+#else
+#error "don't know how to atomically increment on this architecture"
 #endif
-
-void registerCompilationUnit(struct CompilationUnit *);
-void unregisterCompilationUnit(struct CompilationUnit *);
-void unregisterAllCompilationUnits();
+}
+#endif /* SAMPLER_THREADS */
 
 
-#endif /* !INCLUDE_libreport_unit_h */
+#endif /* !INCLUDE_sampler_unit_h */

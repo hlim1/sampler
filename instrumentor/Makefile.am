@@ -1,4 +1,4 @@
-SUBDIRS = driver branches daikon decure nothing returns scalar-pairs #logging
+SUBDIRS = driver branches nothing returns scalar-pairs
 
 EXTRA_DIST = build-libraries libraries.ml.in
 
@@ -8,22 +8,20 @@ extra_impls = libraries version
 include $(top_srcdir)/ocaml/rules.mk
 
 libdirs += $(top_builddir)/ocaml
+syslibs = str.$(cma) unix.$(cma)
 
 
-all-local: harness.$(cma)
+all-local: main
 
 libraries.ml: %: build-libraries %.in
 	./$^ >$@.tmp
 	mv $@.tmp $@
 
-harness = $(manager) $(phases) $(tuples) $(bumper) $(bumpSign) $(describedExpression) $(int64Set)
-harness.$(cma): $(harness)
-	$(archive)
+$(dir $(libcommon))%.cmi: $(libcommon); @:
+$(libcommon): $(force); $(recurse)
 
-$(dir $(libcommon))/%.cmi: $(libcommon); :
-
-$(libcommon): $(force)
-	$(recurse)
+main: $(libcil) $(libcommon) $(main)
+	$(link)
 
 cfgTest: $(libcil) $(cfgTest)
 	$(link)

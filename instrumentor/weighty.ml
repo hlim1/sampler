@@ -1,5 +1,6 @@
 open Cil
 open FuncInfo
+open Scanners
 open Str
 
 
@@ -30,12 +31,10 @@ let debugWeighty =
 
 let hasDefinition file =
   let defined = new VariableNameHash.c 0 in
-  let iterator = function
-    | GFun (func, _) ->
-	defined#add func.svar ()
-    | _ -> ()
+  let iterator func =
+    defined#add func.svar ()
   in
-  iterGlobals file iterator;
+  iterFuncs file iterator;
   defined#mem
 
 
@@ -134,37 +133,36 @@ class visitor hasDefinition hasPragmaWeightless weighty =
 type tester = lval -> bool
 
 
-let collect file allSites =
+let collect file =
   TestHarness.time "  identifying weighty functions"
     (fun () ->
       let hasDefinition = hasDefinition file in
       let hasPragmaWeightless = hasPragmaWeightless file in
       let weighty = new VariableNameHash.c 0 in
 
-      let prepopulate ({svar = svar}, _) =
-	weighty#add svar ();
-	if !debugWeighty then
-	  Printf.eprintf "function %s is weighty: has sites\n" svar.vname
+      let prepopulate func =
+	if Sites.registry#mem func then
+	  begin
+	    weighty#add func.svar ();
+	    if !debugWeighty then
+	      Printf.eprintf "function %s is weighty: has sites\n" func.svar.vname
+	  end
       in
-      List.iter prepopulate allSites;
+      Scanners.iterFuncs file prepopulate;
 
       let visitor = new visitor hasDefinition hasPragmaWeightless weighty in
       let refine madeProgress =
-	let iterator = function
-	  | GFun (func, _) ->
-	      begin
-		try
-		  ignore (visitCilFunction visitor func)
-		with ContainsWeightyCall (location, callee) ->
-		  weighty#add func.svar ();
-		  madeProgress := true;
-		  if !debugWeighty then
-		    ignore (Pretty.eprintf "%a: function %s is weighty: has weighty call to %a@!"
-			      d_loc location func.svar.vname d_lval callee)
-	      end
-	  | _ -> ()
+	let iterator func =
+	  try
+	    ignore (visitCilFunction visitor func)
+	  with ContainsWeightyCall (location, callee) ->
+	    weighty#add func.svar ();
+	    madeProgress := true;
+	    if !debugWeighty then
+	      ignore (Pretty.eprintf "%a: function %s is weighty: has weighty call to %a@!"
+			d_loc location func.svar.vname d_lval callee)
 	in
-	iterGlobals file iterator
+	iterFuncs file iterator
       in
       Fixpoint.compute refine;
 
@@ -174,15 +172,12 @@ let collect file allSites =
 	begin
 	  let numFuncs = ref 0 in
 	  let numWeightless = ref 0 in
-	  let iterator = function
-	    | GFun (func, _) ->
-		incr numFuncs;
-		if not (tester (var func.svar)) then
-		  incr numWeightless
-	    | _ ->
-		()
+	  let iterator func =
+	    incr numFuncs;
+	    if not (tester (var func.svar)) then
+	      incr numWeightless
 	  in
-	  iterGlobals file iterator;
+	  iterFuncs file iterator;
 	  Printf.eprintf "stats: weightless: %d functions, %d weightless\n" !numFuncs !numWeightless
 	end;
 

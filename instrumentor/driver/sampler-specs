@@ -5,7 +5,14 @@
 %{!fcyclic:-include sampler/acyclic.h} %{fcyclic:-include sampler/acyclic.h}
 
 *cpp:
-+ -DCIL %(cpp_threads) -include sampler/countdown.h %(cpp_cyclic) -include sampler/embedded-cfg.h
++ -DCIL \
+%(cpp_threads) \
+-include sampler/countdown.h \
+%(cpp_cyclic) \
+%{fsampler-scheme=branches:-include sampler/branches-unit.h} \
+%{fsampler-scheme=returns:-include sampler/returns-unit.h} \
+%{fsampler-scheme=scalar-pairs:-include sampler/scalar-pairs-unit.h} \
+%{fsampler-scheme=*:-include sampler/unit.h}
 
 *cc1:
 + %{save-temps} %{v}
@@ -19,4 +26,6 @@
 %{fthreads:%(wrap)}%{!fthreads:%{!fno-threads:%{pthread:%(wrap)}}} -lsampler%{fthreads:_r -lpthread}%{!fthreads:%{!fno-threads:%{pthread:_r}}}
 
 *lib:
-%(lib_threads) %(old_lib)
+%{fsampler-scheme=*:-lschemes} \
+%(lib_threads) \
+%(old_lib)

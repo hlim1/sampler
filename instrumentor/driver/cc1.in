@@ -11,7 +11,6 @@ use FindBin;
 
 
 my $countdowns = 'acyclic';
-my $scheme;
 my $verbose;
 my $save_temps;
 my $preprocessed;
@@ -111,7 +110,7 @@ while (@ARGV) {
 	} elsif (/^-m(arch|cpu)=/) {
 	    push @cc1, $_;
 	} elsif (/^-fsampler-scheme=(.*)/) {
-	    $scheme = $1;
+	    push @inst, "--scheme-$1";
 	} elsif (/^-f((in|ex)clude-(file|function))=(.*)/) {
 	    push @inst, "--$1", $4
 	} elsif (/^-f/) {
@@ -175,7 +174,7 @@ my @instrumentor_output = tempfile $input, '.inst.i';
 
 open OLDOUT, '>&', \*STDOUT;
 open STDOUT, '>&', $instrumentor_output[0];
-run_stage "$FindBin::Bin/../$scheme/main", @inst, $instrumentor_input;
+run_stage "$FindBin::Bin/../main", @inst, $instrumentor_input;
 open STDOUT, '>&', \*OLDOUT;
 
 $$cc1_input_slot = $instrumentor_output[1];

@@ -2,9 +2,10 @@ open Cil
 
 let dump file =
   let constants = Constants.visit file in
-  print_endline "constants:\n";
+  print_endline "constants:";
   let scanner n = Printf.printf "\t%Ld\n" n in
-  constants#iter scanner
+  constants#iter scanner;
+  print_newline ()
 
 let process filename =
   let file = Frontc.parse filename () in

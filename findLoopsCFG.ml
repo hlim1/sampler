@@ -50,4 +50,4 @@ end
     
 ;;
 
-ignore(TestHarness.main [new visitor])
+ignore(TestHarness.main ["FindLoopsCFG", visitCilFileSameGlobals new visitor])

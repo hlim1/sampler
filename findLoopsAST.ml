@@ -23,7 +23,15 @@ end
     
 ;;
 
-let visitor = new visitor in
-ignore(TestHarness.main [(visitor :> cilVisitor)]);
-ignore(Pretty.printf "loop headers according to syntax tree:@!  @[%a@]@!"
-	 Utils.d_stmts visitor#getLoops)
+let phase _ =
+  ("FindLoopsAST",
+   fun file ->
+     let visitor = new visitor in
+     visitCilFileSameGlobals (visitor :> cilVisitor) file;
+     ignore (Pretty.printf "loop headers according to syntax tree:@!  @[%a@]@!"
+	       Utils.d_stmts visitor#getLoops)
+  )
+    
+;;
+
+ignore(TestHarness.main [phase ()]);

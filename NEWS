@@ -5,6 +5,7 @@
 ** Use unsigned 64-bit integers for timestamps to forestall overflow.
 ** Various minor updates to project packaging and metadata.
 ** Updates to experimental points-to analysis at indirect calls.
+** Improved support for instrumented Debian application packages.
 
 * sampler-1.0
 

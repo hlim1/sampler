@@ -46,6 +46,9 @@ spec95-density.tex : ccured-density.pl $(spec95_density)
 
 all:: $(addprefix perimeter., eps pdf)
 
+decure-only-one-function.sxc: collated-times.txt
+	$(error please refresh $< in $@)
+
 perimeter.eps: decure-only-one-function.sxc
 	$(error please re-export $@ from $<)
 

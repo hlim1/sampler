@@ -16,3 +16,7 @@ gdb-commands: ; ln -s ../../$@ .
 gnome-gnumeric.png: ; ln -s /usr/share/pixmaps/$@ .
 
 print-debug-info: ; ln -s ../../$@ .
+
+
+TESTS = gnumeric-bug-isolation.schemas
+TESTS_ENVIRONMENT = xmllint --valid --noout

@@ -1,7 +1,7 @@
 [general]
-gconf-root: /apps/gnumeric/bug-isolation
+gconf-root: /apps/gnumeric/bug-isolation/branches
 
 [synopsis]
-Program-Version: 1.18
+Program-Version: 1.20
 Instrumentation-Type: branches
 Instrumentation-Version: 0.1

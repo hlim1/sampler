@@ -4,7 +4,7 @@
 <glade-interface>
 <requires lib="gnome"/>
 
-<widget class="GtkDialog" id="opt-in">
+<widget class="GtkDialog" id="first-time">
   <property name="border_width">6</property>
   <property name="title" translatable="yes"></property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>

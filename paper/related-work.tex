@@ -9,49 +9,47 @@ Typical triggers include periodic hardware timers/interrupts
 software event counters (e.g.  every $n$th function call)
 \cite{Arnold:2000:ACCTS}, or both.  In most cases, the sampling
 interval is strictly periodic; this may suffice when hunting for large
-performance bottlenecks, but may systematically miss rare events such
-as crash-causing invariant violations.
+performance bottlenecks, but may systematically miss rare events.
 
 The Digital Continuous Profiling Infrastructure
-\cite{Anderson:1997:CPW} is unusual in that sampling intervals are
-chosen randomly.  However, the random distribution is uniform, such as
-one sample every 60K to 64K cycles.  Samples thus extracted are not
-statistically fair in the sense of a Bernoulli (coin-tossing) process.
+\cite{Anderson:1997:CPW} is unusual in choosing sampling intervals 
+randomly.  However, the random distribution is uniform, such as one
+sample every 60K to 64K cycles.  Samples thus extracted are not
+statistically fair in the sense of a Bernoulli process.
 If one sample is taken, there is zero chance of taking any sample in
-the next 1--59,999 cycles.  Similarly, there is zero chance of
+the next 1--59,999 cycles and zero chance of
 \emph{not} taking exactly one sample in the next 60K--64K cycles.  We
 trigger samples based on a geometric distribution, which correctly
-models the time between independently randomized coin tosses.  The
-resulting data is a statistically rigorous fair random sample, which
-in turn grants access to a large domain of powerful statistical
-analysis methodologies.
+models the interval between independent coin tosses.  The resulting
+data is a statistically rigorous fair random sample, which in turn
+grants access to a large domain of powerful statistical analyses.
 
-Recent work in trace collection is broadening in scope from pure
-performance to more general program understanding.  Techniques for
-capturing program traces confront challenges similar to those we face
-here, such as minimizing performance overhead and managing large
-quantities of captured data.  Dynamic analysis in particular must
-encode, compress, or otherwise reduce an incoming trace stream in real
-time, as the program runs \cite{Demsky:RBEOOP:2002,ICSE01*221}.  It
-may be difficult to directly adapt dynamic trace analysis techniques
-to a domain where the trace is sampled and therefore incomplete.
-However, it may be possible to combine these approaches so that one
-fairly and randomly samples short trace ``bursts'', with complete data
-collection within each burst.  This would allow us to examine
-sequences of interrelated events, a task which is difficult under our
-current, strictly Bernoullian regime.
+Recent work in trace collection has focused on program understanding.
+Techniques for capturing program traces confront challenges similar to
+those we face here, such as minimizing performance overhead and
+managing large quantities of captured data.  Dynamic analysis in
+particular must encode, compress, or otherwise reduce an incoming
+trace stream in real time, as the program runs
+\cite{Demsky:RBEOOP:2002,ICSE01*221}.  It may be difficult to directly
+adapt dynamic trace analysis techniques to a domain where the trace is
+sampled and therefore incomplete.  
+%However, it may be possible to
+%combine these approaches so that one fairly and randomly samples short
+%trace ``bursts'', with complete data collection within each burst.
+%This would allow us to examine sequences of interrelated events, a
+%task which is difficult under our current, strictly Bernoullian
+%regime.
 
-Our effort to understand and debug programs by selecting predicates
-relates to prior work by the Daikon project \cite{ernst2001}.  Like
-Daikon, we begin with fairly unstructured guesses and eliminate those
-which do not appear to hold.  Daikon collects a complete trace of
-individual program values; generation and testing of possible
-invariants occurs off line.  This gives Daikon greater flexibility to
-consider a much larger family of candidate invariants then we have
-examined here, as a significant part of our predicate testing happens
-within the client itself.  With a large enough user population,
-though, the myriad invariants considered by Daikon could certainly be
-farmed out and tested in the field.
+Our effort to understand and debug programs by selecting predicates is
+partly inspired by Daikon \cite{ernst2001}.  Like Daikon, we begin
+with fairly unstructured guesses and eliminate those which do not
+appear to hold.  Daikon collects a complete trace of individual
+program values; generation and testing of possible invariants occurs
+off line.  This gives Daikon greater flexibility to consider a
+larger family of candidate invariants then we have examined, as a
+significant part of our predicate testing happens within the client
+itself.  With a large enough user population, though, the myriad
+invariants considered by Daikon could certainly be tested.
 
 The DIDUCE project \cite{Hangal:DIDUCE:2002} also attempts to identify
 program invariants.  Unlike Daikon, most processing does take place
@@ -59,12 +57,13 @@ within the client program.  As in our study, DIDUCE attempts to relate
 changes in predicates to the manifestation of bugs.  However, DIDUCE
 performs complete tracing and focuses on discrete state changes, such
 as the first time a predicate transitioned from true to false.  Our
-approach is more probabilistic: we with to identify broad trends over
+approach is more probabilistic: we wish to identify broad trends over
 time that correlate predicate violations with increased likelihood of
-failure.  Our approach explicitly accommodates the possibility of
-``getting lucky'', such as overrunning a buffer but not actually
-crashing.  DIDUCE works in the context of a safe language (Java) in
-which most forms of getting lucky cannot happen.
+failure.  
+%Our approach explicitly accommodates the possibility of
+%``getting lucky'', such as overrunning a buffer but not actually
+%crashing.  DIDUCE works in the context of a safe language (Java) in
+%which most forms of getting lucky cannot happen.
 
 
 % LocalWords:  DIDUCE

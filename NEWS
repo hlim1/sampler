@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.11.1
+
+** Improved developer documentation.
+
 * sampler-0.11
 
 ** Implemented path balancing to make fast path even faster.  Disabled

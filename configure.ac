@@ -130,7 +130,7 @@ fi
 
 
 AC_MSG_CHECKING(for native compilation)
-AC_ARG_ENABLE(native, [  --enable-native         Compile OCaml to native code (default: compile to bytecode)])
+AC_ARG_ENABLE(native, [  --disable-native        Compile OCaml to bytecode (default: compile to native code)], , enable_native=yes)
 AM_CONDITIONAL(ENABLE_NATIVE, test "$enable_native" = yes)
 if test "$enable_native" = yes; then
   AC_SUBST(ENABLE_NATIVE, 1)

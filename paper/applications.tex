@@ -292,10 +292,9 @@ feature selection in a classification setting.
 
 \termdef{Logistic regression} \cite{Hastie01} is a discriminative
 binary classification method.  It is akin to linear regression, but
-uses the logit function instead of the linear output function.  Let $x
-\in \Real^N$ be our input data, and $Y = \{0, 1\}$ be the output
-label.  The class conditional probability is modeled as the logit
-function:
+uses the logistic function instead of the linear output function.  Let
+$x \in \Real^N$ be our input data, and $Y = \{0, 1\}$ be the output
+label.  The output distribution is modeled as the logistic function:
 %%
 \begin{equation*}
   P(Y = 1 | X = x) = \frac{1}{ 1 + \exp(- \beta_0 - \vec\beta^T x) }
@@ -315,7 +314,7 @@ local maximum of the penalized log likelihood.  Let $\mu(x) = P(Y = 1
   \begin{split}
     LL_\lambda (x, y, \{\beta_j\}) \:=\:
     & y \log \mu(x) + (1 - y) \log (1 - \mu(x)) \\
-    & - \lambda \sum_{j = 0}^N \abs{\beta_j}
+    & - \lambda \norm{\vec\beta}_1
   \end{split}
 \end{equation*}
 
@@ -323,14 +322,14 @@ While other ways of doing feature selection exist, none of them are
 particularly well-suited for this problem.  Some methods
 \cite{Golub:MCC:1999,Tibshirani2002} calculate a univariate
 correlation coefficient independently for each feature; other methods
-are more computationally intensive \cite{Breiman:RFRF:1999,Hastie01}.
-In our dataset, the features are clearly not independent of each
-other, and the size of the problem is too large for more
-computationally intensive methods.  Furthermore, logistic regression,
-being a discriminative training method, does not require modeling the
-distribution of the input features.  This is crucial, since our
-features arise from a decidedly artificial process and would be
-difficult to characterize using traditional statistical distributions.
+are more computationally intensive \cite{00000048}.  In our dataset,
+the features are clearly not independent of each other, and the size
+of the problem is too large for more computationally intensive
+methods.  Furthermore, logistic regression, being a discriminative
+training method, does not require modeling the distribution of the
+input features.  This is crucial, since our features arise from a
+decidedly artificial process and would be difficult to characterize
+using traditional statistical distributions.
 
 Our \texttt{bc} dataset consists of 4058 runs with distinct random
 inputs and distinct randomized 1/100 sampling.  We partition these

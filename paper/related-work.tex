@@ -12,17 +12,16 @@ interval is strictly periodic; this may suffice when hunting for large
 performance bottlenecks, but may systematically miss rare events.
 
 The Digital Continuous Profiling Infrastructure
-\cite{Anderson:1997:CPW} is unusual in choosing sampling intervals 
+\cite{Anderson:1997:CPW} is unusual in choosing sampling intervals
 randomly.  However, the random distribution is uniform, such as one
 sample every 60K to 64K cycles.  Samples thus extracted are not
-statistically fair in the sense of a Bernoulli process.
-If one sample is taken, there is zero chance of taking any sample in
-the next 1--59,999 cycles and zero chance of
-\emph{not} taking exactly one sample in the next 60K--64K cycles.  We
-trigger samples based on a geometric distribution, which correctly
-models the interval between independent coin tosses.  The resulting
-data is a statistically rigorous fair random sample, which in turn
-grants access to a large domain of powerful statistical analyses.
+independent.  If one sample is taken, there is zero chance of taking
+any sample in the next 1--59,999 cycles and zero chance of \emph{not}
+taking exactly one sample in the next 60K--64K cycles.  We trigger
+samples based on a geometric distribution, which correctly models the
+interval between independent coin tosses.  The resulting data is a
+statistically rigorous fair random sample, which in turn grants access
+to a large domain of powerful statistical analyses.
 
 Recent work in trace collection has focused on program understanding.
 Techniques for capturing program traces confront challenges similar to

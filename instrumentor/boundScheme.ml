@@ -28,7 +28,8 @@ class c file : Scheme.c =
   object (self)
     method findAllSites =
       let visitor = new visitor in
-      ignore (Cil.visitCilFile visitor file)
+      ignore (Cil.visitCilFile visitor file);
+      BoundManager.patch file
 
     method saveSiteInfo _ _ = ()
   end

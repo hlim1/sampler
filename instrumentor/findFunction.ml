@@ -23,3 +23,21 @@ let find name file =
   in
 
   findAmong file.globals
+
+
+let findDefinition name file =
+
+  let rec findAmong = function
+    | GFun ({svar = {vname = vname}} as fundec, _) :: _
+      when vname = name ->
+	fundec
+    | GFun ({svar = {vname = vname; vinline = true}} as fundec, _) :: _
+      when vname = name ^ "__extinline" ->
+	fundec
+    | _ :: rest ->
+	findAmong rest
+    | [] ->
+	raise (Missing name)
+  in
+
+  findAmong file.globals

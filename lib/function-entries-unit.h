@@ -1,5 +1,5 @@
-#ifndef INCLUDE_sampler_functionEntries_unit_h
-#define INCLUDE_sampler_functionEntries_unit_h
+#ifndef INCLUDE_sampler_function_entries_unit_h
+#define INCLUDE_sampler_function_entries_unit_h
 
 #include "function-entries-types.h"
 #include "unit-signature.h"
@@ -19,4 +19,4 @@ static void functionEntriesReporter()
 }
 
 
-#endif /* !INCLUDE_sampler_functionEntries_unit_h */
+#endif /* !INCLUDE_sampler_function_entries_unit_h */

@@ -7,6 +7,7 @@ type direction = Min | Max
 
 
 let updateBound best example direction location =
+  let example = mkCast example best.vtype in
   let best = var best in
   let op = match direction with
   | Min -> Lt
@@ -21,6 +22,10 @@ let updateBound best example direction location =
 let makeGlobals =
   let nextId = ref 0 in
   fun typ ->
+    let typ = match typ with
+    | TEnum _ -> intType
+    | _ -> typ
+    in
     let prefix = "samplerBounds_" ^ (string_of_int !nextId) in
     incr nextId;
     (makeGlobalVar (prefix ^ "_min") typ,
@@ -61,7 +66,7 @@ let extremes typ =
   | TEnum _ as typ ->
       extremesSigned 32
   | other ->
-      ignore (bug "don't know extreme values of %a\n" d_type other);
+      ignore (bug "don't know extreme values of type %a\n" d_type other);
       failwith "internal error"
   in
   builder typ
@@ -88,6 +93,7 @@ class visitor global func =
 					   mkStmt (updateBound max (Lval newLeft) Max location)]))
 	in
 	Sites.registry#add func site;
+	BoundManager.register min max nil;
 	Block (mkBlock [mkStmtOneInstr (replacement newLeft);
 			site;
 			mkStmtOneInstr (Set (left, Lval newLeft, location))])

@@ -14,7 +14,8 @@ common =					\
 	$(fixpoint)				\
 	$(hashClass)				\
 	$(mapClass)				\
-	$(queueClass)
+	$(queueClass)				\
+	$(stackClass)
 
 common.$(cma): $(common)
 	$(archive)

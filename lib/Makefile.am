@@ -66,6 +66,8 @@ libsampler_r_a_CFLAGS = -include $(srcdir)/threads.h -pthread
 
 
 libschemes_a_SOURCES =				\
+	bounds.c				\
+	bounds-types.h				\
 	branches.c				\
 	branches-types.h			\
 	function-entries.c			\

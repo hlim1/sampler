@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.5.1
+
+** Internal updates only.  No significant user-visible changes.
+
 * sampler-0.5
 
 ** Split preferences out into stand-alone control panel applet (capplet).

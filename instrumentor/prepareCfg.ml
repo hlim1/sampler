@@ -1,13 +1,14 @@
 open Cil
 
 
-class visitor = object
-  inherit FunctionBodyVisitor.visitor
+class visitor =
+  object
+    inherit FunctionBodyVisitor.visitor
 
-  method vfunc func =
-    prepareCFG func;
-    SkipChildren
-end
+    method vfunc func =
+      prepareCFG func;
+      SkipChildren
+  end
 
 
 let phase =

@@ -5,23 +5,24 @@ open Foreach
 class type idomMap = [stmt] StmtMap.container
 
 
-class dominatorTree (idom : stmt StmtMap.container) = object(self)
-    
-  method idom node =
-    try Some(idom#find node)
-    with Not_found -> None
+class dominatorTree (idom : stmt StmtMap.container) =
+  object(self)
+      
+    method idom node =
+      try Some(idom#find node)
+      with Not_found -> None
 
-  method dominates ancestor descendant =
-    if ancestor == descendant then
-      true
-    else
-      self#strictlyDominates ancestor descendant
+    method dominates ancestor descendant =
+      if ancestor == descendant then
+	true
+      else
+	self#strictlyDominates ancestor descendant
 
-  method strictlyDominates ancestor descendant =
-    match self#idom descendant with
-    | Some(idom) -> self#dominates ancestor idom
-    | None -> false
-end
+    method strictlyDominates ancestor descendant =
+      match self#idom descendant with
+      | Some(idom) -> self#dominates ancestor idom
+      | None -> false
+  end
 
 
 let computeDominators (r, nodes) =
@@ -49,7 +50,7 @@ let computeDominators (r, nodes) =
   sdno#add n0 0;
   ancestor#add n0 n0;
   label#add n0 n0;
-    
+  
   let n = ref 0 in
   let rec depthFirstSearch v =
     incr n;
@@ -80,7 +81,7 @@ let computeDominators (r, nodes) =
 	ancestor#add v (ancestor#find (ancestor#find v))
       end
   in
-	
+  
   let eval v =
     if ancestor#find v == n0 then
       label#find v

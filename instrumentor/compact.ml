@@ -1,13 +1,14 @@
 open Cil
 
 
-class visitor file = object
-  inherit FunctionBodyVisitor.visitor
+class visitor file =
+  object
+    inherit FunctionBodyVisitor.visitor
 
-  method vblock block =
-    block.bstmts <- compactStmts block.bstmts;
-    DoChildren
-end
+    method vblock block =
+      block.bstmts <- compactStmts block.bstmts;
+      DoChildren
+  end
 
 
 let phase =

@@ -11,18 +11,19 @@ let cloneLabel = function
 (**********************************************************************)
 
 
-class visitor pairs = object
-  inherit FunctionBodyVisitor.visitor
+class visitor pairs =
+  object
+    inherit FunctionBodyVisitor.visitor
 
-  method vstmt stmt =
-    let clone = { stmt with labels = mapNoCopy cloneLabel stmt.labels }
-    in
-    
-    if stmt.sid != -1 then
-      pairs.(stmt.sid) <- (stmt, clone);
-    
-    ChangeDoChildrenPost (clone, identity)
-end
+    method vstmt stmt =
+      let clone = { stmt with labels = mapNoCopy cloneLabel stmt.labels }
+      in
+      
+      if stmt.sid != -1 then
+	pairs.(stmt.sid) <- (stmt, clone);
+      
+      ChangeDoChildrenPost (clone, identity)
+  end
 
 
 let duplicateBody fundec =

@@ -4,28 +4,29 @@ open Cil
 type placeholders = stmt list
 
 
-class prepatcher = object
-  inherit FunctionBodyVisitor.visitor
+class prepatcher =
+  object
+    inherit FunctionBodyVisitor.visitor
 
-  val mutable placeholders = []
-  method result = placeholders
+    val mutable placeholders = []
+    method result = placeholders
 
-  method vstmt stmt =
-    match stmt.skind with
-    | Instr [Call (_, _, _, location) as call] ->
-	let placeholder = mkEmptyStmt () in
-	let block = Block (mkBlock [mkStmtOneInstr call; placeholder]) in
-	placeholders <- placeholder :: placeholders;
-	
-	let replace stmt =
-	  stmt.skind <- block;
-	  stmt
-	in
-	ChangeDoChildrenPost (stmt, replace)
+    method vstmt stmt =
+      match stmt.skind with
+      | Instr [Call (_, _, _, location) as call] ->
+	  let placeholder = mkEmptyStmt () in
+	  let block = Block (mkBlock [mkStmtOneInstr call; placeholder]) in
+	  placeholders <- placeholder :: placeholders;
+	  
+	  let replace stmt =
+	    stmt.skind <- block;
+	    stmt
+	  in
+	  ChangeDoChildrenPost (stmt, replace)
 
-    | _ ->
-	DoChildren
-end
+      | _ ->
+	  DoChildren
+  end
 
 
 let prepatch {sbody = sbody} =
@@ -52,7 +53,7 @@ let patch clones weights countdown =
     let weight = weights#find standardAfter in
     if weight != 0 then
       let instrumentedAfter = ClonesMap.findCloneOf clones standardAfter in
-	  
+      
       let standardLabel, instrumentedLabel = nextLabels () in
       let standardLanding = mkEmptyStmt () in
       let instrumentedLanding = mkEmptyStmt () in
@@ -74,26 +75,27 @@ let patch clones weights countdown =
 (**********************************************************************)
 
 
-class postpatcher countdown = object
-  inherit FunctionBodyVisitor.visitor
+class postpatcher countdown =
+  object
+    inherit FunctionBodyVisitor.visitor
 
-  method vstmt stmt =
-    match stmt.skind with
-    | Instr [Call (_, _, _, location) as call] ->
-	let before = countdown#beforeCall location in
-	let after = countdown#afterCall location in
-	let instructions = [before; call; after] in
-	stmt.skind <- Instr instructions;
-	SkipChildren
+    method vstmt stmt =
+      match stmt.skind with
+      | Instr [Call (_, _, _, location) as call] ->
+	  let before = countdown#beforeCall location in
+	  let after = countdown#afterCall location in
+	  let instructions = [before; call; after] in
+	  stmt.skind <- Instr instructions;
+	  SkipChildren
 
-    | Return (_, location) ->
-	let export = countdown#beforeCall location in
-	stmt.skind <- Block (mkBlock [mkStmtOneInstr export; mkStmt stmt.skind]);
-	SkipChildren
+      | Return (_, location) ->
+	  let export = countdown#beforeCall location in
+	  stmt.skind <- Block (mkBlock [mkStmtOneInstr export; mkStmt stmt.skind]);
+	  SkipChildren
 
-    | _ ->
-	DoChildren
-end
+      | _ ->
+	  DoChildren
+  end
 
 
 let postpatch {sbody = sbody} countdown =

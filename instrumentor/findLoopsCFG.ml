@@ -33,20 +33,21 @@ let naturalLoop m n =
   loop
 
 
-class visitor = object
-  inherit FunctionBodyVisitor.visitor
-      
-  method vfunc func =
-    let (_, stmts) as cfg = Cfg.cfg func in
-    let dom = computeDominators cfg in
+class visitor =
+  object
+    inherit FunctionBodyVisitor.visitor
+	
+    method vfunc func =
+      let (_, stmts) as cfg = Cfg.cfg func in
+      let dom = computeDominators cfg in
 
-    let headers = List.filter (isLoopHeader dom) stmts in
-    ignore(Pretty.printf "loop headers according to dominator tree:@!  @[%a@]@!"
-	     Utils.d_stmts headers);
+      let headers = List.filter (isLoopHeader dom) stmts in
+      ignore(Pretty.printf "loop headers according to dominator tree:@!  @[%a@]@!"
+	       Utils.d_stmts headers);
 
-    SkipChildren
+      SkipChildren
 
-end
+  end
     
 ;;
 

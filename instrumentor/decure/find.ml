@@ -30,40 +30,41 @@ let isCheck = function
       false
 
 
-class visitor = object
-  inherit FunctionBodyVisitor.visitor
+class visitor =
+  object
+    inherit FunctionBodyVisitor.visitor
 
-  val mutable sites = []
-  method sites = sites
-  method globals : global list = []
+    val mutable sites = []
+    method sites = sites
+    method globals : global list = []
 
-  method vfunc func =
-    if isCheck func.svar.vname then
-      SkipChildren
-    else
+    method vfunc func =
+      if isCheck func.svar.vname then
+	SkipChildren
+      else
+	DoChildren
+
+    method vstmt stmt =
+      begin
+	match stmt.skind with
+	  (* !!!: CHECK_RETURNPTR not yet handled *)
+	| Instr [Call (None, Lval (Var {vname = vname}, NoOffset), _, location)] ->
+	    if isCheck vname then
+	      sites <- stmt :: sites
+	    else if string_match checkPattern vname 0 then
+	      begin
+		currentLoc := get_stmtLoc stmt.skind;
+		ignore (warn "suspicious non-check call: %s\n" vname)
+	      end
+
+	| Instr [_] ->
+	    ()
+
+	| Instr _ ->
+	    currentLoc := get_stmtLoc stmt.skind;
+	    ignore (bug "non-singleton Instr")
+
+	| _ -> ()
+      end;
       DoChildren
-
-  method vstmt stmt =
-    begin
-      match stmt.skind with
-	(* !!!: CHECK_RETURNPTR not yet handled *)
-      | Instr [Call (None, Lval (Var {vname = vname}, NoOffset), _, location)] ->
-	  if isCheck vname then
-	    sites <- stmt :: sites
-	  else if string_match checkPattern vname 0 then
-	    begin
-	      currentLoc := get_stmtLoc stmt.skind;
-	      ignore (warn "suspicious non-check call: %s\n" vname)
-	    end
-
-      | Instr [_] ->
-	  ()
-
-      | Instr _ ->
-	  currentLoc := get_stmtLoc stmt.skind;
-	  ignore (bug "non-singleton Instr")
-
-      | _ -> ()
-    end;
-    DoChildren
   end

@@ -55,6 +55,9 @@ foreach my $objectName (@ARGV) {
 	    next;
 	}
 
+    } elsif (-d $objectName) {
+	next;
+
     } else {
 	$handle = new FileHandle;
 	my $extractor = "$FindBin::Bin/extract-site-info";
@@ -101,21 +104,15 @@ sub miscount ($$) {
 }
 
 
-sub skip ($) {
-    my $report = shift;
-    while (<$report>) {
+sub skip () {
+    while (<STDIN>) {
 	chomp;
 	last if $_ eq '';
     }
 }
 
 
-my $extractor = "$FindBin::Bin/extract-report";
-my $report = new FileHandle;
-open $report, '-|', $extractor, 'samples'
-    or die "error: cannot run $extractor: $!\n";
-
-while (my $signature = <$report>) {
+while (my $signature = <STDIN>) {
     chomp $signature;
     check_signature 'standard input', $., $signature;
 
@@ -123,7 +120,7 @@ while (my $signature = <$report>) {
     if ($unit) {
 	my @sites = @{$unit->{sites}};
 
-	while (my $tuple = <$report>) {
+	while (my $tuple = <STDIN>) {
 	    chomp $tuple;
 	    last if $tuple eq '';
 	    if (@sites) {
@@ -134,7 +131,7 @@ while (my $signature = <$report>) {
 		}
 	    } else {
 		miscount 'many', $signature;
-		skip $report;
+		skip;
 		last;
 	    }
 	}
@@ -142,11 +139,9 @@ while (my $signature = <$report>) {
 	miscount 'few', $signature if @sites;
     } else {
 	error "warning: unrecognized signature in report: $signature\n";
-	skip $report;
+	skip;
     }
 }
-
-$report->close or error "report extractor error: exit status $?\n";
 
 
 local ($,, $\) = ("\t", "\n");

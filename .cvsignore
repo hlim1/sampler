@@ -2,6 +2,7 @@ Makefile
 Makefile.in
 aclocal.m4
 config-aux
+config.cache
 config.h
 config.h.in
 config.log

@@ -12,4 +12,4 @@ let main transformer =
    ]
   in
   
-  ignore(TestHarness.main phases)
+  TestHarness.main phases

@@ -16,11 +16,6 @@ basis: $(benchmarks:=/basis)
 $(benchmarks:=/basis):
 	+$(recurse)
 
-stats: $(benchmarks:=/stats)
-.PHONY: stats
-$(benchmarks:=/stats): force
-	+$(recurse)
-
 loopless: $(benchmarks:=/loopless)
 .PHONY: loopless
 $(benchmarks:=/loopless): force
@@ -45,6 +40,10 @@ GNUmakefile: config.mk
 config.mk: %: ../../config.status %.in
 	cd $(<D) && ./$(<F) benchmarks/ccured/$@
 
+
+########################################################################
+
+
 times: collated-times-all.txt collated-times-only.txt
 .PHONY: times
 
@@ -58,6 +57,24 @@ collated-times-only.txt: $(benchmarks:=/times)
 
 $(benchmarks:=/times):
 	+$(recurse)
+
+
+########################################################################
+
+
+stats: collated-stats.txt
+.PHONY: stats
+
+collated-stats.txt: collate-stats $(benchmarks:=/stats)
+	./$^ >$@.
+	mv $@. $@
+
+$(benchmarks:=/stats): force
+	+$(recurse)
+
+
+########################################################################
+
 
 force:
 .PHONY: force

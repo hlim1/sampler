@@ -7,25 +7,35 @@
 \title{Bug Isolation via Remote Program Sampling
   %%
   \thanks{This research was supported in part by NASA Grant
-  No. NAG2-1210; NSF Grants Nos. EIA-9802069, CCR-0085949,
-  ACI-9619020, and IIS-9988642; DOE Prime Contract No. W-7405-ENG-48
-  through Memorandum Agreement No. B504962 with LLNL; and a Lucent
-  GRPW Fellowship.  The information presented here does not
-  necessarily reflect the position or the policy of the Government and
-  no official endorsement should be inferred.}}
+    No. NAG2-1210; NSF Grant Nos. EIA-9802069, CCR-0085949,
+    ACI-9619020, and IIS-9988642; DOE Prime Contract No. W-7405-ENG-48
+    through Memorandum Agreement No. B504962 with LLNL; and a Lucent
+    GRPW Fellowship.  The information presented here does not
+    necessarily reflect the position or the policy of the Government
+    and no official endorsement should be inferred.}}
 
 \numberofauthors{2}
 
+\makeatletter
+\newcommand*{\eecsMark}[0]{\@fnsymbol{2}}
+\newcommand*{\statMark}[0]{\@fnsymbol{3}}
+\makeatother
+\newcommand*{\eecs}[0]{\textsuperscript{\eecsMark}}
+\newcommand*{\stat}[0]{\textsuperscript{\statMark}}
+\newcommand*{\both}[0]{\textsuperscript{\eecsMark, \statMark}}
+
 \author{%
-  \alignauthor Ben Liblit \\ \mailto{liblit@cs.berkeley.edu}
-  \alignauthor Alex Aiken \\ \mailto{aiken@cs.berkeley.edu}
+  %%
+  \alignauthor Ben Liblit \eecs \\ \mailto{liblit@cs.berkeley.edu}
+  \alignauthor Alex Aiken \eecs \\ \mailto{aiken@cs.berkeley.edu}
   %%
   \sharedaffiliation
-  \alignauthor Alice X. Zheng \\ \mailto{alicez@cs.berkeley.edu}
-  \alignauthor Michael I. Jordan \\ \mailto{jordan@cs.berkeley.edu}
+  \alignauthor Alice X. Zheng \eecs \\ \mailto{alicez@cs.berkeley.edu}
+  \alignauthor Michael I. Jordan \both \\ \mailto{jordan@cs.berkeley.edu}
   %%
   \sharedaffiliation
-  \affaddr{Department of Electrical Engineering and Computer Science} \\
+  \affaddr{\eecs Department of Electrical Engineering and Computer Science} \\
+  \affaddr{\stat Department of Statistics} \\
   \affaddr{University of California, Berkeley} \\
   \affaddr{Berkeley, CA 94720-1776}}
 

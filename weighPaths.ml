@@ -45,11 +45,11 @@ class visitor = object
     
     let cfg = Cfg.cfg func in
     let headers = CollectHeaders.collectHeaders cfg in
-    printf "    collected %i headers\n" headers#size;
-    let weights = weighPaths headers in
-    printf "    weighed %i paths\n" weights#size;
-    if headers#size != weights#size then
-      failwith "headers/weights size mismatch";
+    printf "    collected %i header edges\n" headers#size;
+    let weights = weighPaths headers
+    and nonzero = ref 0 in
+    weights#iter (fun _ weight -> if weight != 0 then incr nonzero);
+    printf "    weighed %i regions; %i nonzero\n" weights#size !nonzero;
 
     let printWeight node weight =
       printf "    weight below %i: %i" node.sid weight;

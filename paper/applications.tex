@@ -40,6 +40,7 @@ simply measuring the overhead of performing the dynamic checks.
 
 \begin{table*}[tb]
   \centering
+  \small
   \begin{tabular}{|l|rrr|rrr|}
     \hline
     & \multicolumn{3}{c|}{\textbf{function counts}} & \multicolumn{3}{c|}{\textbf{average for functions with sites}} \\
@@ -270,7 +271,7 @@ are especially pernicious because the actual corruption may have
 happened well before the ultimate crash \cite{Eisenstadt1993b}.
 
 We instrument \texttt{bc} to guess and randomly check a large number
-of possible invariants.  Our goal is to identify invariants that hold
+of possible invariants.  Our goal is to identify predicates that hold
 when the program succeeds, but which are violated when the program
 crashes.  We cast an extremely broad net, but with an eye toward
 pointer use violations and buffer overruns.  At any direct assignment
@@ -286,14 +287,14 @@ comparison between $x$ and $y_i$, which bumps one of three counters,
 is considered to be one instrumentation site subject to random
 sampling.
 
-As expected, this gives us a large number of candidate invariants:
+As expected, this gives us a large number of candidate predicates:
 13,442 counter triples, or 40,326 counters in all.  Because our
-invariant guesses are so crude, the vast majority of these are of no
-interest: either they compare completely unrelated variables, or they
-express invariants which behave indistinguishably in both successful
-and failed runs.
+guesses are so crude, the vast majority of these are of no interest:
+either they compare completely unrelated variables, or they express
+relationships which behave indistinguishably in both successful and
+failed runs.
 
-To find the few invariants that do count, we recast the bug hunt as a
+To find the few predicates that do count, we recast the bug hunt as a
 statistical analysis problem.  Each run of \texttt{bc} constitutes one
 sample point consisting of 40,326 observed \termdef{features} and one
 binary outcome ($0 = \text{succeeded}, 1 = \text{crashed}$).  In C, a
@@ -315,15 +316,15 @@ function:
   P(Y = 1 | X = x) = \frac{1}{ 1 + \exp(- \beta_0 - \vec\beta^T x) }
 \end{equation*}
 
-In our setting, the input data are the program invariant counters,
-normalized to have unit sample variance.  The $\beta$ values
-essentially weigh the relative importance of each feature in the final
-outcome.  Since we have many more parameters than data points, we
-constrain the possible set of parameter values by penalizing large
-$\beta$ values using the L1-norm, $\norm{\vec\beta}_1 = \sum_j
-\abs{\beta_j}$.  The model is then trained using stochastic gradient
-ascent to reach a local maximum of the penalized log likelihood.  Let
-$\mu(x) = P(Y = 1 | x)$.  Then:
+In our setting, the input data are the predicate counters, normalized
+to have unit sample variance.  The $\beta$ values essentially weigh
+the relative importance of each feature in the final outcome.  Since
+we have many more parameters than data points, we constrain the
+possible set of parameter values by penalizing large $\beta$ values
+using the L1-norm, $\norm{\vec\beta}_1 = \sum_j \abs{\beta_j}$.  The
+model is then trained using stochastic gradient ascent to reach a
+local maximum of the penalized log likelihood.  Let $\mu(x) = P(Y = 1
+| x)$.  Then:
 %%
 \begin{equation*}
   \begin{split}

@@ -41,12 +41,11 @@ sub collectOneArgument {
 
 sub preprocess_after_cil {
     my $self = shift;
-    my $ppargs = pop;
+    my @ppargs = @{(pop)};
 
-    my @ppargs = ('-include', "$FindBin::Bin/../libdecure/decure.h",
-		  '-include', "$libcountdown/countdown.h",
-		  '-include', "$libcountdown/$self->{cycle}.h",
-		  @{$ppargs});
+    push @ppargs, ('-include', "$FindBin::Bin/../libdecure/decure.h",
+		   '-include', "$libcountdown/countdown.h",
+		   '-include', "$libcountdown/$self->{cycle}.h");
     
     $self->SUPER::preprocess_after_cil(@_, \@ppargs);
 }
@@ -67,10 +66,10 @@ sub compile_cil {
 
 sub link_after_cil {
     my $self = shift;
-    my $ldargs = pop;
+    my @ldargs = @{(pop)};
 
-    push @{$ldargs}, "-L$libcountdown", '-lcountdown', "-l$self->{cycle}";
-    push @{$ldargs}, `gsl-config --libs`;
+    push @ldargs, "-L$libcountdown", '-lcountdown', "-l$self->{cycle}";
+    push @ldargs, `gsl-config --libs`;
 
-    $self->SUPER::link_after_cil(@_, $ldargs);
+    $self->SUPER::link_after_cil(@_, \@ldargs);
 }

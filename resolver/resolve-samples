@@ -71,7 +71,7 @@ foreach my $objectName (@ARGV) {
 	if (exists $compilationUnit{$signature}) {
 	    warn "warning: duplicate signature: $signature\n";
 	    warn "warning: first defined in \"$compilationUnit{$signature}{name}\"\n";
-	    warn "wraning: redefined in \"$objectName\"\n";
+	    warn "warning: redefined in \"$objectName\"\n";
 	}
 	my @sites;
 	while (@lines) {

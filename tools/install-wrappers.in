@@ -55,7 +55,7 @@ my $result = GetOptions ('name=s' => \$name,
 			 'version=s' => \$version,
 			 'release=s' => \$release,
 			 'install=s' => \$installdir,
-			 'template=s' => \&template);
+			 'template=s' => \$template);
 
 usage unless $result;
 usage unless $name;

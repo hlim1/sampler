@@ -5,7 +5,7 @@ AM_INIT_AUTOMAKE
 
 ########################################################################
 #
-#  Sampler internal configuration
+#  XML configuration
 #
 
 
@@ -17,11 +17,29 @@ if test -z "$XSL_HTML"; then
 fi
 AM_CONDITIONAL(HAVE_XSL_HTML, test -n "$XSL_HTML")
 
+AC_MSG_CHECKING(for non-standard XML catalog)
+xml=/usr/share/sgml/docbook/dtd/xml/4/catalog.xml
+if test ! -f /etc/xml/catalog -a -f $xml; then
+  XML_CATALOG_FILES=$xml
+  AC_MSG_RESULT($xml)
+else
+  XML_CATALOG_FILES=
+  AC_MSG_RESULT()
+fi
+AC_SUBST(XML_CATALOG_FILES)
+
 AC_CHECK_PROG(XMLLINT, xmllint, xmllint, \$(top_srcdir)/tools/skip-test)
 if test "$XMLLINT" != xmllint; then
   AC_MSG_WARN(cannot find xmllint in \$PATH)
   AC_MSG_WARN(XML validation tests will be skipped)
 fi
+
+
+########################################################################
+#
+#  Sampler internal configuration
+#
+
 
 AC_MSG_CHECKING(for precomputed countdown size)
 PRECOMPUTE_COUNT=1021

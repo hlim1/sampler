@@ -15,6 +15,6 @@ TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
 
 
 $(PACKAGE).html: %.html: %.xml config.xml $(XSL_HTML)
-	xsltproc -o $@ $(XSL_HTML) $<
+	XML_CATALOG_FILES='$(XML_CATALOG_FILES)' xsltproc --nonet -o $@ $(XSL_HTML) $<
 
 MOSTLYCLEANFILES = $(noinst_DATA)

@@ -1,6 +1,8 @@
+*-common.c
+*-skels.c
+*-stubs.c
 .deps
 Makefile
 Makefile.in
-sampler-common.c
-sampler-imodule.c
-sampler.h
+Sampler_Uploader.h
+uploader-main

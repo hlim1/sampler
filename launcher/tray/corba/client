@@ -1,6 +1,0 @@
-#!/usr/bin/python
-
-import bonobo
-
-server = bonobo.get_object('OAFIID:SamplerUploader:www.cs.berkeley.edu', 'Sampler/Uploader')
-print server

@@ -1,33 +1,38 @@
 INCLUDES = $(BONOBO_CFLAGS)
-CFLAGS = -fPIC
+CFLAGS = -g -Wimplicit
 LDFLAGS = $(BONOBO_LIBS)
 
-noinst_LIBRARIES = libsampler_module.a
+noinst_PROGRAMS = client uploader-main
 
-libsampler_module_a_SOURCES = sampler-imodule.c
+client_SOURCES =				\
+	Sampler_Uploader-common.c		\
+	Sampler_Uploader-stubs.c		\
+	client.c
+
+uploader_main_SOURCES =				\
+	Sampler_Uploader-common.c		\
+	Sampler_Uploader-skels.c		\
+	uploader-main.c				\
+	uploader.c				\
+	uploader.h
 
 EXTRA_DIST =					\
 	oaf.dtd					\
-	sampler.idl				\
+	Sampler_Uploader.idl			\
 	sampler.server
 
-BUILT_SOURCES = sampler.h sampler-common.c
+BUILT_SOURCES = Sampler_Uploader.h Sampler_Uploader-common.c
 
 TESTS = sampler.server
 TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
 
-idldir = /usr/share/idl
-
-sampler.h sampler-common.c sampler-imodule.c: sampler.idl
-	orbit-idl-2 --include $(idldir) --imodule $<
-
-sampler_module.so: %_module.so: %-imodule.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ -shared $^ $(LDFLAGS)
-
-all-local: sampler_module.so
+Sampler_Uploader.h Sampler_Uploader-common.c Sampler_Uploader-skels.c: Sampler_Uploader.idl
+	orbit-idl-2 --include /usr/share/idl/bonobo-2.0 --include /usr/share/idl/bonobo-activation-2.0 $<
 
 MOSTLYCLEANFILES =				\
-	sampler-common.c			\
-	sampler-imodule.c			\
-	sampler.h				\
-	sampler_module.so
+	*-common.c				\
+	*-imodule.c				\
+	*_module.so				\
+	*-skels.c				\
+	*-stubs.c				\
+	Sampler_Uploader.h

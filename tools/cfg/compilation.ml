@@ -49,9 +49,9 @@ let parse objKey =
     parse stream
 
 
-let addNodes (functions, _) =
-  List.iter Function.addNodes functions
+let addNodes graph (functions, _) =
+  List.iter (Function.addNodes graph) functions
 
 
-let addEdges (functions, statics) =
-  List.iter (Function.addEdges statics) functions
+let addEdges graph (functions, statics) =
+  List.iter (Function.addEdges graph statics) functions

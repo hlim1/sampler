@@ -9,9 +9,9 @@ let parse name =
     parser [< compilations = compilations >] -> compilations
 
 
-let addNodes =
-  List.iter Compilation.addNodes
+let addNodes graph =
+  List.iter (Compilation.addNodes graph)
 
 
-let addEdges =
-  List.iter Compilation.addEdges
+let addEdges graph =
+  List.iter (Compilation.addEdges graph)

@@ -1,4 +1,5 @@
 open Phase
+open Statement
 
 
 let process () =
@@ -15,5 +16,7 @@ let process () =
   Arg.parse argSpecs doOne
     ("Usage:" ^ Sys.executable_name ^ " <module>.cfg ...");
 
-  time "create graph nodes" (fun () -> List.iter Object.addNodes !objects);
-  time "create graph edges" (fun () -> List.iter Object.addEdges !objects)
+  let graph = new Graph.graph !nodeCount !edgeCount in
+  time "create graph nodes" (fun () -> List.iter (Object.addNodes graph) !objects);
+  time "create graph edges" (fun () -> List.iter (Object.addEdges graph) !objects);
+  graph

@@ -47,17 +47,17 @@ let parse compKey statics =
 	result
 
 
-let addNodes (key, data) =
+let addNodes graph (key, data) =
   let iterator slot =
     let nodeKey = (key, slot) in
-    Statement.addNodes nodeKey
+    Statement.addNodes graph nodeKey
   in
   Array.iteri iterator data.nodes
 
 
-let addEdges statics (key, data) =
+let addEdges graph statics (key, data) =
   let iterator slot =
     let nodeKey = (key, slot) in
-    Statement.addEdges statics nodeKey
+    Statement.addEdges graph statics nodeKey
   in
   Array.iteri iterator data.nodes

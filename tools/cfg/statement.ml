@@ -7,11 +7,19 @@ open Types.Statement
 type result = data
 
 
+let nodeCount = ref 0
+let edgeCount = ref 0
+
+
 let parse =
   let location = Location.parse in
 
   let successors =
-    let successor = integerTab in
+    let successor stream =
+      let result = integerTab stream in
+      incr edgeCount;
+      result
+    in
     sequenceLine successor
   in
 
@@ -34,6 +42,8 @@ let parse =
 	 successors = successors;
 	 callees = callees >]
       ->
+	nodeCount := !nodeCount + 2;
+	incr edgeCount;
 	{ location = location;
 	  successors = successors;
 	  callees = callees;
@@ -57,14 +67,14 @@ let findNode subkey =
       first
 
 
-let addNodes key data =
+let addNodes graph key data =
   graph#addNode (Before, key) data;
   graph#addNode (After, key) data;
   let ((_, func), id) = key in
   registry#add (func, id) (Before, key)
 
 
-let addEdges statics ((func, _) as originKey) data =
+let addEdges graph statics ((func, _) as originKey) data =
   let addFlow destinationId =
     let destinationKey = (func, destinationId) in
     graph#addEdge (After, originKey) Flow (Before, destinationKey)

@@ -1,1 +1,1 @@
-val process : unit -> unit
+val process : unit -> FlowGraph.graph

@@ -7,5 +7,4 @@ type node = split * key
 
 type edge = Flow | Call | Return
 
-
-val graph : (node, data, edge) Graph.graph
+class type graph = [node, data, edge] Graph.graph

@@ -1,4 +1,4 @@
-class ['node, 'nodeData, 'edge] graph :
+class ['node, 'nodeData, 'edge] graph : int -> int ->
   object
     method addNode : 'node -> 'nodeData -> unit
     method addEdge : 'node -> 'edge -> 'node -> unit

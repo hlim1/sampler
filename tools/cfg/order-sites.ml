@@ -8,7 +8,7 @@ type site = Types.Function.extension * Types.Statement.extension
 exception Eliminate of site * site
 
 
-let _ = Args.process ()
+let graph = Args.process ()
 
 
 let sites =

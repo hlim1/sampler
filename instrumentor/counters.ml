@@ -54,8 +54,13 @@ class manager name file =
 
       siteInfos#iter
 	(fun (func, location, description, statement) ->
-	  let description = Pretty.sprint max_int description in
-	  fprintf channel "%s\t%d\t%s\t%d\t%s\n"
+	  let description =
+	    if description = Pretty.nil then
+	      ""
+	    else
+	      Pretty.sprint max_int (chr '\t' ++ description)
+	  in
+	  fprintf channel "%s\t%d\t%s\t%d%s\n"
 	    location.file location.line
 	    func.svar.vname
 	    statement.sid

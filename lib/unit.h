@@ -10,10 +10,6 @@ static void samplerReporter()
 }
 
 
-#pragma cilnoremove("samplerCFG")
-static const char samplerCFG[] __attribute__((unused, section(".debug_sampler_cfg")));
-
-
 static struct SamplerUnit samplerUnit = { 0, 0, samplerReporter };
 
 

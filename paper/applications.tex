@@ -341,8 +341,8 @@ elimination strategy independently to the counter traces:
 %Several factors conspire to drive most counters to zero: the \naive
 %nature of our guesses, the limited coverage of our automated test
 %suite, and the filtering effect of sparse sampling.  Thus, 
-At first glance, \elim{elimination by universal falsehood} is quite effective
-while \elim{elimination by successful counterexample} seems rather
+At first glance, elimination by \elim{universal falsehood} is quite effective
+while elimination by \elim{successful counterexample} seems rather
 poor.  However, these two strategies test disjoint properties and can
 be combined to good effect.
 The combination leaves only those predicates that are sometimes
@@ -375,7 +375,7 @@ bug in-house for further study.  Of course, there should be some runs
 where \texttt{file\_exists()} reports that the file exists but
 \texttt{xreadline()} returns a valid response from the user and
 therefore the program does not crash.  If the \texttt{file\_exists()}
-call is sampled on such a run, \elim{elimination by successful
+call is sampled on such a run, elimination by \elim{successful
   counterexample} will correctly conclude that this predicate does not
 imply failure.  It will be eliminated from further consideration, and
 only the true ``smoking gun,'' the call to \texttt{xreadline()}, will
@@ -403,12 +403,12 @@ we are still left with 86 features.
 In order to gain a better understanding of how the elimination
 strategies benefit from increasing the number of runs, we have
 experimented with randomized subsets of our complete run suite.  We
-have seen that \elim{elimination by successful counterexample} is
+have seen that elimination by \elim{successful counterexample} is
 quite effective when given a few thousand successful runs; how well
 does it perform with a smaller suite?  We start with the 141 candidate
 predicates that are ever nonzero on any run.  We assemble a random
 subset of fifty successful runs and filter the predicate set using
-\elim{elimination by successful counterexample}.  We then add another
+elimination by \elim{successful counterexample}.  We then add another
 fifty runs, and another fifty, and so on in steps up to the full set
 of 2902 successful runs.  We repeat this entire process one hundred
 times to gauge how rapidly one can expect the predicate set to shrink
@@ -418,7 +418,7 @@ as more runs arrive over time.
   \centering
   \small
   \includegraphics[width=\columnwidth]{applications/ds1000ngood_plot}
-  \caption{Progressive \elim{elimination by successful counterexample}
+  \caption{Progressive elimination by \elim{successful counterexample}
     as successful runs accumulate.  Crosses mark means; error bars
     mark one standard deviation.}
   \label{fig:ngood}
@@ -636,7 +636,7 @@ Our \texttt{bc} data set consists of 4390 runs with distinct random
 inputs and distinct randomized \nicefrac{1}{1000} sampling, of which
 2729 are randomly chosen for training, 322 for validation, and 1339
 for testing.  Although there are 30,150 raw features, many can be
-discarded immediately using \elim{elimination by universal falsehood}:
+discarded immediately using elimination by \elim{universal falsehood}:
 in the training set 27,242 features are always zero.  Hence the
 effective number of features used in training is 2908.  (Elimination
 by \elim{lack of failing example} can eliminate another 647 features

@@ -1,7 +1,16 @@
+open Str
+
+
 exception Special
 
 
-type goal = Partial | Complete
+type goal = Assembly | Object | Executable
+
+
+let changeSuffix =
+  let pattern = regexp "\\.[^.]*$" in
+  fun filename newSuffix ->
+    replace_first pattern newSuffix (Filename.basename filename)
 
 
 class c compiler arguments =
@@ -10,11 +19,13 @@ class c compiler arguments =
 
     val mutable flags = []
     val mutable finalFlags = []
-    val mutable goal = Complete
+    val mutable outfile = None
+    val mutable goal = Executable
 
     val mutable saveTemps = false
 
     val mutable inputs = []
+    val mutable anyInputName = ""
 
     method private prepare filename = filename
 
@@ -22,20 +33,19 @@ class c compiler arguments =
 
 
     method private parse_1 flag rest =
-
-      let partial () =
-	goal <- Partial;
-	finalFlags <- finalFlags @ [flag];
-	rest
-      in
-
       match flag, rest with
-      | "-c", _
+      | "-c", _ ->
+	  goal <- Object;
+	  finalFlags <- finalFlags @ [flag];
+	  rest
+
       | "-S", _ ->
-	  partial ()
-	    
+	  goal <- Assembly;
+	  finalFlags <- finalFlags @ [flag];
+	  rest
+
       | "-o", argument :: rest ->
-	  finalFlags <- finalFlags @ [flag; argument];
+	  outfile <- Some argument;
 	  rest
 
       | "-v", _ ->
@@ -47,7 +57,7 @@ class c compiler arguments =
 	  failwith ("unsupported flag: " ^ flag)
 
       | "-fsyntax-only", _ ->
-	  partial ()
+	  raise Special
 
       | "-save-temps", _ ->
 	  saveTemps <- true;
@@ -98,18 +108,35 @@ class c compiler arguments =
       | filename, _ ->
 	  let builder () = self#prepare filename in
 	  inputs <- inputs @ [builder];
+	  anyInputName <- filename;
 	  rest
 
 
     method private build =
       try
 	self#parse;
+
 	let built =
 	  let build builder = builder () in
 	  List.map build inputs
 	in
-	let extraLibs = if goal == Complete then self#extraLibs else [] in
-	self#run compiler (flags @ finalFlags @ built @ extraLibs)
+
+	let outfileName = match outfile with
+	| Some target -> target
+	| None ->
+	    match goal with
+	    | Assembly ->
+		changeSuffix anyInputName ".s"
+	    | Object ->
+		changeSuffix anyInputName ".o"
+	    | Executable ->
+		"a.out"
+	in
+
+	let extraLibs = if goal == Executable then self#extraLibs else [] in
+
+	self#run compiler ("-o" :: outfileName :: flags @ finalFlags @ built @ extraLibs)
+
       with Special ->
 	self#run compiler arguments
   end

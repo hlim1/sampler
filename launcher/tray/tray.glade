@@ -19,7 +19,7 @@
       <child>
 	<widget class="GtkImage" id="image">
 	  <property name="visible">True</property>
-	  <property name="pixbuf">status_lock.png</property>
+	  <property name="pixbuf">/usr/share/pixmaps/status_lock.png</property>
 	  <property name="xalign">0.5</property>
 	  <property name="yalign">0.5</property>
 	  <property name="xpad">0</property>
@@ -51,8 +51,8 @@
 
 <widget class="GnomeAbout" id="about">
   <property name="destroy_with_parent">False</property>
-  <property name="icon">bug-buddy.png</property>
-  <property name="logo">gnome-about-logo.png</property>
+  <property name="icon">/usr/share/pixmaps/bug-buddy.png</property>
+  <property name="logo">/usr/share/pixmaps/gnome-about-logo.png</property>
   <property name="copyright" translatable="yes">Copyright © 2003 The Regents
 of the University of California</property>
   <property name="comments" translatable="yes">Bug isolation report uploader</property>
@@ -68,7 +68,7 @@ of the University of California</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">bug-buddy.png</property>
+  <property name="icon">/usr/share/pixmaps/bug-buddy.png</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">

@@ -24,6 +24,9 @@ BuildRequires:  gstreamer-devel >= %{gstreamer_version}
 BuildRequires:  gstreamer-plugins-devel >= %{gstreamer_version}
 BuildRequires:  gtk2-devel >= %{gtk2_version}
 %{?sampler_tags}
+Packager:	Ben Liblit <liblit@cs.berkeley.edu>
+Vendor:		UC Berkeley
+Distribution:	Sampler
 
 %description
 Music Management application with support for ripping audio-cd's,

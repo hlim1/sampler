@@ -18,6 +18,10 @@ my $scheme = shift
 
 
 my %macros = (
+	      _sampler_datadir => '%{?sampler_datadir}%{!?sampler_datadir:%{_datadir}/sampler}',
+	      _sampler_libdir => '%{?sampler_libdir}%{!?sampler_libdir:%{_libdir}/sampler}',
+	      sampler_tooldir => "$FindBin::Bin",
+
 	      sampler_cc => $driver,
 	      sampler_scheme => $scheme,
 	      sampler_cc_flags => '%{nil}',
@@ -43,7 +47,7 @@ using the "%{sampler_scheme}" instrumentation scheme.  You do not need
 this to use %{name}.  Most users have no need to install this package.
 %files samplerinfo
 %defattr(-,root,root)
-%{_libdir}/sampler/sites/*
+%{_sampler_libdir}/sites/*
 %{nil}
 EOF
 
@@ -56,8 +60,8 @@ EOF
 	      sampler_prebuild => <<'EOF',
 export CC='%{sampler_cc} %{sampler_scheme} %{sampler_cc_flags}'
 sed -e 's/@name@/%{name}/g' -e 's/@scheme@/%{sampler_scheme}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/sampler.schemas.in >sampler/%{name}-sampler.schemas
-sed -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' -e 's!@_datadir@!%{_datadir}!g' <sampler/config.in >sampler/config
-sed -e 's!@_launcherdir@!%{_datadir}/sampler/launcher!g' <sampler/wrapper.in >sampler/wrapper
+sed -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >sampler/config
+sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/wrapper.in >sampler/wrapper
 chmod a+x sampler/wrapper
 %{nil}
 EOF
@@ -65,19 +69,19 @@ EOF
 	      sampler_wrapped => '%{_bindir}/%{name}',
 
 	      sampler_install => <<'EOF',
-install -d %{buildroot}%{_libdir}/sampler/applications/%{name}
-install -m 644 sampler/config sampler/%{name}-sampler.schemas sampler/interface.glade %{buildroot}%{_libdir}/sampler/applications/%{name}
-install sampler/wrapper %{buildroot}%{_libdir}/sampler/applications/%{name}
-mv %{buildroot}%{sampler_wrapped} %{buildroot}%{_libdir}/sampler/applications/%{name}/executable
-ln -s %{_libdir}/sampler/applications/%{name}/wrapper %{buildroot}%{sampler_wrapped}
+install -d %{buildroot}%{_sampler_libdir}/applications/%{name}
+install -m 644 sampler/config sampler/%{name}-sampler.schemas sampler/interface.glade %{buildroot}%{_sampler_libdir}/applications/%{name}
+install sampler/wrapper %{buildroot}%{_sampler_libdir}/applications/%{name}
+mv %{buildroot}%{sampler_wrapped} %{buildroot}%{_sampler_libdir}/applications/%{name}/executable
+ln -s %{_sampler_libdir}/applications/%{name}/wrapper %{buildroot}%{sampler_wrapped}
 install -d %{buildroot}%{_sysconfdir}/gconf/schemas
 install sampler/%{name}-sampler.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
-%{_libdir}/sampler/tools/find-sampler-info $RPM_BUILD_ROOT
+%{sampler_tooldir}/find-sampler-info $RPM_BUILD_ROOT
 %{nil}
 EOF
 
 	      sampler_files => <<'EOF',
-%attr(-, root, root) %{_libdir}/sampler/applications/%{name}
+%attr(-, root, root) %{_sampler_libdir}/applications/%{name}
 %attr(-, root, root) %{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas
 %{nil}
 EOF

@@ -168,7 +168,7 @@ over time as debugging needs and intermediate results warrant.
   We have experimented with variants of the \CCured benchmarks in
   which only a single function is instrumented at a time.  Whereas
   fully instrumented executables range from 13\%-149\% larger than
-  their non-sampling counterparts, average growth for singe-function
+  their non-sampling counterparts, average growth for single-function
   instrumented executables is just 12\% for the small Olden benchmarks
   and 6\% for the larger SPECINT95 applications.  Performance is good:
   94\% of site-containing functions incur less than 5\% slowdown
@@ -543,14 +543,14 @@ sample point consisting of 30,150 observed \termdef{features}
 = \text{crashed}$).  Given numerous data points (sampled runs), we
 want to identify a subset of our 30,150 features that predict the
 outcome.  This is equivalent to the machine learning problem of
-learning a binary classifier with feature selection, i.e.,\ using as
+learning a binary classifier with feature selection, i.e., using as
 few input features as possible.
 
 In the classification setting, we take a set of data with known binary
 output (a training set), and attempt to learn a binary classifier that
 gives good predictions on a test set.  The learning process usually
 involves additional parameters whose values can be determined using a
-validation set.  In our case, the end goal is to narrow down the set
+cross-validation set.  In our case, the end goal is to narrow down the set
 of features.  Hence our method must balance good
 classification performance with aggressive feature selection.
 
@@ -560,7 +560,7 @@ prediction of either $0$ or $1$.  \termdef{Logistic regression}
 output function is assumed to be logistic.  The logistic function is a
 continuous ``S''-shaped curve approaching 0 on one end, and 1 on the
 other.  The output can be interpreted as a probability measure of how
-likely the data point falls within class 0 or 1.  Quantizing the
+likely it is that the data point falls within class 0 or 1.  Quantizing the
 logistic function output then gives us a binary classifier: if the
 output is greater than \nicefrac{1}{2}, then the data point is
 classified as class 1 (a crash), otherwise it falls under class 0 (a
@@ -573,7 +573,7 @@ are wild guesses, but that there may be just a few that correctly
 characterize the bug.
 
 While other techniques for combined classification and feature
-selection exist, none of them are particularly well-suited for this
+selection exist, few of them are particularly well-suited for this
 problem.  Some methods \cite{Golub:MCC:1999,Tibshirani2002} calculate
 a univariate correlation coefficient independently for each feature;
 other methods, such as decision trees \cite{00000048}, are more
@@ -615,8 +615,8 @@ the intercept and slope of the classifier, and essentially weigh the
 relative importance of each feature in the final outcome.  We expect
 most of the input features to have no influence over the success or
 failure of the program, so we place an additional constraint that
-forces most of the $\tilde{\beta}$'s toward zero.  This is accomplished by
-subtracting a penalty term based on the L1-norm $\norm{\tilde{\beta}}_1 =
+forces most of the $\beta$'s toward zero.  This is accomplished by
+subtracting a penalty term based on the $\ell_1$ norm $\norm{\tilde{\beta}}_1 =
 \sum_{j=0}^M \abs{\beta_j}$.  We can tune the importance of this
 \termdef{regularization term} through a \termdef{regularization
   parameter} $\lambda$.  The penalized log likelihood function is:
@@ -625,7 +625,7 @@ subtracting a penalty term based on the L1-norm $\norm{\tilde{\beta}}_1 =
   \begin{split}
     LL (\tilde{\beta} | \mathcal{D}, \lambda ) \:=\:
     & \sum_{i=1}^M \, [y_i \log \mu_{\tilde{\beta}} (x_i) + (1 - y_i) \log (1 - \mu_{\tilde{\beta}} (x_i))] \\
-    & - \lambda \norm{\beta}_1
+    & - \lambda \norm{\tilde{\beta}}_1
   \end{split}
 \end{equation*}
 
@@ -637,8 +637,8 @@ only a small number of features from the complete feature set.
 \subsubsection{Data Collection and Analysis}
 
 Our \texttt{bc} data set consists of 4390 runs with distinct random
-inputs and distinct randomized \nicefrac{1}{1000} sampling, of which
-2729 are randomly chosen for training, 322 for validation, and 1339
+inputs and distinct randomized \nicefrac{1}{1000} sampling.  
+2729 runs are randomly chosen for training, 322 for cross-validation, and 1339
 for testing.  Although there are 30,150 raw features, many can be
 discarded immediately using elimination by \elim{universal falsehood}:
 in the training set 27,242 features are always zero.  Hence the
@@ -652,9 +652,9 @@ To make the magnitude of the $\beta$ parameters comparable, the feature
 values must be on the same scale.  Hence all the input features are
 shifted and scaled to lie on the interval $[0, 1]$, then normalized to
 have unit sample variance.  A suitable value for the regularization
-parameter $\lambda$ is determined through validation to be $0.3$.  The model
+parameter $\lambda$ is determined through cross-validation to be $0.3$.  The model
 is then trained using stochastic gradient ascent to reach a local
-maximum of the penalized log likelihood.  Using a learning rate of
+maximum of the penalized log likelihood.  Using a step size of
 $10^{-5}$, the model usually converges within sixty iterations through
 the training set.  This takes roughly thirty minutes in MATLAB on a
 1.8 GHz Pentium 4 CPU with 1 GB of RAM.
@@ -684,7 +684,7 @@ the rest, and show an unmistakable trend:
 The source code for \texttt{more\_arrays()} appears in
 Figure~\ref{fig:bc:more-arrays}.  A comment earlier in the same file
 suggests that this one of a suite of ``three functions for increasing
-the number of functions, variables, or arrays that are needed''.  The
+the number of functions, variables, or arrays that are needed.''  The
 logic is a fairly clear instance of the buffer reallocation idiom,
 even to one unfamiliar with the code: line 167 allocates a larger
 chunk of memory; line 171 is the top of a loop that copies values over
@@ -758,7 +758,7 @@ are obvious only once one knows where to look.  The logistic
 regression results directed us to one misbehaving variable on one line
 of code, out of 8910 lines in \texttt{bc} as a whole.  Our approach
 does not automatically find and fix bugs.  But it does suggest where
-to start looking, and what sort of scenarios (e.g.\ unusually large
+to start looking, and what sort of scenarios (e.g., unusually large
 \texttt{indx}) to consider.  Although we are still learning about the
 capabilities of this system, and how to interpret its results, we
 believe that statistically guided debugging has the potential to make

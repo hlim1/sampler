@@ -231,7 +231,7 @@ simple interprocedural analysis can be used.  A \termdef{weightless
 \end{itemize}
 
 The set of weightless functions can be computed iteratively, requiring
-no more steps in the worst case then the depth of the deepest
+no more steps in the worst case than the depth of the deepest
 non-recursive call chain.
 
 For purposes of identifying acyclic regions and placing threshold
@@ -287,15 +287,15 @@ Section~\ref{sec:introduction}, there are issues peculiar to
 monitoring a large number of remote sites.  Here we briefly discuss
 the main problems and a particular solution that we adopt.
 
-There are several dimensions in which performance can be harmed by
-remote monitoring.  As usual the performance penalty imposed by the
-extra monitoring code is a concern, but so are the use of local
-storage to hold results (even temporarily) on a user's machine, the
-use of network bandwidth to transmit results, and finally the storage
-needed to hold results on a central server for analysis.  For example,
-if we wish to retain all sampled data, then the storage requirements for the
-central server grow linearly with the number of executions even if the
-data collected from each execution is constant size.  
+Remote monitoring can harm performance in several ways.  As usual the
+performance penalty imposed by the extra monitoring code is a concern,
+but so are the use of local storage to hold results (even temporarily)
+on a user's machine, the use of network bandwidth to transmit results,
+and finally the storage needed to hold results on a central server for
+analysis.  For example, if we wish to retain all sampled data, then
+the storage requirements for the central server grow linearly with the
+number of executions even if the data collected from each execution is
+constant size.
 %In
 %Section~\ref{sec:ccured} we give an example of an analysis that does
 %not require retention of the data on the server.  However, we expect
@@ -318,6 +318,6 @@ of the observations is discarded.  While our results can be interpreted
 as showing that one can go a long way ignoring ordering, we expect
 there are interesting applications that require ordering information.
 We leave the problem of determining how to efficiently gather, store and
-analyze partial traces (with ordering information) as future work.
+analyze partial traces (with ordering information) for future work.
 
 %% LocalWords: rnd getNextCountdown pre

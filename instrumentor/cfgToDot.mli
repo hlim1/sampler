@@ -1,1 +1,1 @@
-val d_cfg : Cil.stmt list -> Pretty.doc
+val d_cfg : unit -> Cil.stmt list -> Pretty.doc

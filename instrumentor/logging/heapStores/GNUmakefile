@@ -2,6 +2,7 @@ top := ../..
 include $(top)/defs.mk
 
 targets := main
+#subdirs := tests
 libdirs := .. $(top)
 
 include $(top)/rules.mk
@@ -10,21 +11,12 @@ include $(top)/rules.mk
 ########################################################################
 
 
-main: %: $(libcil) $(top)/harness.$(cma) ../logging.$(cma) $(main)
+main: %: $(libcil) ../logging.$(cma) $(main)
 	$(link)
-
-$(top)/%.cma: $(force)
-	$(recurse)
-
-$(top)/%.cmi: $(force)
-	$(recurse)
 
 ../%.cma: $(force)
 	$(recurse)
 
-../%.cmi: $(force)
-	$(recurse)
+../%.cmi: ../logging.$(cma)
 
-run: main $(infile).i
-	./$^
-.PHONY: run
+../../%.cmi: ../logging.$(cma)

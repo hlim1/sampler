@@ -11,7 +11,7 @@ include $(top)/rules.mk
 ########################################################################
 
 
-libs := $(libcil) $(top)/harness.$(cma) ../daikount.$(cma)
+libs := $(libcil) ../daikount.$(cma)
 
 main: $(libs) $(main)
 	$(link)
@@ -19,8 +19,6 @@ main: $(libs) $(main)
  ../daikount.$(cma): $(force)
 	$(recurse)
 
-$(top)/%.cmi: $(force)
-	$(recurse)
+../%.cmi: ../daikount.$(cma)
 
-$(top)/%.cma: $(force)
-	$(recurse)
+../../%.cmi: ../daikount.$(cma)

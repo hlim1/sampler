@@ -12,11 +12,10 @@ include $(top)/rules.mk
 
 
 fun_patch := $(mangler)
-fun-patch.$(cma): $(top)/harness.$(cma) $(fun_patch)
+fun-patch.$(cma): ../harness.$(cma) $(fun_patch)
 	$(archive)
 
-$(top)/%.cma: $(force)
+../%.$(cma): $(force)
 	$(recurse)
 
-$(top)/%.cmi: $(force)
-	$(recurse)
+../%.cmi: ../harness.$(cma)

@@ -17,8 +17,7 @@ libharness := $(libcil) $(top)/harness.$(cma)
 main: $(libharness) $(main)
 	$(link)
 
-$(top)/%.cmi: $(force)
-	$(recurse)
+$(top)/%.cmi: $(top)/harness.$(cma)
 
 $(top)/%.cma: $(force)
 	$(recurse)

@@ -12,11 +12,10 @@ include $(top)/rules.mk
 
 
 logging := $(dissect) $(logCollector)
-logging.$(cma): $(logging)
+logging.$(cma): ../harness.$(cma) $(logging)
 	$(archive)
 
-$(top)/%.cma: $(force)
+../%.cma: $(force)
 	$(recurse)
 
-$(top)/%.cmi: $(force)
-	$(recurse)
+../%.cmi: $(top)/harness.$(cma)

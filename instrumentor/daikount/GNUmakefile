@@ -11,11 +11,10 @@ include $(top)/rules.mk
 ########################################################################
 
 
-daikount.$(cma): $(prepareDaikount)
+daikount.$(cma): ../harness.$(cma) $(prepareDaikount)
 	$(archive)
 
-$(top)/%.cmi: $(force)
-	$(recurse)
+../%.cmi: ../harness.$(cma)
 
-$(top)/%.cma: $(force)
+../%.cma: $(force)
 	$(recurse)

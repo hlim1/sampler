@@ -11,11 +11,10 @@ include $(top)/rules.mk
 
 
 main := $(transform) %
-main: %: $(libcil) $(top)/harness.$(cma) $(main)
+main: %: $(libcil) ../harness.$(cma) $(main)
 	$(link)
 
-$(top)/%.cma: $(force)
+../%.cma: $(force)
 	$(recurse)
 
-$(top)/%.cmi: $(force)
-	$(recurse)
+../%.cmi: ../harness.$(cma)

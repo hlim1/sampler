@@ -11,7 +11,7 @@ include $(top)/rules.mk
 ########################################################################
 
 
-libharness := $(libcil) $(top)/harness.$(cma)
+libharness := $(libcil) ../harness.$(cma)
 
 
 main: $(libharness) $(main)
@@ -23,8 +23,7 @@ filterComplete: $(libharness) $(filterComplete)
 listCandidates: $(libharness) $(listCandidates)
 	$(link)
 
-$(top)/%.cmi: $(force)
-	$(recurse)
+../%.cmi: ../harness.$(cma)
 
-$(top)/%.cma: $(force)
+../%.cma: $(force)
 	$(recurse)

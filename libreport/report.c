@@ -77,6 +77,8 @@ static void reportAllCompilationUnits()
       
       fputs("</report>\n", reportFile);
     }
+
+  fflush(reportFile);
 }
 
 

@@ -4,27 +4,48 @@
 #include "daikount.h"
 
 
-static FILE *logFile;
-
 const struct Invariant *invariants;
 
 
-__attribute__((destructor)) static void shutdown()
+static const char *logFilename()
 {
-  if (logFile)
-    {
-      const struct Invariant *invariant;
-      for (invariant = invariants; invariant; invariant = invariant->next)
-	fprintf(logFile, "%s\t%u\t%s\t%s\t%s\t%u\t%u\t%u\t%u\n",
-		invariant->file, invariant->line, invariant->function,
-		invariant->left, invariant->right, invariant->id,
-		invariant->counters[0], invariant->counters[1],
-		invariant->counters[2]);
+  const char * const env = getenv("SAMPLER_FILE");
 
-      if (fclose(logFile)) perror("logger: fclose error");
-      logFile = 0;
+  if (!env)
+    fputs("logger: not recording samples; no $SAMPLER_FILE given in environment\n", stderr);
+
+  return env;
+}
+
+
+static void dumpInvariants(int signum)
+{
+  const char * const filename = logFilename();
+
+  if (filename)
+    {
+      FILE * const logFile = fopen(filename, "w");
+
+      if (!logFile)
+	perror("logger: fopen error");
+      else
+	{
+	  const struct Invariant *invariant;
+
+	  fprintf(logFile, "%d\n", signum);
+
+	  for (invariant = invariants; invariant; invariant = invariant->next)
+	    fprintf(logFile, "%s\t%u\t%s\t%s\t%s\t%u\t%u\t%u\t%u\n",
+		    invariant->file, invariant->line, invariant->function,
+		    invariant->left, invariant->right, invariant->id,
+		    invariant->counters[0], invariant->counters[1],
+		    invariant->counters[2]);
+
+	  if (fclose(logFile)) perror("logger: fclose error");
+	}
     }
 }
+
 
 
 static void handleSignal(int signum)
@@ -34,7 +55,7 @@ static void handleSignal(int signum)
   if (handling) raise(signum);
   
   handling = 1;
-  shutdown();
+  dumpInvariants(signum);
 
   signal(signum, SIG_DFL);
   raise(signum);
@@ -43,19 +64,18 @@ static void handleSignal(int signum)
 
 __attribute__((constructor)) static void initialize()
 {
-  const char * const filename = getenv("SAMPLER_FILE");
-  
-  if (filename)
+  if (logFilename())
     {
-      logFile = fopen(filename, "w");
-      if (!logFile) perror("logger: fopen error");
+      signal(SIGABRT, handleSignal);
+      signal(SIGBUS, handleSignal);
+      signal(SIGFPE, handleSignal);
+      signal(SIGSEGV, handleSignal);
+      signal(SIGTRAP, handleSignal);
     }
-  else
-    fputs("logger: not recording samples; no $SAMPLER_FILE given in environment\n", stderr);
+}
 
-  signal(SIGABRT, handleSignal);
-  signal(SIGBUS, handleSignal);
-  signal(SIGFPE, handleSignal);
-  signal(SIGSEGV, handleSignal);
-  signal(SIGTRAP, handleSignal);
+
+__attribute__((destructor)) static void shutdown()
+{
+  dumpInvariants(0);
 }

@@ -1,12 +1,13 @@
 \section{Introduction}
+\label{sec:introduction}
 
-It is an unfortunate fact that almost all deployed software systems
-have bugs, and that users often encounter these bugs.  For most
-software, the resources (measured in time, money, or people) that can
-be devoted to making improvements are limited, and the normal case is
-that just through sheer numbers the user community brings far more
-resources to bear on testing a piece of software than can be provided
-by the team responsible for producing the software.
+It is an unfortunate fact that essentially all deployed software
+systems have bugs, and that users often encounter these bugs.  The
+resources (measured in time, money, or people) available for making
+improvements are always limited, and the normal case is that just
+through sheer numbers the user community brings far more resources to
+bear on testing a piece of software than the team responsible for
+producing that software.
 
 This paper is about making lemonade from lemons.  Given that deployed
 software has problems, perhaps we can speed up the process of
@@ -15,7 +16,8 @@ the enormous number of executions performed by the software's user
 community.  We propose an infrastructure where some information about
 each user execution of a program is transmitted to a central database.
 The data gathered from all executions is analyzed to extract
-information that helps engineers find and fix problems more quickly.
+information that helps engineers find and fix problems more quickly;
+we term this {\em automatic bug isolation}.
 In our view, such an infrastructure has several benefits:
 \begin{itemize}
   
@@ -37,7 +39,9 @@ In our view, such an infrastructure has several benefits:
 \item While our primary interest is in finding and fixing quality
   problems, information gathered from user executions could be useful
   for other purposes.  For example, software authors may simply wish
-  to know which features are most commonly used.
+  to know which features are most commonly used, or we may be interested
+  in discovering any code not covered by in-house testing is ever
+  executed in practice, etc.
   
 \item Traditional user feedback about problems often involves a call
   from a relatively unsophisticated user to a perhaps only somewhat
@@ -51,7 +55,7 @@ In our view, such an infrastructure has several benefits:
   automated analysis, without human intervention.  Thus, when an
   engineer is finally available to work on a problem, the results of
   automated analysis done in the interim may help the engineer to
-  identify and fix the problem more quickly.
+  identify and fix even relatively simple problems more quickly.
   
   \disregard{
   \item Based on the current state of automatic analysis, clients can
@@ -102,10 +106,10 @@ bugs.  Initially, we believed that the interesting problem was the
 analysis of the data, and that gathering the data was relatively
 straightforward.  However, we discovered that designing a data
 gathering infrastructure that would scale is non-trivial.  As a
-result, this paper discusses mostly the design and implementation of
+result, this paper is as much about the design and implementation of
 the system that gathers the data from user executions
-(\autoref{sec:framework}). We do give a non-trivial example of
-subsequent data analysis in \autoref{sec:applications}.
+(\autoref{sec:framework}) as it is about the 
+subsequent data analysis (\autoref{sec:applications}).
 
 Our infrastructure is designed to gather information about a large
 number of program executions taking place remotely from a central site
@@ -134,7 +138,11 @@ negligible.  Furthermore, gathering a relatively small amount of data
 periodically from a large number of clients can quickly overwhelm the
 storage capacity of a central server.  In our experience, compression
 of the data must always be designed into the analysis; we discuss this
-further in \autoref{sec:applications}.
+further in \autoref{sec:compression}.
+
+%
+% FIX: We have three applications now.   - Alex
+%
 
 \autoref{sec:applications} presents two different applications of our
 framework.  In \autoref{sec:share} we consider how we can share the

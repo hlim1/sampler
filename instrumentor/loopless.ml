@@ -99,7 +99,7 @@ let loopless file =
 	prepareCFG func;
 	RemoveLoops.visit func;
 	ignore (computeCFGInfo func false);
-	if snd (ClassifyJumps.visit func) != [] then
+	if (ClassifyJumps.visit func).ClassifyJumps.backward != [] then
 	  loopless#add func.svar.vname false
     | _ ->
 	()

@@ -82,9 +82,6 @@ decurable.i: basis-cured.c
 	$(CPP) -include $(sampler)/libcountdown/event.h $< >$@ || rm -f $@
 	[ -r $@ ]
 
-clean::
-	$(MAKE) -C $(workDir) clean
-
 
 ########################################################################
 

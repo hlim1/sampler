@@ -26,6 +26,21 @@ resulting data is a statistically rigorous fair random sample, which
 in turn grants access to a large domain of powerful statistical
 analysis methodologies.
 
+Recent work in trace collection is broadening in scope from pure
+performance to more general program understanding.  Techniques for
+capturing program traces confront challenges similar to those we face
+here, such as minimizing performance overhead and managing large
+quantities of captured data.  Dynamic analysis in particular must
+encode, compress, or otherwise reduce an incoming trace stream in real
+time, as the program runs \cite{Demsky:RBEOOP:2002,ICSE01*221}.  It
+may be difficult to directly adapt dynamic trace analysis techniques
+to a domain where the trace is sampled and therefore incomplete.
+However, it may be possible to combine these approaches so that one
+fairly and randomly samples short trace ``bursts'', with complete data
+collection within each burst.  This would allow us to examine
+sequences of interrelated events, a task which is difficult under our
+current, strictly Bernoullian regime.
+
 Our effort to understand and debug programs by identifying invariants
 relates to prior work by the Daikon project \cite{ernst2001}.  Like
 Daikon, we begin with fairly unstructured guesses as to possible
@@ -50,9 +65,3 @@ Our approach explicitly accommodates the possibility of ``getting
 lucky'', such as overrunning a buffer but not actually crashing.
 DIDUCE works in the context of a safe language (Java) in which most
 forms of getting lucky cannot happen.
-
-\aside{Perhaps we should discuss various non-sampling tracing systems.
-  Value tracing, for example could yield data we could mine as we did
-  for \texttt{bc}.  Or could it?  Does it provide the necessary
-  statistical rigor?  Also, would discussing these dilute our efforts
-  to present sampling and mining as a single unified story?}

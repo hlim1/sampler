@@ -17,7 +17,7 @@ let dumpBase =
   value
 
 
-class visitor file =
+class visitor file digest =
   object (self)
     inherit FunctionBodyVisitor.visitor
     inherit BufferClass.c 16
@@ -29,6 +29,8 @@ class visitor file =
       in
       self#addString "*\t0.1\n";
       self#addString filename;
+      self#addChar '\n';
+      self#addString (Digest.to_hex (Lazy.force digest));
       self#addChar '\n';
 
     val expectedSid = ref 0
@@ -106,12 +108,12 @@ class visitor file =
   end
 
 
-let visit file =
+let visit file digest =
   if !embedCFG then
     TestHarness.time "  embedding CFG"
       (fun () ->
 	Dynamic.analyze file;
-	let visitor = new visitor file in
+	let visitor = new visitor file digest in
 	visitCilFileSameGlobals (visitor :> cilVisitor) file;
 	visitor#addChar '\n';
 	let contents = visitor#contents in

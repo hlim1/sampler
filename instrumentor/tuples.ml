@@ -19,8 +19,8 @@ class virtual builder file =
       slice
 
 
-    method finalize =
-      let signature = Digest.file file.fileName in
+    method finalize digest =
+      let signature = Lazy.force digest in
       let siteCount = integer nextId in
 
       let fixer = function

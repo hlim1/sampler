@@ -26,7 +26,7 @@ class virtual visitor schemeName file =
       ignore (visitCilFunction (visitor :> cilVisitor) func);
       visitor#sites
 
-    method private finalize = ()
+    method private finalize = ignore
 
     initializer
       Idents.register ("Scheme", fun () -> schemeName);
@@ -49,9 +49,9 @@ class virtual visitor schemeName file =
 	    foldGlobals file folder [])
       in
 
-      EmbedCFG.visit file;
-
-      TestHarness.time "  finalizing" (fun () -> self#finalize);
+      let digest = lazy (Digest.file file.fileName) in
+      TestHarness.time "  embedding CFG" (fun () -> EmbedCFG.visit file digest);
+      TestHarness.time "  finalizing" (fun () -> self#finalize digest);
 
       if !sample then
 	begin

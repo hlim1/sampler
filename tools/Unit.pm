@@ -31,6 +31,10 @@ sub new ($$) {
 
     $self->{name} = <$handle>;
     chomp $self->{name};
+
+    $self->{signature} = <$handle>;
+    chomp $self->{signature};
+
     $self->{handle} = $handle;
     $self->{functions} = new SymbolTable $self->name;
 

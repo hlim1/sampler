@@ -8,7 +8,7 @@ class visitor file =
 
     method private statementClassifier = classifier
 
-    method private finalize =
-      tuples#finalize;
-      super#finalize
+    method private finalize digest =
+      tuples#finalize digest;
+      super#finalize digest
   end

@@ -204,7 +204,7 @@ static void value()
       break;
     default:
       fprintf(stderr, "unexpected type code: %d\n", typecode);
-      abort();
+      exit(1);
     }
 
   putchar('\n');
@@ -222,7 +222,7 @@ int main()
   if (peek == 0)
     {
       fputs("cannot omit first file name\n", stderr);
-      abort();
+      exit(2);
     }
   else
     {

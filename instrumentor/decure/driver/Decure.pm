@@ -18,6 +18,7 @@ my $libcountdown = "$FindBin::Bin/../../../libcountdown";
 
 sub setDefaultArguments {
     my $self = shift;
+    $self->SUPER::setDefaultArguments;
     $self->{LD} = "libtool $self->{LD}";
     $self->{cycle} = 'acyclic';
 }

@@ -126,6 +126,30 @@ scrollkeeper-update -q
 
 ########################################################################
 #
+#  Package sampler-server
+#
+
+%package server
+Group: System Environment/Daemons
+Summary: CGI script to receive uploaded instrumentation reports
+Requires: webserver
+Requires: mod_unique_id.so
+
+%description server
+This package provides a CGI script that manages the server end of
+sampled instrumentation reporting.  It can be added to any standard
+Apache web server installation that supports CGI scripts and the
+$UNIQUE_ID environment variable.
+
+%files server
+%defattr(-,root,root,-)
+%doc AUTHORS COPYING
+%{_localstatedir}/www/cgi-bin/*
+%{_localstatedir}/www/sampler-uploads
+
+
+########################################################################
+#
 #  General scripts
 #
 

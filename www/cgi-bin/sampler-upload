@@ -19,7 +19,7 @@ exists $ENV{UNIQUE_ID} or die "\$UNIQUE_ID missing from environment\n";
 $ENV{UNIQUE_ID} =~ /^([-0-9A-Za-z@]+)$/ or die "\$UNIQUE_ID looks suspicious: \"$ENV{UNIQUE_ID}\"\n";
 print($query->header({-unique_id => $ENV{UNIQUE_ID}}));
 
-my $dir = "/var/www/uploads/$1";
+my $dir = "/var/www/sampler-uploads/$1";
 mkdir $dir or die "cannot build upload directory $dir: $!\n";
 END { rmdir $dir if $dir; }
 

@@ -51,6 +51,7 @@ AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
 AC_SUBST(toolsdir, '${package_libdir}/tools')
 AC_SUBST(package_datadir, '${datadir}/${PACKAGE}')
 AC_SUBST(launcherdir, '${package_datadir}/launcher')
+AC_SUBST(wwwdir, '${localstatedir}/www')
 
 find_driver_fragment=tools/find-driver.pl
 AC_SUBST_FILE(find_driver_fragment)
@@ -258,6 +259,8 @@ package.m4
 sampler.spec
 tools/Makefile
 tools/find-driver.pl
+www/Makefile
+www/cgi-bin/Makefile
 ])
 
 AC_CONFIG_FILES([instrumentor/driver/main], [chmod +x $ac_file])

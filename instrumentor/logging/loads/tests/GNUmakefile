@@ -1,7 +1,7 @@
 top := ../../../..
 
 front_end := ../../driver/main ../main
-CC := $(front_end) $(CC) -v -g -W -Wall -Werror -save-temps
+CC := $(front_end) -g -W -Wall -Werror -save-temps
 
 tests := 					\
 	array					\
@@ -41,10 +41,11 @@ $(decodes): %.decode: %.trace $(decoder)
 
 $(traces): %.trace: %
 	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
+	[ -r $@ ]
 
 $(objects): %.o: %.c $(top)/liblog/log.h $(top)/libcountdown/countdown.h $(front_end)
 
-$(front_end): $(force)
+../main: $(force)
 	$(recurse)
 
 $(decoder): $(force)

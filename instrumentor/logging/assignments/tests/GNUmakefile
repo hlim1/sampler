@@ -33,7 +33,7 @@ $(traces): %.trace: %
 
 $(objects): %.o: %.c $(top)/liblog/log.h $(top)/libcountdown/countdown.h $(front_end)
 
-$(front_end): $(force)
+../main: $(force)
 	$(recurse)
 
 $(decoder): $(force)

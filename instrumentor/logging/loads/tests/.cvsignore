@@ -3,7 +3,7 @@
 *.inst.c
 *.s
 *.trace
-
+.libs
 array
 bumpy
 conditional

@@ -3,5 +3,5 @@
 *.inst.c
 *.inst.s
 *.trace
-
+.libs
 test

@@ -163,7 +163,7 @@ while ($_ = shift) {
 	my $base = basename $1;
 	push @ld, "$base.inst.c";
 	
-    } elsif (/\.([ao]|so)$/) {
+    } elsif (/\.(a|lo|o|so)$/) {
 	push @ld, $_;
 	
     } else {

@@ -26,7 +26,7 @@ def __install(abled):
 
     source_96 = __source(abled, 96)
     #source_96.set_size_wildcarded(gtk.FALSE)
-    source_96.set_size(size_emblem)
+    source_96.set_size(ICON_SIZE_EMBLEM)
     set.add_source(source_96)
 
     factory = gtk.IconFactory()
@@ -34,7 +34,7 @@ def __install(abled):
     factory.add_default()
 
 
-size_emblem = gtk.icon_size_register('sampler-emblem', 96, 96)
+ICON_SIZE_EMBLEM = gtk.icon_size_register('sampler-emblem', 96, 96)
 
 __install('disabled')
 __install('enabled')

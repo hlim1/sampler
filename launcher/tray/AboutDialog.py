@@ -18,5 +18,5 @@ class AboutDialog(LazyDialog):
 
     def __enabled_refresh(self, enabled):
         widget = self.widget()
-        pixbuf = widget.render_icon(BlipIcons.stock[enabled], BlipIcons.size_emblem, "")
+        pixbuf = widget.render_icon(BlipIcons.stock[enabled], BlipIcons.ICON_SIZE_EMBLEM, "")
         widget.set_property('logo', pixbuf)

@@ -33,4 +33,4 @@ class UploaderTrayIcon(trayicon.TrayIcon):
         self.add(xml.get_widget('eventbox'))
 
         image = xml.get_widget('image')
-        self.__notifier = StatusIcon(client, image, gtk.IMAGE_SIZE_LARGE_TOOLBAR)
+        self.__notifier = StatusIcon(client, image, gtk.ICON_SIZE_LARGE_TOOLBAR)

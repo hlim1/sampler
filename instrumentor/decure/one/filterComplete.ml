@@ -2,15 +2,22 @@ open Cil
 open Rmtmps
 
 
+let error = ref false
+
+
 let main () =
   initCIL ();
   let filterFile filename =
-    let file = Frontc.parse filename () in
-    removeUnusedTemps ~markRoots:markCompleteProgramRoots file;
-    dumpFile defaultCilPrinter stdout file
+    try
+      let file = Frontc.parse filename () in
+      removeUnusedTemps ~markRoots:markCompleteProgramRoots file;
+      dumpFile defaultCilPrinter stdout file
+    with Frontc.ParseError _ ->
+      error := true
   in
   let filenames = List.tl (Array.to_list Sys.argv) in
-  List.iter filterFile filenames
+  List.iter filterFile filenames;
+  if !error then exit 1
 
 ;;
 

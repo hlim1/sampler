@@ -91,9 +91,10 @@ foreach my $package (@ARGV) {
     local ($,, $\) = ("\t", "\n");
     my $instrumentation_type = $guess_instrumentation_type{$app_id[0]};
     my $instrumentation_version = $guess_instrumentation_version;
-    my @fields = ($app_id, $instrumentation_type, $instrumentation_version, $build_date);
+    my @fields = (@app_id, $instrumentation_type, $instrumentation_version, $build_date);
     Common::escape @fields;
     print $upload @fields;
+    print @fields;
 
     # done with rpm query
     $rpm_query->close;
@@ -120,7 +121,8 @@ $dbh->do(q{
 	 application_version VARCHAR(50) NOT NULL,
 	 application_release VARCHAR(50) NOT NULL,
 	 instrumentation_type ENUM('branches', 'returns', 'scalar-pairs') NOT NULL,
-	 instrumentation_version VARCHAR(50) NOT NULL)
+	 instrumentation_version VARCHAR(50) NOT NULL,
+	 build_date DATETIME NOT NULL)
 	TYPE=InnoDB
     }) or die;
 
@@ -132,7 +134,8 @@ $dbh->do(q{
 	 application_version,
 	 application_release,
 	 instrumentation_type,
-	 instrumentation_version)
+	 instrumentation_version,
+	 build_date)
     },
 	 undef, $upload_filename)
     or die;
@@ -152,7 +155,8 @@ $dbh->do(q{
 	 application_version,
 	 application_release,
 	 instrumentation_type,
-	 instrumentation_version)
+	 instrumentation_version,
+	 build_date)
 
 	SELECT *
 	FROM upload

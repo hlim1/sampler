@@ -28,8 +28,10 @@ sub dump ($$\%) {
     my ($unit, $scheme, $tuples) = @_;
     my $sites = $siteInfo->find($unit, $scheme);
 
-    @{$tuples->{lines}} == @{$sites->{lines}}
-	or die "mismatched count of samples and sites for unit $unit, scheme $scheme\n";
+    my $tupleCount = @{$tuples->{lines}};
+    my $siteCount = @{$sites->{lines}};
+    $tupleCount == $siteCount
+	or die "mismatched count of samples ($tupleCount) and sites ($siteCount) for unit $unit, scheme $scheme\n";
 
     local ($,, $\) = ("\t", "\n");
     foreach (0 .. $#{$tuples->{lines}}) {

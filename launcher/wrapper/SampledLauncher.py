@@ -26,6 +26,7 @@ class SampledLauncher(Launcher):
 
         # set up reporting
         self.__pipe = os.pipe()
+        os.environ['SAMPLER_FILE'] = '/dev/fd/%d' % self.__pipe[1]
         os.environ['SAMPLER_REPORT_FD'] = '%d' % self.__pipe[1]
         os.environ['GNOME_DISABLE_CRASH_DIALOG'] = '1'
         os.environ['SAMPLER_REAL_EXECUTABLE'] = self.app.executable()

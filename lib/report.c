@@ -35,13 +35,7 @@ static void openReportFile()
 {
   const char *envar;
 
-  if ((envar = getenv("SAMPLER_FILE")))
-    {
-      reportFile = fopen(envar, "w");
-      closeOnExec(fileno(reportFile));
-    }
-
-  else if ((envar = getenv("SAMPLER_REPORT_FD")))
+  if ((envar = getenv("SAMPLER_REPORT_FD")))
     {
       char *tail;
       const int fd = strtol(envar, &tail, 0);
@@ -52,8 +46,14 @@ static void openReportFile()
 	}
     }
 
-  unsetenv("SAMPLER_FILE");
+  else if ((envar = getenv("SAMPLER_FILE")))
+    {
+      reportFile = fopen(envar, "w");
+      closeOnExec(fileno(reportFile));
+    }
+
   unsetenv("SAMPLER_REPORT_FD");
+  unsetenv("SAMPLER_FILE");
 
   if (reportFile)
     fputs("<report id=\"samples\">\n", reportFile);

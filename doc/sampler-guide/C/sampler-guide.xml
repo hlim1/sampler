@@ -433,25 +433,30 @@
 	</varlistentry>
 
 	<varlistentry>
-	  <term><envar>$SAMPLER_FILE</envar></term>
 	  <term><envar>$SAMPLER_REPORT_FD</envar></term>
+	  <term><envar>$SAMPLER_FILE</envar></term>
 	  <listitem>
-	    <para><envar>$SAMPLER_FILE</envar> names a file into which
-	    the sampler report will be written at program exit time.
-	    <envar>$SAMPLER_REPORT_FD</envar> gives the number of a
-	    file descriptor which is to receive the report.  This file
-	    descriptor must already be open, and will be closed once
-	    the report is complete.</para>
+	    <para>If <envar>$SAMPLER_REPORT_FD</envar> is set, then it
+	    gives the number of a file descriptor into which the
+	    sampler report will be written at program exit time.  This
+	    file descriptor must already be open, and will be closed
+	    once the report is complete.</para>
 
-	    <para>If neither is set, no post-execution report will be
-	    produced.  This does not disable sampling while the
-	    program runs, but it does mean that the results of the
-	    sampling will not be recorded anywhere once the program
-	    exits.</para>
+	    <para> <envar>$SAMPLER_FILE</envar> is set, then names a
+	    file which is to receive the report.  The named file will
+	    be created if it does not already exist.  If the file does
+	    already exist, any existing contents will be
+	    overwritten.</para>
 
-	    <para>If both are set, <envar>$SAMPLER_FILE</envar> is
-	    used and <envar>$SAMPLER_REPORT_FD</envar> is
-	    disregarded.</para>
+	    <para>If neither of these environment variables is set,
+	    then no post-execution report will be produced.  This does
+	    not disable sampling while the program runs, but it does
+	    mean that the results of the sampling will not be recorded
+	    anywhere once the program exits.</para>
+
+	    <para>If both of these environment variables are set, then
+	    <envar>$SAMPLER_REPORT_FD</envar> is used and
+	    <envar>$SAMPLER_FILE</envar> is disregarded.</para>
 	  </listitem>
 	</varlistentry>
 

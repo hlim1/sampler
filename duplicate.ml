@@ -12,7 +12,7 @@ let cloneLabel = function
 
 
 class visitor = object
-  inherit SkipVisitor.visitor
+  inherit FunctionBodyVisitor.visitor
 
   val clones = new StmtMap.container
   val mutable forwardJumps = []
@@ -22,10 +22,6 @@ class visitor = object
       dest := clones#find !dest
     in
     List.iter patchJump forwardJumps
-
-
-  method vblock block =
-    ChangeDoChildrenPost (block, identity)
 
 
   method vstmt stmt =

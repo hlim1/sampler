@@ -17,8 +17,8 @@ include $(top_srcdir)/ocaml/rules.mk
 libdirs += $(top_builddir)/ocaml
 syslibs = str.$(cma) unix.$(cma)
 
+instrumentor_SCRIPTS = main
 
-all-local: main
 
 libraries.ml: %: build-libraries %.in
 	./$^ >$@.tmp

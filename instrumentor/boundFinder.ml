@@ -18,11 +18,53 @@ let updateBound best example direction location =
       location)
 
 
-let makeGlobals typ =
+let makeGlobals =
   let nextId = ref 0 in
-  let prefix = "samplerBounds_" ^ (string_of_int !nextId) in
-  (makeGlobalVar (prefix ^ "_min") typ,
-   makeGlobalVar (prefix ^ "_max") typ)
+  fun typ ->
+    let prefix = "samplerBounds_" ^ (string_of_int !nextId) in
+    incr nextId;
+    (makeGlobalVar (prefix ^ "_min") typ,
+     makeGlobalVar (prefix ^ "_max") typ)
+
+
+let extremesUnsigned typ =
+  mkCast zero typ,
+  mkCast mone typ
+
+
+let extremesSigned bits typ =
+  let shift initial =
+    mkCast (kinteger64 ILongLong (Int64.shift_right initial (64 - bits))) typ
+  in
+  shift Int64.min_int,
+  shift Int64.max_int
+
+
+let extremes typ =
+  let builder = match typ with
+  | TInt (ikind, _) ->
+      begin
+	match ikind with
+	| IChar ->
+	    if !char_is_unsigned then
+	      extremesUnsigned
+	    else
+	      extremesSigned 8
+	| ISChar -> extremesSigned 8
+	| IShort -> extremesSigned 16
+	| IInt | ILong -> extremesSigned 32
+	| ILongLong -> extremesSigned 64
+	| IUChar | IUInt | IUShort | IULong | IULongLong -> extremesUnsigned
+      end
+  | TPtr _ as typ ->
+      extremesUnsigned
+  | TEnum _ as typ ->
+      extremesSigned 32
+  | other ->
+      ignore (bug "don't know extreme values of %a\n" d_type other);
+      failwith "internal error"
+  in
+  builder typ
 
 
 class visitor global func =
@@ -34,13 +76,20 @@ class visitor global func =
 
     method vstmt stmt =
       let build replacement left location _ =
-	let leftType = typeOfLval left in
+	let leftType = unrollType (typeOfLval left) in
 	let newLeft = var (Locals.makeTempVar func leftType) in
 	let min, max = makeGlobals leftType in
-	globals <- GVar (min, {init = None}, location) :: GVar (max, {init = None}, location) :: globals;
+	let maxInit, minInit = extremes leftType in
+	globals <-
+	  GVar (min, {init = Some (SingleInit minInit)}, location) ::
+	  GVar (max, {init = Some (SingleInit maxInit)}, location) ::
+	  globals;
+	let site = mkStmt (Block (mkBlock [mkStmt (updateBound min (Lval newLeft) Min location);
+					   mkStmt (updateBound max (Lval newLeft) Max location)]))
+	in
+	Sites.registry#add func site;
 	Block (mkBlock [mkStmtOneInstr (replacement newLeft);
-			mkStmt (updateBound min (Lval newLeft) Min location);
-			mkStmt (updateBound max (Lval newLeft) Max location);
+			site;
 			mkStmtOneInstr (Set (left, Lval newLeft, location))])
       in
 

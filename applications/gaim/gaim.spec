@@ -18,7 +18,7 @@ BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel
 Requires:   gtk+2.0 >= 2.0.0
 BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel
 %endif
-%sampler_tags
+%{?sampler_tags}
 
 %package devel
 Summary: Development headers, documentation, and libraries for Gaim.
@@ -36,7 +36,7 @@ unique features, such as perl scripting and C plugins.
 
 Gaim is NOT affiliated with or endorsed by AOL.
 
-%sampler_description
+%{?sampler_description}
 
 %description devel
 
@@ -44,15 +44,15 @@ The gaim-devel package contains the header files, developer
 documentation, and libraries required for development of gaim scripts
 and plugins.
 
-%sampler_description
+%{?sampler_description}
 
 %prep
 %setup
-%sampler_prep
+%{?sampler_prep}
 
 %build
 %define sampler_cc_flags --no-threads
-%sampler_prebuild
+%{?sampler_prebuild}
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --bindir=%{_bindir} \
                                     --datadir=%{_datadir} \
@@ -70,7 +70,7 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      libdir=%{buildroot}%{_libdir} mandir=%{buildroot}%{_mandir} \
      sysconfdir=%{buildroot}%{_sysconfdir} \
      install
-%sampler_install
+%{?sampler_install}
 
 %clean
 rm -rf %{buildroot}
@@ -89,7 +89,7 @@ rm -rf %{buildroot}
 %{_datadir}/pixmaps/*
 %{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
-%sampler_files
+%{?sampler_files}
 
 %files devel
 
@@ -99,10 +99,10 @@ rm -rf %{buildroot}
 %attr(755, root, root) %{_libdir}/libgaim-remote.la
 %{_includedir}/gaim-remote/*.h
 
-%sampler_package
+%{?sampler_package}
 
 %post
-%sampler_post
+%{?sampler_post}
 
 %changelog
 * Tue Aug 12 2003 Ben Liblit <liblit@cs.berkeley.edu> 0.66-1.sam.1

@@ -1,7 +1,7 @@
 # RPM specfile for evolution module
 # Generated Tue Jul  8 20:57:03 2003 GMT by Ximian build system
-# $Id: evolution.spec,v 1.3 2003/08/13 01:50:26 liblit Exp $
-# from $Id: evolution.spec,v 1.3 2003/08/13 01:50:26 liblit Exp $
+# $Id: evolution.spec,v 1.4 2003/08/13 22:20:59 liblit Exp $
+# from $Id: evolution.spec,v 1.4 2003/08/13 22:20:59 liblit Exp $
 
 %define nam	evolution
 %define ver	1.4.3
@@ -55,7 +55,7 @@ Provides:	ximian-evolution = %{?epoch:%{epoch}:}%{version}-%{?ximrev:%{ximrev}}%
 Obsoletes:	evolution1.3
 Prereq:	GConf2
 Prereq:	scrollkeeper
-%sampler_tags
+%{?sampler_tags}
 
 %description
 Evolution is the GNOME mailer, calendar, contact manager and
@@ -63,7 +63,7 @@ communications tool.  The tools which make up Evolution will
 be tightly integrated with one another and act as a seamless
 personal information-management tool.
 
-%sampler_description
+%{?sampler_description}
 
 %files
 %defattr(-, root, root)
@@ -112,14 +112,14 @@ personal information-management tool.
 %dir /usr/lib/evolution/1.4/camel-providers
 %dir /usr/libexec/evolution/1.4/camel
 %attr (2755, root, mail) /usr/libexec/evolution/1.4/camel/camel-lock-helper
-%sampler_files
+%{?sampler_files}
 
 
 %post
 ldconfig
 env PATH=$PATH:/usr/bin LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib scrollkeeper-update >/dev/null 2>&1
 GCONF_CONFIG_SOURCE=`/usr/bin/gconftool-2 --get-default-source` /usr/bin/gconftool-2 --makefile-install-rule /etc/gconf/schemas/apps_evolution_addressbook.schemas /etc/gconf/schemas/apps_evolution_shell.schemas /etc/gconf/schemas/apps_evolution_summary.schemas /etc/gconf/schemas/evolution-mail.schemas /etc/gconf/schemas/apps_evolution_calendar.schemas
-%sampler_post
+%{?sampler_post}
 
 %postun
 env PATH=$PATH:/usr/bin LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib scrollkeeper-update >/dev/null 2>&1
@@ -140,7 +140,7 @@ personal information-management tool.
 This package contains conduits needed by gnome-pilot to
 synchronize your Palm with Evolution.
 
-%sampler_description
+%{?sampler_description}
 
 %files -n evolution-pilot
 %defattr(-, root, root)
@@ -164,7 +164,7 @@ personal information-management tool.
 This package contains the files necessary to develop applications
 using Evolution's libraries.
 
-%sampler_description
+%{?sampler_description}
 
 %files -n evolution-devel
 %defattr(-, root, root)
@@ -203,7 +203,7 @@ using Evolution's libraries.
 /usr/lib/evolution/1.4/libcamel.a
 /usr/lib/evolution/1.4/libcamel.la
 
-%sampler_package
+%{?sampler_package}
 
 # $RPM_COMMAND is an environment variable used by the Ximian build
 # system to control the build process with finer granularity than RPM
@@ -220,13 +220,13 @@ dist)
 all)
 %setup  -q -n evolution-1.4.3
 %patch0 -p 0
-%sampler_prep
+%{?sampler_prep}
     ;;
 esac
 
 %build
 %define sampler_cc_flags --threads
-%sampler_prebuild
+%{?sampler_prebuild}
 MAKE=${MAKE:-make}
 RPM_COMMAND=${RPM_COMMAND:-all}
 DESTDIR=${DESTDIR:-"$RPM_BUILD_ROOT"}
@@ -277,7 +277,7 @@ install|all)
 esac
 
 %define sampler_wrapped %{_bindir}/%{name}-1.4
-%sampler_install
+%{?sampler_install}
 
 %clean
 DESTDIR=${DESTDIR:-"$RPM_BUILD_ROOT"}

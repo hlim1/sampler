@@ -1,7 +1,7 @@
 # RPM specfile for nautilus module
 # Generated Tue Jun 10 18:19:26 2003 GMT by Ximian build system
-# $Id: nautilus.spec,v 1.3 2003/08/14 22:23:38 liblit Exp $
-# from $Id: nautilus.spec,v 1.3 2003/08/14 22:23:38 liblit Exp $
+# $Id: nautilus.spec,v 1.4 2003/08/16 00:30:21 liblit Exp $
+# from $Id: nautilus.spec,v 1.4 2003/08/16 00:30:21 liblit Exp $
 
 %define nam	nautilus
 %define ver	2.2.4
@@ -78,7 +78,7 @@ Conflicts:	nautilus-devel < %{version}-%{release}
 Conflicts:	nautilus-devel > %{version}-%{release}
 Conflicts:	nautilus-printers < %{version}-%{release}
 Conflicts:	nautilus-printers > %{version}-%{release}
-%sampler_tags
+%{?sampler_tags}
 
 %description
 				
@@ -88,7 +88,7 @@ rich user experience. Nautilus is an free software project developed
 under the GNU General Public License and is a core component of the
 GNOME desktop project.
 
-%sampler_description
+%{?sampler_description}
 
 
 %files
@@ -124,12 +124,12 @@ GNOME desktop project.
 /etc/gnome-vfs-2.0/vfolders/*
 /etc/gconf/schemas/*
 /etc/X11/*
-%sampler_files
+%{?sampler_files}
 
 
 %post
 GCONF_CONFIG_SOURCE=`/usr/bin/gconftool-2 --get-default-source` /usr/bin/gconftool-2 --makefile-install-rule /etc/gconf/schemas/apps_nautilus_preferences.schemas
-%sampler_post
+%{?sampler_post}
 
 ldconfig
 
@@ -146,7 +146,7 @@ Provides:	ximian-nautilus-printers = %{?epoch:%{epoch}:}%{version}-%{?ximrev:%{x
 %description -n nautilus-printers
 This package provides a view for managing printers in nautilus.
 
-%sampler_description
+%{?sampler_description}
 
 %files -n nautilus-printers
 %defattr(-, root, root)
@@ -170,7 +170,7 @@ Conflicts:	nautilus2-devel < %{version}-%{release}
 This package provides the necessary development libraries and include
 files to allow you to develop Nautilus components.
 
-%sampler_description
+%{?sampler_description}
 
 %files -n nautilus-devel
 %defattr(-, root, root)
@@ -181,7 +181,7 @@ files to allow you to develop Nautilus components.
 /usr/lib/pkgconfig/*
 
 
-%sampler_package
+%{?sampler_package}
 
 
 # $RPM_COMMAND is an environment variable used by the Ximian build
@@ -220,13 +220,13 @@ dist|all)
 %patch -p1 -P 16
 %patch -p1 -P 17
 %patch -p1 -P 18
-%sampler_prep
+%{?sampler_prep}
     ;;
 esac
 
 %build
 %define sampler_cc_flags --threads
-%sampler_prebuild
+%{?sampler_prebuild}
 MAKE=${MAKE:-make}
 RPM_COMMAND=${RPM_COMMAND:-all}
 DESTDIR=${DESTDIR:-"$RPM_BUILD_ROOT"}
@@ -266,7 +266,7 @@ rm ${DESTDIR}/usr/lib/bonobo/*.la
 rm ${DESTDIR}/usr/lib/bonobo/*.a
 rm ${DESTDIR}/usr/share/control-center-2.0/capplets/nautilus-file-management-properties.desktop
 rm ${DESTDIR}/usr/share/gnome/network/nautilus-server-connect.desktop
-%sampler_install
+%{?sampler_install}
 	    
     ;;
 esac

@@ -5,6 +5,22 @@ AM_INIT_AUTOMAKE
 
 ########################################################################
 #
+#  Sampler internal configuration
+#
+
+
+AC_MSG_CHECKING(for precomputed countdown size)
+PRECOMPUTE_COUNT=1021
+AC_SUBST(PRECOMPUTE_COUNT, $PRECOMPUTE_COUNT)
+AC_MSG_RESULT($PRECOMPUTE_COUNT)
+
+AC_MSG_CHECKING(for absolute build directory)
+AC_SUBST(ABSOLUTE_BUILDDIR, $PWD)
+AC_MSG_RESULT($PWD)
+
+
+########################################################################
+#
 #  OCaml configuration
 #
 
@@ -87,6 +103,7 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 AC_CONFIG_FILES([
 Makefile
 doc/Makefile
+doc/config.xml
 fuzz/Makefile
 instrumentor/Makefile
 instrumentor/config.mk
@@ -112,6 +129,7 @@ launcher/python/Makefile
 launcher/applications/Makefile
 launcher/applications/gnumeric/Makefile
 libcountdown/Makefile
+libcountdown/cyclic-size.h
 libreport/Makefile
 mining/Makefile
 mining/libodbc++/Makefile

@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
                          "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
-                         [<!ENTITY samplerdir "~moss/bug-isolation/sampler">
-                          <!ENTITY cycliccount "1024">]>
+                         [<!ENTITY % config SYSTEM "config.xml"> %config;]>
 <article>
   <articleinfo>
     <title>Guide to the Bug Isolation Sampler</title>

@@ -27,7 +27,6 @@ class visitor = object
   method vstmt _ = DoChildren
 
   method vinst inst =
-    prerr_endline "considering instruction";
     match inst with
     | Set((Mem addr, _), data, location) as original ->
 	Printf.eprintf "%s:%i: adding instrumentation point\n"

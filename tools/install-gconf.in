@@ -42,8 +42,6 @@ sub usage () {
 Usage: $0 [options]
 
   --name=NAME
-  --version=X.Y.Z
-  --release=X.Y.Z
   --sparsity=NUM
   --reporting-url=URL
   --install=PATH

@@ -7,8 +7,8 @@ type headers = (stmt * stmt) SetClass.container
 
     
 let collectLoopHeaders headers root =
-  let arrived = new SetClass.container
-  and departed = new SetClass.container in
+  let arrived = new StmtSet.container
+  and departed = new StmtSet.container in
 
   let rec explore stmt =
     arrived#add stmt;
@@ -59,7 +59,7 @@ let collectPostCallHeaders headers stmts =
 
 
 let collectHeaders (root, stmts) =
-  let headers = new SetClass.container in
+  let headers = new EdgeSet.container in
   
   headers#add (dummyStmt, root);
   collectLoopHeaders headers root;
@@ -79,13 +79,13 @@ class visitor = object
     print_endline ("visiting function " ^ func.svar.vname);
     printf "\theaders from entry: 1: (%i, %i)\n" dummyStmt.sid root.sid;
 
-    let loopHeaders = new SetClass.container in
+    let loopHeaders = new EdgeSet.container in
     collectLoopHeaders loopHeaders root;
     printf "\theaders from loops: %i:" loopHeaders#size;
     loopHeaders#iter (fun (s, d) -> printf " (%i, %i)" s.sid d.sid);
     print_newline ();
 
-    let callHeaders = new SetClass.container in
+    let callHeaders = new EdgeSet.container in
     collectPostCallHeaders callHeaders stmts;
     printf "\theaders from calls: %i:" callHeaders#size;
     callHeaders#iter (fun (s, d) -> printf " (%i, %i)" s.sid d.sid);

@@ -2,26 +2,26 @@ exception Duplicate_key
 exception Missing_key
    
 
-class ['a] container = object(self)
+class ['a] container (indexer : 'a -> 'b) = object(self)
     
-  val storage : 'a list ref = ref []
+  val storage = ref []
 
   method add key =
     if not (self#mem key) then
-      storage := key :: !storage
+      storage := (indexer key, key) :: !storage
 			 
-  method mem key = List.mem key !storage
+  method mem key = List.mem_assoc (indexer key) !storage
       
   method isEmpty = !storage == []
 
   method size = List.length !storage
 
-  method choose = List.hd !storage
+  method choose = snd (List.hd !storage)
 
   method remove chaff =
     if not (self#mem chaff) then raise Missing_key;
-    storage := List.filter ((!=) chaff) !storage
+    storage := List.remove_assoc (indexer chaff) !storage
 
   method iter action =
-    List.iter action !storage
+    List.iter (fun (_, key) -> action key) !storage
 end

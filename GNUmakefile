@@ -46,7 +46,7 @@ run: main $(infile).i
 cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), cfg utils foreach dotify skipVisitor functionBodyVisitor splitAfterCalls testHarness %)
 	$(link)
 
-main: %: $(libs) $(addsuffix .$(cmo), mapClass setClass foreach cfg skipVisitor functionBodyVisitor splitAfterCalls collectHeaders stores weighPaths testHarness %)
+main: %: $(libs) $(addsuffix .$(cmo), mapClass setClass edgeSet stmtSet foreach cfg skipVisitor functionBodyVisitor splitAfterCalls collectHeaders stores weighPaths testHarness %)
 	$(link)
 
 cfg-bug: %: $(libs) $(addsuffix .$(cmo), utils skipVisitor functionBodyVisitor splitAfterCalls %)
@@ -86,7 +86,7 @@ force:
 	dot -Tps -Gsize=7.5,10 -Gcenter=1 -o $@ $<
 
 clean: force
-	rm -f $(targets) $(infile).i
+	rm -f $(targets) hello.i
 	rm -f $(foreach suffix, cmi cmo cmx o, *.$(suffix))
 	rm -f $(foreach kind, cfg dom, $(foreach format, dot ps, *.$(kind).$(format)))
 .PHONY: clean

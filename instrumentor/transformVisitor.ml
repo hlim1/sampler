@@ -1,11 +1,6 @@
 open Cil
 
 
-let visitSameBlock visitor original =
-  let replacement = visitCilBlock visitor original in
-  assert (replacement == original)
-
-
 class virtual visitor file = object(self)
   inherit FunctionBodyVisitor.visitor
 

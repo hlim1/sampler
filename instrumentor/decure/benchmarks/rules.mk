@@ -13,17 +13,21 @@ decure := ../..
 instrumentor := $(decure)/..
 sampler := $(instrumentor)/..
 
-workHome := $(instrumentor)/cil
+include ../config.mk
 workDir := $(workHome)/test
 workExec := $(workDir)/$(testDir)/$(exec)
 workComb := $(workExec)_comboptimcured.i
 
+ifdef buildOnlys
 -include functions.mk
-alwaysForms := $(addprefix always-, $(functions:%=only-%) all none)
+onlys := $(functions:%=only-%)
+endif
+
+alwaysForms := $(addprefix always-, $(onlys) all none)
 alwaysExecs := $(alwaysForms:=.exe)
 alwaysSrcs  := $(alwaysForms:=.c)
 
-sampleForms := $(addprefix sample-, $(functions:%=only-%) all)
+sampleForms := $(addprefix sample-, $(onlys) all)
 sampleExecs := $(sampleForms:=.exe)
 sampleSrcs  := $(sampleForms:=.c)
 
@@ -37,7 +41,6 @@ LOADLIBES := $(trusted:%=$(workDir)/$(testDir)/%) $(workHome)/obj/x86_LINUX/ccur
 link = $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 decureMain := $(decure)/main
-#decureMainDep := $(decureMain
 runDecure := $(decureMain)
 
 
@@ -58,17 +61,20 @@ sample: $(sort $(sampleExecs))
 
 source: $(sort $(allExecs:.exe=.c))
 
+force:
+.PHONY: force
+
 $(workComb):
 	$(MAKE) -C $(workDir) ITERATIONS=0 $(name)
-	@[ -r $@ ]
+	[ -r $@ ]
 
 basis-cured.c: $(decure)/filterComplete $(workComb)
 	$^  >$@ || rm -f $@
-	@[ -r $@ ]
+	[ -r $@ ]
 
 decurable.i: basis-cured.c
 	$(CPP) -include $(sampler)/libcountdown/event.h $< >$@ || rm -f $@
-	@[ -r $@ ]
+	[ -r $@ ]
 
 
 ########################################################################
@@ -80,14 +86,14 @@ $(alwaysExecs): %.exe: %.c
 
 always-%.c: runDecure += --no-sample
 
-always-only-%.c: decurable.i $(decureMainDep)
+always-only-%.c: decurable.i
 	$(runDecure) --only $* $< >$@ || rm -f $@
-	@[ -r $@ ]
+	[ -r $@ ]
 
-always-all.c: decurable.i $(decureMainDep)
+always-all.c: decurable.i
 	$(runDecure) $< >$@ || rm -f $@
 
-always-none.c: decurable.i $(decureMainDep)
+always-none.c: decurable.i
 	$(runDecure) --only @ $< >$@ || rm -f $@
 
 
@@ -109,11 +115,11 @@ $(sampleExecs): %.exe: %.c
 
 sample-%.c: runDecure += --sample
 
-sample-only-%.c: decurable.i $(decureMainDep)
+sample-only-%.c: decurable.i
 	$(runDecure) --only $* $< >$@ || rm -f $@
-	@[ -r $@ ]
+	[ -r $@ ]
 
-sample-all.c: decurable.i $(decureMainDep)
+sample-all.c: decurable.i
 	$(runDecure) $< >$@ || rm -f $@
 
 
@@ -125,9 +131,9 @@ clean::
 ########################################################################
 
 
-stats: decurable.i $(decureMainDep)
+stats: decurable.i
 	$(runDecure) --show-stats $< >/dev/null 2>$@ || rm -f $@
-	@[ -r $@ ]
+	[ -r $@ ]
 
 
 clean::
@@ -139,8 +145,10 @@ clean::
 
 loopless: $(instrumentor)/loopless decurable.i
 	$^ >$@ || rm -f $@
-	@[ -r $@ ]
+	[ -r $@ ]
 
+$(instrumentor)/loopless: force
+	$(MAKE) -C $(@D) $(@F)
 
 clean::
 	rm -f loopless
@@ -151,11 +159,11 @@ clean::
 
 functions-list: $(decure)/listCandidates decurable.i
 	$^ >$@ || rm -f $@
-	@[ -r $@ ]
+	[ -r $@ ]
 
 functions.mk: ../make-functions-mk functions-list
 	$< <functions-list >$@ || rm -f $@
-	@[ -r $@ ]
+	[ -r $@ ]
 
 clean::
 	if [ -d .libs ]; then rmdir .libs; fi
@@ -191,7 +199,7 @@ idents: $(allIdents)
 
 $(allIdents): %.ident: %.exe
 	ident $< >$@ || rm -f $@
-	@[ -r $@ ]
+	[ -r $@ ]
 
 clean::
 	rm -f *.ident

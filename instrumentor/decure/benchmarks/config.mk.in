@@ -1,0 +1,2 @@
+top_builddir := ../@top_builddir@
+workHome := @CIL_HOME@

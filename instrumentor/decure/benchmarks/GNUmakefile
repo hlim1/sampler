@@ -51,6 +51,10 @@ spotless: $(benchmarks:=/spotless)
 $(benchmarks:=/spotless): force
 	+$(recurse)
 
+GNUmakefile: config.mk
+config.mk: %: ../../../config.status %.in
+	cd ../../.. && ./config.status instrumentor/decure/benchmarks/config.mk
+
 force:
 .PHONY: force
 

@@ -7,6 +7,7 @@ let phases =
    SimplifyRights.phase ();
    CheckSimplicity.phase ();
    Instrument.phase ();
+   Duplicate.phase ();
    "dump", dumpFile defaultCilPrinter stdout
  ]
     

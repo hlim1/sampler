@@ -52,7 +52,7 @@ dumper: %: $(libs) $(addsuffix .$(cmo), skipVisitor cfg functionBodyVisitor test
 cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), cfg utils foreach dotify skipVisitor functionBodyVisitor splitAfterCalls testHarness %)
 	$(link)
 
-main: %: $(libs) $(addsuffix .$(cmo), skipVisitor functionBodyVisitor currentFunctionVisitor simplifyReturns simplifyLefts simplifyRights checkSimplicity instrument testHarness %)
+main: %: $(libs) $(addsuffix .$(cmo), identity skipVisitor functionBodyVisitor currentFunctionVisitor simplifyReturns simplifyLefts simplifyRights checkSimplicity instrument duplicate testHarness %)
 	$(link)
 
 checker: %: $(libs) $(addsuffix .$(cmo), %)

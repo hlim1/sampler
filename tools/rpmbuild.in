@@ -8,9 +8,6 @@ use FindBin;
 ########################################################################
 
 
-my $scheme = shift
-    or die "Usage: $0 <scheme> <rpmbuild flags> ...\n";
-
 @find_driver_fragment@
 
 
@@ -23,18 +20,18 @@ my %macros = (
 	      sampler_tooldir => "$FindBin::Bin",
 
 	      sampler_cc => $driver,
-	      sampler_scheme => $scheme,
 	      sampler_cc_flags => '%{nil}',
+	      sampler_cc_version => '%(rpm -q sampler-devel)',
 
 	      'sampler_tags(s:)' => <<'EOF',
 Requires: sampler >= 0.4
-BuildRequires: sampler-devel >= 0.4
+BuildRequires: sampler-devel >= 0.7.4
 %global _sampler_source %{-s*}%{!-s:1}
 Source%{_sampler_source}: %{name}-sampler.tar.gz
 %{nil}
 EOF
 
-	      sampler_description => 'This package has been built with sampled %{sampler_scheme} instrumentation.',
+	      sampler_description => 'This package has been built with sampled bug feedback instrumentation.',
 
 	      sampler_package => <<'EOF',
 %package samplerinfo
@@ -42,9 +39,9 @@ Summary: Sampler information for package %{name}
 Group: Development/Debug
 AutoReqProv: 0
 %description samplerinfo
-This package provides sampler information for package %{name}, built
-using the "%{sampler_scheme}" instrumentation scheme.  You do not need
-this to use %{name}.  Most users have no need to install this package.
+This package provides sampler information for package %{name}.  You do
+not need this to use %{name}.  Most users have no need to install this
+package.
 %files samplerinfo
 %defattr(-,root,root)
 %{_sampler_libdir}/sites/*
@@ -60,9 +57,9 @@ EOF
 	      _sampler_name => '%{?sampler_name}%{!?sampler_name:%{name}}',
 
 	      sampler_prebuild => <<'EOF',
-export CC='%{sampler_cc} --sampler-scheme=%{sampler_scheme} %{sampler_cc_flags}'
+export CC='%{sampler_cc} %{sampler_cc_flags}'
 sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/application.schemas.in >sampler/sampler-%{name}.schemas
-sed -e 's/@sampler_name@/%{_sampler_name}/g' -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >sampler/config
+sed -e 's/@sampler_name@/%{_sampler_name}/g' -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >sampler/config
 sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' -e 's!@sampler_libdir@!%{_sampler_libdir}!g' -e 's!@name@!%{name}!g' <sampler/wrapper.in >sampler/wrapper
 chmod a+x sampler/wrapper
 %{nil}

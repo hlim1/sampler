@@ -4,6 +4,8 @@
 
 ** Various and sundry minor bug fixes to developer tools.
 
+** Improved support for multiple schemes in developer tools.
+
 * sampler-0.7.3
 
 ** Minor bug fixes in feedback analysis tools.

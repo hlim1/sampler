@@ -12,7 +12,7 @@ include $(top)/rules.mk
 
 
 logging := $(dissect) $(logCollector)
-logging.$(cma): $(libcil) $(top)/harness.$(cma) $(logging)
+logging.$(cma): $(logging)
 	$(archive)
 
 $(top)/%.cma: force

@@ -9,10 +9,10 @@ include $(top)/rules.mk
 ########################################################################
 
 
-driver.$(cma): libs := str.$(cma) unix.$(cma)
+driver.$(cma):
 driver.$(cma): $(instDriver)
 	$(archive)
 
-main = driver.$(cma) main.cmo
+main = driver.$(cma) main.$(cmo)
 main: $(main)
 	$(link)

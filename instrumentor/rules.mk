@@ -8,8 +8,8 @@ compiler := $(ocamlc) $(ocamlflags)
 
 depend = ocamldep $(includes) $< | $(fixdeps) >$@
 compile = $(compiler) $(includes) -c $<
-archive = $(compiler) -a -o $@ $(libs) $^
-link = $(compiler) -o $@ $(libs) $^
+archive = $(compiler) -a -o $@ $^
+link = $(compiler) -o $@ $(syslibs) $^
 
 recurse = $(MAKE) -C $(@D) $(@F)
 
@@ -18,6 +18,7 @@ recurse = $(MAKE) -C $(@D) $(@F)
 
 
 libcil := $(cilobjdir)/cil.$(cma)
+syslibs := str.$(cma) unix.$(cma)
 
 impls := $(basename $(wildcard *.ml))
 ifaces := $(basename $(wildcard *.mli))
@@ -61,7 +62,7 @@ force:
 
 clean-here:: force
 	rm -f $(targets)
-	rm -f $(foreach suffix, cmi cmo cmx o, *.$(suffix))
+	rm -f $(foreach suffix, cmi cmo cma cmx o cmxa, *.$(suffix))
 .PHONY: clean-here
 
 clean:: force clean-here $(addsuffix /clean, $(subdirs))

@@ -3,7 +3,7 @@ tests := late-global upcase-good upcase-bad
 top := ../../..
 
 front_end := ../driver/main
-CC := $(front_end) -g -W -Wall -Werror -save-temps
+CC := $(front_end) -g -W -Wall -Werror
 
 objects := $(tests:=.o)
 traces := $(tests:=.trace)
@@ -59,7 +59,7 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(traces) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i) $(tests:=.inst.i) $(tests:=.inst.s)
+	rm -f $(tests) *.[iso] *.inst.c
 .PHONY: clean
 
 spotless: clean

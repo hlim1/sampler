@@ -3,7 +3,7 @@ tests := test
 top := ../..
 
 front_end := ../driver/main
-CC := $(front_end) -g -W -Wall -Werror -save-temps
+CC := $(front_end) -g -W -Wall -Werror
 
 traces := $(tests:=.trace)
 checks := $(tests:=.check)
@@ -49,7 +49,7 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(traces) $(tests) *.[ios] *cured.c *_inst.c
+	rm -f $(traces) $(tests) *.[ios] *.cured.c *.inst.c
 	rm -rf *.browser
 	if [ -d .libs ]; then rmdir .libs; fi
 .PHONY: clean

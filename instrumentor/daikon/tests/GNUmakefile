@@ -3,7 +3,7 @@ tests := late-global upcase
 top := ../../..
 
 front_end := ../driver/main
-CC := $(front_end) -g -W -Wall -Werror -save-temps
+CC := $(front_end) -g -W -Wall -Werror
 
 traces := $(tests:=.trace)
 objects := $(tests:=.o)

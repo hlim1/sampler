@@ -2,9 +2,11 @@ Source: sampler
 Section: devel
 Priority: optional
 Maintainer: Ben Liblit <liblit@cs.wisc.edu>
-Build-Depends: cinterlang (>= 1.1.2)
+Build-Depends: autoconf
+Build-Depends: cil-dev
 Build-Depends: debhelper (>> 4.0.0)
-Build-Depends: docbook-xsl
+Build-Depends: fakeroot
+Build-Depends: file
 Build-Depends: flex
 Build-Depends: gconf2
 Build-Depends: libbonobo2-dev
@@ -12,8 +14,12 @@ Build-Depends: libgsl0-dev
 Build-Depends: libgtk2.0-dev
 Build-Depends: liborbit2-dev
 Build-Depends: libxml2-utils
-Build-Depends: ocaml
-Build-Depends: perl-modules
+Build-Depends: ocaml-base-nox
+Build-Depends: ocaml-interp
+Build-Depends: ocaml-native-compilers
+Build-Depends: ocaml-nox
+Build-Depends: perl-base
+Build-Depends: pkg-config
 Build-Depends: python
 Build-Depends: python-dev
 Build-Depends: python-gnome2-dev

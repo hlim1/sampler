@@ -38,7 +38,7 @@ class FirstTime:
 
         # hook up state-linked icons
         image = self.__get_widget('image')
-        self.__image_updater = StatusIcon(client, image, 'disabled-48.png', 'enabled-48.png')
+        self.__image_updater = StatusIcon(client, image, gtk.ICON_SIZE_DIALOG)
         self.__icon_updater = WindowIcon(client, self.__dialog)
 
         # hook up state-linked radio buttons

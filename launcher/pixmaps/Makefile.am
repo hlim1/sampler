@@ -2,6 +2,7 @@ pixmaps_DATA = 					\
 	disabled-16.png				\
 	disabled-32.png				\
 	disabled-48.png				\
+	disabled-96.png				\
 	enabled-16.png				\
 	enabled-32.png				\
 	enabled-48.png				\

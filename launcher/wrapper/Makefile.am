@@ -1,5 +1,3 @@
-pixmap_links = enabled-16.png
-
 wrapper_DATA = wrapper.glade
 
 wrapper_PYTHON = $(sort $(wildcard *.py) Paths.py)
@@ -14,9 +12,6 @@ BUILT_SOURCES = Paths.py
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
-install-data-local:
-	$(mkinstalldirs) $(DESTDIR)$(wrapperdir)
-	$(LN_S) $(pixmap_links:%=../pixmaps/%) $(DESTDIR)$(wrapperdir)
 
 install-data-hook:
 	rm -f $(wrapper_PYTHON:%=$(DESTDIR)$(wrapperdir)/%)

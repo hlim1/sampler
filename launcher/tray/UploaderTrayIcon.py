@@ -1,5 +1,4 @@
-import gtk.gdk
-import gtk.glade
+import gtk
 
 from BusyCursor import BusyCursor
 from PreferencesDialog import PreferencesDialog
@@ -34,4 +33,4 @@ class UploaderTrayIcon(trayicon.TrayIcon):
         self.add(xml.get_widget('eventbox'))
 
         image = xml.get_widget('image')
-        self.__notifier = StatusIcon(client, image, 'disabled-32.png', 'enabled-32.png')
+        self.__notifier = StatusIcon(client, image, gtk.IMAGE_SIZE_LARGE_TOOLBAR)

@@ -1,7 +1,7 @@
 # RPM specfile for nautilus module
 # Generated Tue Jun 10 18:19:26 2003 GMT by Ximian build system
-# $Id: nautilus.spec,v 1.1 2003/08/13 02:26:11 liblit Exp $
-# from $Id: nautilus.spec,v 1.1 2003/08/13 02:26:11 liblit Exp $
+# $Id: nautilus.spec,v 1.2 2003/08/13 22:20:59 liblit Exp $
+# from $Id: nautilus.spec,v 1.2 2003/08/13 22:20:59 liblit Exp $
 
 %define nam	nautilus
 %define ver	2.2.4
@@ -225,7 +225,8 @@ dist|all)
 esac
 
 %build
-%sampler_prebuild -t
+%define sampler_cc_flags --threads
+%sampler_prebuild
 MAKE=${MAKE:-make}
 RPM_COMMAND=${RPM_COMMAND:-all}
 DESTDIR=${DESTDIR:-"$RPM_BUILD_ROOT"}

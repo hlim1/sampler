@@ -51,6 +51,7 @@ and plugins.
 %sampler_prep
 
 %build
+%define sampler_cc_flags --no-threads
 %sampler_prebuild
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --bindir=%{_bindir} \

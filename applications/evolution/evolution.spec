@@ -1,7 +1,7 @@
 # RPM specfile for evolution module
 # Generated Tue Jul  8 20:57:03 2003 GMT by Ximian build system
-# $Id: evolution.spec,v 1.2 2003/08/13 00:44:58 liblit Exp $
-# from $Id: evolution.spec,v 1.2 2003/08/13 00:44:58 liblit Exp $
+# $Id: evolution.spec,v 1.3 2003/08/13 01:50:26 liblit Exp $
+# from $Id: evolution.spec,v 1.3 2003/08/13 01:50:26 liblit Exp $
 
 %define nam	evolution
 %define ver	1.4.3
@@ -225,7 +225,8 @@ all)
 esac
 
 %build
-%sampler_prebuild -t
+%define sampler_cc_flags --threads
+%sampler_prebuild
 MAKE=${MAKE:-make}
 RPM_COMMAND=${RPM_COMMAND:-all}
 DESTDIR=${DESTDIR:-"$RPM_BUILD_ROOT"}

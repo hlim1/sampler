@@ -1,4 +1,13 @@
-noinst_LIBRARIES = $(nothread_libs) $(thread_libs)
+liblib_LIBRARIES = $(nothread_libs) $(thread_libs)
+
+libinclude_HEADERS =				\
+	acyclic.h				\
+	countdown.h				\
+	cyclic.h				\
+	cyclic-size.h
+
+
+########################################################################
 
 
 acyclic_cflags = -DSAMPLER_ACYCLIC -ffast-math
@@ -51,12 +60,12 @@ endif
 ########################################################################
 
 
-noinst_PROGRAMS = precompute mean
-
+tools_PROGRAMS = precompute
 precompute_SOURCES = precompute.c
 precompute_CFLAGS = $(nothread_cflags)
 precompute_LDADD = libacyclic.a $(LIBM)
 
+noinst_PROGRAMS = mean
 mean_CFLAGS = $(nothread_cflags)
 mean_LDADD = libacyclic.a libcountdown.a $(LIBM)
 

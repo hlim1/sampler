@@ -1,1 +1,1 @@
-noinst_HEADERS = tuples-cil.h
+libinclude_HEADERS = tuples-cil.h

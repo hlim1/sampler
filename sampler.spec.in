@@ -43,7 +43,6 @@ bug isolation server.
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING
-%doc doc/%{name}.html
 %dir %{_datadir}/%{name}
 %dir %{_datadir}/%{name}/applications
 %{_datadir}/%{name}/gdb-commands
@@ -115,6 +114,7 @@ reports.
 %files devel
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING
+%doc doc/%{name}.html
 %{_bindir}/*
 %{_libdir}/%{name}
 

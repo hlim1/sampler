@@ -39,6 +39,8 @@ AC_MSG_RESULT($BUILD_HOST)
 
 AC_SUBST(package_libdir,  '${libdir}/${PACKAGE}')
 AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
+AC_SUBST(libincludedir, '${package_libdir}/include')
+AC_SUBST(liblibdir, '${package_libdir}/lib')
 AC_SUBST(driverdir, '${instrumentordir}/driver')
 AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
 AC_SUBST(toolsdir, '${package_libdir}/tools')

@@ -2,10 +2,10 @@ open Cil
 
 
 class visitor file = object
-  inherit TransformVisitor.visitor file as super
+  inherit [FindSites.set] TransformVisitor.visitor file as super
 
-  method weigh = Stores.count_stmt
-  method insertSkips = new SkipWrites.visitor
+  method findSites = FindSites.visit
+  method insertSkips sites countdown = (new InsertSkipsBefore.visitor sites countdown :> cilVisitor)
   method insertLogs = new Instrument.visitor
 
   method vfunc func =

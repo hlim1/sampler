@@ -11,6 +11,7 @@ EXTRA_DIST =					\
 	$(tray_DATA)				\
 	$(filter-out Paths.py, $(tray_PYTHON))	\
 	Paths.py.in				\
+	oaf.dtd					\
 	tray.gladep				\
 	tray.in
 

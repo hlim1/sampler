@@ -2,7 +2,6 @@ py := $(wildcard *.py)
 pyc = $(py:=c)
 pyo = $(py:=o)
 
-launcherdir = @launcherdir@
 launcher_SCRIPTS = $(pyc) $(pyo)
 
 EXTRA_DIST = $(py)

@@ -62,7 +62,7 @@ preferences sampler-preferences: %: %.in Makefile
 		-e 's!@''bindir@!$(bindir)!'			\
 		-e 's!@''commondir@!$(commondir)!'		\
 		-e 's!@''preferencesdir@!$(preferencesdir)!'	\
-		<$< >$@						\
+		<$< >$@
 	chmod a+x $@
 
 

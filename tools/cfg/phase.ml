@@ -3,5 +3,5 @@ let time description operation =
   let before = Unix.gettimeofday () in
   let result = operation () in
   let after = Unix.gettimeofday () in
-  Printf.eprintf "%s: end; %f sec\n%!" description (after -. before);
+  Printf.eprintf "%s: end; %g sec\n%!" description (after -. before);
   result

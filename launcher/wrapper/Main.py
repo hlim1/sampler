@@ -38,9 +38,10 @@ def main(configdir):
             outcome = Launcher.run_without_sampling(app)
 
     finally:
-        try:
-            monitor.unref()
-        except CORBA.COMM_FAILURE:
-            pass
+        if monitor != None:
+            try:
+                monitor.unref()
+            except CORBA.COMM_FAILURE:
+                pass
 
     outcome.exit()

@@ -18,7 +18,7 @@ class builder file =
 	Bump.bump location (Lval local) slice
       in
 
-      sites#add { location = location; condition = expression };
+      sites#add { location = location; description = d_exp () expression };
       local, bump
 
 
@@ -57,7 +57,7 @@ class builder file =
 		  as varinfo,
 		_, location)
 	  ->
-	    let init = SiteInfos.serialize sites signature in
+	    let init = sites#serialize signature in
 	    let length = Some (integer (String.length init)) in
 	    GVar ({varinfo with vtype = TArray (elementType, length, attributes) },
 		  { init = Some (SingleInit (mkString init)) },

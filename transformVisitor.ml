@@ -19,7 +19,6 @@ class virtual ['siteInfo] visitor file = object(self)
     prepareCFG func;
     RemoveLoops.visit func;
     IsolateInstructions.visit func;
-    let countdown = new Countdown.countdown globalCountdown func in
     let afterCalls = Calls.prepatch func in
     ignore (computeCFGInfo func false);
     
@@ -33,6 +32,7 @@ class virtual ['siteInfo] visitor file = object(self)
       match WeighPaths.weigh sites headers with
       | None -> ()
       | Some weights ->    
+	  let countdown = new Countdown.countdown globalCountdown func in
 	  let original, instrumented, clones = Duplicate.duplicateBody func in
 	  
 	  ForwardJumps.patch clones forwardJumps;

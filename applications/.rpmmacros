@@ -1,3 +1,0 @@
-# -*- rpm-spec -*-
-
-%_topdir	%(echo $RPM_TOPDIR)

@@ -230,12 +230,6 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 
 AC_CONFIG_FILES([
 Makefile
-applications/Makefile
-applications/evolution/Makefile
-applications/gaim/Makefile
-applications/gimp/Makefile
-applications/gnumeric/Makefile
-applications/nautilus/Makefile
 benchmarks/Makefile
 benchmarks/ccured/Makefile
 benchmarks/ccured/bh/Makefile

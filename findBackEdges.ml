@@ -6,8 +6,8 @@ class visitor = object
   inherit nopCilVisitor
       
   method vfunc func =
-    let (root, _) = CFG.cfg func;
-
+    let (root, _) = Cfg.cfg func in
+    
     let backEdges = new SetClass.container and
 	arrived = new SetClass.container and
 	departed = new SetClass.container in

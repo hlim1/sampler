@@ -34,7 +34,7 @@ run: main $(infile).i
 	./$^
 .PHONY: run
 
-cfg-to-dot: %: $(libs) $(addsuffix .cmo, utils dotify splitAfterCalls testHarness %)
+cfg-to-dot: %: $(libs) $(addsuffix .cmo, cfg utils dotify splitAfterCalls testHarness %)
 	$(link)
 
 main: %: $(libs) $(addsuffix .cmo, mapClass setClass foreach cfg splitAfterCalls collectHeaders stores weighPaths testHarness %)

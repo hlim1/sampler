@@ -37,5 +37,5 @@ end
     
 ;;
 
-let file = TestHarness.main [new visitor] in
-printFile defaultCilPrinter stdout file
+let files = TestHarness.main [new visitor] in
+List.iter (printFile defaultCilPrinter stdout) files

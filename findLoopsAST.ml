@@ -24,6 +24,6 @@ end
 ;;
 
 let visitor = new visitor in
-ignore(TestHarness.main [visitor]);
+ignore(TestHarness.main [(visitor :> cilVisitor)]);
 ignore(Pretty.printf "loop headers according to syntax tree:@!  @[%a@]@!"
 	 Utils.d_stmts visitor#getLoops)

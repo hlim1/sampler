@@ -4,7 +4,7 @@ let visitOne visitors arg =
   Printf.printf "%s:\n" arg;
   let file = Frontc.parse arg () in
   (* Rmtmps.removeUnusedTemps file; *)
-  List.iter (fun visitor -> visitCilFileSameGlobals (visitor :> cilVisitor) file) visitors;
+  List.iter (fun visitor -> visitCilFileSameGlobals visitor file) visitors;
   file
     
 let main visitors =

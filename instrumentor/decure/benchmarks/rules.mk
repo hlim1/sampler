@@ -36,13 +36,14 @@ LOADLIBES := $(trusted:%=$(workDir)/$(testDir)/%) $(workHome)/obj/x86_LINUX/ccur
 link = $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 decureMain := $(decure)/main
+#decureMainDep := $(decureMain
 runDecure := $(decureMain)
 
 
 ########################################################################
 
 
-all: loopless execs
+all: stats loopless execs
 .PHONY: all
 
 execs: always sample
@@ -65,7 +66,7 @@ basis-cured.c: $(decure)/filterComplete $(workComb)
 	@[ -r $@ ]
 
 decurable.i: basis-cured.c
-	$(CPP) -include $(sampler)/libcountdown/countdown.h $(sampler)/libcountdown/cyclic.h $(decure)/libdecure/decure.h $< >$@ || rm -f $@
+	$(CPP) -include $(sampler)/libcountdown/event.h $< >$@ || rm -f $@
 	@[ -r $@ ]
 
 
@@ -78,14 +79,14 @@ $(alwaysExecs): %.exe: %.c
 
 always-%.c: runDecure += --no-sample
 
-always-only-%.c: decurable.i $(decureMain)
+always-only-%.c: decurable.i $(decureMainDep)
 	$(runDecure) --only $* $< >$@ || rm -f $@
 	@[ -r $@ ]
 
-always-all.c: decurable.i $(decureMain)
+always-all.c: decurable.i $(decureMainDep)
 	$(runDecure) $< >$@ || rm -f $@
 
-always-none.c: decurable.i $(decureMain)
+always-none.c: decurable.i $(decureMainDep)
 	$(runDecure) --only @ $< >$@ || rm -f $@
 
 
@@ -93,7 +94,7 @@ always-none.c: decurable.i $(decureMain)
 
 
 $(sampleExecs): CC := libtool $(CC)
-$(sampleExecs): LOADLIBES += -L$(sampler)/libcountdown -lcyclic `gsl-config --libs`
+$(sampleExecs): LOADLIBES += -L$(sampler)/libcountdown -levent -lcyclic `gsl-config --libs`
 
 
 $(sampleExecs): %.exe: %.c
@@ -102,12 +103,20 @@ $(sampleExecs): %.exe: %.c
 
 sample-%.c: runDecure += --sample
 
-sample-only-%.c: decurable.i $(decureMain)
+sample-only-%.c: decurable.i $(decureMainDep)
 	$(runDecure) --only $* $< >$@ || rm -f $@
 	@[ -r $@ ]
 
-sample-all.c: decurable.i $(decureMain)
+sample-all.c: decurable.i $(decureMainDep)
 	$(runDecure) $< >$@ || rm -f $@
+
+
+########################################################################
+
+
+stats: decurable.i $(decureMainDep)
+	$(runDecure) --show-stats $< >/dev/null 2>$@ || rm -f $@
+	@[ -r $@ ]
 
 
 ########################################################################
@@ -131,6 +140,7 @@ functions.mk: ../make-functions-mk functions-list
 
 clean:
 	if [ -d .libs ]; then rmdir .libs; fi
+	rm -f stats
 	rm -f *.*.times
 	rm -f *.*.times.
 	rm -f *.exe
@@ -148,9 +158,23 @@ spotless: clean
 times: $(allTimes)
 .PHONY: times
 
- $(allTimes): %.times: ../run-trials %.exe
-	./$< './$*.exe $(runArgs)' >$@. 2>&1
+$(allTimes): %.times: ../run-trials %.exe
+	./$< 100 './$*.exe $(runArgs)' >$@. 2>&1
 	mv $@. $@
 
 ../countdowns/%:
 	$(MAKE) -C $(@D) $(@F)
+
+
+########################################################################
+
+
+sparsities := 100 10000 1000000
+sparseTimes := $(sparsities:=.times)
+
+sparse-times: $(sparseTimes)
+.PHONY: sparse-times
+
+$(sparseTimes): %.times: ../run-trials sample-all.exe
+	./$< $* './sample-all.exe $(runArgs)' >$@. 2>&1
+	mv $@. $@

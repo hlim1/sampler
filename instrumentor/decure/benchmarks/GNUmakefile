@@ -21,6 +21,16 @@ times: $(benchmarks:=/times)
 $(benchmarks:=/times):
 	+$(recurse)
 
+sparse-times: $(benchmarks:=/sparse-times)
+.PHONY: sparse-times
+$(benchmarks:=/sparse-times):
+	+$(recurse)
+
+stats: $(benchmarks:=/stats)
+.PHONY: stats
+$(benchmarks:=/stats): force
+	+$(recurse)
+
 loopless: $(benchmarks:=/loopless)
 .PHONY: loopless
 $(benchmarks:=/loopless): force

@@ -7,13 +7,11 @@ to perform sampling for entire programs.  Suppose we start with the
 following C code:
 
 \begin{code}
-  \{\+ \\
   check(p !=\ NULL); \\
   \up p = p->next; \\
   \\
   check(i < max); \\
-  \up total += sizes[i]; \\
-  \<\}
+  \up total += sizes[i];
 \end{code}
 
 Our sampling framework can be configured to sample arbitrary pieces of
@@ -47,13 +45,11 @@ distributed between 0 and $n-1$.  Then the following code gives us
 fair random sampling at the desired density:
 
 \begin{code}
-  \{\+ \\
   if(rnd(100) == 0) check(p != NULL); \\
   \up p = p->next; \\
   \\
   if(rnd(100) == 0) check(i < max); \\
-  \up total += sizes[i]; \\
-  \<\}
+  \up total += sizes[i];
 \end{code}
 
 This strategy has some practical problems.  Random number generation
@@ -99,7 +95,6 @@ those sites is sampled on this visit.  Instead, we merely discard two
 tosses and proceed directly to the instrumentation-free fast path:
 
 \begin{code}
-  \{\+ \\
   if(countdown > 2) \{ \\
   \> /* fast path: no sample ahead */ \\
   \> countdown -= 2; \\
@@ -118,8 +113,7 @@ tosses and proceed directly to the instrumentation-free fast path:
   \>\> countdown = getNextCountdown(); \\
   \> \} \\
   \> \up total += sizes[i]; \\
-  \} \\
-  \<\}
+  \}
 \end{code}
 
 The instrumented code does extra work to manage the

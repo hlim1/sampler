@@ -44,10 +44,12 @@ my %flag_specs =
      # Sampler Options
      '-fthreads' => sub { },
      '-fno-threads' => sub { },
+     '-fsample' => sub { push @inst, '--sample' },
+     '-fno-sample' => sub { push @inst, '--no-sample' },
 
      # Overall Options
      '-o' => sub { slurp_1 $_; $cpp0_output_slot = \$cpp0[@cpp0 - 1]; },
-     '-v' => sub { slurp_0 $_; $verbose = 1 },
+     '-v' => sub { slurp_0 $_; $verbose = 1; push @inst, '--show-phase-times'; },
 
      # C Language Options
      '-aux-info' => sub { push @cc1, $_ },

@@ -1,22 +1,20 @@
-prologue := ../liblog/log.h
-CPPFLAGS := -include $(prologue)
-LOADLIBES := -Wl,-rpath,../liblog -L../liblog -llog -Wl,-rpath,../../libcountdown -L../../libcountdown -lcountdown
+CC := ../front-end $(CC)
 
 all: run
 .PHONY: all
 
-run: test.inst
-	./$^
+run: test
+	LD_LIBRARY_PATH=../liblog:../../libcountdown ./$^
 .PHONY: run
 
-test.inst.c: ../main test.i
-	$^ >$@
-
-%.i: %.c $(prologue)
-	$(CPP) $(CPPFLAGS) $< >$@
+test.o: test.c ../liblog/log.h
 
 ../main: force
 	$(MAKE) -C $(@D) $(@F)
 
 force:
 .PHONY: force
+
+clean:
+	rm -f test test.o
+.PHONY: clean

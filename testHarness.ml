@@ -9,10 +9,8 @@ let doChecks = false
 
 let check file title =
   if doChecks then
-    begin
-      if not (Check.checkFile [] file) then
-	raise Errormsg.Error
-    end
+    if not (Check.checkFile [] file) then
+      raise Errormsg.Error
 
     
 let verbose = false

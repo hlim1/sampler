@@ -36,7 +36,7 @@ libdirs = $(cil_libdir)
 includes = -I $(srcdir) $(libdirs:%=-I %)
 compiler = $(ocamlc) $(ocamlflags)
 
-depend = ocamldep $(includes) $(F) >$@
+depend = ocamldep $(includes) $(F) $< >$@
 compile = $(compiler) $(includes) -o $@ -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) $(includes) -o $@ $(syslibs) $^

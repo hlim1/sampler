@@ -4,7 +4,7 @@ ccured := $(benchdir)/ccured
 ########################################################################
 
 
-all: ccured-static.tex
+tex += ccured-static
 
 ccured-static.tex: %.tex: %.pl $(ccured)/collated-stats.txt
 	./$^ >$@.
@@ -19,7 +19,7 @@ spec95-static.tex: ccured-static.pl $(spec95_static)
 ########################################################################
 
 
-all: ccured-density.tex
+tex += ccured-density
 
 ccured-density.tex: %.tex: %.pl $(ccured)/collated-times-all.txt
 	./$^ >$@.
@@ -29,7 +29,7 @@ ccured-density.tex: %.tex: %.pl $(ccured)/collated-times-all.txt
 ########################################################################
 
 
-all: ccured-size.tex
+tex += ccured-size
 
 ccured-size.tex: %.tex: %.pl $(ccured)/collated-times-all.txt
 	./$< >$@.
@@ -39,7 +39,7 @@ ccured-size.tex: %.tex: %.pl $(ccured)/collated-times-all.txt
 ########################################################################
 
 
-all: $(addprefix perimeter., eps pdf)
+eps += perimeter
 
 decure-only-one-function.sxc: collated-times.txt
 	$(error please refresh $< in $@)

@@ -1,14 +1,31 @@
 benchdir := ../../benchmarks
+matlab := matlab -nodisplay -nojvm -nosplash $(basename $<) </dev/null
 
-
-all:
-
-%.pdf: %.eps
-	epstopdf --outfile=$@ $<
+default: all
 
 
 ########################################################################
 
 
-include ccrypt.mk
 include ccured.mk
+include ccrypt.mk
+include bc.mk
+
+
+########################################################################
+
+
+all: tex eps pdf
+.PHONY: all
+
+tex: $(tex:=.tex)
+.PHONY: tex
+
+eps: $(eps:=.eps)
+.PHONY: eps
+
+pdf: $(eps:=.pdf)
+.PHONY: pdf
+
+%.pdf: %.eps
+	epstopdf --outfile=$@ $<

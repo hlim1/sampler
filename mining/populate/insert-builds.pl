@@ -53,7 +53,8 @@ my %guess_instrumentation_type =
      'gaim' => 'scalar-pairs',
      'gimp' => 'branches',
      'gnumeric' => 'returns',
-     'nautilus' => 'branches');
+     'nautilus' => 'branches',
+     'rhythmbox' => 'scalar-pairs');
 
 my $guess_instrumentation_version = '0.1';
 

@@ -1,16 +1,20 @@
-xsldir := /usr/share/sgml/docbook/xsl-stylesheets
-xsl_html := $(xsldir)/xhtml/docbook.xsl
+AUTOMAKE_OPTIONS = 1.6
+
+XSL_HTML := @XSL_HTML@
+
+if HAVE_XSL_HTML
+noinst_DATA = $(PACKAGE).html
+endif
 
 xml = $(PACKAGE).xml
-noinst_DATA = $(PACKAGE).html
-
 EXTRA_DIST = $(xml)
 
 TESTS = $(xml)
-TESTS_ENVIRONMENT = xmllint --valid --noout
+XMLLINT = @XMLLINT@
+TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
 
 
-%.html: %.xml config.xml $(xsl_html)
-	xsltproc --nonet -o $@ $(xsl_html) $<
+$(PACKAGE).html: %.html: %.xml config.xml $(XSL_HTML)
+	xsltproc -o $@ $(XSL_HTML) $<
 
 MOSTLYCLEANFILES = $(noinst_DATA)

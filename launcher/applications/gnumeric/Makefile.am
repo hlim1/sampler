@@ -7,4 +7,5 @@ schemas = gnumeric-bug-isolation.schemas
 EXTRA_DIST = $(schemas) gconf-1.0.dtd
 
 TESTS = $(schemas)
-TESTS_ENVIRONMENT = xmllint --valid --noout
+XMLLINT = @XMLLINT@
+TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout

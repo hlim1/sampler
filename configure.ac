@@ -9,6 +9,20 @@ AM_INIT_AUTOMAKE
 #
 
 
+AC_PATH_PROGS(XSL_HTML, docbook.xsl, , /usr/share/sgml/docbook/xsl-stylesheets/xhtml:/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/xhtml:/usr/share/apps/ksgmltools2/docbook/xsl/html)
+if test -z "$XSL_HTML"; then
+  AC_MSG_WARN(cannot find DocBook-to-XHTML style sheet)
+  AC_MSG_WARN(HTML documentation will not be built)
+  AC_MSG_WARN(consider setting \$XSL_HTML)
+fi
+AM_CONDITIONAL(HAVE_XSL_HTML, test -n "$XSL_HTML")
+
+AC_CHECK_PROG(XMLLINT, xmllint, xmllint, \$(top_srcdir)/tools/skip-test)
+if test "$XMLLINT" != xmllint; then
+  AC_MSG_WARN(cannot find xmllint in \$PATH)
+  AC_MSG_WARN(XML validation tests will be skipped)
+fi
+
 AC_MSG_CHECKING(for precomputed countdown size)
 PRECOMPUTE_COUNT=1021
 AC_SUBST(PRECOMPUTE_COUNT, $PRECOMPUTE_COUNT)

@@ -1,3 +1,7 @@
+*.i
+*.inst.c
+*.s
+*.report
 *.trace
 .libs
 late-global

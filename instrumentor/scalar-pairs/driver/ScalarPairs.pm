@@ -1,4 +1,4 @@
-package Daikount;
+package ScalarPairs;
 
 use strict;
 use FindBin;
@@ -12,7 +12,7 @@ our @ISA = qw(CillySampler);
 
 sub root {
     my $self = shift;
-    return "$self->{home}/../../..";
+    return "$self->{home}/../..";
 }
 
 
@@ -23,7 +23,7 @@ sub setDefaultArguments {
 
     $self->{home} = "$FindBin::Bin/..";
     $self->{instrumentor} = ["$self->{home}/main"];
-    $self->{libdir} = "$self->{home}/../libdaikount";
+    $self->{libdir} = "$self->{home}/libscalar-pairs";
 }
 
 
@@ -31,7 +31,7 @@ sub extraHeaders {
     my $self = shift;
     my @extras = $self->SUPER::extraHeaders;
     push @extras, '-include', $self->root . '/libreport/requires.h';
-    push @extras, '-include', "$self->{libdir}/daikount.h";
+    push @extras, '-include', "$self->{libdir}/scalar-pairs-cil.h";
     return @extras;
 }
 
@@ -40,7 +40,7 @@ sub extraLibs {
     my $self = shift;
     my @extras = $self->SUPER::extraLibs;
     push @extras, '-L' . $self->root . '/libreport', '-lreport';
-    push @extras, "-L$self->{libdir}", '-ldaikount';
+    push @extras, "-L$self->{libdir}", '-lscalar-pairs';
     return @extras;
 }
 

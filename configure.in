@@ -40,8 +40,8 @@ benchmarks/ccured/config.mk
 fuzz/Makefile
 instrumentor/branches/libbranches/Makefile
 instrumentor/daikon/libdaikon/Makefile
-instrumentor/daikount/libdaikount/Makefile
 instrumentor/returns/libreturns/Makefile
+instrumentor/scalar-pairs/libscalar-pairs/Makefile
 launcher/Makefile
 launcher/applications/Makefile
 launcher/applications/gnumeric/Makefile

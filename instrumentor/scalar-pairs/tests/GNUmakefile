@@ -1,16 +1,18 @@
 tests := late-global upcase-good upcase-bad
 
-top := ../../..
+top := ../..
 
 front_end := ../driver/main
-CC := $(front_end) -g -W -Wall -Werror
+cyclic := acyclic
+CC := $(front_end) --$(cyclic)
+CFLAGS := -g -W -Wall -Werror
 
 objects := $(tests:=.o)
 traces := $(tests:=.trace)
-checks := $(tests:=.check)
+reports := $(tests:=.report)
 
 countdir := $(top)/../libcountdown
-lib := ../../libdaikount/libdaikount.la $(countdir)/libacyclic.la
+lib := ../libscalar-pairs/libscalar-pairs.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -22,12 +24,12 @@ recurse = $(MAKE) -C $(@D) $(@F)
 all:
 .PHONY: all
 
-check: $(checks)
+check: $(reports)
 .PHONY: check
 
-$(checks): %.check: %.trace
-	[ -s $< ]
-.PHONY: $(checks)
+$(reports): %.report: $(top)/../resolver/resolve-samples % %.trace
+	$< $* <$*.trace >$@.
+	mv $@. $@
 
 upcase-bad.trace: %.trace: % $(countdowns)
 	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$< once upon a time || :
@@ -43,12 +45,9 @@ late-global.trace: late-global $(countdowns)
 
 $(tests): %: %.o $(lib)
 
-$(objects): %.o: %.c $(front_end) ../main ../../libdaikount/daikount.h
+$(objects): %.o: %.c $(front_end) ../main ../libscalar-pairs/scalar-pairs.h ../libscalar-pairs/scalar-pairs-cil.h
 
 ../main: $(force)
-	$(recurse)
-
-$(countdowns): $(force)
 	$(recurse)
 
 $(lib): $(force)
@@ -58,7 +57,8 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(tests) *.[iso] *.inst.c
+	libtool --mode=clean 'rm -f' $(tests)
+	rm -f $(reports) $(reports:=.) $(traces) *.[ios] *.inst.c
 .PHONY: clean
 
 spotless: clean

@@ -1,5 +1,6 @@
 open Calls
 open Cil
+open DescribedExpression
 open Interesting
 
 
@@ -19,7 +20,7 @@ class visitor (tuples : ReturnTuples.builder) global func =
 	    begin
 	      let exp = Lval result in
 	      let desc = d_exp () callee in
-	      let bump = tuples#bump func location exp desc in
+	      let bump = tuples#bump func location { exp = exp; doc = desc } in
 	      sites <- info.site :: sites;
 	      let call = mkStmt stmt.skind in
 	      info.site.skind <- bump;

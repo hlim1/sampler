@@ -1,11 +1,12 @@
 -*- outline -*-
 
-* sampler-0.14.1
+* sampler-1.0
 
 ** Fix duplicate symbol errors in bounds scheme.
 ** Avoid several GCC warnings.
 ** Assorted timestamp bug fixes.
 ** Tweaks to library and header locations and search paths.
+** Designated as "1.0" to mark completion of Ph.D.
 
 * sampler-0.14
 

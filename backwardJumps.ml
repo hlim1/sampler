@@ -29,9 +29,12 @@ let patch clones weights func =
   let patchBoth jump =
     let weight = weights#find jump in
     Printf.eprintf "CFG #%i has weight %i\n" jump.sid weight;
-    let choice = choice weight jump in
-    patchOne choice jump;
-    patchOne choice (clones#find jump)
+    if weight != 0 then
+      begin
+	let choice = choice weight jump in
+	patchOne choice jump;
+	patchOne choice (clones#find jump)
+      end
   in
 
   List.iter patchBoth

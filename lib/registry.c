@@ -46,13 +46,13 @@ void samplerUnregisterUnit(struct SamplerUnit *unit)
 		unsigned scan;
 
 		fputs("<report id=\"samples\" signature=\"", reportFile);
-		for (scan = 0; scan < sizeof(unit->signature) / sizeof(unit->signature[0]); ++scan)
+		for (scan = 0; scan < sizeof(SamplerUnitSignature); ++scan)
 		  fprintf(reportFile, "%02x", unit->signature[scan]);
 		fputs("\">\n", reportFile);
 
 		unit->reporter();
 
-		fputs("\n</report>\n", reportFile);
+		fputs("</report>\n", reportFile);
 	      }
 
 	    --samplerUnitCount;

@@ -54,9 +54,6 @@ static void openReportFile()
 
   unsetenv("SAMPLER_REPORT_FD");
   unsetenv("SAMPLER_FILE");
-
-  if (reportFile)
-    fputs("<report id=\"samples\">\n", reportFile);
 }
 
 
@@ -75,7 +72,6 @@ static void reportAllCompilationUnits()
   if (reportFile)
     {
       samplerUnregisterAllUnits();
-      fputs("</report>\n", reportFile);
       fflush(reportFile);
     }
 }

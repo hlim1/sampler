@@ -1,4 +1,4 @@
-tests := upcase
+tests := late-global upcase
 
 top := ../../..
 
@@ -25,6 +25,10 @@ check: $(traces)
 
 upcase.trace: upcase $(countdowns)
 	SAMPLER_FILE=$@ SAMPLER_COUNTDOWNS=$(countdowns) ./$< once upon a time || :
+	[ -r $@ ]
+
+late-global.trace: late-global $(countdowns)
+	SAMPLER_FILE=$@ SAMPLER_COUNTDOWNS=$(countdowns) ./$<
 	[ -r $@ ]
 
 $(objects): %.o: %.c $(front_end) ../main

@@ -26,22 +26,7 @@ let d_vars =
   d_list ", " d_var
 
 
-let globalVars file =
-  let folder accum = function
-    | GVar (varinfo, _, _)
-    | GVarDecl (varinfo, _)
-      when not (isFunctionType varinfo.vtype)
-	  && varinfo.vname <> "requireLogSignature"
-      ->
-	varinfo :: accum
-    | _ ->
-	accum
-  in
-  foldGlobals file folder []
-
-
 class visitor file =
-  let globalVars = globalVars file in
   let logger = FindFunction.find "checkInvariant" file in
   let invariants = Invariants.propose file in
 
@@ -52,7 +37,23 @@ class visitor file =
       val mutable sites = []
       method result = sites
 
-      val vars = globalVars @ List.filter isInteresting (func.sformals @ func.slocals)
+      val vars =
+	let globals =
+	  let rec gather = function
+	    | GVar (varinfo, _, _) :: rest
+	    | GVarDecl (varinfo, _) :: rest ->
+		varinfo :: gather rest
+	    | GFun (through, _) :: _ when func == through ->
+		[]
+	    | _ :: rest ->
+		gather rest
+	    | [] ->
+		failwith ("file contains no function " ^ func.svar.vname ^ "()")
+	  in
+	  gather file.globals
+	in
+	let locals = List.filter isInteresting (func.sformals @ func.slocals) in
+	globals @ locals
 
       method vstmt stmt =
 	match stmt.skind with

@@ -1,19 +1,24 @@
 cildir := ../../../../cil
-link = $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+link = $(LINK.c) $(filter-out ../main, $^) $(LOADLIBES) $(LDLIBS) -o $@
+
+tests := echo static crasher
 
 all:
 .PHONY: all
 
-check: echo-cured echo-decured
+check: $(tests:=-cured) $(tests:=-decured)
 .PHONY: check
 
 %-cured: CC := $(cildir)/bin/ccured
 %-decured: CC := ../driver/main
 
-echo-cured echo-decured: echo.c main.c
+echo-cured echo-decured: echo.c main.c ../main
 	$(link)
 
-crasher-cured crasher-decured: crasher.c
+crasher-cured crasher-decured: crasher.c ../main
+	$(link)
+
+static-cured static-decured: static-1.c static-2.c static-main.c ../main
 	$(link)
 
 force:

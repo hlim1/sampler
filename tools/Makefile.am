@@ -9,6 +9,8 @@ tools_SCRIPTS =					\
 	Function.pm				\
 	Node.pm					\
 	Object.pm				\
+	RawSamples.pm				\
+	SiteInfo.pm				\
 	SymbolTable.pm				\
 	Unit.pm					\
 	extract-report				\

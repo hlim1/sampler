@@ -379,8 +379,8 @@ bug in-house for further study.  Of course, there should be some runs
 where \texttt{file\_exists()} reports that the file exists but
 \texttt{xreadline()} returns a valid response from the user and
 therefore the program does not crash.  If the \texttt{file\_exists()}
-call is sampled on such a run, elimination by \elim{successful
-  counterexample} correctly concludes that this predicate does not
+call is sampled on any such run, elimination by \elim{successful
+  counterexample} correctly determines that this predicate does not
 imply failure.  It will be eliminated from further consideration, and
 only the true ``smoking gun,'' the call to \texttt{xreadline()}, will
 remain.  Thus we have the ability to identify not only the direct

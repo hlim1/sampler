@@ -36,21 +36,20 @@ let warn stmt message =
   ignore(fprintf stderr "%a: %s\n" d_stmt stmt message)
 
 
+let d_label () = function
+  | Label (name, _, _) ->
+      text name
+  | Case (expr, _) ->
+      text "case " ++ d_exp () expr
+  | Default _ ->
+      text "default"
+
 let d_labels () {labels = labels} =
-
-  let rec labelNames = function
-  | [] -> []
-  | Label (name, _, _) :: rest ->
-      name :: labelNames rest
-  | _ :: rest ->
-      labelNames rest
-  in
-
   chr '['
     ++ (seq
 	  ~sep:(text "; ")
-	  ~doit:text
-	  ~elements:(labelNames labels))
+	  ~doit:(d_label ())
+	  ~elements:labels)
     ++ chr ']'
 
 

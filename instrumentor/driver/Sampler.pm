@@ -15,7 +15,7 @@ sub setDefaultArguments {
     $self->{sample_events} = 1;
     $self->{sample_funcs} = 1;
     $self->{LD} = "libtool $self->{LD}";
-    #$self->{TRACE_COMMANDS} = 0;
+    $self->{TRACE_COMMANDS} = 0;
 }
 
 

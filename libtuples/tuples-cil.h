@@ -33,7 +33,7 @@ static inline void atomicIncrementCounter(int site, int counter)
        :
        : "cc");
 #else
-#error don't know how to atomically increment on this architecture
+#error "don't know how to atomically increment on this architecture"
 #endif
 }
 #endif /* no threads */

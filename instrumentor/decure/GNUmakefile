@@ -25,3 +25,6 @@ listCandidates: $(libharness) $(listCandidates)
 
 $(top)/%.cmi: $(force)
 	$(recurse)
+
+$(top)/%.cma: $(force)
+	$(recurse)

@@ -1,34 +1,7 @@
-double sqrt(double);
-
-
-void subsubwork()
-{
-  sqrt(2.);
-}
-
-
-void subwork()
-{
-  subsubwork();
-  sqrt(2.);
-  subsubwork();
-}
-
-
-void core()
-{
-  int source = 2;
-  int dest;
-
-  subwork();
-  
-  dest = source;
-}
-
-
 void work()
 {
-  core();
+  int source = 2;
+  int dest = source;
 }
 
 

@@ -87,6 +87,7 @@ my @slot = ('HTTP_SAMPLER_APPLICATION_NAME',
 sub guess_distro (\%) {
     my $environment = shift;
     my $instrumentor = $environment->{HTTP_SAMPLER_INSTRUMENTOR_VERSION};
+    return 'redhat-9-i386' unless defined $instrumentor;
     return 'fedora-1-i386' if $instrumentor eq '0.9.1';
     return 'redhat-9-i386';
 }

@@ -186,6 +186,7 @@ sub analyze_reports ($\@\@) {
 		   '-do-convert-reports',
 		   '-do-compute-results',
 		   '-do-print-results-1',
+		   '-c', 90,
 		   '-n', scalar @{$runs},
 		   '-l', 'data/%d/label',
 		   (map { ('-st', $_) } @{$sites}),
@@ -216,8 +217,8 @@ sub clean ($) {
     my ($outdir) = @_;
     check_outdir $outdir;
 
-    rmtree "$outdir/data";
-    #rmtree "$outdir/sites";
+    rmtree ["$outdir/data",
+	    "$outdir/sites"];
 
     unlink
 	"$outdir/f.runs",

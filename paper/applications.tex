@@ -203,55 +203,54 @@ over time as debugging needs and intermediate results warrant.
 \subsection{Bug Isolation Using Predicate Elimination}
 \label{sec:ccrypt}
 
-Sharing the cost of assertions works well when potential failure
-points have been explicitly marked.  In practice, this is rare.
-Certainly, few human programmers add assertions as pervasively as
-\CCured.  Instead, we may need to guess at which program behaviors are
-indicative of bad behavior.  Most such automated guesses will be
-incorrect and can be eliminated in light of observed program behavior.
-Those guesses which remain should point in the direction of the bug.
+In this section we consider automatic isolation of deterministic
+bugs.  Recall from Section~\ref{sec:introduction} that for a deterministic
+bug there is a predicate (over program variables) that becomes true
+if the program must crash at some point in the future.
+Deterministic bugs are quite common, though they are generally easier
+to find and fix using any method than non-deterministic bugs (see
+Section~\ref{sec:bc}.
 
 \subsubsection{Instrumentation Strategy}
 
-As a case study we take release 1.2 of the \texttt{ccrypt} encryption
-tool.  This version is known to contain a bug relating to overwriting
-existing files.  If the user responds to a confirmation prompt with
+As a case study in finding deterministic bugs we take release 1.2 of
+the \texttt{ccrypt} encryption tool.  This version is known to contain
+a bug that involves overwriting existing files.  If the user responds to
+a confirmation prompt with
 \texttt{EOF} rather than \texttt{yes} or \texttt{no}, \texttt{ccrypt}
 crashes.
 
-Both the \texttt{EOF} sensitivity as well as the presence of a
-pre-existing file suggest that the problem has something to do with
-\texttt{ccrypt}'s interactions with its surrounding environment.  Such
-interactions are mediated through system and library calls.  In C,
-these functions commonly return values to indicate success or failure.
-Many C application programmers follow the same model for their own
-error reporting.  Thus, randomly sampling function return values may
-identify key operations that behave differently in successful versus
-crashed runs.  We group function return values into three classes:
-negative values, zero, and positive values.  This reduces the amount
-of information we must track while still making distinctions
-consistent with common C programming style.
+The \texttt{EOF} sensitivity suggests that the problem has something to do with
+\texttt{ccrypt}'s interactions with standard file operations.
+In C, these functions commonly return values to indicate
+success or failure.  Many C application programmers follow the same
+model for their own error reporting.  Thus, randomly sampling function
+return values may identify key operations that behave differently in
+successful versus crashed runs.  We group function return values into
+three classes: negative values, zero, and positive values.  This
+reduces the amount of information we must track while still making
+distinctions consistent with common C programming style.
 
-Our instrumentation strategy for this application is as follows.
-Consider each syntactic call site.  Disregard those that return
-structures or floating point numbers; retain only those which return
+We instrument this application is as follows.
+Consider each syntactic call site that returns
 scalar values, including both arithmetic types as well as pointers.
 After each such call, update one of three counters depending upon the
 sign of the result: one for negative values, one for zeros, and one
 for positive values.  Each call site has its own triple of counters.
-Thus, when the program concludes, we can examine any function call of
+Thus, when the program terminates, we can examine any function call of
 interest and ask how often that call returned a negative, zero, or
-positive value.  For
-\texttt{ccrypt}, we find 570 call sites of interest, for $570 \times 3 =
+positive value.  
+
+For \texttt{ccrypt}, there are 570 call sites of interest, for $570 \times 3 =
 1710$ counters.  Each counter corresponds to a single predicate which
 is hypothesized to behave differently in successful versus crashed
 runs.  Specifically, we pose the problem as follows:
-
 \begin{quote}
   Assume that predicates capture incorrect behavior.  That is, assume
   that each predicate $p$ should always be false during correct
-  execution.  When $p$ is true, the program either fails or is at
-  increased risk of failing.
+  execution.  When $p$ is true, the program either fails (a deterministic
+bug) or is at
+  increased risk of failing (a non-deterministic bug).
 \end{quote}
 
 If we eliminate all predicates for which this hypothesis is disproved
@@ -260,26 +259,27 @@ describe the conditions under which the program fails.
 
 \subsubsection{Elimination Strategies}
 
-We have made no effort to restrict instrumentation to only known
-system or library calls; neither have we attempted to distinguish
-functions which return status codes from those which report errors
-through other means or not at all.  Most of those 1710 predicates,
-then, are wild guesses with no bearing on program success or failure.
-Given a body of actual runs, we can discard bad guesses using a set of
-tests we term \termdef{elimination strategies}:
+We make no effort to restrict instrumentation to known
+system or library calls, nor do we distinguish
+functions which return status codes from those that do not.  
+Most of those 1710 predicates,
+then, have no bearing on program success or failure.
+Given a set of runs, we can discard irrelevant predicates using a 
+set of \termdef{elimination strategies}:
 
 \begin{description}\sloppy
-\item[Elimination by \elim{universal falsehood}:] disregard any
-  counter that is zero on all runs.  These likely represent predicates
-  which can never be true.
-  
-\item[Elimination by \elim{lack of failing coverage}:] disregard any
+\item[\elim{Elimination by universal falsehood}:] Disregard any
+  counter that is zero on all runs.  These likely represent
+  predicates which can never be true.
+
+\item[\elim{Elimination by lack of failing coverage}:] Disregard any
   triple of counters all three of which are zero on all failed runs.
   Because one counter in each triple must always be true for any
   sample, these likely represent instrumentation sites that are not
   even reached in failing executions.
-  
-\item[Elimination by \elim{lack of failing example}:] disregard any
+
+
+\item[\elim{Elimination by lack of failing example}:] Disregard any
   counter which is zero on all failed runs.  These likely represent
   predicates that need not be true for a failure to occur.
   
@@ -292,12 +292,11 @@ tests we term \termdef{elimination strategies}:
 We characterize these as strategies because they are subject to noise
 from random sampling, and also because not all are equally applicable
 to all bugs.  For example, elimination by \elim{successful
-  counterexample} assumes that the bug is deterministic: whenever the
-bad behavior occurs, the program \emph{must} crash.  The first three
-strategies do not have this dependency, but do require a large enough
-body of runs so that any predicate which is ever true is likely to
-have been observed true at least once.  Note as well that these
-strategies are not independent: \elim{universal falsehood} and
+  counterexample} assumes that the bug is deterministic.  The other three
+strategies do not make this assumption, but do require enough
+runs so that any predicate which is ever true is likely to
+have been observed true at least once.  Note that these
+strategies are also not independent: \elim{universal falsehood} and
 \elim{lack of failing coverage} each eliminate a subset of the
 counters identified by \elim{lack of failing example}.  Elimination
 strategies also vary in which kinds of runs they exploit:
@@ -336,14 +335,13 @@ elimination strategy independently to the counter traces:
   predicates.
 \end{description}
 
-Several factors conspire to drive most counters to zero: the \naive
-nature of our guesses, the limited coverage of our automated test
-suite, and the filtering effect of sparse sampling.  Thus, at first
-glance, \elim{elimination by universal falsehood} is quite effective
+%Several factors conspire to drive most counters to zero: the \naive
+%nature of our guesses, the limited coverage of our automated test
+%suite, and the filtering effect of sparse sampling.  Thus, 
+At first glance, \elim{elimination by universal falsehood} is quite effective
 while \elim{elimination by successful counterexample} seems rather
 poor.  However, these two strategies test disjoint properties and can
 be combined to good effect.
-
 The combination leaves only those predicates which are sometimes
 observed to be true in failed runs but never observed to be true in
 successful runs.  For our \texttt{ccrypt} trials, only two
@@ -366,7 +364,7 @@ forgot to check for the \texttt{EOF} case: he assumes that
 inspects its contents.  We have successfully isolated this (known) bug
 in \texttt{ccrypt}, and the fix is clear.
 
-While the \texttt{file\_exists()} predicate it not itself the cause of
+While the \texttt{file\_exists()} predicate is not itself the cause of
 the bug, the fact that it appears on our list is useful information.
 It represents a necessary condition under which crashes occur.  That
 may be helpful, for example, if the engineer wishes to reproduce the
@@ -400,7 +398,7 @@ we are still left with 86 features.
 \subsubsection{Refinement over time}
 
 In order to gain a better understanding of how the elimination
-strategies benefit from seeing larger populations of runs, we have
+strategies benefit from increasing the number of runs, we have
 experimented with randomized subsets of our complete run suite.  We
 have seen that \elim{elimination by successful counterexample} is
 quite effective when given a few thousand successful runs; how well
@@ -472,29 +470,25 @@ keep overhead under control.
 \subsection{Statistical Debugging}
 \label{sec:bc}
 
-Our next target is version 1.06 of the GNU implementation of
+In this section we consider the automatic isolation of non-deterministic
+bugs.  Recall from Section~\ref{sec:introduction} that a bug is
+non-deterministic with respect to a set of program predicates if none of them
+is perfectly correlated with program crashes.  
+For this case study we use version 1.06 of the GNU implementation of
 \texttt{bc}.  We find that feeding \texttt{bc} nine megabytes of
-random input causes it to crash roughly one time in four.  While this
-would be an unusually high failure rate for shipping software under
-normal usage patterns, we expect that users experiencing crashes will
-be more likely to opt-in to a trace reporting system.  Thus, this may
-be a reasonable ratio to expect if most crashes and a few non-crashes
-are reported.
+random input causes it to crash roughly one time in four from, as it
+turns out, a previously unknown buffer overrun error.  Since \texttt{bc}
+sometimes terminates successfully even when it overruns the buffer,
+this bug is non-deterministic.
 
-Quick perusal of the stack trace at a typical failure is discouraging.
-The crash occurs several frames deep inside the C library's
-\texttt{malloc()} function: a sure sign of heap corruption.  Such bugs
-are especially pernicious because the actual corruption may have
-happened well before the ultimate crash \cite{Eisenstadt1993b}, or may
-even corrupt memory in a way that allows execution to continue without
-obvious failure.  We instrument using a variation on our previous
-strategy of counter triples.  These counters have no memory of time
-ordering and is therefore are, in a sense, impervious to the
-time-lapse complication.  To cope with bad behavior that does not
-always cause a crash, we abandon strict \elim{elimination by
-  successful counterexample} in favor of an approach based on
-statistical modeling to identify behavior which is broadly correlated
-with failure in spite of the occasional successful counterexample.
+We instrument \texttt{bc} using a variation on our previous strategy
+of counter triples.  We abandon \elim{elimination by successful
+counterexample}\footnote{Because the bug is non-deterministic, if we
+have enough runs no predicates will satisfy \elim{elimination by
+successful counterexample}.} in favor of statistical modeling to
+identify behavior which is broadly correlated with failure in spite of
+the occasional run that terminates successfully despite triggering the
+bug.
 
 \subsubsection{Instrumentation Strategy}
 
@@ -502,8 +496,8 @@ We instrument \texttt{bc} to guess and randomly check a large number
 of predicates.  As before, our goal is to identify predicates
 that capture bad behavior: false when the program succeeds and true
 when the program crashes.  We cast an extremely broad net, but with an
-eye toward pointer use errors and buffer overruns.  For pointer use,
-null pointers are clearly of interest.  Relative addresses of pointers
+eye toward pointer and buffer errors.  For pointers,
+null pointers are of interest.  Relative addresses of pointers
 may be interesting as well, as this may capture cases where one
 pointer scans within a second pointed-to buffer.  Checking
 pointer/pointer equality may reveal aliasing which, when not
@@ -527,31 +521,23 @@ application terminates, it emits the vector of counter triples along
 with a flag indicating whether it completed successfully or was
 aborted by a fatal signal.
 
-As expected, this gives us a large number of candidate predicates:
-10,050 counter triples, or 30,150 counters in all.  Because our
-guesses are so crude, the vast majority of these are of no interest:
-either they compare completely unrelated variables, or they express
-relationships which behave identically in both successful and failed
-runs.  The challenge is to find those few candidate predicates which
-truly matter.
+For \texttt{bc} there are 10,050 counter triples, or 30,150 counters
+in all.  The vast majority of these are of no interest: either they
+compare completely unrelated variables, or they express relationships
+which behave identically in both successful and failed runs.  The
+challenge is to find the few predicates which truly matter.
 
 \subsubsection{Crash Prediction Using Logistic Regression}
 
-To find these few important predicates, we recast the bug hunt as a
+To find the important predicates, we recast bug isolation as a
 statistical analysis problem.  Each run of \texttt{bc} constitutes one
-sample point consisting of 30,150 observed \termdef{features} and one
-binary \termdef{outcome} ($0 = \text{succeeded}, 1 = \text{crashed}$).
-Each counter is a feature; most of these features are irrelevant, but
-some may be strongly predictive of the program's success or failure.
-In C, a misbehaving program can sometimes ``get lucky'': it may
-violate memory safety yet not crash.  Hence the outcome label is
-non-deterministic, and \elim{elimination by successful counterexample}
-is not applicable.  Given numerous data points (sampled runs), we
-would like to identify a narrow subset of our 30,150 features which
-are relevant to predicting the succeeded/crashed outcome.  This is
-equivalent to the machine learning problem of learning a binary
-classifier with feature selection, i.e.\ using as few input features
-as possible.
+sample point consisting of 30,150 observed \termdef{features}
+(counters) and one binary \termdef{outcome} ($0 = \text{succeeded}, 1
+= \text{crashed}$).  Given numerous data points (sampled runs), we
+want to identify a subset of our 30,150 features that predict the
+outcome.  This is equivalent to the machine learning problem of
+learning a binary classifier with feature selection, i.e.\ using as
+few input features as possible.
 
 In the classification setting, we take a set of data with known binary
 output (a training set), and attempt to learn a binary classifier that

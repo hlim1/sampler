@@ -3,7 +3,6 @@ executable: executable
 debug-reporter: ../../print-debug-info
 
 [upload-headers]
-accept: text/html
 application-name: @name@
 application-version: @version@
 application-release: @release@

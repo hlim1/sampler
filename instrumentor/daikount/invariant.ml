@@ -72,6 +72,13 @@ let register file =
   let compInfo = findCompInfo file in
   let callee = FindFunction.find "registerInvariant" file in
 
+  let markRoots file =
+    defaultRootsMarker file;
+    callee.vreferenced <- true;
+    compInfo.creferenced <- true
+  in
+  removeUnusedTemps ~markRoots:markRoots file;
+
   let invariants =
     try
       let target = findCompInfo file in

@@ -3,6 +3,8 @@
 * sampler-0.6.1
 
 ** Don't upload empty report if instrumented app died suddenly.
+   This should fix the "Malformed multipart POST" error reported by
+   some users.
 
 ** Embed instrumentor version number in instrumented object files.
 

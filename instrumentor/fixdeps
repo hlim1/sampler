@@ -1,56 +1,33 @@
 #!/usr/bin/perl -w
 
 use strict;
+use Carp;
 
 
-sub print_interface ($@) {
-    my $target = shift;
-    # interface recompile
-    print "$target.cmi:";
-    print " $_.cmi" foreach @_;
-    print "\n";
+sub parse_dependencies ($$) {
+    my ($target, $dependencies) = @_;
+    croak 'caller forgot to remove trailing backslash' if $dependencies =~ /\\$/;
+    my @dependencies = split ' ', $dependencies;
+    my @roots = map { s/\.cmi$//; $_ eq $target ? "$_.\$(cmo)" : "\$($_)" } @dependencies;
+    return @roots;
 }
 
 
-while (<>) {
-    my $line;
-    my $long;
+$_ = <>;
+print $_;
 
-    do {
-	chomp;
-	$long = s/\\$//;
-	$line .= $_;
-	$_ = <> if $long;
-    } while $long;
+die unless /^([^ ]+)\.cmo:(.*[^\\])\\?\n$/;
+my $target = $1;
+my @dependencies = parse_dependencies $target, $2;
 
-    $_ = $line;
-    my @F = split;
-    
-    my $target = shift @F;
-    next unless $target =~ s/(.*)\.cm([io]):/$1/;
-    my $implementation = $2 eq 'o';
-    (s/^(.*)\.cm[io]$/$1/ or die) foreach @F;
+while (/\\$/) {
+    $_ = <>;
+    print $_;
+    /(.*[^\\])\\?\n$/;
+    push @dependencies, parse_dependencies $target, $1;
+};
 
-    if ($implementation) {
-	# implementation recompile
-	print "${target}.\$(cmo):";
-	print " $_.cmi" foreach @F;
-	print "\n";
+print "$target = @dependencies\n";
 
-	if (-e "$target.mli") {
-	    pop @F;
-	} else {
-	    # implicit interface recompile
-	    print_interface $target, @F;
-	}
 
-	# implementation link order
-	my $clean = $target;
-	print "$target =";
-	print " \$($_)" foreach @F;
-	print " $target.\$(cmo)\n";
-    } else {
-	# explicit interface recompile
-	print_interface $target, @F;
-    }
-}
+print $_ while <>;

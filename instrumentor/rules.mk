@@ -9,7 +9,7 @@ libdirs = $(cilobjdir)
 includes = $(foreach dir, $(libdirs), -I $(dir))
 compiler = $(ocamlc) $(ocamlflags)
 
-depend = ocamldep $(includes) $< | $(fixdeps) >$@
+depend = ocamldep $(includes) $<
 compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) -o $@ $(syslibs) $^
@@ -48,10 +48,10 @@ $(addsuffix .cmi, $(implicits)): %.cmi: %.ml
 	$(compile)
 
 $(addsuffix .do, $(impls)): %.do: %.ml $(fixdeps)
-	$(depend)
+	$(depend) | $(fixdeps) >$@
 
 $(addsuffix .di, $(ifaces)): %.di: %.mli $(fixdeps)
-	$(depend)
+	$(depend) >$@
 
 $(libcil): $(force)
 	$(MAKE) -C $(cildir) -f Makefile.cil NATIVECAML=$(ENABLE_NATIVE) cillib

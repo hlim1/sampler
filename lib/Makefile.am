@@ -10,6 +10,8 @@ lib_LIBRARIES =					\
 	$(thread_lib)
 
 
+EXTRA_DIST = g-object-unref-unit.h
+
 if WITH_GNOME
 gnome_headers =					\
 	g-object-unref-types.h			\

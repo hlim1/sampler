@@ -15,8 +15,7 @@ MOSTLYCLEANFILES =				\
 	*.defs					\
 	*.so
 
-
-all-local: trayicon.so
+traylib_DATA = trayicon.so
 
 
 dist-hook:

@@ -1,3 +1,5 @@
+*-wrap.c
+*.defs
 .deps
 Makefile
 Makefile.in

@@ -1,3 +1,5 @@
+*.server
 Makefile
 Makefile.in
 Paths.py
+tray

@@ -4,8 +4,7 @@ MOSTLYCLEANFILES = *.so
 
 noinst_LIBRARIES = libbroken.a
 
-
-all-local: broken.so
+traylib_DATA = broken.so
 
 
 ########################################################################

@@ -24,8 +24,7 @@ MOSTLYCLEANFILES =				\
 TESTS = Sampler_Monitor.server
 TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
 
-
-all-local: monitor.so
+traylib_DATA = monitor.so
 
 
 dist-hook:

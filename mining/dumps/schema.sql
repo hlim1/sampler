@@ -31,7 +31,7 @@ CREATE TABLE build_module (
   module_name varchar(255) NOT NULL default '',
   unit_signature varchar(32) NOT NULL default '',
   UNIQUE KEY build_id (build_id,unit_signature,module_name),
-  CONSTRAINT `0_578` FOREIGN KEY (`build_id`, `unit_signature`) REFERENCES `build_site` (`build_id`, `unit_signature`)
+  CONSTRAINT `0_597` FOREIGN KEY (`build_id`) REFERENCES `build` (`build_id`)
 ) TYPE=InnoDB;
 
 --
@@ -49,7 +49,7 @@ CREATE TABLE build_site (
   operand_0 varchar(255) NOT NULL default '',
   operand_1 varchar(255) default NULL,
   PRIMARY KEY  (build_id,unit_signature,site_order),
-  CONSTRAINT `0_498` FOREIGN KEY (`build_id`) REFERENCES `build` (`build_id`)
+  CONSTRAINT `0_599` FOREIGN KEY (`build_id`, `unit_signature`) REFERENCES `build_module` (`build_id`, `unit_signature`)
 ) TYPE=InnoDB;
 
 --

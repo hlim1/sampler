@@ -332,6 +332,23 @@
 	  unless your application is really multithreaded.</para>
 	</listitem>
       </varlistentry>
+
+      <varlistentry>
+	<term><option>--rename-locals</option></term>
+	<term><option>--no-rename-locals</option></term>
+	<listitem>
+	  <para>Uniquely rename all local variables and formal
+	  parameters.  This can be useful to avoid confusing multiple
+	  same-named variables when examining instrumentation site
+	  information.  A variable
+	  <varname><replaceable>var</replaceable></varname> within a
+	  function
+	  <function><replaceable>func</replaceable></function> is
+	  renamed as
+	  <varname><replaceable>func</replaceable>$<replaceable>var</replaceable></varname>.
+	  Defaults to no renaming.</para>
+	</listitem>
+      </varlistentry>
     </variablelist>
   </section>
 

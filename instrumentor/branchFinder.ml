@@ -14,7 +14,7 @@ class visitor (tuples : CounterTuples.manager) func =
       match stmt.skind with
       | If (predicate, thenClause, elseClause, location)
 	when self#includedStatement stmt ->
-	  let predTemp = var (makeTempVar func (typeOf predicate)) in
+	  let predTemp = var (Locals.makeTempVar func (typeOf predicate)) in
 	  let selector = BinOp (Ne, Lval predTemp, zero, intType) in
 	  let bump = tuples#addSite func selector (d_exp () predicate) location in
 	  let replacement = Block (mkBlock [mkStmtOneInstr (Set (predTemp, predicate, location));

@@ -59,6 +59,8 @@ my %flag_specs =
      '-fno-threads' => sub { },
      '-fsample' => sub { push @inst, '--sample' },
      '-fno-sample' => sub { push @inst, '--no-sample' },
+     '-frename-locals' => sub { push @inst, '--rename-locals' },
+     '-fno-rename-locals' => sub { push @inst, '--no-rename-locals' },
 
      # Overall Options
      '-o' => sub { slurp_1 $_; $cpp0_output_slot = \$cpp0[@cpp0 - 1]; },

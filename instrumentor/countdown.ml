@@ -29,7 +29,7 @@ class countdown file =
   let global = var (findGlobal file) in
   let reset = findReset file in
   fun fundec ->
-    let local = var (makeTempVar fundec ~name:"localEventCountdown" uintType) in
+    let local = var (Locals.makeTempVar fundec ~name:"localEventCountdown" uintType) in
 
     object (self)
       method decrement location =

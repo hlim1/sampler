@@ -17,7 +17,7 @@ class visitor (constants : Constants.collection) globals (tuples : CounterTuples
 	let leftTypeSig = typeSig leftType in
 	let leftDoc = (d_lval () left) ++ chr '\t' in
 
-	let newLeft = var (makeTempVar func leftType) in
+	let newLeft = var (Locals.makeTempVar func leftType) in
 	let last = mkStmt (Instr [Set (left, Lval newLeft, location)]) in
 	let statements = ref [last] in
 

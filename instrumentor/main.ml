@@ -7,6 +7,7 @@ let _ =
     let phases =
       [
        "removing unused symbols (early)", (fun file -> Rmtmps.removeUnusedTemps file);
+       Locals.rename;
        Instrumentor.phase;
        "removing unused symbols (late)", (fun file -> Rmtmps.removeUnusedTemps file);
        Idents.phase;

@@ -2,8 +2,15 @@ EXTRA_DIST =					\
 	modular-a.c				\
 	modular-b.c				\
 	modular.expected			\
+	library.c				\
+	library.h				\
+	plugin.c				\
+	sharing.c				\
+	sharing.expected			\
 	simple.c				\
 	simple.expected				\
+	threads.c				\
+	threads.expected			\
 	testsuite				\
 	testsuite.at
 

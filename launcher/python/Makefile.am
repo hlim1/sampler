@@ -2,9 +2,11 @@ py := $(wildcard *.py)
 pyc = $(py:=c)
 pyo = $(py:=o)
 
-MOSTLYCLEANFILES = *.pyc *.pyo
+launcherdir = @launcherdir@
+launcher_SCRIPTS = $(pyc) $(pyo)
 
-all-local: $(pyc) $(pyo)
+EXTRA_DIST = $(py)
+MOSTLYCLEANFILES = *.pyc *.pyo
 
 $(pyc): %.pyc: %.py
 	python -W all -c 'import $*' || rm -f $@

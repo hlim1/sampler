@@ -37,6 +37,10 @@ AC_SUBST(BUILD_HOST, `hostname`)
 AC_MSG_RESULT($BUILD_HOST)
 
 
+AC_SUBST(package_datadir, '$(datadir)/$(PACKAGE)')
+AC_SUBST(launcherdir, '$(package_datadir)/launcher')
+
+
 ########################################################################
 #
 #  OCaml configuration

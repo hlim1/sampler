@@ -18,3 +18,6 @@ EXTRA_DIST =					\
 	$(PACKAGE).spec				\
 	package.m4				\
 	tools
+
+rpm: dist
+	rpmbuild -tb $(distdir).tar.gz

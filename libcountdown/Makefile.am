@@ -1,4 +1,4 @@
-lib_LIBRARIES =	$(nothread_libs) $(thread_libs)
+noinst_LIBRARIES = $(nothread_libs) $(thread_libs)
 
 
 acyclic_cflags = -DSAMPLER_ACYCLIC -ffast-math
@@ -51,12 +51,12 @@ endif
 ########################################################################
 
 
-libexec_PROGRAMS = precompute
+noinst_PROGRAMS = precompute mean
+
 precompute_SOURCES = precompute.c
 precompute_CFLAGS = $(nothread_cflags)
 precompute_LDADD = libacyclic.a $(LIBM)
 
-noinst_PROGRAMS = mean
 mean_CFLAGS = $(nothread_cflags)
 mean_LDADD = libacyclic.a libcountdown.a $(LIBM)
 

@@ -1,4 +1,4 @@
-lib_LIBRARIES = libdaikon.a
+noinst_LIBRARIES = libdaikon.a
 
 libdaikon_a_SOURCES =				\
 	daikon.c				\

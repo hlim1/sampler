@@ -1,26 +1,107 @@
-Summary: Tools for bug isolation using sampled instrumentation
+########################################################################
+#
+#  General configuration
+#
+
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
 Release: 1
 License: Freely modifiable and distributable
-Group: Development/Tools
+Group: Applications/System
 URL: http://www.cs.berkeley.edu/~liblit/bug-isolation/
 Source0: %{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-BuildRequires: ocaml
-BuildRequires: libxslt
-BuildRequires: perl
-BuildRequires: gcc
 BuildRequires: binutils
+BuildRequires: gcc
+BuildRequires: gnome-python2
+BuildRequires: gnome-python2-gconf
+BuildRequires: gnome-python2-gtkhtml2
+BuildRequires: libxslt
+BuildRequires: ocaml
+BuildRequires: perl
+BuildRequires: pygtk2
+BuildRequires: pygtk2-libglade
+
+
+########################################################################
+#
+#  Package sampler
+#
+
+Summary: Runtime support for bug isolation using sampled instrumentation
+Requires: gdb
+Requires: python
 
 %description
+This package supports instrumented applications at run time.  It
+includes tools for launching instrumented applications, collecting
+sample and crash reports, and uploading those reports to the central
+bug isolation server.
+
+%files
+%defattr(-,root,root,-)
+%doc AUTHORS COPYING
+%doc doc/%{name}.html
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/gdb-commands
+%{_datadir}/%{name}/launcher/AppConfig.py[co]
+%{_datadir}/%{name}/launcher/BaseMain.py[co]
+%{_datadir}/%{name}/launcher/BaseUserConfig.py[co]
+%{_datadir}/%{name}/launcher/Launcher.py[co]
+%{_datadir}/%{name}/launcher/Main.py[co]
+%{_datadir}/%{name}/launcher/Outcome.py[co]
+%{_datadir}/%{name}/launcher/RedirectHandler.py[co]
+%{_datadir}/%{name}/launcher/ReportsReader.py[co]
+%{_datadir}/%{name}/launcher/Upload.py[co]
+%{_datadir}/%{name}/launcher/Uploader.py[co]
+%{_datadir}/%{name}/launcher/UserConfig.py[co]
+%{_datadir}/%{name}/print-debug-info
+
+
+########################################################################
+#
+#  Package sampler-gnome
+#
+
+%package gnome
+Group: Applications/System
+Summary: Runtime support for GNOME applications with sampled instrumentation
+Requires: %{name}
+Requires: gnome-python2
+Requires: gnome-python2-gconf
+Requires: gnome-python2-gtkhtml2
+Requires: pygtk2
+Requires: pygtk2-libglade
+
+%description gnome
+This package supports instrumented GNOME applications at run time.  It
+contains a modified launcher and uploader that presents GNOME dialogs
+for first-time opt-in and uses GConf to store user preferences.
+
+%files gnome
+%defattr(-,root,root,-)
+%doc AUTHORS COPYING
+%{_datadir}/%{name}/launcher/DialogWrapper.py[co]
+%{_datadir}/%{name}/launcher/FirstTime.py[co]
+%{_datadir}/%{name}/launcher/GnomeMain.py[co]
+%{_datadir}/%{name}/launcher/GnomeUserConfig.py[co]
+%{_datadir}/%{name}/launcher/GtkImporter.py[co]
+%{_datadir}/%{name}/launcher/SamplerConfig.py[co]
+%{_datadir}/%{name}/launcher/ServerMessage.py[co]
+
+
+########################################################################
+#
+#  General scripts
+#
 
 %prep
 %setup -q
 
 %build
 %configure --enable-native
-%__make %{?_smp_mflags}
+make %{?_smp_mflags}
+#make check
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -28,11 +109,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
-%files
-%defattr(-,root,root,-)
-%doc AUTHORS COPYING
-%doc doc/%{package}.html
 
 %changelog
 * Mon Jul 28 2003 Ben Liblit <liblit@cs.berkeley.edu> 

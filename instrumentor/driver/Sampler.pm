@@ -3,6 +3,7 @@ package Sampler;
 use strict;
 
 use CilConfig;
+use FindBin;
 
 
 ########################################################################
@@ -117,11 +118,10 @@ sub extraHeaders {
     my $self = shift;
     my @extras;
 
-    my $dir = "$::root/libcountdown";
     push @extras, '-DCIL';
-    push @extras, '-include', "$::root/libthreads/" . ($self->threading ? 'threads.h' : 'no-threads.h');
-    push @extras, '-include', "$dir/countdown.h" if $self->sampling;
-    push @extras, '-include', "$dir/$self->{countdowns}.h" if $self->{sample_events};
+    push @extras, '-include', "$::root/lib/" . ($self->threading ? 'threads.h' : 'no-threads.h');
+    push @extras, '-include', "$::root/lib/countdown.h" if $self->sampling;
+    push @extras, '-include', "$::root/lib/$self->{countdowns}.h" if $self->{sample_events};
 
     return @extras;
 }
@@ -134,9 +134,7 @@ sub extraLibs {
     if ($self->sampling) {
 	my $_r = $self->threading ? '_r' : '';
 	push @extras, '-Wl,--wrap,pthread_create' if $self->threading;
-	push @extras, "-L$::root/libcountdown";
-	push @extras, "-l$self->{countdowns}$_r";
-	push @extras, "-lcountdown$_r";
+	push @extras, "-L$::root/lib", "-lsampler$_r";
 	push @extras, $::libm if $::libm && $self->{countdowns} eq 'acyclic';
     }
 

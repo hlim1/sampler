@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir)/lib
 
 scheme = returns
 scheme_LIBRARIES = libreturns.a

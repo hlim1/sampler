@@ -1,5 +1,5 @@
-#include <libreport/report.h>
-#include <libreport/unit.h>
+#include <report.h>
+#include <unit.h>
 #include "scalar-pairs.h"
 
 

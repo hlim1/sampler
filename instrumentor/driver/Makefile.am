@@ -1,7 +1,7 @@
 bin_SCRIPTS = sampler-cc
 driver_SCRIPTS = main
 
-driver_DATA =					\
+driver_extras =					\
 	../cil/lib/Cilly.pm			\
 	../cil/lib/KeptFile.pm			\
 	../cil/lib/OutputFile.pm		\
@@ -9,7 +9,7 @@ driver_DATA =					\
 	CillySampler.pm				\
 	Sampler.pm
 
-EXTRA_DIST = $(driver_DATA)
+EXTRA_DIST = CillySampler.pm Sampler.pm
 
 main: main-subst
 	chmod +x $<

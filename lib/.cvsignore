@@ -1,7 +1,4 @@
-*.la
-*.lo
 .deps
-.libs
 Makefile
 Makefile.in
 countdown-1-1

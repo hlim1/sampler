@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir)/lib
 
 scheme = branches
 scheme_LIBRARIES = libbranches.a

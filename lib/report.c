@@ -1,3 +1,5 @@
+#define _GNU_SOURCE		/* for obstack_printf() */
+
 #include <errno.h>
 #include <obstack.h>
 #include <stdio.h>

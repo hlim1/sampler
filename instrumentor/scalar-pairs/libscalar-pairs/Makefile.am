@@ -1,4 +1,4 @@
-INCLUDES = -I$(top_srcdir)
+INCLUDES = -I$(top_srcdir)/lib
 
 scheme = scalar-pairs
 scheme_LIBRARIES = libscalar-pairs.a

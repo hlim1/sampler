@@ -5,15 +5,12 @@ SUBDIRS =					\
 	fuzz					\
 	instrumentor				\
 	launcher				\
-	libcountdown				\
-	libreport				\
+	lib					\
 	tools
 
 DIST_SUBDIRS =					\
 	$(SUBDIRS)				\
-	benchmarks				\
-	libthreads				\
-	libtuples
+	benchmarks
 
 EXTRA_DIST =					\
 	$(PACKAGE).spec				\

@@ -2,14 +2,21 @@ open Cil
 open Printf
 
 
+let bad message printer thing =
+  try ignore(error message printer thing)
+  with Errormsg.Error -> ()
+    
+    
 let checkLvalue = function
   | (Mem Lval (Var _, NoOffset), NoOffset) -> ()
   | (Var _, _) -> ()
-  | other -> ignore(warnContext "complex lvalue: %a" d_lval other)
+  | other -> bad "complex lvalue: %a" d_lval other
 	
 	
 class visitor = object
-  inherit nopCilVisitor
+  inherit FunctionBodyVisitor.visitor
+
+  method vstmt _ = DoChildren
 
   method vinst inst =
     begin
@@ -22,7 +29,7 @@ class visitor = object
 		begin
 		  match rval with
 		  | Lval (Var _, NoOffset) -> ()
-		  | other -> ignore(warnContext "complex rvalue: %a" d_exp other)
+		  | other -> bad "complex rvalue: %a" d_exp other
 		end
 	    | _ -> ()
 	  end

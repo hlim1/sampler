@@ -29,6 +29,7 @@ AC_MSG_RESULT($DISTRO)
 #
 
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_RANLIB
 AM_PROG_LEX
 AC_PROG_LN_S
@@ -333,6 +334,7 @@ launcher/trayicon/libegg/tray/Makefile
 launcher/wrapper/Makefile
 lib/Makefile
 lib/cyclic-size.h
+mining/analysis/Makefile
 mining/dumps/Makefile
 mining/Makefile
 mining/populate/Makefile

@@ -1,0 +1,6 @@
+.deps
+Makefile
+Makefile.in
+modernize
+results
+stamps.mk

@@ -1,1 +1,1 @@
-SUBDIRS = dumps populate queries
+SUBDIRS = analysis dumps populate queries

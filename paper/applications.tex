@@ -143,10 +143,16 @@ to a mere 3\% with sparse sampling.
 Is 1/1000 sampling good enough to tell us with confidence that our
 code is correct?  That depends on how confident we want to be, how
 many users we have, and how often a bug is thought to occur.  Suppose
-we are interested in a bug triggered by bad behavior that occurs once
-per hundred runs.  If we want to be 90\% confident to have seen
-sampled this misbehavior at least once, then we need at least $100 \times
-\log{(1-0.90)} / \log{(1-1/1000)} = 230,143$ runs.  While this may
+we are interested in a bug triggered by bad behavior that has a
+$1/100$ chance of occurring in a single run.
+%occurs once per hundred runs.
+If we want to be 90\% confident to have seen this misbehavior in at
+least one run,
+%at least once,
+then we need at least $\log{(1-0.90)} / \log{( 1 - 1/100000)} =
+230,258$ runs.
+%$100 \times \log{(1-0.90)} / \log{(1-1/1000)} = 230,143$ runs.
+While this may
 seem large, consider that sixty million Office XP licenses were sold
 in its first year on the market \cite{Microsoft:2002:AR-F10K}.  If
 each licensee runs Microsoft Word twice per week, then 230,000 runs
@@ -234,7 +240,7 @@ across many benchmarks.  Other recurring themes include:
   that are constant or fixed on entry.  A loop with iteration count
   $i$ and body weight $w$ could be treated as an acyclic region of
   weight $iw$.
-  
+
 \item Overly conservative identification of weightless functions.
   Calls through function pointers or to externally-defined code are
   assumed to potentially recurse back to the caller.  Points-to
@@ -259,12 +265,12 @@ and other poorly-performing benchmarks into line.
   weights, so amortization should be great.  I really have no
   plausible explanation for the \texttt{go} performance data at this
   time.
-  
+
   Perhaps all of Section~\ref{sec:ccured:single} should be shrunk down
   dramatically.  We might just offer a bullet list of things we know
   we could improve, along with some vague statement that these may not
   be the only sources of slowdown.
-  
+
   Part of the problem, I think, is that we're trying to do two
   different things here.  First, we're trying to mention the idea of
   single-function instrumentation.  Alex feels it is very important
@@ -275,7 +281,7 @@ and other poorly-performing benchmarks into line.
   because single-function instrumentation makes it easier to find
   certain opportunities for improvement, but that's not a very strong
   tie.
-  
+
   On the other hand, one of the reviewers specifically commented on
   the fact that ``Apparent anomalies in the results are aggressively
   addressed and explained,'' so I'm loathe to remove this.
@@ -354,17 +360,17 @@ tests we term \termdef{elimination strategies}:
 \item[\elim{Elimination by universal falsehood}:] disregard any
   counter that is zero on all runs.  These likely represent
   predicates which can never be true.
-  
+
 \item[\elim{Elimination by lack of failing coverage}:] disregard any
   triple of counters all three of which are zero on all failed runs.
   Because one counter in each triple must always be true for any
   sample, these likely represent instrumentation sites that are not
   even reached in failing executions.
-  
+
 \item[\elim{Elimination by lack of failing example}:] disregard any
   counter which is zero on all failed runs.  These likely represent
   predicates that need not be true for a failure to occur.
-  
+
 \item[\elim{Elimination by successful counterexample}:] disregard any
   counter which has a non-zero value on any successful run.  These
   must represent predicates which can be true without subsequently
@@ -406,13 +412,13 @@ independently to the counter traces:
 \begin{description}
 \item[\elim{Universal falsehood}] discards 1569 counters which are
   zero on all runs, leaving 141 candidate predicates.
-  
+
 \item[\elim{Lack of failing example}] discards 1665 counters which are
   zero on all crashes, leaving 45 candidate predicates.
-  
-\item[\elim{Lack of failing coverage}] discards 554 counter triples
-  which are all zero on all crashes, leaving 48 candidate predicates.
-  
+
+\item[\elim{Lack of failing coverage}] discards 526 counter triples
+  which are all zero on all crashes, leaving 132 candidate predicates.
+
 \item[\elim{Successful counterexample}] discards 139 counters which
   are non-zero on any successful run, leaving 1571 candidate
   predicates.
@@ -465,6 +471,21 @@ cause of a bug but also related behaviors which are strongly but
 imperfectly correlated with failure.  We further explore this idea of
 broad correlation in Section~\ref{sec:bc}, where even the buggy line
 of code itself does not always cause a crash.
+
+As previously noted, the first three subsets of eliminated features
+are not independent of each, whereas the last set, i.e. those features
+with a \elim{successful counterexample}, is in another class altogether.
+The \elim{universal falsehood} and \elim{successful counterexample}
+sets both only look at successful runs, hence are easily analyzed
+together.  But the \elim{lack of failing example} strategy in general
+eliminates the most raw number of counts, hence it also makes sense to
+combine \elim{successful counterexample} with it.  Doing so in the
+case of \texttt{ccrypt} leaves us with exactly the same two features.
+While combining set 2 with set 4 makes no difference for this dataset,
+it might serve to our advantage in other programs.  \elim{Elimination
+  by lack of failing coverage}, on the other hand, is an inherently
+weaker strategy; when combined with \elim{successful counterexample},
+we are still left with 86 features.
 
 \subsubsection{Refinement over time}
 
@@ -519,6 +540,15 @@ not weightless.  Thus, for much of \texttt{ccrypt}, our sampling
 transformation devolves to a simpler but slower pattern of checking
 the next-sample countdown at each and every site.
 
+\begin{figure}
+  \centering
+  \small
+  \includegraphics[width=\columnwidth]{applications/ccrypt_density}
+  \caption{Relative performance of \texttt{ccrypt} with unconditional or
+    sampled instrumentation}
+  \label{fig:ccrypt:slowdown}
+\end{figure}
+
 In spite of this, the performance impact of sampled instrumentation is
 minimal.  Using an experimental setup similar to that described
 earlier in Section~\ref{sec:share:whole}, we find that the overhead
@@ -540,7 +570,7 @@ normal usage patterns, we expect that users experiencing crashes will
 be more likely to opt-in to a trace reporting system.  Thus, this may
 be a reasonable ratio to expect if most crashes and a few non-crashes
 are reported.
-  
+
 Quick perusal of the stack trace at a typical failure is discouraging.
 The crash occurs several frames deep inside the C library's
 \texttt{malloc()} function: a sure sign of heap corruption.  Such bugs

@@ -25,7 +25,7 @@ let postBlock block =
 let postStmt stmt =
   match stmt.skind with
   | Block { bstmts = [singleton] } ->
-      singleton.labels <- stmt.labels @ singleton.labels;
+      assert (stmt.labels == []);
       singleton
   | _ ->
       stmt
@@ -39,8 +39,8 @@ class visitor =
       ChangeDoChildrenPost (block, postBlock)
 
     method vstmt stmt =
-      match stmt.skind with
-      | Block { battrs = [] } ->
+      match stmt with
+      | { skind = Block { battrs = [] }; labels = [] } ->
 	  ChangeDoChildrenPost (stmt, postStmt)
       | _ ->
 	  DoChildren

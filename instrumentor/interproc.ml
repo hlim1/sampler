@@ -8,7 +8,7 @@ let _ =
     sample
     ~flag:"sample"
     ~desc:"randomly sample instrumentation sites at run time"
-    ~ident:"sample"
+    ~ident:"Sample"
 
 
 let visit preparator file =

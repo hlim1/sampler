@@ -4,6 +4,7 @@ use strict;
 use FindBin;
 use File::Basename;
 
+use CilConfig;
 use Cilly;
 our @ISA = qw(Cilly);
 
@@ -35,6 +36,20 @@ sub setDefaultArguments {
     my $self = shift;
     $self->SUPER::setDefaultArguments;
     $self->{LD} = "libtool $self->{LD}";
+    $self->{only} = '';
+}
+
+
+sub collectOneArgument {
+    my $self = shift;
+    my ($arg, $pargs) = @_;
+
+    if ($arg eq '--only') {
+	$self->{only} = shift @{$pargs};
+	return 1;
+    } else {
+	$self->SUPER::collectOneArgument(@_);
+    }
 }
 
 
@@ -57,7 +72,7 @@ sub applyCil {
     my ($base, $dir, undef) = fileparse $dest, '\\.[^.]+';
     my $aftercil = "$dir$base.inst.c";
 
-    $self->runShell("$self->{instrumentor} @{$ppsrc} >$aftercil");
+    $self->runShell("$self->{instrumentor} --only '$self->{only}' @{$ppsrc} >$aftercil");
     return $aftercil;
 }
 

@@ -1,6 +1,20 @@
 open Cil
 
 
+let only = ref ""
+
+
+let _ =
+  Options.registerString
+    ~flag:"only"
+    ~desc:"<function> sample only in this function"
+    ~ident:"Only"
+    only
+
+
+(**********************************************************************)
+
+
 type info = {
     sites : StmtSet.container;
     calls : Calls.infos;
@@ -30,13 +44,19 @@ class virtual visitor =
 
       let calls = Calls.prepatch self#prepatcher func in
       let sitesList, globals = self#collectSites func in
-
-      ignore (computeCFGInfo func false);
       let sites = new StmtSet.container in
-      List.iter sites#add sitesList;
+      let info = { sites = sites; calls = calls } in
 
-      globals,
-      { sites = sites; calls = calls }
+      if !only = "" || !only = func.svar.vname then
+	begin
+	  ignore (computeCFGInfo func false);
+	  List.iter sites#add sitesList;
+	  globals, info
+	end
+      else
+	let removeStmt stmt = stmt.skind <- Instr [] in
+	List.iter removeStmt sitesList;
+	[], info
 
     method vglob = function
       | GFun (func, _) as global

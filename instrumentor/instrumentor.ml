@@ -43,5 +43,5 @@ let phase =
 	let countdown = new Countdown.countdown file in
 	time "  loading site scales" Sites.setScales;
 	time "  applying sampling transformation"
-	  (fun () -> Transform.visit file tester countdown)
+	  (fun () -> Transformer.visit file tester countdown)
       end

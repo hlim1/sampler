@@ -58,6 +58,6 @@ class virtual visitor schemeName file =
 	  let tester = Weighty.collect file allSites in
 	  let countdown = new Countdown.countdown file in
 	  TestHarness.time "  applying sampling transformation"
-	  (fun () -> List.iter (Transform.visit tester countdown) allSites)
+	  (fun () -> List.iter (Transformer.visit tester countdown) allSites)
 	end
   end

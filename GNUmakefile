@@ -20,9 +20,10 @@ backwardJumps = $(clonesMap) backwardJumps
 calls = $(clonesMap) $(functionBodyVisitor) calls
 cfg = cfg
 cfgToDot = $(dotify) cfgToDot
+choices = choices
 classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
 clonesMap = clonesMap
-countdown = $(findGlobal) countdown
+countdown = $(choices) $(findGlobal) countdown
 dotify = $(utils) dotify
 duplicate = $(functionBodyVisitor) $(identity) $(stmtMap) duplicate
 filterLabels = $(functionBodyVisitor) $(stmtSet) filterLabels
@@ -38,6 +39,8 @@ insertSkipsVisitor = $(functionBodyVisitor) insertSkipsVisitor
 isolateInstructions = $(functionBodyVisitor) isolateInstructions
 mapClass = mapClass
 patchSites = patchSites
+phases = $(testHarness) phases
+printer = $(choices) $(filterLabels) printer
 removeLoops = $(functionBodyVisitor) removeLoops
 setClass = setClass
 skipVisitor = skipVisitor
@@ -56,7 +59,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libcil) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-harness := $(filterLabels) $(findFunction) $(insertSkipsAfter) $(insertSkipsBefore) $(testHarness) $(transformVisitor)
+harness := $(findFunction) $(insertSkipsAfter) $(insertSkipsBefore) $(phases) $(transformVisitor)
 harness.$(cma): $(addsuffix .$(cmo), $(harness))
 	$(archive)
 

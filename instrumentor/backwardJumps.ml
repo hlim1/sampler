@@ -1,5 +1,4 @@
 open Cil
-open ClonesMap
 
 
 let patch clones weights countdown =
@@ -8,16 +7,11 @@ let patch clones weights countdown =
     let weight = weights#find jump in
     match jump.skind with
     | Goto (destination, location) ->
-
-	let clonedDest = findCloneOf clones !destination in
-	let gotoStandard = mkBlock [mkStmt jump.skind] in
-	let gotoInstrumented = mkBlock [mkStmt (Goto (ref clonedDest, location))] in
-
-	let choice = countdown#checkThreshold location weight
-	    gotoInstrumented gotoStandard in
-
+	let findClone = ClonesMap.findCloneOf clones in
+	let clonedDest = findClone !destination in
+	let choice = countdown#checkThreshold location weight clonedDest !destination in
 	jump.skind <- choice;
-	(findCloneOf clones jump).skind <- choice;
+	(findClone jump).skind <- choice;
 
     | _ -> failwith "unexpected statement kind in backward jumps list"
   in

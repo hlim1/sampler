@@ -1,7 +1,7 @@
 open Cil
 
 
-type placeholders = (stmt * stmt) list
+type placeholders = (stmt * stmt * stmt * stmt) list
 
 
 class prepatcher =
@@ -14,11 +14,13 @@ class prepatcher =
     method vstmt stmt =
       match stmt.skind with
       | Instr [Call _ as call] ->
-	  let slotBefore = mkEmptyStmt () in
-	  let slotAfter = mkEmptyStmt () in
-	  placeholders <- (slotBefore, slotAfter) :: placeholders;
+	  let export = mkEmptyStmt () in
+	  let import = mkEmptyStmt () in
+	  let jump = mkEmptyStmt () in
+	  let landing = mkEmptyStmt () in
+	  placeholders <- (export, import, jump, landing) :: placeholders;
 	  
-	  let block = Block (mkBlock [slotBefore; mkStmtOneInstr call; slotAfter]) in
+	  let block = Block (mkBlock [export; mkStmtOneInstr call; import; jump; landing]) in
 	  stmt.skind <- block;
 	  SkipChildren
 
@@ -47,46 +49,29 @@ let nextLabels _ =
 
 
 let patch clones weights countdown =
-  let patchOne (_, standardAfter) =
-    let weight = weights#find standardAfter in
-    let instrumentedAfter = ClonesMap.findCloneOf clones standardAfter in
-    
+  let patchOne (standardExport, standardImport, standardJump, standardLanding) =
+    let findClone = ClonesMap.findCloneOf clones in
+    let instrumentedImport = findClone standardImport in
+    let instrumentedJump = findClone standardJump in
+    let instrumentedLanding = findClone standardLanding in
+
+    let export () = Instr [countdown#import] in
+    let instrumentedExport = findClone standardExport in
+    standardExport.skind <- export ();
+    instrumentedExport.skind <- export ();
+
+    let import () = Instr [countdown#import] in
+    standardImport.skind <- import ();
+    instrumentedImport.skind <- import ();
+
+    let weight = weights#find standardLanding in
+    let choice () = countdown#checkThreshold locUnknown weight instrumentedLanding standardLanding in
+    standardJump.skind <- choice ();
+    instrumentedJump.skind <- choice ();
+
     let standardLabel, instrumentedLabel = nextLabels () in
-    let standardLanding = mkEmptyStmt () in
-    let instrumentedLanding = mkEmptyStmt () in
     standardLanding.labels <- [standardLabel];
-    instrumentedLanding.labels <- [instrumentedLabel];
-    
-    let gotoStandard = mkBlock [mkStmt (Goto (ref standardLanding, locUnknown))] in
-    let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumentedLanding, locUnknown))] in
-    let choice = countdown#checkThreshold locUnknown weight
-	gotoInstrumented gotoStandard in
-    
-    standardAfter.skind <- Block (mkBlock [mkStmt choice; standardLanding]);
-    instrumentedAfter.skind <- Block (mkBlock [mkStmt choice; instrumentedLanding])
+    instrumentedLanding.labels <- [instrumentedLabel]
   in
   
   List.iter patchOne
-
-
-(**********************************************************************)
-
-
-let postpatch clones countdown =
-  let postpatchOne before after =
-    before.skind <- Instr [countdown#beforeCall];
-    after.skind <- Instr [countdown#afterCall]
-  in
-
-  let findClone =
-    ClonesMap.findCloneOf clones
-  in
-
-  let postpatchBoth (standardBefore, standardAfter) =
-    let instrumentedBefore = findClone standardBefore in
-    let instrumentedAfter = findClone standardAfter in
-    postpatchOne standardBefore standardAfter;
-    postpatchOne instrumentedBefore instrumentedAfter
-  in
-
-  List.iter postpatchBoth

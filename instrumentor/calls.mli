@@ -1,7 +1,7 @@
 open Cil
 
 
-type placeholders = (stmt * stmt) list
+type placeholders = (stmt * stmt * stmt * stmt) list
 
 
 class prepatcher : object
@@ -12,4 +12,3 @@ end
 
 val prepatch : fundec -> placeholders
 val patch : ClonesMap.clonesMap -> WeighPaths.weightsMap -> Countdown.countdown -> placeholders -> unit
-val postpatch : ClonesMap.clonesMap -> Countdown.countdown -> placeholders -> unit

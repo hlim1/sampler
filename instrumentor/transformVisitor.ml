@@ -15,7 +15,7 @@ class virtual visitor file =
       prepareCFG func;
       RemoveLoops.visit func;
       IsolateInstructions.visit func;
-      let callMargins = self#prepatchCalls func in
+      let placeholders = self#prepatchCalls func in
       let collector = self#collector func in
       ignore (visitCilFunction (collector :> cilVisitor) func);
 
@@ -29,7 +29,7 @@ class virtual visitor file =
 
 	    let forwardJumps, backwardJumps = ClassifyJumps.visit func in
 	    let entry = FunctionEntry.find func in
-	    let afterCalls = List.map snd callMargins in
+	    let afterCalls = List.map (fun (_, _, _, landing) -> landing) placeholders in
 	    let headers = entry :: backwardJumps @ afterCalls in
 	    let weights = WeighPaths.weigh sites headers in
 	    let countdown = new Countdown.countdown countdownToken func in
@@ -37,10 +37,9 @@ class virtual visitor file =
 	    
 	    ForwardJumps.patch clones forwardJumps;
 	    BackwardJumps.patch clones weights countdown backwardJumps;
-	    Calls.patch clones weights countdown callMargins;
+	    Calls.patch clones weights countdown placeholders;
 	    FunctionEntry.patch func weights countdown instrumented;
 	    Returns.patch func countdown;
-	    Calls.postpatch clones countdown callMargins;
 	    
 	    let instrument original =
 	      let location = get_stmtLoc original.skind in

@@ -25,20 +25,25 @@ class countdown (global, reset) fundec =
     method decrement location =
       Instr [Set (local, increm (Lval local) (-1), location)]
 
-    method beforeCall =
+    method export =
       Set (global, (Lval local), locUnknown)
 
-    method afterCall =
+    method import =
       Set (local, (Lval global), locUnknown)
 
     method checkThreshold location weight instrumented original =
+      let gotoOriginal = Goto (ref original, location) in
+      let gotoInstrumented = Goto (ref instrumented, location) in
       match weight with
-      | 0 -> Block original
-      | 1 -> Block instrumented
+      | 0 -> gotoOriginal
+      | 1 -> gotoInstrumented
       | _ ->
 	  let within = kinteger IUInt weight in
 	  let predicate = BinOp (Gt, Lval local, within, intType) in
-	  let choice = If (predicate, original, instrumented, location) in
+	  let choice = If (predicate,
+			   mkBlock [mkStmt gotoOriginal],
+			   mkBlock [mkStmt gotoInstrumented],
+			   location) in
 	  Choices.add choice;
 	  choice
 

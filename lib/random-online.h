@@ -7,7 +7,7 @@
 #pragma sampler_assume_weightless("getNextEventCountdown")
 #endif
 
-int getNextEventCountdown();
+int getNextEventCountdown(void);
 
 
 #endif /* !INCLUDE_libcountdown_random_online_h */

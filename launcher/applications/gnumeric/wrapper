@@ -5,5 +5,5 @@ import sys
 
 sys.path.append(os.path.join(sys.path[0], '..', '..'))
 
-import main
-main.main()
+import GnomeMain
+GnomeMain.main(os.path.join(sys.path[0], 'config'))

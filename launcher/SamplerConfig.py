@@ -9,9 +9,9 @@ import gconf
 
 class SamplerConfig:
 
-    def __init__(self, application):
+    def __init__(self, app):
         self.client = gconf.client_get_default()
-        self.root = application.get('general', 'gconf-root')
+        self.root = app.get("user", "gconf-root")
         self.client.add_dir(self.root, gconf.CLIENT_PRELOAD_ONELEVEL)
 
     def __key(self, suffix):

@@ -1,7 +1,12 @@
-[general]
+[gnome]
 gconf-root: /apps/gnumeric/bug-isolation/branches
 
-[synopsis]
-Program-Version: 1.20
-Instrumentation-Type: branches
-Instrumentation-Version: 0.1
+[application]
+executable: /usr/bin/gnumeric
+debug-reporter: %(configdir)s/../../print-debug-info
+
+[upload-headers]
+name: gnumeric
+version: 1.20
+instrumentation-type: branches
+instrumentation-version: 0.1

@@ -34,31 +34,30 @@ class Upload:
             self.__compressed[name] = accumulator.getvalue()
 
         # pick a boundy that never appears in any report
-        self.boundary = self.__pickBoundary()
+        self.__boundary = self.__pick_boundary()
+        self.headers = {"content-type" : 'multipart/form-data; boundary="' + self.__boundary + '"'}
 
-
-    def __pickBoundary(self):
+    def __pick_boundary(self):
         candidate = ('=' * 15) + repr(random.random()).split('.')[1] + '=='
         pattern = re.compile('^--' + re.escape(candidate) + '(--)?$', re.MULTILINE)
 
         for name in self.__compressed:
             if pattern.search(self.__compressed[name]):
-                return __pickBoundary(reports)
+                return __pick_boundary(reports)
 
         return candidate
 
-
-    def __str__(self):
+    def body(self):
         multipart = cStringIO.StringIO()
 
         for name in self.__compressed:
-            contents = ['--' + self.boundary,
-                        'Content-Disposition: form-data; filename="' + name + '", name="' + name + '"',
-                        'Content-Encoding: gzip',
+            contents = ['--' + self.__boundary,
+                        'content-disposition: form-data; filename="' + name + '", name="' + name + '"',
+                        'content-encoding: gzip',
                         '',
                         self.__compressed[name]]
             for line in contents:
                 print >>multipart, line + '\r'
 
-        print >>multipart, '--' + self.boundary + '--\r'
+        print >>multipart, '--' + self.__boundary + '--\r'
         return multipart.getvalue()

@@ -1,0 +1,33 @@
+from ConfigParser import ConfigParser
+import os.path
+
+
+class AppConfig:
+    """Static configuration information about a single instrumented application"""
+
+    def __init__(self, filename):
+        """Find application information in the given configuration file."""
+        self.__config = ConfigParser({"configdir" : os.path.basename(filename)})
+        self.__config.readfp(file(filename))
+
+    def get(self, section, key):
+        """Fetch an arbitrary configuration entry."""
+        return self.__config.get(section, key)
+
+    def executable(self):
+        """Path to the real instrumented executable."""
+        return self.get("application", "executable")
+
+    def debug_reporter(self):
+        """Path to script that prints post-crash debug reports."""
+        if self.__config.has_option("application", "debug-reporter"):
+            return self.get("application", "debug-reporter")
+        else:
+            return None
+
+    def upload_headers(self):
+        """Extra headers to be included in all report uploads."""
+        headers = {}
+        for key in self.__config.options("upload-headers"):
+            headers[key] = self.get("upload-headers", key)
+        return headers

@@ -1,6 +1,6 @@
 SUBDIRS = applications
 
-py := $(filter-out launcher.py, $(wildcard *.py))
+py := $(wildcard *.py)
 pyo = $(py:=o)
 
 MOSTLYCLEANFILES = $(pyo)
@@ -11,3 +11,6 @@ $(pyo): %.pyo: %.py
 	python -O -c 'import $*' || rm -f $@
 	[ -r $@ ]
 
+mains:
+	python -O -c 'import GnomeMain'
+	python -O -c 'import Main'

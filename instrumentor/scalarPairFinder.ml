@@ -6,7 +6,7 @@ open Pretty
 let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
 
 
-class visitor (constants : Constants.collection) globals (tuples : CounterTuples.manager) func =
+class visitor (constants : Constants.collection) globals (tuples : Counters.manager) func =
   object (self)
     inherit SiteFinder.visitor
 
@@ -28,7 +28,7 @@ class visitor (constants : Constants.collection) globals (tuples : CounterTuples
 
 	let selector right =
 	  let compare op = BinOp (op, Lval newLeft, right, intType) in
-	  BinOp (PlusA, compare Gt, compare Ge, intType)
+	  Index (BinOp (PlusA, compare Gt, compare Ge, intType), NoOffset)
 	in
 
 	let compareToVarMaybe right =

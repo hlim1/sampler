@@ -2,8 +2,8 @@
 #define INCLUDE_libreturns_returns_h
 
 
-#pragma cilnoremove("returnsCounterTuples")
-static unsigned returnsCounterTuples[][3];
+#pragma cilnoremove("returnsCounters")
+static unsigned returnsCounters[][3];
 
 
 #endif /* !INCLUDE_libreturns_returns_h */

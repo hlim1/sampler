@@ -62,6 +62,15 @@
 	    </varlistentry>
 
 	    <varlistentry>
+	      <term><option>function-entries</option></term>
+	      <listitem>
+		<para>Count how many times each function is called.
+		Each function body induces one instrumentation point
+		with one counter.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
 	      <term><option>returns</option></term>
 	      <listitem>
 		<para>At each scalar-returning call site, count how

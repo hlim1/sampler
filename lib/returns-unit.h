@@ -5,8 +5,8 @@
 #include "unit-signature.h"
 
 
-#pragma cilnoremove("returnsCounterTuples")
-static ReturnTuple returnsCounterTuples[];
+#pragma cilnoremove("returnsCounters")
+static ReturnTuple returnsCounters[];
 
 
 #pragma cilnoremove("returnsReporter")
@@ -14,8 +14,8 @@ static ReturnTuple returnsCounterTuples[];
 static void returnsReporter()
 {
   returnsReport(samplerUnitSignature,
-		sizeof(returnsCounterTuples) / sizeof(ReturnTuple),
-		returnsCounterTuples);
+		sizeof(returnsCounters) / sizeof(ReturnTuple),
+		returnsCounters);
 }
 
 

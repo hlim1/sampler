@@ -68,6 +68,8 @@ libsampler_r_a_CFLAGS = -include $(srcdir)/threads.h -pthread
 libschemes_a_SOURCES =				\
 	branches.c				\
 	branches-types.h			\
+	function-entries.c			\
+	function-entries-types.h		\
 	returns.c				\
 	returns-types.h				\
 	scalar-pairs.c				\

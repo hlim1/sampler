@@ -6,7 +6,7 @@ let postpatch replacement statement =
   statement
 
 
-class visitor (tuples : CounterTuples.manager) func =
+class visitor (tuples : Counters.manager) func =
   object (self)
     inherit SiteFinder.visitor
 
@@ -15,7 +15,7 @@ class visitor (tuples : CounterTuples.manager) func =
       | If (predicate, thenClause, elseClause, location)
 	when self#includedStatement stmt ->
 	  let predTemp = var (Locals.makeTempVar func (typeOf predicate)) in
-	  let selector = BinOp (Ne, Lval predTemp, zero, intType) in
+	  let selector = Index (BinOp (Ne, Lval predTemp, zero, intType), NoOffset) in
 	  let bump = tuples#addSite func selector (d_exp () predicate) location in
 	  let replacement = Block (mkBlock [mkStmtOneInstr (Set (predTemp, predicate, location));
 					    bump;

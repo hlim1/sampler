@@ -12,7 +12,7 @@ let name = {
 
 class c file : Scheme.c =
   object (self)
-    val tuples = new CounterTuples.manager name file
+    val tuples = new Counters.manager name file
 
     val constants = Constants.collect file
     val mutable globals = []

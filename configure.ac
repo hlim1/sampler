@@ -251,6 +251,7 @@ AM_CONFIG_HEADER(config.h)
 
 AC_CONFIG_TESTDIR(instrumentor/branches)
 AC_CONFIG_TESTDIR(instrumentor/decure/tests)
+AC_CONFIG_TESTDIR(instrumentor/function-entries)
 AC_CONFIG_TESTDIR(instrumentor/nothing)
 AC_CONFIG_TESTDIR(instrumentor/returns)
 AC_CONFIG_TESTDIR(instrumentor/scalar-pairs)
@@ -270,6 +271,7 @@ instrumentor/daikon/Makefile
 instrumentor/decure/Makefile
 instrumentor/decure/tests/Makefile
 instrumentor/driver/Makefile
+instrumentor/function-entries/Makefile
 instrumentor/nothing/Makefile
 instrumentor/returns/Makefile
 instrumentor/scalar-pairs/Makefile

@@ -1,4 +1,10 @@
-SUBDIRS = driver branches nothing returns scalar-pairs
+SUBDIRS =					\
+	driver					\
+	branches				\
+	function-entries			\
+	nothing					\
+	returns					\
+	scalar-pairs
 
 EXTRA_DIST = build-libraries libraries.ml.in
 

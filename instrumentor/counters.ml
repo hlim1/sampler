@@ -6,14 +6,14 @@ open SchemeName
 
 class manager name file =
   object (self)
-    val tuples = FindGlobal.find (name.prefix ^ "CounterTuples") file
+    val counters = FindGlobal.find (name.prefix ^ "Counters") file
     val mutable nextId = 0
     val siteInfos = new QueueClass.container
 
     method private bump = Threads.bump file
 
     method addSite func selector (description : doc) location =
-      let counter = (Var tuples, Index (integer nextId, Index (selector, NoOffset))) in
+      let counter = (Var counters, Index (integer nextId, selector)) in
       nextId <- nextId + 1;
       let result = mkStmtOneInstr (self#bump counter location) in
       Sites.registry#add func result;
@@ -25,7 +25,7 @@ class manager name file =
 	begin
 	  function
 	    | GVar ({vtype = TArray (elementType, _, attributes)} as varinfo, initinfo, location)
-	      when varinfo == tuples
+	      when varinfo == counters
 	      ->
 		GVar ({varinfo with vtype = TArray (elementType,
 						    Some (integer nextId),

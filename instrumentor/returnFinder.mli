@@ -1,4 +1,4 @@
 open Cil
 
 
-class visitor : CounterTuples.manager -> fundec -> SiteFinder.visitor
+class visitor : Counters.manager -> fundec -> SiteFinder.visitor

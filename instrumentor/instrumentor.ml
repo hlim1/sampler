@@ -14,6 +14,7 @@ let sample =
 let schemes = [
   ScalarPairScheme.factory;
   BranchScheme.factory;
+  FunctionEntryScheme.factory;
   ReturnScheme.factory;
 ]
 

@@ -177,6 +177,15 @@ void samplesBegin(const unsigned char *signature, const char scheme[])
 }
 
 
+void samplesDump1(unsigned count, const unsigned counts[])
+{
+  unsigned scan;
+
+  for (scan = 0; scan < count; ++scan)
+    fprintf(reportFile, "%u\n", counts[scan]);
+}
+
+
 void samplesDump2(unsigned count, const unsigned tuples[][2])
 {
   unsigned scan;

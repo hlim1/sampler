@@ -8,6 +8,7 @@ extern FILE *reportFile;
 
 
 void samplesBegin(const unsigned char *, const char []);
+void samplesDump1(unsigned, const unsigned []);
 void samplesDump2(unsigned, const unsigned [][2]);
 void samplesDump3(unsigned, const unsigned [][3]);
 void samplesEnd();

@@ -2,7 +2,7 @@ open Cil
 open InterestingReturn
 
 
-class visitor (tuples : CounterTuples.manager) func =
+class visitor (tuples : Counters.manager) func =
   object (self)
     inherit SiteFinder.visitor
 
@@ -17,7 +17,7 @@ class visitor (tuples : CounterTuples.manager) func =
 	      let exp = Lval result in
 	      let desc = d_exp () callee in
 	      let compare op = BinOp (op, exp, zero, intType) in
-	      let selector = BinOp (PlusA, compare Gt, compare Ge, intType) in
+	      let selector = Index (BinOp (PlusA, compare Gt, compare Ge, intType), NoOffset) in
 	      let bump = tuples#addSite func selector (d_exp () callee) location in
 	      stmt.skind <- Block (mkBlock [mkStmt stmt.skind; bump]);
 	    end;

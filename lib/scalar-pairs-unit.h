@@ -5,8 +5,8 @@
 #include "unit-signature.h"
 
 
-#pragma cilnoremove("scalarPairsCounterTuples")
-static ScalarPairTuple scalarPairsCounterTuples[];
+#pragma cilnoremove("scalarPairsCounters")
+static ScalarPairTuple scalarPairsCounters[];
 
 
 #pragma cilnoremove("scalarPairsReporter")
@@ -14,8 +14,8 @@ static ScalarPairTuple scalarPairsCounterTuples[];
 static void scalarPairsReporter()
 {
   scalarPairsReport(samplerUnitSignature,
-		    sizeof(scalarPairsCounterTuples) / sizeof(ScalarPairTuple),
-		    scalarPairsCounterTuples);
+		    sizeof(scalarPairsCounters) / sizeof(ScalarPairTuple),
+		    scalarPairsCounters);
 }
 
 

@@ -2,8 +2,8 @@
 #define INCLUDE_libscalar_pairs_scalar_pairs_h
 
 
-#pragma cilnoremove("scalarPairsCounterTuples")
-static unsigned scalarPairsCounterTuples[][3];
+#pragma cilnoremove("scalarPairsCounters")
+static unsigned scalarPairsCounters[][3];
 
 
 #endif /* !INCLUDE_libscalar_pairs_scalar_pairs_h */

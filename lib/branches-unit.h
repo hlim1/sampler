@@ -5,8 +5,8 @@
 #include "unit-signature.h"
 
 
-#pragma cilnoremove("branchesCounterTuples")
-static BranchTuple branchesCounterTuples[];
+#pragma cilnoremove("branchesCounters")
+static BranchTuple branchesCounters[];
 
 
 #pragma cilnoremove("branchesReporter")
@@ -14,8 +14,8 @@ static BranchTuple branchesCounterTuples[];
 static void branchesReporter()
 {
   branchesReport(samplerUnitSignature,
-		 sizeof(branchesCounterTuples) / sizeof(BranchTuple),
-		 branchesCounterTuples);
+		 sizeof(branchesCounters) / sizeof(BranchTuple),
+		 branchesCounters);
 }
 
 

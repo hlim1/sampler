@@ -51,31 +51,3 @@ sub stash_file ($) {
 
 stash_environ();
 stash_file $_ foreach $query->param;
-
-
-########################################################################
-
-
-use lib '/usr/lib/perl5/site_perl/5.6.1';
-use DB_File::Lock;
-use POSIX qw(S_IRUSR S_IWUSR);
-
-
-my $remote = $query->remote_host;
-
-my %survey;
-tie %survey, 'DB_File::Lock', '/var/www/sampler-survey/distro.db', O_RDONLY, 0, $DB_HASH, 'read';
-my $novel = not exists $survey{$remote};
-untie %survey;
-
-if ($novel) {
-    my $pollster = 'http://www.cs.berkeley.edu/~liblit/sampler/survey/';
-    
-    print($query->start_html('Distribution Change Survey'),
-	  $query->h1('Distribution Change Survey'),
-	  $query->p('Thank you for participating in the Cooperative Bug Isolation Project.  We are considering changing our CBI build platform and would like your input.  Please',
-		    $query->a({href => $pollster}, 'visit the survey page'),
-		    'and let us know what you think.'),
-	  $query->p("(If that hyperlink does not work, use your bowser to go to &lt;$pollster&gt; manually.)"),
-	  $query->end_html);
-}

@@ -2,7 +2,7 @@ open Cil
 
 
 class visitor closure =
-  let const = [Attr ("const", [])] in
+  let const = [Attrs.const] in
   let closurePtrFormal = ("",  TPtr (closure.vtype, const), []) in
   let closurePtr = mkAddrOf (var closure) in
   

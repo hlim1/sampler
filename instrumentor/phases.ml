@@ -4,9 +4,9 @@ open Cil
 let main manager =
   let phases =
     [
-     "removing unused symbols", (fun file -> Rmtmps.removeUnusedTemps file);
+     "removing unused symbols (early)", (fun file -> Rmtmps.removeUnusedTemps file);
      "instrumenting", (fun file -> ignore (manager file));
-     "removind unused symbols", (fun file -> Rmtmps.removeUnusedTemps file);
+     "removing unused symbols (late)", (fun file -> Rmtmps.removeUnusedTemps file);
      Idents.phase;
      "printing transformed code", dumpFile (new Printer.printer) stdout
    ]

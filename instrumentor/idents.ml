@@ -8,7 +8,7 @@ let register ident =
   idents := ident :: !idents
 
 
-let constAttr = [Attr ("const", [])]
+let constAttr = [Attrs.const]
 
 
 let phase =

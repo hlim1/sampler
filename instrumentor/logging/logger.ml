@@ -6,7 +6,7 @@ open Pretty
 exception Missing of string
 
 
-let constAttrs = [Attr ("const", [])]
+let constAttrs = [Attrs.const]
 let constCharType = TInt (IChar, constAttrs)
 let constVoidPtrType = TPtr (TVoid constAttrs, [])
 

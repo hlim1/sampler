@@ -7,12 +7,13 @@ libdirs = $(cil_libdir)
 includes = $(foreach dir, $(libdirs), -I $(dir))
 compiler = $(ocamlc) $(ocamlflags)
 
-depend = ocamldep $(includes) $< >$@
+depend = ocamldep $(includes) $< >$@.tmp
 compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) -o $@ $(syslibs) $^
 
-recurse = $(MAKE) -C $(@D) $(@F)
+force ?= force
+recurse = $(MAKE) -C $(@D) $(@F) force=
 
 
 ########################################################################
@@ -44,9 +45,11 @@ $(addsuffix .$(cmo), $(impls)): %.$(cmo): %.ml
 
 $(addsuffix .di, $(ifaces)): %.di: %.mli
 	$(depend)
+	mv $@.tmp $@
 
 $(addsuffix .do, $(impls)): %.do: %.ml
 	$(depend)
+	mv $@.tmp $@
 
 $(addsuffix .dl, $(impls)): %.dl: %.do $(linkorder)
 	$(linkorder) <$< >$@
@@ -55,8 +58,11 @@ browse: force
 	ocamlbrowser $(includes)
 .PHONY: browse
 
+force:
+.PHONY: force
 
-MOSTLYCLEANFILES = $(targets) *.cma *.cmxa *.cmi *.cmo *.cmx *.o
+
+MOSTLYCLEANFILES = $(targets) *.annot *.cma *.cmxa *.cmi *.cmo *.cmx *.o
 CLEANFILES = *.d[ilo]
 
 

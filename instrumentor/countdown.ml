@@ -35,11 +35,11 @@ class countdown file =
       method decrement location =
 	Instr [Set (local, increm (Lval local) (-1), location)]
 
-      method export =
-	Set (global, (Lval local), locUnknown)
+      method export location =
+	Set (global, (Lval local), location)
 
-      method import =
-	Set (local, (Lval global), locUnknown)
+      method import location =
+	Set (local, (Lval global), location)
 
       method checkThreshold location weight instrumented original =
 	assert (Labels.hasGotoLabel original);

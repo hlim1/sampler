@@ -1,16 +1,22 @@
 tools_SCRIPTS =					\
 	debuild					\
 	extract-report				\
-	extract-site-info			\
+	extract-section				\
 	find-sampler-info			\
 	resolve-samples				\
 	rpmbuild
 
 EXTRA_DIST =					\
+	Embedded.pm				\
+	Function.pm				\
+	Node.pm					\
+	SymbolTable.pm				\
+	Unit.pm					\
 	extract-report				\
-	extract-site-info			\
+	extract-section				\
 	find-driver.pl				\
 	find-sampler-info			\
+	resolve-cfg				\
 	resolve-samples				\
 	skip-test
 

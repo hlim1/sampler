@@ -16,19 +16,24 @@ class visitor (tuples : ReturnTuples.builder) func =
       match stmt.skind with
       | Instr [Call (Some result, callee, args, location)]
 	when self#includedStatement stmt ->
-	  let info = super#prepatchCall stmt in
 	  let resultType, _, _, _ = splitFunctionType (typeOf callee) in
 	  if isInterestingType resultType then
 	    begin
 	      let exp = Lval result in
 	      let desc = d_exp () callee in
-	      let bump = tuples#bump func location { exp = exp; doc = desc } in
-	      sites <- info.site :: sites;
+	      let site = mkEmptyStmt () in
+	      let bump = tuples#bump func location site { exp = exp; doc = desc } in
+	      site.skind <- bump;
+	      sites <- site :: sites;
 	      let call = mkStmt stmt.skind in
-	      info.site.skind <- bump;
+	      stmt.skind <- Block (mkBlock [call; site])
 	    end;
 	  SkipChildren
 
+      | Instr (_ :: _ :: _) ->
+	  ignore (bug "instr should have been atomized");
+	  failwith "internal error"
+
       | _ ->
-	  super#vstmt stmt
+	  DoChildren
   end

@@ -19,6 +19,8 @@ EXTRA_DIST =					\
 	package.m4
 
 
+all-local: package.m4
+
 install-data-local:
 	mkdir $(DESTDIR)$(package_libdir)/sites
 

@@ -39,13 +39,15 @@ class visitor file (constants : Constants.collection) (tuples : PairTuples.build
 		exp = Lval (var left);
 		doc = text left.vname
 	      } in
-	      let bump = tuples#bump func location leftOperand in
+	      let bump = tuples#bump func location in
 	      fun right ->
 		let rightOperand = {
 		  exp = right;
 		  doc = d_exp () right
 		} in
-		let site = mkStmt (bump rightOperand) in
+		let site = mkEmptyStmt () in
+		let bump = bump site leftOperand rightOperand in
+		site.skind <- bump;
 		sites <- site :: sites;
 		site
 	    in
@@ -95,6 +97,10 @@ class visitor file (constants : Constants.collection) (tuples : PairTuples.build
 	  stmt.skind <- Block (mkBlock (mkStmt stmt.skind :: bumps));
 	  SkipChildren
 
+      | Instr (_ :: _ :: _) ->
+	  ignore (bug "instr should have been atomized");
+	  failwith "internal error"
+
       | _ ->
-	  super#vstmt stmt
+	  DoChildren
   end

@@ -12,8 +12,7 @@ DIST_SUBDIRS =					\
 	$(SUBDIRS)				\
 	benchmarks				\
 	libthreads				\
-	libtuples				\
-	mining
+	libtuples
 
 EXTRA_DIST =					\
 	package.m4				\

@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "primitive.h"
 
@@ -85,7 +86,9 @@ static int name()
 
 static void value()
 {
-  switch (getchar())
+  const int typecode = getchar();
+  
+  switch (typecode)
     {
     case Char:
       {
@@ -195,7 +198,8 @@ static void value()
     case EOF:
       break;
     default:
-      assert(0);
+      fprintf(stderr, "unexpected type code: %d\n", typecode);
+      abort();
     }
 
   putchar('\n');

@@ -11,5 +11,5 @@ $(pyc): %.pyc: %.py
 	[ -r $@ ]
 
 $(pyo): %.pyo: %.py
-	python -W all -c 'import $*' -O || rm -f $@
+	python -O -W all -c 'import $*' || rm -f $@
 	[ -r $@ ]

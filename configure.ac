@@ -1,4 +1,4 @@
-AC_INIT(sampler,0.7.1,liblit@cs.berkeley.edu)
+AC_INIT([sampler],[0.7.1],[liblit@cs.berkeley.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -258,7 +258,7 @@ AM_PATH_GSL
 #  Output
 #
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_TESTDIR(instrumentor/bounds)
 AC_CONFIG_TESTDIR(instrumentor/branches)

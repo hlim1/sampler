@@ -14,7 +14,8 @@ sub extraHeaders {
     my $self = shift;
     my @extras = $self->SUPER::extraHeaders;
     push @extras, '-include', "$::root/libreport/requires.h";
-    push @extras, '-include', "$::home/libbranches/branches-cil.h";
+    push @extras, '-include', "$::home/libbranches/branches.h";
+    push @extras, '-include', "$::root/libtuples/tuples-cil.h";
     return @extras;
 }
 

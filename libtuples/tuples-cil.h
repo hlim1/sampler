@@ -1,7 +1,8 @@
-#ifndef INCLUDE_libreturns_returns_cil_h
-#define INCLUDE_libreturns_returns_cil_h
+#ifndef INCLUDE_libtuples_tuples_cil_h
+#define INCLUDE_libtuples_tuples_cil_h
 
-#include "returns.h"
+
+/* define CounterTuple before including this header */
 
 
 /* the instrumentor will create initializers for these */
@@ -27,4 +28,4 @@ static void compilationUnitDestructor() __attribute__((destructor))
 }
 
 
-#endif /* !INCLUDE_libreturns_returns_cil_h */
+#endif /* !INCLUDE_libtuples_tuples_cil_h */

@@ -131,6 +131,7 @@ launcher/applications/gnumeric/Makefile
 libcountdown/Makefile
 libcountdown/cyclic-size.h
 libreport/Makefile
+libtuples/Makefile
 mining/Makefile
 mining/libodbc++/Makefile
 mining/populate/Makefile

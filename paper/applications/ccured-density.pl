@@ -48,7 +48,7 @@ sub print_time ($$$$) {
 
 foreach my $suite ('olden', 'spec95') {
     foreach my $benchmark (@{$suite{$suite}}) {
-	print $benchmark;
+	print "\\texttt{$benchmark}";
 	print_time 'always', 'all', 1, $elapsed{$benchmark};
 	foreach my $sparsity (100, 1000, 10000, 1000000) {
 	    print_time 'sample', 'all', $sparsity, $elapsed{$benchmark};

@@ -29,7 +29,7 @@ while ($_ = <$collated>) {
 foreach ('olden', 'spec95') {
     foreach my $benchmark (@{$suite{$_}}) {
 	my %info = %{$stats{$benchmark}};
-	printf("%s & %d & %d & %d & %.1f & %.1f & %.1f \\\\\n",
+	printf("\\texttt{%s} & %d & %d & %d & %.1f & %.1f & %.1f \\\\\n",
 	       $benchmark,
 	       $info{numFuncs}, $info{numWeightless}, $info{numHasSites},
 	       ($info{numSites} / $info{numHasSites}),

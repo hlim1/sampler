@@ -65,6 +65,9 @@ let rec classifyStatement = function
   | Instr [Call (None, Lval (Var {vname = vname}, NoOffset), _, location)] ->
       classifyByName vname
 
+  | Instr (_ :: _ :: _) ->
+      failwith "instr should have been atomized"
+
   | If (_, { battrs = []; bstmts = [{skind = consequence}] }, { battrs = []; bstmts = [] }, _)
   | If (_, { battrs = []; bstmts = [] }, { battrs = []; bstmts = [{skind = consequence}] }, _)
     ->

@@ -23,7 +23,7 @@ let sites =
 
   let insert ((func, id) as site) =
     try
-      ignore (Find.findNode site);
+      ignore (Statement.findNode site);
       table#add site ()
     with Not_found ->
       Printf.eprintf "warning: invalid site: %s:%d\n" func id
@@ -35,8 +35,8 @@ let sites =
 let eliminate description follow sites =
   let reach =
     Memoize.memoize (fun (a, b) ->
-      let aNode = Find.findNode a in
-      let bNode = Find.findNode b in
+      let aNode = Statement.findNode a in
+      let bNode = Statement.findNode b in
       Transitive.reach ignore follow aNode bNode)
   in
 

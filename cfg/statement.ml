@@ -44,9 +44,24 @@ let isReturn node =
   node.successors = []
 
 
+let registry = HashClass.create 0
+
+
+let findNode subkey =
+  match registry#findAll subkey with
+  | [] -> raise Not_found
+  | [singleton] -> singleton
+  | first :: _ ->
+      let (func, id) = subkey in
+      Printf.eprintf "warning: multiple matches found for %s:%d\n" func id;
+      first
+
+
 let addNodes key data =
   graph#addNode (Before, key) data;
-  graph#addNode (After, key) data
+  graph#addNode (After, key) data;
+  let ((_, func), id) = key in
+  registry#add (func, id) (Before, key)
 
 
 let addEdges statics ((func, _) as originKey) data =

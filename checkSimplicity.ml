@@ -5,7 +5,7 @@ open Printf
 let checkLvalue = function
   | (Mem Lval (Var _, NoOffset), NoOffset) -> ()
   | (Var _, _) -> ()
-  | _ -> ignore(warnContext "complex lvalue")
+  | other -> ignore(warnContext "complex lvalue: %a" d_lval other)
 	
 	
 class visitor = object
@@ -22,7 +22,7 @@ class visitor = object
 		begin
 		  match rval with
 		  | Lval (Var _, NoOffset) -> ()
-		  | _ -> ignore(warnContext "complex rvalue")
+		  | other -> ignore(warnContext "complex rvalue: %a" d_exp other)
 		end
 	    | _ -> ()
 	  end

@@ -4,11 +4,11 @@ open Cil
 exception Missing of string
 
 
-let find predicate name {globals = globals} =
+let find name {globals = globals} =
   let rec findAmong = function
-    | GVarDecl ({vname = vname; vtype = vtype} as varinfo, _) :: _
-      when vname = name && predicate vtype ->
-	var varinfo
+    | GVarDecl ({vname = vname} as varinfo, _) :: _
+      when vname = name ->
+	varinfo
     | _ :: rest ->
 	findAmong rest
     | [] ->

@@ -18,12 +18,7 @@ let _ =
     ~ident:"SpecializeSingletonRegions"
 
 
-let findGlobal =
-  let predicate = function
-    | TInt _ -> true
-    | _ -> false
-  in
-  FindGlobal.find predicate "nextEventCountdown"
+let findGlobal = FindGlobal.find "nextEventCountdown"
 
 
 let findReset file = Lval (var (FindFunction.find "getNextEventCountdown" file))
@@ -33,7 +28,7 @@ let find file = (findGlobal file, findReset file)
 
 
 class countdown file =
-  let global = findGlobal file in
+  let global = var (findGlobal file) in
   let reset = findReset file in
   fun fundec ->
     let local = var (makeTempVar fundec ~name:"localEventCountdown" uintType) in

@@ -2,35 +2,36 @@ open Cil
 
   
 class visitor = object
-  inherit nopCilVisitor
-      
+  inherit FunctionBodyVisitor.visitor
+
   method vstmt stmt =
     match stmt.skind with
     | Instr(instrs) ->
+	let rec split = function
+	  | [] -> []
+	  | instrs ->
+	      let rec slurp = function
+		| [] ->
+		    ([], [])
+		| Call _ as call :: tail ->
+		    ([call], tail)
+		| other :: tail ->
+		    let more, remainder = slurp tail in
+		    (other :: more, remainder)
+	      in
+	      
+	      let (initial, remainder) = slurp instrs in
+	      mkStmt(Instr(initial)) :: split remainder
+	in
+	
 	begin
-	  let rec split = function
-	    | [] -> []
-	    | instrs ->
-		let rec slurp = function
-		  | [] ->
-		      ([], [])
-		  | Call _ as call :: tail ->
-		      ([call], tail)
-		  | other :: tail ->
-		      let more, remainder = slurp tail in
-		      (other :: more, remainder)
-		in
-		
-		let (initial, remainder) = slurp instrs in
-		mkStmt(Instr(initial)) :: split remainder
-	  in
-	  
 	  match split instrs with
-	  | [] -> DoChildren
-	  | [_] -> DoChildren
-	  | splits ->
-	      ChangeTo {stmt with skind = Block (mkBlock splits)}
-	end
-    | _ -> DoChildren
+	  | [] -> ()
+	  | [_] -> ()
+	  | splits -> stmt.skind <- Block (mkBlock splits)
+	end;
+	
+	SkipChildren
 	  
+    | _ -> DoChildren
 end

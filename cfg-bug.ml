@@ -2,7 +2,7 @@ open Cil
   
 
 class visitor = object
-  inherit nopCilVisitor
+  inherit FunctionBodyVisitor.visitor
       
   method vfunc func =
     prepareCFG func;
@@ -10,8 +10,9 @@ class visitor = object
 
     List.iter begin
       fun stmt ->
-	Printf.printf "%i:" stmt.sid;
-	List.iter (fun succ -> Printf.printf " %i" succ.sid) stmt.succs;
+	let name = Utils.stmt_what stmt.skind in
+	Printf.printf "%i (%s):" stmt.sid name;
+	List.iter (fun succ -> Printf.printf " %i (%s)" succ.sid (Utils.stmt_what succ.skind)) stmt.succs;
 	print_newline ()
     end
       stmts;
@@ -23,5 +24,8 @@ end
 ;;
 
 let file = Frontc.parse "bug.c" () in
+Check.checkFile [] file;
 visitCilFileSameGlobals (new SplitAfterCalls.visitor) file;
-visitCilFileSameGlobals (new visitor) file
+Check.checkFile [] file;
+visitCilFileSameGlobals (new visitor) file;
+Check.checkFile [] file

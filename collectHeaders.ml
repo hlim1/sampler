@@ -71,7 +71,7 @@ let collectHeaders (root, stmts) =
 
 
 class visitor = object
-  inherit nopCilVisitor
+  inherit FunctionBodyVisitor.visitor
       
   method vfunc func =
     let (root, stmts) as cfg = Cfg.cfg func in

@@ -3,7 +3,7 @@ open Printf
 
 
 class visitor = object
-  inherit nopCilVisitor
+  inherit FunctionBodyVisitor.visitor
       
   method vfunc func =
     print_string ("visiting function " ^ func.svar.vname ^ "\n");

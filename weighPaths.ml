@@ -39,7 +39,7 @@ let rec weighPaths headers =
 	  
 	  
 class visitor = object
-  inherit nopCilVisitor
+  inherit FunctionBodyVisitor.visitor
       
   method vfunc func =
     printf "  weighing %s()" func.svar.vname;

@@ -3,7 +3,7 @@ open Dominators
   
   
 class visitor = object
-  inherit nopCilVisitor
+  inherit FunctionBodyVisitor.visitor
       
   method vfunc func =
     let (_, stmts) as cfg = Cfg.cfg func in

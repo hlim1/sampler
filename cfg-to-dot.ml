@@ -5,7 +5,7 @@ open Pretty
   
 
 class visitor = object
-  inherit nopCilVisitor
+  inherit FunctionBodyVisitor.visitor
       
   method vfunc func =
     let (_, stmts) = Cfg.cfg func in

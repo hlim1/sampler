@@ -3,7 +3,7 @@ open Foreach
 
 
 class visitor = object
-  inherit nopCilVisitor
+  inherit FunctionBodyVisitor.visitor
       
   method vfunc func =
     let (root, _) = Cfg.cfg func in

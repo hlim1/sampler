@@ -3,7 +3,7 @@ open Foreach
 
 
 class visitor = object
-  inherit nopCilVisitor
+  inherit FunctionBodyVisitor.visitor
       
   val loopHeaders = ref []
   val loopEscapes = ref []

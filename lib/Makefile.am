@@ -26,7 +26,6 @@ INCLUDES = -ffast-math
 common_sources =				\
 	acyclic.c				\
 	acyclic.h				\
-	anchor.h				\
 	countdown.c				\
 	countdown.h				\
 	cyclic-size.h				\

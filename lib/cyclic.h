@@ -2,6 +2,7 @@
 #define INCLUDE_libcountdown_cyclic_h
 
 #include "cyclic-size.h"
+#include "threads.h"
 
 
 #ifdef CIL
@@ -12,7 +13,7 @@
 static inline int getNextEventCountdown()
 {
   extern const int *nextEventPrecomputed;
-  extern unsigned nextEventSlot;
+  extern SAMPLER_THREAD_LOCAL unsigned nextEventSlot;
 
   unsigned slot = nextEventSlot;
   const int result = nextEventPrecomputed[slot];

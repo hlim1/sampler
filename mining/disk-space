@@ -1,0 +1,10 @@
+original: 192 sessions
+8911228	/var/lib/pgsql
+46413 K/session
+
+populated files table
+8911284	/var/lib/pgsql
+
+after conversion: 276 sessions
+13372428        /var/lib/pgsql
+48451 K/session

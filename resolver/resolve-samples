@@ -1,0 +1,130 @@
+#!/usr/bin/perl -w
+
+use strict;
+use 5.008;			# for safe pipe opens using list form of open
+
+use Data::Dumper;
+use Fcntl qw(SEEK_SET);
+use FileHandle;
+
+
+########################################################################
+
+
+sub check_signature ($) {
+    my $signature = shift;
+    die "error: malformed signature: $signature\n"
+	unless $signature =~ /^[0-9A-Fa-f]{32}$/
+}
+
+
+########################################################################
+
+
+my %compilationUnit;
+
+
+foreach my $objectName (<@ARGV>) {
+    my $buffer;
+
+    if ($objectName =~ /\.sites$/) {
+	my $handle = new FileHandle $objectName, 'r';
+	local $/;
+	$buffer = $handle->getline;
+
+    } else {
+	my $objdump = new FileHandle;
+	if (! open $objdump, '-|', 'objdump', '-h', '-w', $objectName) {
+	    warn "warning: cannot run objdump on $objectName: $!\n";
+	    next;
+	}
+
+	my $size;
+	my $offset;
+	while (<$objdump>) {
+	    my @field = split;
+	    next unless @field >= 7;
+	    next unless $field[1] eq '.debug_site_info';
+	    next unless $field[0] =~ /^\d+$/;
+	    $size = hex $field[2];
+	    $offset = hex $field[5];
+	    last;
+	}
+	die "error: objdump failed on $objectName\n" unless $objdump->close;
+	next unless $size && defined $offset;
+
+	my $executable = new FileHandle $objectName, 'r';
+	$executable->seek($offset, &SEEK_SET);
+	$executable->read($buffer, $size);
+	$buffer =~ s/\0//g;
+    }
+
+    my @lines = split /\n/, $buffer;
+    while (@lines) {
+	my $signature = shift @lines;
+	check_signature $signature;
+	if (exists $compilationUnit{$signature}) {
+	    warn "warning: duplicate signature: $signature\n";
+	    warn "warning: first defined in \"$compilationUnit{$signature}{name}\"\n";
+	    warn "wraning: redefined in \"$objectName\"\n";
+	}
+	my @sites;
+	while (@lines) {
+	    my $site = shift @lines;
+	    last if $site eq '';
+	    push @sites, $site;
+	}
+	$compilationUnit{$signature} = { sites => \@sites };
+    }
+}
+
+
+########################################################################
+
+
+sub miscount ($$) {
+    my ($direction, $signature) = @_;
+    die "error: too $direction sites in report for $signature\n";
+}
+
+
+$_ = <STDIN>;
+chomp;
+die "error: malformed report header: $_\n" unless $_ eq '<report id="samples">';
+
+while (my $signature = <STDIN>) {
+    chomp $signature;
+    last if $signature eq '</report>';
+    
+    check_signature $signature;
+    my $info = $compilationUnit{$signature};
+    if ($info) {
+	warn "warning: duplicate signature in report: $signature\n" if $info->{seen};
+	my @sites = @{$info->{sites}};
+
+	while (<STDIN>) {
+	    chomp;
+	    last if $_ eq '';
+	    miscount 'many', $signature unless @sites;
+	    my $site = shift @sites;
+	    print "$_\t$signature\t$site\n";
+	}
+
+	miscount 'few', $signature if @sites;
+	$info->{seen} = 1;
+    } else {
+	warn "warning: unrecognized signature in report: $signature\n" unless $info;
+	while (<STDIN>) {
+	    chomp;
+	    last if $_ eq '';
+	}
+    }
+}
+
+
+
+unless (eof) {
+    $_ = <STDIN>;
+    chomp;
+    die "error: trailing garbage after report: $_\n";
+}

@@ -53,7 +53,7 @@ EOF
 	      _sampler_sparsity => '%{?sampler_sparsity}%{!?sampler_sparsity:100}',
 	      _sampler_reporting_host => '%{?sampler_reporting_host}%{!?sampler_reporting_host:www.example.org}',
 	      _sampler_reporting_url => '%{?sampler_reporting_url}%{!?sampler_reporting_url:https://%{_sampler_reporting_host}/cgi-bin/sampler-upload}',
-	      _sampler_build_distribution => '%{?sampler_build_distribution}%{!?sampler_build_distribution:@DISTRO@}',
+	      _sampler_build_distribution => '%{?sampler_build_distribution}%{!?sampler_build_distribution:@DISTRO@-@RPM_ARCH@}',
 
 	      _sampler_name => '%{?sampler_name}%{!?sampler_name:%{name}}',
 

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.13.1
+
+** Put architecture back into build distribution upload header.
+
 * sampler-0.13
 
 ** Add support for tweaking various optimizations.

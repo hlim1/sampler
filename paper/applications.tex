@@ -371,29 +371,28 @@ we can maximize the \termdef{log likelihood} of the training set.
 Here the output labels $y_i$ are used as indicator functions to zero
 out exactly one of the two terms in each summand.  In logistic
 regression, the distribution $P(Y=1|x)$ is modeled as the logistic
-function $\mu_{\tilde\beta}(x)$ with parameters $\tilde{\beta} =
-\langle \beta_0 \in \Real, \beta \in \Real^N \rangle$.
+function $\mu_{\tilde{\beta}}(x)$ with parameters $\tilde{\beta} = \langle \beta_0 \in
+\Real, \beta \in \Real^N \rangle$.
 %%
 \begin{equation*}
-  P(Y = 1 | x) = \mu_{\tilde \beta} (x) = \frac{1}{1 + \exp(- \beta_0 - \beta^T x)}
+  P(Y = 1 | x) = \mu_{\tilde{\beta}} (x) = \frac{1}{1 + \exp(- \beta_0 - \beta^T x)}
 \end{equation*}
 %%
-The logistic parameters $\beta_0$ and $\beta$ take on the respective
-roles as the intercept and slope of the classifier, and essentially
-weigh the relative importance of each feature in the final outcome.
-We expect most of the input features to have no influence over the
-success or failure of the program, so we place an additional
-constraint that forces most of the $\tilde{\beta}$'s toward zero.
-This is accomplished by subtracting a penalty term based on the
-L1-norm $\norm{\tilde{\beta}}_1 = \sum_{j=0}^M \abs{\beta_j}$.  We can
-tune the importance of this \termdef{regularization term} through a
-\termdef{regularization parameter} $\lambda$.  The penalized log
-likelihood function is:
+The logistic parameters $\beta_0$ and $\beta$ take on the respective roles as
+the intercept and slope of the classifier, and essentially weigh the
+relative importance of each feature in the final outcome.  We expect
+most of the input features to have no influence over the success or
+failure of the program, so we place an additional constraint that
+forces most of the $\tilde{\beta}$'s toward zero.  This is accomplished by
+subtracting a penalty term based on the L1-norm $\norm{\tilde{\beta}}_1 =
+\sum_{j=0}^M \abs{\beta_j}$.  We can tune the importance of this
+\termdef{regularization term} through a \termdef{regularization
+  parameter} $\lambda$.  The penalized log likelihood function is:
 %%
 \begin{equation*}
   \begin{split}
-    LL (\tilde\beta | \mathcal{D}, \lambda ) \:=\:
-    & \sum_{i=1}^M \, [y_i \log \mu_{\tilde \beta} (x_i) + (1 - y_i) \log (1 - \mu_{ \tilde \beta } (x_i))] \\
+    LL (\tilde{\beta} | \mathcal{D}, \lambda ) \:=\:
+    & \sum_{i=1}^M \, [y_i \log \mu_{\tilde{\beta}} (x_i) + (1 - y_i) \log (1 - \mu_{\tilde{\beta}} (x_i))] \\
     & - \lambda \norm{\beta}_1
   \end{split}
 \end{equation*}
@@ -409,17 +408,16 @@ zero.  Hence the effective number of features used in training is
 2908.  (Beyond simplifying the statistical analysis, this degree of
 regularity means that counter reports are highly compressible: good
 news for deployed users with small hard drives or slow modems.)
-Furthermore, to make the magnitude of the $\beta$ parameters
-comparable, the feature values have to be on the same scale.  Hence
-all the input features are shifted and scaled to lie between $[0,1]$,
-then normalized to have unit sample variance.  A suitable value for
-the regularization parameter $\lambda$ is determined through
-validation to be $0.3$.  The model is then trained using stochastic
-gradient ascent to reach a local maximum of the penalized log
-likelihood.  Using a learning rate of $10^{-5}$, the model usually
-converges within sixty iterations through the training set.  This
-takes roughly thirty minutes in MATLAB on a 1.8 GHz Pentium 4 CPU with
-1 GB of RAM.
+Furthermore, to make the magnitude of the $\beta$ parameters comparable,
+the feature values have to be on the same scale.  Hence all the input
+features are shifted and scaled to lie between $[0,1]$, then
+normalized to have unit sample variance.  A suitable value for the
+regularization parameter $\lambda$ is determined through validation to be
+$0.3$.  The model is then trained using stochastic gradient ascent to
+reach a local maximum of the penalized log likelihood.  Using a
+learning rate of $10^{-5}$, the model usually converges within sixty
+iterations through the training set.  This takes roughly thirty
+minutes in MATLAB on a 1.8 GHz Pentium 4 CPU with 1 GB of RAM.
 
 Once the model has been trained, predicates with the largest $\beta$
 coefficients suggest where to begin looking for the bug.  In our case,

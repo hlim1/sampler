@@ -45,8 +45,10 @@ let build func =
       | [] ->
 	  [addition]
       | (head :: tail) as sorted ->
-	  if head.sid < addition.sid then
+	  if head.sid > addition.sid then
 	    head :: (insert addition tail)
+	  else if head.sid == addition.sid then
+	    sorted
 	  else
 	    addition :: sorted
     in

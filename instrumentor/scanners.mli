@@ -1,4 +1,4 @@
 open Cil
 
 
-val iterFuncs : file -> (fundec * location -> unit) -> unit
+val iterFuncs : file -> (fundec -> unit) -> unit

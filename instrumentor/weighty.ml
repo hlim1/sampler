@@ -31,7 +31,7 @@ let debugWeighty =
 
 let hasDefinition file =
   let defined = new VariableNameHash.c 0 in
-  let iterator (func, _) =
+  let iterator func =
     defined#add func.svar ()
   in
   iterFuncs file iterator;
@@ -133,23 +133,26 @@ class visitor hasDefinition hasPragmaWeightless weighty =
 type tester = lval -> bool
 
 
-let collect file siteIndex =
+let collect file =
   TestHarness.time "  identifying weighty functions"
     (fun () ->
       let hasDefinition = hasDefinition file in
       let hasPragmaWeightless = hasPragmaWeightless file in
       let weighty = new VariableNameHash.c 0 in
 
-      let prepopulate {svar = svar} _ =
-	weighty#add svar ();
-	if !debugWeighty then
-	  Printf.eprintf "function %s is weighty: has sites\n" svar.vname
+      let prepopulate func =
+	if Sites.registry#mem func then
+	  begin
+	    weighty#add func.svar ();
+	    if !debugWeighty then
+	      Printf.eprintf "function %s is weighty: has sites\n" func.svar.vname
+	  end
       in
-      siteIndex#iter prepopulate;
+      Scanners.iterFuncs file prepopulate;
 
       let visitor = new visitor hasDefinition hasPragmaWeightless weighty in
       let refine madeProgress =
-	let iterator (func, _) =
+	let iterator func =
 	  try
 	    ignore (visitCilFunction visitor func)
 	  with ContainsWeightyCall (location, callee) ->
@@ -169,7 +172,7 @@ let collect file siteIndex =
 	begin
 	  let numFuncs = ref 0 in
 	  let numWeightless = ref 0 in
-	  let iterator (func, _) =
+	  let iterator func =
 	    incr numFuncs;
 	    if not (tester (var func.svar)) then
 	      incr numWeightless

@@ -7,5 +7,5 @@ class virtual c file =
     method virtual embedInfo : Digest.t Lazy.t -> unit
 
     method findAllSites =
-      Scanners.iterFuncs file (fun (func, _) -> self#findSites func)
+      Scanners.iterFuncs file self#findSites
   end

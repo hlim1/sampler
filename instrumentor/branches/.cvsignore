@@ -1,4 +1,5 @@
 *.annot
+*.cma
 *.cmi
 *.cmo
 *.cmx
@@ -8,4 +9,3 @@
 .deps
 Makefile
 Makefile.in
-main

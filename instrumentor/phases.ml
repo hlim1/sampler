@@ -13,6 +13,7 @@ let main () =
   in
 
   initCIL ();
+  Ptranal.conservative_undefineds := false;
   lineDirectiveStyle := Some LinePreprocessorOutput;
 
   Arg.parse (Options.argspecs ())

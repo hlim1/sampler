@@ -29,7 +29,7 @@ class printEdges =
 
 let process filename =
   let file = Frontc.parse filename () in
-  let action (func, _) =
+  let action func =
     DeadCode.visit func;
     Cfg.build func;
     printf "digraph %s {\n" func.svar.vname;

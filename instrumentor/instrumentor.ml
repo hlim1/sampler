@@ -31,8 +31,8 @@ let phase =
 
     if !sample then
       begin
-	let tester = Weighty.collect file allSites in
+	let tester = Weighty.collect file in
 	let countdown = new Countdown.countdown file in
 	TestHarness.time "  applying sampling transformation"
-	  (fun () -> Transform.visit tester allSites countdown)
+	  (fun () -> Transform.visit file tester countdown)
       end

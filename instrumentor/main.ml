@@ -1,5 +1,7 @@
 let _ =
 
-  BranchScheme.register;
+  NothingScheme.register ();
+  BranchScheme.register ();
+  ReturnScheme.register ();
 
   Phases.main ()

@@ -4,7 +4,7 @@ let check = Check.checkFile []
 
 let process filename =
   let file = Frontc.parse filename () in
-  Scanners.iterFuncs file (fun (func, _) -> DeadCode.visit func);
+  Scanners.iterFuncs file DeadCode.visit;
   dumpFile defaultCilPrinter stdout file
 
 ;;

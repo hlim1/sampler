@@ -1,4 +1,4 @@
-SUBDIRS = driver branches daikon decure nothing returns scalar-pairs #logging
+SUBDIRS = driver branches nothing returns scalar-pairs
 
 EXTRA_DIST = build-libraries libraries.ml.in
 
@@ -21,7 +21,7 @@ main = main.$(cmo)
 main: $(libcil) $(libcommon) harness.$(cma) main.$(cmo)
 	$(link)
 
-harness = $(bumper) $(siteFinder) $(phases)
+harness = $(counterTuples) $(siteFinder) $(phases)
 harness.$(cma): $(harness)
 	$(archive)
 

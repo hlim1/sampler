@@ -6,4 +6,4 @@ val assumeWeightlessExterns : bool ref
 
 type tester = lval -> bool
 
-val collect : file -> Site.index -> tester
+val collect : file -> tester

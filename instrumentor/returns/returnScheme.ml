@@ -1,4 +1,4 @@
-let name = "branches"
+let name = "returns"
 
 
 class c file =
@@ -8,7 +8,8 @@ class c file =
     val tuples = CounterTuples.build name file
 
     method private findSites func =
-      let finder = new BranchFinder.visitor tuples func in
+      StoreReturns.visit func;
+      let finder = new ReturnFinder.visitor tuples func in
       ignore (Cil.visitCilFunction finder func)
 
     method embedInfo = tuples#finalize

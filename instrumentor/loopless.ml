@@ -83,7 +83,7 @@ let addExterns loopless file =
 
   Scanners.iterFuncs file
     begin
-      fun ({ svar = { vname = vname }}, _) ->
+      fun { svar = { vname = vname }} ->
 	loopless#remove vname
     end
 
@@ -93,7 +93,7 @@ let loopless file =
   if !assumeLooplessExterns then addExterns loopless file;
   if !assumeLooplessLibraries then addLibraries loopless;
 
-  let considerGlobal (func, _) =
+  let considerGlobal func =
     RemoveLoops.visit func;
     if (ClassifyJumps.visit func).ClassifyJumps.backward != [] then
       loopless#add func.svar.vname false
@@ -124,7 +124,7 @@ initCIL ();
 let process filename =
   let file = Frontc.parse filename () in
   let loopless = loopless file in
-  let considerGlobal ({svar = varinfo}, _) =
+  let considerGlobal {svar = varinfo} =
     Printf.printf "%s\t%b\n" varinfo.vname (loopless varinfo)
   in
   Scanners.iterFuncs file considerGlobal

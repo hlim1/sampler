@@ -5,11 +5,13 @@ open SiteInfo
 type siteId = int
 
 
-class virtual builder file =
+class virtual builder prefix file =
   object (self)
     val mutable nextId = 0
     val sites = new SiteInfoQueue.container
-    val counterTuples = FindGlobal.find "counterTuples" file
+    val counterTuples = FindGlobal.find (prefix ^ "CounterTuples") file
+    val compilationUnit = FindGlobal.find (prefix ^ "CompilationUnit") file
+    val siteInfo = FindGlobal.find (prefix ^ "SiteInfo") file
 
 
     method private addSiteInfo info =
@@ -24,18 +26,14 @@ class virtual builder file =
       let siteCount = integer nextId in
 
       let fixer = function
-	| GVar ({vname = "counterTuples";
-		 vtype = TArray (elementType, _, attributes)}
-		  as varinfo,
-		initinfo, location)
+	| GVar ({vtype = TArray (elementType, _, attributes)} as varinfo, initinfo, location)
+	  when varinfo == counterTuples
 	  ->
 	    GVar ({varinfo with vtype = TArray (elementType, Some siteCount, attributes)},
 		  initinfo, location)
 
-	| GVar ({vname = "compilationUnit";
-		 vtype = TComp (compinfo, _)}
-		  as varinfo,
-		initinfo, _) as global
+	| GVar ({vtype = TComp (compinfo, _)} as varinfo, initinfo, _) as global
+	  when varinfo == compilationUnit;
 	  ->
 	    let noOffset field = Field (field, NoOffset) in
 	    let getOffset name = noOffset (getCompField compinfo name) in
@@ -49,10 +47,8 @@ class virtual builder file =
 	    initinfo.init <- Some (CompoundInit (varinfo.vtype, inits));
 	    global
 
-	| GVar ({vname = "siteInfo";
-		 vtype = TArray (elementType, None, attributes)}
-		  as varinfo,
-		_, location)
+	| GVar ({vtype = TArray (elementType, None, attributes)} as varinfo, _, location)
+	  when varinfo == siteInfo
 	  ->
 	    let init = sites#serialize signature in
 	    let length = Some (integer (String.length init)) in

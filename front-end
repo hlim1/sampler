@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
 use strict;
-use File::Basename;
-use File::Temp qw(tmpnam);
+use File::Basename qw(basename);
+use File::Temp qw(tempdir tempfile);
+use FileHandle;
 use FindBin;
 
 
@@ -21,8 +22,8 @@ my @source;
 my $outfile;
 my $verbose;
 
-my @chaff;
-END { unlink @chaff; }
+my @holes;
+my $save_temps;
 
 
 ########################################################################
@@ -62,6 +63,12 @@ sub handle_o ($) {
 }
 
 
+sub handle_save_temps ($) {
+    &push_all;
+    $save_temps = 1;
+}
+
+
 sub handle_special ($) {
     push @cc, @_;
     $mode = 'special';
@@ -93,6 +100,9 @@ my %flag_spec = (
 
 		 # warning options
 		 'fsyntax-only' => \&handle_special,
+
+		 # debugging options
+		 'save-temps' => \&handle_save_temps,
 
 		 # preprocessor options
 		 'include' => \&handle_cpp_1,
@@ -129,8 +139,7 @@ my %flag_spec = (
 ########################################################################
 
 
-sub trace_system (@) {
-    warn "@_\n" if $verbose;
+sub check_system (@) {
     my $error = system @_;
 
     if ($error == -1) {
@@ -142,9 +151,47 @@ sub trace_system (@) {
 }
 
 
+sub trace_redirect ($$@) {
+    my $handle = shift;
+    my $name = shift;
+    my $descriptor = fileno $handle;
+
+    warn "@_ >$name\n" if $verbose;
+    open OLDOUT, ">&STDOUT" or die "cannot preserve stdout: $!\n";
+    open STDOUT, ">&$descriptor" or die "cannot redirect stdout: $!\n";
+    &check_system;
+    open STDOUT, ">&OLDOUT" or die "cannot restore stdout: $!\n";
+    fileno OLDOUT; 		# suppress a warning
+}
+
+
+sub trace_system (@) {
+    warn "@_\n" if $verbose;
+    &check_system;
+}
+
+
+sub resuffix ($$) {
+    my ($name, $suffix) = @_;
+    $name =~ s/\..$/$suffix/ or die "unexpected source file suffix: $name\n";
+    return $name;
+}
+
+
 sub push_library ($$) {
     my ($dir, $lib) = @_;
     push @ld, "-Wl,-rpath,$dir", "-L$dir", "-l$lib";
+}
+
+
+sub temp ($$) {
+    my ($suggested, $suffix) = @_;
+    if ($save_temps) {
+	my $name = "$suggested.$suffix";
+	return (new FileHandle($name, 'w'), $name);
+    } else {
+	return tempfile(SUFFIX => $suffix, UNLINK => 1);
+    }
 }
 
 
@@ -187,8 +234,8 @@ while ($_ = shift) {
 
     } elsif (/(.*)\.c$/) {
 	push @source, $_;
-	my $base = basename $1;
-	push @ld, "$base.inst.c";
+	push @ld, '';
+	push @holes, $#ld;
 	
     } elsif (/\.(a|lo|o|so)$/) {
 	push @ld, $_;
@@ -210,23 +257,21 @@ if ($mode eq 'special') {
     
 } else {
 
-    my $outdir = $outfile ? dirname $outfile : '.';
-
     foreach (@source) {
-	my $base = "$outdir/" . basename $_, '.c';
-	my $i = "$base.i";
-	my $inst = "$base.inst.c";
+	my $base = basename $_, '.c';
+	my ($i_handle, $i_name) = temp $base, 'i';
+	trace_redirect $i_handle, $i_name, @cpp, '-E', $_;
 	
-	push @chaff, $i;
-	trace_system @cpp, '-o', $i, '-E', $_;
-
-	push @chaff, $inst;
-	trace_system "$transformer $i >$inst";
-	die unless -s $inst;
-
+	my ($c_handle, $c_name) = temp "$base.inst", 'c';
+	trace_redirect $c_handle, $c_name, $transformer, $i_name;
+	
 	if ($mode eq 'compile') {
-	    my $o = $outfile || "$base.o";
-	    trace_system @cc, '-o', $o, $inst;
+	    my $o = $outfile || (resuffix $_, '.o');
+	    trace_system @cc, '-o', $o, $c_name;
+	} else {
+	    warn "ld hole filling: before: @ld\n";
+	    $ld[shift @holes] = $c_name;
+	    warn "ld hole filling: after:  @ld\n";
 	}
     }
 

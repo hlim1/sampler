@@ -1,4 +1,5 @@
 xsldir := /usr/share/sgml/docbook/xsl-stylesheets
+xsl_html := $(xsldir)/xhtml/docbook.xsl
 
 xml = $(PACKAGE).xml
 noinst_DATA = $(PACKAGE).html
@@ -9,5 +10,5 @@ TESTS = $(xml)
 TESTS_ENVIRONMENT = xmllint --valid --noout
 
 
-%.html: %.xml
-	xsltproc --nonet -o $@ $(xsldir)/xhtml/docbook.xsl $<
+%.html: %.xml config.xml $(xsl_html)
+	xsltproc --nonet -o $@ $(xsl_html) $<

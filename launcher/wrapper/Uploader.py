@@ -46,10 +46,10 @@ def upload(app, user, outcome, accept):
             user.change_reporting_url(redirect.permanent)
 
         # server may have requested a sparsity change
-        if reply.info().has_key('change-sparsity'):
+        if reply.info().has_key('sampler-change-sparsity'):
             # !!!: sanity check this before applying it
             # !!!: don't apply change if it is the same as the old value
-            user.change_sparsity(int(reply.info()['change-sparsity']))
+            user.change_sparsity(int(reply.info()['sampler-change-sparsity']))
 
         # server may have posted a message for the user
         message = reply.read()

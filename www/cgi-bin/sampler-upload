@@ -20,7 +20,7 @@ my $query = new CGI;
 exists $ENV{UNIQUE_ID} or die "\$UNIQUE_ID missing from environment\n";
 $ENV{UNIQUE_ID} =~ /^([-0-9A-Za-z@]+)$/ or die "\$UNIQUE_ID looks suspicious: \"$ENV{UNIQUE_ID}\"\n";
 my $uid = $1;
-print($query->header({-unique_id => $uid}));
+print($query->header({-sampler_unique_id => $uid}));
 
 umask 0007;
 

@@ -36,9 +36,6 @@ class visitor =
   end
 
 
-let phase = visitCilFileSameGlobals new visitor
-
-
 let visit original =
   let replacement = visitCilFunction (new visitor) original in
   assert (replacement == original)

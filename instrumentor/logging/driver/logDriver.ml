@@ -1,9 +1,9 @@
 open Filename
 
 
-class c homeDir instrumentor compiler arguments =
+class c homeDir instrumentor compiler =
   object (self)
-    inherit InstDriver.c homeDir instrumentor compiler arguments as super
+    inherit InstDriver.c homeDir instrumentor compiler as super
 
     method private extraHeader = homeDir ^ "/liblog/log.h"
 

@@ -1,6 +1,10 @@
 open Cil
 
 
+val specializeEmptyRegions : bool ref
+val specializeSingletonRegions : bool ref
+    
+
 type token
 
 val find : file -> token

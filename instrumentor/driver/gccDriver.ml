@@ -13,9 +13,9 @@ let changeSuffix =
     replace_first pattern newSuffix (Filename.basename filename)
 
 
-class c compiler arguments =
+class c (compiler : CommandLine.t) =
   object (self)
-    inherit Driver.c arguments
+    inherit Driver.c (snd compiler)
 
     val mutable flags = []
     val mutable finalFlags = []
@@ -135,8 +135,8 @@ class c compiler arguments =
 
 	let extraLibs = if goal == Executable then self#extraLibs else [] in
 
-	self#run compiler ("-o" :: outfileName :: flags @ finalFlags @ built @ extraLibs)
+	self#run ((fst compiler), ("-o" :: outfileName :: flags @ finalFlags @ built @ extraLibs))
 
       with Special ->
-	self#run compiler arguments
+	self#run compiler
   end

@@ -42,10 +42,3 @@ let doOne stages filename =
 	file)
   in
   List.iter (doOneOne file) stages
-    
-let main stages =
-  initCIL ();
-  (* printLnComment := true; *)
-
-  let filenames = Array.sub Sys.argv 1 (Array.length Sys.argv - 1) in
-  Array.iter (doOne stages) filenames

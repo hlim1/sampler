@@ -1,4 +1,4 @@
-class c : string -> string list ->
+class c : CommandLine.t ->
   object
     inherit Driver.c
 

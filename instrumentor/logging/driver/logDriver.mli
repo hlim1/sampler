@@ -1,4 +1,4 @@
-class c : string -> string -> string -> string list ->
+class c : string -> CommandLine.t -> CommandLine.t ->
   object
     inherit InstDriver.c
 

@@ -21,7 +21,7 @@ class virtual c arguments =
 
     method private virtual parse_1 : string -> string list -> string list
 
-    method private trace arg0 argv =
+    method private trace (arg0, argv) =
       if verbose then
 	let show arg =
 	  prerr_char ' ';
@@ -31,11 +31,11 @@ class virtual c arguments =
 	List.iter show argv;
 	prerr_newline ()
 
-    method private run arg0 argv =
-      self#trace arg0 argv;
-      self#runOut arg0 argv stdout
+    method private run command =
+      self#trace command;
+      self#runOut command stdout
 
-    method private runOut arg0 argv outFd =
+    method private runOut (arg0, argv) outFd =
       let child = create_process arg0 (Array.of_list (arg0 :: argv)) stdin outFd stderr in
       match snd (waitpid [] child) with
       | WEXITED 0 -> ()

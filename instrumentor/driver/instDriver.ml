@@ -14,9 +14,9 @@ let savedTempName filename strip append =
 
 
 
-class virtual c homeDir instrumentor compiler arguments =
+class virtual c homeDir (instrumentor, instArgs) compiler =
   object (self)
-    inherit GccDriver.c compiler arguments as super
+    inherit GccDriver.c compiler as super
 
     method private parse =
       finalFlags <- "-Wno-unused-label" :: finalFlags;
@@ -49,7 +49,7 @@ class virtual c homeDir instrumentor compiler arguments =
 	else
 	  fst (TempFile.get ".i")
       in
-      self#run compiler ("-E" :: input :: "-o" :: output :: extraFlags @ flags);
+      self#run (fst compiler, ("-E" :: input :: "-o" :: output :: extraFlags @ flags));
       output
 
     method private preparePreprocess input =
@@ -64,8 +64,8 @@ class virtual c homeDir instrumentor compiler arguments =
 	else
 	  TempFile.get ".inst.c"
       in
-      self#trace instrumentor (input :: [">" ^ outputName]);
-      self#runOut instrumentor [input] outputFd;
+      self#trace (instrumentor, instArgs @ [input; (">" ^ outputName)]);
+      self#runOut (instrumentor, instArgs @ [input]) outputFd;
       self#preparePostprocess outputName
 
     method private preparePostprocess input =

@@ -1,4 +1,4 @@
-class virtual c : string -> string -> string -> string list ->
+class virtual c : string -> CommandLine.t -> CommandLine.t ->
   object
     inherit GccDriver.c
 

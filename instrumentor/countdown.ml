@@ -1,6 +1,10 @@
 open Cil
 
 
+let specializeEmptyRegions = ref true
+let specializeSingletonRegions = ref true
+
+
 type token = lval * exp
 
 
@@ -35,8 +39,8 @@ class countdown (global, reset) fundec =
       let gotoOriginal = Goto (ref original, location) in
       let gotoInstrumented = Goto (ref instrumented, location) in
       match weight with
-      | 0 -> gotoOriginal
-      | 1 -> gotoInstrumented
+      | 0 when !specializeEmptyRegions -> gotoOriginal
+      | 1 when !specializeSingletonRegions -> gotoInstrumented
       | _ ->
 	  let within = kinteger IUInt weight in
 	  let predicate = BinOp (Gt, Lval local, within, intType) in

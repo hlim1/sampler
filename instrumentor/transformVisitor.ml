@@ -1,6 +1,9 @@
 open Cil
 
 
+let removeDeadCode = ref true
+
+
 class virtual visitor file =
   object (self)
     inherit SkipVisitor.visitor
@@ -51,7 +54,9 @@ class virtual visitor file =
 	    
 	    sites#iter instrument;
 
-	    DeadCode.visit func;
+	    if !removeDeadCode then
+		DeadCode.visit func;
+
 	    FilterLabels.visit func;
 	    MergeBlocks.visit func;
 	    FilterLabels.visit func

@@ -39,7 +39,8 @@ class visitor file =
 	let globalVars =
 	  let rec gather = function
 	    | GVar (varinfo, _, _) :: rest
-	    | GVarDecl (varinfo, _) :: rest ->
+	    | GVarDecl (varinfo, _) :: rest
+	      when varinfo.vname <> "sys_nerr" ->
 		varinfo :: gather rest
 	    | GFun (through, _) :: _ when func == through ->
 		[]

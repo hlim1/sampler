@@ -24,12 +24,9 @@ module Make (Key : Hashtbl.HashedType) = struct
 
       val mutable storage = Hash.create 0
 
-      method add key =
-	self#remove key;
-	Hash.add storage key
+      method add = Hash.add storage
 
-      method remove =
-	Hash.remove storage
+      method remove = Hash.remove storage
 
       method find = Hash.find storage
 

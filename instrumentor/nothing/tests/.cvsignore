@@ -1,3 +1,6 @@
-*.passed
-.libs
-main
+Makefile
+Makefile.in
+atconfig
+testsuite
+testsuite.dir
+testsuite.log

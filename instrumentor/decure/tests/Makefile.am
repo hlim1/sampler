@@ -1,0 +1,12 @@
+EXTRA_DIST = testsuite.at testsuite
+TESTSUITE = $(srcdir)/testsuite
+check-local: atconfig $(TESTSUITE)
+	$(SHELL) $(TESTSUITE)
+
+AUTOTEST = autom4te --language=autotest
+$(TESTSUITE): $(srcdir)/testsuite.at
+	$(AUTOTEST) -I $(top_builddir) -I $(srcdir) $@.at -o $@.tmp
+	mv $@.tmp $@
+
+clean-local:
+	$(TESTSUITE) --clean

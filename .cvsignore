@@ -10,7 +10,7 @@ config.log
 config.status
 configure
 instrumentor
-libtool
+package.m4
 sampler
 stamp-h
 stamp-h.in

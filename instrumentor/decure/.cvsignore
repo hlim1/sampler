@@ -5,6 +5,8 @@
 *.di
 *.do
 *.o
+Makefile
+Makefile.in
 filterComplete
 listCandidates
 main

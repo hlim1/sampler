@@ -1,2 +1,4 @@
 #profile := 1
 #native := 1
+
+CIL_HOME = @CIL_HOME@

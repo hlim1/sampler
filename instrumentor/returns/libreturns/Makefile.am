@@ -1,5 +1,5 @@
 AM_CFLAGS = -W -Wall -Werror
 
-lib_LTLIBRARIES = libreturns.la
+lib_LIBRARIES = libreturns.a
 
-libreturns_la_SOURCES = returns.c returns.h
+libreturns_a_SOURCES = returns.c returns.h

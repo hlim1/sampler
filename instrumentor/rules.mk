@@ -1,57 +1,53 @@
-fixdeps := $(top)/fixdeps
+include $(top_builddir)/instrumentor/config.mk
+include $(top_builddir)/instrumentor/defs.mk
 
-cildir := $(top)/../../cil
-cilobjdir := $(cildir)/obj/x86_LINUX
-libdirs += $(cilobjdir)
-includes := $(foreach dir, $(libdirs), -I $(dir))
-compiler := $(ocamlc) $(ocamlflags)
+
+fixdeps = $(top_srcdir)/instrumentor/fixdeps
+
+cildir = $(top_srcdir)/../cil
+cilobjdir = $(cildir)/obj/x86_LINUX
+libdirs = $(cilobjdir)
+includes = $(foreach dir, $(libdirs), -I $(dir))
+compiler = $(ocamlc) $(ocamlflags)
 
 depend = ocamldep $(includes) $< | $(fixdeps) >$@
 compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) -o $@ $(syslibs) $^
 
-force := force
+force = force
 recurse = $(MAKE) -C $(@D) $(@F)
 
 
 ########################################################################
 
 
-libcil := $(cilobjdir)/cil.$(cma)
-syslibs := str.$(cma) unix.$(cma)
+libcil = $(cilobjdir)/cil.$(cma)
+syslibs = str.$(cma) unix.$(cma)
 
-impls := $(basename $(wildcard *.ml))
-ifaces := $(basename $(wildcard *.mli))
-implicits := $(filter-out $(ifaces), $(impls))
+impls = $(basename $(wildcard $(srcdir)/*.ml))
+ifaces = $(basename $(wildcard $(srcdir)/*.mli))
+implicits = $(filter-out $(ifaces), $(impls))
 
 
 ########################################################################
 
 
-all: $(targets) $(addsuffix /all, $(subdirs))
-.PHONY: all
+all-local: $(targets)
 
-%/all: force
-	$(recurse)
-.PHONY: all
-
-parts: $(impls:=.$(cmo)) $(ifaces:=.cmi)
-.PHONY: parts
-
-$(impls:=.$(cmo)): %.$(cmo): %.ml
+$(addsuffix .$(cmo), $(impls)): %.$(cmo): %.ml
 	$(compile)
 
-$(ifaces:=.cmi): %.cmi: %.mli
+$(addsuffix .cmi, $(ifaces)): %.cmi: %.mli
 	$(compile)
 
-$(implicits:=.cmi): %.cmi: %.ml
+$(addsuffix .cmi, $(implicits)): %.cmi: %.ml
 	$(compile)
 
-$(impls:=.do): %.do: %.ml $(fixdeps)
+$(addsuffix .do, $(impls)): %.do: %.ml $(fixdeps)
 	$(depend)
 
-$(ifaces:=.di): %.di: %.mli $(fixdeps)
+$(addsuffix .di, $(ifaces)): %.di: %.mli $(fixdeps)
 	$(depend)
 
 $(libcil): $(force)
@@ -61,48 +57,17 @@ force:
 .PHONY: force
 
 
-clean-here:: force
-	rm -f $(targets)
-	rm -f $(foreach suffix, cmi cmo cma cmx o cmxa a, *.$(suffix))
-.PHONY: clean-here
-
-clean:: force clean-here $(addsuffix /clean, $(subdirs))
-.PHONY: clean
-
-%/clean: force
-	$(recurse)
-.PHONY: %/clean
-
-
-spotless: force clean-here $(addsuffix /spotless, $(subdirs))
-	rm -f *.d *.di *.do
-.PHONY: spotless
-
-%/spotless: force
-	$(recurse)
-.PHONY: %/spotless
-
-
-check:: force $(addsuffix /check, $(subdirs))
-.PHONY: check
-
-%/check: force
-	$(recurse)
-.PHONY: %/check
-
-
 browse: force
 	ocamlbrowser $(includes)
 .PHONY: browse
 
 
+MOSTLYCLEANFILES = $(targets) *.cma *.cmxa *.cmi *.cmo *.cmx *.o
+CLEANFILES = *.di *.do
+
+
 ########################################################################
 
 
-ifdef impls
 -include $(impls:=.do)
-endif
-
-ifdef ifaces
 -include $(ifaces:=.di)
-endif

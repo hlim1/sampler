@@ -15,7 +15,6 @@ sub setDefaultArguments {
     $self->{countdowns} = 'acyclic';
     $self->{sample_events} = 1;
     $self->{TRACE_COMMANDS} = 0;
-    unshift @{$self->{LD}}, 'libtool';
 }
 
 
@@ -103,6 +102,8 @@ sub extraLibs {
     if ($self->sampling) {
 	push @extras, '-L' . $self->libcountdown;
 	push @extras, "-l$self->{countdowns}";
+	push @extras, '-lcountdown';
+	push @extras, (split ' ', `gsl-config --libs`) if $self->{countdowns} eq 'acyclic';
     }
 
     return @extras;

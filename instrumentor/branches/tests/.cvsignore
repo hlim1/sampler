@@ -1,9 +1,6 @@
-*.i
-*.inst.c
-*.passed
-*.report
-*.s
-*.trace
-.libs
-modular
-simple
+Makefile
+Makefile.in
+atconfig
+testsuite
+testsuite.dir
+testsuite.log

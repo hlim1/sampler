@@ -1,5 +1,5 @@
 AM_CFLAGS = -W -Wall -Werror
 
-lib_LTLIBRARIES = libbranches.la
+lib_LIBRARIES = libbranches.a
 
-libbranches_la_SOURCES = branches.c branches.h
+libbranches_a_SOURCES = branches.c branches.h

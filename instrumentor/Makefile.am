@@ -1,0 +1,37 @@
+SUBDIRS = branches daikon decure nothing returns scalar-pairs #logging
+
+targets = harness.$(cma)
+
+include rules.mk
+
+
+harness = $(manager) $(phases) $(tuples) $(bumpSign) $(describedExpression)
+harness.$(cma): $(harness)
+	$(archive)
+
+cfg-to-dot: $(libcil) $(cfg-to-dot)
+	$(link)
+
+checker: $(libcil) $(checker)
+	$(link)
+
+dump: $(libcil) $(dump)
+	$(link)
+
+removeDeadCode: $(libcil) $(removeDeadCode)
+	$(link)
+
+loopless: $(libcil) $(loopless)
+	$(link)
+
+dumpConstants: $(libcil) $(dumpConstants)
+	$(link)
+
+%.cfg.dot: cfg-to-dot %.i
+	./$^ >$@
+
+%.dom.dot: dom-to-dot %.i
+	./$^ >$@
+
+%.ps: %.dot
+	dot -Tps -Gsize=7.5,10 -Gcenter=1 -o $@ $<

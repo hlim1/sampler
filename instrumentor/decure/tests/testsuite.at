@@ -1,0 +1,9 @@
+AT_INIT(decure)
+
+AT_SETUP(test)
+AT_CHECK(
+cp $srcdir/test.c .
+$srcdir/../driver/main -o test $srcdir/test.c
+SAMPLER_SPARSITY=1 ./test, 0, [Hi!
+], stderr)
+AT_CLEANUP

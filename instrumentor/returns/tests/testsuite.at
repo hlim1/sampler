@@ -1,0 +1,21 @@
+AT_INIT(returns)
+
+AT_SETUP(test)
+AT_CHECK(
+cp $srcdir/test.c .
+cp $srcdir/test.expected expout
+$srcdir/../driver/main -o test test.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./test
+$top_srcdir/resolver/resolve-samples test <trace
+, 0, expout)
+AT_CLEANUP
+
+AT_SETUP(extern)
+AT_CHECK(
+cp $srcdir/extern-*.c .
+cp $srcdir/extern.expected expout
+$srcdir/../driver/main -o extern *.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./extern
+$top_srcdir/resolver/resolve-samples extern <trace
+, 0, expout)
+AT_CLEANUP

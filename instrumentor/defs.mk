@@ -1,5 +1,3 @@
-include $(top)/config.mk
-
 ifdef profile
 native := 1
 ocamlflags := -p

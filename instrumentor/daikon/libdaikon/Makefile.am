@@ -1,6 +1,6 @@
-lib_LTLIBRARIES = libdaikon.la
+lib_LIBRARIES = libdaikon.a
 
-libdaikon_la_SOURCES =				\
+libdaikon_a_SOURCES =				\
 	daikon.c				\
 	daikon.h
 

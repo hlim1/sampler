@@ -1,3 +1,6 @@
+Is GSL actually getting to see the HAVE_INLINE macro in config.h?
+Where are we supposed to be including this header?
+
 ShowStats doesn't need ident string, as it has no effect on the
 built binary.
 
@@ -18,4 +21,4 @@ launcher doesn't implicitly handle redirects
 assume that anything declared in /usr/include/... or
 /usr/lib/gcc-lib/... or perhaps a few other places is library code
 
-how does launchers propagate SIGINT down to child (^C)?
+how does launcher propagate SIGINT (^C) down to child?

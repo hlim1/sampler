@@ -1,6 +1,8 @@
-.libs
 *.cmi
 *.cmo
 *.di
 *.do
+.libs
+Makefile
+Makefile.in
 main

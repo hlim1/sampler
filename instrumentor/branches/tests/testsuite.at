@@ -1,0 +1,21 @@
+AT_INIT(branches)
+
+AT_SETUP(simple)
+AT_CHECK(
+cp $srcdir/simple.c .
+cp $srcdir/simple.expected expout
+$srcdir/../driver/main -o simple simple.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./simple
+$top_srcdir/resolver/resolve-samples simple <trace
+, 0, expout)
+AT_CLEANUP
+
+AT_SETUP(modular)
+AT_CHECK(
+cp $srcdir/modular-*.c .
+cp $srcdir/modular.expected expout
+$srcdir/../driver/main -o modular *.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./modular
+$top_srcdir/resolver/resolve-samples modular <trace
+, 0, expout)
+AT_CLEANUP

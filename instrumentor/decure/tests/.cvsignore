@@ -1,7 +1,6 @@
-*.browser
-*.cured.[ci]
-*.i
-*.inst.[cis]
-*.trace
-.libs
-test
+Makefile
+Makefile.in
+atconfig
+testsuite
+testsuite.dir
+testsuite.log

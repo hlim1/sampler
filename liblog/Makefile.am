@@ -1,22 +1,22 @@
 noinst_HEADERS = primitive.h
 
 
-lib_LTLIBRARIES = libdecoder.la liblog-stdio.la liblog-storage.la liblog-syscall.la
+lib_LIBRARIES = libdecoder.a liblog-stdio.a liblog-storage.a liblog-syscall.a
 
-libdecoder_la_SOURCES =				\
+libdecoder_a_SOURCES =				\
 	decoder.l				\
 	decoder.h
 
-liblog_storage_la_SOURCES =			\
+liblog_storage_a_SOURCES =			\
 	log.h					\
 	storage.c				\
 	storage.h
 
-liblog_stdio_la_SOURCES = stdio.c
+liblog_stdio_a_SOURCES = stdio.c
 
-liblog_syscall_la_SOURCES = syscall.c
+liblog_syscall_a_SOURCES = syscall.c
 
 
 noinst_PROGRAMS = print-trace
 
-print_trace_LDADD = libdecoder.la
+print_trace_LDADD = libdecoder.a

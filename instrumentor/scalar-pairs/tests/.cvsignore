@@ -1,10 +1,6 @@
-*.i
-*.inst.c
-*.passed
-*.report
-*.s
-*.trace
-.libs
-late-global
-upcase-bad
-upcase-good
+Makefile
+Makefile.in
+atconfig
+testsuite
+testsuite.dir
+testsuite.log

@@ -2,4 +2,6 @@
 *.cmo
 *.di
 *.do
+Makefile
+Makefile.in
 main

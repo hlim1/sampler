@@ -1,0 +1,11 @@
+AT_INIT(nothing)
+
+AT_SETUP(sharing)
+AT_CHECK([
+$srcdir/../driver/main -shared -o plugin.so $srcdir/plugin.c
+$srcdir/../driver/main -shared -o library.so $srcdir/library.c
+$srcdir/../driver/main -c $srcdir/main.c
+$srcdir/../driver/main -Wl,-rpath,. -o main main.o library.so -ldl
+SAMPLER_SPARSITY=1 ./main
+], 0)
+AT_CLEANUP

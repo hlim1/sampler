@@ -14,3 +14,6 @@ loopless
 removeDeadCode
 
 libraries.ml
+
+Makefile
+Makefile.in

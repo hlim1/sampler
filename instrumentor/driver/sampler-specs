@@ -1,6 +1,6 @@
 *embedding:
--fsave-cfg=%g.cfg \
--fsave-site-info=%g.sites
+-fsave-cfg %g.cfg \
+-fsave-site-info %g.sites
 
 *cpp_threads:
 %{fno-threads:-include sampler/no-threads.h} \

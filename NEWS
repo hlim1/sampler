@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.9.1
+
+** More robust cleanup of compiler temporary files.
+
 * sampler-0.9
 
 ** New "g-object-unref" instrumentation scheme tracks state of GLib

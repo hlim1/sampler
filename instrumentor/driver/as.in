@@ -11,26 +11,29 @@ my @objcopy;
 
 my $verbose;
 my $outfile;
-my $save_temps;
 
 my $saved_cfg;
 my $saved_site_info;
 
 
+my %flag_specs =
+    (
+     # Sampler Options
+     '-fsave-cfg' => sub { $saved_cfg = shift @ARGV },
+     '-fsave-site-info' => sub { $saved_site_info = shift @ARGV },
+
+     # Overall Options
+     '-o' => sub { $outfile = shift @ARGV; push @as, $_, $outfile },
+     '--verbose' => sub { $verbose = 1 },
+     );
+     
+
 while (@ARGV) {
     local $_ = shift;
 
-    if ($_ eq '-o') {
-	$outfile = shift;
-	push @as, $_, $outfile;
-    } elsif ($_ eq '-save-temps') {
-	$save_temps = 1;
-    } elsif ($_ eq '--verbose') {
-	$verbose = 1;
-    } elsif (/^-fsave-cfg=(.+)/) {
-	$saved_cfg = $1;
-    } elsif (/^-fsave-site-info=(.+)/) {
-	$saved_site_info = $1;
+    if (exists $flag_specs{$_}) {
+	my $handler = $flag_specs{$_};
+	$handler->($_);
     } else {
 	push @as, $_;
     }
@@ -55,11 +58,3 @@ run_stage 'objcopy', @objcopy, $outfile if @objcopy && defined $outfile;
 
 
 exit 0;
-
-
-END {
-    unless ($save_temps) {
-	unlink $saved_cfg if defined $saved_cfg;
-	unlink $saved_site_info if defined $saved_site_info;
-    }
-}

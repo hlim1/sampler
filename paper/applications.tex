@@ -144,24 +144,18 @@ Is 1/1000 sampling good enough to tell us with confidence that our
 code is correct?  That depends on how confident we want to be, how
 many users we have, and how often a bug is thought to occur.  Suppose
 we are interested in a bug triggered by bad behavior that has a
-$1/100$ chance of occurring in a single run.
-%occurs once per hundred runs.
-If we want to be 90\% confident to have seen this misbehavior in at
-least one run,
-%at least once,
-then we need at least $\log{(1-0.90)} / \log{( 1 - 1/100000)} =
-230,258$ runs.
-%$100 \times \log{(1-0.90)} / \log{(1-1/1000)} = 230,143$ runs.
-While this may
-seem large, consider that sixty million Office XP licenses were sold
-in its first year on the market \cite{Microsoft:2002:AR-F10K}.  If
-each licensee runs Microsoft Word twice per week, then 230,000 runs
-complete in just over three hours.  99\% confidence of seeing a
-one-in-a-thousand bug takes less than a week.  With smaller
-deployments, one has the choice of increasing sampling density or
-waiting longer for samples to accrue.  The use of statistically fair
-sampling allows one to make these calculations, and therefore these
-trade-offs, in a mathematically well founded manner.
+$1/100$ chance of occurring in a single run.  If we want to be 90\%
+confident to have seen this misbehavior in at least one run, then we
+need at least $\log{(1-0.90)} / \log{( 1 - 1/100000)} = 230,258$ runs.
+While this may seem large, consider that sixty million Office XP
+licenses were sold in its first year on the market
+\cite{Microsoft:2002:AR-F10K}.  If each licensee runs Microsoft Word
+twice per week, then 230,000 runs complete in just over three hours.
+99\% confidence of seeing a one-in-a-thousand bug takes less than a
+week.  With smaller deployments, one has the choice of increasing
+sampling density or waiting longer for samples to accrue.  The use of
+statistically fair sampling allows one to make these calculations, and
+therefore these trade-offs, in a mathematically well founded manner.
 
 \subsubsection{Statically Selective Sampling}
 \label{sec:ccured:single}

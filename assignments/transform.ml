@@ -6,11 +6,7 @@ class visitor file = object
 
   val logger = FindLogger.find file
 
-  method weigh {skind = skind} =
-    match skind with
-    | Instr instrs -> List.length instrs
-    | _ -> 0
-
+  method weigh = Weigh.weigh
   method insertSkips = new Skips.visitor
   method insertLogs = new Logs.visitor logger
 end

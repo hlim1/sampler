@@ -15,7 +15,8 @@ include $(top)/rules.mk
 findLogger = findLogger
 logs = $(where) logs
 skips = $(functionBodyVisitor) skips
-transform = $(findLogger) $(logs) $(skips) transform
+transform = $(findLogger) $(logs) $(skips) $(weigh) transform
+weigh = weigh
 where = where
 
 

@@ -22,6 +22,9 @@ class GnomeUserConfig (BaseUserConfig.BaseUserConfig):
 
         # present first time dialog if we haven't already asked
         if not self.__gconfig['asked']:
+            if not 'DISPLAY' in os.environ:
+                return 0
+
             firstTime = FirstTime.FirstTime(self.__app, self.__gconfig)
             response = firstTime.run()
             firstTime.hide()

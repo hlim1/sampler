@@ -9,7 +9,7 @@ extern const char logSignature[];
 static const char * const requireLogSignature __attribute__((unused)) = logSignature;
 
 
-void logTableau(const void *, unsigned);
+void logTableau(const void *, unsigned) __attribute__((no_instrument_function));
 
 
 #endif /* !INCLUDE_liblog_log_h */

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!@PERL@ -w
 # -*- cperl -*-
 
 use strict;
@@ -12,14 +12,20 @@ my $prefix = '@prefix@';
 my $exec_prefix = "@exec_prefix@";
 my $bindir = "@bindir@";
 my $PACKAGE = '@PACKAGE@';
-my $pkglibdir = "@pkglibdir@";
-my $pkgdatadir = "@pkgdatadir@";
+my $libdir = "@libdir@";
+my $datadir = "@datadir@";
+my $pkglibdir = "@package_libdir@";
+my $pkgdatadir = "@package_datadir@";
 
 
 ########################################################################
 
 
 my %macros = (
+	      sampler_sparsity => '%{error:sampler_sparsity undefined}',
+	      sampler_reporting_host => '%{error:sampler_reporting_host undefined}',
+	      sampler_reporting_url => 'https://%{sampler_reporting_host}/cgi-bin/sampler-upload',
+
 	      sampler_datadir => "$pkgdatadir",
 	      sampler_libdir => "$pkglibdir",
 
@@ -50,31 +56,16 @@ package.
 %{nil}
 EOF
 
-	      sampler_prebuild => 'export CC=\'%{sampler_cc} %{sampler_cc_flags}\''
+	      sampler_prebuild => 'export CC=\'%{sampler_cc} %{sampler_cc_flags}\'',
 
 	      'sampler_install()' => <<'EOF',
-%{sampler_libdir}/templates/install-gconf \
-  --name='%{name}' \
-  --sparsity='%{sampler_sparsity}' \
-  --reporting-url='%{sampler_reporting_url}' \
-  --install="$RPM_BUILD_ROOT" \
-  -- \
-  %*
-%{sampler_libdir}/templates/install-wrappers \
-  --name='%{name}' \
-  --version='%{version}' \
-  --release='%{release}' \
-  --install="$RPM_BUILD_ROOT" \
-  -- \
-  %*
-%{sampler_tooldir}/find-sampler-info \
-  --extract="$RPM_BUILD_ROOT" \
-  --save="$RPM_BUILD_ROOT" \
-  --edit-source="$RPM_BUILD_DIR::/usr/src/debug"
+%{sampler_libdir}/tools/install-gconf --name='%{name}' --sparsity='%{sampler_sparsity}' --reporting-url='%{sampler_reporting_url}' --install="$RPM_BUILD_ROOT"
+%{sampler_libdir}/tools/install-wrappers --name='%{name}' --version='%{version}' --release='%{release}' --install="$RPM_BUILD_ROOT" -- %*
+%{sampler_libdir}/tools/find-sampler-info --extract="$RPM_BUILD_ROOT" --save="$RPM_BUILD_ROOT" --edit-source="$RPM_BUILD_DIR::/usr/src/debug"
 %{nil}
 EOF
 
-	      sampler_files => '%attr(-, root, root) %{sampler_libdir}/wrapped/*'
+	      sampler_files => '%attr(-, root, root) %{sampler_libdir}/wrapped/*',
 	      sampler_files_gconf => '%attr(-, root, root) %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas',
 	      sampler_post => 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas >/dev/null'
 );

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.12.4
+
+** Continued small packaging tweaks.
+
 * sampler-0.12.3
 
 ** Various makefile tweaks for cleaner packaging.

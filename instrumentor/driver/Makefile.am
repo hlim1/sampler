@@ -1,8 +1,9 @@
 bin_SCRIPTS = sampler-cc
 driver_SCRIPTS = as cc1
 driver_DATA = sampler-specs
+noinst_SCRIPTS = sampler-cc-here
 
-EXTRA_DIST = sampler-cc-here $(driver_DATA)
+EXTRA_DIST = $(driver_DATA)
 
 MOSTLYCLEANFILES =				\
 	include					\

@@ -9,7 +9,7 @@ let cloneLabel = function
 	
 	
 class visitor = object(self)
-  inherit CurrentFunctionVisitor.visitor
+  inherit FunctionBodyVisitor.visitor
 
   method vfunc func =
     let predicate = one in

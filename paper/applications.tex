@@ -84,9 +84,10 @@ amortization rates are fairly good.
     \hline\hline
     \input{applications/ccured-density}
   \end{tabular}
-  \caption{Relative performance of various sampling rates versus no
-    instrumentation.  \textit{Italics} marks cases where sampled
-    instrumentation outperforms unconditional instrumentation.}
+  \caption{Relative performance of \CCured benchmarks with
+    unconditional or sampled instrumentation.  \textit{Italics} marks
+    cases where sampled instrumentation outperforms unconditional
+    instrumentation.}
   \label{tab:share:density}
 \end{table}
 
@@ -641,7 +642,7 @@ zeroing out the new extra space.  As the comment suggests, there are
 two similar functions (\texttt{more\_functions()} and
 \texttt{more\_variables()}) nearby that do largely the same thing with
 different storage pools.  The text of these three functions is nearly
-identical, but each uses different global variables (e.g.
+identical, but each uses different global variables (such as
 \texttt{a\_count} versus \texttt{f\_count} versus \texttt{v\_count}).
 
 The top ranked predicates seem bizarre at first glance, because the
@@ -715,8 +716,40 @@ are obvious only once one knows where to look.  The logistic
 regression results directed us to one misbehaving variable on one line
 of code, out of 8910 lines in \texttt{bc} as a whole.  Our approach
 does not automatically find and fix bugs.  But it does suggest where
-to start looking, and what sort of scenarios (large \texttt{indx}) to
-consider.  Although we are still learning about the capabilities of
-this system, and how to interpret its results, we believe that
-statistically guided debugging has the potential to make the process
-of finding and fixing bugs more efficient.
+to start looking, and what sort of scenarios (e.g.\ unusually large
+\texttt{indx}) to consider.  Although we are still learning about the
+capabilities of this system, and how to interpret its results, we
+believe that statistically guided debugging has the potential to make
+the process of finding and fixing bugs more efficient.
+
+\subsubsection{Performance Metrics}
+
+\begin{figure}
+  \centering
+  \small
+  \includegraphics[width=\columnwidth]{applications/bc_density}
+  \caption{Relative performance of \texttt{bc} with unconditional or
+    sampled instrumentation}
+  \label{fig:bc:slowdown}
+\end{figure}
+
+Our \texttt{bc} instrumentation is quite dense.  The leftmost bar in
+\autoref{fig:bc:slowdown} shows that if this instrumentation is added
+without sampling, the performance penalty is quite large: 13\%.  A
+sampling density of 1/100 cuts this in half (6\%).  At the 1/1000
+density used in our statistical debugging experiment, the penalty is
+barely measurable (0.5\%).  Surprisingly, still lower densities show
+small speedups relative to uninstrumented code.  This is apparently
+due to effects such as changes in relative code alignment, cache
+behavior, measurement noise, and other unpredictable factors.  Thus,
+we have met our original goal: we can sample program behavior at
+densities that allow us to isolate real bugs while imposing an
+overhead on clients that is so small as to be unmeasurable in
+practice.
+
+\aside{Where exactly did we state this as ``our original goal''?}
+
+\aside{Stipulate what the performance experiment is: average of 4
+  random runs, what kind of machine, etc.  Perhaps say this at the
+  first set of performance metrics (\autoref{sec:ccured}) and
+  stipulate there that all subsequent performance data is the same.}

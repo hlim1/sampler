@@ -22,6 +22,10 @@ foreach my $library (@libraries) {
 	my (undef, $kind, $name) = split;
 	next unless defined $kind;
 	next unless $kind eq 'T' || $kind eq 'W';
+	next if $name eq 'bsearch';
+	next if $name eq 'qsort';
+	next if $name =~ /setjmp/;
+	next if $name =~ /longjmp/;
 	$funcs{$name} = 1;
     }
 }

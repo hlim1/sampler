@@ -7,7 +7,7 @@ let main transformer =
      transformer;
      "RemoveUnusedTemps", Rmtmps.removeUnusedTemps;
      FilterLabels.phase;
-     "dump", dumpFile defaultCilPrinter stdout
+     "dump", dumpFile (new Printer.printer) stdout
    ]
   in
   

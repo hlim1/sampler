@@ -3,3 +3,5 @@ handle "-S" gcc option
 handle "-save-temps" gcc option
 
 combine patch and postpatch in Calls module
+
+should reset or recreate Choices set on each file

@@ -4,6 +4,7 @@ tests := 					\
 	array					\
 	conditional				\
 	deep-pointers				\
+	loop					\
 	multiple				\
 	return					\
 	structures

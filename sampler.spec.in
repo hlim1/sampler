@@ -6,7 +6,7 @@
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
 Release: 1
-License: MIT style
+License: BSD
 Group: Applications/System
 Packager: Ben Liblit <@PACKAGE_BUGREPORT@>
 URL: http://www.cs.berkeley.edu/~liblit/bug-isolation/

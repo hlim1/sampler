@@ -12,6 +12,6 @@
     <identifier url=""/>
     <language code="C"/>
     <relation seriesid="2582b21a-c713-11d7-890f-89dcc7901dde"/>
-    <rights type="MIT style" holder="The Regents of the University of California"/>
+    <rights type="BSD" holder="The Regents of the University of California"/>
   </resource>
 </omf>

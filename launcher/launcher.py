@@ -312,14 +312,14 @@ def main():
                 sys.exit(exitSignal or exitStatus)
 
         print 'compressing reports'
-        for reportId in reportText:
-            reportText[reportId] = compress(reportText[reportId])
+        for reportId in reports:
+            reports[reportId] = compress(reports[reportId].getvalue())
         print 'compressing reports: done'
 
         multipart = cStringIO.StringIO()
-        boundary = pickBoundary(reportText)
-        for reportId in reportText:
-            appendPart(multipart, boundary, reportId, reportText[reportId])
+        boundary = pickBoundary(reports)
+        for reportId in reports:
+            appendPart(multipart, boundary, reportId, reports[reportId])
         print >>multipart, '--' + boundary + '--\r'
         headers = {'Content-type' : 'multipart/form-data; boundary="' + boundary + '"'}
 

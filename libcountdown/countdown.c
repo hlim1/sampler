@@ -9,7 +9,7 @@ unsigned nextLogCountdown = UINT_MAX;
 
 __attribute__((constructor)) void resetCountdown()
 {
-  unsigned countUp = 0;
+  unsigned countUp = 1;
   
   while (random() % 4096 != 0)
     {

@@ -305,7 +305,6 @@ www/cgi-bin/Makefile
 ])
 
 AC_CONFIG_FILES([launcher/test-by-extension], [chmod +x $ac_file])
-AC_CONFIG_FILES([instrumentor/driver/main], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/sampler-cc], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/cc1], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/debuild], [chmod +x $ac_file])

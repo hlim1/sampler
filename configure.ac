@@ -150,6 +150,22 @@ AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
+PKG_CHECK_MODULES(LAUNCHER_TRAY, gtk+-2.0 pygtk-2.0)
+AC_SUBST(LAUNCHER_TRAY_LIBS)
+AC_SUBST(LAUNCHER_TRAY_CFLAGS)
+
+PKG_CHECK_MODULES(EGG_TRAY, gtk+-2.0 libgnomeui-2.0)
+AC_SUBST(EGG_TRAY_LIBS)
+AC_SUBST(EGG_TRAY_CFLAGS)
+
+PKG_CHECK_MODULES(ORBIT, ORBit-2.0)
+AC_SUBST(ORBIT_LIBS)
+AC_SUBST(ORBIT_CFLAGS)
+
+PKG_CHECK_MODULES(BONOBO, libbonobo-2.0)
+AC_SUBST(BONOBO_LIBS)
+AC_SUBST(BONOBO_CFLAGS)
+
 AC_MSG_CHECKING(format string type modifer j)
 AC_COMPILE_IFELSE(
   AC_LANG_PROGRAM(
@@ -252,6 +268,10 @@ instrumentor/scalar-pairs/Makefile
 instrumentor/scalar-pairs/tests/Makefile
 launcher/Makefile
 launcher/python/Makefile
+launcher/tray/Makefile
+launcher/tray/corba/Makefile
+launcher/tray/libegg/Makefile
+launcher/tray/libegg/tray/Makefile
 lib/Makefile
 lib/cyclic-size.h
 package.m4

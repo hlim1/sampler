@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?> <!-- -*- xml -*- -->
+<!DOCTYPE oaf_info SYSTEM "oaf.dtd">
+
+<oaf_info>
+
+  <oaf_server iid="OAFIID:SamplerUploader_Factory:1.0"
+    type="exe"
+    location="/home/liblit/research/sampler/launcher/tray/corba/server">
+
+    <oaf_attribute name="repo_ids" type="stringv">
+      <item value="IDL:Bonobo/GenericFactory:1.0"/>
+      <item value="IDL:Bonobo/Unknown:1.0"/>
+    </oaf_attribute>
+
+    <oaf_attribute name="name" type="string" value="Sampler Uploader Factory"/>
+  </oaf_server>
+
+  <oaf_server iid="OAFIID:SamplerUploader:1.0"
+    type="factory"
+    location="OAFIID:SamplerUploader_Factory:1.0">
+
+    <oaf_attribute name="repo_ids" type="stringv">
+      <item value="IDL:Sampler/Uploader:1.0"/>
+      <item value="IDL:Bonobo/Unknown:1.0"/>
+    </oaf_attribute>
+
+    <oaf_attribute name="name" type="string" value="Sampler Uploader"/>
+  </oaf_server>
+
+</oaf_info>

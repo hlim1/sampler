@@ -15,6 +15,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: binutils
 BuildRequires: cil-devel >= 1.1.2
 BuildRequires: gcc
+BuildRequires: glib2-devel
 BuildRequires: ocaml
 BuildRequires: perl
 BuildRequires: python

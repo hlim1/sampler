@@ -1,4 +1,4 @@
-SUBDIRS = python
+SUBDIRS = python tray
 
 package_data_DATA = gdb-commands
 package_data_SCRIPTS = print-debug-info

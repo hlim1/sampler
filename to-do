@@ -1,5 +1,7 @@
 -*- outline -*-
 
+Remove temporary hack symlink on koan in /usr/lib/bonobo/servers/sampler.server
+
 * launcher
 
 GNOME launcher's server reply dialog has bad tab navigation.  If focus
@@ -19,6 +21,9 @@ We should disconnect sooner.
 For long-lived processes, perhaps we need to send periodic interim
 reports (e.g. daily) instead of waiting for termination.  This will
 require support from the client application too, though.
+
+libegg code is licensed under LGPL, while we use BSD.  Figure out the
+right thing to do about this.
 
 * packaging
 

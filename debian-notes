@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* glib2-devel
+* pygtk2-devel
+** required at build time for libegg wrapper
+
 * python-glade2
 * python-gnome2
 

@@ -1,0 +1,38 @@
+#!/usr/bin/python
+
+import ORBit
+import bonobo
+import os
+import sys
+
+ORBit.load_typelib('/home/liblit/research/sampler/launcher/tray/corba/sampler_module')
+
+import CORBA
+import Sampler__POA
+
+
+########################################################################
+
+
+class Uploader(Sampler__POA.Uploader):
+
+    def reportUnit(self, signature, counts):
+        print 'reportUnit:', signature, length(counts)
+
+    def exitStatus(self, status):
+        print 'exitStatus:', status
+
+    def exitSignal(self, signal):
+        print 'exitSignal:', signal
+    
+
+def uploader_factory(factory, iid):
+    print 'called uploader_factory'
+    return Uploader()
+
+
+component = bonobo.GenericFactory('OAFIID:SamplerUploader_Factory:1.0', uploader_factory)
+bonobo.running_context_auto_exit_unref(component)
+print 'about to enter bonobo.main'
+bonobo.main()
+print 'returned from bonobo.main'

@@ -10,7 +10,8 @@ use Getopt::Long;
 
 use lib $FindBin::Bin;
 use SymbolTable;
-use Unit;
+use Function;
+use Object;
 
 
 ########################################################################
@@ -38,27 +39,27 @@ sub check_signature ($$$) {
 }
 
 
-my @units;
+my @objects;
 
 
 ########################################################################
 
 
 sub print_dump () {
-    $_->dump foreach @units;
+    $_->dump foreach @objects;
 }
 
 
 sub print_dot () {
     print "digraph CFG {\n";
-    $_->dot foreach @units;
+    $_->dot foreach @objects;
     print "}\n";
 }
 
 
 sub print_dot_calls () {
     print "digraph CallGraph {\n";
-    $_->dot_calls foreach @units;
+    $_->dot_calls foreach @objects;
     print "}\n";
 }
 
@@ -69,7 +70,8 @@ my $printer = \&print_dump;
 GetOptions
     'dump' => sub { $printer = \&print_dump },
     'dot' => sub { $printer = \&print_dot },
-    'dot-calls' => sub { $printer = \&print_dot_calls };
+    'dot-calls' => sub { $printer = \&print_dot_calls },
+    'verbose' => \$Unit::verbose;
 
 
 ########################################################################
@@ -97,16 +99,15 @@ foreach my $objectName (@ARGV) {
 	}
     }
 
-    while (my $unit = new Unit $objectName, $handle) {
-	push @units, $unit;
-    }
-
-    my $exports = new SymbolTable;
-    $_->collectExports($exports) foreach @units;
-    $_->resolveCallees($exports) foreach @units;
+    push @objects, new Object $handle, $objectName;
 
     $handle->close or error "error after reading CFG from $objectName\n";
 }
+
+
+my $exports = new SymbolTable 'exports';
+$_->collectExports($exports) foreach @objects;
+$_->resolveCallees($exports) foreach @objects;
 
 
 &{$printer} unless $problem;

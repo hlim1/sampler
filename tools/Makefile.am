@@ -3,6 +3,7 @@ tools_SCRIPTS =					\
 	Embedded.pm				\
 	Function.pm				\
 	Node.pm					\
+	Object.pm				\
 	SymbolTable.pm				\
 	Unit.pm					\
 	extract-report				\
@@ -16,6 +17,7 @@ EXTRA_DIST =					\
 	Embedded.pm				\
 	Function.pm				\
 	Node.pm					\
+	Object.pm				\
 	SymbolTable.pm				\
 	Unit.pm					\
 	extract-report				\

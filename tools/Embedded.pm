@@ -1,37 +1,43 @@
 package Embedded;
 
 use strict;
+use Carp;
 
 
 ########################################################################
 
 
-sub new ($$$) {
-    my $proto = shift;
+sub new ($;$) {
+    my ($proto, $parent) = @_;
     my $class = ref($proto) || $proto;
 
-    if (@_ == 1) {
-	my $parent = shift;
-	@_ = ($parent->{objectName}, $parent->{handle});
-    }
-
-    my $self = {};
-    ($self->{objectName}, $self->{handle}) = @_;
+    my $self = { parent => $parent,
+		 name => "(anonymous $class)" };
 
     bless $self, $class;
     return $self;
 }
 
 
+sub name ($) {
+    my $self = shift;
+    if ($self->{parent}) {
+	return $self->{parent}->name . '::' . $self->{name};
+    } else {
+	return $self->{name};
+    }
+}
+
+
 sub malformed ($$$) {
     my ($self, $context) = @_;
-    die "$self->{objectName}:", $self->{handle}->input_line_number, ": malformed $context: $_\n";
+    confess $self->name . ": malformed $context: $_\n";
 }
 
 
 sub warn ($$) {
     my ($self, $message) = @_;
-    warn "$self->{objectName}:", $self->{handle}->input_line_number, ": $message\n";
+    warn $self->name . ": $message\n";
 }
 
 

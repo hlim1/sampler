@@ -10,13 +10,13 @@ our @ISA = ('Embedded');
 ########################################################################
 
 
-sub new {
-    my $proto = shift;
+sub new ($$) {
+    my ($proto, $parent) = @_;
     my $class = ref($proto) || $proto;
     my $self = $class->SUPER::new(@_);
     bless $self, $class;
 
-    my $handle = $self->{handle};
+    my $handle = $parent->{handle};
     local $_ = <$handle>;
     chomp;
     return if $_ eq '';
@@ -45,7 +45,7 @@ sub new {
 
 sub resolveSuccessors ($$) {
     my ($self, $peers) = @_;
-    $peers->[$self->{id}] == $self or die "inconsistent node ordering";
+    $peers->[$self->{name}] == $self or die "inconsistent node ordering";
 
     $_ = $peers->[$_] foreach @{$self->{successors}};
 }
@@ -70,17 +70,17 @@ sub resolveCallees ($$$) {
 sub dump ($) {
     my $self = shift;
 
-    print "\t\tnode $self->{id} at $self->{filename}:$self->{line}\n";
+    print "\t\t\tnode $self->{name} at $self->{filename}:$self->{line}\n";
 
     if (@{$self->{successors}}) {
-	print "\t\t\tsuccessors:";
-	print " $_->{id}" foreach @{$self->{successors}};
+	print "\t\t\t\tsuccessors:";
+	print " $_->{name}" foreach @{$self->{successors}};
 	print "\n";
     }
 
     if (exists $self->{callees}) {
 	if (@{$self->{callees}}) {
-	    print "\t\t\tcallees:";
+	    print "\t\t\t\tcallees:";
 	    foreach (@{$self->{callees}}) {
 		if (ref) {
 		    print " $_->{name}";
@@ -91,7 +91,7 @@ sub dump ($) {
 	    print "\n";
 	}
     } else {
-	print "\t\t\tcallees: ???\n";
+	print "\t\t\t\tcallees: ???\n";
     }
 }
 
@@ -102,16 +102,16 @@ sub dump ($) {
 sub dot ($) {
     my $self = shift;
 
-    print "\t\t\t\"$self\" [label=$self->{id}];\n";
+    print "\t\t\t\t\"$self\" [label=$self->{name}];\n";
 
     if (@{$self->{successors}}) {
-	print "\t\t\t\"$self\" -> { ";
+	print "\t\t\t\t\"$self\" -> { ";
 	print "\"$_\"; " foreach @{$self->{successors}};
 	print "}\n";
     }
 
-    if (@{$self->{callees}}) {
-	print "\t\t\t\"$self\" -> { ";
+    if (exists $self->{callees} && @{$self->{callees}}) {
+	print "\t\t\t\t\"$self\" -> { ";
 	print "\"$_\"; " foreach @{$self->{callees}};
 	print "} [style=dotted]\n";
     }

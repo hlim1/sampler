@@ -9,13 +9,15 @@ let embedCFG =
     ~default:true
 
 
-class visitor =
+class visitor file =
   object (self)
     inherit FunctionBodyVisitor.visitor
     inherit BufferClass.c 16
 
     initializer
-      self#addString "*\t0.0\n";
+      self#addString "*\t0.1\n";
+      self#addString file.fileName;
+      self#addChar '\n';
 
     val expectedSid = ref 0
 
@@ -97,7 +99,7 @@ let visit file =
     TestHarness.time "  embedding CFG"
       (fun () ->
 	Dynamic.analyze file;
-	let visitor = new visitor in
+	let visitor = new visitor file in
 	visitCilFileSameGlobals (visitor :> cilVisitor) file;
 	visitor#addChar '\n';
 	let contents = visitor#contents in

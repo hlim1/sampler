@@ -1,4 +1,4 @@
-AC_INIT([sampler],[0.7.4],[liblit@cs.berkeley.edu])
+AC_INIT([sampler],[0.8],[liblit@cs.berkeley.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 

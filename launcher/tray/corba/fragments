@@ -1,3 +1,0 @@
-list = bonobo.activation.query("has(repo_ids, 'IDL:Bonobo/Unknown:1.0')")
-activation-client -s "repo_ids.has('IDL:Sampler/Uploader:1.0')"
-activation-client -s "repo_ids.has('IDL:Nautilus/MetafileFactory:1.0')"

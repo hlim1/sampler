@@ -267,7 +267,6 @@ launcher/Makefile
 launcher/python/Makefile
 launcher/tray/Makefile
 launcher/tray/Config.py
-launcher/tray/corba/Makefile
 launcher/tray/libegg/Makefile
 launcher/tray/libegg/tray/Makefile
 lib/Makefile

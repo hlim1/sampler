@@ -26,98 +26,89 @@
 
     <cmdsynopsis>
       <command>sampler-cc</command>
-      <arg choice="req"><replaceable>scheme</replaceable></arg>
       <group choice="req" rep="repeat">
-	<arg choice="plain"><replaceable>source file</replaceable></arg>
-	<arg choice="plain"><replaceable>compiler option</replaceable></arg>
-	<arg choice="plain"><replaceable>instrumentor option</replaceable></arg>
+	<arg choice="plain"><replaceable>C source file</replaceable></arg>
+	<arg choice="plain"><replaceable>GCC compiler flag</replaceable></arg>
+	<arg choice="plain"><replaceable>instrumentor flag</replaceable></arg>
       </group>
     </cmdsynopsis>
-
-    <para>The mandatory <replaceable
-    class="parameter">scheme</replaceable> argument selects an
-    instrumentation scheme, and must appear as the first argument to
-    the driver.  The following instrumentation schemes are currently
-    available:</para>
-
-    <variablelist>
-      <title>Instrumentation schemes</title>
-      <varlistentry>
-	<term><option>branches</option></term>
-	<listitem>
-	  <para>For each conditional (branch), count how many times
-	  the branch predicate is false or true.  This includes
-	  <literal>if</literal> statements as well as branches that
-	  are implicit in looping control structures and certain
-	  operators (<literal>&amp;&amp;</literal>,
-	  <literal>||</literal>, <literal>?:</literal>).  Each
-	  branch induces one instrumentation point with a pair of counters.</para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term><option>returns</option></term>
-	<listitem>
-	  <para>At each scalar-returning call site, count how many
-	  times the called function returned a negative, zero, or
-	  positive value.  Each such call induces one
-	  instrumentation point with a triple of counters.  This is
-	  the scheme used for the <application>ccrypt</application>
-	  experiment in our PLDI paper.</para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term><option>scalar-pairs</option></term>
-	<listitem>
-	  <para>At each direct scalar assignment, count how many
-	  times the assigned value is less than, equal to, or
-	  greater than each other same-typed in-scope variable.
-	  Each such comparable variable at each such assignment
-	  induces one instrumentation point with a triple of
-	  counters.  This is the scheme used for the
-	  <application>bc</application> experiment in our PLDI
-	  paper.</para>
-
-	  <para>This scheme can also optionally compare each
-	  assigned value to each constant-valued integer expression
-	  seen in the program.  This can be useful to trap problems
-	  relating to fixed-size buffers, structure sizes, or other
-	  <quote>magic</quote> values.  To turn on constant
-	  expression comparisons, add
-	  <option>--compare-constants</option> to the compiler
-	  command line.</para>
-	</listitem>
-      </varlistentry>
-
-      <varlistentry>
-	<term><option>decure</option></term>
-	<listitem>
-	  <para>Instrument the application using
-	  <application>CCured</application>.  Each
-	  <application>CCured</application> runtime memory check
-	  induces one instrumentation point.  There are no counters;
-	  checks that are not skipped due to random sampling are
-	  performed in the standard manner, and will abort the
-	  program if they fail.  This is the scheme used for the
-	  <application>CCured</application> experiment in our PLDI
-	  paper.</para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
-    <para>Remaining arguments can be source files to compile,
-    standard <application>GCC</application> command line flags, or
-    special instrumentor flags that fine tune the instrumentation
-    process.  In the special case of the
-    <option>decure</option> scheme, all standard
-    <application>CCured</application> command line flags are
-    accepted as well.</para>
 
     <para>Recognized instrumentor flags are as follows:</para>
 
     <variablelist>
       <title>Instrumentor flags</title>
+
+      <varlistentry>
+	<term><option>--sampler-scheme=<replaceable>scheme</replaceable></option></term>
+	<listitem>
+	  <para>Activate the named instrumentation scheme.  The
+	  following instrumentation schemes are currently
+	  available:</para>
+
+	  <variablelist>
+	    <title>Instrumentation schemes</title>
+	    <varlistentry>
+	      <term><option>branches</option></term>
+	      <listitem>
+		<para>For each conditional (branch), count how many
+		times the branch predicate is false or true.  This
+		includes <literal>if</literal> statements as well as
+		branches that are implicit in looping control
+		structures and certain operators
+		(<literal>&amp;&amp;</literal>, <literal>||</literal>,
+		<literal>?:</literal>).  Each branch induces one
+		instrumentation point with a pair of counters.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><option>returns</option></term>
+	      <listitem>
+		<para>At each scalar-returning call site, count how
+		many times the called function returned a negative,
+		zero, or positive value.  Each such call induces one
+		instrumentation point with a triple of counters.  This
+		is the scheme used for the
+		<application>ccrypt</application> experiment in our
+		PLDI paper.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><option>scalar-pairs</option></term>
+	      <listitem>
+		<para>At each direct scalar assignment, count how many
+		times the assigned value is less than, equal to, or
+		greater than each other same-typed in-scope
+		variable. Each such comparable variable at each such
+		assignment induces one instrumentation point with a
+		triple of counters.  This is the scheme used for the
+		<application>bc</application> experiment in our PLDI
+		paper.</para>
+
+		<para>This scheme can also optionally compare each
+		assigned value to each constant-valued integer
+		expression seen in the program.  This can be useful to
+		trap problems relating to fixed-size buffers,
+		structure sizes, or other <quote>magic</quote> values.
+		To turn on constant expression comparisons, add
+		<option>--compare-constants</option> to the compiler
+		command line.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+
+	  <para>This flag may be used multiple times to activate
+          multiple schemes.  However, the order in which active
+          schemes are applied is fixed and does not depend on the
+          order in which they are named on the command line.</para>
+
+	  <para>If this flag never appears on the command line, then
+          no instrumentation scheme is activated and no
+          instrumentation is added to the compiled code.</para>
+	</listitem>
+      </varlistentry>
+
       <varlistentry>
 	<term><option>--sample</option></term>
 	<term><option>--no-sample</option></term>

@@ -15,4 +15,5 @@ let visit schemes digest =
 	let channel = open_out !saveSiteInfo in
 	List.iter
 	  (fun scheme -> scheme#saveSiteInfo digest channel)
-	  schemes)
+	  schemes;
+	close_out channel)

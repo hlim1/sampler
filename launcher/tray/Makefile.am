@@ -20,13 +20,13 @@ trayicon.defs: %.defs: libegg/tray/egg%.h
 	mv $@.tmp $@
 
 
-DEFS = "`pkg-config --variable=defsdir pygtk-2.0`"
+defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
 
 trayicon.c: %.c: %.defs %.override
 	pygtk-codegen-2.0			\
 	  --prefix $*				\
-	  --register $(DEFS)/gdk-types.defs	\
-	  --register $(DEFS)/gtk-types.defs	\
+	  --register $(defsdir)/gdk-types.defs	\
+	  --register $(defsdir)/gtk-types.defs	\
 	  --override $*.override		\
 	  $*.defs >$@.tmp
 	mv $@.tmp $@

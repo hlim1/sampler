@@ -27,6 +27,7 @@ my @ld = ($gcc);
 
 my $mode = 'link';
 my @source;
+my $has_inputs;
 
 my $outfile;
 my $verbose;
@@ -248,16 +249,22 @@ while ($_ = shift) {
 	# everything else
 	push_all $_;
 
-    } elsif (/(.*)\.c$/) {
-	push @source, $_;
-	push @ld, undef;
-	push @holes, \$ld[$#ld];
-	
     } else {
-	push @ld, $_;
+	$has_inputs = 1;
+
+	if (/(.*)\.c$/) {
+	    push @source, $_;
+	    push @ld, undef;
+	    push @holes, \$ld[$#ld];
+	    
+	} else {
+	    push @ld, $_;
+	}
     }
 }
 
+
+$mode = 'special' unless $has_inputs;
 
 if ($mode eq 'special') {
     trace_system @cc;

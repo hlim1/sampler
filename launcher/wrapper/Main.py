@@ -36,9 +36,7 @@ def main(configdir):
     launcher.spawn()
 
     try:
-        iid = "OAFIID:SamplerMonitor:" + Config.version
-        query = "iid == '" + iid + "'"
-        monitor = bonobo.activation.activate(query)
+        monitor = bonobo.activation.activate("iid == 'OAFIID:SamplerMonitor:0.1'")
         outcome = launcher.wait()
 
     finally:

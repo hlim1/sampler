@@ -9,5 +9,5 @@ class Factory(bonobo.GenericFactory):
         return monitor.Monitor()
 
     def __init__(self):
-        bonobo.GenericFactory.__init__(self, 'OAFIID:SamplerMonitor_Factory:' + Config.version, self.__builder)
+        bonobo.GenericFactory.__init__(self, 'OAFIID:SamplerMonitor_Factory:0.1', self.__builder)
         bonobo.running_context_auto_exit_unref(self)

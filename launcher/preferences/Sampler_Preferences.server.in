@@ -3,7 +3,7 @@
 
 <oaf_info>
 
-  <oaf_server iid="OAFIID:SamplerPreferences_Factory:@VERSION@"
+  <oaf_server iid="OAFIID:SamplerPreferences_Factory:0.1"
     type="exe"
     location="@preferencesdir@/preferences">
 
@@ -15,9 +15,9 @@
     <oaf_attribute name="name" type="string" value="Sampler Preferences Factory"/>
   </oaf_server>
 
-  <oaf_server iid="OAFIID:SamplerPreferences:@VERSION@"
+  <oaf_server iid="OAFIID:SamplerPreferences:0.1"
     type="factory"
-    location="OAFIID:SamplerPreferences_Factory:@VERSION@">
+    location="OAFIID:SamplerPreferences_Factory:0.1">
 
     <oaf_attribute name="repo_ids" type="stringv">
       <item value="IDL:Bonobo/Unknown:1.0"/>

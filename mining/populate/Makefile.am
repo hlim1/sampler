@@ -3,6 +3,8 @@ libdecoder = ../../liblog/libdecoder.a
 noinst_PROGRAMS = populate
 populate_LDADD = -lcurses -lpq++ $(libdecoder)
 populate_SOURCES =				\
+	File.cc					\
+	File.h					\
 	Progress.cc				\
 	Progress.h				\
 	Sample.cc				\
@@ -16,7 +18,9 @@ populate_SOURCES =				\
 	quote.cc				\
 	quote.h					\
 	require.cc				\
-	require.h
+	require.h				\
+	serial.cc				\
+	serial.h
 
 
 $(libdecoder): force

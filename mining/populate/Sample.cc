@@ -3,7 +3,7 @@
 #include "Sample.h"
 
 
-void Sample::copy(PgDatabase &database, const string &sessionId, unsigned long long sampleCount) const
+void Sample::copy(PgDatabase &database, unsigned sessionId, unsigned long long sampleCount) const
 {
   ostringstream tuples;
   tuples << sessionId << '\t'

@@ -4,6 +4,7 @@
 #include "Session.h"
 #include "quote.h"
 #include "require.h"
+#include "serial.h"
 
 
 Session Session::singleton;
@@ -17,16 +18,26 @@ void Session::upload(PgDatabase &database,
 		     unsigned short signum) const
 {
   ostringstream command;
-  command << "INSERT INTO sessions (application, sparsity, seed, inputSize, signal) VALUES ('"
+  command << "INSERT INTO sessions (session, application, sparsity, seed, inputSize, signal) VALUES ("
+	  << seed << ", '"
 	  << quote(application) << "', "
 	  << sparsity << ", "
 	  << seed << ", "
 	  << inputSize << ", "
 	  << signum << ')';
   require(database.ExecCommandOk(command.str().c_str()), database);
-      
-  require(database.ExecTuplesOk("SELECT currval('session_seq')"), database);
-  const string sessionId = database.GetValue(0, 0);
+
+  const unsigned sessionId = seed;
+
+  {
+    Progress progress("upload files", size());
+    
+    for (const_iterator site = begin(); site != end(); ++site)
+      {
+	site->registerFiles(database);
+	progress.bump();
+      }
+  }
 
   {
     Progress progress("upload sites", size());

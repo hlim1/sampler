@@ -1,6 +1,5 @@
 CREATE SEQUENCE session_seq;
 
-
 CREATE TABLE sessions (
   session int NOT NULL CHECK (session > 0) PRIMARY KEY DEFAULT NEXTVAL('session_seq'),
   application text NOT NULL CHECK (application <> ''),
@@ -11,10 +10,20 @@ CREATE TABLE sessions (
 );
 
 
+CREATE SEQUENCE file_seq;
+
+CREATE TABLE files (
+  file int NOT NULL PRIMARY KEY DEFAULT NEXTVAL('file_seq'),
+  name text NOT NULL CHECK (name <> ''),
+
+  UNIQUE (name)
+);
+
+
 CREATE TABLE sites (
   session int NOT NULL CHECK (session > 0) REFERENCES sessions MATCH FULL,
   site bigint NOT NULL CHECK (site > 0),
-  file text NOT NULL CHECK (file <> ''),
+  file int NOT NULL REFERENCES files,
   line int NOT NULL CHECK (line > 0),
 
   UNIQUE (session, site)
@@ -33,4 +42,5 @@ CREATE TABLE samples (
 );
 
 
-CREATE INDEX samples_expression_value ON samples (expression, value);
+-- CREATE INDEX samples_expression_value ON samples (expression, value);
+-- CREATE INDEX sites_file_line ON sites (file, line);

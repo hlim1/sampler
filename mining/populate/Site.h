@@ -2,6 +2,7 @@
 #define INCLUDE_populate_Site_h
 
 #include <list>
+#include "File.h"
 #include "Sample.h"
 
 class PgDatabase;
@@ -12,12 +13,13 @@ class Site : public list<Sample>
 public:
   Site(unsigned long long, const string &, unsigned);
 
-  void copySite(PgDatabase &, const string &) const;
-  void copySamples(PgDatabase &, const string &) const;
+  void registerFiles(PgDatabase &) const;
+  void copySite(PgDatabase &, unsigned) const;
+  void copySamples(PgDatabase &, unsigned) const;
 
 private:
   const unsigned long long sampleCount;
-  const string file;
+  const File file;
   const unsigned line;
 };
 

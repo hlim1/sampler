@@ -12,7 +12,7 @@ class Sample
 public:
   Sample(const string &, PrimitiveType, const string &);
   
-  void copy(PgDatabase &, const string &, unsigned long long) const;
+  void copy(PgDatabase &, unsigned, unsigned long long) const;
 
 private:
   const string expression;

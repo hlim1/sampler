@@ -34,6 +34,8 @@ cfg-to-dot: $(libcil) $(cfg-to-dot)
 checker: $(libcil) $(checker)
 	$(link)
 
+syslibs = unix.$(cma)
+
 dump: $(libcil) $(dump)
 	$(link)
 

@@ -55,9 +55,7 @@ sub compile_cil {
     my $self = shift;
     my $input = shift;
 
-    my $base = basename $input, ".i";
-    my $output = "${base}_inst.c";
-    my $instrumentor = "$FindBin::Bin/../main";
+    my $output = $self->cilOutputFile($input, 'inst.c');
     $self->runShellOut($output, @{$self->{instrumentor}}, $input);
 
     $self->CCured::compile_cil($output, @_);

@@ -40,8 +40,7 @@ sub preprocess_before_cil {
 sub applyCil {
     my ($self, $ppsrc, $dest) = @_;
     
-    my ($base, $dir, undef) = fileparse $dest, '\\.[^.]+';
-    my $aftercil = "$dir$base.inst.c";
+    my $aftercil = $self->cilOutputFile($dest, 'inst.c');
 
     $self->runShellOut($aftercil, @{$self->{instrumentor}}, @{$ppsrc});
     return $aftercil;

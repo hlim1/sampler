@@ -16,6 +16,7 @@ cfg-to-dot
 checker
 collectHeaders
 dom-to-dot
+dump
 findBackEdges
 findLoopsAST
 findLoopsCFG

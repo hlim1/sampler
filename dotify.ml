@@ -1,14 +1,19 @@
 open Cil
+open Pretty
 open Utils
 
+let d_sid _ = function
+  | -1 -> text "none"
+  | sid -> (chr 'n') ++ (num sid)
+	
 let d_node _ stmt =
-  Pretty.dprintf "n%i [label=\"CFG #%i%cn%a%cn%s\"];@!"
-    stmt.sid
+  dprintf "%a [label=\"CFG #%i%cn%a%cn%s\"];@!"
+    d_sid stmt.sid
     stmt.sid '\\'
     d_loc (stmt_where stmt.skind) '\\'
     (stmt_what stmt.skind)
 
 let d_edge _ source destination =
-  Pretty.dprintf "n%i -> n%i;@!"
-    source.sid
-    destination.sid
+  dprintf "%a -> %a;@!"
+    d_sid source.sid
+    d_sid destination.sid

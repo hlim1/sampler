@@ -36,6 +36,7 @@ class virtual visitor file =
 	    BackwardJumps.patch clones weights countdown backwardJumps;
 	    Calls.patch clones weights countdown afterCalls;
 	    FunctionEntry.patch func weights countdown instrumented;
+	    Returns.patch func countdown;
 	    Calls.postpatch func countdown;
 	    
 	    let instrument original =

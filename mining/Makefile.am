@@ -1,2 +1,2 @@
-SUBDIRS = dumps populate queries
-DIST_SUBDIRS = analysis $(SUBDIRS)
+SUBDIRS = analysis dumps populate queries
+

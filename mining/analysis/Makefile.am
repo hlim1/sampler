@@ -12,11 +12,15 @@ overview.xml: $(stamps)
 	xmllint --valid --noout $@
 
 stamps.mk: stamps.pl
+if ENABLE_MINING
 	./$< >$@
+else
+	touch $@
+endif
 
 CLEANFILES = stamps.mk
 clean-local:
-	rm overview.xml
+	rm -f overview.xml
 	rm -rf results
 
 .DELETE_ON_ERROR:

@@ -129,6 +129,12 @@ find_driver_fragment=tools/find-driver.pl
 AC_SUBST_FILE(find_driver_fragment)
 
 
+AC_MSG_CHECKING(for mining support)
+AC_ARG_ENABLE(mining, AC_HELP_STRING([--enable-mining], [Add rules for mining a local feedback database]), , enable_mining=no)
+AM_CONDITIONAL(ENABLE_MINING, test "$enable_mining" = yes)
+AC_MSG_RESULT($enable_mining)
+
+
 ########################################################################
 #
 #  CIL configuration

@@ -68,7 +68,10 @@ class visitor loopless changed =
 
 let addLibraries loopless =
   Libraries.functions#iter (fun name -> loopless#add name true);
-  List.iter loopless#remove ["bsearch"; "qsort"]
+  List.iter loopless#remove ["bsearch"; "qsort";
+			     "setjmp"; "__sigsetjmp"; "_setjmp";
+			     "__libc_longjmp"; "__libc_siglongjmp";
+			     "_longjmp"; "longjmp"; "siglongjmp"]
 
 
 let addExterns loopless file =

@@ -1,3 +1,6 @@
+open Types
+
+
 let argSpecs = []
 
 
@@ -16,5 +19,12 @@ let doOne filename =
 Arg.parse argSpecs doOne
 ("Usage:" ^ Sys.executable_name ^ " <module>.cfg ...");
 
-Object.resolveAll !objs;
-Dotty.dump stdout !objs
+let globals = Object.fixCalleesAll !objs in
+Dotty.dump stdout !objs;
+
+let check origin destination =
+  let reachable = Transitive.reach origin destination in
+  Printf.printf "%d -?-> %d: %b\n\n" origin.nid destination.nid reachable
+in
+let tiny = StringMap.M.find "tiny" globals in
+check tiny.nodes.(1) tiny.nodes.(0)

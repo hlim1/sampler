@@ -1,9 +1,13 @@
 open Types
 
 
-val p : char Stream.t -> node
+val p : char Stream.t -> node * int list
 
 
-val connect : node array -> node -> unit
+val fixParent : func -> node -> unit
+val fixSuccessors : node array -> (node * int list) -> unit
+val fixCallees : environment -> node -> unit
 
-val resolve : environment -> node -> unit
+val isReturn : node -> bool
+
+val addCallSuccessors : node -> unit

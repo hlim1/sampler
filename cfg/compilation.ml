@@ -48,7 +48,7 @@ let collectExports symtab { functions = functions } =
   List.fold_left Function.collectExports symtab functions
 
 
-let resolve globals { functions = functions } =
+let fixCallees globals { functions = functions } =
   let locals = List.fold_left Function.collectAll StringMap.M.empty functions in
   let environment = { locals = locals; globals = globals } in
-  List.iter (Function.resolve environment) functions
+  List.iter (Function.fixCallees environment) functions

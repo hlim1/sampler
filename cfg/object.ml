@@ -11,13 +11,14 @@ let p name stream =
 (**********************************************************************)
 
 
-let resolve globals { compilations = compilations } =
-  List.iter (Compilation.resolve globals) compilations
+let fixCallees globals { compilations = compilations } =
+  List.iter (Compilation.fixCallees globals) compilations
 
 
-let resolveAll objects =
+let fixCalleesAll objects =
   let collectExports symtab obj =
     List.fold_left Compilation.collectExports symtab obj.compilations
   in
   let globals = List.fold_left collectExports StringMap.M.empty objects in
-  List.iter (resolve globals) objects
+  List.iter (fixCallees globals) objects;
+  globals

@@ -1,3 +1,4 @@
+open Known
 open Types
 
 
@@ -13,8 +14,7 @@ let dump sink objects =
 	  | Unknown ->
 	      Printf.fprintf sink "\t\t\"???\" [shape=box];\n"
 	  | Known callees ->
-	      let stubCallee callee =
-		match !callee with
+	      let stubCallee = function
 		| Raw symbol ->
 		    Printf.fprintf sink "\t\t\"%s()\" [shape=box];\n" symbol
 		| Resolved func ->
@@ -40,11 +40,7 @@ let dump sink objects =
 		()
 	    | successors ->
 		let dumpSucc succ =
-		  match !succ with
-		  | Raw _ ->
-		      failwith "unresolved successor"
-		  | Resolved succ ->
-		      Printf.fprintf sink " %d;" succ.nid
+		  Printf.fprintf sink " %d;" succ.nid
 		in
 		Printf.fprintf sink "\t\t\t\t%d -> {" node.nid;
 		List.iter dumpSucc successors;
@@ -54,8 +50,7 @@ let dump sink objects =
 	  | Unknown ->
 	      Printf.fprintf sink "\t\t\t\t%d -> \"???\" [style=dotted];\n" node.nid
 	  | Known callees ->
-	      let dumpCallee callee =
-		match !callee with
+	      let dumpCallee = function
 		| Raw symbol ->
 		    Printf.fprintf sink "\t\t\t\t%d -> \"%s()\" [style=dotted];\n" node.nid symbol
 		| Resolved func ->

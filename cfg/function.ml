@@ -13,12 +13,34 @@ let p =
 
   let name = wordTab in
   let location = Location.p in
-  let nodes stream = Array.of_list (sequenceLine Node.p stream) in
+  let rawNodes = sequenceLine Node.p in
 
   parser
-      [< linkage = linkage; ''\t'; name = name; location = location; nodes = nodes >] ->
-	Array.iter (Node.connect nodes) nodes;
-	{ fid = Uid.next (); linkage = linkage; name = name; start = location; nodes = nodes }
+      [< linkage = linkage; ''\t'; name = name; location = location; raws = rawNodes >] ->
+
+	let nodesList = List.map fst raws in
+	let nodes = Array.of_list nodesList in
+	List.iter (Node.fixSuccessors nodes) raws;
+
+	let callers = List.filter Node.isReturn nodesList in
+	let func = {
+	  fid = Uid.next ();
+	  linkage = linkage;
+	  name = name;
+	  start = location;
+	  nodes = nodes;
+	  callers = callers;
+	  returns = [];
+	} in
+
+	Array.iter (Node.fixParent func) nodes;
+	func
+
+
+(**********************************************************************)
+
+
+let entry func = func.nodes.(0)
 
 
 (**********************************************************************)
@@ -39,6 +61,6 @@ let collectExports symtab = function
       collectAll symtab export
 
 
-let resolve environment func =
-  let fixer = Node.resolve environment in
+let fixCallees environment func =
+  let fixer = Node.fixCallees environment in
   Array.iter fixer func.nodes

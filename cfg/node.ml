@@ -1,12 +1,25 @@
 open Basics
+open Known
+open Location
 open Types
+
+
+let noParent = {
+  fid = -1;
+  linkage = Static;
+  name = "";
+  start = { file = ""; line = -1 };
+  nodes = [| |];
+  callers = [];
+  returns = [];
+}
 
 
 let p =
   let location = Location.p in
 
   let successors =
-    let successor stream = ref (Raw (integerTab stream)) in
+    let successor = integerTab in
     sequenceLine successor
   in
 
@@ -16,7 +29,7 @@ let p =
 	  [< ''?'; ''?'; ''?'; ''\n' >] -> ()
     in
     let known =
-      let callee stream = ref (Raw (wordTab stream)) in
+      let callee stream = Raw (wordTab stream) in
       sequenceLine callee
     in
     parser
@@ -26,33 +39,55 @@ let p =
 
   parser
       [< location = location; successors = successors; callees = callees >] ->
-	{ nid = Uid.next (); location = location; successors = successors; callees = callees }
+	{ nid = Uid.next ();
+	  location = location;
+	  parent = noParent;
+	  successors = [];
+	  callees = callees;
+	  visited = ClockMark.unmark ();
+	}, successors
 
 
-let connect nodes node =
-  let fixer successor =
-    match !successor with
-    | Raw slot -> successor := Resolved nodes.(slot)
-    | Resolved _ -> ()
-  in
-  List.iter fixer node.successors
+let fixParent func node =
+  node.parent <- func
 
 
-let resolve { locals = locals; globals = globals } = function
-  | { callees = Unknown } -> ()
-  | { callees = Known callees } ->
+let fixSuccessors nodes (node, successors) =
+  let fixer successor = nodes.(successor) in
+  node.successors <- List.map fixer successors
+
+
+let fixCallees environment node =
+  match node.callees with
+  | Unknown -> ()
+  | Known callees ->
       let fixer callee =
-	match !callee with
+	match callee with
+	| Resolved _ -> callee
 	| Raw symbol ->
-	    begin
-	      try
-		let referent =
-		  try StringMap.M.find symbol locals
-		  with Not_found -> StringMap.M.find symbol globals
-		in
-		callee := Resolved referent
-	      with Not_found -> ()
-	    end
-	| Resolved _ -> ()
+	    try
+	      let referent =
+		try StringMap.M.find symbol environment.locals
+		with Not_found -> StringMap.M.find symbol environment.globals
+	      in
+	      referent.callers <- node :: referent.callers;
+	      Resolved referent
+	    with Not_found ->
+	      callee
+      in
+      node.callees <- Known (List.map fixer callees)
+
+
+let isReturn node = node.successors = []
+
+
+let addCallSuccessors node =
+  match node.callees with
+  | Unknown -> ()
+  | Known callees ->
+      let fixer = function
+	| Raw _ -> ()
+	| Resolved callee ->
+	    node.successors <- callee.nodes.(0) :: node.successors
       in
       List.iter fixer callees

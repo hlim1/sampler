@@ -7,11 +7,16 @@ include $(top_srcdir)/ocaml/rules.mk
 MOSTLYCLEANFILES += $(noinst_SCRIPTS)
 
 includes += -pp camlp4o
+libdirs += $(dir $(libcommon))
 
 
-resolve-cfg: $(libcil) $(libharness) $(resolve-cfg)
+resolve-cfg: $(libcil) $(libcommon) $(resolve-cfg)
 	$(link)
 
+$(dir $(libcommon))/%.cmi: $(libcommon)
+
+$(libcommon): $(force)
+	$(recurse)
 
 #input := /usr/lib/sampler/sites/usr/lib/sampler/applications/evolution/executable.cfg
 input := tiny.cfg

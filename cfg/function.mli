@@ -3,7 +3,9 @@ open Types
 
 val p : char Stream.t -> func
 
+val entry : func -> node
 
 val collectAll : symtab -> func -> symtab
 val collectExports : symtab -> func -> symtab
-val resolve : environment -> func -> unit
+
+val fixCallees : environment -> func -> unit

@@ -2,7 +2,7 @@ py := $(wildcard *.py)
 pyc = $(py:=c)
 pyo = $(py:=o)
 
-launcher_SCRIPTS = $(pyc) $(pyo)
+launcher_DATA = $(pyc) $(pyo)
 
 EXTRA_DIST = $(py)
 MOSTLYCLEANFILES = *.pyc *.pyo

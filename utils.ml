@@ -50,3 +50,21 @@ let print_stmts stmts =
     
 let warn stmt message =
   ignore(fprintf stderr "%a: %s\n" d_stmt stmt message)
+
+
+let d_labels () {labels = labels} =
+
+  let rec labelNames = function
+  | [] -> []
+  | Label (name, _, _) :: rest ->
+      name :: labelNames rest
+  | _ :: rest ->
+      labelNames rest
+  in
+
+  chr '['
+    ++ (seq
+	  ~sep:(text "; ")
+	  ~doit:text
+	  ~elements:(labelNames labels))
+    ++ chr ']'

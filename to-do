@@ -1,3 +1,1 @@
 combine patch and postpatch in Calls module
-
-should reset or recreate Choices set on each file

@@ -4,6 +4,7 @@ open Cil
 let main transformer =
   let phases =
     [
+     Choices.phase;
      transformer;
      "RemoveUnusedTemps", Rmtmps.removeUnusedTemps;
      FilterLabels.phase;

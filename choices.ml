@@ -8,6 +8,10 @@ module ChoiceSet = Set.Make(
 
 let choices = ref ChoiceSet.empty
 
+let phase =
+  "Choices",
+  (fun _ -> choices := ChoiceSet.empty)
+
 
 let add choice =
   choices := ChoiceSet.add choice !choices

@@ -14,4 +14,7 @@ server-message dialog needs HIG'ified spacing
 
 launcher doesn't implicitly handle redirects
 
+assume that anything declared in /usr/include/... or
+/usr/lib/gcc-lib/... or perhaps a few other places is library code
+
 how does launchers propagate SIGINT down to child (^C)?

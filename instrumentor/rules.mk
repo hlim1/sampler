@@ -1,6 +1,6 @@
 fixdeps := $(top)/fixdeps
 
-cildir := $(top)/cil
+cildir := $(top)/../../cil
 cilobjdir := $(cildir)/obj/x86_LINUX
 libdirs += $(cilobjdir)
 includes := $(foreach dir, $(libdirs), -I $(dir))

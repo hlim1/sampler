@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -5,9 +6,10 @@
 #include "log.h"
 
 
-void log(const char *format, ...)
+void samplerLog(const char *format, ...)
 {
-  skipLog();
+  assert(nextLogCountdown > 0);
+  --nextLogCountdown;
 
   if (nextLogCountdown == 0)
     {

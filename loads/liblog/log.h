@@ -2,7 +2,7 @@
 #define INCLUDE_localVars_liblog_log_h
 
 
-void log(const char *, ...)
+void samplerLog(const char *, ...)
      __attribute__ ((format (printf, 1, 2)));
 
 

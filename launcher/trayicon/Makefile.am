@@ -1,0 +1,54 @@
+SUBDIRS = libegg
+
+INCLUDES = $(TRAY_ICON_CFLAGS) -I/usr/include/python2.2
+
+defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
+
+EXTRA_DIST = trayicon.override
+
+BUILT_SOURCES = trayicon-wrap.c
+
+MOSTLYCLEANFILES =				\
+	*-common.c				\
+	*-skels.c				\
+	*-wrap.c				\
+	*.defs					\
+	*.so
+
+
+all-local: trayicon.so
+
+
+dist-hook:
+	rm $(BUILT_SOURCES:%=$(distdir)/%)
+
+
+########################################################################
+
+
+trayicon.so: %.so: lib%.a libegg/tray/libtray.a
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(TRAY_ICON_LIBS) -L/usr/lib/python2.2/config -lpython2.2 -lpthread -lutil -Llibegg/tray -ltray
+
+noinst_LIBRARIES = libtrayicon.a
+
+libtrayicon_a_SOURCES =				\
+	trayicon-wrap.c				\
+	trayicon-module.c
+
+trayicon-wrap.c: %-wrap.c: %.defs %.override
+	pygtk-codegen-2.0			\
+	  --prefix $*				\
+	  --register $(defsdir)/gdk-types.defs	\
+	  --register $(defsdir)/gtk-types.defs	\
+	  --override $*.override		\
+	  $*.defs >$@.tmp
+	mv $@.tmp $@
+
+trayicon.defs: %.defs: libegg/tray/egg%.h
+	python /usr/share/pygtk/2.0/codegen/h2def.py $< >$@.tmp
+	mv $@.tmp $@
+
+libegg/tray/libtray.a: force
+	$(MAKE) -C $(@D) $(@F)
+force:
+.PHONY: force

@@ -17,8 +17,7 @@ class Main:
 	client = gconf.client_get_default()
         self.__dir = GConfDir(client, Keys.root, gconf.CLIENT_PRELOAD_ONELEVEL)
 
-        if not client.get_bool(Keys.asked):
-            FirstTime(client).run()
+        self.__factory = Factory(client)
 
         finder = AppFinder()
         model = AppModel()
@@ -27,5 +26,3 @@ class Main:
 
         tray = UploaderTrayIcon(client, model)
         tray.show_all()
-
-        Factory(client)

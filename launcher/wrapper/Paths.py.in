@@ -1,0 +1,4 @@
+import os.path
+
+home = '@wrapperdir@'
+glade = os.path.join(home, 'wrapper.glade')

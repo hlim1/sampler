@@ -10,7 +10,7 @@ pristine-stamp: build-pristine always-none/src/ccrypt
 	./$^
 	touch $@
 
-clean-local: $(builds:=/clean)
+clean:: $(builds:=/clean)
 	rm -f pristine-stamp
 	rm -rf cyphertext pristine
 
@@ -50,3 +50,7 @@ $(sampleTimes): times/sample-all-%.times: sample-all/src/ccrypt run-trials $(see
 inputs/%.noise: ../../../../../fuzz/fuzz
 	[ -d $(@D) ] || mkdir $(@D)
 	$< $* 4 $@
+
+clean::
+	rm -f collated-times
+	rm -rf inputs times

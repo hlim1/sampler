@@ -1,7 +1,9 @@
 EXTRA_DIST =					\
 	first.expected				\
 	last.expected				\
-	simple.c
+	simple.c				\
+	testsuite				\
+	testsuite.at
 
 TESTSUITE = $(srcdir)/testsuite
 check_SCRIPTS = $(TESTSUITE)

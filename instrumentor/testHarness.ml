@@ -2,7 +2,7 @@ open Cil
 open Printf
 
 
-let debugPhaseTimes =
+let showPhaseTimes =
   Options.registerBoolean
     ~flag:"debug-phase-times"
     ~desc:"print the length of time taken to complete each phase"
@@ -14,7 +14,7 @@ type phase = string * (file -> unit)
 
 
 let time description action =
-  if !debugPhaseTimes then
+  if !showPhaseTimes then
     let before = Unix.gettimeofday () in
     let result = action () in
     let after = Unix.gettimeofday () in

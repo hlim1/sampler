@@ -1,27 +1,21 @@
 open Cil
 
 
-type set = StmtSet.container
+type map = (lval * location) StmtMap.container
 
 
 class visitor = object
   inherit FunctionBodyVisitor.visitor
 
-  val set = new StmtSet.container
-  method result = set
+  val sites = new StmtMap.container
+  method result = sites
 
   method vstmt statement =
     begin
       match statement.skind with
-      |	Instr (instruction :: instructions) ->
-	  assert (instructions == []);
-	  begin
-	    match instruction with
-	    | Set _
-	    | Call (Some _, _, _, _) ->
-		set#add statement
-	    | _ -> ()
-	  end;
+      |	Instr [Set (lval, _, location)]
+      |	Instr [Call (Some lval, _, _, location)] ->
+	  sites#add statement (lval, location)
       | _ ->
 	  ()
     end;

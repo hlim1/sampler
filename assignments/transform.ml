@@ -2,7 +2,7 @@ open Cil
 
 
 class visitor file = object
-  inherit [FindSites.set] TransformVisitor.visitor file
+  inherit [FindSites.map] TransformVisitor.visitor file
       
   val logger = FindLogger.find file
 

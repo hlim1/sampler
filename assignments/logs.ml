@@ -63,19 +63,17 @@ and dissect lval = function
     -> failwith "unexpected variable type"
 
 
-class visitor logger (sites : FindSites.set) = object (self)
+class visitor logger (sites : FindSites.map) = object (self)
   inherit FunctionBodyVisitor.visitor
 
-  method vstmt _ = DoChildren
-
-  method vinst instr =
-    match instr with
-    | Set (lval, _, location)
-    | Call (Some lval, _, _, location) ->
-	
+  method vstmt statement =
+    if statement.sid == -1 then
+      DoChildren
+    else
+      try
+	let lval, where = sites#find statement in
 	let formats, arguments = List.split (dissect lval (typeOfLval lval)) in
 	let format = ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
-	let where = get_instrLoc instr in
 	let call = 
 	  Call (None, logger,
 		mkString format
@@ -84,8 +82,14 @@ class visitor logger (sites : FindSites.set) = object (self)
 		:: arguments,
 		where)
 	in
+	let block = Block (mkBlock [mkStmt statement.skind;
+				    mkStmtOneInstr call])
+	in
+	let replace stmt =
+	  stmt.skind <- block;
+	  stmt
+	in
+	ChangeDoChildrenPost (statement, replace)
 	
-	ChangeTo [instr; call]
-	  
-    | _ -> SkipChildren
+      with Not_found -> DoChildren
 end

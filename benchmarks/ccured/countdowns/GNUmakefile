@@ -1,4 +1,4 @@
-precompute := ../../../../libcountdown/precompute
+precompute := ../../../libcountdown/precompute
 
 all:
 

@@ -53,7 +53,7 @@ $(sampleTimes): times/sample-all-%.times: sample-all/src/ccrypt run-trials $(see
 
 fuzz := ../../fuzz/fuzz
 
-$(seeds:%=inputs/%.noise): $(fuzz)
+$(seeds:%=inputs/%.noise): inputs/%.noise: $(fuzz)
 	[ -d $(@D) ] || mkdir $(@D)
 	$< $* 20 $@
 

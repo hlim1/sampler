@@ -6,15 +6,15 @@ builds := always-none always-all sample-all
 
 all: $(builds:=/bc/bc)
 
-$(builds:=/bc/bc): %/bc: %
+$(builds:=/bc/bc): %/bc/bc: %/Makefile
 	make -C $(dir $(@D))
 
-$(builds:=/bc):
+$(builds:=/Makefile):
 	cd $(@D) && CC=$$PWD/cc ../src/configure
 
 clean:: $(builds:=/clean)
 
-$(builds:=/clean):
+$(builds:=/clean): %/clean: %/Makefile
 	make -C $(@D) $(@F)
 .PHONY: $(builds:=/clean)
 
@@ -47,7 +47,7 @@ $(sampleTimes): times/sample-all-%.times: sample-all/bc/bc run-trials $(seeds:%=
 
 fuzz := ../../fuzz/fuzz
 
-$(seeds:%=inputs/%.noise): $(fuzz)
+$(seeds:%=inputs/%.noise): inputs/%.noise: $(fuzz)
 	[ -d $(@D) ] || mkdir $(@D)
 	$< $* 9 $@
 

@@ -52,15 +52,15 @@ simply measuring the overhead of performing the dynamic checks.
   \label{tab:ccured-static}
 \end{table*}
 
-Table~\ref{tab:ccured-static} gives summary information for static
-facets of the sampling transformation.  For each benchmark, we count
-the total number of non-library functions and the number of these
-which are shown to be weightless.  \ccured is a whole-program
-analysis, so weightless function identification has the advantage of
-being able to examine every function body.  We also count the number
-of functions which directly contain at least one instrumentation site.
-(A function may contain no sites, but still not be weightless if it
-calls other functions which do have sites.)
+Table~\ref{tab:ccured-static} summarizes static aspects of the
+sampling transformation.  For each benchmark, we count the total
+number of non-library functions and the number of these which are
+weightless.  \ccured is a whole-program analysis, so weightless
+function identification has the advantage of being able to examine
+every function body.  We also count the number of functions which
+directly contain at least one instrumentation site.  (What remains are
+are those functions which contain no sites of their own but which call
+other functions that do have sites.)
 
 Considering just the functions which directly contain at least one
 instrumentation site, Table~\ref{tab:ccured-static} also presents the
@@ -81,11 +81,12 @@ been in amortizing the cost of countdown checks over multiple sites.
     \rule{0pt}{2.5ex}
     \textbf{benchmark} & $\mathbf{10^{-2}}$ & $\mathbf{10^{-4}}$ & $\mathbf{10^{-6}}$ \\
     \hline\hline
-    %%\input{applications/olden-density}
+    \input{applications/olden-density}
     \hline
-    %%\input{applications/spec95-density}
+    \input{applications/spec95-density}
+    \hline
   \end{tabular}
-  \caption{Relative speedup of various sampling rates versus always checking.}
+  \caption{Relative speedup of various sampling rates versus always checking}
   \label{tab:ccured-density}
 \end{table}
 
@@ -99,7 +100,30 @@ Linux machine with one gigabyte of RAM.  Reported speedups represent
 the average of four runs; each run used a different pre-generated bank
 of 1024 geometrically distributed random countdowns.
 
-\aside{Interpret the data, once I have it.}
+Even at a fairly high sampling density of 1/100, two thirds of our
+benchmarks run faster then they would if all checks were performed.
+Because each single check is so small and fast, this suggests that we
+have largely been successful in amortizing our sampling overhead.  We
+are, in a sense, ``hiding'' the sampling overhead in the time that
+would otherwise have been taken to run 99/100 checks.  The most
+dramatic speedups are seen in \texttt{compress} and \texttt{ijpeg},
+which run roughly 25\% faster with 1/100 sampling.  On the other hand,
+four of the benchmarks do run slower, with \texttt{go} showing the
+largest penalty.  In these cases, the time recovered by skipping
+99/100 checks is not enough to mask the added overhead of the sampling
+infrastructure.
+
+As we reduce the sampling density to 1/10,000, \texttt{power} and
+\texttt{go} reach a balance point of no measurable speedup or
+slowdown, while \texttt{perimeter} remains a stubborn 2\% slower.
+\texttt{health} crosses that balance, and is now slightly faster with
+sampling.  Other benchmarks, which already showed speedups at 1/100,
+show further gains ranging from <1\% for \texttt{tsp} to an additional
+9\% boost for \texttt{bh} and a 10\% boost for \texttt{ijpeg}.
+Further reducing the sampling density to 1/1,000,000 shows little
+change; we have reached a performance ceiling.  One benchmark
+continues to run slower than standard \ccured; two run at the same
+speed; the remaining ten run 2\% - 35\% faster.
 
 \aside{Present and interpret single-function sampling data.}
 
@@ -159,7 +183,9 @@ To find the few invariants that do count, we use \aside{identify and
 \aside{Interpretation of logistic regression results.  Statement that
   they direct us to some small region of code in a single function,
   versus 9764 lines of code in all of \texttt{bc}.  Description of bug
-  found on like 176 of \texttt{storage.c}.}
+  found on like 176 of \texttt{storage.c}.
+  
+  Yes, this is rigged.}
 
 \aside{Alice reports:
   
@@ -168,4 +194,10 @@ To find the few invariants that do count, we use \aside{identify and
   features, 955 are constant; 948 of these are constant at 1, 2 at 2,
   1 at 28, 1 at 31, and 3 at 32.  144 of the useful features have very
   small variation, where the value is only different for one or two
-  runs.}
+  runs.
+  
+  Beyond what this does for the regression analysis, this means the
+  counts would compress very well.  That's good news for deployed
+  users with slow modems.  It's also good news for the server's hard
+  drive.}
+

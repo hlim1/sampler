@@ -1,0 +1,40 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Basename;
+use Storable;
+
+my $numTrials;
+my $numViolations = 0;
+my $numNotCrashes = 0;
+my $numGotLuckies = 0;
+
+
+foreach my $pst (@ARGV) {
+    my $seed = basename $pst, '.pst';
+    my $trace = retrieve $pst;
+
+    my $site = $trace->{"/home/cs/liblit/research/forensics/sampling/apps/bc-1.06/daikount/../src/bc/storage.c	176	more_arrays	indx	a_count	620"} or die;
+    ++$numTrials;
+
+    my $violated = $site->{greater};
+    my $crashed = $trace->{result};
+    
+    ++$numViolations if $violated;
+    ++$numNotCrashes if !$crashed;
+    ++$numGotLuckies if $violated && !$crashed;
+
+    my $pA = $numViolations / $numTrials;
+    my $pNotB = $numNotCrashes / $numTrials;
+    my $pAandNotB = $numGotLuckies / $numTrials;
+
+    my $numerator = $numNotCrashes * $numViolations;
+    my $conviction =
+	$numGotLuckies
+	? $numerator / $numGotLuckies / $numTrials
+	: ($numerator
+	   ? 'inf'
+	   : 'nan');
+
+    print "$seed: $conviction\n";
+}

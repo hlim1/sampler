@@ -1,0 +1,59 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Miner;
+use FileHandle;
+
+
+########################################################################
+
+
+{
+    warn "summarizing site info...\n";
+
+    local ($,, $\) = ("\t", "\n");
+    my $summary = new FileHandle 'site-info.dat', 'w';
+    $summary->print('file', 'line', 'func', 'left', 'right', 'id');
+
+    my $trace = readTrace $ARGV[0];
+    while (<$trace>) {
+	my @F = split /\t/;
+	$summary->print(@F[0 .. 5]);
+    }
+}
+
+
+########################################################################
+
+
+{
+    local $\ = "\n";
+    warn "summarizing results...\n";
+
+    my $summary = new FileHandle 'results.dat', 'w';
+    $summary->print('result');
+
+    foreach my $seed ($ARGV[0] .. $ARGV[1]) {
+	$summary->print(loadResult $seed);
+    }
+}
+
+
+########################################################################
+
+
+{
+    local ($,, $\) = ("\t", "\n");
+    my $summary = new FileHandle 'summary.dat', 'w';
+
+    foreach my $seed ($ARGV[0] .. $ARGV[1]) {
+	warn "reading trace $seed...\n";
+
+	my $trace = readTrace $seed;
+	while (<$trace>) {
+	    chomp;
+	    my @F = split /\t/;
+	    $summary->print(@F[6 .. 8]);
+	}
+    }
+}

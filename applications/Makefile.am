@@ -1,7 +1,7 @@
 if HAVE_XIMIAN_RPMS
 SUBDIRS = nautilus
 else
-SUBDIRS = gaim evolution
+SUBDIRS = gaim gimp evolution
 endif
 
 EXTRA_DIST =					\

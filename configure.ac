@@ -233,6 +233,7 @@ Makefile
 applications/Makefile
 applications/evolution/Makefile
 applications/gaim/Makefile
+applications/gimp/Makefile
 applications/nautilus/Makefile
 benchmarks/Makefile
 benchmarks/ccured/Makefile

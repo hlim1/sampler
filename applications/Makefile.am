@@ -5,7 +5,7 @@ SUBDIRS =					\
 	gaim					\
 	gimp					\
 	evolution				\
-	rhythmbox
+#	rhythmbox
 endif
 
 EXTRA_DIST =					\

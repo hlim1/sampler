@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.6.2
+
+** Assorted bug fixes.
+
 * sampler-0.6.1
 
 ** Don't upload empty report if instrumented app died suddenly.

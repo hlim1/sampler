@@ -64,8 +64,8 @@ my %flag_specs =
     (
      # Sampler Options
      '-fsampler-scheme=nothing' => sub { },
-     '-fthreads' => sub { },
-     '-fno-threads' => sub { },
+     '-fthreads' => \&inst_toggle,
+     '-fno-threads' => \&inst_toggle,
      '-fsample' => \&inst_toggle,
      '-fno-sample' => \&inst_toggle,
      '-frename-locals' => \&inst_toggle,

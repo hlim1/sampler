@@ -2,7 +2,9 @@
 
 * sampler-0.7.4
 
-** Various and sundry minor bug fixes to developer tools.
+** Important atomicity bug fix for multithreaded applications.
+
+** Minor bug fixes to developer tools.
 
 ** Improved support for multiple schemes in developer tools.
 

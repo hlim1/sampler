@@ -28,8 +28,12 @@ let makeGlobals =
     in
     let prefix = "samplerBounds_" ^ (string_of_int !nextId) in
     incr nextId;
-    (makeGlobalVar (prefix ^ "_min") typ,
-     makeGlobalVar (prefix ^ "_max") typ)
+    let makeGlobal suffix =
+      let result = makeGlobalVar (prefix ^ suffix) typ in
+      result.vstorage <- Static;
+      result
+    in
+    (makeGlobal "_min", makeGlobal "_max")
 
 
 let extremesUnsigned typ =

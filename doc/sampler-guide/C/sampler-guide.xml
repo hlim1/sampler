@@ -767,7 +767,7 @@
 
       <section>
 	<title>Static Site Information</title>
-	
+
 	<para>The static site information file lists the
 	instrumentation sites added to each compilation unit.  This is
 	the main key used to decode dynamic instrumentation reports.
@@ -866,7 +866,7 @@
 
 	<section>
 	  <title>Site Details</title>
-	  
+
 	  <para>Within a single <sgmltag
 	  class="element">sites</sgmltag> section, each line describes
 	  one instrumentation site for the given compilation unit and

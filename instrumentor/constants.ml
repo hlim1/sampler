@@ -43,8 +43,6 @@ class visitor collection =
 	begin
 	  match isInteger (constFold true exp) with
 	  | Some constant ->
-	      ignore (Pretty.eprintf "%t: picked up constant %Ld@!"
-			d_thisloc constant);
 	      collection#replace constant ()
 	  | None ->
 	      ()

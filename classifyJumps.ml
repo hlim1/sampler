@@ -10,10 +10,6 @@ class visitor = object
   val mutable backwards = []
   method result = (forwards, backwards)
 
-  method vfunc _ =
-    ignore(bug "ClassifyJumps.visitor can only be used within a function body");
-    SkipChildren
-
   method vstmt stmt =
     begin
       match stmt.skind with

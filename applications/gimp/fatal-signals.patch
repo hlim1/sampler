@@ -1,0 +1,6 @@
+--- gimp2-orig	2003-07-25 00:10:50.000000000 -0700
++++ gimp2	2003-08-19 17:36:18.000000000 -0700
+@@ -1,2 +1,2 @@
+ #!/bin/bash
+-exec /usr/lib/gimp2/bin/gimp-1.3
++exec /usr/lib/gimp2/bin/gimp-1.3 --enable-stack-trace never "$@"

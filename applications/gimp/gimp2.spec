@@ -14,6 +14,7 @@ Source0:        ftp://ftp.gimp.org/pub/gimp/v1.3/v1.3.18/gimp-1.3.18.tar.bz2
 Source1:        gimp2.desktop
 Source2:        gimp2.png
 Source3:        gimp2
+Patch0:		fatal-signals.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:	glib2-devel >= 0:2.2.0
 BuildRequires:	gtk2-devel >= 0:2.2.0
@@ -65,6 +66,7 @@ Static libraries and header files for writing GIMP plugins and extensions.
 
 %prep
 %setup -q -n gimp-%{version}
+%{?sampler_scheme:pwd; ls ..; patch -d %{_sourcedir} <%{P:0}}
 %{?sampler_prep}
 
 #---------------------------------------------------------------------

@@ -7,6 +7,8 @@ src=../gimp-1.2.3
 find $src/* -name '*.i' -print |
 while read source; do
   base="`echo $source | sed 's/\.i$//'`"
+  rm -f gmon.out
   ./main $source >$base.inst.c
+  if [ -e gmon.out ]; then mv gmon.out $base.gmon.out; fi
 done
 

@@ -163,6 +163,7 @@ libcountdown/cyclic-size.h
 libreport/Makefile
 libthreads/Makefile
 libtuples/Makefile
+sampler.spec
 ])
 
 AC_OUTPUT

@@ -15,6 +15,7 @@ DIST_SUBDIRS =					\
 	libtuples
 
 EXTRA_DIST =					\
+	$(PACKAGE).spec				\
 	package.m4				\
 	tools
 

@@ -11,7 +11,8 @@ config.status
 configure
 instrumentor
 package.m4
-sampler
+sampler-*.*.tar.gz
+sampler.spec
 stamp-h
 stamp-h.in
 stamp-h1

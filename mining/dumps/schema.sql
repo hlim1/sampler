@@ -26,7 +26,7 @@ CREATE TABLE build (
   application_version varchar(50) NOT NULL default '',
   application_release varchar(50) NOT NULL default '',
   build_date datetime NOT NULL default '0000-00-00 00:00:00',
-  suppress varchar(255) default NULL,
+  build_suppress varchar(255) default NULL,
   PRIMARY KEY  (build_id),
   UNIQUE KEY application_name (application_name,application_version,application_release)
 ) TYPE=InnoDB;
@@ -44,6 +44,7 @@ CREATE TABLE run (
   exit_signal tinyint(3) unsigned NOT NULL default '0',
   exit_status tinyint(3) unsigned NOT NULL default '0',
   date datetime NOT NULL default '0000-00-00 00:00:00',
+  run_suppress varchar(255) default NULL,
   PRIMARY KEY  (run_id),
   KEY build_id (build_id),
   KEY run_id (run_id,build_id),

@@ -7,10 +7,7 @@ class ['a, 'b] container size = object(self)
   val storage : ('a * 'b) list ref = ref []
       
   method add key data =
-    if self#mem key then
-      raise Duplicate_key
-    else
-      storage := (key, data) :: !storage
+    storage := (key, data) :: List.remove_assq key !storage
 	
   method find key = List.assq key !storage
 

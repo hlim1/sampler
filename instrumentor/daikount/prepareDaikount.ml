@@ -1,9 +1,6 @@
-class visitor file =
+class virtual visitor (file : Cil.file) =
   object
-    inherit Prepare.visitor as super
-
-    val collectSites = Collector.collect file
-    method private collectSites = collectSites
+    inherit Prepare.visitor
 
     method finalize file =
       Invariant.register file

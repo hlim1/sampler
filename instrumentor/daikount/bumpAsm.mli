@@ -1,4 +1,4 @@
 open Cil
 
 
-val bump : fundec -> location -> varinfo -> exp -> lval -> stmt
+val bump : fundec -> location -> lval -> exp -> lval -> stmt

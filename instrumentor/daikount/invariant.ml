@@ -47,7 +47,7 @@ let invariant file =
 		    initStr "file" location.file;
 		    initNum "line" location.line;
 		    initStr "function" func.svar.vname;
-		    initStr "left" left.vname;
+		    initStr "left" (Pretty.sprint max_int (d_lval () left));
 		    initStr "right" (Pretty.sprint max_int (d_exp () right));
 		    initNum "id" !id
 		  ])),

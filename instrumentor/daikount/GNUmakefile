@@ -1,9 +1,9 @@
 top := ..
 include $(top)/defs.mk
 
-targets := main
+targets := daikount.$(cma)
 libdirs := $(top)
-subdirs := libdaikount tests
+subdirs := libdaikount returns scalar-pairs
 
 include $(top)/rules.mk
 
@@ -11,11 +11,8 @@ include $(top)/rules.mk
 ########################################################################
 
 
-libharness := $(libcil) $(top)/harness.$(cma)
-
-
-main: $(libharness) $(main)
-	$(link)
+daikount.$(cma): $(prepareDaikount)
+	$(archive)
 
 $(top)/%.cmi: $(force)
 	$(recurse)

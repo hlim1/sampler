@@ -9,8 +9,9 @@ objects := $(tests:=.o)
 traces := $(tests:=.trace)
 checks := $(tests:=.check)
 
-countdowns := $(top)/libcountdown/countdown-1-1
-lib := ../libdaikount/libdaikount.la
+countdir := $(top)/../libcountdown
+countdowns := $(countdir)/countdown-1-1
+lib := ../../libdaikount/libdaikount.la $(countdir)/libevent.la $(countdir)/libcyclic.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -43,7 +44,7 @@ late-global.trace: late-global $(countdowns)
 
 $(tests): %: %.o $(lib)
 
-$(objects): %.o: %.c $(front_end) ../main ../libdaikount/daikount.h
+$(objects): %.o: %.c $(front_end) ../main ../../libdaikount/daikount.h
 
 ../main: $(force)
 	$(recurse)

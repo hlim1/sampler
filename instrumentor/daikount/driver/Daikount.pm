@@ -12,7 +12,7 @@ our @ISA = qw(CillySampler);
 
 sub root {
     my $self = shift;
-    return "$self->{home}/../..";
+    return "$self->{home}/../../..";
 }
 
 
@@ -23,7 +23,7 @@ sub setDefaultArguments {
 
     $self->{home} = "$FindBin::Bin/..";
     $self->{instrumentor} = ["$self->{home}/main"];
-    $self->{libdir} = "$self->{home}/libdaikount";
+    $self->{libdir} = "$self->{home}/../libdaikount";
 }
 
 

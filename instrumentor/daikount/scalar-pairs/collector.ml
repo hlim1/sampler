@@ -1,5 +1,4 @@
 open Cil
-open Pretty
 
 
 let isInteresting varinfo =
@@ -61,7 +60,7 @@ class visitor file =
 	    let bumps =
 
 	      let build =
-		let invariant = invariant location left in
+		let invariant = invariant location (var left) in
 		fun right ->
 		  let global, site = invariant right in
 		  globals <- global :: globals;

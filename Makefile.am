@@ -27,6 +27,6 @@ install-data-local:
 rpms: dist sampler.spec
 	rm -rf redhat
 	mkdir -p redhat/BUILD redhat/RPMS/$(RPM_ARCH) redhat/SOURCES redhat/SPECS redhat/SRPMS
-	cp $(DIST_ARCHIVES) redhat/SOURCES
+	cp $(distdir).tar.gz redhat/SOURCES
 	cp sampler.spec redhat/SPECS
 	rpmbuild --define '_topdir $(shell pwd)/redhat' -ba redhat/SPECS/sampler.spec

@@ -7,13 +7,13 @@ class visitor file = object
   method collectOutputs _ = FindSites.collect
   method placeInstrumentation code log = log @ [code]
 
-  method vfunc func =
+  method instrumentFunction func =
     Simplify.visit func;
-    super#vfunc func
+    super#instrumentFunction func
 end
 
 
 let phase =
   "Transform",
   fun file ->
-    visitCilFileSameGlobals (new visitor file :> cilVisitor) file
+    visitCilFile (new visitor file :> cilVisitor) file

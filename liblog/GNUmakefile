@@ -10,16 +10,14 @@ all: decoder $(targets)
 .PHONY: all
 
 liblog.%: liblog-$(strategy).% strategy.mk
-	rm -f $@
-	ln -s $< $@
+	cp $< $@
 
-liblog-stdio.a: %: %(log.o) %(storage.o) %(stdio.o)
-liblog-syscall.a: %: %(log.o) %(storage.o) %(syscall.o)
+liblog-stdio.a: %: %(storage.o) %(stdio.o)
+liblog-syscall.a: %: %(storage.o) %(syscall.o)
 
-liblog-stdio.so liblog-syscall.so: liblog-%.so: log.o storage.o %.o
+liblog-stdio.so liblog-syscall.so: liblog-%.so: storage.o %.o
 	$(LINK.o) -shared $^ -o $@
 
-log.o: %.o: %.c %.h primitive.h storage.h
 storage.o: %.o: %.c %.h
 stdio.o syscall.o: %.o: %.c primitive.h storage.h
 

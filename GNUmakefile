@@ -1,7 +1,7 @@
 top := .
 include defs.mk
 
-targets := cfg-to-dot harness.$(cma)
+targets := cfg-to-dot checker dump harness.$(cma)
 libraries := libcountdown liblog
 transformers := assignments heapStores loads localVars
 subdirs := $(libraries) $(transformers)

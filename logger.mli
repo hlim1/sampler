@@ -1,6 +1,6 @@
 open Cil
 
 
-type builder = location -> OutputSet.OutputSet.t -> instr list
+type builder = location -> OutputSet.OutputSet.t -> global list ref -> instr list
 
 val call : file -> builder

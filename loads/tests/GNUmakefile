@@ -1,14 +1,17 @@
 CC := ../../front-end ../main $(CC)
-CFLAGS := -save-temps
+CFLAGS := -W -Wall -Werror -save-temps
 
 tests := 					\
 	array					\
+	bumpy					\
 	conditional				\
 	deep-pointers				\
 	loop					\
 	multiple				\
 	return					\
-	structures
+	sizeof					\
+	structures				\
+	tiny
 
 decodes := $(addprefix decode-, $(tests))
 traces := $(tests:=.trace)

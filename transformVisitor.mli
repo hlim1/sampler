@@ -8,4 +8,6 @@ class virtual visitor : file -> object
 
   method virtual collectOutputs : fundec -> stmtkind -> Sites.outputs
   method virtual placeInstrumentation : stmt -> stmt list -> stmt list
+
+  method instrumentFunction : fundec -> global list
 end

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "log.h"
 #include "storage.h"
 
 
@@ -16,5 +17,6 @@ __attribute__((constructor)) static void initialize()
 
 __attribute__((destructor)) static void shutdown()
 {
-  storeByte(-1);
+  const char terminator = -1;
+  logTableau(&terminator, sizeof(terminator));
 }

@@ -18,7 +18,7 @@ recurse = $(MAKE) -C $(@D) $(@F)
 
 
 libcil := $(cilobjdir)/cil.$(cma)
-syslibs += unix.$(cma)
+syslibs += unix.$(cma) str.$(cma)
 
 impls := $(basename $(wildcard *.ml))
 ifaces := $(basename $(wildcard *.mli))

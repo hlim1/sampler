@@ -189,13 +189,6 @@ sub trace_system (@) {
 }
 
 
-sub resuffix ($$) {
-    my ($name, $suffix) = @_;
-    $name =~ s/\..$/$suffix/ or die "unexpected source file suffix: $name\n";
-    return $name;
-}
-
-
 sub push_library ($$) {
     my ($dir, $lib) = @_;
     push @ld, "-Wl,-rpath,$dir", "-L$dir", "-l$lib";
@@ -288,10 +281,10 @@ if ($mode eq 'special') {
 	trace_redirect $c_handle, $c_name, $transformer, $i_name;
 	
 	if ($mode eq 'compile') {
-	    my $o = $outfile || (resuffix $_, '.o');
+	    my $o = $outfile || "$base.o";
 	    trace_system @cc, '-o', $o, $c_name;
 	} elsif ($mode eq 'codegen') {
-	    my $o = $outfile || (resuffix $_, '.s');
+	    my $o = $outfile || "$base.s";
 	    trace_system @cc, '-o', $o, $c_name;
 	} else {
 	    ${shift @holes} = $c_name;

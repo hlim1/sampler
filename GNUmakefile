@@ -71,7 +71,7 @@ stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 stores = stores
 testHarness = testHarness
-transform = $(backwardJumps) $(cfgToDot) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrumentWrites) $(removeLoops) $(skipWrites) $(weighPaths) transform
+transform = $(backwardJumps) $(cfgToDot) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrumentWrites) $(removeLoops) $(skipWrites) $(splitAfterCalls) $(weighPaths) transform
 utils = utils
 weighPaths = $(stmtMap) $(stores) weighPaths
 

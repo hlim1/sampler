@@ -1,5 +1,5 @@
 bin_SCRIPTS = sampler-cc
-driver_SCRIPTS = cc1
+driver_SCRIPTS = as cc1
 driver_DATA = sampler-specs
 
 EXTRA_DIST = sampler-cc-here $(driver_DATA)

@@ -1,12 +1,12 @@
 open Cil
 
 
-let embedCFG =
-  Options.registerBoolean
-    ~flag:"embed-cfg"
-    ~desc:"embed control flow graphs in executables"
-    ~ident:"EmbedCFG"
-    ~default:true
+let saveCFG =
+  let value = ref "" in
+  Options.push ("--save-cfg",
+		Arg.Set_string value,
+		"save control flow graph in the named file");
+  value
 
 
 let dumpBase =
@@ -17,41 +17,36 @@ let dumpBase =
   value
 
 
-class visitor file digest =
+class visitor file digest channel =
   object (self)
     inherit FunctionBodyVisitor.visitor
-    inherit BufferClass.c 16
 
     initializer
       let filename =
 	if !dumpBase = "" then file.fileName
 	else !dumpBase
       in
-      self#addString "*\t0.1\n";
-      self#addString filename;
-      self#addChar '\n';
-      self#addString (Digest.to_hex (Lazy.force digest));
-      self#addChar '\n';
+      Printf.fprintf channel
+	"*\t0.1\n%s\n%s\n"
+	filename
+	(Digest.to_hex (Lazy.force digest))
 
     val expectedSid = ref 0
 
     method private addLocation location =
       let file = if location.file = "" then "(unknown)" else location.file in
       let line = if location.line = -1 then 0 else location.line in
-      self#addString file;
-      self#addChar '\t';
-      self#addString (string_of_int line);
-      self#addChar '\n'
+      Printf.fprintf channel "%s\t%d\n" file line
 
     method postNewline thing =
-      self#addChar '\n';
+      output_char channel '\n';
       thing
 
     method vfunc fundec =
-      self#addChar (if fundec.svar.vstorage == Static then '-' else '+');
-      self#addChar '\t';
-      self#addString fundec.svar.vname;
-      self#addChar '\t';
+      Printf.fprintf channel
+	"%c\t%s\t"
+	(if fundec.svar.vstorage == Static then '-' else '+')
+	fundec.svar.vname;
       self#addLocation fundec.svar.vdecl;
 
       Cfg.build fundec;
@@ -68,11 +63,10 @@ class visitor file digest =
 
       (* successors list *)
       let addSucc {sid = succId} =
-	self#addString (string_of_int succId);
-	self#addChar '\t'
+	Printf.fprintf channel "%d\t" succId
       in
       List.iter addSucc statement.succs;
-      self#addChar '\n';
+      output_char channel '\n';
 
       (* callees list *)
       begin
@@ -81,11 +75,11 @@ class visitor file digest =
 	    begin
 	      match Dynamic.resolve callee with
 	      | Dynamic.Unknown ->
-		  self#addString "???"
+		  output_string channel "???"
 	      | Dynamic.Known callees ->
 		  let addCallee {vname = vname} =
-		    self#addString vname;
-		    self#addChar '\t'
+		    output_string channel vname;
+		    output_char channel '\t'
 		  in
 		  List.iter addCallee callees
 	    end
@@ -97,20 +91,18 @@ class visitor file digest =
 	| _ ->
 	    ()
       end;
-      self#addChar '\n';
+      output_char channel '\n';
 
       DoChildren
   end
 
 
 let visit file digest =
-  if !embedCFG then
-    TestHarness.time "  embedding CFG"
+  if !saveCFG <> "" then
+    TestHarness.time "  saving CFG"
       (fun () ->
-	let visitor = new visitor file digest in
+	let channel = open_out !saveCFG in
+	let visitor = new visitor file digest channel in
 	visitCilFileSameGlobals (visitor :> cilVisitor) file;
-	visitor#addChar '\n';
-	let contents = visitor#contents in
-
-	let initinfo = FindGlobal.findInit "samplerCFG" file in
-	initinfo.init <- Some (SingleInit (mkString contents)))
+	output_char channel '\n';
+	close_out channel)

@@ -18,7 +18,7 @@ class c file =
       let finder = new BranchFinder.visitor tuples func in
       ignore (Cil.visitCilFunction finder func)
 
-    method embedInfo = tuples#finalize
+    method saveSiteInfo = tuples#finalize
   end
 
 

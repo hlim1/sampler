@@ -17,7 +17,6 @@ package_include_HEADERS =			\
 	cyclic.h				\
 	no-threads.h				\
 	threads.h				\
-	unit-cfg.h				\
 	unit-signature.h			\
 	unit.h
 

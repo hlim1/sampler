@@ -14,7 +14,7 @@ class c file =
 
     method findAllSites = ()
     method private findSites = ignore
-    method embedInfo = ignore
+    method saveSiteInfo _ = ignore
   end
 
 

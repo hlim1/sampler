@@ -33,8 +33,7 @@ let phase =
     let digest = lazy (Digest.file file.fileName) in
     EmbedSignature.visit file digest;
     EmbedCFG.visit file digest;
-    time "  collecting site info"
-      (fun () -> List.iter (fun scheme -> scheme#embedInfo digest) schemes);
+    EmbedSiteInfo.visit schemes digest;
 
     if !sample then
       begin

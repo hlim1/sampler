@@ -1,0 +1,53 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+
+########################################################################
+
+
+my @as = ("@as@");
+my @objcopy;
+
+my $verbose;
+my $outfile;
+
+my $saved_cfg;
+my $saved_site_info;
+
+
+while (@ARGV) {
+    local $_ = shift;
+
+    if ($_ eq '-o') {
+	$outfile = shift;
+	push @as, $_, $outfile;
+    } elsif ($_ eq '--verbose') {
+	$verbose = 1;
+    } elsif (/^-fsave-cfg=(.+)/) {
+	push @objcopy, '--add-section', ".debug_sampler_cfg=$1";
+    } elsif (/^-fsave-site-info=(.+)/) {
+	push @objcopy, '--add-section', ".debug_site_info=$1";
+    } else {
+	push @as, $_;
+    }
+}
+
+
+########################################################################
+
+
+sub run_stage (@) {
+    warn "  @_\n" if $verbose;
+    system {$_[0]} @_;
+    exit ($? >> 8 || $? & 127 || 1) if $?;
+}
+
+
+run_stage @as;
+
+run_stage 'objcopy', @objcopy, $outfile
+    if @objcopy && defined $outfile;
+
+
+exit 0;

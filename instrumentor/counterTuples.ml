@@ -1,5 +1,6 @@
 open Cil
 open Pretty
+open Printf
 open SchemeName
 
 
@@ -7,7 +8,7 @@ class type manager =
   object
     method private bump : lval -> location -> instr
     method addSite : fundec -> exp -> doc -> location -> stmt
-    method finalize : Digest.t Lazy.t -> unit
+    method finalize : Digest.t Lazy.t -> out_channel -> unit
   end
 
 
@@ -19,7 +20,7 @@ class virtual basis name file =
 
     method private virtual bump : lval -> location -> instr
 
-    method addSite func selector description location =
+    method addSite func selector (description : doc) location =
       let counter = (Var tuples, Index (integer nextId, Index (selector, NoOffset))) in
       nextId <- nextId + 1;
       let result = mkStmtOneInstr (self#bump counter location) in
@@ -27,32 +28,20 @@ class virtual basis name file =
       siteInfos#push (func, location, description, result);
       result
 
-    method finalize digest =
-      let accumulator = new BufferClass.c 0 in
+    method finalize digest channel =
+      fprintf channel "<sites unit=\"%s\" scheme=\"%s\">\n"
+	(Digest.to_hex (Lazy.force digest)) name.flag;
 
-      let startTag =
-	sprint max_int
-	  (seq nil text
-	     ["<sites unit=\"";
-	      Digest.to_hex (Lazy.force digest);
-	      "\" scheme=\""; name.flag; "\">\n"])
-      in
+      siteInfos#iter
+	(fun (func, location, description, statement) ->
+	  let description = Pretty.sprint max_int description in
+	  fprintf channel "%s\t%d\t%s\t%d\t%s\n"
+	    location.file location.line
+	    func.svar.vname
+	    statement.sid
+	    description);
 
-      let serializer (func, location, description, statement) =
-	let fields = [text location.file;
-		      num location.line;
-		      text func.svar.vname;
-		      num statement.sid;
-		      description]
-	in
-	let row = seq (chr '\t') (fun doc -> doc) fields in
-	let text = sprint max_int (row ++ chr '\n') in
-	accumulator#addString text
-      in
-
-      accumulator#addString startTag;
-      siteInfos#iter serializer;
-      accumulator#addString "</sites>\n";
+      output_string channel "</sites>\n";
 
       mapGlobals file
 	begin
@@ -64,16 +53,6 @@ class virtual basis name file =
 						    Some (integer nextId),
 						    attributes)},
 		      initinfo, location)
-
-	    | GVar ({vtype = TArray (elementType, _, attributes)} as varinfo, _, location)
-	      when varinfo.vname = name.prefix ^ "SiteInfo" ->
-		let text = accumulator#contents in
-		let size = String.length text in
-		GVar ({varinfo with vtype = TArray (elementType,
-						    Some (integer size),
-						    attributes)},
-		      {init = Some (SingleInit (mkString text))},
-		      location)
 
 	    | GFun ({svar = {vname = "samplerReporter"}; sbody = sbody}, _) as global
 	      when nextId > 0 ->

@@ -185,6 +185,10 @@ AC_MSG_CHECKING(for cc1)
 AC_SUBST(cc1, `$CC -print-prog-name=cc1`)
 AC_MSG_RESULT($cc1)
 
+AC_MSG_CHECKING(for as)
+AC_SUBST(as, `$CC -print-prog-name=as`)
+AC_MSG_RESULT($as)
+
 AC_MSG_CHECKING(format string type modifer j)
 AC_COMPILE_IFELSE(
   AC_LANG_PROGRAM(
@@ -298,6 +302,7 @@ www/cgi-bin/Makefile
 
 AC_CONFIG_FILES([launcher/test-by-extension], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/sampler-cc], [chmod +x $ac_file])
+AC_CONFIG_FILES([instrumentor/driver/as], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/cc1], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/debuild], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/rpmbuild], [chmod +x $ac_file])

@@ -120,7 +120,11 @@ while (@ARGV) {
 	} elsif (/^-fsampler-scheme=(.*)/) {
 	    push @inst, "--scheme-$1";
 	} elsif (/^-f((in|ex)clude-(file|function))=(.*)/) {
-	    push @inst, "--$1", $4
+	    push @inst, "--$1", $4;
+	} elsif (/^-fsave-cfg=(.+)/) {
+	    push @inst, '--save-cfg', $1;
+	} elsif (/^-fsave-site-info=(.+)/) {
+	    push @inst, '--save-site-info', $1;
 	} elsif (/^-f/) {
 	    push @cc1, $_
 	} else {

@@ -8,9 +8,6 @@
 #pragma cilnoremove("returnsCounterTuples")
 static ReturnTuple returnsCounterTuples[];
 
-#pragma cilnoremove("returnsSiteInfo")
-static const char returnsSiteInfo[] __attribute__((section(".debug.sampler.site_info.returns")));
-
 
 #pragma cilnoremove("returnsReporter")
 #pragma sampler_exclude_function("returnsDestructor")

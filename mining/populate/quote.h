@@ -4,7 +4,7 @@
 #include <string>
 
 
-string quote(const char *, char);
+string quote(const char *);
 
 
 #endif // !INCLUDE_populate_quote_h

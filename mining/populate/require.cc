@@ -1,8 +1,8 @@
-#include "database.h"
+#include <libpq++/pgdatabase.h>
 #include "require.h"
 
 
-void require(bool condition)
+void require(bool condition, const PgDatabase &database)
 {
   require(condition, database.ErrorMessage());
 }

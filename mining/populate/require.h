@@ -1,8 +1,10 @@
 #ifndef INCLUDE_populate_require_h
 #define INCLUDE_populate_require_h
 
+class PgDatabase;
 
-void require(bool);
+
+void require(bool, const PgDatabase &);
 void require(bool, const char []);
 
 

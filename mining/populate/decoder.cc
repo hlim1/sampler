@@ -1,18 +1,16 @@
 #define _GNU_SOURCE
-#include <cassert>
-#include <climits>
 #include <liblog/decoder.h>
-#include <liblog/primitive.h>
 #include <sstream>
-#include "database.h"
-#include "progress.h"
+#include "Session.h"
 #include "quote.h"
 #include "require.h"
-#include "session.h"
 
 
 static unsigned long long sampleCounter = 0;
 static string file;
+static string expression;
+
+Session session;
 
 
 void siteCountdown(unsigned countdown)
@@ -24,35 +22,18 @@ void siteCountdown(unsigned countdown)
 
 void siteFile(const char *file)
 {
-  ::file = '\'' + quote(file, '\'') + '\'';
+  ::file = quote(file);
 }
 
 
 void siteLine(unsigned line)
 {
-  ostringstream command;
-  command << "INSERT INTO sites (session, sample, file, line) VALUES ("
-	  << sessionId << ", " << sampleCounter << ", " << file << ", " << line
-	  << ')';
-  require(database.ExecCommandOk(command.str().c_str()));
-
-  const ExecStatusType status = database.Exec("COPY samples FROM STDIN");
-  require(status == PGRES_COPY_IN);
+  session.push_back(Site(sampleCounter, file, line));
 }
 
 
 void siteEnd()
 {
-  database.PutLine("\\.\n");
-  const int error = database.EndCopy();
-  require(!error);
-  
-  ++tasksCompleted;
-  if (progressUpdateNeeded)
-    {
-      progressUpdateNeeded = false;
-      displayProgress();
-    }
 }
 
 
@@ -61,11 +42,7 @@ void siteEnd()
 
 void sampleExpr(const char *expression)
 {
-  ostringstream fields;
-  fields << sessionId << '\t'
-	 << sampleCounter << '\t'
-	 << quote(expression, '\t') << '\t';
-  database.PutLine(fields.str().c_str());
+  ::expression = quote(expression);
 }
 
 
@@ -74,9 +51,9 @@ void sampleExpr(const char *expression)
 
 template<class T> void sampleValue(PrimitiveType typeCode, T value)
 {
-  ostringstream fields;
-  fields << typeCode << '\t' << value << '\n';
-  database.PutLine(fields.str().c_str());
+  ostringstream stringify;
+  stringify << value;
+  session.back().push_back(Sample(expression, typeCode, stringify.str()));
 }
 
 

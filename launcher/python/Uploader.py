@@ -49,5 +49,5 @@ def upload(app, user, outcome, accept):
             user.change_sparsity(int(reply.info()['change-sparsity']))
 
         # server may have posted a message for the user
-        if reply.info().has_key('content-length') and int(reply.info()['Content-length']):
+        if reply.info().has_key('content-length') and int(reply.info()['content-length']):
             user.show_server_message(reply)

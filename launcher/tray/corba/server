@@ -5,7 +5,7 @@ import bonobo
 import os
 import sys
 
-ORBit.load_typelib('/home/liblit/research/sampler/launcher/tray/corba/sampler_module')
+ORBit.load_typelib(os.path.dirname(sys.argv[0]) + '/sampler_module')
 
 import CORBA
 import Sampler__POA
@@ -31,7 +31,24 @@ def uploader_factory(factory, iid):
     return Uploader()
 
 
-component = bonobo.GenericFactory('OAFIID:SamplerUploader_Factory:1.0', uploader_factory)
+########################################################################
+
+
+class UploaderFactory(bonobo.GenericFactory):
+
+    def __init__(self):
+        bonobo.GenericFactory.__init__(self, 'OAFIID:SamplerUploader_Factory:1.0', self.badness)
+
+    def badness(*args):
+        print 'UploaderFactory.badness:', args
+
+    def createObject(*args):
+        print 'UploaderFactory.createObject:', args
+        return Uploader()
+
+
+component = UploaderFactory()
+#component = bonobo.GenericFactory('OAFIID:SamplerUploader_Factory:1.0', uploader_factory)
 bonobo.running_context_auto_exit_unref(component)
 print 'about to enter bonobo.main'
 bonobo.main()

@@ -6,12 +6,19 @@ noinst_LIBRARIES = libsampler_module.a
 
 libsampler_module_a_SOURCES = sampler-imodule.c
 
+EXTRA_DIST =					\
+	oaf.dtd					\
+	sampler.idl				\
+	sampler.server
+
+BUILT_SOURCES = sampler.h sampler-common.c
+
 TESTS = sampler.server
 TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
 
 idldir = /usr/share/idl
 
-sampler-imodule.c: %-imodule.c: %.idl
+sampler.h sampler-common.c sampler-imodule.c: sampler.idl
 	orbit-idl-2 --include $(idldir) --imodule $<
 
 sampler_module.so: %_module.so: %-imodule.o

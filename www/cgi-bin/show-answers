@@ -1,0 +1,17 @@
+#!/usr/bin/perl -wT
+
+use strict;
+
+use lib '/usr/lib/perl5/site_perl/5.6.1';
+use DB_File::Lock;
+use POSIX qw(S_IRUSR S_IWUSR);
+
+
+my %survey;
+tie %survey, 'DB_File::Lock', 'sampler-survey.db', O_RDONLY, 0, $DB_HASH, 'read';
+
+while (my ($remote, $distro) = each %survey) {
+    print "$remote\t$distro\n";
+}
+
+untie %survey;

@@ -53,15 +53,34 @@ sub stash_file ($) {
 stash_environ();
 stash_file $_ foreach $query->param;
 
-my $reply_demo = 0;
-if ($reply_demo) {
-    print($query->start_html('Server Reply Demo'),
-	  $query->h1('Server Reply Demo'),
-	  $query->p('This is a demonstration of presenting server reply messages to the client.  Ordinarily we would only use this if there was some important piece of information we needed to communicate to all clients.'),
-	  $query->p('Replies can make full use of HTML features such as',
-		    $query->a({href => 'http://www.cs.berkeley.edu/~liblit/sampler/'}, 'hyperlinks'),
-		    'and inline images',
-		    $query->img({src => 'http://www.cs.berkeley.edu/icons/balls/redball.gif'}),
-		    '.'),
+
+########################################################################
+
+
+use lib '/usr/lib/perl5/site_perl/5.6.1';
+use DB_File::Lock;
+use POSIX qw(S_IRUSR S_IWUSR);
+
+
+my $remote = $query->remote_host;
+
+my %survey;
+tie %survey, 'DB_File::Lock', 'sampler-survey.db', O_RDONLY, 0, $DB_HASH, 'read';
+my $novel = not exists $survey{$remote};
+untie %survey;
+
+
+if ($novel) {
+    print($query->start_html('Distribution Change Survey'),
+	  $query->h1('Distribution Change Survey'),
+	  $query->p('Thank you for participating in the Cooperative Bug Isolation Project.  We are considering changing our CBI build platform and would like your input.'),
+	  $query->p('Red Hat Linux 9 officially reaches end-of-life on April 30, 2004.  Red Hat will no longer release errata or security updates for this distribution.  For this reason, we are considering changing our CBI build platform to Fedora Core 1.  The existing Red Hat Linux 9 packages would still be available, but future builds and new releases would be for Fedora Core 1.'),
+	  $query->p('If we made this change to Fedora Core 1, would you still be able to use our packages?  Would you be able to use them on more machines than you use now?  Please let us know:'),
+	  $query->ul($query->li($query->a({href => 'http://sampler.cs.berkeley.edu/cgi-bin/sampler-survey?distro=fedora-core-1'},
+					  'Yes, switch to Fedora Core 1.  I will be able to use new packages on as many or more computers than I do now.')),
+		     $query->li($query->a({href => 'http://sampler.cs.berkeley.edu/cgi-bin/sampler-survey?distro=either'},
+					  'Neutral.  My use of CBI packages would remain about the same either way.')),
+		     $query->li($query->a({href => 'http://sampler.cs.berkeley.edu/cgi-bin/sampler-survey?distro=redhat-linux-9'},
+					  'No, stay with Red Hat Linux 9.  I am not using Fedora Core 1 and have no plans to use it any time soon.'))),
 	  $query->end_html);
 }

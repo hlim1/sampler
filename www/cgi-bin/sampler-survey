@@ -1,0 +1,38 @@
+#!/usr/bin/perl -wT
+
+use strict;
+
+use CGI qw(:standard -private_tempfiles);
+use CGI::Carp qw(fatalsToBrowser);
+use CGI::Pretty;
+
+use lib '/usr/lib/perl5/site_perl/5.6.1';
+use DB_File::Lock;
+use POSIX qw(S_IRUSR S_IWUSR);
+
+
+########################################################################
+
+
+my $query = new CGI;
+
+my $remote = $query->remote_host;
+my $distro = param('distro');
+die "survey returned with no answer\n" unless defined $distro;
+
+
+my %survey;
+tie %survey, 'DB_File::Lock', 'sampler-survey.db',
+    O_CREAT | O_RDWR, S_IRUSR | S_IWUSR, $DB_HASH, 'write';
+
+$survey{$remote} = $distro;
+
+untie %survey;
+
+
+print($query->start_html('Thank you for your input'),
+      $query->h1('Thank you for your input'),
+      $query->p('Thank you for sharing your opinion.  If we do decide to change distributions, we will announce it on the &lt;sampler-announce&gt; mailing list.  If you are not already a subscriber, now would be a great time to',
+		$query->a({href => 'http://www.cs.berkeley.edu/~liblit/sampler/contact/'}, 'sign up'),
+		'.'), 
+      $query->end_html);

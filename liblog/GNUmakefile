@@ -2,8 +2,8 @@ CPPFLAGS := -D_GNU_SOURCE
 CFLAGS := -W -Wall -Werror -O9
 libs := log log-stdio log-syscall
 targets := $(foreach lib, $(libs), lib$(lib).so lib$(lib).a)
-#strategy := stdio
-strategy := syscall
+strategy := stdio
+#strategy := syscall
 
 
 all: decoder $(targets)

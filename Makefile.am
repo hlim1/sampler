@@ -11,7 +11,8 @@ SUBDIRS =					\
 DIST_SUBDIRS =					\
 	$(SUBDIRS)				\
 	benchmarks				\
-	debian
+	debian					\
+	www
 
 EXTRA_DIST =					\
 	$(PACKAGE).spec				\

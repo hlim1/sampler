@@ -15,15 +15,34 @@ let check file title =
     end
 
     
+let verbose = false
+
+let verbosely title action =
+  let print event =
+    if verbose then
+      prerr_endline (title ^ ": " ^ event)
+  in
+  
+  print "begin";
+  let result = action () in
+  print "end";
+  result
+
 let doOneOne file (title, action) =
-  action file;
-  if ! Errormsg.hadErrors then
-    raise Errormsg.Error;
-  check file title
+  verbosely title
+  (fun _ ->
+    action file;
+    if ! Errormsg.hadErrors then
+      raise Errormsg.Error;
+    check file title)
 
 let doOne stages filename =
-  let file = Frontc.parse filename () in
-  check file "parse";
+  let file = verbosely "parse"
+      (fun _ ->
+	let file = Frontc.parse filename () in
+	check file "parse";
+	file)
+  in
   List.iter (doOneOne file) stages
     
 let main stages =

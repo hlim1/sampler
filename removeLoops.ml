@@ -1,5 +1,4 @@
 open Cil
-open Identity
 
 
 class visitor = object
@@ -20,5 +19,10 @@ class visitor = object
 end
 
 
-let duplicateBody {sbody = original} =
-  visitCilBlock new visitor original
+let phase _ = "RemoveLoops", visitCilFileSameGlobals new visitor
+
+
+let visit original =
+  let replacement = visitCilFunction (new visitor) original in
+  if replacement != original then
+    failwith "unexpected function replacement by RemoveLoops visitor"

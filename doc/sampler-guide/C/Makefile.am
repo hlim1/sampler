@@ -11,6 +11,11 @@ clean_omf = *.omf.out omf_timestamp
 clean_html = index.html ar??s??.html
 MOSTLYCLEANFILES = $(clean_omf) $(clean_html)
 
+install-data-hook-omf: install-data-hook-config
+
+install-data-hook-config:
+	$(MAKE) -C ../.. install-docDATA
+
 dist-hook: app-dist-hook
 
 

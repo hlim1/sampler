@@ -203,7 +203,7 @@ let call file =
 
     let stmt = mkStmt (Instr instrs) in
     let globals = [GCompTag (tableauInfo, location);
-		   GVar (tableau, Some inits, location)]
+		   GVar (tableau, { init = Some inits }, location)]
     in
 
     stmt, globals

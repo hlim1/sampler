@@ -40,6 +40,7 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 AC_CONFIG_FILES([
 Makefile
 benchmarks/ccured/config.mk
+doc/Makefile
 fuzz/Makefile
 instrumentor/Makefile
 instrumentor/config.mk
@@ -61,6 +62,7 @@ instrumentor/scalar-pairs/Makefile
 instrumentor/scalar-pairs/libscalar-pairs/Makefile
 instrumentor/scalar-pairs/tests/Makefile
 launcher/Makefile
+launcher/python/Makefile
 launcher/applications/Makefile
 launcher/applications/gnumeric/Makefile
 libcountdown/Makefile

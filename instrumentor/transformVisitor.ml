@@ -14,6 +14,8 @@ class virtual visitor file =
 
     method private prepatchCalls = Calls.prepatch
 
+    method private shouldTransform = ShouldTransform.shouldTransform
+
     method private transform func =
       prepareCFG func;
       RemoveLoops.visit func;
@@ -66,7 +68,7 @@ class virtual visitor file =
 
     method vglob = function
       | GFun (func, _) as global
-	when ShouldTransform.shouldTransform func ->
+	when self#shouldTransform func ->
 	  begin
 	    match self#transform func with
 	    | [] -> SkipChildren

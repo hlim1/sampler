@@ -20,7 +20,6 @@ FROM focus INNER JOIN run USING (run_id)
 WHERE exit_signal > 0
 GROUP BY unit_signature, site_order, predicate;
 
-
 -- S(P)
 DROP TEMPORARY TABLE IF EXISTS succeed_predicate;
 CREATE TEMPORARY TABLE succeed_predicate

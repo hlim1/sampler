@@ -44,7 +44,7 @@ let visit file isWeightyCallee countdown =
 	let callJumps = WeightyCalls.jumpify afterCalls in
 	let backJumps = jumps.backward @ callJumps in
 	let headers = entry :: backJumps in
-	let weights = WeighPaths.weigh func sites headers in
+	let weights = WeighPaths.weigh sites headers in
 	
 	let original, instrumented, clones = Duplicate.duplicateBody func in
 	

@@ -6,7 +6,7 @@ open Weight
 class weightsMap = [t] StmtIdHash.c 0
 
 
-let weigh func sites headers =
+let weigh sites headers =
   
   let siteMap = new StmtIdHash.c 0 in
   List.iter

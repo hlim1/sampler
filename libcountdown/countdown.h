@@ -1,11 +1,11 @@
-#ifndef INCLUDE_liblog_log_h
-#define INCLUDE_liblog_log_h
+#ifndef INCLUDE_libcountdown_countdown_h
+#define INCLUDE_libcountdown_countdown_h
 
 
 extern unsigned nextLogCountdown;
 
 
-void resetCountdown();
+unsigned resetCountdown();
 
 
-#endif /* !INCLUDE_liblog_log_h */
+#endif /* !INCLUDE_libcountdown_countdown_h */

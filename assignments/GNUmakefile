@@ -12,11 +12,8 @@ include $(top)/rules.mk
 ########################################################################
 
 
-findLogger = findLogger
-findSites = $(logs) findSites
-logs = logs
-skips = $(functionBodyVisitor) skips
-transform = $(findLogger) $(findSites) transform
+findSites = findSites
+transform = $(findSites) transform
 
 
 ########################################################################

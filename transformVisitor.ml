@@ -9,10 +9,11 @@ let visitSameBlock visitor original =
 class virtual visitor file = object(self)
   inherit FunctionBodyVisitor.visitor
 
-  val globalCountdown = Countdown.findGlobal file
+  val logger = Logger.call file
+  val countdownToken = Countdown.find file
 
   method virtual findSites : fundec -> Sites.visitor
-  method virtual placeInstrumentation : stmt -> stmt -> stmt list
+  method virtual placeInstrumentation : stmt -> stmt list -> stmt list
 
   method vfunc func =
     prepareCFG func;
@@ -34,33 +35,32 @@ class virtual visitor file = object(self)
       match WeighPaths.weigh sites headers with
       | None -> ()
       | Some weights ->    
-	  let countdown = new Countdown.countdown globalCountdown func in
+	  let countdown = new Countdown.countdown countdownToken func in
 	  let original, instrumented, clones = Duplicate.duplicateBody func in
 	  
 	  ForwardJumps.patch clones forwardJumps;
 	  BackwardJumps.patch clones weights countdown backwardJumps;
 	  Calls.patch clones weights countdown afterCalls;
+	  Calls.postpatch func countdown;
 	  FunctionEntry.patch func weights countdown instrumented;
 	  
 	  let combine code instrumentation =
 	    let codeStmt = mkStmt code.skind in
-	    let instStmt = mkStmtOneInstr instrumentation in
-	    let combined = self#placeInstrumentation codeStmt instStmt in
+	    let combined = self#placeInstrumentation codeStmt instrumentation in
 	    code.skind <- Block (mkBlock combined)
 	  in
 	  
 	  let instrument original instrumentation =
 	    let location = get_stmtLoc original.skind in
 	    let skip = countdown#decrement location in
-	    combine original skip;
+	    combine original [mkStmtOneInstr skip];
 	    
 	    let clone = ClonesMap.findCloneOf clones original in
-	    combine clone instrumentation
+	    let conditional = countdown#log location instrumentation in
+	    combine clone conditional
 	  in
 	  
 	  sites#iter instrument;
-	  
-	  Calls.postpatch func countdown;
     end;
 
     SkipChildren

@@ -3,7 +3,6 @@ include $(top)/defs.mk
 
 targets := main
 libdirs := $(top)
-subdirs := liblog
 syslibs := str.$(cma)
 
 include $(top)/rules.mk
@@ -13,10 +12,8 @@ include $(top)/rules.mk
 
 
 collect = $(dissect) $(outputSet) collect
-findLogger = findLogger
-findSites = $(collect) $(logs) $(outputSet) findSites
-logs = $(outputSet) logs
-transform = $(findLogger) $(findSites) transform
+findSites = $(collect) $(outputSet) findSites
+transform = $(findSites) transform
 
 
 ########################################################################

@@ -142,10 +142,18 @@ sub trace_system (@) {
 }
 
 
+sub push_library ($$) {
+    my ($dir, $lib) = @_;
+    push @ld, "-Wl,-rpath,$dir", "-L$dir", "-l$lib";
+}
+
+
 ########################################################################
 
 
 push @ARGV, '-include', "$FindBin::Bin/libcountdown/countdown.h";
+push @ARGV, '-include', "$FindBin::Bin/liblog/log.h";
+
 
 while ($_ = shift) {
     if (/^-(.*)/) {
@@ -224,8 +232,8 @@ if ($mode eq 'special') {
 
     if ($mode eq 'link') {
 	my @out = ('-o', $outfile) if $outfile;
-	my $libdir = "$FindBin::Bin/libcountdown";
-	push @ld, "-Wl,-rpath,$libdir", "-L$libdir", '-lcountdown';
+	push_library "$FindBin::Bin/libcountdown", 'countdown';
+	push_library "$FindBin::Bin/liblog", 'log';
 	trace_system @ld, @out;
     }
 }

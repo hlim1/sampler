@@ -1,1 +1,1 @@
-module OutputSet : Set.S with type elt = string * Cil.exp
+module OutputSet : Set.S with type elt = Cil.lval

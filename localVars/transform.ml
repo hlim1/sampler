@@ -1,19 +1,11 @@
 open Cil
 
 
-class visitor file =
-  let logger = FindLogger.find file in
-
-  object
-    inherit TransformVisitor.visitor file
-
-    method weigh {skind = skind} =
-      match skind with
-      | Instr [_] -> 1
-      | _ -> 0
+class visitor file = object
+  inherit TransformVisitor.visitor file
 
     method findSites = new FindSites.visitor logger
-    method placeInstrumentation code log = [log; code]
+    method placeInstrumentation code log = log @ [code]
   end
 
 

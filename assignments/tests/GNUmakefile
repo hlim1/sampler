@@ -1,20 +1,41 @@
-CC := ../front-end $(CC)
+CC := ../../front-end ../main $(CC)
 
-all: run
+tests := test
+
+decodes := $(addprefix decode-, $(tests))
+traces := $(tests:=.trace)
+objects := $(tests:=.o)
+
+decoder := ../../liblog/decoder
+
+recurse = $(MAKE) -C $(@D) $(@F)
+
+
+########################################################################
+
+
+all: $(decodes)
 .PHONY: all
 
-run: test
-	LD_LIBRARY_PATH=../liblog:../../libcountdown ./$^
-.PHONY: run
+$(decodes): decode-%: %.trace $(decoder)
+	$(decoder) <$<
+.PHONY: $(decodes)
 
-test.o: test.c ../liblog/log.h ../main
+$(traces): %.trace: %
+	./$< 2>$@.
+	mv $@. $@
+
+$(objects): %.o: %.c ../../liblog/log.h ../../libcountdown/countdown.h ../main
 
 ../main: force
-	$(MAKE) -C $(@D) $(@F)
+	$(recurse)
+
+$(decoder): force
+	$(recurse)
 
 force:
 .PHONY: force
 
 clean:
-	rm -f test test.o
+	rm -f $(traces) $(traces:=.) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i)
 .PHONY: clean

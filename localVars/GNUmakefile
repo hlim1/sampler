@@ -11,10 +11,9 @@ include $(top)/rules.mk
 ########################################################################
 
 
-findLogger = findLogger
-findSites = $(logs) findSites
-logs = logs
-transform = $(findLogger) $(findSites) transform
+collect = collect
+findSites = $(collect) findSites
+transform = $(findSites) transform
 
 
 ########################################################################

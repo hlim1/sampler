@@ -1,13 +1,12 @@
 open Cil
 
 
-class visitor = object
+class visitor logger = object
   inherit Sites.visitor
 
   method consider = function
     | Instr [Set((Mem address, NoOffset), Lval data, location)] ->
-	let instrumentation = Instrument.build address data location in
-	Some instrumentation
+	logger location (Dissect.dissect data (typeOfLval data))
     | _ ->
-	None
+	[]
 end

@@ -3,7 +3,7 @@ open OutputSet
 open Str
 
 
-let build logger func where =
+let collect func =
 
   let isTemporary {vname = vname} =
     let pattern = regexp "^__\|^tmp$\|^tmp___[0-9]+$" in
@@ -28,13 +28,4 @@ let build logger func where =
 
   let formals = dissectVars func.sformals in
   let locals = dissectVars func.slocals in
-  let outputs = OutputSet.union formals locals in
-  let formats, arguments = List.split (OutputSet.elements outputs) in
-  let format = mkString ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
-  
-  Call (None, logger,
-	format
-	:: mkString where.file
-	:: kinteger IUInt where.line
-	:: arguments,
-	where)
+  OutputSet.union formals locals

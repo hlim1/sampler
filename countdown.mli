@@ -1,13 +1,14 @@
 open Cil
 
 
-type globalCountdown
+type token
 
-val findGlobal : file -> globalCountdown
+val find : file -> token
 
-class countdown : globalCountdown -> fundec -> object
+class countdown : token -> fundec -> object
   method decrement : location -> instr
   method beforeCall : location -> instr
   method afterCall : location -> instr
   method choose : location -> int -> block -> block -> stmtkind
+  method log : location -> instr list -> stmt list
 end

@@ -18,9 +18,8 @@ class visitor logger = object
 	  OutputSet.empty
     in
     if OutputSet.is_empty outputs then
-      None
+      []
     else
       let location = get_stmtLoc skind in
-      let instrumentation = Logs.build logger outputs location in
-      Some instrumentation
+      logger location outputs
 end

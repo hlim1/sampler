@@ -1,7 +1,7 @@
 open Cil
 
 
-type globalCountdown = lval
+type token = lval * exp
 
 
 let findGlobal =
@@ -12,7 +12,13 @@ let findGlobal =
   FindGlobal.find predicate
 
 
-class countdown global fundec =
+let findReset = FindFunction.find "resetCountdown"
+
+
+let find file = (findGlobal file, findReset file)
+
+
+class countdown (global, reset) fundec =
   let local = var (makeTempVar fundec ~name:"localCountdown" uintType) in
   
   object (self)
@@ -31,4 +37,14 @@ class countdown global fundec =
       let choice = If (predicate, original, instrumented, location) in
       (* Choices.add choice; *)
       choice
+
+    method log location calls =
+      [ mkStmtOneInstr (self#decrement location);
+	mkStmt (If (BinOp (Eq, Lval local, zero, intType),
+		    mkBlock [ mkStmt (Instr (Call (Some local,
+						   reset, [],
+						   location)
+					     :: calls)) ],
+		    mkBlock [],
+		    location)) ]
   end

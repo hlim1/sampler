@@ -1,7 +1,7 @@
 open Cil
 
 
-class visitor : exp -> fundec -> object
+class visitor : Logger.builder -> fundec -> object
   inherit Sites.visitor
-  method consider : stmtkind -> instr option
+  method consider : stmtkind -> Sites.instrumentation
 end

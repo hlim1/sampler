@@ -7,8 +7,7 @@ class visitor logger = object
   method consider = function
     | Instr [Set (lval, _, location)]
     | Instr [Call (Some lval, _, _, location)] ->
-	let instrumentation = Logs.build logger lval location in
-	Some instrumentation
+	logger location (Dissect.dissect lval (typeOfLval lval))
     | _ ->
-	None
+	[]
 end

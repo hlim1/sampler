@@ -1,7 +1,9 @@
 open Cil
 
 
-class map = [instr] StmtMap.container
+type instrumentation = instr list
+
+class map = [instrumentation] StmtMap.container
 
 
 class virtual visitor =
@@ -12,15 +14,13 @@ class virtual visitor =
 	
     method result = sites
 
-    method virtual consider : stmtkind -> instr option
+    method virtual consider : stmtkind -> instrumentation
 	
     method vstmt statement =
       begin
-	match self#consider statement.skind with
-	| Some instrumentation ->
-	    sites#add statement instrumentation
-	| None ->
-	    ()
+	let instrumentation = self#consider statement.skind in
+	if instrumentation != [] then
+	  sites#add statement instrumentation
       end;
 
       DoChildren

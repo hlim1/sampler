@@ -1,6 +1,6 @@
 module OutputSet = Set.Make(
   struct
-    type t = string * Cil.exp
-    let compare (format, _) (format', _) = compare format format'
+    type t = Cil.lval
+    let compare = compare
   end
  )

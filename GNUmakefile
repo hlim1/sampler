@@ -2,8 +2,9 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot harness.$(cma)
+libraries := libcountdown liblog
 transformers := assignments heapStores loads localVars
-subdirs := libcountdown $(transformers)
+subdirs := $(libraries) $(transformers)
 
 include rules.mk
 
@@ -36,6 +37,7 @@ functionBodyVisitor = $(skipVisitor) functionBodyVisitor
 functionEntry = functionEntry
 identity = identity
 isolateInstructions = $(functionBodyVisitor) isolateInstructions
+logger = $(findFunction) $(outputSet) logger
 mapClass = mapClass
 outputSet = outputSet
 patchSites = patchSites
@@ -60,7 +62,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libcil) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-harness := $(dissect) $(findFunction) $(phases) $(transformVisitor)
+harness := $(dissect) $(findFunction) $(logger) $(phases) $(transformVisitor)
 harness.$(cma): $(addsuffix .$(cmo), $(harness))
 	$(archive)
 

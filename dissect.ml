@@ -3,14 +3,8 @@ open OutputSet
 open Pretty
 
 
-let primitive lval formatter =
-  OutputSet.singleton
-    (sprint 80 (chr '\t'
-		  ++ d_lval () lval
-		  ++ text " == %"
-		  ++ text formatter
-		  ++ chr '\n'),
-     Lval lval)
+let primitive lval =
+  OutputSet.singleton lval
 
 
 let rec dissectField lval field =
@@ -21,55 +15,25 @@ let rec dissectField lval field =
 
 
 and dissect lval = function
-  | TArray _ -> (* fix me *)
-      OutputSet.empty
+  | TInt _
+  | TPtr _
+  | TFloat _ ->
+      primitive lval
 	
-  | TBuiltin_va_list _ ->
+  | TArray _ (* fix me *)
+  | TEnum _ (* fix me *)
+  | TBuiltin_va_list _
+  | TFun _ ->
       OutputSet.empty
+
+  | TNamed ({ttype = ttype}, _) ->
+      dissect lval ttype
 	
-  | TComp ({cfields = cfields}, _) -> (* fix me *)
+  | TComp ({cfields = cfields}, _) ->
       let folder prior field =
 	OutputSet.union prior (dissectField lval field)
       in
       List.fold_left folder OutputSet.empty cfields
-
-  | TEnum _ -> (* fix me *)
-      OutputSet.empty
-	
-  | TFloat (fkind, _) ->
-      let formatter =
-	match fkind with
-	| FFloat -> "g"
-	| FDouble -> "g"
-	| FLongDouble -> "Lg"
-      in
-      primitive lval formatter
-	
-  | TInt (ikind, _) ->
-      let formatter =
-	match ikind with
-	| IChar -> "hhd"
-	| ISChar -> "hhd"
-	| IUChar -> "hhd"
-	| IShort -> "hd"
-	| IUShort -> "hu"
-	| IInt -> "d"
-	| IUInt -> "u"
-	| ILong -> "ld"
-	| IULong -> "lu"
-	| ILongLong -> "lld"
-	| IULongLong -> "llu"
-      in
-      primitive lval formatter
-	
-  | TNamed ({ttype = ttype}, _) ->
-      dissect lval ttype
-	
-  | TPtr _ ->
-      primitive lval "p"
-	
-  | TFun _ ->
-      OutputSet.empty
 
   | TVoid _ ->
       failwith "unexpected variable type"

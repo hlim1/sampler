@@ -7,7 +7,7 @@
 unsigned nextLogCountdown = UINT_MAX;
 
 
-__attribute__((constructor)) void resetCountdown()
+unsigned resetCountdown()
 {
   unsigned countUp = 1;
   
@@ -23,5 +23,11 @@ __attribute__((constructor)) void resetCountdown()
     }
 #endif
 
-  nextLogCountdown = countUp;
+  return countUp;
+}
+
+
+__attribute__((constructor)) void initialize()
+{
+  nextLogCountdown = resetCountdown();
 }

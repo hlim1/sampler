@@ -13,16 +13,13 @@ include $(top)/rules.mk
 
 bitFields = bitFields
 checkSimplicity = $(bitFields) checkSimplicity
-findSites = $(instrument) findSites
+findSites = findSites
 heapStoresTransform = $(findSites) $(simplify) $(stores) heapStoresTransform
-instrument = $(functionBodyVisitor) $(logWrite) instrument
-logWrite = logWrite
 simplify = $(simplifyLefts) $(simplifyReturns) $(simplifyRights) $(checkSimplicity) simplify
 simplifyLefts = $(bitFields) $(simplifyVisitor) simplifyLefts
 simplifyReturns = $(simplifyVisitor) simplifyReturns
 simplifyRights = $(simplifyVisitor) simplifyRights
 simplifyVisitor = simplifyVisitor
-stores = stores
 
 
 ########################################################################

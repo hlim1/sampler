@@ -36,6 +36,46 @@ targets := cfg-to-dot main
 impls := $(basename $(wildcard *.ml))
 ifaces := $(basename $(wildcard *.mli))
 
+
+########################################################################
+
+
+backwardJumps = backwardJumps
+cfg = cfg
+cfgToDot = $(dotify) cfgToDot
+checkSimplicity = $(functionBodyVisitor) checkSimplicity
+classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
+dotify = $(utils) dotify
+duplicate = $(functionBodyVisitor) $(identity) $(stmtMap) duplicate
+forwardJumps = forwardJumps
+functionBodyVisitor = $(skipVisitor) functionBodyVisitor
+identity = identity
+identity = identity
+instrument = $(functionBodyVisitor) $(logWrite) instrument
+instrumentWrites = $(simplifyLefts) $(simplifyReturns) $(simplifyRights) $(checkSimplicity) $(instrument) instrumentWrites
+logWrite = logWrite
+logWrite = logWrite
+mapClass = mapClass
+removeLoops = $(functionBodyVisitor) removeLoops
+setClass = setClass
+simplifyLefts = $(simplifyVisitor) simplifyLefts
+simplifyReturns = $(simplifyVisitor) simplifyReturns
+simplifyRights = $(simplifyVisitor) simplifyRights
+simplifyVisitor = $(functionBodyVisitor) simplifyVisitor
+skipVisitor = skipVisitor
+splitAfterCalls = $(functionBodyVisitor) splitAfterCalls
+stmtMap = $(mapClass) stmtMap
+stmtSet = $(setClass) stmtSet
+stores = stores
+testHarness = testHarness
+transform = $(backwardJumps) $(cfgToDot) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(instrumentWrites) $(logWrite) $(removeLoops) $(weighPaths) transform
+utils = utils
+weighPaths = $(stmtMap) $(stores) weighPaths
+
+
+########################################################################
+
+
 all: $(targets)
 .PHONY: all
 
@@ -46,13 +86,12 @@ run: main $(infile).i
 	./$^
 .PHONY: run
 
-dumper: %: $(libs) $(addsuffix .$(cmo), skipVisitor cfg functionBodyVisitor testHarness utils %)
+cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
+cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), cfg utils foreach dotify skipVisitor functionBodyVisitor splitAfterCalls cfgToDot testHarness %)
-	$(link)
-
-main: %: $(libs) $(addsuffix .$(cmo), identity mapClass stmtMap setClass stmtSet skipVisitor functionBodyVisitor removeLoops classifyJumps forwardJumps backwardJumps simplifyVisitor simplifyReturns simplifyLefts simplifyRights checkSimplicity instrument utils duplicate instrumentWrites stores weighPaths transform testHarness %)
+main := $(transform) $(testHarness) %
+main: %: $(libs) $(addsuffix .$(cmo), $(main))
 	$(link)
 
 checker: %: $(libs) $(addsuffix .$(cmo), %)

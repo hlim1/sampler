@@ -25,7 +25,7 @@ __attribute__((constructor)) void resetCountdown()
 }
 
 
-void skipWrite()
+void skipLog()
 {
   assert(nextLogCountdown > 0);
   --nextLogCountdown;

@@ -79,3 +79,11 @@ cp $abs_srcdir/switch-if.c $abs_srcdir/work.h .
 $abs_top_builddir/instrumentor/driver/sampler-cc-here -save-temps --balance-paths --sampler-scheme=returns -c switch-if.c
 ])
 AT_CLEANUP
+
+AT_SETUP(loop-if)
+AT_CHECK([
+set -e
+cp $abs_srcdir/loop-if.c $abs_srcdir/work.h .
+$abs_top_builddir/instrumentor/driver/sampler-cc-here -save-temps --balance-paths --sampler-scheme=returns -c loop-if.c
+])
+AT_CLEANUP

@@ -43,13 +43,12 @@ let addDefaultCases func =
 let prepatchSplits func =
   let isSplit = function
     | { skind = If (_, thenBlock, elseBlock, _) } as stmt ->
-	(* make both branches be non-empty *)
-	let makeNonempty block =
-	  if block.bstmts = [] then
-	    block.bstmts <- mkEmptyStmt () :: block.bstmts
+	(* make space for possible future counterweights *)
+	let reserveSpace block =
+	  block.bstmts <- mkEmptyStmt () :: block.bstmts
 	in
-	makeNonempty thenBlock;
-	makeNonempty elseBlock;
+	reserveSpace thenBlock;
+	reserveSpace elseBlock;
 	true
 
     | { skind = Switch (expr, block, cases, location) } as stmt ->
@@ -116,7 +115,9 @@ let patch func splits weights =
   let prependCounterweights stmt =
     let selfWeight = weightOf stmt in
     fun successor tail ->
+      assert (List.memq successor stmt.succs);
       let succWeight = weightOf successor in
+      assert (succWeight <= selfWeight);
       let result = ref tail in
       for prepend = succWeight + 1 to selfWeight do
 	result := makeCounterweight () :: !result
@@ -181,4 +182,4 @@ let patch func splits weights =
 		  (Utils.stmt_what other));
 	failwith "internal error"
   in
-  List.iter patchOneSplit splits;
+  List.iter patchOneSplit splits

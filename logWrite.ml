@@ -2,15 +2,15 @@ open Cil
   
 
 let logWrite =
-  let f = emptyFunction "logWrite" in
-  let arg name typ = ignore (makeFormalVar f ~where:"$" name typ) in
-  arg "file" charConstPtrType;
-  arg "line" uintType;
-  arg "address" voidPtrType;
-  arg "size" uintType;
-  arg "data" voidPtrType;
-  f.svar
-    
+  makeGlobalVar "logWrite" (TFun (TVoid [],
+				  Some [ "file", charConstPtrType, [];
+					 "line", uintType, [];
+					 "address", voidPtrType, [];
+					 "size", uintType, [];
+					 "data", voidPtrType, [] ],
+				  false,
+				  []))
+
 
 let addPrototype file =
   file.globals <- GVarDecl (logWrite, logWrite.vdecl) :: file.globals

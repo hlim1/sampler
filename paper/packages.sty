@@ -1,12 +1,17 @@
-%% Ben's personal LaTeX collection
-%% \usepackage{ifpdf}
+%% Ben's personal collection
+\usepackage{ifpdf}
 
 
 %% standard tetex distribution
 \usepackage{amsmath}
 \usepackage{graphicx}
-\usepackage[bookmarks,pdfauthor={Ben Liblit and Alex
-  Aiken},pdfpagemode=UseOutlines]{hyperref}
+
+\ifpdf{\usepackage[bookmarks,pdftitle={Distributed Program
+    Sampling},pdfauthor={Ben Liblit, Alex Aiken, and Alice X.
+    Zheng},pdfpagemode=UseOutlines]{hyperref}}
+{\usepackage[bookmarks,pdftitle={Distributed Program
+    Sampling},pdfauthor={Ben Liblit, Alex Aiken, and Alice X.
+    Zheng},pdfpagemode=UseOutlines,ps2pdf]{hyperref}}
 
 \usepackage{listings}
 \lstloadlanguages{C}
@@ -17,14 +22,15 @@
 \setlength{\belowcaptionskip}{0pt}
 
 \usepackage{moreverb}
-\usepackage[arrow,curve,frame,matrix]{xy}
+
+\ifpdf{\usepackage[arrow,curve,frame,matrix]{xy}}
+{\usepackage[arrow,curve,frame,matrix,dvips]{xy}}
 
 
 %% Ben's personal collection
 \usepackage{mailto}
 \usepackage{naïve}
 \usepackage{termdef}
-\usepackage{unknown}
 \usepackage{url-angles}
 
 

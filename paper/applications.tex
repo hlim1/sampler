@@ -229,12 +229,11 @@ a large user community by using randomly generated inputs in the
 spirit of the Fuzz project~\cite{MKLMMNS95}.  Our selected target is
 version 1.06 of the GNU implementation of \texttt{bc}.  We find that
 feeding \texttt{bc} nine megabytes of random input causes it to crash
-roughly one time in four.
-%While this would be an unusually high
-%failure rate for shipping software under normal usage patterns, we
-%expect that users experiencing crashes will be more likely to opt-in
-%to a trace reporting system.  Thus, this may be a reasonable ratio to
-%expect if most crashes and a few non-crashes are reported.
+roughly one time in four.  \disregard{While this would be an unusually
+  high failure rate for shipping software under normal usage patterns,
+  we expect that users experiencing crashes will be more likely to
+  opt-in to a trace reporting system.  Thus, this may be a reasonable
+  ratio to expect if most crashes and a few non-crashes are reported.}
 
 Quick perusal of the stack trace at a typical failure is discouraging.
 The crash occurs several frames deep inside the C library's

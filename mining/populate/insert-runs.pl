@@ -28,7 +28,7 @@ sub get_known ($) {
     my ($dbh) = @_;
     my $column = $dbh->selectcol_arrayref('SELECT DISTINCT run_id FROM run');
 
-    print 'already known: ', scalar @{$column}, "\n";
+    print 'already known runs: ', scalar @{$column}, "\n";
 
     my %known;
     $known{$_} = 1 foreach @{$column};
@@ -41,8 +41,48 @@ my %known = get_known $dbh;
 
 ########################################################################
 #
+#  get the list of suppressed builds
+#
+
+
+sub get_suppressed ($) {
+    my ($dbh) = @_;
+    my $rows = $dbh->selectall_arrayref(q{
+	SELECT application_name, application_version, application_release
+	    FROM build
+	    WHERE suppress IS NOT NULL});
+
+    print 'suppressed builds: ', scalar @{$rows}, "\n";
+
+    my %suppressed;
+    foreach my $row (@{$rows}) {
+	my $app_id = join("\t", @{$row});
+	$suppressed{$app_id} = 1;
+    }
+    return %suppressed;
+}
+
+
+my %suppressed = get_suppressed $dbh;
+
+
+########################################################################
+#
 #  simple helper functions
 #
+
+
+my @slot = ('RUN_ID',
+	    'HTTP_SAMPLER_APPLICATION_NAME',
+	    'HTTP_SAMPLER_APPLICATION_VERSION',
+	    'HTTP_SAMPLER_APPLICATION_RELEASE',
+	    'HTTP_SAMPLER_INSTRUMENTATION_TYPE',
+	    'HTTP_SAMPLER_INSTRUMENTATION_VERSION',
+	    'HTTP_SAMPLER_VERSION',
+	    'HTTP_SAMPLER_SPARSITY',
+	    'HTTP_SAMPLER_EXIT_SIGNAL',
+	    'HTTP_SAMPLER_EXIT_STATUS',
+	    'DATE');
 
 
 sub read_environment ($\%) {
@@ -68,21 +108,11 @@ sub read_environment ($\%) {
     $environment{HTTP_SAMPLER_VERSION} = '\N'
 	unless defined $environment{HTTP_SAMPLER_VERSION};
 
+    my $app_id = join("\t", @environment{@slot[1 .. 3]});
+    return undef if $suppressed{$app_id};
+
     return \%environment;
 }
-
-
-my @slot = ('RUN_ID',
-	    'HTTP_SAMPLER_APPLICATION_NAME',
-	    'HTTP_SAMPLER_APPLICATION_VERSION',
-	    'HTTP_SAMPLER_APPLICATION_RELEASE',
-	    'HTTP_SAMPLER_INSTRUMENTATION_TYPE',
-	    'HTTP_SAMPLER_INSTRUMENTATION_VERSION',
-	    'HTTP_SAMPLER_VERSION',
-	    'HTTP_SAMPLER_SPARSITY',
-	    'HTTP_SAMPLER_EXIT_SIGNAL',
-	    'HTTP_SAMPLER_EXIT_STATUS',
-	    'DATE');
 
 
 sub environment_fields (\%) {

@@ -20,7 +20,7 @@ syslibs := unix.cma
 
 infile := hello
 
-targets := sampler cfg-to-dot dom-to-dot findLoopsAST findLoopsCFG findBackEdges weighPaths collectHeaders
+targets := cfg-to-dot main
 impls := $(basename $(wildcard *.ml))
 ifaces := $(basename $(wildcard *.mli))
 
@@ -30,32 +30,14 @@ all: $(targets)
 parts: $(impls:=.cmo) $(ifaces:=.cmi)
 .PHONY: parts
 
-run: collectHeaders $(infile).i
+run: main $(infile).i
 	./$^
 .PHONY: run
-
-sampler: %: $(libs) $(addsuffix .cmo, utils testHarness %)
-	$(link)
 
 cfg-to-dot: %: $(libs) $(addsuffix .cmo, utils dotify splitAfterCalls testHarness %)
 	$(link)
 
-dom-to-dot: %: $(libs) $(addsuffix .cmo, foreach mapClass setClass utils dominators dotify testHarness %)
-	$(link)
-
-findBackEdges: %: $(libs) $(addsuffix .cmo, setClass utils foreach testHarness %)
-	$(link)
-
-weighPaths: %: $(libs) $(addsuffix .cmo, mapClass setClass utils foreach testHarness stores %)
-	$(link)
-
-collectHeaders: %: $(libs) $(addsuffix .cmo, setClass foreach splitAfterCalls testHarness %)
-	$(link)
-
-findLoopsAST: %: $(libs) $(addsuffix .cmo, utils testHarness %)
-	$(link)
-
-findLoopsCFG: %: $(libs) $(addsuffix .cmo, utils mapClass setClass stackClass foreach dominators testHarness %)
+main: %: $(libs) $(addsuffix .cmo, mapClass setClass foreach cfg splitAfterCalls collectHeaders stores weighPaths testHarness %)
 	$(link)
 
 $(ifaces:=.cmi): %.cmi: %.mli

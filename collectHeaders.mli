@@ -1,3 +1,7 @@
 open Cil
 
-val collectHeaders : stmt -> stmt list -> (stmt * stmt) SetClass.container
+type headers = Edge.edge SetClass.container
+
+val collectHeaders : Cfg.cfg -> headers
+
+class visitor : cilVisitor

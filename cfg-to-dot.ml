@@ -7,8 +7,7 @@ class visitor = object
   inherit nopCilVisitor
       
   method vfunc func =
-    prepareCFG func;
-    ignore(computeCFGInfo func);
+    ignore (cfg func);
     DoChildren
 
   method vstmt stmt =

@@ -1,7 +1,10 @@
 open Cil
 open Foreach
 open Printf
-    
+
+
+type headers = (stmt * stmt) SetClass.container
+
     
 let collectLoopHeaders headers root =
   let arrived = new SetClass.container
@@ -54,7 +57,7 @@ let collectPostCallHeaders headers stmts =
 (**********************************************************************)
 
 
-let collectHeaders root stmts =
+let collectHeaders (root, stmts) =
   let headers = new SetClass.container in
   
   headers#add (dummyStmt, root);
@@ -70,10 +73,8 @@ class visitor = object
   inherit nopCilVisitor
       
   method vfunc func =
-    prepareCFG func;
-    let stmts = computeCFGInfo func
-    and root = List.hd func.sbody.bstmts in
-
+    let (root, stmts) as cfg = Cfg.cfg func in
+    
     print_endline ("visiting function " ^ func.svar.vname);
     printf "\theaders from entry: 1: (%i, %i)\n" dummyStmt.sid root.sid;
 
@@ -89,16 +90,10 @@ class visitor = object
     callHeaders#iter (fun (s, d) -> printf " (%i, %i)" s.sid d.sid);
     print_newline ();
 
-    let headers = collectHeaders root stmts in
+    let headers = collectHeaders cfg in
     printf "\ttotal: %i:" headers#size;
     headers#iter (fun (s, d) -> printf " (%i, %i)" s.sid d.sid);
     print_newline ();
 
     SkipChildren
 end
-    
-;;
-
-let splitter = new SplitAfterCalls.visitor
-and collector = new visitor in
-ignore(TestHarness.main [splitter; collector])

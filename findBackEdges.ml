@@ -6,8 +6,7 @@ class visitor = object
   inherit nopCilVisitor
       
   method vfunc func =
-    prepareCFG func;
-    ignore (computeCFGInfo func);
+    let (root, _) = CFG.cfg func;
 
     let backEdges = new SetClass.container and
 	arrived = new SetClass.container and
@@ -25,7 +24,7 @@ class visitor = object
       departed#add stmt
     in
     
-    explore (List.hd func.sbody.bstmts);
+    explore root;
     
     backEdges#iter begin
       fun (src, dst) ->

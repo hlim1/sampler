@@ -6,9 +6,8 @@ class visitor = object
   inherit nopCilVisitor
       
   method vfunc func =
-    prepareCFG func;
-    let stmts = computeCFGInfo func in
-    let dominators = computeDominators stmts (List.hd func.sbody.bstmts) in
+    let (_, stmts) as cfg = Cfg.cfg func in
+    let dominators = computeDominators cfg in
     
     let print_stmt stmt =
       ignore(Pretty.printf "%a" Dotify.d_node stmt);

@@ -7,8 +7,7 @@ class visitor = object
       
   method vfunc func =
     print_string ("visiting function " ^ func.svar.vname ^ "\n");
-    prepareCFG func;
-    let stmts = computeCFGInfo func in
+    let (root, stmts) = Cfg.cfg func in
 
     printf "\n********************\ntop-level block structure:\n";
     Utils.print_stmts func.sbody.bstmts;
@@ -30,7 +29,7 @@ class visitor = object
 	List.iter (explore (stmt :: ancestors)) succs
     in
     
-    explore [] (List.hd func.sbody.bstmts);
+    explore [] root;
     ignore(Pretty.printf "fringe:\n%a\n\n" Utils.d_stmts !fringe);
 
     SkipChildren

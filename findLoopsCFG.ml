@@ -37,9 +37,8 @@ class visitor = object
   inherit nopCilVisitor
       
   method vfunc func =
-    prepareCFG func;
-    let stmts = computeCFGInfo func in
-    let dom = computeDominators stmts (List.hd func.sbody.bstmts) in
+    let (_, stmts) as cfg = Cfg.cfg func in
+    let dom = computeDominators cfg in
 
     let headers = List.filter (isLoopHeader dom) stmts in
     ignore(Pretty.printf "loop headers according to dominator tree:@!  @[%a@]@!"

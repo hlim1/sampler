@@ -15,5 +15,6 @@ dom-to-dot
 findBackEdges
 findLoopsAST
 findLoopsCFG
+main
 sampler
 weighPaths

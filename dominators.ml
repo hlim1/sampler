@@ -21,7 +21,7 @@ class dominatorTree idom = object(self)
 end
 
 
-let computeDominators nodes r =
+let computeDominators (r, nodes) =
   let n0 = dummyStmt in
   let nodeCount = List.length nodes in
   let newMap _ = new MapClass.container nodeCount in

@@ -1,8 +1,0 @@
-#!/usr/bin/perl -w
-
-use strict;
-use FindBin;
-use lib $FindBin::Bin;
-
-use Decure;
-Decure->new(@ARGV)->doit();

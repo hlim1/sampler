@@ -26,7 +26,7 @@ my $libcountdown = "$root/libcountdown";
 sub setDefaultArguments {
     my $self = shift;
     $self->SUPER::setDefaultArguments;
-    $self->{only} = '';
+    $self->{instrumentor} = [$instrumentor];
     $self->{LD} = "libtool $self->{LD}";
     $self->{TRACE_COMMANDS} = 0;
 }
@@ -37,7 +37,10 @@ sub collectOneArgument {
     my ($arg, $pargs) = @_;
 
     if ($arg eq '--only') {
-	$self->{only} = shift @{$pargs};
+	push @{$self->{instrumentor}}, $arg, shift @{$pargs};
+	return 1;
+    } elsif ($arg =~ /^--(no-)?sample$/) {
+	push @{$self->{instrumentor}}, $arg;
 	return 1;
     } else {
 	$self->SUPER::collectOneArgument(@_);
@@ -63,7 +66,7 @@ sub applyCil {
     my ($base, $dir, undef) = fileparse $dest, '\\.[^.]+';
     my $aftercil = "$dir$base.inst.c";
 
-    $self->runShell("$instrumentor --only '$self->{only}' @{$ppsrc} >$aftercil");
+    $self->runShell("@{$self->{instrumentor}} @{$ppsrc} >$aftercil");
     return $aftercil;
 }
 

@@ -40,7 +40,7 @@ simple: %: %.o $(lib) ../main
 modular: %: %-a.o %-b.o $(lib) ../main
 	$(LINK.o) $*-a.o $*-b.o $(LOADLIBES) $(LDLIBS) -o $@
 
-simple.o: %.o: %.c $(front_end) ../main ../libbranches/branches.h $(countdir)/$(cyclic).h
+simple.o modular-a.o modular-b.o: %.o: %.c $(front_end) ../main ../libbranches/branches.h ../libbranches/branches-cil.h $(countdir)/$(cyclic).h
 
 ../main: $(force)
 	$(recurse)

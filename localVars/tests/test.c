@@ -10,9 +10,11 @@ typedef struct Multinode {
 } Multinode;
 
 
-void foo()
+int main()
 {
   int x = 7;
   Node a = {3.14, 0};
   Multinode b = {1, {2.73, &a}};
+
+  return 0;
 }

@@ -30,7 +30,6 @@ let rec weigh headers =
   let compute trivial header =
     let w = weight header in
     weights#add header w;
-    Printf.eprintf "weigher: CFG #%i has weight %i\n" header.sid w;
     trivial && w == 0
   in
   

@@ -1,5 +1,4 @@
 open Cil
-open Arg
 
 
 let main manager =
@@ -14,6 +13,6 @@ let main manager =
   in
   
   initCIL ();
-  parse (Options.argspecs ())
+  Arg.parse (Options.argspecs ())
     (TestHarness.doOne phases)
     ("Usage:" ^ Sys.executable_name ^ " [<flag> | <source>] ...")

@@ -1,6 +1,6 @@
 -*- outline -*-
 
-* sampler-0.7.4
+* sampler-0.8
 
 ** Important atomicity bug fix for multithreaded applications.
 

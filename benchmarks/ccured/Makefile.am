@@ -1,44 +1,29 @@
 olden := bh bisort em3d health mst perimeter power treeadd tsp
 spec95 := compress go ijpeg li
-benchmarks := $(sort $(olden) $(spec95))
+benchmarks := $(olden) $(spec95)
 
+SUBDIRS := $(benchmarks)
 
 recurse = $(MAKE) -C $(@D) $(@F)
 
 
-all: $(benchmarks:=/all)
-.PHONY: all
-$(benchmarks:=/all):
-	+$(recurse)
-
-basis: $(benchmarks:=/basis)
+basis := $(benchmarks:=/basis)
+basis: $(basis)
 .PHONY: basis
-$(benchmarks:=/basis):
+$(basis):
 	+$(recurse)
 
-loopless: $(benchmarks:=/loopless)
+loopless := $(benchmarks:=/loopless)
+loopless: $(loopless)
 .PHONY: loopless
-$(benchmarks:=/loopless): force
+$(loopless): force
 	+$(recurse)
 
-idents: $(benchmarks:=/idents)
+idents := $(benchmarks:=/idents)
+idents: $(idents)
 .PHONY: idents
-$(benchmarks:=/idents): force
+$(idents): force
 	+$(recurse)
-
-clean: $(benchmarks:=/clean)
-.PHONY: clean
-$(benchmarks:=/clean): force
-	+$(recurse)
-
-spotless: $(benchmarks:=/spotless)
-.PHONY: spotless
-$(benchmarks:=/spotless): force
-	+$(recurse)
-
-GNUmakefile: config.mk
-config.mk: %: ../../config.status %.in
-	cd $(<D) && ./$(<F) benchmarks/ccured/$@
 
 
 ########################################################################
@@ -51,7 +36,8 @@ collated-times.txt: $(benchmarks:=/times)
 	./collate-times >$@.
 	mv $@. $@
 
-$(benchmarks:=/times):
+times := $(benchmarks:=/times)
+$(times):
 	+$(recurse)
 
 
@@ -65,7 +51,8 @@ collated-stats.txt: collate-stats $(benchmarks:=/stats)
 	./$^ >$@.
 	mv $@. $@
 
-$(benchmarks:=/stats): force
+stats := $(benchmarks:=/stats)
+$(stats): force
 	+$(recurse)
 
 

@@ -1,14 +1,16 @@
 AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS =					\
+	doc					\
 	fuzz					\
 	instrumentor				\
 	launcher				\
 	libcountdown				\
-	liblog					\
 	libreport
 
-EXTRA_DIST = package.m4
+DIST_SUBDIRS = $(SUBDIRS) mining
+
+EXTRA_DIST = resolver package.m4
 
 all-local: package.m4
 

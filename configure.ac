@@ -1,6 +1,6 @@
-AC_INIT(sampler,0.0)
+AC_INIT(sampler,0.0,liblit@cs.berkeley.edu)
 AC_CONFIG_AUX_DIR(config-aux)
-AM_INIT_AUTOMAKE(sampler,0.0)
+AM_INIT_AUTOMAKE
 
 AC_MSG_CHECKING(for CIL build tree)
 AC_ARG_WITH(cil, [  --with-cil=DIR          CIL build tree], , with_cil=../cil)
@@ -39,7 +39,6 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 
 AC_CONFIG_FILES([
 Makefile
-benchmarks/ccured/config.mk
 doc/Makefile
 fuzz/Makefile
 instrumentor/Makefile
@@ -66,7 +65,6 @@ launcher/python/Makefile
 launcher/applications/Makefile
 launcher/applications/gnumeric/Makefile
 libcountdown/Makefile
-liblog/Makefile
 libreport/Makefile
 mining/Makefile
 mining/libodbc++/Makefile

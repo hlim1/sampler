@@ -1,8 +1,11 @@
 xsldir := /usr/share/sgml/docbook/xsl-stylesheets
 
+xml = $(PACKAGE).xml
 noinst_DATA = $(PACKAGE).html
 
-TESTS = $(PACKAGE).xml
+EXTRA_DIST = $(xml)
+
+TESTS = $(xml)
 TESTS_ENVIRONMENT = xmllint --valid --noout
 
 

@@ -18,12 +18,8 @@ workDir := $(workHome)/test
 workExec := $(workDir)/$(testDir)/$(exec)
 workComb := $(workExec:.exe=.cured.i)
 
-ifdef buildOnlys
--include functions.mk
-ifneq (,$(filter all none, $(functions)))
-$(name conflict: error benchmark defines an "all" or "none" function)
-endif
-endif
+# hide from automake
+-include ../onlys.mk
 
 alwaysForms := $(addprefix always-, $(functions) all none)
 alwaysExecs := $(alwaysForms:=.exe)
@@ -105,9 +101,7 @@ always-%.c: decurable.i
 	[ -r $@ ]
 
 
-clean::
-	rm -f always-*.exe
-	rm -f always-*.c
+MOSTLYCLEANFILES = always-*.exe always-*.c
 
 
 ########################################################################
@@ -131,9 +125,7 @@ sample-%.c: decurable.i
 	[ -r $@ ]
 
 
-clean::
-	rm -f sample-*.exe
-	rm -f sample-*.c
+MOSTLYCLEANFILES += sample-*.exe sample-*.c
 
 
 ########################################################################
@@ -144,8 +136,7 @@ stats: decurable.i
 	[ -r $@ ]
 
 
-clean::
-	rm -f stats
+MOSTLYCLEANFILES += stats
 
 
 ########################################################################
@@ -158,8 +149,7 @@ loopless: $(instrumentor)/loopless decurable.i
 $(instrumentor)/loopless: force
 	$(MAKE) -C $(@D) $(@F)
 
-clean::
-	rm -f loopless
+MOSTLYCLEANFILES += loopless
 
 
 ########################################################################
@@ -173,11 +163,7 @@ functions.mk: ../make-functions-mk functions-list
 	$< <functions-list >$@ || rm -f $@
 	[ -r $@ ]
 
-clean::
-	if [ -d .libs ]; then rmdir .libs; fi
-
-spotless: clean
-	rm -f functions.mk functions-list basis-cured.c decurable.i $(workComb)
+CLEANFILES = functions.mk functions-list basis-cured.c decurable.i $(workComb)
 
 
 ########################################################################
@@ -190,8 +176,7 @@ $(allIdents): %.ident: %.exe
 	ident $< >$@ || rm -f $@
 	[ -r $@ ]
 
-clean::
-	rm -f *.ident
+MOSTLYCLEANFILES += *.ident
 
 
 ########################################################################
@@ -219,6 +204,4 @@ $(ccuredTimes): ../run-trials $(workExec)
 	./$< $(sparsity) './$(executable) $(runArgs)' >$@. 2>&1
 	mv $@. $@
 
-clean::
-	rm -f *.times.
-	rm -f *.times
+MOSTLYCLEANFILES += *.times. *.times

@@ -1,4 +1,13 @@
-EXTRA_DIST = testsuite.at testsuite
+EXTRA_DIST =					\
+	late-global.c				\
+	late-global.expected			\
+	testsuite				\
+	testsuite.at				\
+	upcase-bad.c				\
+	upcase-bad.expected			\
+	upcase-good.c				\
+	upcase-good.expected
+
 TESTSUITE = $(srcdir)/testsuite
 check-local: atconfig $(TESTSUITE)
 	$(SHELL) $(TESTSUITE)

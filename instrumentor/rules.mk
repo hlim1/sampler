@@ -24,8 +24,12 @@ recurse = $(MAKE) -C $(@D) $(@F)
 libcil = $(cilobjdir)/cil.$(cma)
 syslibs = str.$(cma) unix.$(cma)
 
-impls = $(sort $(extra_impls) $(basename $(wildcard *.ml)))
-ifaces = $(basename $(wildcard *.mli))
+ml = $(wildcard *.ml)
+mli = $(wildcard *.mli)
+EXTRA_DIST += $(sort $(ml) $(mli))
+
+impls = $(sort $(extra_impls) $(ml:.ml=))
+ifaces = $(mli:.mli=)
 implicits = $(filter-out $(ifaces), $(impls))
 
 

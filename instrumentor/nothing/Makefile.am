@@ -1,6 +1,8 @@
 SUBDIRS = tests
 targets = main
 
+EXTRA_DIST = Driver.pm
+
 include ../rules.mk
 
 

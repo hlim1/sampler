@@ -66,3 +66,5 @@ force:
 clean::
 	rm -f collated-times.txt
 	rm -rf inputs times
+
+distdir:

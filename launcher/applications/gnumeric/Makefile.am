@@ -3,5 +3,8 @@ all-local: gnome-gnumeric.png
 gnome-gnumeric.png: ; ln -s /usr/share/pixmaps/$@ .
 
 
-TESTS = gnumeric-bug-isolation.schemas
+schemas = gnumeric-bug-isolation.schemas
+EXTRA_DIST = $(schemas)
+
+TESTS = $(schemas)
 TESTS_ENVIRONMENT = xmllint --valid --noout

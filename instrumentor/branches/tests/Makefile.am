@@ -1,4 +1,12 @@
-EXTRA_DIST = testsuite.at testsuite
+EXTRA_DIST =					\
+	modular-a.c				\
+	modular-b.c				\
+	modular.expected			\
+	simple.c				\
+	simple.expected				\
+	testsuite				\
+	testsuite.at
+
 TESTSUITE = $(srcdir)/testsuite
 check-local: atconfig $(TESTSUITE)
 	$(SHELL) $(TESTSUITE)

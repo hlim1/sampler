@@ -3,6 +3,8 @@
 *.ident
 *.times
 .libs
+Makefile
+Makefile.in
 decurable.i
 functions-list
 functions.mk

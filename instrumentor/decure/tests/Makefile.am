@@ -1,4 +1,8 @@
-EXTRA_DIST = testsuite.at testsuite
+EXTRA_DIST =					\
+	test.c					\
+	testsuite				\
+	testsuite.at
+
 TESTSUITE = $(srcdir)/testsuite
 check-local: atconfig $(TESTSUITE)
 	$(SHELL) $(TESTSUITE)

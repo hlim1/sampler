@@ -1,4 +1,12 @@
-EXTRA_DIST = testsuite.at testsuite
+EXTRA_DIST =					\
+	extern-callee.c				\
+	extern-caller.c				\
+	extern.expected				\
+	test.c					\
+	test.expected				\
+	testsuite				\
+	testsuite.at
+
 TESTSUITE = $(srcdir)/testsuite
 check-local: atconfig $(TESTSUITE)
 	$(SHELL) $(TESTSUITE)

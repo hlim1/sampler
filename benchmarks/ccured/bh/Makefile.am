@@ -6,3 +6,4 @@ runArgs = <$(workDir)/$(testDir)/data.in >/dev/null
 
 
 include ../olden.mk
+include ../rules.mk

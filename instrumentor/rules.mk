@@ -54,7 +54,7 @@ $(addsuffix .di, $(ifaces)): %.di: %.mli $(fixdeps)
 	$(depend)
 
 $(libcil): $(force)
-	$(MAKE) -C $(cildir) -f Makefile.cil NATIVECAML=$(native) cillib
+	$(MAKE) -C $(cildir) -f Makefile.cil NATIVECAML=$(ENABLE_NATIVE) cillib
 
 force:
 .PHONY: force

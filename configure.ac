@@ -92,7 +92,7 @@ AC_COMPILE_IFELSE(
   AC_MSG_RESULT(no))
 AM_CONDITIONAL(HAVE_THREAD_STORAGE, test "$have_thread_storage" = yes)
 
-AC_MSG_CHECKING(log without -lm)
+AC_MSG_CHECKING(for log without -lm)
 old_CFLAGS=$CFLAGS
 CFLAGS="$CFLAGS -ffast-math"
 AC_LINK_IFELSE(

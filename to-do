@@ -1,6 +1,3 @@
-Some CVS directories are being copied into the source distribution
-tarball.
-
 Install something in /usr/share/omf.
 
 Each thread starts its own random sequence of countdowns with the same

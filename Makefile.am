@@ -10,11 +10,11 @@ SUBDIRS =					\
 
 DIST_SUBDIRS =					\
 	$(SUBDIRS)				\
-	benchmarks
+	benchmarks				\
+	debian
 
 EXTRA_DIST =					\
 	$(PACKAGE).spec				\
-	debian					\
 	package.m4
 
 

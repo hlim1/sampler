@@ -231,6 +231,7 @@ benchmarks/ccured/power/Makefile
 benchmarks/ccured/treeadd/Makefile
 benchmarks/ccured/tsp/Makefile
 config.m4
+debian/Makefile
 doc/Makefile
 doc/config.xml
 fuzz/Makefile
@@ -254,6 +255,7 @@ launcher/Makefile
 launcher/python/Makefile
 launcher/applications/Makefile
 launcher/applications/gnumeric/Makefile
+launcher/applications/gnumeric-non-gui/Makefile
 lib/Makefile
 lib/cyclic-size.h
 package.m4

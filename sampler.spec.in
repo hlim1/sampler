@@ -125,7 +125,7 @@ tools for collecting and decoding sampled instrumentation reports.
 %{uncompress:%{S:1}} | tar -xf - -C instrumentor
 
 %build
-%configure --enable-native
+%configure
 make %{?_smp_mflags}
 %{?do_check:make check}
 

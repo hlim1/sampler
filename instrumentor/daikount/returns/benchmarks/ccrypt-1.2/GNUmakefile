@@ -50,7 +50,7 @@ $(sampleTimes): times/sample-all-%.times: sample-all/src/ccrypt run-trials $(see
 
 inputs/%.noise: ../../../../../fuzz/fuzz
 	[ -d $(@D) ] || mkdir $(@D)
-	$< $* 30 $@
+	$< $* 20 $@
 
 clean::
 	rm -f collated-times.txt

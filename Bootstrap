@@ -42,6 +42,7 @@ rm -f config.cache
 cd $srcdir
 aclocal
 autoheader
-autoconf
 [ -d config-aux ] || mkdir config-aux
+libtoolize
 automake -a
+autoconf

@@ -11,4 +11,4 @@ let visit file digest =
     let expr = mkString signature in
     initinfo.init <- Some (SingleInit expr)
   with
-    Not_found -> ()
+    Missing.Missing _ -> ()

@@ -24,7 +24,7 @@ import Uploader
 
 
 def main(name, wrapped, debug_reporter, upload_headers):
-    app = AppConfig(name wrapped, debug_reporter, upload_headers)
+    app = AppConfig(name, wrapped, debug_reporter, upload_headers)
     user = UserConfig(name)
 
     sparsity = user.sparsity()

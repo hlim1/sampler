@@ -5,7 +5,7 @@
 extern unsigned nextEventCountdown;
 
 
-inline unsigned getNextCountdown()
+static inline unsigned getNextCountdown()
 {
   extern double density;
   extern void *generator;

@@ -43,10 +43,10 @@
 %rename lib old_lib
 
 *lib_threads_with:
--lsampler-threads -lpthread
+libsampler-threads.a%s -lpthread
 
 *lib_threads_without:
--lsampler-no-threads
+libsampler-no-threads.a%s
 
 *lib_threads:
 --wrap pthread_create \
@@ -56,6 +56,6 @@
 %{!fthreads:%{!fno-threads:%{!pthread:%(lib_threads_without)}}}
 
 *lib:
--lsampler \
+libsampler.a%s \
 %(lib_threads) \
 %(old_lib)

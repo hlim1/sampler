@@ -40,13 +40,16 @@ def upload(app, user, outcome):
 
         # server may have requested a permanent URL change
         if redirect.permanent:
+            # !!!: sanity check this before applying it
+            # !!!: don't apply change if it is the same as the old value
             user.change_reporting_url(redirect.permanent)
 
         # server may have requested a sparsity change
-        print reply.info()
         if reply.info().has_key("Change-sparsity"):
+            # !!!: sanity check this before applying it
+            # !!!: don't apply change if it is the same as the old value
             user.change_sparsity(int(reply.info()["Change-sparsity"]))
 
         # server may have posted a message for the user
-        if reply.info()["Content-length"]:
+        if int(reply.info()["Content-length"]):
             user.show_server_message(reply)

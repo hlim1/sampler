@@ -10,7 +10,9 @@ SUBDIRS =					\
 
 DIST_SUBDIRS = $(SUBDIRS) mining
 
-EXTRA_DIST = resolver package.m4
+EXTRA_DIST =					\
+	package.m4				\
+	resolver
 
 all-local: package.m4
 

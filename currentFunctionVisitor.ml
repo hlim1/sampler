@@ -1,7 +1,7 @@
 open Cil
 
 
-class visitor = object
+class virtual visitor = object
   inherit FunctionBodyVisitor.visitor
 
   val currentFunction = ref dummyFunDec

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-0.5.4
+
+** Correct a typo in the first-time opt-in dialog.
+
 * sampler-0.5.3
 
 ** Add instrumentor driver support for GCC "-gLEVEL" debug flags.

@@ -7,30 +7,15 @@ class visitor = object
 
   method vfunc func =
     prepareCFG func;
-    
+    RemoveLoops.visit func;
+    ignore (computeCFGInfo func false);	(* for sid's only *)
+
     let predicate = zero in
     let original = func.sbody in
     let instrumented = Duplicate.duplicateBody func in
 
-    let visitors = [
-      "RemoveLoops", (fun _ -> new RemoveLoops.visitor);
-      "SimplifyReturns", new SimplifyReturns.visitor;
-      "SimplifyLefts", new SimplifyLefts.visitor;
-      "SimplifyRights", new SimplifyRights.visitor;
-      "CheckSimplicity", (fun _ -> new CheckSimplicity.visitor);
-      "Instrument", (fun _ -> new Instrument.visitor)
-    ] in
+    InstrumentWrites.visit func instrumented;
     
-    let visit (title, visitor) =
-      eprintf "  subphase %s begins\n" title;
-      let replacement = visitCilBlock (visitor func) instrumented in
-      if replacement != instrumented then
-	failwith "unexpectedly got changed block";
-      eprintf "  subphase %s ends\n" title
-    in
-
-    List.iter visit visitors;
-
     let choice = mkStmt (If (predicate, original, instrumented, func.svar.vdecl)) in
     func.sbody <- mkBlock [choice];
     SkipChildren

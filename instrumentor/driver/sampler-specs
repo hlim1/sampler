@@ -24,12 +24,14 @@
 %{fsampler-scheme=*:-include sampler/unit.h}
 
 *cc1:
-+ %{save-temps} %{v} \
++ %{v} \
 %{!fno-threads:%{!fthreads:%{pthread:-fthreads}}} \
+-finstrumentor-input %u.i \
+-finstrumentor-output %u.inst.i \
 %(embedding)
 
 *asm_final:
-+ %{save-temps} %{v:--verbose} \
++ %{v:--verbose} \
 %(embedding)
 
 %rename lib old_lib

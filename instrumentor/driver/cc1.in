@@ -2,7 +2,6 @@
 
 use strict;
 use File::Basename;
-use File::Temp;
 use FileHandle;
 use FindBin;
 
@@ -12,12 +11,13 @@ use FindBin;
 
 my $countdowns = 'acyclic';
 my $verbose;
-my $save_temps;
 my $preprocessed;
 my $preprocessing;
 
 my @inputs;
 my $input;
+my $instrumentor_input;
+my $instrumentor_output;
 
 my @cpp0 = "@cpp0@" ? ("@cpp0@") : ("@cc1@", '-E', '-quiet');
 my $cpp0_output_slot;
@@ -86,6 +86,8 @@ my %flag_specs =
      '-fno-compare-constants' => \&inst_toggle,
      '-fsave-cfg' => \&inst_embed,
      '-fsave-site-info' => \&inst_embed,
+     '-finstrumentor-input' => sub { $instrumentor_input = shift @ARGV },
+     '-finstrumentor-output' => sub { $instrumentor_output = shift @ARGV },
 
      # Overall Options
      '-E' => sub { $preprocessing = 1; },
@@ -95,20 +97,20 @@ my %flag_specs =
      # C Language Options
      '-aux-info' => sub { push @cc1, $_ },
 
-     # Debugging Options
-     '-save-temps' => sub { $save_temps = 1 },
-
      # Optimization Options
      '--param' => sub { push @cc1, $_, shift @ARGV },
 
      # Preprocessor Options
      '-A' => \&slurp_1,
      '-D' => \&slurp_1,
-     '-MT' => \&slurp_1,
-     '-MQ' => \&slurp_1,
+
+     '-MT' => sub { push @cpp0, $_, shift @ARGV },
+     '-MQ' => sub { push @cpp0, $_, shift @ARGV },
+     '-MP' => sub { push @cpp0, $_ },
+
      '-MF' => sub { push @cpp0, $_, shift @ARGV },
-     '-MD' => sub { push @cpp0, $_ },
-     '-MMD' => sub { push @cpp0, $_ },
+     '-MD' => sub { push @cpp0, $_, shift @ARGV },
+     '-MMD' => sub { push @cpp0, $_, shift @ARGV },
      '-I' => \&slurp_1,
      '-idirafter' => \&slurp_1,
      '-include' => \&slurp_1,
@@ -122,6 +124,7 @@ my %flag_specs =
 
      # Undocumented Options
      '-auxbase' => \&slurp_1,
+     '-auxbase-strip' => \&slurp_1,
      '-dumpbase' => \&dumpbase,
      '-quiet' => sub { push @cc1, $_ }
      );
@@ -130,7 +133,7 @@ my %flag_specs =
 while (@ARGV) {
     local $_ = shift;
 
-    if (/^-/) {
+    if (/^-./) {
 	if (exists $flag_specs{$_}) {
 	    my $handler = $flag_specs{$_};
 	    $handler->($_);
@@ -151,7 +154,7 @@ while (@ARGV) {
 	} else {
 	    slurp_0 $_;
 	}
-    } elsif (/\.[ci]$/) {
+    } elsif (/\.[ci]$/ || $_ eq '-') {
 	push @inputs, $_;
 	slurp_0 $_;
 	$cc1_input_slot = \$cc1[@cc1 - 1];
@@ -187,36 +190,23 @@ if ($preprocessing) {
 ########################################################################
 
 
-sub tempfile ($$) {
-    my ($basis, $suffix) = @_;
-    if ($save_temps) {
-	my ($basename, undef, undef) = fileparse $basis, qr{\..*};
-	my $filename = $basename . $suffix;
-	return (new FileHandle($filename, 'w'), $filename)
-    } else {
-	return File::Temp::tempfile(SUFFIX => $suffix, UNLINK => 1);
-    }
-}
+$instrumentor_input = $input if $preprocessed;
+die "internal error: instrumentor input file was not set\n" unless defined $instrumentor_input;
+die "internal error: instrumentor output file was not set\n" unless defined $instrumentor_output;
 
-
-my $instrumentor_input;
-
-if ($preprocessed) {
-    $instrumentor_input = $input;
-} else {
-    $instrumentor_input = (tempfile $input, '.i')[1];
+if (defined $cpp0_output_slot) {
     $$cpp0_output_slot = $instrumentor_input;
-    run_stage @cpp0;
+} else {
+    push @cpp0, '-o', $instrumentor_input;
 }
-
-my @instrumentor_output = tempfile $input, '.inst.i';
+run_stage @cpp0;
 
 open OLDOUT, '>&', \*STDOUT;
-open STDOUT, '>&', $instrumentor_output[0];
+open STDOUT, '>', $instrumentor_output;
 run_stage "$FindBin::Bin/../main", @inst, $instrumentor_input;
 open STDOUT, '>&', \*OLDOUT;
 
-$$cc1_input_slot = $instrumentor_output[1];
+$$cc1_input_slot = $instrumentor_output;
 run_stage @cc1;
 
 exit 0;

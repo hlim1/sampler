@@ -2,22 +2,22 @@
 #define INCLUDE_libbranches_branches_h
 
 
-typedef unsigned BranchCounters[2];
+typedef unsigned CounterTuple[2];
 
 
-struct BranchProfile
+struct CompilationUnit
 {
-  struct BranchProfile *prev;
-  struct BranchProfile *next;
+  struct CompilationUnit *prev;
+  struct CompilationUnit *next;
   
   const unsigned char signature[128 / 8];
   const unsigned count;
-  BranchCounters sites[];
+  CounterTuple * const tuples;
 };
 
 
-void registerBranchProfile(struct BranchProfile *);
-void unregisterBranchProfile(struct BranchProfile *);
+void registerCompilationUnit(struct CompilationUnit *);
+void unregisterCompilationUnit(struct CompilationUnit *);
 
 
 #endif /* !INCLUDE_libbranches_branches_h */

@@ -5,24 +5,27 @@
 
 
 /* the instrumentor will create initializers for these */
-static struct BranchProfile branchProfile;
+#pragma cilnoremove("counterTuples")
 #pragma cilnoremove("siteInfo")
+static CounterTuple counterTuples[];
+static struct CompilationUnit compilationUnit;
+
 static const char siteInfo[] __attribute__((section(".debug_site_info")));
 
 
-#pragma cilnoremove("branchProfileConstructor")
-static void branchProfileConstructor() __attribute__((constructor));
-static void branchProfileConstructor()
+#pragma cilnoremove("compilationUnitConstructor")
+static void compilationUnitConstructor() __attribute__((constructor));
+static void compilationUnitConstructor()
 {
-  registerBranchProfile(&branchProfile);
+  registerCompilationUnit(&compilationUnit);
 }
 
 
-#pragma cilnoremove("branchProfileDestructor")
-static void branchProfileDestructor() __attribute__((destructor));
-static void branchProfileDestructor()
+#pragma cilnoremove("compilationUnitDestructor")
+static void compilationUnitDestructor() __attribute__((destructor));
+static void compilationUnitDestructor()
 {
-  unregisterBranchProfile(&branchProfile);
+  unregisterCompilationUnit(&compilationUnit);
 }
 
 

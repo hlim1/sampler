@@ -9,3 +9,5 @@ single value multiple times
 figure out what to do about setjmp/longjmp
 
 opt-in dialog's href button lacks color, underline
+
+server-message dialog needs HIG'ified spacing

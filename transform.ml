@@ -29,5 +29,5 @@ end
 let phase _ =
   ("Transform",
    fun file ->
-     Instrument.addPrototype file;
+     LogWrite.addPrototype file;
      visitCilFileSameGlobals new visitor file)

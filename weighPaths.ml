@@ -47,8 +47,10 @@ class visitor = object
     let headers = CollectHeaders.collectHeaders cfg in
     printf "    collected %i headers\n" headers#size;
     let weights = weighPaths headers in
-    print_endline "    weighed paths";
-    
+    printf "    weighed %i paths\n" weights#size;
+    if headers#size != weights#size then
+      failwith "headers/weights size mismatch";
+
     let printWeight node weight =
       printf "    weight below %i: %i" node.sid weight;
       print_newline ()

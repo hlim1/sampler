@@ -2,26 +2,23 @@ exception Duplicate_key
 exception Missing_key
     
 
-class ['key, 'data] container (indexer : 'key -> 'index) = object(self)
-    
-  val storage : ('key * 'data) list ref = ref []
+class ['key, 'data] container indexer = object(self)
+
+  val storage : ('index * ('key * 'data)) list ref = ref []
       
   method add key data =
-    storage := (key, data) :: List.remove_assq key !storage
-	
-  method find key = List.assq key !storage
+    self#remove key;
+    storage := (indexer key, (key, data)) :: !storage
 
-  method mem key = List.mem_assq key !storage
+  method remove key =
+    storage := List.remove_assoc (indexer key) !storage
+					      
+  method find key = snd (List.assoc (indexer key) !storage)
 
-  method replace key data =
-    if not (self#mem key) then
-      raise Missing_key
-    else
-      begin
-	storage := List.remove_assq key !storage;
-	self#add key data
-      end
-	
+  method mem key = List.mem_assoc (indexer key) !storage
+
+  method size = List.length !storage
+
   method iter action =
-    List.iter (fun (key, data) -> action key data) !storage
+    List.iter (fun (_, (key, data)) -> action key data) !storage
 end

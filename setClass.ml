@@ -1,9 +1,9 @@
 exception Missing_key
    
 
-class ['key] container (indexer : 'key -> 'index) = object(self)
+class ['key] container indexer = object(self)
     
-  val storage = ref []
+  val storage : ('index * 'key) list ref = ref []
 
   method add key =
     if not (self#mem key) then

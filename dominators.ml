@@ -50,7 +50,7 @@ let computeDominators (r, nodes) =
   let n = ref 0 in
   let rec depthFirstSearch v =
     incr n;
-    sdno#replace v !n;
+    sdno#add v !n;
     ndfs#add !n v;
     label#add v v;
     ancestor#add v n0;
@@ -73,8 +73,8 @@ let computeDominators (r, nodes) =
       begin
 	compress (ancestor#find v);
 	if sdno#find (label#find (ancestor#find v)) < sdno#find (label#find v) then
-	  label#replace v (label#find (ancestor#find v));
-	ancestor#replace v (ancestor#find (ancestor#find v))
+	  label#add v (label#find (ancestor#find v));
+	ancestor#add v (ancestor#find (ancestor#find v))
       end
   in
 	
@@ -96,28 +96,28 @@ let computeDominators (r, nodes) =
     while sdno#find (label#find w) < sdno#find (label#find (child#find !s)) do
       if size#find !s + size#find (child#find (child#find !s)) >= 2* size#find (child#find !s) then
 	begin
-	  ancestor#replace (child#find !s) !s;
-	  child#replace !s (child#find (child#find !s));
+	  ancestor#add (child#find !s) !s;
+	  child#add !s (child#find (child#find !s));
 	end
       else
 	begin
-	  size#replace (child#find !s) (size#find !s);
-	  ancestor#replace !s (child#find !s);
+	  size#add (child#find !s) (size#find !s);
+	  ancestor#add !s (child#find !s);
 	  s := child#find !s
 	end
     done;
     
-    label#replace !s (label#find w);
-    size#replace v (size#find v + size#find w);
+    label#add !s (label#find w);
+    size#add v (size#find v + size#find w);
     if size#find v < 2 * size#find w then
       begin
 	let tmp = !s in
 	s := child#find v;
-	child#replace v tmp
+	child#add v tmp
       end;
     
     while !s != n0 do
-      ancestor#replace !s v;
+      ancestor#add !s v;
       s := child#find !s
     done
   in
@@ -128,7 +128,7 @@ let computeDominators (r, nodes) =
       fun v ->
 	let u = eval v in
 	if sdno#find u < sdno#find w then
-	  sdno#replace w (sdno#find u)
+	  sdno#add w (sdno#find u)
     end;
 
     (bucket#find (ndfs#find (sdno#find w)))#add w;
@@ -148,7 +148,7 @@ let computeDominators (r, nodes) =
   for i = 2 to !n do
     let w = ndfs#find i in
     if idom#find w != ndfs#find (sdno#find w) then
-      idom#replace w (idom#find (idom#find w))
+      idom#add w (idom#find (idom#find w))
   done;
 
   new dominatorTree idom

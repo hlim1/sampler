@@ -2,6 +2,12 @@
 #include "log.h"
 
 
+int logIsImminent(unsigned within __attribute__((unused)))
+{
+  return 1;
+}
+
+
 void logWrite(const char filename[], unsigned line,
 	      void *address, unsigned size,
 	      void *data __attribute__((unused)))

@@ -2,6 +2,8 @@
 #define INCLUDE_liblog_log_h
 
 
+int logIsImminent(unsigned);
+
 void logWrite(const char *, unsigned, void *, unsigned, void *);
 
 

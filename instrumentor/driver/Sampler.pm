@@ -67,16 +67,16 @@ sub collectOneArgument {
 	return 1;
     } elsif ($arg eq '--no-threads') {
 	push @{$self->{instrumentor}}, $arg;
-	$self->{threads} = 0;
+	$self->{threads_override} = 0;
 	return 1;
     } elsif ($arg =~ '--threads') {
 	$::have_thread_storage
 	    or die "cannot instrument multithreaded applications on this platform\n";
 	push @{$self->{instrumentor}}, $arg;
-	$self->{threads} = 1;
+	$self->{threads_override} = 1;
 	return 1;
     } else {
-	unshift @{$pargs}, '--threads' if $self->isThreadFlag($arg);
+	$self->{threads} = 1 if $self->isThreadFlag($arg);
 	return 0;
     }
 }
@@ -107,13 +107,20 @@ sub sampling {
 }
 
 
+sub threading {
+    my $self = shift;
+    return $self->{threads_override} if defined $self->{threads_override};
+    return $self->{threads};
+}
+
+
 sub extraHeaders {
     my $self = shift;
     my @extras;
 
     my $dir = "$::root/libcountdown";
     push @extras, '-DCIL';
-    push @extras, '-include', "$::root/libthreads/" . ($self->{threads} ? 'threads.h' : 'no-threads.h');
+    push @extras, '-include', "$::root/libthreads/" . ($self->threading ? 'threads.h' : 'no-threads.h');
     push @extras, '-include', "$dir/countdown.h" if $self->sampling;
     push @extras, '-include', "$dir/$self->{countdowns}.h" if $self->{sample_events};
 
@@ -126,8 +133,8 @@ sub extraLibs {
     my @extras;
 
     if ($self->sampling) {
-	my $_r = $self->{threads} ? '_r' : '';
-	push @extras, '-Wl,--wrap,pthread_create' if $self->{threads};
+	my $_r = $self->threading ? '_r' : '';
+	push @extras, '-Wl,--wrap,pthread_create' if $self->threading;
 	push @extras, "-L$::root/libcountdown";
 	push @extras, "-l$self->{countdowns}$_r";
 	push @extras, "-lcountdown$_r";

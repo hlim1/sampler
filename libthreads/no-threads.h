@@ -4,6 +4,7 @@
 
 #define SAMPLER_THREAD_LOCAL
 #define SAMPLER_REENTRANT(symbol) symbol
+#undef SAMPLER_THREADS
 
 
 #endif /* !INCLUDE_libthreads_threads_h */

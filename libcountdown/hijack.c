@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include "lifetime.h"
@@ -45,7 +46,11 @@ int __wrap_pthread_create(pthread_t *thread,
 			  Starter start, void *argument)
 {
   Closure * const closure = (Closure *) malloc(sizeof(Closure));
-  if (!closure) return -1;
+  if (!closure)
+    {
+      errno = ENOMEM;
+      return -1;
+    }
 
   closure->start = start;
   closure->argument = argument;

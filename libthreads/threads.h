@@ -4,7 +4,6 @@
 
 #define SAMPLER_THREAD_LOCAL __thread
 #define SAMPLER_REENTRANT(symbol) symbol ## _r
-#define SAMPLER_REENTRANT_NAME(symbol) symbol "_r"
 #define SAMPLER_THREADS
 
 

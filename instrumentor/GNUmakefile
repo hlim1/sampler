@@ -14,7 +14,7 @@ cfg-to-dot: $(libcil) $(cfg-to-dot)
 	$(link)
 live += $(cfg-to-dot)
 
-harness := $(manager) $(phases)
+harness := $(manager) $(phases) $(queueClass)
 harness.$(cma): $(harness)
 	$(archive)
 live += $(harness)

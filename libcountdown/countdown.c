@@ -27,7 +27,7 @@ unsigned resetCountdown()
 }
 
 
-__attribute__((constructor)) void initialize()
+static __attribute__((constructor)) void initialize()
 {
   nextLogCountdown = resetCountdown();
 }

@@ -34,7 +34,7 @@ Maintaining a global counter modulo one hundred is simple, but has the
 disadvantage of being trivially periodic.  If the above fragment were
 in a loop, for example, one of the checks would execute on every
 fiftieth iteration while the other would never execute.  We wish
-sampling to be fair and random: each check should independently have a
+sampling to be fair and uniformly random: each check should independently have a
 1/100 chance of being sampled each time it occurs.  This is a
 so-called \termdef{Bernoulli process}, the most common example of
 which is repeatedly tossing a coin.  We wish to sample based on the
@@ -64,13 +64,13 @@ optimizations.
 
 Sampling is sparse.  Each of the conditionals has a 99/100 = 99\%
 chance of not sampling.  On any run through this block, there is a
-$(99/100)^2 \approx 98\%$ chance that both instrumentation sites will
-be skipped.  If we could determine, upon reaching the top of a basic
-block, that no site in that block will be sampled, then we could
-branch off into fast-path code from which all conditionally-guarded
-checks have been removed.  This requires two versions of the code: one
+$(99/100)^2 \approx 98\%$ chance that both instrumentation sites are
+skipped.  If we determine, upon reaching the top of a basic
+block, that no site in that block is sampled, then we can
+branch into fast-path code with all conditionally-guarded
+checks removed.  This requires two versions of the code: one
 with sampled instrumentation, one without.  It also requires that we
-be able to predict how many future sampling opportunities will be
+can predict how many future sampling opportunities are
 skipped before the next one is taken.
 
 Anticipating future samples requires a change in randomization
@@ -89,16 +89,15 @@ have:
   \rangle
 \end{equation*}
 
-A more compressed representation would be to encode the number of
+A more compressed representation encodes the number of
 tosses until (and including) the next sampled check: $\langle6, 4, 2, 3,
-\dots\rangle$.  An advantage of this representation is that it is
-predictive: looking at the head of the sequence, we can see that five
-sites will be skipped before the next sample.  The head of the
+\dots\rangle$.  This representation is 
+predictive: the head of the
 sequence can be treated as a countdown, telling us how far away the
 next sample is.  If we are at the top of a basic block containing only
 two checks, and the next sampling countdown is 6, we know in advance
-that neither of those sites will be sampled on this visit.  Instead,
-we merely discard two tosses and proceed directly to our
+that neither of those sites is sampled on this visit.  Instead,
+we merely discard two tosses and proceed directly to the
 instrumentation-free fast path:
 
 \begin{code}
@@ -125,7 +124,7 @@ instrumentation-free fast path:
   \<\}
 \end{code}
 
-The instrumented code must do some extra work to manage the
+The instrumented code does extra work to manage the
 next-sample countdown, but the fast path is much improved.  The only
 overhead is a single compare/branch and a constant decrement, and this
 overhead is amortized over the entire block.  In larger blocks with
@@ -150,7 +149,7 @@ simple floating-point operations.\footnote{In theory, a countdown may
   This divisor vastly exceeds any reasonable estimate of the number of
   elementary particles in the universe.}
 
-As can be seen in the instrumented slow path, the countdown must be
+As can be seen in the instrumented slow path, the countdown is
 reset once it reaches zero.  Thus, we consume next-sample countdowns
 gradually over time.  However, the rate of consumption is slower than
 that for raw coin tosses: $n$ countdowns for $1/d$ sampling encode, on
@@ -160,12 +159,12 @@ slowly than would a similar bank of raw coin tosses.
 
 \subsection{From Blocks to Functions}
 
-The block amortizing scheme outlined above generalizes to an arbitrary
+The scheme for blocks outlined above generalizes to an arbitrary
 control flow graph as follows.  Any region of acyclic code has a
-finite number of possible paths.  We call the maximum number of
-instrumented sites on any path the \termdef{weight} of that region.
+finite number of possible paths.  Let the maximum number of
+instrumented sites on any path be the \termdef{weight} of that region.
 If the next-sample countdown exceeds the weight of an acyclic region,
-then no samples will be taken on this pass through that part of the
+then no samples are taken on this pass through that part of the
 code.  We can place a countdown threshold check at the top of this
 region.
 
@@ -274,10 +273,10 @@ within each function:
   out to the global.
 \end{enumerate}
 
-In order to maintain agreement across all functions, we must also
+To maintain agreement across all functions, we must also
 export just before each function call and import again after each call
 returns.  Again, though, calls to weightless functions may simply be
-ignored.  They will not change or even inspect the countdown.
+ignored, as they do not change or even inspect the countdown.
 Similarly, the bodies of weightless functions need not import and
 export at entry and exit, since they always leave the countdown
 unchanged.  With this change, the conventional native C compiler can
@@ -287,10 +286,10 @@ optimizations.
 \subsection{Issues in Remote Sampling}
 \label{sec:compression}
 
-Our framework for statistically fair sampling could be used for any
+Our framework for statistically fair sampling can be used for any
 application of program monitoring.  As discussed in
 Section~\ref{sec:introduction}, there are issues peculiar to
-monitoring a large number of remote sites.  Here we briefly reiterate
+monitoring a large number of remote sites.  Here we briefly discuss
 the main problems and a particular solution that we adopt.
 
 There are several dimensions in which performance can be harmed by
@@ -299,16 +298,17 @@ extra monitoring code is a concern, but so are the use of local
 storage to hold results (even temporarily) on a user's machine, the
 use of network bandwidth to transmit results, and finally the storage
 needed to hold results on a central server for analysis.  For example,
-if we wish to keep all results, then the storage requirements for the
+if we wish to retain all sampled data, then the storage requirements for the
 central server grow linearly with the number of executions even if the
-data collected from each execution is constant size.  In
-Section~\ref{sec:ccured} we give an example of an analysis that does
-not require retention of the data on the server.  However, we expect
-it will often be desirable to be able to perform a new analysis on
-previously gathered data and in this situation at least some data
-would need to be retained.
+data collected from each execution is constant size.  
+%In
+%Section~\ref{sec:ccured} we give an example of an analysis that does
+%not require retention of the data on the server.  However, we expect
+%it will often be desirable to be able to perform a new analysis on
+%previously gathered data and in this situation at least some data
+%would need to be retained.
 
-Our solution is to sample the number of observations of each of a very
+Our approach is to sample the number of observations of each of a very
 large, but fixed, set of predicates (see Sections~\ref{sec:ccrypt}
 and~\ref{sec:bc}).  The final form of the data is a vector of
 integers, with position $i$ containing the number of times we observed
@@ -320,7 +320,7 @@ Maintaining a vector of counters produces data for an execution whose
 size is largely independent of the sampling density or running time.
 The loss of information, however, is significant, as the order
 of the observations is discarded.  While our results can be interpreted
-as showing that one can get fairly far without ordering, we expect
-there will be interesting applications that require ordering information.
+as showing that one can get fairly far ignoring ordering, we expect
+there are interesting applications that require ordering information.
 We leave the problem of determining how to efficiently gather, store and
 analyze partial traces (with ordering information) as future work.

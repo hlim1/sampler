@@ -1,7 +1,7 @@
 \section{Applications and Experiments}
 \label{sec:applications}
 
-We have used the transformation framework to inject different forms of
+We have used our transformation framework to inject different forms of
 instrumentation into several programs, both to assess the performance
 impact of sampling as well as to show that sampling can offer novel
 insights into program (mis)behavior.  We begin with the relatively
@@ -33,9 +33,9 @@ bounds checks, testing for null, etc.  However, in large numbers,
 their performance impact can be considerable.  We wish to use random
 sampling to spread this cost among many users.
 
-We have applied sampling to several benchmarks taken from the Olden
-\cite{Carlisle:1996:OPPWDDSDMM} and SPECINT95 \cite{SPEC95} benchmark
-suites.  All programs run to completion and we are simply measuring
+We have applied sampling to \CCured versions of several Olden
+\cite{Carlisle:1996:OPPWDDSDMM} and SPECINT95 \cite{SPEC95} benchmarks.
+All programs run to completion and we are simply measuring
 the overhead of performing the dynamic checks.
 
 \subsubsection{Whole-Program Sampling}
@@ -62,7 +62,7 @@ each program, we give the total number of non-library functions and
 the number of these that are weightless.  As \CCured is a
 whole-program analysis, weightless function identification has the
 advantage of being able to examine every function body.  We also count
-the number of functions which directly contain at least one
+the number of functions that directly contain at least one
 instrumentation site.  (The remainder are functions which contain no
 sites of their own but which call other functions that do have sites.)
 
@@ -293,8 +293,8 @@ and other poorly-performing benchmarks into line.
 
 Assertion sharing works well when potential failure points have been
 explicitly marked.  In practice, this is rare.  Certainly, few human
-programmers will add assertions as pervasively as \CCured.  Instead,
-we may have to guess at which program behaviors are indicative of bad
+programmers add assertions as pervasively as \CCured.  Instead,
+we may need to guess at which program behaviors are indicative of bad
 behavior.  Most such automated guesses will be incorrect and can be
 eliminated in light of observed program behavior.  Those guesses which
 remain should point in the direction of the bug.
@@ -320,15 +320,16 @@ negative values, zero, and positive values.  This reduces the amount
 of information we must track while still making distinctions
 consistent with common C programming style.
 
-Our instrumentation strategy is as follows.  Consider each syntactic
-call site.  Disregard those that return structures or floating point
-numbers; retain only those which return scalar values, including both
-arithmetic types as well as pointers.  After each such call, update
-one of three counters depending upon the sign of the result: one for
-negative values, one for zeros, and one for positive values.  Each
-call site has its own triple of counters.  Thus, when the program
-concludes, we can examine any function call of interest and ask how
-often that call returned a negative, zero, or positive value.  For
+Our instrumentation strategy for this application is as follows.
+Consider each syntactic call site.  Disregard those that return
+structures or floating point numbers; retain only those which return
+scalar values, including both arithmetic types as well as pointers.
+After each such call, update one of three counters depending upon the
+sign of the result: one for negative values, one for zeros, and one
+for positive values.  Each call site has its own triple of counters.
+Thus, when the program concludes, we can examine any function call of
+interest and ask how often that call returned a negative, zero, or
+positive value.  For
 \texttt{ccrypt}, we find 570 call sites of interest, for $570 \times 3 =
 1710$ counters.  Each counter corresponds to a single predicate which
 is hypothesized to behave differently in successful versus crashed
@@ -357,20 +358,18 @@ tests we term \termdef{elimination heuristics}:
 
 \begin{description}
 \item[\elim{Elimination by universal falsehood}:] disregard any
-  counter which is zero on all runs.  These likely represent
-  predicates which can never be true due to deeper properties of the
-  code.
-  
-\item[\elim{Elimination by lack of failing example}:] disregard any
-  counter which is zero on all failed runs.  These likely represent
-  predicates which do not need to be true in order for a failure to
-  occur.
+  counter that is zero on all runs.  These likely represent
+  predicates which can never be true.
   
 \item[\elim{Elimination by lack of failing coverage}:] disregard any
   triple of counters all three of which are zero on all failed runs.
   Because one counter in each triple must always be true for any
-  sample, these likely represent instrumentation sites which do not
-  need to execute at all in order for a failure to occur.
+  sample, these likely represent instrumentation sites that are not
+  even reached in failing executions.
+  
+\item[\elim{Elimination by lack of failing example}:] disregard any
+  counter which is zero on all failed runs.  These likely represent
+  predicates that need not be true for a failure to occur.
   
 \item[\elim{Elimination by successful counterexample}:] disregard any
   counter which has a non-zero value on any successful run.  These
@@ -380,14 +379,15 @@ tests we term \termdef{elimination heuristics}:
 
 We characterize these as heuristics because they are subject to noise
 from random sampling, and also because not all are equally applicable
-to all bugs.  \elim{Elimination by successful counterexample} assumes
-that the bug is deterministic: whenever the bad behavior occurs, the
-program \emph{must} crash.  The first three heuristics do not have
-this dependency, but do require a large enough body of runs so that
-any predicate which is ever true is likely to have been observed true
-at least once.  Note as well that these heuristics are not
-independent: \elim{universal falsehood} and \elim{lack of failing
-  coverage} each eliminate a subset of the counters identified by
+to all bugs.  For example, \elim{Elimination by successful
+counterexample} assumes that the bug is deterministic: whenever the
+bad behavior occurs, the program \emph{must} crash.  The first three
+heuristics do not have this dependency, but do require a large enough
+body of runs so that any predicate which is ever true is likely to
+have been observed true at least once.  Note as well that these
+heuristics are not independent: \elim{universal falsehood} and
+\elim{lack of failing coverage} each eliminate a subset of the
+counters identified by
 \elim{lack of failing example}.  Elimination heuristics also vary in
 which kinds of runs they exploit: \elim{successful counterexample}
 considers only successful runs; \elim{lack of failing example} and
@@ -396,7 +396,7 @@ considers only successful runs; \elim{lack of failing example} and
 
 \subsubsection{Data Collection and Analysis}
 
-One call, with one update to one of three counters, is considered one
+One function call, with one update to one of three counters, is considered one
 instrumentation site.  We transform the instrumentation to be sampled
 rather than unconditional using the framework described in
 Section~\ref{sec:framework}.  In lieu of a large user community, we
@@ -430,12 +430,12 @@ nature of our guesses, the limited coverage of our automated test
 suite, and the filtering effect of sparse sampling.  Thus, at first
 glance, \elim{elimination by universal falsehood} is quite effective
 while \elim{elimination by successful counterexample} seems rather
-poor.  However, these two heuristics look for disjoint properties, and
-can be combined together to good effect.
+poor.  However, these two heuristics test disjoint properties and
+can be combined to good effect.
 
-This leaves us with only those predicates which are occasionally
+The combination leaves only those predicates which are sometimes
 observed to be true in failed runs but never observed to be true in
-any successful run.  For our \texttt{ccrypt} trials, only two
+successful runs.  For our \texttt{ccrypt} trials, only two
 predicates meet this criterion:
 
 \begin{features}
@@ -445,7 +445,7 @@ predicates meet this criterion:
 
 Examining the corresponding code shows that these predicates are
 consistent with the circumstances under which the bug is reported to
-occur.  This call to \texttt{file\_exists()} returns one when an output
+occur.  This call to \texttt{file\_exists()} returns ``{\tt 1}'' when an output
 file already exists.  A confirmation prompt is presented, and this
 call to \texttt{xreadline()} returns the user's reply, or null if the
 input terminal is at \texttt{EOF}.  Inspection of the code immediately
@@ -471,27 +471,27 @@ remain.  Thus we have the ability to identify not only the direct
 cause of a bug but also related behaviors which are strongly but
 imperfectly correlated with failure.  We further explore this idea of
 broad correlation in Section~\ref{sec:bc}, where even the buggy line
-code itself does not always cause a crash.
+of code itself does not always cause a crash.
 
 \subsubsection{Refinement over time}
 
 In order to gain a better understanding of how the elimination
 heuristics benefit from seeing larger populations of runs, we have
 experimented with randomized subsets of our complete run suite.
-Assume that \elim{elimination by universal falsehood} mainly
-identifies foolish guesses that could have been avoided entirely given
-a more refined guessing procedure.  We have seen that
+%Assume that \elim{elimination by universal falsehood} mainly
+%identifies foolish guesses that could have been avoided entirely given
+%a more refined guessing procedure.  
+We have seen that
 \elim{elimination by successful counterexample} is quite effective
 when given a few thousand successful runs; how well does it perform
 with a smaller suite?
-
 We start with the 141 candidate predicates that are ever nonzero on
 any run.  We assemble a random subset of fifty successful runs and
 filter the predicate set using \elim{elimination by successful
   counterexample}.  We then add another fifty runs, and another fifty,
 and so on in steps up to the full set of 2902 successful runs.  We
-repeat this entire process one hundred times to gage how rapidly one
-can expect the predicate set to shrink as more and more runs arrive
+repeat this entire process one hundred times to gauge how rapidly one
+can expect the predicate set to shrink as more runs arrive
 over time.
 
 \begin{figure}
@@ -574,7 +574,7 @@ The crash occurs several frames deep inside the C library's
 are especially pernicious because the actual corruption may have
 happened well before the ultimate crash \cite{Eisenstadt1993b}, or may
 even corrupt memory in a way that allows execution to continue without
-obvious failure.  We will instrument using a variation on our previous
+obvious failure.  We instrument using a variation on our previous
 strategy of counter triples.  These counters have no memory of time
 ordering and is therefore are, in a sense, impervious to the
 time-lapse complication.  To cope with bad behavior that does not
@@ -586,7 +586,7 @@ with failure in spite of the occasional successful counterexample.
 \subsubsection{Instrumentation Strategy}
 
 We instrument \texttt{bc} to guess and randomly check a large number
-of possible invariants.  As before, our goal is to identify predicates
+of predicates.  As before, our goal is to identify predicates
 that capture bad behavior: false when the program succeeds and true
 when the program crashes.  We cast an extremely broad net, but with an
 eye toward pointer use errors and buffer overruns.  For pointer use,
@@ -645,7 +645,7 @@ output (a training set), and attempt to learn a binary classifier that
 gives good predictions on a test set.  The learning process usually
 involves additional parameters whose values can be determined using a
 validation set.  In our case, the end goal is to narrow down the set
-of features.  Hence our method will have to balance good
+of features.  Hence our method must balance good
 classification performance with aggressive feature selection.
 
 A binary classifier takes feature values as inputs, and outputs a

@@ -3,8 +3,8 @@
 
 It is an unfortunate fact that essentially all deployed software
 systems have bugs, and that users often encounter these bugs.  The
-resources (measured in time, money, or people) available for making
-improvements are always limited.  The normal case is that just through
+resources (measured in time, money, or people) available for improving
+software are always limited, and the normal case is that just through
 sheer numbers the user community brings far more resources to bear on
 testing a piece of software than the team responsible for producing
 that software.
@@ -17,7 +17,7 @@ community.  We propose an infrastructure where some information about
 each user execution of a program is transmitted to a central database.
 The data gathered from all executions is analyzed to extract
 information that helps engineers find and fix problems more quickly;
-we term this {\em automatic bug isolation}.
+we call this {\em automatic bug isolation}.
 In our view, such an infrastructure has several benefits:
 \begin{itemize}
   
@@ -131,17 +131,12 @@ reduce the overhead of the necessary additional code that determines
 whether to take a sample or not.
 
 The second problem is that information from the client must be
-transmitted over the network to the central database.  Generating
-traces, or even partial traces, is simply too expensive in network
-bandwidth.  Furthermore, gathering a relatively small amount of data
-periodically from a large number of clients can quickly overwhelm the
-storage capacity of a central server.  In our experience, compression
-of the data must always be designed into the analysis; we discuss this
-further in Section~\ref{sec:compression}.
-
-\aside{The preceding two paragraphs are somewhat redundant with
-  respect to Section~\ref{sec:compression}.  Do we really need both,
-  or is there some way these could be coalesced?}
+transmitted over the network to the central database.  Gathering even
+a relatively small amount of data periodically from a large number of
+clients creates significant scalability problems.  We have found it necessary
+to discard information about the order in which program statements execute
+to achieve sufficiently compact representations of sampled data
+(see Section~\ref{sec:compression}).
 
 Section~\ref{sec:applications} presents several different applications
 of our framework.  In Section~\ref{sec:ccured} we consider how we can

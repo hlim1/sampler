@@ -6,6 +6,7 @@
 *.out
 *.pdf
 *.ps
+*.tpt
 *.xyc
 auto
 body.tmp

@@ -10,7 +10,7 @@ let name = {
 
 class c file : Scheme.c =
   object
-    val tuples = CounterTuples.build name file
+    val tuples = new CounterTuples.manager name file
 
     method private findAllSites =
       Scanners.iterFuncs file

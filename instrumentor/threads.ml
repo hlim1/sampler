@@ -7,3 +7,13 @@ let threads =
     ~desc:"create thread-safe code"
     ~ident:"Threads"
     ~default:false
+
+
+let bump file =
+  if !threads then
+    let helper = Lval (var (FindFunction.find "atomicIncrementCounter" file)) in
+    fun lval location ->
+      Call (None, helper, [mkAddrOrStartOf lval], location)
+  else
+    fun lval location ->
+      Set (lval, increm (Lval lval) 1, location)

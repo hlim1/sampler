@@ -4,22 +4,13 @@ open Printf
 open SchemeName
 
 
-class type manager =
-  object
-    method private bump : lval -> location -> instr
-    method addSite : fundec -> exp -> doc -> location -> stmt
-    method patch : unit
-    method saveSiteInfo : Digest.t Lazy.t -> out_channel -> unit
-  end
-
-
-class virtual basis name file =
+class manager name file =
   object (self)
     val tuples = FindGlobal.find (name.prefix ^ "CounterTuples") file
     val mutable nextId = 0
     val siteInfos = new QueueClass.container
 
-    method private virtual bump : lval -> location -> instr
+    method private bump = Threads.bump file
 
     method addSite func selector (description : doc) location =
       let counter = (Var tuples, Index (integer nextId, Index (selector, NoOffset))) in
@@ -67,33 +58,3 @@ class virtual basis name file =
 
       output_string channel "</sites>\n"
   end
-
-
-class nonThreaded name file =
-  object
-    inherit basis name file
-
-    method private bump lval location =
-      Set (lval, increm (Lval lval) 1, location)
-  end
-
-
-class threaded name file =
-  object
-    inherit basis name file
-
-    val helper = Lval (var (FindFunction.find "atomicIncrementCounter" file))
-
-    method private bump lval location =
-      Call (None, helper, [mkAddrOrStartOf lval], location)
-  end
-
-
-let build name file =
-  let factory =
-    if !Threads.threads then
-      new threaded
-    else
-      new nonThreaded
-  in
-  factory name file

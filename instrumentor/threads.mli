@@ -1,1 +1,4 @@
-val threads : bool ref
+open Cil
+
+
+val bump : file -> lval -> location -> instr

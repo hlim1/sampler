@@ -372,19 +372,19 @@ broad correlation in Section~\ref{sec:bc}, where even the buggy line
 of code itself does not always cause a crash.
 
 As previously noted, the first three subsets of eliminated features
-are not independent of each, whereas the last set, i.e. those features
-with a \elim{successful counterexample}, is in another class altogether.
-The \elim{universal falsehood} and \elim{successful counterexample}
-sets both only look at successful runs, hence are easily analyzed
-together.  But the \elim{lack of failing example} strategy in general
-eliminates the most raw number of counts, hence it also makes sense to
-combine \elim{successful counterexample} with it.  Doing so in the
-case of \texttt{ccrypt} leaves us with exactly the same two features.
-While combining set 2 with set 4 makes no difference for this dataset,
-it might serve to our advantage in other programs.  \elim{Elimination
-  by lack of failing coverage}, on the other hand, is an inherently
-weaker strategy; when combined with \elim{successful counterexample},
-we are still left with 86 features.
+are not independent of each, whereas the last set, i.e.\ those
+features with a \elim{successful counterexample}, is in another class
+altogether.  The \elim{universal falsehood} and \elim{successful
+  counterexample} sets both only look at successful runs, hence are
+easily analyzed together.  But the \elim{lack of failing example}
+strategy in general eliminates the most raw number of counts, hence it
+also makes sense to combine \elim{successful counterexample} with it.
+Doing so in the case of \texttt{ccrypt} leaves us with exactly the
+same two features.  While combining set 2 with set 4 makes no
+difference for this dataset, it might serve to our advantage in other
+programs.  \elim{Elimination by lack of failing coverage}, on the
+other hand, is an inherently weaker strategy; when combined with
+\elim{successful counterexample}, we are still left with 86 features.
 
 \subsubsection{Refinement over time}
 

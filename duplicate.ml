@@ -25,8 +25,7 @@ class visitor = object
 
 
   method vblock block =
-    let duplicate = { block with bstmts = block.bstmts } in
-    ChangeDoChildrenPost (duplicate, identity)
+    ChangeDoChildrenPost (block, identity)
 
 
   method vstmt stmt =

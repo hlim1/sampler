@@ -103,16 +103,22 @@ AC_SUBST_FILE(find_driver_fragment)
 #
 
 
+AC_ARG_WITH(cil-sibling, AC_HELP_STRING([--without-cil-sibling], [do not look for CIL in sibling build tree]),
+,
 AC_MSG_CHECKING(for CIL in sibling build tree)
 if test -d ../cil; then
-  cil_absolute=`cd ../cil; pwd`
-  cil_libdir=$cil_absolute/obj/x86_LINUX
+  with_cil_sibling=yes
   AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)
 fi
+)
 
-if test -z "$cil_libdir"; then
+if test "$with_cil_sibling" = yes; then
+  cil_absolute=`cd ../cil; pwd`
+  cil_libdir=$cil_absolute/obj/x86_LINUX
+
+elif test -z "$cil_libdir"; then
   for cil_prefix in /usr/local /usr; do
     AC_MSG_CHECKING(for CIL in $cil_prefix)
     if test -d $cil_prefix/lib/cil; then
@@ -160,7 +166,7 @@ AC_SUBST(DTYPES)
 
 
 AC_MSG_CHECKING(for profiling)
-AC_ARG_ENABLE(profiling, [  --enable-profiling      Compile OCaml for gprof profiling (implies --enable-native)])
+AC_ARG_ENABLE(profiling, AC_HELP_STRING([--enable-profiling], [Compile OCaml for gprof profiling (implies --enable-native)]))
 if test "$enable_profiling" = yes; then
   enable_native=yes
   AC_SUBST(ENABLE_PROFILING, 1)
@@ -171,7 +177,7 @@ fi
 
 
 AC_MSG_CHECKING(for native compilation)
-AC_ARG_ENABLE(native, [  --disable-native        Compile OCaml to bytecode (default: compile to native code)], , enable_native=yes)
+AC_ARG_ENABLE(native, AC_HELP_STRING([--disable-native], [Compile OCaml to bytecode (default: compile to native code)]), , enable_native=yes)
 AM_CONDITIONAL(ENABLE_NATIVE, test "$enable_native" = yes)
 if test "$enable_native" = yes; then
   AC_SUBST(ENABLE_NATIVE, 1)

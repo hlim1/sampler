@@ -20,7 +20,7 @@ static double probability;
 %%
 
 
-\<samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"[-a-z]+\">	{
+<INITIAL>^<samples\ unit=\"[0-9a-f]{32}\"\ scheme=\"[-a-z]+\">	{
   fputs(yytext, stdout);
   BEGIN(SAMPLES);
 }
@@ -31,7 +31,7 @@ static double probability;
   printf("%u", reduced);
 }
 
-<SAMPLES>^</samples>\n	{
+<SAMPLES>^<\/samples>\n	{
   BEGIN(INITIAL);
 }
 

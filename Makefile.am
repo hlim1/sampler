@@ -17,7 +17,7 @@ DIST_SUBDIRS =					\
 
 EXTRA_DIST =					\
 	package.m4				\
-	resolver
+	tools
 
 all-local: package.m4
 

@@ -7,7 +7,7 @@ cp $abs_srcdir/test.c .
 cp $abs_srcdir/test.expected expout
 $abs_top_builddir/instrumentor/driver/main returns -o test test.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./test
-$abs_top_srcdir/resolver/resolve-samples test <trace | cut -f2- | sort
+$abs_top_srcdir/tools/resolve-samples test <trace | cut -f2- | sort
 , 0, expout)
 AT_CLEANUP
 
@@ -18,6 +18,6 @@ cp $abs_srcdir/extern-*.c .
 cp $abs_srcdir/extern.expected expout
 $abs_top_builddir/instrumentor/driver/main returns -o extern *.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./extern
-$abs_top_srcdir/resolver/resolve-samples extern <trace | cut -f2- | sort
+$abs_top_srcdir/tools/resolve-samples extern <trace | cut -f2- | sort
 , 0, expout)
 AT_CLEANUP

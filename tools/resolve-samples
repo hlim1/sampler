@@ -5,6 +5,7 @@ use 5.008;			# for safe pipe opens using list form of open
 
 use Fcntl qw(SEEK_SET);
 use FileHandle;
+use FindBin;
 
 
 ########################################################################
@@ -111,28 +112,29 @@ sub miscount ($$) {
 }
 
 
-sub skip () {
-    while (<STDIN>) {
+sub skip ($) {
+    my $report = shift;
+    while (<$report>) {
 	chomp;
 	last if $_ eq '';
     }
 }
 
 
-$_ = <STDIN> || '';
-chomp;
-die "error: malformed report header: $_" unless $_ eq '<report id="samples">';
+my $extractor = "$FindBin::Bin/extract-report";
+my $report = new FileHandle;
+open $report, '-|', $extractor, 'samples'
+    or die "error: cannot run $extractor: $!\n";
 
-while (my $signature = <STDIN>) {
+while (my $signature = <$report>) {
     chomp $signature;
-    last if $signature eq '</report>';
-    
     check_signature 'standard input', $., $signature;
+
     my $unit = $compilationUnit{$signature};
     if ($unit) {
 	my @sites = @{$unit->{sites}};
 
-	while (my $tuple = <STDIN>) {
+	while (my $tuple = <$report>) {
 	    chomp $tuple;
 	    last if $tuple eq '';
 	    if (@sites) {
@@ -143,7 +145,7 @@ while (my $signature = <STDIN>) {
 		}
 	    } else {
 		miscount 'many', $signature;
-		skip;
+		skip $report;
 		last;
 	    }
 	}
@@ -151,16 +153,8 @@ while (my $signature = <STDIN>) {
 	miscount 'few', $signature if @sites;
     } else {
 	warn "warning: unrecognized signature in report: $signature\n";
-	skip;
+	skip $report;
     }
-}
-
-
-
-unless (eof) {
-    $_ = <STDIN>;
-    chomp;
-    warn "error: trailing garbage after report: $_\n";
 }
 
 

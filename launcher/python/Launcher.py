@@ -1,6 +1,11 @@
 import Outcome
 import ReportsReader
 
+import os
+import signal
+import struct
+import sys
+
 
 def run_without_sampling(app):
     """Run an application with sampling forced off.
@@ -13,10 +18,10 @@ def run_without_sampling(app):
         del os.environ["SAMPLER_SPARSITY"]
 
     # away we go!
-    os.execv(app.executable, sys.argv)
+    os.execv(app.executable(), sys.argv)
 
 
-def run_with_sampling(app, user):
+def run_with_sampling(app, sparsity):
     """Run an application with sampling according to user preferences.
 
     Returns an Outcome object describing the outcome of the run."""
@@ -26,8 +31,9 @@ def run_with_sampling(app, user):
     # set up random number generator
     format = 'L'
     outcome.seed = str(struct.unpack(format, file('/dev/urandom').read(struct.calcsize(format)))[0])
+    outcome.sparsity = sparsity
     os.environ['SAMPLER_SEED'] = outcome.seed
-    os.environ['SAMPLER_SPARSITY'] = outcome.sparsity = user.sparsity()
+    os.environ['SAMPLER_SPARSITY'] = str(outcome.sparsity)
     if 'GSL_RNG_TYPE' in os.environ:
         del os.environ['GSL_RNG_TYPE']
     if 'GSL_RNG_SEED' in os.environ:

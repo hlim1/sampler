@@ -3,6 +3,7 @@ from DialogWrapper import DialogWrapper
 import gnome
 import gtkhtml2
 
+import cgi
 import urllib2
 import urlparse
 
@@ -14,8 +15,8 @@ import urlparse
 
 
 class ServerMessage (DialogWrapper):
-    def __init__(self, application, base, message):
-        DialogWrapper.__init__(self, application, 'server-message')
+    def __init__(self, dir, reply):
+        DialogWrapper.__init__(self, dir, 'server-message')
 
         document = gtkhtml2.Document()
         document.connect('request_url', self.on_request_url)
@@ -24,9 +25,10 @@ class ServerMessage (DialogWrapper):
         document.connect('title_changed', self.on_title_changed)
         document.dialog = self.dialog
         document.base = ''
-        self.on_set_base(document, base)
-        document.open_stream(message.get_content_type())
-        document.write_stream(message.get_payload())
+        self.on_set_base(document, reply.geturl())
+        [type, options] = cgi.parse_header(reply.info()["Content-type"])
+        document.open_stream(type)
+        document.write_stream(reply.read())
         document.close_stream()
 
         view = gtkhtml2.View()

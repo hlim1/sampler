@@ -7,8 +7,13 @@ class AppConfig:
 
     def __init__(self, filename):
         """Find application information in the given configuration file."""
-        self.__config = ConfigParser({"configdir" : os.path.basename(filename)})
+        self.__dir = os.path.dirname(filename)
+        self.__config = ConfigParser({"configdir" : self.__dir})
         self.__config.readfp(file(filename))
+
+    def path(self, filename):
+        """Find a related file in the same directory as the config file."""
+        return os.path.join(self.__dir, filename)
 
     def get(self, section, key):
         """Fetch an arbitrary configuration entry."""

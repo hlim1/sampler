@@ -3,7 +3,7 @@
 import os.path
 import sys
 
-sys.path.append(os.path.join(sys.path[0], '..', '..'))
+sys.path[0:0] = [sys.path[0], os.path.join(sys.path[0], '..', '..', 'python')]
 
 import GnomeMain
 GnomeMain.main(os.path.join(sys.path[0], 'config'))

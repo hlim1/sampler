@@ -3,20 +3,23 @@ import FirstTime
 import SamplerConfig
 import ServerMessage
 
+import gtk
+
 
 class GnomeUserConfig (BaseUserConfig.BaseUserConfig):
     """User preferences for instrumened GNOME applications.."""
 
-    def __init__(self, app):
+    def __init__(self, dir, app):
         """Look for preferences under GConf area for the given application."""
         self.__gconfig = SamplerConfig.SamplerConfig(app)
+        self.__app = app
 
     def enabled(self):
         """Check whether sampling is enabled."""
 
         # present first time dialog if we haven"t already asked
         if not self.__gconfig["asked"]:
-            firstTime = FirstTime.FirstTime(self.__application, self.__gconfig)
+            firstTime = FirstTime.FirstTime(self.__app, self.__gconfig)
             response = firstTime.run()
             firstTime.hide()
             if response != gtk.RESPONSE_OK:
@@ -46,14 +49,14 @@ class GnomeUserConfig (BaseUserConfig.BaseUserConfig):
 
     def change_reporting_url(self, url):
         """Record a new address for future uploads."""
-        self.__gconfig["reporting-url"] = redirect.permanent
+        self.__gconfig["reporting-url"] = url
 
     def change_sparsity(self, sparsity):
         """Record a new sampling sparsity for future runs."""
         self.__gconfig["sparsity"] = sparsity
 
-    def show_server_message(self, base, message):
+    def show_server_message(self, reply):
         """Show a server message in response to an upload."""
-        dialog = ServerMessage.ServerMessage(application, base, message)
+        dialog = ServerMessage.ServerMessage(self.__app, reply)
         dialog.run()
         dialog.hide()

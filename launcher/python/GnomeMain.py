@@ -4,7 +4,7 @@ import GnomeUserConfig
 
 
 def main(app_filename):
-    """Run an instrumented GNOME application and possibly upload the results."""
+    """Run an instrumented GNOME application."""
     app = AppConfig.AppConfig(app_filename)
-    user = GnomeUserConfig.GnomeUserConfig(app)
+    user = GnomeUserConfig.GnomeUserConfig(app_filename, app)
     BaseMain.main(app, user)

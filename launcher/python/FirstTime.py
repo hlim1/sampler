@@ -10,8 +10,8 @@ from DialogWrapper import DialogWrapper
 
 
 class FirstTime (DialogWrapper):
-    def __init__(self, application, gconfig):
-        DialogWrapper.__init__(self, application, 'first-time')
+    def __init__(self, dir, gconfig):
+        DialogWrapper.__init__(self, dir, 'first-time')
 
         # replace the HRef button with a clone of itself to work around a libglade bug
         # <http://bugzilla.gnome.org/show_bug.cgi?id=112470>

@@ -29,6 +29,6 @@ class BaseUserConfig:
         """Record a new sampling sparsity for future runs."""
         raise NotImementedError
 
-    def show_server_message(self, base, message):
+    def show_server_message(self, reply):
         """Show a server message in response to an upload."""
         raise NotImementedError

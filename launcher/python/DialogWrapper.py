@@ -10,8 +10,8 @@ import types
 #
 
 class DialogWrapper:
-    def __init__(self, application, name):
-        self.__xml = gtk.glade.XML(application.path('interface.glade'), name)
+    def __init__(self, app, name):
+        self.__xml = gtk.glade.XML(app.path('interface.glade'), name)
         self.dialog = self.get_widget(name)
 
         callbacks = {}

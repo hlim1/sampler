@@ -1,4 +1,5 @@
 AUTOMAKE_OPTIONS = foreign 1.6
+ACLOCAL_AMFLAGS = -I /usr/share/aclocal
 
 if WITH_GNOME
 launcher = launcher

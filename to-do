@@ -1,8 +1,3 @@
 handle "-S" gcc option
 
-convert heapStores and possibly localVars to use "-include" and find
-their prototypes rather than building them by hand
-
-modify localVars to only to the dissection once per function
-
 combine patch and postpatch in Calls module

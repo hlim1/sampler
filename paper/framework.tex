@@ -226,10 +226,6 @@ several variant layouts with varying trade-offs of code size versus
 overhead; the same choices and trade-offs are directly applicable
 here.
 
-\aside{Should something here about using loop unrolling to create
-  larger acyclic regions?  This has a conceptual connection to VLIW
-  scheduling.}
-
 \subsection{Function Calls}
 
 New choices arise in the presence of function calls.  A conservative
@@ -298,14 +294,13 @@ unchanged.
 With this change, the native C compiler is well positioned to coalesce
 decrements and perform other standard but important optimizations.
 
-\aside{Should we say something about multithreaded code (specifically,
-  that it is OK to have per-thread countdowns to avoid global lock
-  contention)?}
-
 \aside{Still need to discuss:
 
   \begin{itemize}
   \item instrumenting a single function at a time
   \item hierarchical sampling at the level of functions and sites
   \item client-side data reduction
-  \end{itemize}}
+  \end{itemize}
+  
+  Alex may cover these in his rewritten introduction.}
+

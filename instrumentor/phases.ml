@@ -5,6 +5,7 @@ let main manager =
   let phases =
     [
      "removing unused symbols", (fun file -> Rmtmps.removeUnusedTemps file);
+     "embedding control flow graph", EmbedCFG.visit;
      "instrumenting", (fun file -> ignore (manager file));
      "removind unused symbols", (fun file -> Rmtmps.removeUnusedTemps file);
      Idents.phase;

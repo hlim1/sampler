@@ -15,7 +15,7 @@ class visitor = object(self)
 	  match result with
 	  | (Var _, _) -> SkipChildren
 	  | (Mem _, _) ->
-	      let temp = var (self#makeTempVar "call" (returnTypeOf (typeOf fname))) in
+	      let temp = var (self#makeTempVar "call" (typeOfLval result)) in
 	      ChangeTo [Call (Some temp, fname, actuals, location);
 			Set (result, Lval temp, location)]
 	end

@@ -25,6 +25,8 @@ EXTRA_DIST =					\
 	Function.pm				\
 	Node.pm					\
 	Object.pm				\
+	RawSamples.pm				\
+	SiteInfo.pm				\
 	SymbolTable.pm				\
 	Unit.pm					\
 	extract-report				\

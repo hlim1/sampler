@@ -1,8 +1,9 @@
 [application]
 executable: /usr/bin/gnumeric
-debug-reporter: %(configdir)s/../../print-debug-info
+debug-reporter: ../../print-debug-info
 
 [upload-headers]
+accept: text/html
 name: gnumeric
 version: 1.20
 instrumentation-type: branches

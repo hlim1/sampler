@@ -1,9 +1,6 @@
 Document --{no-,}assume-weightless-{libraries,externs} and hook them
 up in the Perl driver.
 
-let uploader tell server whether it wants text/html or text/plain in
-replies
-
 add listener for changes to gconf 'enabled' key
 
 how does launcher propagate SIGINT (^C) down to child?

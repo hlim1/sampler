@@ -1,15 +1,16 @@
 [application]
-executable = /usr/bin/gnumeric
-debug-reporter = %(configdir)s/../../print-debug-info
+executable: /usr/bin/gnumeric
+debug-reporter: ../../print-debug-info
 
 [upload-headers]
-name = gnumeric
-version = 1.20
-instrumentation-type = branches
-instrumentation-version = 0.1
+accept: text/plain
+name: gnumeric
+version: 1.20
+instrumentation-type: branches
+instrumentation-version: 0.1
 
 [user]
-enabled = true
-sparsity = 1000
-compression-level = 9
-reporting-url = http://brawnix.cs.berkeley.edu/cgi-bin/sampler-upload
+enabled: true
+sparsity: 1000
+compression-level: 9
+reporting-url: http://brawnix.cs.berkeley.edu/cgi-bin/sampler-upload

@@ -17,16 +17,16 @@ class AppConfig:
 
     def get(self, section, key):
         '''Fetch an arbitrary configuration entry.'''
-        return self.config.get(section, key, 0, {'configdir' : self.__dir})
+        return self.config.get(section, key)
 
     def executable(self):
         '''Path to the real instrumented executable.'''
-        return self.get('application', 'executable')
+        return self.path(self.get('application', 'executable'))
 
     def debug_reporter(self):
         '''Path to script that prints post-crash debug reports.'''
         if self.config.has_option('application', 'debug-reporter'):
-            return self.get('application', 'debug-reporter')
+            return self.path(self.get('application', 'debug-reporter'))
         else:
             return None
 

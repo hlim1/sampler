@@ -1,1 +1,5 @@
-val reach : ('node, _) Reach.probe
+open Task
+
+
+val explore : ('node, _) explore
+val reach   : ('node, _) reach

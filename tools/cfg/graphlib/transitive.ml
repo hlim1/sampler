@@ -1,30 +1,36 @@
 exception Reached
 
 
-let reach trace succ origin destination =
+let explore trace succ origin =
   let worklist = new QueueClass.container in
   let visited = new HashClass.c 0 in
 
-  let reached midpoint =
+  let visit midpoint =
     trace midpoint;
-    if midpoint = destination then
-      raise Reached
-    else if not (visited#mem midpoint) then
+    if not (visited#mem midpoint) then
       begin
 	visited#add midpoint ();
 	worklist#push midpoint
       end
   in
 
+  visit origin;
+
+  while not worklist#isEmpty do
+    let frontier = worklist#pop in
+    List.iter (fun edge -> visit (snd edge)) (succ frontier)
+  done
+
+
+let reach trace succ origin destination =
+  let trace midpoint =
+    trace midpoint;
+    if midpoint = destination then
+      raise Reached
+  in
+
   try
-    reached origin;
-
-    while not worklist#isEmpty do
-      let frontier = worklist#pop in
-      List.iter (fun edge -> reached (snd edge)) (succ frontier)
-    done;
-
+    explore trace succ origin;
     false
-
   with Reached ->
     true

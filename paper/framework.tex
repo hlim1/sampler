@@ -1,0 +1,292 @@
+\section{Sampling Framework}
+\label{sec:framework}
+
+The sampling program transformation is best illustrated by example.
+For the sake of discussion, suppose we start with the following C
+code:
+
+\begin{code}
+  check(p != 0); \\
+  \up p = p->next; \\
+  \\
+  check(i < max); \\
+  \up total += sizes[i];
+\end{code}
+
+The sampling framework is flexible enough to treat arbitrary fragments
+of code as instrumentation; for this particular example, assume that
+the italicized \texttt{\textit{check()}} calls have been tagged for
+sampling.  A \texttt{\textit{check()}} call might conditionally halt
+the program (as \texttt{assert()}), or it might append an event to a
+trace stream, or it might simply update a per-predicate counter to
+record how often the claimed invariant did indeed hold.  The precise
+behavior of the instrumentation code depends on what one wishes to
+measure, but is of no concern to the sampling transformation itself.
+
+\subsection{Sampling the Bernoulli Way}
+
+Suppose that we wish to sample one hundredth of these checks.
+Maintaining a global counter modulo one hundred would be simple, but
+has the disadvantage of being trivially periodic.  If the above
+fragment were inside a loop, for example, one of the checks would
+execute on every fiftieth iteration while the other would never
+execute at all.  We wish our samples to be fair and random: each time
+any check is reached, that check should independently have a 1/100
+chance of being sampled.  This is a so-called \termdef{Bernoulli
+  process}, the most common example of which is repeatedly tossing a
+coin.  Each toss of the coin has no ``memory'' of previous tosses.  We
+wish to sample based on the outcome of tossing a coin which is biased
+to come up heads only one time in a hundred.
+
+A \naive approach would be to use a simple random number
+generator.\footnote{In practice, of course, the generator is likely to
+  be pseudo-random, but with a long enough period that cyclic
+  repetition will not be a concern.}  Suppose \texttt{rnd($n$)} yields
+a random integer uniformly distributed between 0 and $n-1$.  Then the
+following code will give us fair random sampling at the desired
+density:
+
+\begin{code}
+  if(rnd(100) == 0) check(p != 0); \\
+  \up p = p->next; \\
+  \\
+  if(rnd(100) == 0) check(i < max); \\
+  \up total += sizes[i];
+\end{code}
+
+This strategy has a number of problems in practice.  Random number
+generation is not free: tossing the coin may be slower than simply
+doing the check unconditionally.  Random numbers could be generated
+off line and stored for later use, but if instrumentation code is
+dense, the program will consume these random numbers rapidly, and may
+soon exhaust its pre-generated supply.  Furthermore, what was
+previously straight-line code is now dense with branches and joins,
+which may impede other optimizations.
+
+Sampling is sparse.  Each of the conditionals has a 99/100 = 99\%
+chance of not sampling.  On any run through this block, there is a
+$(99/100)^2 \approx 98\%$ chance that both instrumentation sites will
+be skipped.  If we could determine, upon reaching the top of a basic
+block, that no site in that block will be sampled, then we could
+branch off into fast-path code from which all conditionally-guarded
+checks have been removed.  This will require two versions of the code:
+one with sampled instrumentation, one without.  It also requires that
+we be able to predict how many future sampling opportunities will be
+skipped before the next one is taken.
+
+Anticipating future samples requires a change in randomization
+strategy.  Consider a sequence of biased coin tosses, with ``0''
+indicating no sample and ``1'' indicating that a sample is to be
+taken.  Temporarily increasing the sampling density to 1/5, we might
+have:
+
+\begin{equation*}
+  \langle
+    \underbrace{0, 0, 0, 0, 0, 1,}_{\text{6 tosses}}
+    \underbrace{0, 0, 0, 1,}_{\text{4 tosses}}
+    \underbrace{0, 1,}_{\text{2 tosses}}
+    \underbrace{0, 0, 1}_{\text{3 tosses}}
+    \rangle
+\end{equation*}
+
+A more compressed representation would be to encode the number of
+tosses until (and including) the next sampled check: $\langle 6, 4, 2,
+3 \rangle$.  An advantage of this representation is that it is
+predictive: looking at the head of the sequence, we can see that five
+sites will be skipped before the next sample.  The head of the
+sequence can be treated as a countdown, telling us how far away the
+next sample is.  If we are at the top of a basic block containing only
+two checks, and the next sampling countdown is 6, we know in advance
+that neither of those sites will be sampled on this visit.  Instead,
+we merely discard two tosses and proceed directly to our
+instrumentation-free fast path:
+
+\begin{code}
+  if(countdown > 2) \{ \\
+  \> /* fast path: no sample in near future */ \\
+  \> countdown -= 2; \\
+  \> \up p = p->next; \\
+  \> \up total += sizes[i]; \\
+  \} else \{ \\
+  \> /* slow path: sample is imminent */ \\
+  \> if(countdown-- == 0) \{ \\
+  \>\> check(p != 0); \\
+  \>\> countdown = getNextCountdown(); \\
+  \> \} \\
+  \> \up p = p->next; \\
+  \> \\
+  \> if(countdown-- == 0) \{ \\
+  \>\> check(i < max); \\
+  \>\> countdown = getNextCountdown(); \\
+  \> \} \\
+  \> \up total += sizes[i]; \\
+  \}
+\end{code}
+
+The instrumented code must do some extra work to manage the
+next-sample countdown, but the fast path is much improved.  The only
+overhead is a single compare/branch and a constant decrement, and this
+overhead is amortized over the entire block.  In larger blocks with
+more instrumentation sites, the initial countdown check will have a
+larger threshold, but that one check will suffice to predict a larger
+number of skipped sampling opportunities.
+
+Consider the distribution of likely countdown values.  With a sampling
+density of 1/100, there is a 1/100 chance that we will sample at the
+very next opportunity.  There is a $(99/100)\dot(1/100)$ that the next
+chance will be skipped, and that the one after that will be taken.  A
+countdown of three appears on a $(99/100)^2\dot(1/100)$ chance, and so
+on.  These numbers form a \termdef{geometric distribution} whose mean
+value is the inverse of the sampling density (that is, 100).  Numbers
+in a geometric distribution characterize the expected inter-arrival
+times of a Bernoulli process.  However, repeated tossing of a biased
+coin is not necessary: geometrically distributed random numbers can be
+generated directly using a standard (uniform) random generator and
+some simple floating-point operations.\footnote{In theory, a countdown
+  may need to be arbitrarily large.  However, the odds of a 1/100
+  countdown exceeding $2^{32}-1$ are less than one in $10^{10^7}$.
+  This divisor is many orders of magnitude beyond all reasonable
+  estimates of the number of elementary particles in the universe.}
+
+As can be seen in the instrumented slow path, the countdown must be
+reset once it reaches zero.  Thus, we consume next-sample countdowns
+gradually over time.  However, the rate of consumption will be slower
+than that for raw coin tosses: $n$ countdowns for $1/d$ sampling
+encode, on average, $nd$ tosses.  A bank of pre-generated random
+countdowns, then, is quite reasonable and will exhaust or repeat $d$
+times more slowly than would a similar bank of raw coin tosses.
+
+\subsection{From Blocks to Functions}
+
+The block amortizing scheme outlined above may be generalized for an
+arbitrary control flow graph as follows.  If we have a region of
+acyclic code, then there are only a finite number of possible paths
+through that region.  We can easily compute the maximum number of
+instrumented sites on any of these paths, which we call the
+\termdef{weight} of that region.  If the next-sample countdown exceeds
+the weight of an acyclic region, then no samples will be taken on this
+pass through that part of the code.  We can place a countdown
+threshold check at the top of this region.
+
+Cycles that are devoid of instrumentation are effectively weightless
+and may be disregarded entirely.  A cycle that does contain
+instrumentation must also contain a threshold check.  This guarantees
+that if we start at any threshold check and execute forward, we can
+only cross a finite number of instrumentation sites before reaching
+the next threshold check.  Thus, we can compute an appropriate, finite
+weight for each threshold check.
+
+Within these bounds, there is some flexibility regarding exactly where
+a threshold check is placed.  For simplicity, our present system
+places one threshold check at function entry and one along each back
+edge.  Weights may be computed in a single bottom-up traversal of each
+function's control flow graph.
+
+We produce two complete copies of the function body.  One contains
+full instrumentation, with each possible sample guarded by a decrement
+and test of the next-sample countdown.  The other copy, the fast path,
+merely decrements the countdown where appropriate, but otherwise has
+all instrumentation removed.  We stitch the two variants together at
+threshold check points: at the top of each acyclic region, we decide
+whether a sample is imminent.  If it is, we branch into the
+instrumented code.  If the next sample is far off, we continue in the
+fast path code instead.
+
+
+\begin{figure}
+  \centering
+  \input{layout}
+  \caption{Example of instrumented code layout}
+  \label{fig:layout}
+\end{figure}
+
+Figure~\ref{fig:layout} shows an example of code layout for a function
+containing one conditional and one loop.  Dotted nodes represent
+instrumentation sites; these are reduced to mere countdown decrements
+in the fast path.  The boxed nodes represent threshold checks; we have
+added one at function entry and one along the back edge of the loop.
+At a high level, this code layout strategy is a variation on that used
+by Arnold and Ryder to reduce the cost of code instrumented for
+performance profiling \cite{Arnold:2001:FRC}.  The principal change in
+our transformation is the use of geometrically distributed countdowns
+in conjunction with acyclic region weights to choose between the two
+code variants.  Arnold and Ryder use fixed sampling periods (e.g.,
+exactly once per $n$ opportunities, or exactly once per $n$
+instructions) and do not apply region-specific weighting.  Our
+approach imposes more overhead, but offers greater statistical rigor
+in the resultant sampled data.  Arnold and Ryder have studied several
+variant layouts with varying trade-offs of code size versus overhead;
+the same choices and trade-offs are directly applicable here.
+
+\aside{Should something here about using loop unrolling to create
+  larger acyclic regions?  This has a conceptual connection to VLIW
+  scheduling.}
+
+\subsection{Function Calls}
+
+New choices arise in the presence of function calls.  A conservative
+treatment assumes that any function call may change the countdown by
+an arbitrary, unknown amount.  Therefore, a new threshold check must
+appear immediately after each function call.  This treatment is
+appropriate if the callee is being compiled separately, or is
+dynamically bound through a function pointer.
+
+However, if the callee is known and available for examination, a
+simple interprocedural analysis can optionally be used.  Define a
+\termdef{weightless function} to be one with the following properties:
+
+\begin{itemize}
+\item The function contains no instrumentation sites.
+\item The function only calls other weightless functions.
+\end{itemize}
+
+The set of weightless functions can be computed iteratively, requiring
+no more steps in the worst case then the depth of the deepest
+non-recursive call chain.
+
+For purposes of identifying acyclic regions and placing threshold
+checks, calls to weightless functions are invisible.  Acyclic regions
+can extend below such calls, and no additional threshold check is
+required after such a call returns.  A further benefit is that the
+bodies of weightless functions may be compiled with no modifications.
+They have no threshold checks, no instrumented code, and therefore
+require no cloning or transformation of any sort.
+
+\subsection{Global Countdown Management}
+
+Our initial experience has suggested that managing the next-site
+countdown in a global variable can be a source of considerable
+overhead.  Our system is implemented as a source-to-source
+transformation for C, with \texttt{gcc} as our native compiler.
+Examining the native machine code reveals that \texttt{gcc} treats the
+many ``\texttt{countdown--}'' decrements along the fast path quite
+poorly.  It will not, for example, coalesce a sequence of five such
+decrements into a single ``\texttt{countdown -= 5}'' adjustment.  This
+apparently stems from conservative assumptions about aliasing of
+global variables.
+
+Efficient countdown management requires that the native C compiler
+take greater liberties when optimizing these decrements.  We assist
+the native compiler by maintaining the countdown in a local variable
+within each function:
+
+\begin{enumerate}
+\item At function entry, \termdef{import} the current global countdown
+  into a local variable.
+\item Use this local copy for all decrements, threshold checks, and
+  sampling decisions.
+\item Just before function exit, \termdef{export} this local copy back
+  out to the global.
+\end{enumerate}
+
+In order to maintain agreement across all functions, we must also
+export just before each function call and import again after each call
+returns.  Again, though, we find that calls to weightless functions
+may simply be ignored.  They will not change or even inspect the
+countdown.  Similarly, the bodies of weightless functions need not
+import and export at entry and exit, since they always leave the
+countdown unchanged.
+
+\aside{Should we say something about multithreaded code (specifically,
+  that it is OK to have per-thread countdowns to avoid global lock
+  contention)?}

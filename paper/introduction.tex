@@ -1,0 +1,78 @@
+\section{Introduction}
+
+Large software systems are notoriously difficult to understand and
+debug.  Static analysis tools yield strong proofs about all possible
+behaviors, but may be limited by issues of scalability and
+decidability.  Furthermore, unsound languages such as C can easily
+fail in ways that violate their own semantics; few static analyses are
+designed for this contingency.  Testing avoids such issues by directly
+running and observing the real code.  However, testing is only as good
+as test coverage, and has limited predictive power.  If end users do
+things not anticipated by the test suite, they may uncover novel bugs.
+
+Ultimately, the most truthful information about program behavior must
+come from the end users themselves.  End users will discover new bugs,
+or may collectively prove that a known flaw thought to be rare is
+actually a common, recurring problem.  This is especially true in
+industrial practice: engineers cost money, delayed releases cost
+money, and bug fixing is a matter of triage.  The bugs that must be
+fixed are those that happen most often to the most users.
+
+Traditionally, user feedback comes in the form of calls or e-mail to a
+technical support center.  Technically savvy users might be able to
+provide a stack trace, core dump, or even a repeatable test case.  But
+for the most part, software designers have only an impoverished view
+of how their code is operating (and failing) in the real world.
+
+Widespread Internet connectivity has improved this somewhat.
+Netscape/Mozilla, Microsoft, GNOME, and KDE have all deployed
+automated (but opt-in) crash reporting systems.  These can report key
+information about program state \emph{after} a failure has occurred:
+stack trace, register contents, and the like.  However, program
+actions \emph{before} the crash remain unknown.  Trace information
+leading up to the failure may contain critical clues, especially in
+such cases as heap corruption where the erroneous program action may
+occur well before the resultant crash.  Also, such systems report no
+information for successful runs.  This makes it difficult to
+distinguish anomalous (crash-causing) behavior from behavior common to
+all runs.
+
+Therefore, we wish to trace or monitor program behavior continuously
+throughout a run.  Furthermore, we want to measure reality: actual use
+by actual users.  Any monitoring scheme, then, must be sufficiently
+lightweight as to not interfere with normal program usage.  The size
+of collected data is a concern as well, in terms of both the storage
+space and the network bandwidth required to collect it.  Working to
+our advantage is the sheer number of runs we may examine: any deployed
+software system will have far more end users than dedicated in-house
+testers.
+
+Because of this advantage of numbers, it is not necessary to gather
+complete information about each and every run.  We can collect just a
+small sample of program behavior on each run.  The aggregate picture
+resulting from a large number of such samples will still be a truthful
+representation of overall program usage, provided that the samples are
+collected in a statistically fair, randomized manner.  Sampling can
+address performance and size concerns as well: when the monitoring
+cost is spread thin across a great many users, the incremental burden
+on any single user can be made arbitrarily small.
+
+This paper presents a framework for fair random sampling of program
+behavior.  Section~\ref{sec:framework} presents the program
+transformation at the heart this framework, which allows us to add
+randomly sampled instrumentation code to an existing application.  In
+this section we also discuss some of the design issues
+\unknown[something about keeping data size down, and doing client-side
+data reduction].  Section~\ref{sec:applications} presents two example
+applications of our system: sharing the cost of checking assertions,
+and hunting for bugs using trace data mining.  Monitoring of deployed
+code raises important privacy and security concerns, both social and
+technical; a discussion of these issues appears in
+Section~\ref{sec:privsec}.  In Section~\ref{sec:related-work} we
+discuss related work, and Section~\ref{sec:conclusions} concludes.
+
+\aside{Did this introduction take too long to get to the point?}
+
+\aside{I fear that my message may be a bit muddled.  I just care about
+  fixing bugs, or do I care about building up a broader understanding
+  of what the code is doing?}

@@ -71,17 +71,5 @@ let patch file =
   reporter.sbody.bstmts <- mkStmtOneInstr call :: reporter.sbody.bstmts
 
 
-let saveSiteInfo digest channel =
-  fprintf channel "<sites unit=\"%s\" scheme=\"bounds\">\n"
-    (Digest.to_hex (Lazy.force digest));
-
-  infos#iter
-    (fun (func, location, description, statement) ->
-      let description = Pretty.sprint max_int description in
-      fprintf channel "%s\t%d\t%s\t%d\t%s\n"
-	location.file location.line
-	func.svar.vname
-	statement.sid
-	description);
-
-  output_string channel "</sites>\n"
+let saveSiteInfo scheme digest channel =
+  SiteInfo.print channel digest scheme infos

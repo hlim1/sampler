@@ -5,7 +5,7 @@ AT_CHECK([
 set -e
 cp $abs_srcdir/simple.c .
 cp $abs_srcdir/first.expected expout
-$abs_top_builddir/instrumentor/driver/sampler-cc-here --sampler-scheme=function-entries --timestamp-first -save-temps -o simple simple.c
+$abs_top_builddir/instrumentor/driver/sampler-cc-here --relative-paths --sampler-scheme=function-entries --timestamp-first -save-temps -o simple simple.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./simple
 $abs_top_srcdir/tools/resolve-timestamps simple <trace | cut -f1,3- | sort -t '	'
 ], 0, expout)
@@ -16,7 +16,7 @@ AT_CHECK([
 set -e
 cp $abs_srcdir/simple.c .
 cp $abs_srcdir/last.expected expout
-$abs_top_builddir/instrumentor/driver/sampler-cc-here --sampler-scheme=function-entries --timestamp-last -save-temps -o simple simple.c
+$abs_top_builddir/instrumentor/driver/sampler-cc-here --relative-paths --sampler-scheme=function-entries --timestamp-last -save-temps -o simple simple.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./simple
 $abs_top_srcdir/tools/resolve-timestamps simple <trace | cut -f1,3- | sort -t '	'
 ], 0, expout)
@@ -27,7 +27,7 @@ AT_CHECK([
 set -e
 cp $abs_srcdir/simple.c .
 cat $abs_srcdir/first.expected $abs_srcdir/last.expected >expout
-$abs_top_builddir/instrumentor/driver/sampler-cc-here --sampler-scheme=function-entries --timestamp-first --timestamp-last -save-temps -o simple simple.c
+$abs_top_builddir/instrumentor/driver/sampler-cc-here --relative-paths --sampler-scheme=function-entries --timestamp-first --timestamp-last -save-temps -o simple simple.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./simple
 $abs_top_srcdir/tools/resolve-timestamps simple <trace | cut -f1,3- | sort -t '	'
 ], 0, expout)

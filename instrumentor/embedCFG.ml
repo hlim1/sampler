@@ -32,9 +32,14 @@ class visitor file digest channel =
     val expectedSid = ref 0
 
     method private addLocation location =
-      let file = if location.file = "" then "(unknown)" else location.file in
+      let file =
+	if location.file = "" then
+	  Pretty.text "(unknown)"
+	else
+	  Paths.normalize location
+      in
       let line = if location.line = -1 then 0 else location.line in
-      Printf.fprintf channel "%s\t%d\n" file line
+      ignore (Pretty.fprintf channel "%t\t%d\n" (fun () -> file) line)
 
     method postNewline thing =
       output_char channel '\n';

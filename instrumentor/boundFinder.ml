@@ -92,15 +92,14 @@ class visitor global func =
 	  GVar (min, {init = Some (SingleInit minInit)}, location) ::
 	  GVar (max, {init = Some (SingleInit maxInit)}, location) ::
 	  globals;
-	let site = mkStmt (Block (mkBlock [mkStmt (updateBound min (Lval newLeft) Min location);
-					   mkStmt (updateBound max (Lval newLeft) Max location)]))
-	in
-	Sites.registry#add func (Site.build site);
-	BoundManager.register
-	  (min, max)
-	  (func, location, d_columns [d_lval () left; text host; text offset], site);
+	let siteInfo = new BoundSiteInfo.c func location left host offset in
+	let implementation = siteInfo#implementation in
+	implementation.skind <- Block (mkBlock [mkStmt (updateBound min (Lval newLeft) Min location);
+						mkStmt (updateBound max (Lval newLeft) Max location)]);
+	Sites.registry#add func (Site.build implementation);
+	BoundManager.register (min, max) siteInfo;
 	Block (mkBlock [mkStmtOneInstr (replacement newLeft);
-			site;
+			implementation;
 			mkStmtOneInstr (Set (left, Lval newLeft, location))])
       in
 

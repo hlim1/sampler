@@ -52,14 +52,5 @@ class manager name file =
 	end
 
     method saveSiteInfo digest channel =
-      fprintf channel "<sites unit=\"%s\" scheme=\"%s\">\n"
-	(Digest.to_hex (Lazy.force digest)) name.flag;
-
-      siteInfos#iter
-	(fun siteInfo ->
-	  Pretty.fprint channel max_int
-	    ((seq (chr '\t') (fun doc -> doc) siteInfo#print)
-	       ++ line));
-
-      output_string channel "</sites>\n"
+      SiteInfo.print channel digest name siteInfos
   end

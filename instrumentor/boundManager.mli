@@ -1,6 +1,6 @@
 open Cil
 
 
-val register : (varinfo * varinfo) -> (fundec * location * Pretty.doc * stmt) -> unit
+val register : (varinfo * varinfo) -> BoundSiteInfo.c -> unit
 val patch : file -> unit
-val saveSiteInfo : Digest.t Lazy.t -> out_channel -> unit
+val saveSiteInfo : SchemeName.t -> Digest.t Lazy.t -> out_channel -> unit

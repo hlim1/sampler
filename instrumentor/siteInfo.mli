@@ -9,3 +9,6 @@ class c : fundec -> location ->
 
     method print : Pretty.doc list
   end
+
+
+val print : out_channel -> Digest.t Lazy.t -> SchemeName.t -> c QueueClass.container -> unit

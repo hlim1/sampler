@@ -35,7 +35,7 @@ class c file : Scheme.c =
       ignore (Cil.visitCilFile visitor file);
       BoundManager.patch file
 
-    method saveSiteInfo = BoundManager.saveSiteInfo
+    method saveSiteInfo = BoundManager.saveSiteInfo name
   end
 
 

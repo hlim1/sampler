@@ -1,18 +1,55 @@
-#!/bin/sh -e
+#!/usr/bin/perl -wt
 
-ROOT=$1
-test -n "$ROOT"
+use strict;
+use File::Basename;
+use File::Find;
+use File::Path;
+use File::stat;
+use FindBin;
 
-extract=`dirname $0`/extract-section
+my $buildRoot = shift;
+die "Usage: $0 <rpm-build-root>\n" unless defined $buildRoot;
 
-# Extract site information from ELF binaries
-( cd $ROOT && find . -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) -exec file {} \; ) |
-sed -n 's/^\(.*\):[ 	]*ELF.*, not stripped/\1/p' |
-while read filename; do
-    input=$ROOT/$filename
-    output=$ROOT/usr/lib/sampler/sites/$filename
-    echo "extracting sampler site info from $input"
-    mkdir -p `dirname $output`
-    $extract .debug_site_info $input >$output.sites
-    $extract .debug_sampler_cfg $input >$output.cfg
-done
+my $extract = "$FindBin::Bin/extract-section";
+
+
+sub wanted {
+    return unless -f $_;
+
+    my $stat = File::stat $_;
+    my $mode = $stat->mode;
+    return unless $mode & 0100 || $mode & 0010 || $mode & 0001;
+
+    my $exe = new FileHandle;
+    open $exe, '|-', 'file', $_;
+    my $magic = $exe->getline;
+    return unless $magic =~ /:[ \t]*ELF.*, not stripped/;
+    die unless $exe->close;
+
+    die "Found one: {$_}, {$File::Find::name}, {$File::Find::fullname}";
+    print "extracting sampler site info from $_";
+    my $output = "$buildRoot/usr/lib/sampler/sites/$_";
+    my $outdir = dirname $output;
+    mkpath $outdir;
+
+    my $sites = new FileHandle "$output.sites", 'w';
+    $exe = new FileHandle;
+    open $exe, '|-', $extract, '.debug_site_info', $_;
+    while (<$exe>) {
+	s/^$buildRoot/\/usr\/lib\/sampler\/sites/;
+	$sites->print;
+    }
+    die unless $exe->close;
+
+    my $cfg = new FileHandle "$output.sites", 'w';
+    $exe = new FileHandle;
+    open $exe, '|-', $extract, '.debug_sampler_cfg', $_;
+    while (<$exe>) {
+	s/(^|\t)$buildRoot/\1\/usr\/lib\/sampler\/sites/;
+	$cfg->print;
+    }
+    die unless $exe->close
+}
+
+
+find \&wanted, $buildRoot;

@@ -14,7 +14,7 @@ use FindBin;
 sub check_signature ($$$) {
     my ($filename, $lineno, $signature) = @_;
     die "$filename:$lineno: malformed signature: $signature\n"
-	unless $signature =~ /^[0-9A-Fa-f]{32}$/
+	unless $signature =~ /^[0-9A-Fa-f]{32}\z/;
 }
 
 
@@ -37,56 +37,33 @@ my %compilationUnit;
 
 
 foreach my $objectName (@ARGV) {
-    my $buffer;
+    my $handle;
 
     if ($objectName =~ /\.sites$/) {
-	my $handle = new FileHandle $objectName, 'r';
+	$handle = new FileHandle $objectName, 'r';
 	unless ($handle) {
 	    warn "warning: cannot read $objectName: $!\n";
 	    next;
 	}
-	local $/;
-	$buffer = $handle->getline;
 
     } else {
-	my $objdump = new FileHandle;
-	if (! open $objdump, '-|', 'objdump', '-h', '-w', $objectName) {
-	    warn "warning: cannot run objdump on $objectName: $!\n";
+	$handle = new FileHandle;
+	my $extractor = "$FindBin::Bin/extract-site-info";
+	if (! open $handle, '-|', $extractor, $objectName) {
+	    warn "warning: cannot run $extractor for $objectName: $!\n";
 	    next;
 	}
-
-	my $size;
-	my $offset;
-	while (<$objdump>) {
-	    my @field = split;
-	    next unless @field >= 7;
-	    next unless $field[1] eq '.debug_site_info';
-	    next unless $field[0] =~ /^\d+$/;
-	    $size = hex $field[2];
-	    $offset = hex $field[5];
-	    last;
-	}
-	die "error: objdump failed on $objectName\n" unless $objdump->close;
-	next unless $size && defined $offset;
-
-	my $executable = new FileHandle $objectName, 'r';
-	$executable->seek($offset, &SEEK_SET);
-	$executable->read($buffer, $size);
-	$buffer =~ s/\0//g;
     }
 
-    my @lines = split /\n/, $buffer;
-    my $lineno = 0;
-    while (@lines) {
-	my $signature = shift @lines;
-	++$lineno;
-	check_signature $objectName, $lineno, $signature;
-
+    while (my $signature = <$handle>) {
+	chomp $signature;
+	check_signature $objectName, $handle->input_line_number, $signature;
 	my $unit = { sites => [], name => $objectName };
-	while (@lines) {
-	    my $site = { description => shift @lines };
-	    ++$lineno;
-	    last unless $site->{description};
+
+	while (my $description = <$handle>) {
+	    chomp $description;
+	    last unless $description;
+	    my $site = { description => $description };
 	    push @{$unit->{sites}}, $site;
 	}
 
@@ -100,6 +77,7 @@ foreach my $objectName (@ARGV) {
 	    $compilationUnit{$signature} = $unit;
 	}
     }
+    $handle->close or die "site info error for $objectName: exit status $?\n";
 }
 
 
@@ -156,6 +134,8 @@ while (my $signature = <$report>) {
 	skip $report;
     }
 }
+
+$report->close or die "report extractor error: exit status $?\n";
 
 
 local ($,, $\) = ("\t", "\n");

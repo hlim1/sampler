@@ -6,4 +6,4 @@ set -x
 
 cd $srcdir
 [ -d config-aux ] || mkdir config-aux
-autoreconf -v -i -f "$@"
+autoreconf -v -Wall,no-obsolete,no-portability,error -i -f "$@"

@@ -26,7 +26,7 @@ class visitor = object
 	      let (hasCall, initial, remainder) = slurp instrs in
 	      let initialStmt = mkStmt (Instr initial) in
 	      if hasCall then
-		let placeholder = mkStmt (Block (mkBlock [])) in
+		let placeholder = mkStmt (Instr []) in
 		afterCalls <- placeholder :: afterCalls;
 		initialStmt :: placeholder :: split remainder
 	      else
@@ -68,25 +68,22 @@ let nextLabels _ =
 
 let patch clones weights =
   let patchOne standardAfter =
-    match standardAfter.skind with
-    | Block standardBlock ->
-	let instrumentedAfter = clones#find standardAfter in
-	
-	let standardLabel, instrumentedLabel = nextLabels () in
-	let standardLanding = mkStmt (Instr []) in
-	let instrumentedLanding = mkStmt (Instr []) in
-	standardLanding.labels <- [standardLabel];
-	instrumentedLanding.labels <- [instrumentedLabel];
-	
-	let gotoStandard = mkBlock [mkStmt (Goto (ref standardLanding, locUnknown))] in
-	let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumentedLanding, locUnknown))] in
-	let weight = weights#find standardAfter in
-	
-	let choice = LogIsImminent.choose locUnknown weight gotoInstrumented gotoStandard in
-	standardBlock.bstmts <- [mkStmt choice; standardLanding];
-	instrumentedAfter.skind <- Block (mkBlock [mkStmt choice; instrumentedLanding])
-	    
-    | _ -> failwith "unexpected statement kind in after calls list"
+    let weight = weights#find standardAfter in
+    if weight != 0 then
+      let instrumentedAfter = clones#find standardAfter in
+	  
+      let standardLabel, instrumentedLabel = nextLabels () in
+      let standardLanding = mkStmt (Instr []) in
+      let instrumentedLanding = mkStmt (Instr []) in
+      standardLanding.labels <- [standardLabel];
+      instrumentedLanding.labels <- [instrumentedLabel];
+      
+      let gotoStandard = mkBlock [mkStmt (Goto (ref standardLanding, locUnknown))] in
+      let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumentedLanding, locUnknown))] in
+      let choice = LogIsImminent.choose locUnknown weight gotoInstrumented gotoStandard in
+      
+      standardAfter.skind <- Block (mkBlock [mkStmt choice; standardLanding]);
+      instrumentedAfter.skind <- Block (mkBlock [mkStmt choice; instrumentedLanding])
   in
   
   List.iter patchOne

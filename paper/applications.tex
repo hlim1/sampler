@@ -201,13 +201,18 @@ To find the few invariants that do count, we use \aside{identify and
 
 \aside{Alice reports:
   
-  Well, of the 40296 features (yet another name for ``predictors''),
-  only 9056 of them are ever non-zero.  Of the non-zero useful
-  features, 955 are constant; 948 of these are constant at 1, 2 at 2,
-  1 at 28, 1 at 31, and 3 at 32.  144 of the useful features have very
-  small variation, where the value is only different for one or two
-  runs.
-  
+  \begin{quote}
+    Well, of the 40296 features (yet another name for ``predictors''),
+    only 9056 of them are ever non-zero.  Of the non-zero useful
+    features, 955 are constant; 948 of these are constant at 1, 2 at
+    2, 1 at 28, 1 at 31, and 3 at 32.  144 of the useful features have
+    very small variation, where the value is only different for one or
+    two runs.
+  \end{quote}
+
+  And once we sample down to 1/100, we have only 2088 columns, so
+  things speed up quite a bit.
+
   Beyond what this does for the regression analysis, this means the
   counts would compress very well.  That's good news for deployed
   users with slow modems.  It's also good news for the server's hard

@@ -7,7 +7,8 @@
 unsigned nextEventCountdown = UINT_MAX;
 
 double density;
-gsl_rng *generator;
+void *generator;
+static gsl_rng *gen;
 
 
 __attribute__((constructor)) static void initialize()
@@ -37,7 +38,7 @@ __attribute__((constructor)) static void initialize()
     }
   
   assert(!generator);
-  generator = gsl_rng_alloc(gsl_rng_env_setup());
+  generator = gen = gsl_rng_alloc(gsl_rng_env_setup());
   nextEventCountdown = getNextCountdown();
 }
 
@@ -45,6 +46,6 @@ __attribute__((constructor)) static void initialize()
 __attribute__((destructor)) static void shutdown()
 {
   assert(generator);
-  gsl_rng_free(generator);
-  generator = 0;
+  gsl_rng_free(gen);
+  generator = gen = 0;
 }

@@ -275,6 +275,7 @@ instrumentor/returns/Makefile
 instrumentor/returns/tests/Makefile
 instrumentor/scalar-pairs/Makefile
 instrumentor/scalar-pairs/tests/Makefile
+instrumentor/version.ml
 launcher/Makefile
 launcher/broken/Makefile
 launcher/common/Makefile

@@ -1,6 +1,9 @@
 open Cil
 
 
+let _ = Version.require
+
+
 let main manager =
   let phases =
     [

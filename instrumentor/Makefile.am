@@ -3,7 +3,7 @@ SUBDIRS = driver branches daikon decure nothing returns scalar-pairs #logging
 EXTRA_DIST = build-libraries libraries.ml.in link-order rules.mk
 
 targets = harness.$(cma)
-extra_impls = libraries
+extra_impls = libraries version
 
 include $(top_srcdir)/ocaml/rules.mk
 

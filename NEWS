@@ -4,6 +4,8 @@
 
 ** Don't upload empty report if instrumented app died suddenly.
 
+** Embed instrumentor version number in instrumented object files.
+
 * sampler-0.6
 
 ** Internal bug fixes to report reader/writer pipe management.

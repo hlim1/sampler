@@ -1,4 +1,4 @@
-0olden := bh bisort em3d health mst perimeter power treeadd tsp
+olden := bh bisort em3d health mst perimeter power treeadd tsp
 spec95 := compress go ijpeg li
 benchmarks := $(sort $(olden) $(spec95))
 
@@ -50,8 +50,12 @@ GNUmakefile: config.mk
 config.mk: %: ../../../config.status %.in
 	cd ../../.. && ./config.status instrumentor/decure/benchmarks/config.mk
 
-collated-times.txt: times
-	./collate-times >$@.
+collated-times-all.txt: times
+	./collate-times-all >$@.
+	mv $@. $@
+
+collated-times-only.txt: times
+	./collate-times-only >$@.
 	mv $@. $@
 
 force:

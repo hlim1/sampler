@@ -200,8 +200,9 @@ clean::
 
 sparsities := 100 1000 10000 1000000
 alwaysTimes := $(alwaysForms:=.times)
-sampleTimes := $(patsubst %, sample-all-%.times, $(sparsities))
-times := $(alwaysTimes) $(sampleTimes)
+sampleAllTimes := $(sparsities:%=sample-all-%.times)
+sampleOnlyTimes := $(onlys:%=sample-%.times)
+times := $(alwaysTimes) $(sampleAllTimes) $(sampleOnlyTimes)
 
 times: $(times)
 .PHONY: times
@@ -210,8 +211,12 @@ $(alwaysTimes): %.times: ../run-trials %.exe
 	./$< 1 './$*.exe $(runArgs)' >$@. 2>&1
 	mv $@. $@
 
-$(sampleTimes): sample-all-%.times: ../run-trials sample-all.exe
+$(sampleAllTimes): sample-all-%.times: ../run-trials sample-all.exe
 	./$< $* './sample-all.exe $(runArgs)' >$@. 2>&1
+	mv $@. $@
+
+$(sampleOnlyTimes): sample-only-%.times: ../run-trials sample-only-%.exe
+	./$< 1000 './sample-only-$*.exe $(runArgs)' >$@. 2>&1
 	mv $@. $@
 
 clean::

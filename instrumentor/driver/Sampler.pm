@@ -43,6 +43,9 @@ sub collectOneArgument {
     } elsif ($arg =~ /^--(no-)?specialize-(singleton|empty)-regions$/) {
 	push @{$self->{instrumentor}}, $arg;
 	return 1;
+    } elsif ($arg =~ /^--(no-)?use-points-to$/) {
+	push @{$self->{instrumentor}}, $arg;
+	return 1;
     } else {
 	return 0;
     }

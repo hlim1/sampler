@@ -8,4 +8,4 @@ esac
 instrumentordir=`dirname $0`/..
 driverdir=`dirname $0`
 
-exec gcc -B $driverdir -I$instrumentordir/$scheme -L$instrumentordir/$scheme -specs=$instrumentordir/$scheme/specs -specs=sampler-specs -fsampler-scheme=$scheme "$@"
+exec gcc -B $driverdir -I$instrumentordir/$scheme -I$driverdir -L$instrumentordir/$scheme -specs=$instrumentordir/$scheme/specs -specs=sampler-specs -fsampler-scheme=$scheme "$@"

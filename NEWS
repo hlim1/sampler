@@ -3,8 +3,8 @@
 * sampler-0.14
 
 ** Ignore program constants in excluded files.
-
-We were already doing the analogous thing for excluded functions.
+** Install ".desktop" icon along proper search path.
+** Improved workaround for Glade GnomeHRef label bug.
 
 * sampler-0.13.1
 

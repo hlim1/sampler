@@ -27,15 +27,6 @@ class FirstTime:
         self.__dialog = self.__get_widget(root)
         Signals.autoconnect(self, self.__xml)
 
-        # replace the HRef button with a clone of itself to work around a libglade bug
-        # <http://bugzilla.gnome.org/show_bug.cgi?id=112470>
-        oldLink = self.__get_widget('learn-more')
-        newLink = gnome.ui.HRef(oldLink.get_property('url'), oldLink.get_property('label'))
-        linkParent = oldLink.parent
-        oldLink.destroy()
-        linkParent.add(newLink)
-        newLink.show()
-
         # hook up state-linked icons
         image = self.__get_widget('image')
         self.__image_updater = StatusIcon(client, image, gtk.ICON_SIZE_DIALOG)

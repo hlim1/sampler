@@ -232,7 +232,7 @@
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="url">http://www.cs.berkeley.edu/~liblit/sampler/learn-more/</property>
-		      <property name="label" translatable="yes">Click here to learn more.</property>
+		      <property name="text" translatable="yes">Click here to learn more.</property>
 		    </widget>
 		  </child>
 		</widget>

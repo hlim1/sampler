@@ -5,7 +5,8 @@ use FindBin;
 use File::Basename;
 
 use CCured;
-our @ISA = qw(CCured);
+use Sampler;
+our @ISA = qw(CCured Sampler);
 
 
 my $libcountdown = "$FindBin::Bin/../../../libcountdown";
@@ -14,24 +15,28 @@ my $libcountdown = "$FindBin::Bin/../../../libcountdown";
 ########################################################################
 
 
+sub root {
+    my $self = shift;
+    return "$self->{home}/../..";
+}
+
+
 sub setDefaultArguments {
     my $self = shift;
-    $self->SUPER::setDefaultArguments;
-    $self->{only} = '';
-    $self->{LD} = "libtool $self->{LD}";
+
+    $self->CCured::setDefaultArguments;
+    $self->Sampler::setDefaultArguments;
+
+    $self->{home} = "$FindBin::Bin/..";
+    $self->{instrumentor} = ["$home/main"];
 }
 
 
 sub collectOneArgument {
     my $self = shift;
-    my ($arg, $pargs) = @_;
 
-    if ($arg eq '--only') {
-	$self->{only} = shift @{$pargs};
-	return 1;
-    } else {
-	$self->SUPER::collectOneArgument(@_);
-    }
+    $self->Sampler::collectOneArgument(@_)
+	or $self->CCured::collectOneArgument(@_);
 }
 
 
@@ -39,11 +44,9 @@ sub preprocess_after_cil {
     my $self = shift;
     my @ppargs = @{(pop)};
 
-    push @ppargs, ('-include', "$libcountdown/countdown.h",
-		   '-include', "$libcountdown/cyclic.h",
-		   '-include', "$FindBin::Bin/../../libdecure/decure.h");
+    push @ppargs, $self->extraHeaders;
     
-    $self->SUPER::preprocess_after_cil(@_, \@ppargs);
+    $self->CCured::preprocess_after_cil(@_, \@ppargs);
 }
 
 
@@ -54,9 +57,9 @@ sub compile_cil {
     my $base = basename $input, ".i";
     my $output = "${base}_inst.c";
     my $instrumentor = "$FindBin::Bin/../main";
-    $self->runShell("$instrumentor --only '$self->{only}' $input >$output");
+    $self->runShell("$self->{instrumentor} $input >$output");
 
-    $self->SUPER::compile_cil($output, @_);
+    $self->CCured::compile_cil($output, @_);
 }
 
 
@@ -64,9 +67,9 @@ sub link_after_cil {
     my $self = shift;
     my @ldargs = @{(pop)};
 
-    push @ldargs, "-L$libcountdown", '-lcyclic';
+    push @ldargs, $self->extraLibs;
 
-    $self->SUPER::link_after_cil(@_, \@ldargs);
+    $self->Cilly::link_after_cil(@_, \@ldargs);
 }
 
 

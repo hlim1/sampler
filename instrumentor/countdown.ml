@@ -29,15 +29,15 @@ let findGlobal =
   FindGlobal.find predicate "nextEventCountdown"
 
 
-let findReset = FindFunction.find "resetCountdown"
+let findReset = FindFunction.find "getNextEventCountdown"
 
 
 let find file = (findGlobal file, findReset file)
 
 
 class countdown (global, reset) fundec =
-  let local = var (makeTempVar fundec ~name:"localCountdown" uintType) in
-  
+  let local = var (makeTempVar fundec ~name:"localEventCountdown" uintType) in
+
   object (self)
     method decrement location =
       Instr [Set (local, increm (Lval local) (-1), location)]

@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "acyclic.h"
-#include "countdown.h"
+#include "cyclic-size.h"
 
 
-#define PRECOMPUTE_COUNT 1024
+unsigned nextEventCountdown;
 
 
 static void writeCountdown(FILE *outfile)

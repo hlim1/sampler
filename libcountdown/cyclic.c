@@ -6,25 +6,19 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
-#include "countdown.h"
 #include "cyclic.h"
+#include "cyclic-size.h"
 
 
-unsigned nextEventCountdown = UINT_MAX;
-
-const unsigned *precomputedCountdowns = 0;
-unsigned nextCountdownSlot = 0;
+#define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(unsigned))
 
 
-#define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(*precomputedCountdowns))
-
-
-__attribute__((constructor)) static void initialize()
+const unsigned *loadCountdowns(const char envar[])
 {
-  const char * const environ = getenv("SAMPLER_COUNTDOWNS");
+  const char * const environ = getenv(envar);
   if (!environ)
     {
-      fputs("countdown/cyclic: must name precomputed countdowns file in $SAMPLER_COUNTDOWNS\n", stderr);
+      fprintf(stderr, __FUNCTION__ ": must name precomputed countdowns file in $%s\n", envar);
       exit(2);
     }
   else
@@ -32,7 +26,7 @@ __attribute__((constructor)) static void initialize()
       const int fd = open(environ, O_RDONLY);
       if (fd == -1)
 	{
-	  fprintf(stderr, "countdown/cyclic: cannot open \"%s\": %s\n", environ, strerror(errno));
+	  fprintf(stderr, __FUNCTION__ ": cannot open \"%s\": %s\n", environ, strerror(errno));
 	  exit(2);
 	}
       else
@@ -40,23 +34,19 @@ __attribute__((constructor)) static void initialize()
 	  void * const mapping = mmap(0, MAP_SIZE, PROT_READ, MAP_PRIVATE, fd, 0);
 	  if (mapping == (void *) -1)
 	    {
-	      fprintf(stderr, "countdown/cyclic: cannot mmap \"%s\": %s\n", environ, strerror(errno));
+	      fprintf(stderr, __FUNCTION__ ": cannot mmap \"%s\": %s\n", environ, strerror(errno));
 	      exit(2);
 	    }
 
 	  close(fd);
-	  precomputedCountdowns = (const unsigned *) mapping;
-	  nextEventCountdown = getNextCountdown();
+	  return (const unsigned *) mapping;
 	}
     }
 }
 
 
-__attribute__((destructor)) static void shutdown()
+void unloadCountdowns(const unsigned *mapping)
 {
-  if (precomputedCountdowns != 0)
-    {
-      munmap((void *) precomputedCountdowns, MAP_SIZE);
-      precomputedCountdowns = 0;
-    }
+  if (mapping != 0)
+    munmap((void *) mapping, MAP_SIZE);
 }

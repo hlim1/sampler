@@ -4,17 +4,9 @@ use strict;
 use FindBin;
 use File::Basename;
 
-use CilConfig;
-use Cilly;
-our @ISA = qw(Cilly);
+use CillySampler;
+our @ISA = qw(CillySampler);
 
-
-########################################################################
-
-
-my $root = "$FindBin::Bin/../../..";
-my $liblog = "$root/liblog";
-my $libcountdown = "$root/libcountdown";
 
 
 ########################################################################
@@ -26,30 +18,23 @@ sub new {
     my $class = ref($proto) || $proto;
     my $self = $class->SUPER::new(@_);
 
-    $self->{instrumentor} = $instrumentor;
+    $self->{instrumentor} = [$instrumentor];
 
     return $self;
 }
 
 
-sub setDefaultArguments {
+sub setPaths {
     my $self = shift;
-    $self->SUPER::setDefaultArguments;
-    $self->{LD} = "libtool $self->{LD}";
-    $self->{only} = '';
-}
 
+    my $root = ;
+    my $liblog = "$root/liblog";
+    my $libcountdown = "$root/libcountdown";
 
-sub collectOneArgument {
-    my $self = shift;
-    my ($arg, $pargs) = @_;
+    $self->{root} = "$FindBin::Bin/../../..";
+    $self->{libdir} = "$daikon/libdaikon";
 
-    if ($arg eq '--only') {
-	$self->{only} = shift @{$pargs};
-	return 1;
-    } else {
-	$self->SUPER::collectOneArgument(@_);
-    }
+    $self->SUPER::setPaths(@_);
 }
 
 
@@ -57,9 +42,7 @@ sub preprocess_before_cil {
     my $self = shift;
     my @ppargs = @{(pop)};
 
-    push @ppargs, ('-include', "$libcountdown/countdown.h",
-		   '-include', "$libcountdown/cyclic.h",
-		   '-include', "$liblog/log.h",
+    push @ppargs, ('-include', "$liblog/log.h",
 		   '-include', "$liblog/primitive.h");
     
     $self->SUPER::preprocess_before_cil(@_, \@ppargs);

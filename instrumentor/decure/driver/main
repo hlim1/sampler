@@ -7,5 +7,5 @@ use lib "$FindBin::Bin/../../driver";
 use lib "$FindBin::Bin/../../cil/bin";
 use lib "$FindBin::Bin/../../cil/lib";
 
-use Daikon;
-Daikon->new(@ARGV)->doit();
+use Decure;
+Decure->new(@ARGV)->doit();

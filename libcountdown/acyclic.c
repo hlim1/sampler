@@ -4,7 +4,6 @@
 #include <gsl/gsl_randist.h>
 #include <limits.h>
 #include "acyclic.h"
-#include "countdown.h"
 
 
 unsigned nextEventCountdown = UINT_MAX;

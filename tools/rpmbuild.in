@@ -21,7 +21,7 @@ my %macros = (
 
 	      sampler_cc => $driver,
 	      sampler_cc_flags => '%{nil}',
-	      sampler_cc_version => '%(rpm -q sampler-devel)',
+	      sampler_cc_version => '%(rpm -q --qf "%{version}" sampler-devel)',
 
 	      'sampler_tags(s:)' => <<'EOF',
 Requires: sampler >= 0.4

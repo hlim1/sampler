@@ -48,13 +48,12 @@ class virtual visitor schemeName file =
       in
 
       EmbedCFG.visit file;
+      self#finalize;
 
       if !sample then
 	begin
 	  let tester = Weighty.collect file allSites in
 	  let countdown = new Countdown.countdown file in
 	  List.iter (Transform.visit tester countdown) allSites
-	end;
-
-      self#finalize
+	end
   end

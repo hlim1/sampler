@@ -7,4 +7,4 @@ Exec=sampler-preferences
 Terminal=false
 Type=Application
 StartupNotify=true
-Categories=Application;Settings;System;X-Ximian-Settings;
+Categories=Application;Settings;AdvancedSettings;X-Ximian-Settings;

@@ -12,10 +12,11 @@ ORBit.load_typelib('Everything')
 import CORBA
 
 from AppConfig import AppConfig
+from SampledLauncher import SampledLauncher
+from UnsampledLauncher import UnsampledLauncher
 from UserConfig import UserConfig
 
 import Config
-import Launcher
 import Uploader
 
 
@@ -26,16 +27,19 @@ def main(configdir):
     app = AppConfig(configdir)
     user = UserConfig(configdir, app)
 
-    monitor = bonobo.activation.activate("iid == 'OAFIID:SamplerMonitor:" + Config.version + "'")
+    sparsity = user.sparsity()
+    if sparsity > 0:
+        launcher = SampledLauncher(app, user, sparsity)
+    else:
+        launcher = UnsampledLauncher(app)
+
+    launcher.spawn()
 
     try:
-        sparsity = user.sparsity()
-        if sparsity > 0:
-            outcome = Launcher.run_with_sampling(app, sparsity)
-            if user.enabled():
-                Uploader.upload(app, user, outcome, 'text/html')
-        else:
-            outcome = Launcher.run_without_sampling(app)
+        iid = "OAFIID:SamplerMonitor:" + Config.version
+        query = "iid == '" + iid + "'"
+        monitor = bonobo.activation.activate(query)
+        outcome = launcher.wait()
 
     finally:
         if monitor != None:

@@ -1,13 +1,10 @@
 #!/usr/bin/python -O
 
-import os.path        
 import sys
 sys.path.append('../common')
 
 import Paths
 Paths.glade = 'wrapper.glade'
 
-from ServerMessage import ServerMessage
-
 import Main
-Main.main(os.path.join('/usr/lib/sampler', 'applications', 'gaim'))
+Main.main('/usr/lib/sampler/applications/gaim')

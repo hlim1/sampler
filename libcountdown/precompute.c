@@ -44,7 +44,6 @@ int main(int argc, char *argv[])
 	    {
 	      writeCountdown(outfile);
 	      nextEventCountdown = getNextEventCountdown();
-	      printf("%u\n", nextEventCountdown);
 	    }
 
 	  nextEventCountdown = 0;

@@ -2,16 +2,29 @@ open Cil
 open Clude
 
 
-let filter = new Clude.filter
+class filter ~flag ~desc ~ident =
+  object
+    inherit Clude.filter ~flag:flag ~desc:desc ~ident:ident as super
+
+    val pragmaExclusions = new StringSet.container
+
+    method collectPragmas file =
+      let iterator = function
+	| GPragma (Attr ("sampler_exclude_function", [AStr name]), _) ->
+	    pragmaExclusions#add name
+	| _ -> ()
+      in
+      iterGlobals file iterator
+
+    method included focus =
+      if pragmaExclusions#mem focus then
+	false
+      else
+	super#included focus
+  end
+
+
+let filter = new filter
     ~flag:"function"
     ~desc:"<function> instrument this function"
     ~ident:"FilterFunction"
-
-
-let collectPragmas file =
-  let iterator = function
-    | GPragma (Attr ("sampler_exclude_function", [AStr name]), _) ->
-	filter#addExclude name
-    | _ -> ()
-  in
-  iterGlobals file iterator

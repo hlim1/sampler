@@ -30,7 +30,7 @@ class virtual visitor file =
 
     initializer
       Dynamic.analyze file;
-      FunctionFilter.collectPragmas file;
+      FunctionFilter.filter#collectPragmas file;
 
       let infos = new FileInfo.container in
       let iterator = function

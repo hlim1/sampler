@@ -1,6 +1,12 @@
 open Cil
 
 
-val filter : Clude.filter
+class filter : flag:string -> desc:string -> ident:string ->
+  object
+    inherit Clude.filter
 
-val collectPragmas : file -> unit
+    method collectPragmas : file -> unit
+  end
+
+
+val filter : filter

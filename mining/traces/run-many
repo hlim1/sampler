@@ -32,7 +32,10 @@ sub check_system (@) {
 ########################################################################
 
 
-for (my $seed = 1; 1; ++$seed) {
+my ($first, $last) = @ARGV or die "usage: $0 <first> <last>\n";
+
+
+foreach my $seed ($first .. $last) {
     my $noise = "$seed.noise";
     my $trace = "$seed.trace";
     my $signal = "$seed.signal";

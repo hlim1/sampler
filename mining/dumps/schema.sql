@@ -22,6 +22,19 @@ CREATE TABLE build (
 ) TYPE=InnoDB;
 
 --
+-- Table structure for table `build_module`
+--
+
+DROP TABLE IF EXISTS build_module;
+CREATE TABLE build_module (
+  build_id int(10) unsigned NOT NULL default '0',
+  module_name varchar(255) NOT NULL default '',
+  unit_signature varchar(32) NOT NULL default '',
+  UNIQUE KEY build_id (build_id,unit_signature,module_name),
+  CONSTRAINT `0_578` FOREIGN KEY (`build_id`, `unit_signature`) REFERENCES `build_site` (`build_id`, `unit_signature`)
+) TYPE=InnoDB;
+
+--
 -- Table structure for table `build_site`
 --
 

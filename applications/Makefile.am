@@ -1,7 +1,8 @@
-SUBDIRS =					\
-	gaim					\
-	evolution				\
-	nautilus
+if HAVE_XIMIAN_RPMS
+SUBDIRS = nautilus
+else
+SUBDIRS = gaim evolution
+endif
 
 EXTRA_DIST =					\
 	.rpmmacros				\

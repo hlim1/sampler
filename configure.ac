@@ -5,6 +5,22 @@ AM_INIT_AUTOMAKE
 
 ########################################################################
 #
+#  Package building configuration
+#
+
+
+AC_MSG_CHECKING(for RPM-based Ximian GNOME Desktop)
+if rpm -q gnome-desktop 2>/dev/null | fgrep -q ximian; then
+  ximian_rpms=yes
+else
+  ximian_rpms=no
+fi
+AM_CONDITIONAL(HAVE_XIMIAN_RPMS, test "$ximian_rpms" = yes)
+AC_MSG_RESULT($ximian_rpms)
+
+
+########################################################################
+#
 #  XML configuration
 #
 

@@ -9,19 +9,18 @@ class visitor = object
     prepareCFG func;
     RemoveLoops.visit func;
     ignore (computeCFGInfo func false);
-    
+
     let forwards, backwards = ClassifyJumps.visit func in
-    let weights = WeighPaths.weigh backwards in
+    let headers = FunctionEntry.find func :: backwards in
+    let weights = WeighPaths.weigh headers in
     let instrumented, clones = Duplicate.duplicateBody func in
 
     ForwardJumps.patch clones forwards;
     BackwardJumps.patch clones weights func backwards;
+    FunctionEntry.patch func weights instrumented;
+
     InstrumentWrites.visit func instrumented;
     
-    let predicate = zero in
-    let original = func.sbody in
-    let choice = mkStmt (If (predicate, original, instrumented, func.svar.vdecl)) in
-    func.sbody <- mkBlock [choice];
     SkipChildren
 end
 

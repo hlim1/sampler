@@ -6,17 +6,13 @@ let patch clones weights func =
   let choice weight jump =
     match jump.skind with
     | Goto (dest, location) ->
-	let imminent = makeTempVar func ~name:"imminent" intType in
-	let lval = (Var imminent, NoOffset) in
-	let call = Call (Some lval, Lval (var LogIsImminent.logIsImminent), [kinteger IUInt weight], location) in
 	let branch =
 	  let dest' = clones#find !dest in
-	  If (Lval lval,
-	      mkBlock [mkStmt (Goto (ref dest', location))],
-	      mkBlock [mkStmt jump.skind],
-	      location)
+	  LogIsImminent.choose func location weight
+	    (mkBlock [mkStmt jump.skind])
+	    (mkBlock [mkStmt (Goto (ref dest', location))])
 	in
-	Block (mkBlock [mkStmtOneInstr call; mkStmt branch])
+	Block branch
 	
     | _ ->
 	failwith "unexpected statement kind in backward jumps list"
@@ -28,7 +24,7 @@ let patch clones weights func =
   
   let patchBoth jump =
     let weight = weights#find jump in
-    Printf.eprintf "CFG #%i has weight %i\n" jump.sid weight;
+    Printf.eprintf "patcher: CFG #%i has weight %i\n" jump.sid weight;
     if weight != 0 then
       begin
 	let choice = choice weight jump in

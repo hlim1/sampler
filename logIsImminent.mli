@@ -1,6 +1,6 @@
 open Cil
 
 
-val logIsImminent : varinfo
+val choose : fundec -> location -> int -> block -> block -> block
 
 val addPrototype : file -> unit

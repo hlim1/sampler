@@ -28,7 +28,9 @@ let rec weigh headers =
   let weights = new StmtMap.container in
 
   let compute header =
-    weights#add header (weight header)
+    let w = weight header in
+    weights#add header w;
+    Printf.eprintf "weigher: CFG #%i has weight %i\n" header.sid w
   in
   
   List.iter compute headers;

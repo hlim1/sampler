@@ -1,9 +1,0 @@
-#!/usr/bin/python -O
-
-import os.path
-import sys
-
-sys.path[0:0] = [sys.path[0], os.path.join(sys.path[0], '..', '..', 'python')]
-
-import Main
-Main.main(os.path.join(sys.path[0], 'config'))

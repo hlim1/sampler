@@ -5,7 +5,8 @@ Release:    1.sam.1
 Epoch:      1
 License:    GPL
 Group:      Applications/Internet
-Vendor:     Computer Science Division, UC Berkeley
+Vendor:     UC Berkeley
+Distribution: Sampler
 Url:        http://gaim.sourceforge.net/
 Source:     %{name}-%{version}.tar.gz
 Packager:   Ben Liblit <liblit@cs.berkeley.edu>
@@ -45,14 +46,12 @@ and plugins.
 
 %sampler_description
 
-%sampler_package
-
 %prep
 %setup
 %sampler_prep
 
 %build
-%sampler_build
+%sampler_prebuild
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --bindir=%{_bindir} \
                                     --datadir=%{_datadir} \
@@ -64,6 +63,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
+export GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      datadir=%{buildroot}%{_datadir} includedir=%{buildroot}%{_includedir} \
      libdir=%{buildroot}%{_libdir} mandir=%{buildroot}%{_mandir} \
@@ -98,12 +98,14 @@ rm -rf %{buildroot}
 %attr(755, root, root) %{_libdir}/libgaim-remote.la
 %{_includedir}/gaim-remote/*.h
 
+%sampler_package
+
 %post
 %sampler_post
 
 %changelog
-* Fri Aug  8 2003 Ben Liblit <liblit@cs.berkeley.edu> 1:@VERSION@-1
-- Added sampled instrumentation.
+* Tue Aug 12 2003 Ben Liblit <liblit@cs.berkeley.edu> 1:0.66-1.sam.1
+- Added hooks for sampled instrumenation.
 
 * Wed Jul 16 2003 Ethan Blanton <eblanton@cs.ohiou.edu>
 - Complete spec file rewrite to take advantage of "new" RPM features

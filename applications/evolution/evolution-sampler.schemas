@@ -3,9 +3,9 @@
 <gconfschemafile>
   <schemalist>
     <schema>
-      <key>/schemas/apps/gnumeric/bug-isolation/branches/asked</key>
-      <applyto>/apps/gnumeric/bug-isolation/branches/asked</applyto>
-      <owner>Gnumeric</owner>
+      <key>/schemas/apps/gaim/sampler/branches/asked</key>
+      <applyto>/apps/gaim/sampler/branches/asked</applyto>
+      <owner>Gaim</owner>
       <type>bool</type>
       <default>false</default>
       <locale name="C">
@@ -14,9 +14,9 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/gnumeric/bug-isolation/branches/enabled</key>
-      <applyto>/apps/gnumeric/bug-isolation/branches/enabled</applyto>
-      <owner>Gnumeric</owner>
+      <key>/schemas/apps/gaim/sampler/branches/enabled</key>
+      <applyto>/apps/gaim/sampler/branches/enabled</applyto>
+      <owner>Gaim</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
@@ -25,9 +25,9 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/gnumeric/bug-isolation/branches/sparsity</key>
-      <applyto>/apps/gnumeric/bug-isolation/branches/sparsity</applyto>
-      <owner>Gnumeric</owner>
+      <key>/schemas/apps/gaim/sampler/branches/sparsity</key>
+      <applyto>/apps/gaim/sampler/branches/sparsity</applyto>
+      <owner>Gaim</owner>
       <type>int</type>
       <default>1000</default>
       <locale name="C">
@@ -36,9 +36,9 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/gnumeric/bug-isolation/branches/compression-level</key>
-      <applyto>/apps/gnumeric/bug-isolation/branches/compression-level</applyto>
-      <owner>Gnumeric</owner>
+      <key>/schemas/apps/gaim/sampler/branches/compression-level</key>
+      <applyto>/apps/gaim/sampler/branches/compression-level</applyto>
+      <owner>Gaim</owner>
       <type>int</type>
       <default>9</default>
       <locale name="C">
@@ -47,9 +47,9 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/gnumeric/bug-isolation/branches/reporting-url</key>
-      <applyto>/apps/gnumeric/bug-isolation/branches/reporting-url</applyto>
-      <owner>Gnumeric</owner>
+      <key>/schemas/apps/gaim/sampler/branches/reporting-url</key>
+      <applyto>/apps/gaim/sampler/branches/reporting-url</applyto>
+      <owner>Gaim</owner>
       <type>string</type>
       <default>http://brawnix.cs.berkeley.edu/cgi-bin/sampler-upload</default>
       <locale name="C">

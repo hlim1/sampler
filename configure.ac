@@ -49,8 +49,12 @@ AC_SUBST(cillibdir, '${instrumentordir}/cil/lib')
 AC_SUBST(driverdir, '${instrumentordir}/driver')
 AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
 AC_SUBST(toolsdir, '${package_libdir}/tools')
+AC_SUBST(aclocaldir, '${datadir}/aclocal')
 AC_SUBST(package_datadir, '${datadir}/${PACKAGE}')
 AC_SUBST(launcherdir, '${package_datadir}/launcher')
+AC_SUBST(fragmentsdir, '${package_datadir}/fragments')
+AC_SUBST(fragments_samplerdir, '${fragmentsdir}/sampler')
+AC_SUBST(templatesdir, '${package_datadir}/templates')
 AC_SUBST(wwwdir, '${localstatedir}/www')
 
 find_driver_fragment=tools/find-driver.pl
@@ -210,6 +214,13 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 
 AC_CONFIG_FILES([
 Makefile
+applications/Makefile
+applications/evolution/Makefile
+applications/gaim/Makefile
+autotools/Makefile
+autotools/fragments/Makefile
+autotools/fragments/sampler/Makefile
+autotools/templates/Makefile
 benchmarks/Makefile
 benchmarks/ccured/Makefile
 benchmarks/ccured/bh/Makefile
@@ -248,11 +259,6 @@ instrumentor/scalar-pairs/Makefile
 instrumentor/scalar-pairs/tests/Makefile
 launcher/Makefile
 launcher/python/Makefile
-launcher/applications/Makefile
-launcher/applications/evolution/Makefile
-launcher/applications/gaim/Makefile
-launcher/applications/gnumeric/Makefile
-launcher/applications/gnumeric-non-gui/Makefile
 lib/Makefile
 lib/cyclic-size.h
 package.m4

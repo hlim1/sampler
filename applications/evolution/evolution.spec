@@ -11,8 +11,9 @@
 Name:     	evolution
 Version: 	1.4.3
 Release:	0.ximian.6.1.sam.1
-Vendor:		Ximian, Inc.
-Distribution:	Ximian GNOME for Red Hat Linux 9 / i386
+Packager:	Ben Liblit <liblit@cs.berkeley.edu>
+Vendor:		UC Berkeley
+Distribution:	Sampler
 Copyright:	GPL
 BuildRoot:	/var/tmp/%{nam}-%{ver}-root
 Docdir:         /usr/share/doc
@@ -224,7 +225,7 @@ all)
 esac
 
 %build
-%sampler_build
+%sampler_prebuild -t
 MAKE=${MAKE:-make}
 RPM_COMMAND=${RPM_COMMAND:-all}
 DESTDIR=${DESTDIR:-"$RPM_BUILD_ROOT"}
@@ -273,7 +274,9 @@ install|all)
     rm -f ${DESTDIR}/usr/lib/gnome-pilot/conduits/libe*_conduit.la
     ;;
 esac
-%sampler_install -x %{_bindir}/%{name}-1.4
+
+%define sampler_wrapped %{name}-1.4
+%sampler_install
 
 %clean
 DESTDIR=${DESTDIR:-"$RPM_BUILD_ROOT"}
@@ -288,6 +291,10 @@ esac
 
 
 %changelog
+* Tue Aug 12 2003 Ben Liblit <liblit@cs.berkeley.edu>
+
+- Added hooks for sampled instrumentation.
+
 * Tue Jul 8 2003 Ximian, Inc.
 
 - Version: 1.4.3-0.ximian.6.1

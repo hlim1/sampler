@@ -53,13 +53,14 @@ EOF
 	      _sampler_sparsity => '%{?sampler_sparsity}%{!?sampler_sparsity:100}',
 	      _sampler_reporting_host => '%{?sampler_reporting_host}%{!?sampler_reporting_host:www.example.org}',
 	      _sampler_reporting_url => '%{?sampler_reporting_url}%{!?sampler_reporting_url:https://%{_sampler_reporting_host}/cgi-bin/sampler-upload}',
+	      _sampler_build_distribution => '%{?sampler_build_distribution}%{!?sampler_build_distribution:@DISTRO@}',
 
 	      _sampler_name => '%{?sampler_name}%{!?sampler_name:%{name}}',
 
 	      sampler_prebuild => <<'EOF',
 export CC='%{sampler_cc} %{sampler_cc_flags}'
 sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/application.schemas.in >sampler/sampler-%{name}.schemas
-sed -e 's/@sampler_name@/%{_sampler_name}/g' -e 's/@sampler_cc_version@/%{sampler_cc_version}/g' -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >sampler/config
+sed -e 's/@sampler_name@/%{_sampler_name}/g' -e 's/@sampler_cc_version@/%{sampler_cc_version}/g' -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@build_distribution@/%{build_distribution}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >sampler/config
 sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' -e 's!@sampler_libdir@!%{_sampler_libdir}!g' -e 's!@name@!%{name}!g' <sampler/wrapper.in >sampler/wrapper
 chmod a+x sampler/wrapper
 %{nil}

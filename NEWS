@@ -3,6 +3,12 @@
 * sampler-0.10
 
 ** Add ability to timestamp instrumentation sites when observed.
+   Not yet documented, unfortunately.
+
+** Add build distribution field to feedback reports.  This is not the
+   user's distribution; it is just the distribution against which the
+   package was originally built.  This helps me distinguish reports
+   for the same software release on multiple platforms.
 
 * sampler-0.9.1
 

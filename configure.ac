@@ -5,6 +5,26 @@ AM_INIT_AUTOMAKE
 
 ########################################################################
 #
+#  Linux distribution
+#
+
+AC_MSG_CHECKING(Linux distribution)
+
+for vendor in fedora redhat; do
+  if test -f /etc/$vendor-release; then
+    DISTRO=`rpm -q --qf '%{name}-%{version}-%{arch}\n' $vendor-release | sed s/-release//`
+    break
+  fi
+done
+
+: ${DISTRO:=unknown}
+
+AC_SUBST(DISTRO)
+AC_MSG_RESULT($DISTRO)
+
+
+########################################################################
+#
 #  Basic C configuration
 #
 

@@ -84,6 +84,14 @@ my @slot = ('HTTP_SAMPLER_APPLICATION_NAME',
 	    'DATE');
 
 
+sub guess_distro (\%) {
+    my $environment = shift;
+    my $instrumentor = $environment->{HTTP_SAMPLER_INSTRUMENTOR_VERSION};
+    return 'fedora-1-i386' if $instrumentor eq '0.9.1';
+    return 'redhat-9-i386';
+}
+
+
 sub read_environment ($\%) {
     my ($dir, $known) = @_;
 
@@ -98,9 +106,7 @@ sub read_environment ($\%) {
 
     unless (defined $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION}) {
 	$environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} =
-	    ($environment{HTTP_SAMPLER_VERSION} eq '0.9.1')
-	    ? 'fedora-1-i386'
-	    : 'redhat-9-i386';
+	    guess_distro %environment;
     }
 
     unless (defined $environment{DATE}) {

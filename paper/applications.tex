@@ -163,130 +163,34 @@ waiting longer for samples to accrue.  The use of statistically fair
 sampling allows one to make these calculations, and therefore these
 trade-offs, in a mathematically well founded manner.
 
-\subsubsection{Single-Function Sampling}
+\subsubsection{Statically Selective Sampling}
 \label{sec:ccured:single}
-\input{applications/ccured-size}
 
-In an effort to better understand the sources of overhead, we have
-performed additional experiments in which only a single function is
-instrumented at a time.  This also approximates a more realistic
-approach to managing code size.  The fully instrumented executables
-from Section~\ref{sec:share:whole} range from
-\execGrowthMin\%-\execGrowthMax\% larger than their non-sampling
-counterparts.  When only a single function is instrumented, code
-expansion is small enough to not be a concern.
+Because samples are taken independently, it is not necessary to put
+all instrumentation into a single executable.  One can easily build a
+suite of executables which each contain a subset of the complete
+instrumentation.  Partitioning instrumentation by site, by module, by
+function, or by object file are all reasonable schemes.  Any
+individual executable contains less instrumentation and therefore
+incurs a smaller performance penalty.  Fewer sites mean more
+weightless functions, and therefore better interprocedural
+optimization per Section~\ref{sec:framework:calls}.  Functions without
+instrumentation sites require no code duplication, which limits
+executable growth.  Known trusted code can be exempted from
+instrumentation, or especially suspect code can be ``farmed out'' to a
+larger proportion of users for more intensive study.  Given a suitable
+dynamic instrumentation infrastructure, sites can be added or removed
+over time as debugging needs and intermediate results warrant.
 
-A fully deployed system might use dynamic instrumentation to randomly
-instrument a single selected function \textit{du jour}.  For the
-present research, we consider each site-containing function one at a
-time.  For each such function, we build one executable with
-unconditional instrumentation in that function, and one executable
-with sampled instrumentation in that function.  All sites in other
-functions are removed.  This, in turn, allows us to discover many more
-weightless functions: any function which cannot transitively call the
-one function being instrumented is weightless.  Thus, a suite of
-single-function sampling executables may perform better, over all,
-than a single executable with sampling in all functions.
-
-In the interest of space, we focus here on the smaller Olden
-benchmarks whose sampled instrumentation performance is worse than
-unconditional instrumentation: \texttt{perimeter} and \texttt{tsp}.
-
-As each site-bearing function in \texttt{perimeter} is instrumented in
-isolation, each sampled version shows a slight slowdown relative to
-its unconditional counterpart, with no single function as an obvious
-performance hog.  However, examining each of these six functions more
-closely reveals that five of them are self-recursive, with between one
-and four recursive calls.  Our current system treats each of these as
-a call to a non-weightless function: the countdown must be exported
-before the call and imported after.  A faster approach would be to
-transform each function to pass the local countdown down to its
-recursive callees, and accept an updated countdown back as a returned
-value.  Such a countdown management strategy would be applicable any
-time both callee and caller can agree on the API change; the case of
-self-recursive calls is particularly straightforward.
-
-The sixth site-bearing function, \texttt{child()}, is not
-self-recursive.  It is, in fact, an acyclic leaf function which must
-always cross exactly two instrumentation sites on every call.
-However, this is a very commonly called function which is fairly
-simple and fast in its non-instrumented form.  Amortization across two
-sites is not enough to mask our overhead here.
-
-In a context where multiple functions are being instrumented, though,
-the relative simplicity of \texttt{child()} suggests an improved
-treatment.  Although \texttt{child()} is not weightless, it does have
-a finite maximum weight (two).  The caller of a finite-weight function
-can exploit this upper limit, effectively treating the callee as a
-cluster of sites of appropriate weight.  One might optionally create
-specialized versions of each finite-weight callee: one to be used from
-the caller's fast path, and one to be used from the caller's slow
-path.  This is a generalization of our existing optimizations for
-weightless functions and calls to weightless functions.
-
-In the \texttt{tsp} benchmark, all functions but one perform slightly
-better using sampling versus unconditional instrumentation.  The one
-exception is \texttt{distance()}, a simple but heavily-trafficked leaf
-function with no cycles that always crosses exactly two
-instrumentation sites.  The same approaches proposed for
-\texttt{perimeter}'s \texttt{child()} function are applicable here.
-
-These two patterns, self recursive functions and finite-weight
-callees, are found in several of the poorly performing functions
-across many benchmarks.  Other recurring themes include:
-
-\begin{itemize}
-\item Low amortization due to lightweight regions in loops with bounds
-  that are constant or fixed on entry.  A loop with iteration count
-  $i$ and body weight $w$ could be treated as an acyclic region of
-  weight $iw$.
-
-\item Overly conservative identification of weightless functions.
-  Calls through function pointers or to externally-defined code are
-  assumed to potentially recurse back to the caller.  Points-to
-  analyses can improve the former; a statically checkable
-  \texttt{weightless} annotation on function prototypes would resolve
-  the later.
-\end{itemize}
-
-These do not completely account for all observed slowdown, though.
-The worst performing benchmark, \texttt{go}, shows poor performance in
-several functions that should have excellent amortization.  For
-example, \texttt{eval\_line\_eye()} has four threshold checks with
-weights 35, 30, 33, and 14.  In spite of this, sampled instrumentation
-in this function runs 9\% slower than uninstrumented code, while
-unconditional instrumentation here has less than at 1\% penalty.
-Further detailed study will be required in order to bring \texttt{go}
-and other poorly-performing benchmarks into line.
-
-\aside{That's a pretty depressing note to end the section on, but what
-  else can we say?  I've looked at several of the worst performing
-  functions in \texttt{go} and they all have large acyclic region
-  weights, so amortization should be great.  I really have no
-  plausible explanation for the \texttt{go} performance data at this
-  time.
-
-  Perhaps all of Section~\ref{sec:ccured:single} should be shrunk down
-  dramatically.  We might just offer a bullet list of things we know
-  we could improve, along with some vague statement that these may not
-  be the only sources of slowdown.
-
-  Part of the problem, I think, is that we're trying to do two
-  different things here.  First, we're trying to mention the idea of
-  single-function instrumentation.  Alex feels it is very important
-  that we discuss this because if we don't claim to have invented it,
-  someone else will come along and think of it themselves.  Second,
-  we're trying to say that the performance could be improved in a
-  number of straightforward ways.  These two ideas are connected
-  because single-function instrumentation makes it easier to find
-  certain opportunities for improvement, but that's not a very strong
-  tie.
-
-  On the other hand, one of the reviewers specifically commented on
-  the fact that ``Apparent anomalies in the results are aggressively
-  addressed and explained,'' so I'm loathe to remove this.
-
-  Hmm.  I'm just not sure what to do here.}
+We have experimented with variants of the \CCured benchmarks in which
+only a single function is instrumented at a time.  Whereas fully
+instrumented executables range from 13\%-149\% larger than their
+non-sampling counterparts, average growth for singe-function
+instrumented executables is just 12\% for the small Olden benchmarks
+and 6\% for the larger SPECINT95 applications.  Performance is strong:
+94\% of site-containing functions incur less than 5\% slowdown versus
+instrumentation-free code, while even the worst single function has
+less than a 12\% penalty.
 
 \subsection{Bug Isolation Using Predicate Elimination}
 \label{sec:ccrypt}

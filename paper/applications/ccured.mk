@@ -24,19 +24,3 @@ tex += ccured-density
 ccured-density.tex: %.tex: %.pl $(ccured)/collated-times.txt
 	./$^ >$@.
 	mv $@. $@
-
-
-########################################################################
-
-
-tex += ccured-size
-
-ccured-size.tex: %.tex: %.pl $(ccured)/collated-times.txt
-	./$< >$@.
-	mv $@. $@
-
-
-########################################################################
-
-
-eps += perimeter

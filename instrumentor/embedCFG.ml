@@ -102,7 +102,7 @@ class visitor file digest channel =
 
 let visit file digest =
   if !saveCFG <> "" then
-    TestHarness.time "  saving CFG"
+    TestHarness.time "saving CFG"
       (fun () ->
 	let channel = open_out !saveCFG in
 	let visitor = new visitor file digest channel in

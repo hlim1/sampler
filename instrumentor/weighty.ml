@@ -134,7 +134,7 @@ type tester = lval -> bool
 
 
 let collect file =
-  TestHarness.time "  identifying weighty functions"
+  TestHarness.time "identifying weighty functions"
     (fun () ->
       let hasDefinition = hasDefinition file in
       let hasPragmaWeightless = hasPragmaWeightless file in

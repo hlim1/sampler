@@ -18,7 +18,7 @@ class c file : Scheme.c =
     val mutable globals = []
 
     method findAllSites =
-      TestHarness.time ("  finding " ^ name.flag ^ " sites")
+      TestHarness.time ("finding " ^ name.flag ^ " sites")
 	(fun () ->
 	  let scanner = function
 	    | GVar (varinfo, _, _)

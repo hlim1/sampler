@@ -13,20 +13,26 @@ let showPhaseTimes =
 type phase = string * (file -> unit)
 
 
-let time description action =
-  if !showPhaseTimes then
-    begin
-      Printf.eprintf "%s: begin\n" description;
-      flush stderr;
-      let before = Unix.gettimeofday () in
-      let result = action () in
-      let after = Unix.gettimeofday () in
-      Printf.eprintf "%s: end; %f sec\n" description (after -. before);
-      flush stderr;
-      result
-    end
-  else
-    action ()
+let depth = ref 0
+
+let time =
+  fun description action ->
+    if !showPhaseTimes then
+      begin
+	let indent = String.make (2 * !depth) ' ' in
+	Printf.eprintf "%s%s: begin\n" indent description;
+	incr depth;
+	flush stderr;
+	let before = Unix.gettimeofday () in
+	let result = action () in
+	let after = Unix.gettimeofday () in
+	decr depth;
+	Printf.eprintf "%s%s: end; %f sec\n" indent description (after -. before);
+	flush stderr;
+	result
+      end
+    else
+      action ()
 
 let doChecks = false
 
@@ -44,7 +50,7 @@ let doOneOne file (description, action) =
 
 
 let doOne phases filename =
-  let thunk = time "parsing" (fun () -> Frontc.parse filename) in
-  let file = time "converting to CIL" thunk in
+  let thunk : unit -> file = time "parsing" (fun () -> Frontc.parse filename) in
+  let file : file = time "converting to CIL" thunk in
   check file;
   List.iter (doOneOne file) phases

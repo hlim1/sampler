@@ -10,7 +10,7 @@ let saveSiteInfo =
 
 let visit schemes digest =
   if !saveSiteInfo <> "" then
-    TestHarness.time "  saving site info"
+    TestHarness.time "saving site info"
       (fun () ->
 	let channel = open_out !saveSiteInfo in
 	List.iter

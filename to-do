@@ -1,3 +1,6 @@
+ShowStats doesn't need ident string, as it has no effect on the
+built binary.
+
 PairClassifier.visitor does a lot of redundant work to re-scan for
 globals from the start of the file for each new instance.  We should
 be able to accumulate this incrementally as we go along.

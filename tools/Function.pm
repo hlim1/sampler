@@ -26,8 +26,6 @@ sub new {
     ($self->{linkage}, $self->{name}, $self->{filename}, $self->{line}) = ($1, $2, $3, $4);
     $self->{nodes} = [];
 
-    print "$self->{filename}:$self->{line}: function $self->{name}()\n";
-
     while (my $node = new Node $self) {
 	$node->{id} = @{$self->{nodes}};
 	push @{$self->{nodes}}, $node;
@@ -42,6 +40,14 @@ sub new {
 sub resolveCallees ($$$) {
     my $self = shift;
     $_->resolveCallees(@_) foreach @{$self->{nodes}};
+}
+
+
+sub dump ($) {
+    my $self = shift;
+
+    print "\tfunction $self->{name} at $self->{filename}:$self->{line}\n";
+    $_->dump foreach @{$self->{nodes}};
 }
 
 

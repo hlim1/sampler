@@ -64,7 +64,6 @@ foreach my $objectName (@ARGV) {
 
     while (my $unit = new Unit $objectName, $handle) {
 	push @units, $unit;
-	print "got unit $unit\n";
     }
 
     my $exports = new SymbolTable;
@@ -73,6 +72,9 @@ foreach my $objectName (@ARGV) {
 
     $handle->close or error "error after reading CFG from $objectName\n";
 }
+
+
+$_->dump foreach @units;    
 
 
 exit $problem;

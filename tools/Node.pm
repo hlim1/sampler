@@ -24,14 +24,11 @@ sub new {
     /^(.+)\t(\d+)$/ or $self->malformed('function header');
     ($self->{filename}, $self->{line}) = ($1, $2);
     
-    print "$self->{filename}:$self->{line}:\tnode\n";
-
     $_ = <$handle>;
     chomp;
     /^(\d+\t)*$/ or $self->malformed('successors list');
     my @successors = split /\t/;
     $self->{successors} = \@successors;
-    print "$self->{filename}:$self->{line}:\t\tsuccs: @successors\n" if @successors;
 
     $_ = <$handle>;
     chomp;
@@ -40,7 +37,6 @@ sub new {
 	/^([\w\$]+\t)*$/ or self->malformed('callees list');
 	@callees = split /\t/;
 	$self->{callees} = \@callees;
-	print "$self->{filename}:$self->{line}:\t\tcallees: @callees\n" if @callees;
     }
 
     return $self;
@@ -66,10 +62,36 @@ sub resolveCallees ($$$) {
 	    $_ = $unit->{$_};
 	} elsif (exists $exports->{$_}) {
 	    $_ = $exports->{$_};
-	} else {
-	    warn "unresolved callee: $_";
 	}
-	print "$old resolved to $_\n";
+    }
+}
+
+
+sub dump ($) {
+    my $self = shift;
+
+    print "\t\tnode $self->{id} at $self->{filename}:$self->{line}\n";
+
+    if (@{$self->{successors}}) {
+	print "\t\t\tsuccessors:";
+	print " $_->{id}" foreach @{$self->{successors}};
+	print "\n";
+    }
+
+    if (exists $self->{callees}) {
+	if (@{$self->{callees}}) {
+	    print "\t\t\tcallees:";
+	    foreach (@{$self->{callees}}) {
+		if (ref) {
+		    print " $_->{name}";
+		} else {
+		    print " ($_)";
+		}
+	    }
+	    print "\n";
+	}
+    } else {
+	print "\t\t\tcallees: ???\n";
     }
 }
 

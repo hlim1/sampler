@@ -40,7 +40,6 @@ sub collectExports ($$) {
     my ($self, $exports) = @_;
 
     foreach (values %{$self->{functions}}) {
-	print "collecting exports from $self .. $_->{name}\n";
 	$exports->add($_) if $_->{linkage} eq '+';
     }
 }
@@ -50,9 +49,16 @@ sub resolveCallees ($$) {
     my ($self, $exports) = @_;
 
     foreach (values %{$self->{functions}}) {
-	print "resolving callees within $self .. $_->{name}\n";
 	$_->resolveCallees($self->{functions}, $exports);
     }
+}
+
+
+sub dump ($) {
+    my $self = shift;
+
+    print "unit $self->{objectName}\n";
+    $_->dump foreach values %{$self->{functions}};
 }
 
 

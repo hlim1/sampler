@@ -73,6 +73,7 @@ signature  \212sam\r\n\032\n
 }
 
 <EXPR0>{null} {
+  siteEnd();
   BEGIN COUNTDOWN0;
 }
 

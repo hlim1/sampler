@@ -29,6 +29,7 @@ libraries.ml: %: build-libraries %.in
 	./$^ >$@
 
 $(dir $(libcommon))%.cmi: $(libcommon); @:
+$(dir $(libcommon))%.cmx: $(libcommon); @:
 $(libcommon): $(force); $(recurse)
 
 MOSTLYCLEANFILES += main

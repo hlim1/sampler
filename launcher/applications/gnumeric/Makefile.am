@@ -4,7 +4,7 @@ gnome-gnumeric.png: ; ln -s /usr/share/pixmaps/$@ .
 
 
 schemas = gnumeric-bug-isolation.schemas
-EXTRA_DIST = $(schemas)
+EXTRA_DIST = $(schemas) gconf-1.0.dtd
 
 TESTS = $(schemas)
 TESTS_ENVIRONMENT = xmllint --valid --noout

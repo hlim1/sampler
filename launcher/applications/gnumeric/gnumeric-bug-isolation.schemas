@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE gconfschemafile SYSTEM "/usr/share/sgml/gconf/gconf-1.0.dtd">
+<!DOCTYPE gconfschemafile SYSTEM "gconf-1.0.dtd">
 <gconfschemafile>
   <schemalist>
     <schema>

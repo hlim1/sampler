@@ -1,1 +1,8 @@
 combine patch and postpatch in Calls module
+
+start trace with magic number for easy recognition; use PNG for
+inspiration here
+
+prefix traces with: binary path, pid, timestamp
+
+embed reset countdown numbers in trace

@@ -525,30 +525,15 @@ not weightless.  Thus, for much of \texttt{ccrypt}, our sampling
 transformation devolves to a simpler but slower pattern of checking
 the next-sample countdown at each and every site.
 
-\begin{figure}
-  \centering
-  \small
-  \includegraphics[width=\columnwidth]{applications/ccrypt_density}
-  \caption{Relative performance of \texttt{ccrypt} with unconditional or
-    sampled instrumentation}
-  \label{fig:ccrypt:slowdown}
-\end{figure}
-
-Table~\ref{tab:share:density} shows the performance impact of
-unconditional instrumentation as well as sampled instrumentation at
-various densities.  Our experimental setup and benchmarking
-methodology are the same as that described earlier in
-Section~\ref{sec:share:whole}.  Somewhat surprisingly, code with
-unconditional instrumentation runs slightly faster than uninstrumented
-code.  This is apparently due to effects such as changes in relative
-code alignment, cache behavior, measurement noise, and other
-unpredictable factors.  Counter management overhead does slow down
-code with sampled instrumentation, but only slightly.  Overhead for
-1/1000 sampling is less than 4\%, and progressively sparser sampling
-rates shrink this still further.  Thus, either unconditional or
-sampled instrumentation seems reasonable for this application.  In the
-next section, though, we consider a more invasive instrumentation
-strategy that requires sampling to keep overhead under control.
+In spite of this, the performance impact of sampled instrumentation is
+minimal.  Using an experimental setup similar to that described
+earlier in Section~\ref{sec:share:whole}, we find that the overhead
+for 1/1000 sampling is less than 4\%, and progressively sparser
+sampling rates shrink this still further.  Unconditional
+instrumentation also performs well here, making either reasonable for
+this particular application.  In the next section, though, we consider
+a more invasive instrumentation strategy that requires sampling to
+keep overhead under control.
 
 \subsection{Statistical Debugging}
 \label{sec:bc}

@@ -11,9 +11,9 @@ use FileHandle;
 ########################################################################
 
 
-sub check_signature ($) {
-    my $signature = shift;
-    die "error: malformed signature: $signature\n"
+sub check_signature ($$$) {
+    my ($filename, $lineno, $signature) = @_;
+    die "$filename:$lineno: malformed signature: $signature\n"
 	unless $signature =~ /^[0-9A-Fa-f]{32}$/
 }
 
@@ -60,9 +60,11 @@ foreach my $objectName (@ARGV) {
     }
 
     my @lines = split /\n/, $buffer;
+    my $lineno = 0;
     while (@lines) {
 	my $signature = shift @lines;
-	check_signature $signature;
+	++$lineno;
+	check_signature $objectName, $lineno, $signature;
 	if (exists $compilationUnit{$signature}) {
 	    warn "warning: duplicate signature: $signature\n";
 	    warn "warning: first defined in \"$compilationUnit{$signature}{name}\"\n";
@@ -71,10 +73,12 @@ foreach my $objectName (@ARGV) {
 	my @sites;
 	while (@lines) {
 	    my $site = shift @lines;
+	    ++$lineno;
 	    last if $site eq '';
 	    push @sites, $site;
 	}
-	$compilationUnit{$signature} = { sites => \@sites };
+	$compilationUnit{$signature} = { sites => \@sites,
+					 name => $objectName };
     }
 }
 
@@ -96,7 +100,7 @@ while (my $signature = <STDIN>) {
     chomp $signature;
     last if $signature eq '</report>';
     
-    check_signature $signature;
+    check_signature 'standard input', $., $signature;
     my $info = $compilationUnit{$signature};
     if ($info) {
 	warn "warning: duplicate signature in report: $signature\n" if $info->{seen};

@@ -2,9 +2,6 @@
 
 * tray
 
-What happens if first time dialog is running and we get a second
-client asking for the factory?
-
 Use ORBit_small_{,un}listen_for_broken() to clean up after dead
 clients.
 

@@ -1,5 +1,6 @@
 prologue := ../liblog/log.h
 CPPFLAGS := -include $(prologue)
+LOADLIBES := -Wl,-rpath,../liblog -L../liblog -llog -Wl,-rpath,../../libcountdown -L../../libcountdown -lcountdown
 
 all: run
 .PHONY: all

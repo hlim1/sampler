@@ -272,9 +272,11 @@ Given a set of runs, we can discard irrelevant predicates using a
 set of \termdef{elimination strategies}:
 
 \begin{elimlist}
-\item[\elim{Elimination by universal falsehood}:] Disregard any
-  counter that is zero on all runs.  These likely represent
-  predicates that can never be true.
+  \begin{sloppypar}
+  \item[\elim{Elimination by universal falsehood}:] Disregard any
+    counter that is zero on all runs.  These likely represent
+    predicates that can never be true.
+  \end{sloppypar}
 
 \item[\elim{Elimination by lack of failing coverage}:] Disregard any
   triple of counters all three of which are zero on all failed runs.
@@ -338,17 +340,19 @@ elimination strategy independently to the counter traces:
   predicates.
 \end{elimlist}
 
-%Several factors conspire to drive most counters to zero: the \naive
-%nature of our guesses, the limited coverage of our automated test
-%suite, and the filtering effect of sparse sampling.  Thus, 
-At first glance, elimination by \elim{universal falsehood} is quite effective
-while elimination by \elim{successful counterexample} seems rather
-poor.  However, these two strategies test disjoint properties and can
-be combined to good effect.
-The combination leaves only those predicates that are sometimes
-observed to be true in failed runs but never observed to be true in
-successful runs.  For our \texttt{ccrypt} trials, only two
-predicates meet this criterion:
+\begin{sloppypar}
+  %% Several factors conspire to drive most counters to zero: the \naive
+  %% nature of our guesses, the limited coverage of our automated test
+  %% suite, and the filtering effect of sparse sampling.  Thus, 
+  At first glance, elimination by \elim{universal falsehood} is quite
+  effective while elimination by \elim{successful counterexample}
+  seems rather poor.  However, these two strategies test disjoint
+  properties and can be combined to good effect.  The combination
+  leaves only those predicates that are sometimes observed to be true
+  in failed runs but never observed to be true in successful runs.
+  For our \texttt{ccrypt} trials, only two predicates meet this
+  criterion:
+\end{sloppypar}
 
 \begin{features}
 \item traverse.c:320: file\_exists() return value > 0

@@ -132,8 +132,7 @@ sub tempfile ($$) {
 	my $filename = $basename . $suffix;
 	return (new FileHandle($filename, 'w'), $filename)
     } else {
-	return File::Temp::tempfile(SUFFIX => $suffix);
-	# return File::Temp::tempfile(SUFFIX => $suffix, UNLINK => 1);
+	return File::Temp::tempfile(SUFFIX => $suffix, UNLINK => 1);
     }
 }
 

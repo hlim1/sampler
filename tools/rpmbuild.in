@@ -28,7 +28,7 @@ my %macros = (
 
 	      'sampler_tags(s:)' => <<'EOF',
 Requires: sampler-gnome
-BuildRequires: sampler-devel
+BuildRequires: sampler-devel >= 0.5
 %global _sampler_source %{-s*}%{!-s:1}
 Source%{_sampler_source}: %{name}-sampler.tar.gz
 %{nil}
@@ -59,7 +59,7 @@ EOF
 
 	      sampler_prebuild => <<'EOF',
 export CC='%{sampler_cc} %{sampler_scheme} %{sampler_cc_flags}'
-sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/sampler.schemas.in >sampler/%{name}-sampler.schemas
+sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/application.schemas.in >sampler/sampler-%{name}.schemas
 sed -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >sampler/config
 sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/wrapper.in >sampler/wrapper
 chmod a+x sampler/wrapper
@@ -75,15 +75,15 @@ install sampler/wrapper %{buildroot}%{_sampler_libdir}/applications/%{name}
 mv %{buildroot}%{sampler_wrapped} %{buildroot}%{_sampler_libdir}/applications/%{name}/executable
 ln -s %{_sampler_libdir}/applications/%{name}/wrapper %{buildroot}%{sampler_wrapped}
 install -d %{buildroot}%{_sysconfdir}/gconf/schemas
-install sampler/%{name}-sampler.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
+install sampler/sampler-%{name}.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
 %{sampler_tooldir}/find-sampler-info $RPM_BUILD_ROOT
 %{nil}
 EOF
 
 	      sampler_files => '%attr(-, root, root) %{_sampler_libdir}/applications/%{name}',
-	      sampler_files_gconf => '%attr(-, root, root) %{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas',
+	      sampler_files_gconf => '%attr(-, root, root) %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas',
 
-	      sampler_post => 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas >/dev/null'
+	      sampler_post => 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas >/dev/null'
 );
 
 

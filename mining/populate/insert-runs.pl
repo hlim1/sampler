@@ -13,7 +13,7 @@ use POSIX qw(strftime);
 use Common;
 use Upload;
 
-my $dry_run = $ARGV[0] eq '--dry-run' ? shift : undef;
+my $dry_run = (@ARGV && $ARGV[0] eq '--dry-run') ? shift : undef;
 
 my $dbh = Common::connect;
 
@@ -128,21 +128,32 @@ sub environment_fields (\%) {
 
 my $upload_run = new Upload;
 
-foreach my $dir (@ARGV) {
+sub insert_run ($) {
+    my $dir = shift;
     my $run_id = basename $dir;
 
     # skip already-known reports
-    next if exists $known{$run_id};
+    return if exists $known{$run_id};
     $known{$run_id} = 1;
 
     # load environment, and skip reports from bad builds
     my $environment = read_environment $dir, %known;
-    next unless defined $environment;
+    return unless defined $environment;
 
     # new report of good build, so add to upload
     print "new: $dir\n";
     my @environment = environment_fields %{$environment};
     $upload_run->print($run_id, @environment);
+}
+
+
+if (@ARGV) {
+    insert_run $_ foreach @ARGV;
+} else {
+    while (local $_ = <STDIN>) {
+	chomp;
+	insert_run $_;
+    }
 }
 
 

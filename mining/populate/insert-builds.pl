@@ -11,7 +11,7 @@ use POSIX qw(strftime);
 use Common;
 use Upload;
 
-my $dry_run = $ARGV[0] eq '--dry-run' ? shift : undef;
+my $dry_run = (@ARGV && $ARGV[0] eq '--dry-run') ? shift : undef;
 
 my $dbh = Common::connect;
 
@@ -69,7 +69,8 @@ my %guess_instrumentation_type =
 
 my $upload_build = new Upload;
 
-foreach my $package (@ARGV) {
+sub insert_build ($) {
+    my $package = shift;
     my @command = ('rpm', '-qp', '--qf', '%{name}\t%{version}\t%{release}\n%{buildtime}\n', $package);
     my $rpm_query = new FileHandle;
     open $rpm_query, '-|', @command;
@@ -79,7 +80,7 @@ foreach my $package (@ARGV) {
     my $app_id = join "\t", @app_id;
 
     # have we seen this before?
-    next if exists $known{$app_id};
+    return if exists $known{$app_id};
     $known{$app_id} = 1;
 
     print "new: $package\n";
@@ -99,6 +100,16 @@ foreach my $package (@ARGV) {
     if ($?) {
 	print "rpm command failed: $?";
         exit($? >> 8 || $?);
+    }
+}
+
+
+if (@ARGV) {
+    insert_build $_ foreach @ARGV;
+} else {
+    while (local $_ = <STDIN>) {
+	chomp;
+	insert_build $_;
     }
 }
 

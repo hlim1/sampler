@@ -17,7 +17,8 @@ EXTRA_DIST =					\
 	$(package_data_DATA)			\
 	$(package_data_SCRIPTS)			\
 	$(schema_DATA)				\
-	gconf-1.0.dtd
+	gconf-1.0.dtd				\
+	oaf.dtd
 
 TESTS = $(schema_DATA)
 TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout

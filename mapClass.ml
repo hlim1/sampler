@@ -1,7 +1,3 @@
-exception Duplicate_key
-exception Missing_key
-    
-
 class ['key, 'data] container indexer = object(self)
 
   val storage : ('index * ('key * 'data)) list ref = ref []

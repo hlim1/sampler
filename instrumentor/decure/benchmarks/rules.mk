@@ -200,7 +200,7 @@ clean::
 ########################################################################
 
 
-sparsities := 100 10000 1000000
+sparsities := 100 1000 10000 1000000
 sparseTimes := $(sparsities:=.times)
 
 sparse-times: $(sparseTimes)

@@ -8,15 +8,15 @@ class visitor = object
   val mutable outputs = OutputSet.empty
   method result = outputs
 
-  method vexpr expression =
-    begin
-      match expression with
-      | Lval lval ->
-	  let dissection = Dissect.dissect lval (typeOfLval lval) in
-	  outputs <- OutputSet.union outputs dissection
-      |	_ -> ()
-    end;
-    DoChildren
+  method vexpr = function
+    | Lval lval ->
+	let dissection = Dissect.dissect lval (typeOfLval lval) in
+	outputs <- OutputSet.union outputs dissection;
+	DoChildren
+    | SizeOfE _ ->
+	SkipChildren
+    | _ ->
+	DoChildren
 end
 
 

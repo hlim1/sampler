@@ -13,14 +13,19 @@ unsigned nextLogCountdown = 0;
 
 static void resetCountdown()
 {
+  unsigned countUp = 0;
+  
   while (likely(random() % 4096 != 0))
     {
-      ++nextLogCountdown;
-      if (unlikely(nextLogCountdown == 0))
+      ++countUp;
+      if (unlikely(countUp == 0))
       {
-	nextLogCountdown = UINT_MAX;
+	countUp = UINT_MAX;
 	break;
       }
+    }
+
+  nextLogCountdown = countUp;
 }
 
 

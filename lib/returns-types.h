@@ -1,5 +1,5 @@
-#ifndef INCLUDE_sampler_returns_report_h
-#define INCLUDE_sampler_returns_report_h
+#ifndef INCLUDE_sampler_returns_types_h
+#define INCLUDE_sampler_returns_types_h
 
 
 typedef unsigned ReturnTuple[3];
@@ -8,4 +8,4 @@ typedef unsigned ReturnTuple[3];
 void returnsReport(const unsigned char *, unsigned, const ReturnTuple []);
 
 
-#endif /* !INCLUDE_sampler_returns_report_h */
+#endif /* !INCLUDE_sampler_returns_types_h */

@@ -15,7 +15,7 @@ my @sparsity = (100, 1000, 10000, 1000000);
 my @form = ('always-none', map("sample-all-$_", @sparsity), 'always-all');
 
 foreach my $form (@form) {
-    my $file = new FileHandle("$benchmark/$form.times", 'r') or die;
+    my $file = new FileHandle("times/$form.times", 'r') or die;
 
     while (not $file->eof) {
 	my $seed;
@@ -24,7 +24,7 @@ foreach my $form (@form) {
 	
 	while (<$file>) {
 	    $seed = $1
-		if /SAMPLER_EVENT_COUNTDOWNS=\.\.\/countdowns\/\d+-(\d+)\.counts/;
+		if /SEED=(\d+)$/;
 	    ($user, $system, $elapsedMin, $elapsedSec, $cpu, $text, $data, $max) = ($1, $2, $3, $4, $5, $6, $7, $8)
 		if /\b(\d+\.\d+)user (\d+\.\d+)system (\d+):(\d+\.\d+)elapsed (\d+)%CPU \((\d+)avgtext\+(\d+)avgdata (\d+)maxresident\)k/;
 	    ($inputs, $outputs, $major, $minor, $swaps) = ($1, $2, $3, $4, $5)
@@ -39,7 +39,7 @@ foreach my $form (@form) {
 	    die unless defined $inputs;
 	    
 	    my $elapsed = 60 * $elapsedMin + $elapsedSec;
-	    print($suite, $benchmark, $form, $seed,
+	    print($form, $seed,
 		  $user, $system, $elapsed, $cpu, $text, $data, $max,
 		  $inputs, $outputs, $major, $minor, $swaps);
 	}

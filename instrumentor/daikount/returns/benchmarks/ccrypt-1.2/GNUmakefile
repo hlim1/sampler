@@ -34,14 +34,15 @@ sampleTimes := $(sparsities:%=times/sample-all-%.times)
 alwaysTimes := $(patsubst %, times/always-%.times, none all)
 times := $(alwaysTimes) $(sampleTimes)
 
-times: $(times)
+collated-times: collate-times $(times)
+	./$<
 
-$(alwaysTimes): times/%.times: %/src/ccrypt $(seeds:%=inputs/%.noise)
+$(alwaysTimes): times/%.times: %/src/ccrypt run-trials $(seeds:%=inputs/%.noise)
 	[ -d $(@D) ] || mkdir $(@D)
 	./run-trials $< </dev/null >$@. 2>&1
 	mv $@. $@
 
-$(sampleTimes): times/sample-all-%.times: sample-all/src/ccrypt $(seeds:%=inputs/%.noise)
+$(sampleTimes): times/sample-all-%.times: sample-all/src/ccrypt run-trials $(seeds:%=inputs/%.noise)
 	[ -d $(@D) ] || mkdir $(@D)
 	./run-trials $< $* </dev/null >$@. 2>&1
 	mv $@. $@

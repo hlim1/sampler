@@ -40,6 +40,7 @@ foreach my $seed (1 .. 4) {
     unlink $crypt;
     check_copy $input, $clear;
 
+    print "SEED=$seed\n";
     check_system 'time', $ccrypt, '-K', 'good', $clear;
 
     unlink $clear, $crypt;

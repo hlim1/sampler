@@ -1,15 +1,10 @@
 #ifndef INCLUDE_sampler_clock_h
 #define INCLUDE_sampler_clock_h
 
-#include "threads.h"
-
-
-extern SAMPLER_THREAD_LOCAL unsigned samplerClock;
-
-
-#ifdef CIL
-#pragma cilnoremove("samplerClock")
-#endif
-
+#ifdef SAMPLER_THREADS
+#include "clock-threads.h"
+#else  /* no threads */
+#include "clock-no-threads.h"
+#endif /* no threads */
 
 #endif /* !INCLUDE_sampler_clock_h */

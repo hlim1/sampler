@@ -53,7 +53,6 @@ package_include_HEADERS =			\
 sampler_sources =				\
 	acyclic.c				\
 	acyclic.h				\
-	clock.c					\
 	clock.h					\
 	countdown.c				\
 	countdown.h				\
@@ -72,11 +71,15 @@ sampler_sources =				\
 
 libsampler_a_SOURCES =				\
 	$(sampler_sources)			\
+	clock-no-threads.c			\
+	clock-no-threads.h			\
 	no-hijack.c
 
 
 libsampler_r_a_SOURCES =			\
 	$(sampler_sources)			\
+	clock-threads.c				\
+	clock-threads.h				\
 	hijack.c
 
 libsampler_r_a_CFLAGS = -pthread -DSAMPLER_THREADS

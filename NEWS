@@ -1,5 +1,10 @@
 -*- outline -*-
 
+* sampler-0.10
+
+** Add "--timestamps" flag to give each instrumentation site a
+   relative timestamp that is updated when an observation is made.
+
 * sampler-0.9.1
 
 ** Minor bug fixes to developer tools.

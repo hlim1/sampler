@@ -1,8 +1,15 @@
 bin_SCRIPTS = sampler-cc
-instrumentor_SCRIPTS = main
-instrumentor_DATA = CillySampler.pm Sampler.pm
+driver_SCRIPTS = main
 
-EXTRA_DIST = $(instrumentor_DATA)
+driver_DATA =					\
+	../cil/lib/Cilly.pm			\
+	../cil/lib/KeptFile.pm			\
+	../cil/lib/OutputFile.pm		\
+	../cil/lib/TempFile.pm			\
+	CillySampler.pm				\
+	Sampler.pm
+
+EXTRA_DIST = $(driver_DATA)
 
 main: main-subst
 	chmod +x $<

@@ -1,6 +1,10 @@
 cildir := ../../../../cil
 
+all:
+.PHONY: all
+
 check: echo-cured echo-decured
+.PHONY: check
 
 %-cured: CC := $(cildir)/bin/ccured
 %-decured: CC := ../driver/main

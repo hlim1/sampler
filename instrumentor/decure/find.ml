@@ -3,11 +3,6 @@ open Classify
 open Str
 
 
-let isWrapper =
-  let pattern = regexp ".*_wrapper_[sfqiwrv]+$" in
-  fun candidate -> string_match pattern candidate 0
-
-
 class visitor =
   object
     inherit FunctionBodyVisitor.visitor
@@ -22,10 +17,7 @@ class visitor =
       | Fail ->
 	  SkipChildren
       | Generic ->
-	  if isWrapper vname then
-	    SkipChildren
-	  else
-	    DoChildren
+	  DoChildren
 
     method vstmt ({skind = skind} as stmt) =
       match classifyStatement skind with
@@ -35,7 +27,8 @@ class visitor =
 
       | Fail ->
 	  currentLoc := get_stmtLoc skind;
-	  ignore (bug "found raw call to failure routine; missed containing check?");
+	  ignore (bug "found unguarded call to failure routine; missed containing check?");
+	  sites <- stmt :: sites;
 	  SkipChildren
 
       | Generic ->

@@ -2,37 +2,58 @@ open Cil
 open Str
 
 
-let isCheck =
-  let pattern = regexp "__CHECK_" in
-  fun candidate -> string_match pattern candidate 0
-
-
 type classification = Check | Fail | Generic
 
 
 let classifyByName = function
-  | "__CHECK_BOUNDS_LEN"
+    (* include/ccuredcheck.h *)
+  | "__CHECK_RETURNPTR"
+  | "__CHECK_STOREPTR"
+  | "__CHECK_FUNCTIONPOINTER"
   | "__CHECK_FSEQ2SAFE"
   | "__CHECK_FSEQALIGN"
-  | "__CHECK_FSEQARITH"
-  | "__CHECK_FSEQARITH2SAFE"
-  | "__CHECK_FUNCTIONPOINTER"
-  | "__CHECK_GEU"
-  | "__CHECK_INDEXALIGN"
-  | "__CHECK_NULL"
-  | "__CHECK_POSITIVE"
-  | "__CHECK_RTTICAST"
-  | "__CHECK_SEQ2FSEQ"
-  | "__CHECK_SEQ2SAFE"
   | "__CHECK_SEQALIGN"
-  | "__CHECK_STOREPTR"
-  | "__CHECK_STRINGMAX"
+  | "__CHECK_SEQ2SAFE"
+  | "__CHECK_BOUNDS_LEN"
+  | "__CHECK_INDEXALIGN"
+  | "__CHECK_GEU"
+  | "__CHECK_SEQ2FSEQ"
+  | "__CHECK_POSITIVE"
+  | "__CHECK_FSEQARITH"
+  | "__CHECK_NULL"
+  | "__CHECK_RTTICAST"
   | "__CHECK_WILDPOINTERREAD"
-  | "__CHECK_WILDPOINTERWRITE"
-  | "__CHECK_WILDPOINTERWRITE_NOSTACKCHECK"
-  | "__CHECK_WILDP_WRITE_ATLEAST" ->
+    (* lib/ccuredlib.c *)
+  | "wildp_verify_atleast"
+  | "wildp_write_atleast"
+  | "__ccured_verify_nul"
+  | "wildp_verify_nul"
+  | "seqp_verify_atleast"
+  | "fseqp_verify_atleast"
+  | "DO_CHECK"
+  | "CHECK_FORMATARGS"
+  | "CHECK_FORMATARGS_w"
+  | "__bounds_check_w"
+  | "__bounds_check_q"
+  | "__verify_nul_q"
+  | "__read_at_least_q"
+  | "__write_at_least_q"
+  | "__bounds_check_f"
+  | "__verify_nul_f"
+  | "__read_at_least_f"
+  | "__write_at_least_f"
+  | "__verify_nul_Q"
+  | "__write_at_least_Q"
+  | "__read_at_least_Q"
+  | "__verify_nul_F"
+  | "__write_at_least_F"
+  | "__read_at_least_F"
+  | "__bounds_check_i"
+  | "__write_at_least_i" ->
       Check
   | "fp_fail"
+  | "fp_fail_str"
+  | "fp_fail_w"
   | "lbound_or_ubound_fail"
   | "ubound_or_non_pointer_fail" ->
       Fail
@@ -40,35 +61,34 @@ let classifyByName = function
       Generic
 
 
-let classifyStatement = function
+let rec classifyStatement = function
   | Instr [Call (None, Lval (Var {vname = vname}, NoOffset), _, location)] ->
       classifyByName vname
 
-  | If (p,
-	{ battrs = [];
-	  bstmts = [
-	  { skind = If (BinOp (Shiftrt,
-			       BinOp (MinusPP,
-				      Lval (Var _, NoOffset),
-				      CastE (TPtr (TInt (IChar, []), []), p'),
-				      TInt (IInt, [])),
-			       Const (CInt64 (twentyOne, IInt, _)),
-			       TInt (IInt, [])),
-			{ battrs = []; bstmts = [] },
-			{ battrs = []; bstmts = [
-			  { skind = Instr [ Call (None, Lval (Var {vname = "fp_fail"},
-							      NoOffset),
-						  Const (CInt64 (zero, IInt, _)) :: _,
-						  _) ] } ] },
-			_) } ] },
-	{ battrs = []; bstmts = [] },
-	_)
-    when twentyOne = Int64.of_int 21
-	&& zero = Int64.zero
-	&& p = p'
+  | If (_, { battrs = []; bstmts = [{skind = consequence}] }, { battrs = []; bstmts = [] }, _)
+  | If (_, { battrs = []; bstmts = [] }, { battrs = []; bstmts = [{skind = consequence}] }, _)
     ->
-      (* CHECK_RETURNPTR *)
-      Check
+      begin
+	match classifyStatement consequence with
+	| Check
+	| Fail ->
+	    Check
+	| Generic ->
+	    Generic
+      end
+
+  | If (_,
+	{ battrs = []; bstmts = [{skind = consequence}] },
+	{ battrs = []; bstmts = [{skind = alternative}] }, _)
+    ->
+      begin
+	match
+	  classifyStatement consequence,
+	  classifyStatement alternative
+	with
+	| (Check | Fail), (Check | Fail) -> Check
+	| _ -> Generic
+      end
 
   | _ ->
       Generic

@@ -37,8 +37,8 @@ class virtual visitor file = object(self)
 	    ForwardJumps.patch clones forwardJumps;
 	    BackwardJumps.patch clones weights countdown backwardJumps;
 	    Calls.patch clones weights countdown afterCalls;
-	    Calls.postpatch func countdown;
 	    FunctionEntry.patch func weights countdown instrumented;
+	    Calls.postpatch func countdown;
 	    
 	    let combine code instrumentation =
 	      let codeStmt = mkStmt code.skind in

@@ -1,7 +1,7 @@
 # RPM specfile for evolution module
 # Generated Tue Jul  8 20:57:03 2003 GMT by Ximian build system
-# $Id: evolution.spec,v 1.1 2003/08/11 23:35:38 liblit Exp $
-# from $Id: evolution.spec,v 1.1 2003/08/11 23:35:38 liblit Exp $
+# $Id: evolution.spec,v 1.2 2003/08/12 07:23:26 liblit Exp $
+# from $Id: evolution.spec,v 1.2 2003/08/12 07:23:26 liblit Exp $
 
 %define nam	evolution
 %define ver	1.4.3
@@ -217,9 +217,9 @@ dist)
 %patch0 -p 0
     ;;
 all)
-%sampler_prep
 %setup  -q -n evolution-1.4.3
 %patch0 -p 0
+%sampler_prep
     ;;
 esac
 

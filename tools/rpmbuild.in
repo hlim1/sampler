@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+# -*- cperl -*-
 
 use strict;
 use FindBin;
@@ -12,6 +13,8 @@ my $scheme = shift
 
 @find_driver_fragment@
 $ENV{CC} = "$driver $scheme";
+
+$scheme =~ s/ --threads( |$)//;
 
 
 ########################################################################
@@ -43,28 +46,31 @@ this to use %{name}.  Most users have no need to install this package.
 %{_libdir}/sampler/sites/*
 EOF
 
-	      sampler_prep => '%setup -n %{name}-sampler -T -c -a %{_sampler_source}',
+	      sampler_prep => <<'EOF',
+mkdir sampler
+tar xzf %{S:%{_sampler_source}} -C sampler
+EOF
 
 	      sampler_build => <<'EOF',
-sed -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' <../%{name}-sampler/config.in >../%{name}-sampler/config
-sed -e 's!@_launcherdir@!%{_datadir}/sampler/launcher!g' <../%{name}-sampler/wrapper.in >../%{name}-sampler/wrapper
+sed -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' <sampler/config.in >sampler/config
+sed -e 's!@_launcherdir@!%{_datadir}/sampler/launcher!g' <sampler/wrapper.in >sampler/wrapper
 EOF
 
 	      'sampler_install(x:)' => <<'EOF',
 install -d %{buildroot}%{_libdir}/sampler/applications/%{name}
 for file in config %{name}-sampler.schemas interface.glade wrapper; do
-  install %{_builddir}/%{name}-sampler/$file %{buildroot}%{_libdir}/sampler/applications/%{name}
+  install sampler/$file %{buildroot}%{_libdir}/sampler/applications/%{name}
 done
 mv %{buildroot}%{-x*}%{!-x:%{_bindir}/%{name}} %{buildroot}%{_libdir}/sampler/applications/%{name}/executable
 ln -s %{_libdir}/sampler/applications/%{name}/wrapper %{buildroot}%{-x:-x*}%{!-x:%{_bindir}/%{name}}
 install -d %{buildroot}%{_sysconfdir}/gconf/schemas
-install %{_builddir}/%{name}-sampler/%{name}-sampler.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
-%{_libdir}/sampler/tools/find-sampler-info %{_builddir}/%{?buildsubdir}
+install sampler/%{name}-sampler.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
+%{_libdir}/sampler/tools/find-sampler-info $RPM_BUILD_ROOT
 EOF
 
 	      sampler_files => <<'EOF',
-%{_libdir}/sampler/applications/%{name}
-%{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas
+%attr(-, root, root) %{_libdir}/sampler/applications/%{name}
+%attr(-, root, root) %{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas
 EOF
 
 	      sampler_post => 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas >/dev/null'

@@ -50,23 +50,17 @@ $(dtd): ../$(dtd)
 $(rpmbuild): force
 	$(MAKE) -C $(@D) $(@F)
 
-unpack: SPECS/$(spec)
-.PHONY: unpack
-SPECS/$(spec): $(srpm)
-	$(rpmenv) rpm -i $<
+config.in wrapper.in: %: ../%
+	cp $< $@
 
 $(sampler_extras): config.in $(name)-sampler.schemas interface.glade wrapper.in
 	tar czf $@ $^
 
-config.in wrapper.in: %: ../%
-	cp $< $@
-
-SOURCES/$(sampler_extras): SOURCES/%: % SOURCES/.stamp
-	cp $< $@
-
 srpm: $(sam_srpm)
 .PHONY: srpm
-$(sam_srpm): $(spec) $(rpmbuild) SOURCES/$(sampler_extras) SPECS/$(spec) SRPMS/.stamp
+$(sam_srpm): $(spec) $(rpmbuild) $(sampler_extras) SOURCES/.stamp SRPMS/.stamp
+	cp $(sampler_exras) SOURCES
+	$(rpmenv) rpm -i $<
 	$(rpmenv) $(rpmbuild) '$(scheme)' -bs $<
 
 rpm: $(sam_rpm)
@@ -89,6 +83,12 @@ RPMS/.stamp: %/.stamp:
 	[ -d $*/$(cpu) ] || mkdir -p $*/$(cpu)
 	touch $@
 
+
+MOSTLYCLEANFILES =				\
+	 $(sampler_extras)			\
+	config.in				\
+	gconf-1.0.dtd				\
+	wrapper.in
 
 mostlyclean-local:
 	rm -rf BUILD RPMS SOURCES SPECS SRPMS

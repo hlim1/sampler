@@ -48,8 +48,8 @@ and plugins.
 %sampler_package
 
 %prep
-%sampler_prep
 %setup
+%sampler_prep
 
 %build
 %sampler_build

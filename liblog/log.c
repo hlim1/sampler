@@ -23,4 +23,4 @@ void logSiteBegin(const char *file, unsigned line)
     }
 
   storeData(&line, sizeof(line));
-}  
+}

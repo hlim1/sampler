@@ -5,12 +5,19 @@
 #include "primitive.h"
 
 
-const char *storageFilename();
+void storeInitialize(const char *);
+void storeShutdown();
 
 void storeData(const void *, size_t);
-void storeNull();
+void storeByte(char);
 void storeString(const char *);
 void storeValue(const char *, enum PrimitiveType, const void *, size_t);
+
+extern inline
+void storeNull()
+{
+  storeByte(0);
+}
 
 
 #endif /* !INCLUDE_liblog_storage_h */

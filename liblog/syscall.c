@@ -11,22 +11,17 @@
 int logFd = -1;
 
 
-__attribute__((constructor)) static void initialize()
+void storeInitialize(const char *filename)
 {
-  const char * const filename = getenv("SAMPLER_FILE");
-  
-  if (filename)
-    {
-      logFd = open(filename, O_WRONLY | O_CREAT | O_TRUNC,
-		   S_IRUSR | S_IRGRP | S_IROTH |
-		   S_IWUSR | S_IWGRP | S_IWOTH);
+  logFd = open(filename, O_WRONLY | O_CREAT | O_TRUNC,
+	       S_IRUSR | S_IRGRP | S_IROTH |
+	       S_IWUSR | S_IWGRP | S_IWOTH);
       
-      if (logFd == -1) perror("logger: open error");
-    }
+  if (logFd == -1) perror("logger: open error");
 }
 
 
-__attribute__((destructor)) static void shutdown()
+void storeShutdown()
 {
   if (logFd != -1)
     {
@@ -51,10 +46,9 @@ void storeData(const void *value, size_t desired)
 }
 
 
-void storeNull()
+void storeByte(char byte)
 {
-  const char null = '\0';
-  storeData(&null, sizeof(null));
+  storeData(&byte, sizeof(byte));
 }
 
 

@@ -3,12 +3,18 @@
 #include "storage.h"
 
 
-const char *storageFilename()
+__attribute__((constructor)) static void initialize()
 {
   const char * const filename = getenv("SAMPLER_FILE");
   
-  if (!filename)
+  if (filename)
+    storeInitialize(filename);
+  else
     fprintf(stderr, "logger: not recording samples; no $SAMPLER_FILE given in environment\n");
+}
 
-  return filename;
+
+__attribute__((destructor)) static void shutdown()
+{
+  storeByte(-1);
 }

@@ -4,19 +4,14 @@
 FILE *logFile;
 
 
-__attribute__((constructor)) static void initialize()
+void storeInitialize(const char *filename)
 {
-  const char * const filename = storageFilename();
-  
-  if (filename)
-    {
-      logFile = fopen(filename, "w");
-      if (!logFile) perror("logger: fopen error");
-    }
+  logFile = fopen(filename, "w");
+  if (!logFile) perror("logger: fopen error");
 }
 
 
-__attribute__((destructor)) static void shutdown()
+void storeShutdown()
 {
   if (logFile)
     {
@@ -41,7 +36,7 @@ void storeData(const void *value, size_t desired)
 }
 
 
-static void storeByte(char byte)
+void storeByte(char byte)
 {
   if (logFile)
     {
@@ -49,12 +44,6 @@ static void storeByte(char byte)
       if (error == -1)
 	perror("logger: fputc error");
     }
-}
-
-
-void storeNull()
-{
-  storeByte(0);
 }
 
 

@@ -1,3 +1,4 @@
+import os
 import urllib2
 
 from RedirectHandler import RedirectHandler
@@ -21,6 +22,10 @@ def upload(app, user, outcome, accept):
 
     reporting_url = user.reporting_url()
     if reporting_url and outcome.reports:
+
+        # upload in the background, in case the network is slow
+        if os.fork() > 0:
+            return
 
         # compress reports in preparation for upload
         upload = Upload(outcome.reports)
@@ -59,3 +64,6 @@ def upload(app, user, outcome, accept):
             del reply
             dialog = ServerMessage(base, content_type, message)
             dialog.run()
+
+        # child is done; exit without fanfare
+        os._exit(0)

@@ -17,12 +17,12 @@ my $preprocessed;
 
 my @inputs;
 my $input;
-my $instrumentor_outfile;
 
 my @cpp0 = ("@cpp0@");
 my $cpp0_output_slot;
 
 my @cc1 = ("@cc1@", '-fpreprocessed');
+my $cc1_input_slot;
 
 my @inst;
 
@@ -52,29 +52,21 @@ sub dumpbase ($) {
 }
 
 
-sub inst_toggle ($) {
-    $_[0] =~ /\A-f([-a-z]+)\Z/ or die;
-    push @inst, "--$1";
-}
-
-
 my %flag_specs =
     (
      # Sampler Options
      '-fthreads' => sub { },
      '-fno-threads' => sub { },
-     '-fsample' => \&inst_toggle,
-     '-fno-sample' => \&inst_toggle,
-     '-frename-locals' => \&inst_toggle,
-     '-fno-rename-locals' => \&inst_toggle,
-     '-fassign-across-pointer' => \&inst_toggle,
-     '-fno-assign-across-pointer' => \&inst_toggle,
-     '-fassign-into-field' => \&inst_toggle,
-     '-fno-assign-into-field' => \&inst_toggle,
-     '-fassign-into-index' => \&inst_toggle,
-     '-fno-assign-into-index' => \&inst_toggle,
-     '-fcompare-constants' => \&inst_toggle,
-     '-fno-compare-constants' => \&inst_toggle,
+     '-fsample' => sub { push @inst, '--sample' },
+     '-fno-sample' => sub { push @inst, '--no-sample' },
+     '-frename-locals' => sub { push @inst, '--rename-locals' },
+     '-fno-rename-locals' => sub { push @inst, '--no-rename-locals' },
+     '-fassign-across-pointer' => sub { push @inst, '--assign-across-pointer' },
+     '-fno-assign-across-pointer' => sub { push @inst, '--assign-across-pointer' },
+     '-fassign-into-field' => sub { push @inst, '--assign-into-field' },
+     '-fno-assign-into-field' => sub { push @inst, '--assign-into-field' },
+     '-fassign-into-index' => sub { push @inst, '--assign-into-index' },
+     '-fno-assign-into-index' => sub { push @inst, '--assign-into-index' },
 
      # Overall Options
      '-o' => sub { slurp_1 $_; $cpp0_output_slot = \$cpp0[@cpp0 - 1]; },
@@ -133,19 +125,15 @@ while (@ARGV) {
 	    push @inst, '--save-cfg', $1;
 	} elsif (/^-fsave-site-info=(.+)/) {
 	    push @inst, '--save-site-info', $1;
-	} elsif (/^--instrumentor-outfile=(.+)/) {
-	    $instrumentor_outfile = $1;
 	} elsif (/^-f/) {
 	    push @cc1, $_
 	} else {
 	    slurp_0 $_;
 	}
     } elsif (/\.[ci]$/) {
-	defined $instrumentor_outfile
-	    or die "internal error: saw input file before seeing \"--instrumentor-outfile=\" flag";
 	push @inputs, $_;
-	push @cpp0, $_;
-	push @cc1, $instrumentor_outfile;
+	slurp_0 $_;
+	$cc1_input_slot = \$cc1[@cc1 - 1];
     } else {
 	warn "warning: unhandled option: $_\n";
 	push @cpp0, $_;
@@ -194,18 +182,14 @@ if ($preprocessed) {
     run_stage @cpp0;
 }
 
+my @instrumentor_output = tempfile $input, '.inst.i';
+
 open OLDOUT, '>&', \*STDOUT;
-open STDOUT, '>', $instrumentor_outfile;
+open STDOUT, '>&', $instrumentor_output[0];
 run_stage "$FindBin::Bin/../main", @inst, $instrumentor_input;
 open STDOUT, '>&', \*OLDOUT;
 
+$$cc1_input_slot = $instrumentor_output[1];
 run_stage @cc1;
 
 exit 0;
-
-
-END {
-    unless ($save_temps) {
-	unlink $instrumentor_outfile if defined $instrumentor_outfile;
-    }
-}

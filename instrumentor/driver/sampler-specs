@@ -16,8 +16,7 @@
 %{fsampler-scheme=branches:-include sampler/branches-unit.h} \
 %{fsampler-scheme=returns:-include sampler/returns-unit.h} \
 %{fsampler-scheme=scalar-pairs:-include sampler/scalar-pairs-unit.h} \
-%{fsampler-scheme=*:-include sampler/unit.h} \
---instrumentor-outfile=%g.inst.i
+%{fsampler-scheme=*:-include sampler/unit.h}
 
 *cc1:
 + %{save-temps} %{v} \

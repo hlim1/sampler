@@ -27,10 +27,14 @@ static void compilationUnitDestructor() __attribute__((destructor))
 #pragma cilnoremove("atomicIncrementCounter")
 static inline void atomicIncrementCounter(int site, int counter)
 {
+#if __i386__
   asm ("lock incl %0"
        : "+m" (counterTuples[site].values[counter])
        :
        : "cc");
+#else
+#error don't know how to atomically increment on this architecture
+#endif
 }
 #endif /* no threads */
 

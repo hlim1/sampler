@@ -43,7 +43,7 @@ class countdown (global, reset) fundec =
       let callReset = mkStmtOneInstr (Call (Some local, reset, [], location)) in
       Block (mkBlock [ mkStmt (self#decrement location);
 			mkStmt (If (BinOp (Eq, Lval local, zero, intType),
-				    mkBlock [ callReset; mkStmt skind ],
+				    mkBlock [ mkStmt skind; callReset ],
 				    mkBlock [],
 				    location)) ])
   end

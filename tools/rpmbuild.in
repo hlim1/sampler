@@ -80,11 +80,8 @@ install sampler/%{name}-sampler.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
 %{nil}
 EOF
 
-	      sampler_files => <<'EOF',
-%attr(-, root, root) %{_sampler_libdir}/applications/%{name}
-%attr(-, root, root) %{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas
-%{nil}
-EOF
+	      sampler_files => '%attr(-, root, root) %{_sampler_libdir}/applications/%{name}',
+	      sampler_files_gconf => '%attr(-, root, root) %{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas',
 
 	      sampler_post => 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/%{name}-sampler.schemas >/dev/null'
 );

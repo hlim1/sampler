@@ -53,7 +53,7 @@ binary: build install
 	dh_testroot
 	dh_installchangelogs
 	dh_installdocs
-#	dh_scrollkeeper -v debian/sampler-doc
+	dh_scrollkeeper
 	dh_strip
 	dh_compress
 	dh_fixperms

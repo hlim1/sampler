@@ -1,20 +1,8 @@
-AUTOMAKE_OPTIONS = 1.6
+SUBDIRS = sampler-guide
 
-XSL_HTML := @XSL_HTML@
+EXTRA_DIST =					\
+	omf.make				\
+        xmldocs.make
 
-if HAVE_XSL_HTML
-noinst_DATA = $(PACKAGE).html
-endif
-
-xml = $(PACKAGE).xml
-EXTRA_DIST = $(xml)
-
-TESTS = $(xml)
-XMLLINT = @XMLLINT@
-TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
-
-
-$(PACKAGE).html: %.html: %.xml config.xml $(XSL_HTML)
-	XML_CATALOG_FILES='$(XML_CATALOG_FILES)' xsltproc --nonet -o $@ $(XSL_HTML) $<
-
-MOSTLYCLEANFILES = $(noinst_DATA)
+docdir = $(datadir)/@PACKAGE@/doc
+doc_DATA = config.xml

@@ -15,10 +15,10 @@ Source1: cil-@cil_version@.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: binutils
 BuildRequires: gcc
-BuildRequires: libxslt
 BuildRequires: ocaml
 BuildRequires: perl
 BuildRequires: python
+BuildRequires: scrollkeeper
 
 
 ########################################################################
@@ -111,7 +111,16 @@ tools for collecting and decoding sampled instrumentation reports.
 %doc AUTHORS COPYING
 %doc doc/%{name}.html
 %{_bindir}/*
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/doc
+%{_datadir}/omf/*
 %{_libdir}/%{name}
+
+%post devel
+if which scrollkeeper-update>/dev/null 2>&1; then scrollkeeper-update -q -o %{_datadir}/omf/sampler-guide; fi
+
+%postun
+if which scrollkeeper-update>/dev/null 2>&1; then scrollkeeper-update -q; fi
 
 
 ########################################################################

@@ -9,24 +9,11 @@ AM_INIT_AUTOMAKE
 #
 
 
-AC_PATH_PROGS(XSL_HTML, docbook.xsl, , /usr/share/sgml/docbook/xsl-stylesheets/xhtml:/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/xhtml:/usr/share/apps/ksgmltools2/docbook/xsl/html)
-if test -z "$XSL_HTML"; then
-  AC_MSG_WARN(cannot find DocBook XML-to-XHTML style sheet)
-  AC_MSG_WARN(HTML documentation will not be built)
-  AC_MSG_WARN(consider setting \$XSL_HTML)
+AC_CHECK_PROG(sk_config, scrollkeeper-config, scrollkeeper-config)
+if test "$sk_config" != scrollkeeper-config; then
+  AC_MSG_ERROR(cannot find scrollkeeper-config in $\PATH)
 fi
-AM_CONDITIONAL(HAVE_XSL_HTML, test -n "$XSL_HTML")
 
-AC_MSG_CHECKING(for non-standard XML catalog)
-xml=/usr/share/sgml/docbook/dtd/xml/4/catalog.xml
-if test ! -f /etc/xml/catalog -a -f $xml; then
-  XML_CATALOG_FILES=$xml
-  AC_MSG_RESULT($xml)
-else
-  XML_CATALOG_FILES=
-  AC_MSG_RESULT()
-fi
-AC_SUBST(XML_CATALOG_FILES)
 
 AC_CHECK_PROG(XMLLINT, xmllint, xmllint, \$(top_srcdir)/tools/skip-test)
 if test "$XMLLINT" != xmllint; then
@@ -234,6 +221,8 @@ config.m4
 debian/Makefile
 doc/Makefile
 doc/config.xml
+doc/sampler-guide/Makefile
+doc/sampler-guide/C/Makefile
 fuzz/Makefile
 instrumentor/Makefile
 instrumentor/config.mk

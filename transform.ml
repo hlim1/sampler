@@ -6,11 +6,14 @@ class visitor = object
   inherit FunctionBodyVisitor.visitor
 
   method vfunc func =
+    prepareCFG func;
+    
     let predicate = zero in
     let original = func.sbody in
     let instrumented = Duplicate.duplicateBody func in
 
     let visitors = [
+      "RemoveLoops", (fun _ -> new RemoveLoops.visitor);
       "SimplifyReturns", new SimplifyReturns.visitor;
       "SimplifyLefts", new SimplifyLefts.visitor;
       "SimplifyRights", new SimplifyRights.visitor;

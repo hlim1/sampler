@@ -6,7 +6,7 @@ links =						\
 
 all-local: $(links)
 
-executable: ; ln -s ../../../../gnumeric/cvs/branches/src/gnumeric $@
+executable: ; ln -s ../../../../apps/gnumeric/cvs/branches/src/gnumeric $@
 
 gdb-commands: ; ln -s ../../$@ .
 

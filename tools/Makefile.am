@@ -9,7 +9,6 @@ tools_SCRIPTS =					\
 EXTRA_DIST =					\
 	extract-report				\
 	extract-site-info			\
-	find-cil-version			\
 	find-driver.pl				\
 	find-sampler-info			\
 	resolve-samples				\

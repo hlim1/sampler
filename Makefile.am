@@ -21,5 +21,5 @@ EXTRA_DIST =					\
 install-data-local:
 	mkdir $(DESTDIR)$(package_libdir)/sites
 
-srpm: dist
+rpms: dist
 	rpmbuild -D 'do_check 1' -ta $(distdir).tar.gz

@@ -62,30 +62,36 @@ AC_SUBST_FILE(find_driver_fragment)
 #
 
 
-link=$srcdir/instrumentor/cil
-if test -h $link; then rm $link; fi
-
-AC_MSG_CHECKING(for CIL build tree)
-if test -d $link; then
-  with_cil=instrumentor/cil
+AC_MSG_CHECKING(for CIL in sibling build tree)
+if test -d ../cil; then
+  cil_absolute=`cd ../cil; pwd`
+  cil_libdir=$cil_absolute/obj/x86_LINUX
+  cil_datadir=$cil_absolute/lib
+  AC_MSG_RESULT(yes)
 else
-  AC_ARG_WITH(cil, [  --with-cil=DIR          CIL build tree], , with_cil=../cil)
-  if ! test -d $with_cil; then
-    AC_MSG_RESULT($with_cil (not a directory))
-    AC_MSG_ERROR(cannot find CIL build tree; please use --with-cil=DIR)
-  fi
-  with_cil="`cd $with_cil; pwd`"
-  ln -sf $with_cil $link
+  AC_MSG_RESULT(no)
 fi
 
-AC_MSG_RESULT($with_cil)
-AC_CONFIG_SUBDIRS(instrumentor/cil)
+if test -z "$cil_libdir"; then
+  for cil_prefix in /usr/local /usr; do
+    AC_MSG_CHECKING(for CIL in $cil_prefix)
+    if test -d $cil_prefix/lib/cil -a -d $cil_prefix/share/cil; then
+      cil_libdir=$cil_prefix/lib/cil
+      cil_datadir=$cil_prefix/share/cil
+      AC_MSG_RESULT(yes)
+      break
+    else
+      AC_MSG_RESULT(no)
+    fi
+  done
+fi
 
+if test -z "$cil_libdir"; then
+  AC_MSG_ERROR(cannot find CIL)
+fi
 
-AC_MSG_CHECKING(for CIL version)
-cil_version=`$srcdir/tools/find-cil-version <$with_cil/configure.in`
-AC_SUBST(cil_version)
-AC_MSG_RESULT($cil_version)
+AC_SUBST(cil_libdir)
+AC_SUBST(cil_datadir)
 
 
 ########################################################################

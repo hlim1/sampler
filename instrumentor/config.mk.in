@@ -1,9 +1,10 @@
 ENABLE_PROFILING = @ENABLE_PROFILING@
 ENABLE_NATIVE = @ENABLE_NATIVE@
-CIL_HOME = @CIL_HOME@
 
 OCAMLOPT = @OCAMLOPT@
 OCAMLC = @OCAMLC@
+
+cil_libdir = @cil_libdir@
 
 
 ########################################################################

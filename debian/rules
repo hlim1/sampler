@@ -43,14 +43,13 @@ debian/install-stamp: debian/build-stamp
 	dh_testdir
 	dh_testroot
 	dh_clean
-	dh_installdirs
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
-	dh_install --list-missing --sourcedir=$(CURDIR)/debian/tmp
 	touch $@
 
 binary: build install
 	dh_testdir
 	dh_testroot
+	dh_install --list-missing --sourcedir=$(CURDIR)/debian/tmp
 	dh_installchangelogs
 	dh_installdocs
 	dh_scrollkeeper

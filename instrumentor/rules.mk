@@ -3,9 +3,7 @@ include $(top_builddir)/instrumentor/config.mk
 
 linkorder = $(top_srcdir)/instrumentor/link-order
 
-cildir = $(top_builddir)/instrumentor/cil
-cilobjdir = $(cildir)/obj/x86_LINUX
-libdirs = $(cilobjdir)
+libdirs = $(cil_libdir)
 includes = $(foreach dir, $(libdirs), -I $(dir))
 compiler = $(ocamlc) $(ocamlflags)
 
@@ -14,14 +12,13 @@ compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) -o $@ $(syslibs) $^
 
-force = force
 recurse = $(MAKE) -C $(@D) $(@F)
 
 
 ########################################################################
 
 
-libcil = $(cilobjdir)/cil.$(cma)
+libcil = $(cil_libdir)/cil.$(cma)
 syslibs = str.$(cma) unix.$(cma)
 
 ml = $(wildcard *.ml)
@@ -53,13 +50,6 @@ $(addsuffix .do, $(impls)): %.do: %.ml
 
 $(addsuffix .dl, $(impls)): %.dl: %.do $(linkorder)
 	$(linkorder) <$< >$@
-
-$(libcil): $(force)
-	$(MAKE) -C $(cildir) -f Makefile.cil NATIVECAML=$(ENABLE_NATIVE) cillib
-
-force:
-.PHONY: force
-
 
 browse: force
 	ocamlbrowser $(includes)

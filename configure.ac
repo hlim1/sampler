@@ -25,6 +25,16 @@ AC_EGREP_CPP(inline, inline,
 	   [Define to tell GSL that we can handle inline functions.])
 )
 
+AC_MSG_CHECKING(format string type modifer j)
+AC_COMPILE_IFELSE(
+  AC_LANG_PROGRAM(
+    [#include <stdint.h>
+     #include <stdio.h>],
+    [printf("%jd\n", (intmax_t) 0);]),
+  AC_DEFINE(HAVE_FORMAT_STRING_TYPE_MODIFIER_j, 1, [Define if C compiler supports format string type modifier "j"])
+  AC_MSG_RESULT(yes),
+  AC_MSG_RESULT(no))
+
 
 ########################################################################
 

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <config.h>
 #include "daikon.h"
 
 
@@ -39,7 +40,11 @@ void checkInvariant(const char location[], const char function[], const char exp
 {
   if (daikonLogFile)
     {
+#ifdef HAVE_FORMAT_STRING_TYPE_MODIFIER_j
       fprintf(daikonLogFile, "%s\t%s\t%s\t%jd\n", location, function, expr, value);
+#else
+      fprintf(daikonLogFile, "%s\t%s\t%s\t%Ld\n", location, function, expr, (long long) value);
+#endif
       fflush(daikonLogFile);
     }
 }

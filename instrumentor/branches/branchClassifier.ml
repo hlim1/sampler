@@ -31,10 +31,10 @@ class visitor file =
 	stmt
 
       method vstmt stmt =
-	ignore (super#vstmt stmt);
+	let action = super#vstmt stmt in
 	match stmt.skind with
 	| If _ ->
 	    ChangeDoChildrenPost (stmt, self#patchConditional)
 	| _ ->
-	    DoChildren
+	    action
     end

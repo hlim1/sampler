@@ -1,4 +1,4 @@
-cildir := ../../cil
+cildir := ../../../cil
 link = $(LINK.c) $(filter-out ../main, $^) $(LOADLIBES) $(LDLIBS) -o $@
 
 tests := echo static crasher

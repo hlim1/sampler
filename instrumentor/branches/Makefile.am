@@ -2,7 +2,7 @@ SUBDIRS = tests
 
 scheme = branches
 scheme_SCRIPTS = main
-scheme_DATA = Driver.pm
+scheme_DATA = specs
 scheme_LIBRARIES = libbranches.a
 scheme_HEADERS = branches.h
 

@@ -2,7 +2,7 @@ SUBDIRS = tests
 
 scheme = returns
 scheme_SCRIPTS = main
-scheme_DATA = Driver.pm
+scheme_DATA = specs
 scheme_LIBRARIES = libreturns.a
 scheme_HEADERS = returns.h
 

@@ -2,7 +2,7 @@ targets = main
 
 scheme = daikon
 noinst_SCRIPTS = main
-noinst_DATA = Driver.pm
+noinst_DATA = specs
 noinst_LIBRARIES = libdaikon.a
 noinst_HEADERS = daikon.h
 

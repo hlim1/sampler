@@ -1,4 +1,4 @@
-AC_INIT(sampler,0.4,liblit@cs.berkeley.edu)
+AC_INIT(sampler,0.5,liblit@cs.berkeley.edu)
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -139,6 +139,14 @@ AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
+AC_MSG_CHECKING(for cpp0)
+AC_SUBST(cpp0, `$CC -print-prog-name=cpp0`)
+AC_MSG_RESULT($cpp0)
+
+AC_MSG_CHECKING(for cc1)
+AC_SUBST(cc1, `$CC -print-prog-name=cc1`)
+AC_MSG_RESULT($cc1)
+
 PKG_CHECK_MODULES(LAUNCHER_TRAY, gtk+-2.0 pygtk-2.0)
 AC_SUBST(LAUNCHER_TRAY_LIBS)
 AC_SUBST(LAUNCHER_TRAY_CFLAGS)
@@ -273,6 +281,7 @@ www/cgi-bin/Makefile
 
 AC_CONFIG_FILES([instrumentor/driver/main], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/sampler-cc], [chmod +x $ac_file])
+AC_CONFIG_FILES([instrumentor/driver/cc1], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/debuild], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/rpmbuild], [chmod +x $ac_file])
 

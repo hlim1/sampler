@@ -1,0 +1,13 @@
+*cpp:
++ -DCIL %{fno-threads:-include no-threads.h} %{fthreads:-include threads.h} %{!fno-threads:%{!fthreads:%{!pthread:-include no-threads.h} %{pthread:-include threads.h}}} -include countdown.h %{!fcyclic:-include acyclic.h} %{fcyclic:-include acyclic.h}
+
+*cc1:
++ %{save-temps} %{v}
+
+%rename lib old_lib
+
+*wrap:
+--wrap pthread_create
+
+*lib:
+%{fthreads:%(wrap)}%{!fthreads:%{!fno-threads:%{pthread:%(wrap)}}} -lsampler%{fthreads:_r}%{!fthreads:%{!fno-threads:%{pthread:_r}}} %(libscheme) %(libsampler) %(old_lib)

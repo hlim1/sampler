@@ -18,10 +18,9 @@ G_BEGIN_DECLS
 
 struct _SamplerReportCollector {
   BonoboObject parent;
-  PyObject *sparsity;
-  PyObject *reportUnit;
-  PyObject *exitStatus;
-  PyObject *exitSignal;
+  PyObject *addHeader;
+  PyObject *addReport;
+  PyObject *submit;
 };
 
 typedef struct _SamplerReportCollector SamplerReportCollector;
@@ -37,10 +36,7 @@ typedef struct _SamplerReportCollectorClass SamplerReportCollectorClass;
 
 GType sampler_report_collector_get_type();
 
-SamplerReportCollector *sampler_report_collector_new(PyObject *sparsity,
-						     PyObject *reportUnit,
-						     PyObject *exitStatus,
-						     PyObject *exitSignal);
+SamplerReportCollector *sampler_report_collector_new(PyObject *addHeader, PyObject *addReport, PyObject *submit);
 
 
 #endif /* !INCLUDE_report_collector_h */

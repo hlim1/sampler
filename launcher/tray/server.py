@@ -4,10 +4,6 @@ import bonobo
 import ReportCollector
 
 
-def builder(factory, product):
-    return ReportCollector.ReportCollector()
-
-
 def bonobo_generic_factory_main(act_iid, factory_cb):
     factory = bonobo.GenericFactory(act_iid, factory_cb)
     if factory:
@@ -16,6 +12,10 @@ def bonobo_generic_factory_main(act_iid, factory_cb):
         return bonobo.debug_shutdown()
     else:
         return 1
+
+
+def builder(factory, product):
+    return ReportCollector.ReportCollector()
 
 
 if __name__ == '__main__':

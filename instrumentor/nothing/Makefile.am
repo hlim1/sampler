@@ -2,7 +2,7 @@ SUBDIRS = tests
 
 scheme = nothing
 scheme_SCRIPTS = main
-scheme_DATA = Driver.pm
+scheme_DATA = specs
 EXTRA_DIST = $(scheme_DATA)
 
 include ../rules.mk

@@ -1,3 +1,7 @@
+*-common.c
+*-skels.c
+*-wrap.c
+*.defs
 *.defs
 *.pyc
 *.pyo
@@ -6,3 +10,4 @@ Makefile
 Makefile.in
 trayicon.c
 trayicon.defs
+Sampler_ReportCollector.h

@@ -1,11 +1,21 @@
-SUBDIRS = corba libegg
+SUBDIRS = libegg
 
 INCLUDES = `pkg-config --cflags libbonobo-2.0 gtk+-2.0 pygtk-2.0` -I/usr/include/python2.2 -DGETTEXT_PACKAGE='"sampler"'
-CFLAGS = -g
+CFLAGS = -g -Werror
 
 defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
 
-EXTRA_DIST = trayicon.override
+EXTRA_DIST =					\
+	Sampler_ReportCollector.idl		\
+	sampler.override			\
+	trayicon.override
+
+BUILT_SOURCES =					\
+	Sampler_ReportCollector-common.c	\
+	Sampler_ReportCollector-skels.c		\
+	Sampler_ReportCollector.h		\
+	sampler-wrap.c				\
+	trayicon-wrap.c
 
 noinst_LIBRARIES = libtrayicon.a libsampler.a
 
@@ -15,11 +25,14 @@ MOSTLYCLEANFILES =				\
 	*-wrap.c				\
 	*.defs					\
 	*.so					\
-	Sampler_ReportCollector.h		\
-	trayicon.c
+	Sampler_ReportCollector.h
 
 
 all-local: trayicon.so sampler.so
+
+
+dist-hook:
+	rm $(BUILT_SOURCES:%=$(distdir)/%)
 
 
 ########################################################################
@@ -55,7 +68,7 @@ trayicon.so: %.so: lib%.a libegg/tray/libtray.a
 
 
 Sampler_ReportCollector.h Sampler_ReportCollector-skels.c Sampler_ReportCollector-common.c: Sampler_ReportCollector.idl
-	orbit-idl-2 --nostubs $(patsubst %, --include %, $(shell pkg-config --variable idlinclude libbonobo-2.0)) $<
+	orbit-idl-2 --nostubs $(patsubst %, --include %, $(srcdir) $(shell pkg-config --variable idlinclude libbonobo-2.0)) $<
 
 sampler.defs: collector.h
 	python /usr/share/pygtk/2.0/codegen/h2def.py $< >$@.tmp
@@ -74,7 +87,9 @@ sampler-wrap.c: %-wrap.c: %.defs %.override
 libsampler_a_SOURCES =				\
 	Sampler_ReportCollector-common.c	\
 	Sampler_ReportCollector-skels.c		\
+	Sampler_ReportCollector.h		\
 	collector.c				\
+	collector.h				\
 	sampler-module.c			\
 	sampler-wrap.c
 

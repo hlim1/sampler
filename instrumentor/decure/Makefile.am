@@ -2,7 +2,7 @@ SUBDIRS = tests
 
 scheme = decure
 noinst_SCRIPTS = main
-noinst_DATA = Driver.pm
+noinst_DATA = specs
 EXTRA_DIST = $(noinst_DATA)
 
 include ../rules.mk

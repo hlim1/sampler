@@ -1,5 +1,10 @@
 -*- outline -*-
 
+* tray
+
+What happens if first time dialog is running and we get a second
+client asking for the factory?
+
 * launcher
 
 GNOME launcher's server reply dialog has bad tab navigation.  If focus

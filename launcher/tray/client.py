@@ -3,21 +3,17 @@
 import bonobo
 import time
 
-server = bonobo.get_object('OAFIID:SamplerReportCollector:1.0', 'IDL:Sampler/ReportCollector:1.0')
-print dir(server)
+server = bonobo.get_object('OAFIID:SamplerReportCollector:1.0', 'Sampler/ReportCollector')
 
-sparsity = server.sparsity()
-print 'sparsity:', sparsity
+nothing = server.addHeader('sparsity', '100')
+print 'addHeader:', nothing
 
-nothing = server.reportUnit((12, 34, 56, 78), (1, 1, 2, 3, 5, 8, 13, 21))
-print 'reportUnit:', nothing
+nothing = server.addReport('samples', 'deadbeef\n0\t0\n1\t0\n')
+print 'addReport:', nothing
 
-nothing = server.exitStatus(14)
-print 'exitStatus:', nothing
+nothing = server.submit('http://brawnix.cs.berkeley.edu/cgi-bin/sampler-upload')
+print 'submit:', nothing
 
-nothing = server.exitSignal(14)
-print 'exitSignal:', nothing
-
-time.sleep(10)
+#time.sleep(5)
 
 server.unref()

@@ -1,11 +1,5 @@
 #!/bin/sh
 
-scheme=$1
-if ! shift; then
-    echo "Usage: $0 <scheme> [<compiler arguments> ...]" >&2
-    exit 2
-fi
-
 PACKAGE='@PACKAGE@'
 
 prefix='@prefix@'
@@ -15,4 +9,4 @@ package_libdir="@package_libdir@"
 instrumentordir="@instrumentordir@"
 driverdir="@driverdir@"
 
-exec $driverdir/main $scheme "$@"
+exec "$driverdir/sampler-cc-here" "$@"

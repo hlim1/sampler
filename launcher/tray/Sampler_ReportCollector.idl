@@ -2,14 +2,9 @@
 
 
 module Sampler {
-  typedef unsigned long signature[4];
-  typedef sequence <unsigned long> counts;
-  
   interface ReportCollector : Bonobo::Unknown {
-    unsigned long sparsity();
-    
-    oneway void reportUnit(in signature signature, in counts counts);
-    oneway void exitStatus(in octet status);
-    oneway void exitSignal(in octet signal);
+    oneway void addHeader(in string name, in string value);
+    oneway void addReport(in string name, in string contents);
+    oneway void submit(in string url);
   };
 };

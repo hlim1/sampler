@@ -2,7 +2,7 @@ SUBDIRS = tests
 
 scheme = scalar-pairs
 scheme_SCRIPTS = main
-scheme_DATA = Driver.pm
+scheme_DATA = specs
 scheme_LIBRARIES = libscalar-pairs.a
 scheme_HEADERS = scalar-pairs.h
 

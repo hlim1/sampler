@@ -1,8 +1,4 @@
 open Cil
-open Pretty
-
-
-type builder = unit -> unit
 
 
 (* control flow successors following various types of execution *)
@@ -84,17 +80,16 @@ let build func =
   let rec scanBlock context block =
     scanStatements context block.bstmts
 
-      (* scan a list of statements *)
-  and scanStatements context =
-    function
-      | [] ->
-	  ()
-      | first :: rest ->
-	  let firstContext = {context with next = pickNext context.next rest} in
-	  scanStatement firstContext first;
-	  scanStatements context rest
+  (* scan a list of statements *)
+  and scanStatements context = function
+    | [] ->
+	()
+    | first :: rest ->
+	let firstContext = {context with next = pickNext context.next rest} in
+	scanStatement firstContext first;
+	scanStatements context rest
 
-	    (* scan a single statement *)
+  (* scan a single statement *)
   and scanStatement context statement =
     match statement.skind with
     | Instr _ ->
@@ -132,26 +127,31 @@ let build func =
 	List.iter (link statement) cases;
 
 	(* fall through as well if no "default:" case *)
-	let hasDefault =
-	  let hasDefault case =
-	    let isDefault = function
-	      | Default _ -> true
-	      | _ -> false
-	    in
-	    List.exists isDefault case.labels
-	  in	    
-	  List.exists hasDefault cases
-	in
-	if not hasDefault then
-	  linkMaybe statement context.next;
+	begin
+	  match context.next with
+	  | None -> ()
+	  | Some next ->
+	      let hasDefault =
+		let hasDefaultLabel case =
+		  let isDefaultLabel = function
+		    | Default _ -> true
+		    | _ -> false
+		  in
+		  List.exists isDefaultLabel case.labels
+		in	    
+		List.exists hasDefaultLabel cases
+	      in
+	      if not hasDefault then
+		link statement next
+	end;
 
 	(* breaks in body jump to statement after "switch" *)
 	let switchContext = {context with break = context.next} in
 	scanBlock switchContext body
 
     | Loop (body, location, _, _) ->
-	(* fall through to top of loop, or nowhere if loop body is empty *)
-	linkMaybe statement (pickNext None body.bstmts);
+	(* fall through to top of loop, or self if loop body is empty *)
+	linkMaybe statement (pickNext (Some statement) body.bstmts);
 
 	(* loop is infinite, so body fall-through goes back to top *)
 	(* break jumps to statement after loop *)

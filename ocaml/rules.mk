@@ -8,7 +8,7 @@ libdirs = $(cil_libdir)
 includes = $(foreach dir, $(libdirs), -I $(dir))
 compiler = $(ocamlc) $(ocamlflags)
 
-depend = ocamldep $(includes) $< >$@.tmp
+depend = ocamldep $(includes) $< >$@
 compile = $(compiler) $(includes) -c $<
 archive = $(compiler) -a -o $@ $^
 link = $(compiler) $(includes) -o $@ $(syslibs) $^
@@ -28,8 +28,8 @@ libharness = $(error harness library is no longer used)
 ########################################################################
 
 
-ml = $(wildcard *.ml)
-mli = $(wildcard *.mli)
+ml = $(notdir $(wildcard $(srcdir)/*.ml))
+mli = $(notdir $(wildcard $(srcdir)/*.mli))
 EXTRA_DIST += $(sort $(ml) $(mli))
 
 impls = $(sort $(extra_impls) $(ml:.ml=))
@@ -51,15 +51,12 @@ $(addsuffix .$(cmo), $(impls)): %.$(cmo): %.ml
 
 $(addsuffix .di, $(ifaces)): %.di: %.mli
 	$(depend)
-	mv $@.tmp $@
 
 $(addsuffix .do, $(impls)): %.do: %.ml
 	$(depend)
-	mv $@.tmp $@
 
 $(addsuffix .dl, $(impls)): %.dl: %.do $(linkorder)
-	$(linkorder) <$< >$@.tmp
-	mv $@.tmp $@
+	$(linkorder) <$< >$@
 
 browse: force
 	ocamlbrowser $(includes)
@@ -71,6 +68,8 @@ force:
 
 MOSTLYCLEANFILES = $(targets) *.annot *.cma *.cmxa *.cmi *.cmo *.cmx *.o
 CLEANFILES = *.d[ilo]
+
+.DELETE_ON_ERROR:
 
 
 ########################################################################

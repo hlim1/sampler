@@ -1,7 +1,7 @@
 top := ../..
 include $(top)/defs.mk
 
-targets := main
+targets := filterComplete listCandidates main
 libdirs := .. $(top)
 
 include $(top)/rules.mk
@@ -10,7 +10,16 @@ include $(top)/rules.mk
 ########################################################################
 
 
-main: $(libcil) $(top)/harness.$(cma) ../decure.$(cma) $(main)
+libs := $(libcil) $(top)/harness.$(cma) ../decure.$(cma)
+
+
+main: $(libs) $(main)
+	$(link)
+
+listCandidates: $(libs) $(listCandidates)
+	$(link)
+
+filterComplete: $(libs) $(filterComplete)
 	$(link)
 
 $(top)/%.cmi: $(force)

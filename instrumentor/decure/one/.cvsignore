@@ -4,4 +4,6 @@
 *.di
 *.do
 *.o
+filterComplete
+listCandidates
 main

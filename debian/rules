@@ -1,15 +1,4 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
-# GNU copyright 1997 to 1999 by Joey Hess.
-#
-# Modified to make a template file for a multi-binary package with separated
-# build-arch and build-indep targets  by Bill Allombert 2001
-
-# Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
-
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
 
 # These are used for cross-compiling and for saving the configure script
 # from having to guess our platform (since we know it already)
@@ -21,6 +10,7 @@ CFLAGS = -W -Wall -Werror -g
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0
+	configflags = --disable-native
 else
 	CFLAGS += -O2
 	configflags = --enable-native
@@ -28,6 +18,15 @@ endif
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
+
+all: config.status
+
+clean:
+	dh_testdir
+	dh_testroot
+	-$(MAKE) distclean
+	rm -f debian/build-stamp debian/install-stamp
+	dh_clean
 
 config.status: configure
 	dh_testdir
@@ -39,13 +38,6 @@ debian/build-stamp: config.status
 	$(MAKE)
 	touch $@
 
-clean:
-	dh_testdir
-	dh_testroot
-	-$(MAKE) distclean
-	rm -f debian/build-stamp debian/install-stamp
-	dh_clean
-
 install: debian/install-stamp
 debian/install-stamp: debian/build-stamp
 	dh_testdir
@@ -53,7 +45,6 @@ debian/install-stamp: debian/build-stamp
 	dh_clean
 	dh_installdirs
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
-	install -D doc/sampler.xml debian/tmp/usr/share/doc/sampler-dev/sampler.xml
 	dh_install --list-missing --sourcedir=$(CURDIR)/debian/tmp
 	touch $@
 
@@ -62,7 +53,7 @@ binary: build install
 	dh_testroot
 	dh_installchangelogs
 	dh_installdocs
-	dh_scrollkeeper -v debian/sampler-doc
+#	dh_scrollkeeper -v debian/sampler-doc
 	dh_strip
 	dh_compress
 	dh_fixperms

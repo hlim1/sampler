@@ -1,3 +1,5 @@
+import sys
+
 import GtkImporter
 import gtk
 

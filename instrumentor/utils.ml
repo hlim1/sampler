@@ -44,7 +44,7 @@ let d_label () = function
   | Default _ ->
       text "default"
 
-let d_labels () {labels = labels} =
+let d_labels () labels =
   chr '['
     ++ (seq
 	  ~sep:(text "; ")

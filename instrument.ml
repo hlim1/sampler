@@ -30,6 +30,4 @@ end
 
 let phase =
   "Instrument",
-  fun file ->
-    LogWrite.addPrototype file;
-    visitCilFileSameGlobals new visitor file
+  visitCilFileSameGlobals new visitor

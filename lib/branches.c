@@ -1,11 +1,11 @@
-#include "branches-types.h"
+#include "branches.h"
 #include "report.h"
 
 
 void branchesReport(const unsigned char *signature,
-		    unsigned count, const BranchTuple tuples[])
+		    unsigned count, const struct SamplerTuple2 sites[])
 {
   samplesBegin(signature, "branches");
-  samplesDump2(count, tuples);
+  samplesDump2(count, sites);
   samplesEnd();
 }

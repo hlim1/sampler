@@ -1,9 +1,11 @@
-#ifndef INCLUDE_libreturns_returns_h
-#define INCLUDE_libreturns_returns_h
+#ifndef INCLUDE_sampler_return_h
+#define INCLUDE_sampler_return_h
 
 
-#pragma cilnoremove("returnsCounters")
-static unsigned returnsCounters[][3];
+struct SamplerTuple3;
 
 
-#endif /* !INCLUDE_libreturns_returns_h */
+void returnReport(const unsigned char *, unsigned, const struct SamplerTuple3 []);
+
+
+#endif /* !INCLUDE_sampler_return_h */

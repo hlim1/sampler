@@ -3,16 +3,20 @@
 -fsave-site-info %g.sites
 
 *cpp_threads:
-%{fno-threads:-include sampler/no-threads.h} \
-%{fthreads:-include sampler/threads.h} \
-%{!fno-threads:%{!fthreads:%{!pthread:-include sampler/no-threads.h} %{pthread:-include sampler/threads.h}}}
+%{fthreads:-D SAMPLER_THREADS} \
+%{!fthreads:%{!fno-threads:%{pthread:-D SAMPLER_THREADS}}}
 
 *cpp_cyclic:
-%{!fcyclic:-include sampler/acyclic.h} %{fcyclic:-include sampler/acyclic.h}
+%{!fcyclic:-include sampler/acyclic.h} \
+%{fcyclic:-include sampler/cyclic.h}
+
+*cpp_timestamps:
+%{ftimestamps:-D SAMPLER_TIMESTAMPS}
 
 *cpp:
 + -DCIL \
 %(cpp_threads) \
+%(cpp_timestamps) \
 -include sampler/countdown.h \
 %(cpp_cyclic) \
 %{fsampler-scheme=bounds:-include sampler/bounds-unit.h} \
@@ -45,4 +49,5 @@
 *lib:
 %{fsampler-scheme=*:-lschemes} \
 %(lib_threads) \
+%{fsampler-scheme=*:-ldump%{ftimestamps:-timestamps}} \
 %(old_lib)

@@ -1,12 +1,13 @@
 #ifndef INCLUDE_sampler_branches_unit_h
 #define INCLUDE_sampler_branches_unit_h
 
-#include "branches-types.h"
+#include "branches.h"
+#include "tuple-2.h"
 #include "unit-signature.h"
 
 
 #pragma cilnoremove("branchesCounters")
-static BranchTuple branchesCounters[];
+static struct SamplerTuple2 branchesCounters[];
 
 
 #pragma cilnoremove("branchesReporter")
@@ -14,7 +15,7 @@ static BranchTuple branchesCounters[];
 static void branchesReporter()
 {
   branchesReport(samplerUnitSignature,
-		 sizeof(branchesCounters) / sizeof(BranchTuple),
+		 sizeof(branchesCounters) / sizeof(*branchesCounters),
 		 branchesCounters);
 }
 

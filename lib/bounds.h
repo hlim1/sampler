@@ -1,5 +1,5 @@
-#ifndef INCLUDE_sampler_bounds_types_h
-#define INCLUDE_sampler_bounds_types_h
+#ifndef INCLUDE_sampler_bounds_h
+#define INCLUDE_sampler_bounds_h
 
 #include "signature.h"
 
@@ -35,4 +35,4 @@ void boundDumpPointer(const void *, const void *);
 #endif /* CIL */
 
 
-#endif /* !INCLUDE_sampler_bounds_types_h */
+#endif /* !INCLUDE_sampler_bounds_h */

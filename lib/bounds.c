@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "bounds-types.h"
+#include "bounds.h"
 #include "report.h"
 
 

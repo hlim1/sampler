@@ -1,16 +1,24 @@
 open Cil
 
 
+let isolate =
+  function
+    | (_ :: _ :: _) as instructions ->
+	let statements = List.map mkStmtOneInstr instructions in
+	Block (mkBlock statements)
+    | other ->
+	Instr other
+
+
 class visitor =
   object
     inherit FunctionBodyVisitor.visitor
 	
     method vstmt statement =
       match statement.skind with
-      | Instr (_ :: _ :: _ as instructions) ->
-	  let statements = List.map mkStmtOneInstr instructions in
-	  let block = mkBlock statements in
-	  statement.skind <- Block block;
+      | Instr instructions ->
+	  let block = isolate instructions in
+	  statement.skind <- block;
 	  SkipChildren
       | _ ->
 	  DoChildren

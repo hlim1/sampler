@@ -1,7 +1,7 @@
 #ifndef INCLUDE_sampler_bounds_unit_h
 #define INCLUDE_sampler_bounds_unit_h
 
-#include "bounds-types.h"
+#include "bounds.h"
 #include "unit-signature.h"
 
 

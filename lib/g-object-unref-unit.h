@@ -1,12 +1,13 @@
 #ifndef INCLUDE_sampler_g_object_unref_unit_h
 #define INCLUDE_sampler_g_object_unref_unit_h
 
-#include "g-object-unref-types.h"
+#include "g-object-unref.h"
+#include "tuple-4.h"
 #include "unit-signature.h"
 
 
 #pragma cilnoremove("gObjectUnrefCounters")
-static GObjectUnrefTuple gObjectUnrefCounters[];
+static struct SamplerTuple4 gObjectUnrefCounters[];
 
 
 #pragma cilnoremove("gObjectUnrefReporter")
@@ -14,7 +15,7 @@ static GObjectUnrefTuple gObjectUnrefCounters[];
 static void gObjectUnrefReporter()
 {
   gObjectUnrefReport(samplerUnitSignature,
-		    sizeof(gObjectUnrefCounters) / sizeof(GObjectUnrefTuple),
+		    sizeof(gObjectUnrefCounters) / sizeof(*gObjectUnrefCounters),
 		    gObjectUnrefCounters);
 }
 

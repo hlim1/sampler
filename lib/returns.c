@@ -1,9 +1,9 @@
 #include "report.h"
-#include "returns-types.h"
+#include "returns.h"
 
 
 void returnsReport(const unsigned char *signature,
-		   unsigned count, const ReturnTuple tuples[])
+		   unsigned count, const struct SamplerTuple3 tuples[])
 {
   samplesBegin(signature, "returns");
   samplesDump3(count, tuples);

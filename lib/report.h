@@ -6,12 +6,17 @@
 
 extern FILE *reportFile;
 
+struct SamplerTuple1;
+struct SamplerTuple2;
+struct SamplerTuple3;
+struct SamplerTuple4;
+
 
 void samplesBegin(const unsigned char *, const char []);
-void samplesDump1(unsigned, const unsigned []);
-void samplesDump2(unsigned, const unsigned [][2]);
-void samplesDump3(unsigned, const unsigned [][3]);
-void samplesDump4(unsigned, const unsigned [][4]);
+void samplesDump1(unsigned, const struct SamplerTuple1 []);
+void samplesDump2(unsigned, const struct SamplerTuple2 []);
+void samplesDump3(unsigned, const struct SamplerTuple3 []);
+void samplesDump4(unsigned, const struct SamplerTuple4 []);
 void samplesEnd();
 
 

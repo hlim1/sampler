@@ -1,12 +1,13 @@
 #ifndef INCLUDE_sampler_scalar_pairs_unit_h
 #define INCLUDE_sampler_scalar_pairs_unit_h
 
-#include "scalar-pairs-types.h"
+#include "scalar-pairs.h"
+#include "tuple-3.h"
 #include "unit-signature.h"
 
 
 #pragma cilnoremove("scalarPairsCounters")
-static ScalarPairTuple scalarPairsCounters[];
+static struct SamplerTuple3 scalarPairsCounters[];
 
 
 #pragma cilnoremove("scalarPairsReporter")
@@ -14,7 +15,7 @@ static ScalarPairTuple scalarPairsCounters[];
 static void scalarPairsReporter()
 {
   scalarPairsReport(samplerUnitSignature,
-		    sizeof(scalarPairsCounters) / sizeof(ScalarPairTuple),
+		    sizeof(scalarPairsCounters) / sizeof(*scalarPairsCounters),
 		    scalarPairsCounters);
 }
 

@@ -1,12 +1,13 @@
 #ifndef INCLUDE_sampler_function_entries_unit_h
 #define INCLUDE_sampler_function_entries_unit_h
 
-#include "function-entries-types.h"
+#include "function-entries.h"
+#include "tuple-1.h"
 #include "unit-signature.h"
 
 
 #pragma cilnoremove("functionEntriesCounters")
-static unsigned functionEntriesCounters[];
+static struct SamplerTuple1 functionEntriesCounters[];
 
 
 #pragma cilnoremove("functionEntriesReporter")

@@ -177,51 +177,6 @@ void samplesBegin(const unsigned char *signature, const char scheme[])
 }
 
 
-void samplesDump1(unsigned count, const unsigned counts[])
-{
-  unsigned scan;
-
-  for (scan = 0; scan < count; ++scan)
-    fprintf(reportFile, "%u\n", counts[scan]);
-}
-
-
-void samplesDump2(unsigned count, const unsigned tuples[][2])
-{
-  unsigned scan;
-
-  for (scan = 0; scan < count; ++scan)
-    fprintf(reportFile, "%u\t%u\n",
-	    tuples[scan][0],
-	    tuples[scan][1]);
-}
-
-
-void samplesDump3(unsigned count, const unsigned tuples[][3])
-{
-  unsigned scan;
-
-  for (scan = 0; scan < count; ++scan)
-    fprintf(reportFile, "%u\t%u\t%u\n",
-	    tuples[scan][0],
-	    tuples[scan][1],
-	    tuples[scan][2]);
-}
-
-
-void samplesDump4(unsigned count, const unsigned tuples[][4])
-{
-  unsigned scan;
-
-  for (scan = 0; scan < count; ++scan)
-    fprintf(reportFile, "%u\t%u\t%u\t%u\n",
-	    tuples[scan][0],
-	    tuples[scan][1],
-	    tuples[scan][2],
-	    tuples[scan][3]);
-}
-
-
 void samplesEnd()
 {
   fputs("</samples>\n", reportFile);

@@ -26,5 +26,4 @@ Paths.py: %: %.in Makefile
 		-e 's!@''wrapperdir@!$(wrapperdir)!'	\
 		-e 's!@''commondir@!$(commondir)!'	\
 		<$< >$@.tmp
-	chmod a+x $@.tmp
 	mv $@.tmp $@

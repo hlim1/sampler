@@ -6,6 +6,8 @@ EXTRA_DIST = sampler-cc-here $(driver_DATA)
 
 MOSTLYCLEANFILES =				\
 	include					\
+	libdump.a				\
+	libdump-timestamps.a			\
 	libsampler.a				\
 	libsampler_r.a				\
 	libschemes.a				\
@@ -19,6 +21,8 @@ stamp-links:
 	rm -f $(MOSTLYCLEANFILES)
 	$(LN_S) $(srcdir) include
 	$(LN_S) $(top_srcdir)/lib sampler
+	$(LN_S) $(top_builddir)/lib/libdump.a .
+	$(LN_S) $(top_builddir)/lib/libdump-timestamps.a .
 	$(LN_S) $(top_builddir)/lib/libsampler.a .
 	$(LN_S) $(top_builddir)/lib/libsampler_r.a .
 	$(LN_S) $(top_builddir)/lib/libschemes.a .

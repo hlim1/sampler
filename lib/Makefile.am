@@ -1,10 +1,13 @@
-AM_CFLAGS = -W -Wall -Werror
+AM_CFLAGS = -W -Wall -Werror -Wformat=2
+INCLUDES = -ffast-math @GLIB_CFLAGS@
 
 if HAVE_THREAD_STORAGE
 thread_lib = libsampler_r.a
 endif
 
 lib_LIBRARIES =					\
+	libdump.a				\
+	libdump-timestamps.a			\
 	libsampler.a				\
 	libschemes.a				\
 	$(thread_lib)
@@ -14,46 +17,44 @@ EXTRA_DIST = g-object-unref-unit.h
 
 if WITH_GNOME
 gnome_headers =					\
-	g-object-unref-types.h			\
+	g-object-unref.h			\
 	g-object-unref-unit.h
 endif
 
 package_include_HEADERS =			\
 	$(gnome_headers)			\
 	acyclic.h				\
-	bounds-types.h				\
 	bounds-unit.h				\
-	branches-types.h			\
 	branches-unit.h				\
 	countdown.h				\
 	cyclic-size.h				\
 	cyclic.h				\
-	function-entries-types.h		\
 	function-entries-unit.h			\
 	lifetime.h				\
 	lock.h					\
 	log.h					\
-	no-threads.h				\
 	registry.h				\
 	report.h				\
-	returns-types.h				\
 	returns-unit.h				\
-	returns.h				\
-	scalar-pairs-types.h			\
 	scalar-pairs-unit.h			\
-	scalar-pairs.h				\
 	signature.h				\
 	threads.h				\
+	tuple-1.h				\
+	tuple-2.h				\
+	tuple-3.h				\
+	tuple-4.h				\
 	unit-signature.h			\
 	unit.h
 
 
+########################################################################
 
-INCLUDES = -ffast-math @GLIB_CFLAGS@
 
-common_sources =				\
+sampler_sources =				\
 	acyclic.c				\
 	acyclic.h				\
+	clock.c					\
+	clock.h					\
 	countdown.c				\
 	countdown.h				\
 	cyclic-size.h				\
@@ -65,29 +66,31 @@ common_sources =				\
 	registry.h				\
 	report.c				\
 	report.h				\
-	signature.h
-
-
-########################################################################
+	signature.h				\
+	threads.h
 
 
 libsampler_a_SOURCES =				\
-	$(common_sources)			\
-	no-hijack.c				\
-	no-threads.h
+	$(sampler_sources)			\
+	no-hijack.c
 
-libsampler_a_CFLAGS = -include $(srcdir)/no-threads.h
+
+libsampler_r_a_SOURCES =			\
+	$(sampler_sources)			\
+	hijack.c
+
+libsampler_r_a_CFLAGS = -pthread -DSAMPLER_THREADS
 
 
 ########################################################################
 
 
-libsampler_r_a_SOURCES =			\
-	$(common_sources)			\
-	hijack.c				\
-	threads.h
+dump_sources = dump.c
 
-libsampler_r_a_CFLAGS = -include $(srcdir)/threads.h -pthread
+libdump_a_SOURCES = $(dump_sources)
+
+libdump_timestamps_a_SOURCES = $(dump_sources)
+libdump_timestamps_a_CFLAGS = -DSAMPLER_TIMESTAMPS
 
 
 ########################################################################
@@ -96,33 +99,31 @@ libsampler_r_a_CFLAGS = -include $(srcdir)/threads.h -pthread
 if WITH_GNOME
 gnome_sources =					\
 	g-object-unref.c			\
-	g-object-unref-classify.c		\
-	g-object-unref-types.h
+	g-object-unref-report.h			\
+	g-object-unref-classify.h
 endif
 
 libschemes_a_SOURCES =				\
 	$(gnome_sources)			\
 	bounds.c				\
-	bounds-types.h				\
+	bounds.h				\
 	branches.c				\
-	branches-types.h			\
+	branches.h				\
 	function-entries.c			\
-	function-entries-types.h		\
+	function-entries.h			\
 	returns.c				\
-	returns-types.h				\
+	returns.h				\
 	scalar-pairs.c				\
-	scalar-pairs-types.h
+	scalar-pairs.h
 
 
 ########################################################################
 
 
 tools_PROGRAMS = precompute
-precompute_CFLAGS = -include $(srcdir)/no-threads.h
 precompute_LDADD = libsampler.a $(LIBM)
 
 noinst_PROGRAMS = mean
-mean_CFLAGS = -include $(srcdir)/no-threads.h
 mean_LDADD = libsampler.a $(LIBM)
 
 countdown-1-1: precompute

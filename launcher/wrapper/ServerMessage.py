@@ -72,6 +72,7 @@ class ServerMessage:
 
     def on_link_clicked(self, document, link):
         full = urlparse.urljoin(document.base, link)
+	print 'Showing clicked URL:', full
         gnome.url_show(full)
 
     def on_title_changed(self, document, title):

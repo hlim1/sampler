@@ -2,6 +2,9 @@
 #define INCLUDE_libcountdown_countdown_h
 
 
+#include "threads.h"
+
+
 extern SAMPLER_THREAD_LOCAL int nextEventCountdown;
 
 

@@ -8,3 +8,5 @@ not yet implemented: function has bounded weight if none of its sample
 sites can reach itself on that function's CFG
 
 identify weightless functions, and keep calls to such functions simple
+
+in Daikount: ++counters[(a >= b) + (a > b)]

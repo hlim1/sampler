@@ -26,7 +26,6 @@ sub extraHeaders {
     my $self = shift;
     my @extras = $self->SUPER::extraHeaders;
     push @extras, '-include', "$::scheme/scalar-pairs.h";
-    push @extras, '-include', "$::root/lib/requires.h";
     push @extras, '-include', "$::root/lib/unit.h";
     push @extras, '-include', "$::root/lib/tuples-cil.h";
     return @extras;

@@ -4,15 +4,6 @@
 #include "cyclic-size.h"
 
 
-extern const void * const SAMPLER_REENTRANT(providesLibCyclic);
-
-#ifdef CIL
-#pragma cilnoremove("requiresLibCyclic")
-#pragma cilnoremove("requiresLibCyclic_r")
-static const void * const SAMPLER_REENTRANT(requiresLibCyclic) = &SAMPLER_REENTRANT(providesLibCyclic);
-#endif
-
-
 #ifdef CIL
 #pragma cilnoremove("getNextEventCountdown")
 #pragma sampler_exclude_function("getNextEventCountdown")

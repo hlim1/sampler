@@ -10,7 +10,6 @@
 #include "anchor.h"
 #include "lock.h"
 #include "report.h"
-#include "requires.h"
 #include "unit.h"
 
 #define obstack_chunk_alloc malloc

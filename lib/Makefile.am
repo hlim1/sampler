@@ -13,7 +13,6 @@ liblib_HEADERS =				\
 	cyclic-size.h				\
 	cyclic.h				\
 	no-threads.h				\
-	requires.h				\
 	threads.h				\
 	tuples-cil.h				\
 	unit.h

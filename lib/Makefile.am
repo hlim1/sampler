@@ -22,18 +22,23 @@ endif
 package_include_HEADERS =			\
 	$(gnome_headers)			\
 	acyclic.h				\
+	bounds.h				\
 	bounds-unit.h				\
+	branches.h				\
 	branches-unit.h				\
 	countdown.h				\
 	cyclic-size.h				\
 	cyclic.h				\
+	function-entries.h			\
 	function-entries-unit.h			\
 	lifetime.h				\
 	lock.h					\
 	log.h					\
 	registry.h				\
 	report.h				\
+	returns.h				\
 	returns-unit.h				\
+	scalar-pairs.h				\
 	scalar-pairs-unit.h			\
 	signature.h				\
 	threads.h				\

@@ -22,7 +22,7 @@ my $outfile;
 my $verbose;
 
 my @chaff;
-#END { unlink @chaff; }
+END { unlink @chaff; }
 
 
 ########################################################################

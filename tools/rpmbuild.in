@@ -20,6 +20,7 @@ my $scheme = shift
 my %macros = (
 	      sampler_cc => $driver,
 	      sampler_scheme => $scheme,
+	      sampler_cc_flags => '%{nil}',
 
 	      'sampler_tags(s:)' => <<'EOF',
 Requires: sampler-gnome
@@ -48,17 +49,22 @@ EOF
 
 	      sampler_prep => 'tar xzf %{S:%{_sampler_source}}',
 
-	      'sampler_prebuild(t)' => <<'EOF',
-export CC='%{sampler_cc} %{sampler_scheme} %{?sampler_cc_flags}'
+	      _sampler_sparsity => '%{?sampler_sparsity}%{!?sampler_sparsity:100}',
+	      _sampler_reporting_host => '%{?sampler_reporting_host}%{!?sampler_reporting_host:www.example.org}',
+	      _sampler_reporting_url => '%{?sampler_reporting_url}%{!?sampler_reporting_url:https://%{_sampler_reporting_host}/cgi-bin/sampler-upload}',
+
+	      sampler_prebuild => <<'EOF',
+export CC='%{sampler_cc} %{sampler_scheme} %{sampler_cc_flags}'
+sed -e 's/@name@/%{name}/g' -e 's/@scheme@/%{sampler_scheme}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/sampler.schemas.in >sampler/%{name}-sampler.schemas
 sed -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' <sampler/config.in >sampler/config
 sed -e 's!@_launcherdir@!%{_datadir}/sampler/launcher!g' <sampler/wrapper.in >sampler/wrapper
 chmod a+x sampler/wrapper
 %{nil}
 EOF
 
-	      'sampler_wrapped' => '%{_bindir}/%{name}',
+	      sampler_wrapped => '%{_bindir}/%{name}',
 
-	      'sampler_install' => <<'EOF',
+	      sampler_install => <<'EOF',
 install -d %{buildroot}%{_libdir}/sampler/applications/%{name}
 install -m 644 sampler/config sampler/%{name}-sampler.schemas sampler/interface.glade %{buildroot}%{_libdir}/sampler/applications/%{name}
 install sampler/wrapper %{buildroot}%{_libdir}/sampler/applications/%{name}

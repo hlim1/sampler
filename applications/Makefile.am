@@ -9,6 +9,7 @@ EXTRA_DIST =					\
 	config.in				\
 	gconf-1.0.dtd				\
 	rules.mk				\
+	sampler-schemas.in			\
 	wrapper.in
 
 srpm rpm: %: $(SUBDIRS:=/%)

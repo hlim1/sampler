@@ -6,6 +6,7 @@ class visitor file =
     inherit TransformVisitor.visitor file
 
     method private collector _ = new Find.visitor
+    method private prepatchCalls = DecureCalls.prepatch
   end
 
 

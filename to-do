@@ -4,7 +4,3 @@ Remember which functions are loopless.  Use this to optimize treatment
 of calls to known loopless functions.
 
 prefix traces with: binary path, pid, timestamp
-
-Add special treatment for acyclic regions containing at most one
-event.  No need to have two countdown checks here.  Instead, we should
-just jump right into the checking code.

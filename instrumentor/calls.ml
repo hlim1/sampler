@@ -49,22 +49,21 @@ let nextLabels _ =
 let patch clones weights countdown =
   let patchOne (_, standardAfter) =
     let weight = weights#find standardAfter in
-    if weight != 0 then
-      let instrumentedAfter = ClonesMap.findCloneOf clones standardAfter in
-      
-      let standardLabel, instrumentedLabel = nextLabels () in
-      let standardLanding = mkEmptyStmt () in
-      let instrumentedLanding = mkEmptyStmt () in
-      standardLanding.labels <- [standardLabel];
-      instrumentedLanding.labels <- [instrumentedLabel];
-      
-      let gotoStandard = mkBlock [mkStmt (Goto (ref standardLanding, locUnknown))] in
-      let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumentedLanding, locUnknown))] in
-      let choice = countdown#checkThreshold locUnknown weight
-	  gotoInstrumented gotoStandard in
-      
-      standardAfter.skind <- Block (mkBlock [mkStmt choice; standardLanding]);
-      instrumentedAfter.skind <- Block (mkBlock [mkStmt choice; instrumentedLanding])
+    let instrumentedAfter = ClonesMap.findCloneOf clones standardAfter in
+    
+    let standardLabel, instrumentedLabel = nextLabels () in
+    let standardLanding = mkEmptyStmt () in
+    let instrumentedLanding = mkEmptyStmt () in
+    standardLanding.labels <- [standardLabel];
+    instrumentedLanding.labels <- [instrumentedLabel];
+    
+    let gotoStandard = mkBlock [mkStmt (Goto (ref standardLanding, locUnknown))] in
+    let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumentedLanding, locUnknown))] in
+    let choice = countdown#checkThreshold locUnknown weight
+	gotoInstrumented gotoStandard in
+    
+    standardAfter.skind <- Block (mkBlock [mkStmt choice; standardLanding]);
+    instrumentedAfter.skind <- Block (mkBlock [mkStmt choice; instrumentedLanding])
   in
   
   List.iter patchOne

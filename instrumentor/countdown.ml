@@ -32,11 +32,15 @@ class countdown (global, reset) fundec =
       Set (local, (Lval global), locUnknown)
 
     method checkThreshold location weight instrumented original =
-      let within = kinteger IUInt weight in
-      let predicate = BinOp (Gt, Lval local, within, intType) in
-      let choice = If (predicate, original, instrumented, location) in
-      Choices.add choice;
-      choice
+      match weight with
+      | 0 -> Block original
+      | 1 -> Block instrumented
+      | _ ->
+	  let within = kinteger IUInt weight in
+	  let predicate = BinOp (Gt, Lval local, within, intType) in
+	  let choice = If (predicate, original, instrumented, location) in
+	  Choices.add choice;
+	  choice
 
     method decrementAndCheckZero skind =
       let location = get_stmtLoc skind in

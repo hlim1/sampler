@@ -10,22 +10,24 @@ let find func =
 let patch func weights countdown instrumented =
   let entry = find func in
   let import = mkStmtOneInstr countdown#afterCall in
-  let weight = weights#find entry in
 
-  let body =
-    let original = func.sbody in
-    if weight == 0 then
-      let finis = mkEmptyStmt () in
-      finis.labels <- [ Label ("finis", locUnknown, false) ];
-      [ import;
-	mkStmt (Block original);
-	mkStmt (Goto (ref finis, locUnknown));
-	mkStmt (Block instrumented);
-	finis ]
-    else
-      let choice = countdown#checkThreshold locUnknown weight instrumented original in
-      [ import;
-	mkStmt choice ]
-  in
+  let original = mkStmt (Block func.sbody) in
+  let instrumented = mkStmt (Block instrumented) in
+  original.labels <- Label ("original", locUnknown, false) :: original.labels;
+  instrumented.labels <- Label ("instrumented", locUnknown, false) :: instrumented.labels;
+
+  let gotoOriginal = mkBlock [mkStmt (Goto (ref original, locUnknown))] in
+  let gotoInstrumented = mkBlock [mkStmt (Goto (ref instrumented, locUnknown))] in
   
-  func.sbody <- mkBlock body
+  let weight = weights#find entry in
+  let choice = countdown#checkThreshold locUnknown weight gotoInstrumented gotoOriginal in
+
+  let finis = mkEmptyStmt () in
+  finis.labels <- [ Label ("finis", locUnknown, false) ];
+
+  func.sbody <- mkBlock [ import;
+			  mkStmt choice;
+			  original;
+			  mkStmt (Goto (ref finis, locUnknown));
+			  instrumented;
+			  finis ]

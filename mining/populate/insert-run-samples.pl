@@ -73,7 +73,9 @@ foreach my $dir (@ARGV) {
 		foreach my $predicate (0 .. $#counts) {
 		    my $count = $counts[$predicate];
 		    next unless $count;
-		    print $upload ($run_id, $unit_signature, $site_order, $predicate, $count);
+		    my @fields = ($run_id, $unit_signature, $site_order, $predicate, $count);
+		    Common::escape @fields;
+		    print $upload @fields;
 		}
 	    }
 	    ++$site_order;
@@ -104,8 +106,7 @@ $dbh->do(q{
 
 $dbh->do(q{
     LOAD DATA LOCAL INFILE ?
-	INTO TABLE upload
-	FIELDS ESCAPED BY ''},
+	INTO TABLE upload},
 	 undef, $upload_filename);
 
 unlink $upload_filename;

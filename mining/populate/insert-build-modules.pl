@@ -98,8 +98,11 @@ foreach my $package (@ARGV) {
 		$has_sites = 1;
 	    }
 	    
-	    print $upload $app_id, $module_name, $unit_signature
-		if $has_sites;
+	    next unless $has_sites;
+
+	    my @fields = (@app_id, $module_name, $unit_signature);
+	    Common::escape @fields;
+	    print @fields;
 	}
     }
 
@@ -138,7 +141,6 @@ $dbh->do(q{
 $dbh->do(q{
     LOAD DATA LOCAL INFILE ?
 	INTO TABLE upload
-	FIELDS ESCAPED BY ''
     },
 	 undef, $upload_filename)
     or die;

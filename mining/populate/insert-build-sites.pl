@@ -77,7 +77,7 @@ foreach my $package (@ARGV) {
 
     while (my $filename = <$rpm_query>) {
 	chomp $filename;
-	next unless $filename =~ s/^\/usr\/lib\/sampler\/sites\/.*\.sites$/;
+	next unless $filename =~ /^\/usr\/lib\/sampler\/sites\/.*\.sites$/;
 
 	my $extracted = "$tempdir$filename";
 	die "missing file: $filename\n" unless -e $extracted;
@@ -93,9 +93,9 @@ foreach my $package (@ARGV) {
 	    while (my $description = <$contents>) {
 		chomp $description;
 		last unless $description;
-		print $upload (@app_id,
-			       $unit_signature,
-			       $site_order, $description);
+		my @fields = (@app_id, $unit_signature, $site_order, $description);
+		Common::escape @fields;
+		print $upload @fields;
 		++$site_order;
 	    }
 	}
@@ -143,7 +143,6 @@ $dbh->do(q{
 $dbh->do(q{
     LOAD DATA LOCAL INFILE ?
 	INTO TABLE upload
-	FIELDS ESCAPED BY ''
     },
 	 undef, $upload_filename)
     or die;

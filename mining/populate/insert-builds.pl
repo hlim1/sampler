@@ -5,6 +5,7 @@ use 5.008;			# for safe pipe opens using list form of open
 use File::Path;
 use File::Temp qw(tempfile);
 use FileHandle;
+use POSIX qw(strftime);
 
 use Common;
 
@@ -90,7 +91,9 @@ foreach my $package (@ARGV) {
     local ($,, $\) = ("\t", "\n");
     my $instrumentation_type = $guess_instrumentation_type{$app_id[0]};
     my $instrumentation_version = $guess_instrumentation_version;
-    print $upload $app_id, $instrumentation_type, $instrumentation_version, $build_date;
+    my @fields = ($app_id, $instrumentation_type, $instrumentation_version, $build_date);
+    Common::escape @fields;
+    print $upload @fields;
 
     # done with rpm query
     $rpm_query->close;
@@ -124,7 +127,6 @@ $dbh->do(q{
 $dbh->do(q{
     LOAD DATA LOCAL INFILE ?
 	INTO TABLE upload
-	FIELDS ESCAPED BY ''
     
 	(application_name,
 	 application_version,

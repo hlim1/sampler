@@ -108,6 +108,7 @@ foreach my $dir (@ARGV) {
 
     local ($,, $\) = ("\t", "\n");
     my @environment = environment_fields %{$environment};
+    Common::escape @environment;
     print $upload @environment;
 }
 

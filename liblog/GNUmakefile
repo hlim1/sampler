@@ -1,9 +1,11 @@
 CFLAGS := -W -Wall -Werror -g
-lib := liblog.so
+libs := liblog.a liblog.so
 
-all: $(lib)
+all: $(libs)
 
-$(lib): log.o
+liblog.a: %: %(log.o)
+
+liblog.so: log.o
 	$(LINK.o) -shared $^ -o $@
 
 log.o: %.o: %.c log.h

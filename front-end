@@ -100,7 +100,8 @@ sub handle_v ($) {
 sub handle_x ($) {
     &push_all;
     my $language = shift @ARGV;
-    die if $language ne 'c';
+    die "unsupported language option: $language\n"
+	unless $language eq 'c';
     push_all $language;
 }
 

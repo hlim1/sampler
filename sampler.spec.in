@@ -18,6 +18,7 @@ BuildRequires: gcc
 BuildRequires: glib2-devel
 BuildRequires: ocaml
 BuildRequires: perl
+BuildRequires: pyorbit-devel
 BuildRequires: scrollkeeper
 
 

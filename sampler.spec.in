@@ -26,7 +26,7 @@ BuildRequires: python
 #  Package sampler
 #
 
-Summary: Runtime support for bug isolation using sampled instrumentation
+Summary: Support for applications with sampled instrumentation
 Requires: gdb
 Requires: python
 
@@ -64,7 +64,7 @@ bug isolation server.
 
 %package gnome
 Group: Applications/System
-Summary: Runtime support for GNOME applications with sampled instrumentation
+Summary: Support for GNOME applications with sampled instrumentation
 Requires: %{name}
 Requires: gnome-python2
 Requires: gnome-python2-gconf

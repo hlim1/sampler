@@ -15,16 +15,31 @@ let removeDeadCode =
 (**********************************************************************)
 
 
+class showCFG =
+  object
+    inherit FunctionBodyVisitor.visitor
+
+    method vstmt statement =
+      ignore (Pretty.eprintf "%a@!    @[%a@]@!"
+		Utils.d_stmt statement
+		Utils.d_stmts statement.succs);
+      DoChildren
+  end
+
+
 let visit isWeightyCallee countdownToken func info =
   if info.sites != [] then
     begin
-      ignore (computeCFGInfo func false);
-      let entry = FunctionEntry.find func in
+      let entry = mkStmt (Block func.sbody) in
+      func.sbody <- mkBlock [entry];
+      Cfg.build func;
       let jumps = ClassifyJumps.visit func in
       let weightyCalls = List.filter (fun call -> isWeightyCallee call.callee) info.calls in
       let afterCalls = List.map (fun info -> info.landing) weightyCalls in
       let headers = entry :: jumps.backward @ afterCalls in
-      ignore (computeCFGInfo func false);
+
+      Cfg.build func;
+      (* ignore (visitCilFunction (new showCFG) func); *)
       let weights = WeighPaths.weigh info.sites headers in
       
       let countdown = countdownToken func in

@@ -32,6 +32,7 @@ let rec weigh ~sites:sites ~headers:headers =
   
   let record header =
     let weight = weight header in
+    (* ignore (Pretty.eprintf "%a: weight %d@!" Utils.d_stmt header weight); *)
     weights#add header weight
   in
   

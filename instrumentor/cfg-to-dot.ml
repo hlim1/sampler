@@ -1,31 +1,49 @@
 open Cil
-  
-
-type cfg = stmt * stmt list
-
-let cfg func =
-  prepareCFG func;
-  let stmts = computeCFGInfo func false in
-  let root = List.hd func.sbody.bstmts in
-
-  if root.sid != 0 then
-    ignore(bug "first statement in function body is not root of CFG");
-
-  (root, stmts)
+open Printf
 
 
-class visitor =
+class printNodes =
   object
     inherit FunctionBodyVisitor.visitor
-	
-    method vfunc func =
-      let (_, stmts) = cfg func in
-      Pretty.fprint stdout 80 (CfgToDot.d_cfg stmts);
-      SkipChildren
-	
+
+    method vstmt statement =
+      ignore (Pretty.printf "  n%d [label = \"%s\"];@!"
+		statement.sid
+		(Utils.stmt_describe statement.skind));
+      DoChildren
   end
-    
+
+
+class printEdges =
+  object
+    inherit FunctionBodyVisitor.visitor
+
+    method vstmt statement =
+      let printEdge succ =
+	printf "  n%d -> n%d;\n" statement.sid succ.sid
+      in
+      List.iter printEdge statement.succs;
+      DoChildren
+  end
+
+
+let process filename =
+  let file = Frontc.parse filename () in
+  let iterator = function
+    | GFun (func, _) ->
+	DeadCode.visit func;
+	Cfg.build func;
+	printf "digraph %s {\n" func.svar.vname;
+	ignore (visitCilFunction (new printNodes) func);
+	ignore (visitCilFunction (new printEdges) func);
+	print_endline "}"
+    | _ ->
+	()
+  in
+  iterGlobals file iterator
+
 ;;
 
 initCIL ();
-Arg.parse [] (TestHarness.doOne ["cfg-to-dot", visitCilFileSameGlobals new visitor]) "";
+let filenames = List.tl (Array.to_list Sys.argv) in
+List.iter process filenames

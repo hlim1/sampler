@@ -97,9 +97,7 @@ let loopless file =
 
   let considerGlobal = function
     | GFun (func, _) ->
-	prepareCFG func;
 	RemoveLoops.visit func;
-	ignore (computeCFGInfo func false);
 	if (ClassifyJumps.visit func).ClassifyJumps.backward != [] then
 	  loopless#add func.svar.vname false
     | _ ->

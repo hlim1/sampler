@@ -33,7 +33,6 @@ class visitor func =
       info
 
     method private normalize =
-      prepareCFG func;
       RemoveLoops.visit func;
       IsolateInstructions.visit func
 

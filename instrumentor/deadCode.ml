@@ -35,11 +35,26 @@ let rec markBlock { bstmts = bstmts } =
   List.fold_left folder false bstmts
 
 
+class remover =
+  object
+    inherit FunctionBodyVisitor.visitor
+
+    method vstmt stmt =
+      if stmt.sid != -2 then
+	begin
+	  stmt.skind <- Instr [];
+	  SkipChildren
+	end
+      else
+	DoChildren
+  end
+
+
 let visit func =
   match func.sbody.bstmts with
   | [] -> ()
   | entry :: _ ->
-      let stmts = computeCFGInfo func false in
+      Cfg.build func;
 
       let rec mark stmt =
 	if stmt.sid != -2 then
@@ -50,12 +65,6 @@ let visit func =
       in
       mark entry;
 
-      ignore (markBlock func.sbody);
-
-      let removeUnmarked = function
-	| { sid = -2 } ->
-	    ()
-	| stmt ->
-	    stmt.skind <- Instr []
-      in
-      List.iter removeUnmarked stmts
+      let body = func.sbody in
+      ignore (markBlock body);
+      ignore (visitCilBlock (new remover) body)

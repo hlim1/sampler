@@ -26,6 +26,20 @@ int main(int argc, char *argv[])
     }
   CORBA_exception_free(&env);
 
+  puts("sleeping for a while");
+  sleep(2);
+
+  CORBA_exception_init(&env);
+  Sampler_Uploader_increment(server, &env);
+  if (BONOBO_EX(&env))
+    {
+      char * const err = bonobo_exception_get_text(&env);
+      g_warning("Client exception occured: %s\n", err);
+      g_free(err);
+    }
+  CORBA_exception_free(&env);
+
+  puts("sleeping for a while");
   sleep(2);
 
   CORBA_exception_init(&env);

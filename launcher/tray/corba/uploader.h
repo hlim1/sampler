@@ -18,7 +18,6 @@ G_BEGIN_DECLS
 struct _SamplerUploader {
   BonoboObject parent;
   GClosure *increment;
-  GClosure *decrement;
 };
 
 typedef struct _SamplerUploader SamplerUploader;
@@ -36,7 +35,7 @@ GType sampler_uploader_get_type();
 
 SamplerUploader *sampler_uploader_new();
 
-void sampler_uploader_set_closures(SamplerUploader *, GClosure *increment, GClosure *decrement);
+void sampler_uploader_set_closure(SamplerUploader *, GClosure *increment);
 
 
 #endif /* !INCLUDE_uploader_h */

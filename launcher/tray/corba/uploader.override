@@ -14,46 +14,40 @@ import bonobo.Object as PyBonoboObject_Type
 ignore-glob
   *_get_type
 %%
-override sampler_uploader_set_closures kwargs
-static int
-_wrap_sampler_uploader_set_closures (PyGObject *self, PyObject *args, PyObject *kwargs)
+override sampler_uploader_set_closure kwargs
+static PyObject *
+_wrap_sampler_uploader_set_closure (PyGObject *self, PyObject *args, PyObject *kwargs)
 {
-  static char *kwlist[] = {"increment", "decrement", 0};
+  static char *kwlist[] = {"increment", 0};
   PyObject *increment_cb;
   PyObject *decrement_cb;    
 
-  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO:Uploader.set_closures",
-				   kwlist, &increment_cb, &decrement_cb))
-    return -1;
+  if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O:Uploader.set_closures",
+				   kwlist, &increment_cb))
+    return 0;
 
   if (!PyCallable_Check (increment_cb))
     {
       PyErr_SetString (PyExc_TypeError, "increment arg not callable");
-      return -1;
+      return 0;
     }
-    
-  if (!PyCallable_Check (decrement_cb))
-    {
-      PyErr_SetString (PyExc_TypeError, "decrement arg not callable");
-      return -1;
-    }    
 
   GClosure * const increment_closure = pyg_closure_new(increment_cb, 0, 0);
-  GClosure * const decrement_closure = pyg_closure_new(decrement_cb, 0, 0);
 
   if (!self->obj)
     {
       PyErr_SetString(PyExc_RuntimeError, "self does not wrap anything");
-      return -1;
+      return 0;
     }
   
   if (!SAMPLER_UPLOADER(self->obj))
     {
       PyErr_SetString(PyExc_RuntimeError, "self does not wrap an Uploader");
-      return -1;
+      return 0;
     }
   
-  sampler_uploader_set_closures(SAMPLER_UPLOADER(self->obj), increment_closure, decrement_closure);
+  sampler_uploader_set_closure(SAMPLER_UPLOADER(self->obj), increment_closure);
 
-  return 0;
+  Py_INCREF(Py_None);
+  return Py_None;
 }

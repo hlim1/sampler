@@ -6,11 +6,25 @@
 static GObjectClass *uploader_parent_class;
 
 
+static void unset_closure(GClosure **slot)
+{
+  if (*slot)
+    {
+      g_closure_unref(*slot);
+      *slot = 0;
+    }
+}
+
+
+/**********************************************************************/
+
+
 static void impl_uploader_increment(PortableServer_Servant servant, CORBA_Environment *env)
 {
-  g_print("Uploader service: increment\n");
-  SamplerUploader * const self = SAMPLER_UPLOADER(bonobo_object(servant));
-  g_print("   self == %p\n", self);
+  g_print("Uploader service: increment; now calling instance-specific closure\n");
+  const SamplerUploader * const self = SAMPLER_UPLOADER(bonobo_object(servant));
+  if (self->increment)
+    g_closure_invoke(self->increment, 0, 0, 0, 0);
 }
 
 
@@ -24,13 +38,16 @@ static void sampler_uploader_init(SamplerUploader *uploader)
 {
   g_print("instance init\n");
   uploader->increment = 0;
-  uploader->decrement = 0;
 }
 
 
 static void sampler_uploader_finalize(GObject *object)
 {
   g_print("instance finalize\n");
+
+  SamplerUploader * const self = SAMPLER_UPLOADER(object);
+  unset_closure(&self->increment);
+
   uploader_parent_class->finalize(object);
 }
 
@@ -60,8 +77,13 @@ SamplerUploader *sampler_uploader_new()
 }
 
 
-void sampler_uploader_set_closures(SamplerUploader *self, GClosure *increment_closure, GClosure *decrement_closure)
+void sampler_uploader_set_closure(SamplerUploader *self, GClosure *replacement)
 {
-  self->increment = increment_closure;
-  self->decrement = decrement_closure;
+  unset_closure(&self->increment);
+  self->increment = replacement;
+  if (replacement)
+    {
+      g_closure_ref(replacement);
+      g_closure_sink(replacement);
+    }
 }

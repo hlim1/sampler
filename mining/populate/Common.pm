@@ -34,7 +34,7 @@ sub parse_signature ($$$$) {
     my ($tag, $filename, $lineno, $signature) = @_;
     return ($1, undef) if $signature =~ /^([0-9A-Fa-f]{32})\z/;
     return ($1, $2) if $signature =~ qr{^<$tag unit="([0-9A-Fa-f]{32})" scheme="([-a-z]+)">\z};
-    die "$filename:$lineno: malformed signature: $signature\n";
+    return undef;
 }
 
 

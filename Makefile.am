@@ -18,6 +18,8 @@ SUBDIRS =					\
 	tools					\
 	www
 
+EXTRA_DIST = $(PACKAGE).spec
+
 
 all-local: $(srcdir)/package.m4
 
@@ -36,12 +38,10 @@ install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)/sites
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)/wrapped
 
-rpms: dist sampler.spec
+rpms: dist
 	rm -rf redhat
 	mkdir -p redhat/BUILD redhat/RPMS/$(DISTRO_ARCH) redhat/SOURCES redhat/SPECS redhat/SRPMS
-	cp $(distdir).tar.gz redhat/SOURCES
-	cp sampler.spec redhat/SPECS
-	rpmbuild --define '_topdir $(shell pwd)/redhat' -ba redhat/SPECS/sampler.spec
+	rpmbuild --define '_topdir $(shell pwd)/redhat' -ta $(distdir).tar.gz
 
 debs: dist
 	rm -rf debuild

@@ -200,22 +200,23 @@ fi
 #
 
 
+gcc=$CC
+AC_MAKE_ABSOLUTE(gcc)
+
 AC_MSG_CHECKING(for cpp0)
 AC_SUBST(cpp0, `$CC -print-prog-name=cpp0`)
 AC_MSG_RESULT($cpp0)
-
-case $cpp0 in
-  (/*) ;;
-  (*) AC_PATH_PROG(cpp0, $cpp0, [])
-esac
+AC_MAKE_ABSOLUTE(cpp0, [])
 
 AC_MSG_CHECKING(for cc1)
 AC_SUBST(cc1, `$CC -print-prog-name=cc1`)
 AC_MSG_RESULT($cc1)
+AC_MAKE_ABSOLUTE(cc1)
 
 AC_MSG_CHECKING(for as)
 AC_SUBST(as, `$CC -print-prog-name=as`)
 AC_MSG_RESULT($as)
+AC_MAKE_ABSOLUTE(as)
 
 
 AC_MSG_CHECKING(for thread-local storage qualifier)
@@ -327,6 +328,7 @@ www/cgi-bin/Makefile
 
 AC_CONFIG_FILES([launcher/test-by-extension], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/sampler-cc], [chmod +x $ac_file])
+AC_CONFIG_FILES([instrumentor/driver/sampler-cc-here], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/as], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/cc1], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/debuild], [chmod +x $ac_file])

@@ -6,7 +6,7 @@ use strict;
 ########################################################################
 
 
-my @as = ("@as@");
+my @as = ('@as@');
 my @objcopy;
 
 my $verbose;
@@ -26,7 +26,7 @@ my %flag_specs =
      '-o' => sub { $outfile = shift @ARGV; push @as, $_, $outfile },
      '--verbose' => sub { $verbose = 1 },
      );
-     
+
 
 while (@ARGV) {
     local $_ = shift;

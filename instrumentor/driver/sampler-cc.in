@@ -9,4 +9,4 @@ package_libdir="@package_libdir@"
 instrumentordir="@instrumentordir@"
 driverdir="@driverdir@"
 
-exec gcc -B $driverdir -specs=sampler-specs "$@"
+exec '@gcc@' -B "$driverdir" -specs=sampler-specs "$@"

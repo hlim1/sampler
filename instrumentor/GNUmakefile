@@ -51,6 +51,8 @@ dumpConstants: $(libcil) $(dumpConstants)
 ########################################################################
 
 
+GNUmakefile: libraries.ml
+
 libraries.ml: %: build-libraries %.in
 	./$< >$@.
 	mv $@. $@

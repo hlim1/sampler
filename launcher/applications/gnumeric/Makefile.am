@@ -7,6 +7,7 @@ links =						\
 all-local: $(links)
 
 stamp-executable:
+	rm -f executable
 	ln -s ../../../../apps/gnumeric/cvs/branches/src/gnumeric executable
 	touch $@
 

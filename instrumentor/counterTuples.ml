@@ -1,5 +1,4 @@
 open Cil
-open EmbedSiteInfo
 open Pretty
 open SchemeName
 
@@ -29,6 +28,8 @@ class virtual basis name file =
       result
 
     method finalize digest =
+      let accumulator = new BufferClass.c 0 in
+
       let startTag =
 	sprint max_int
 	  (seq nil text
@@ -63,6 +64,16 @@ class virtual basis name file =
 						    Some (integer nextId),
 						    attributes)},
 		      initinfo, location)
+
+	    | GVar ({vtype = TArray (elementType, _, attributes)} as varinfo, _, location)
+	      when varinfo.vname = name.prefix ^ "SiteInfo" ->
+		let text = accumulator#contents in
+		let size = String.length text in
+		GVar ({varinfo with vtype = TArray (elementType,
+						    Some (integer size),
+						    attributes)},
+		      {init = Some (SingleInit (mkString text))},
+		      location)
 
 	    | GFun ({svar = {vname = "samplerReporter"}; sbody = sbody}, _) as global
 	      when nextId > 0 ->

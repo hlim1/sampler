@@ -8,7 +8,6 @@
 #pragma cilnoremove("scalarPairsCounterTuples")
 static ScalarPairTuple scalarPairsCounterTuples[];
 
-
 #pragma cilnoremove("scalarPairsSiteInfo")
 static const char scalarPairsSiteInfo[] __attribute__((section(".debug.sampler.site_info.scalar-pairs")));
 

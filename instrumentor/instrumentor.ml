@@ -35,7 +35,6 @@ let phase =
     EmbedCFG.visit file digest;
     time "  collecting site info"
       (fun () -> List.iter (fun scheme -> scheme#embedInfo digest) schemes);
-    EmbedSiteInfo.visit file;
 
     if !sample then
       begin

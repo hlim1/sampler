@@ -1,12 +1,9 @@
 #!/usr/bin/python
 
 import bonobo
-import time
-import CORBA; help(CORBA)
 
-bag = bonobo.get_object('OAFIID:SamplerUploader_Bag:1.0', 'IDL:Bonobo/PropertyBag:1.0')
-print bag, dir(bag)
+server = bonobo.get_object('OAFIID:SamplerUploader:1.0', 'IDL:Sampler/Uploader:1.0')
 
-bag.setValue('foo', 7)
-uploader = bag.getValue('foo')
-print uploader, dir(uploader)
+server.increment()
+
+server.unref()

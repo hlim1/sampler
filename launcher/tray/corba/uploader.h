@@ -7,28 +7,36 @@
 G_BEGIN_DECLS
 
 
-#define TYPE_UPLOADER		(uploader_get_type())
-#define UPLOADER(o)		(G_TYPE_CHECK_INSTANCE_CAST((o), TYPE_UPLOADER, Uploader))
-#define UPLOADER_CLASS(k)	(G_TYPE_CHECK_CASS_CAST((k),     TYPE_UPLOADER, UploaderClass))
-#define IS_UPLOADER(o)		(G_TYPE_CHECK_INSTANCE_TYPE((o), TYPE_UPLOADER))
-#define IS_UPLOADER_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE((k),    TYPE_UPLOADER))
-#define UPLOADER_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS((o),  TYPE_UPLOADER, UploaderClass))
+#define SAMPLER_TYPE_UPLOADER		(sampler_uploader_get_type())
+#define SAMPLER_UPLOADER(o)		(G_TYPE_CHECK_INSTANCE_CAST((o), SAMPLER_TYPE_UPLOADER, SamplerUploader))
+#define SAMPLER_UPLOADER_CLASS(k)	(G_TYPE_CHECK_CASS_CAST((k),     SAMPLER_TYPE_UPLOADER, SamplerUploaderClass))
+#define IS_SAMPLER_UPLOADER(o)		(G_TYPE_CHECK_INSTANCE_TYPE((o), SAMPLER_TYPE_UPLOADER))
+#define IS_SAMPLER_UPLOADER_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE((k),    SAMPLER_TYPE_UPLOADER))
+#define SAMPLER_UPLOADER_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS((o),  SAMPLER_TYPE_UPLOADER, SamplerUploaderClass))
 
 
-typedef struct {
+struct _SamplerUploader {
   BonoboObject parent;
-  char *title;
-} Uploader;
+  GClosure *increment;
+  GClosure *decrement;
+};
+
+typedef struct _SamplerUploader SamplerUploader;
 
 
-typedef struct
-{
+struct _SamplerUploaderClass {
   BonoboObjectClass parent_class;
   POA_Sampler_Uploader__epv epv;
-} UploaderClass;
+};
+
+typedef struct _SamplerUploaderClass SamplerUploaderClass;
 
 
-GType uploader_get_type();
+GType sampler_uploader_get_type();
+
+SamplerUploader *sampler_uploader_new();
+
+void sampler_uploader_set_closures(SamplerUploader *, GClosure *increment, GClosure *decrement);
 
 
 #endif /* !INCLUDE_uploader_h */

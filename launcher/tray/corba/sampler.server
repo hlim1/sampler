@@ -3,9 +3,21 @@
 
 <oaf_info>
 
-  <oaf_server iid="OAFIID:SamplerUploader:1.0"
+  <oaf_server iid="OAFIID:SamplerUploader_Factory:1.0"
     type="exe"
-    location="/home/liblit/research/sampler/launcher/tray/corba/uploader-main">
+    location="/var/local/liblit/forensics/redhat/sampler/launcher/tray/corba/uploader-main">
+
+    <oaf_attribute name="repo_ids" type="stringv">
+      <item value="IDL:Bonobo/GenericFactory:1.0"/>
+      <item value="IDL:Bonobo/Unknown:1.0"/>
+    </oaf_attribute>
+
+    <oaf_attribute name="name" type="string" value="Sampler Uploader Factory"/>
+  </oaf_server>
+
+  <oaf_server iid="OAFIID:SamplerUploader:1.0"
+    type="factory"
+    location="OAFIID:SamplerUploader_Factory:1.0">
 
     <oaf_attribute name="repo_ids" type="stringv">
       <item value="IDL:Sampler/Uploader:1.0"/>

@@ -1,8 +1,12 @@
 *-common.c
 *-skels.c
 *-stubs.c
+*.defs
 .deps
 Makefile
 Makefile.in
 Sampler_Uploader.h
+client
+py-uploader.c
+sampler.h
 uploader-main

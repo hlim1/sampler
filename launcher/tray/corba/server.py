@@ -47,7 +47,7 @@ class UploaderBag(bonobo.PropertyBag):
 
     def get_property(self, *args):
         print 'UploaderBag.get_property:', args
-        return self.uploader
+        return CORBA.Any(7)
 
     def __init__(self):
         print 'UploaderBag.__init__'

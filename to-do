@@ -1,3 +1,7 @@
+When using acyclic countdowns, threads are racing on the random number
+generator.  They either need to lock it or each have their own.
+Cyclic countdowns have a similar problem.
+
 Document --{no-,}assume-weightless-{libraries,externs} and hook them
 up in the Perl driver.
 

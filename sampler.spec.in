@@ -100,6 +100,7 @@ Summary: Tools for building applications with sampled instrumentation
 Requires: binutils
 Requires: gcc
 Requires: perl >= 5.8
+Requires: scrollkeeper
 
 %description devel
 This package provides tools for building applications with sampled
@@ -117,10 +118,10 @@ tools for collecting and decoding sampled instrumentation reports.
 %{_libdir}/%{name}
 
 %post devel
-if which scrollkeeper-update>/dev/null 2>&1; then scrollkeeper-update -q -o %{_datadir}/omf/sampler-guide; fi
+scrollkeeper-update -q -o %{_datadir}/omf/sampler-guide
 
 %postun
-if which scrollkeeper-update>/dev/null 2>&1; then scrollkeeper-update -q; fi
+scrollkeeper-update -q
 
 
 ########################################################################

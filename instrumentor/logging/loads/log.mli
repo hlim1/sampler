@@ -1,1 +1,4 @@
-class visitor : Cil.file -> Collector.visitor
+open Cil
+
+
+val collect : file -> fundec -> Sites.info

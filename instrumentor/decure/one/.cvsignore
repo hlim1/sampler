@@ -1,9 +1,0 @@
-*.cmi
-*.cmo
-*.cmx
-*.di
-*.do
-*.o
-filterComplete
-listCandidates
-main

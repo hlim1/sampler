@@ -2,6 +2,7 @@ class type ['key, 'data] s =
   object
     method add : 'key -> 'data -> unit
     method remove : 'key -> unit
+    method replace : 'key -> 'data -> unit
 
     method find : 'key -> 'data
     method mem : 'key -> bool

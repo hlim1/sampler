@@ -1,7 +1,0 @@
-#!/bin/sh -x
-
-make -C `dirname $0`/.. main
-
-root=`cd \`dirname $0\`/../../../..; pwd`
-
-SAMPLER_SPARSITY=1 exec make -C $root/cil/test CCURED=$root/sampler/instrumentor/decure/driver/main "$@" clean all-olden all-spec95

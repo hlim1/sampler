@@ -1,1 +1,1 @@
-class visitor : Collector.visitor
+val collect : Cil.fundec -> Sites.info

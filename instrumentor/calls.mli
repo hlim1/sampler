@@ -1,14 +1,21 @@
 open Cil
 
 
-type placeholders = (stmt * stmt * stmt * stmt) list
+type info = {
+    export : stmt;
+    callee : exp;
+    import : stmt;
+    jump : stmt;
+    landing : stmt;
+  }
+
+type infos = info list
 
 
 class prepatcher : object
   inherit cilVisitor
-  method result : placeholders
+  method result : infos
 end
-      
 
-val prepatch : fundec -> placeholders
-val patch : ClonesMap.clonesMap -> WeighPaths.weightsMap -> Countdown.countdown -> placeholders -> unit
+
+val prepatch : prepatcher -> fundec -> infos

@@ -1,6 +1,9 @@
 open Cil
 
 
+type info = { forward : stmt list; backward : stmt list }
+
+
 class visitor =
   object
     inherit FunctionBodyVisitor.visitor
@@ -9,7 +12,7 @@ class visitor =
 	
     val mutable forwards = []
     val mutable backwards = []
-    method result = (forwards, backwards)
+    method result = { forward = forwards; backward = backwards }
 
     method vstmt stmt =
       begin

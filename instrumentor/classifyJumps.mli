@@ -1,4 +1,6 @@
 open Cil
 
 
-val visit : fundec -> (stmt list * stmt list)
+type info = { forward : stmt list; backward : stmt list }
+
+val visit : fundec -> info

@@ -1,10 +1,18 @@
-class visitor file func =
+open Cil
+
+
+class visitor file =
   object
     inherit LogCollector.visitor file
 
     method private collectOutputs = FindOutputs.collect
     method private placeInstrumentation code log = [log; code]
-
-    initializer
-      Simplify.visit func
   end
+
+
+let collect file =
+  let visitor = new visitor file in
+  fun func ->
+    Simplify.visit func;
+    ignore (visitCilFunction (visitor :> cilVisitor) func);
+    visitor#result

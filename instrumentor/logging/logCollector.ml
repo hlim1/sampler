@@ -6,9 +6,8 @@ class virtual visitor file =
     inherit FunctionBodyVisitor.visitor
 
     val mutable sites = []
-    method sites = sites
     val globals = ref []
-    method globals = !globals
+    method result = sites, !globals
 
     val logger = Logger.call file
 
@@ -31,4 +30,4 @@ class virtual visitor file =
 	DoChildren
       else
 	ChangeDoChildrenPost (stmt, self#addLogging outputs)
-end
+  end

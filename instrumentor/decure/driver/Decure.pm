@@ -8,7 +8,7 @@ use CCured;
 our @ISA = qw(CCured);
 
 
-my $libcountdown = "$FindBin::Bin/../../../../libcountdown";
+my $libcountdown = "$FindBin::Bin/../../../libcountdown";
 
 
 ########################################################################
@@ -26,7 +26,10 @@ sub collectOneArgument {
     my $self = shift;
     my ($arg) = @_;
 
-    if ($arg eq '--cyclic') {
+    if ($arg eq '--only') {
+	$self->{only} = shift @{$pargs};
+	return 1;
+    } elsif ($arg eq '--cyclic') {
 	$self->{cycle} = 'cyclic';
 	return 1;
     } elsif ($arg eq '--acyclic') {
@@ -47,6 +50,19 @@ sub preprocess_after_cil {
 		   '-include', "$FindBin::Bin/../../libdecure/decure.h");
     
     $self->SUPER::preprocess_after_cil(@_, \@ppargs);
+}
+
+
+sub compile_cil {
+    my $self = shift;
+    my $input = shift;
+
+    my $base = basename $input, ".i";
+    my $output = "${base}_inst.c";
+    my $instrumentor = "$FindBin::Bin/../main";
+    $self->runShell("$instrumentor --only '$self->{only}' $input >$output");
+
+    $self->SUPER::compile_cil($output, @_);
 }
 
 

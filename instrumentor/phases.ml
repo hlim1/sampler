@@ -2,11 +2,11 @@ open Cil
 open Arg
 
 
-let main transformer =
+let main preparator =
   let phases =
     [
      Choices.phase;
-     transformer;
+     "Transform", Interproc.visit preparator;
      "RemoveUnusedTemps", (fun file -> Rmtmps.removeUnusedTemps file);
      Options.phase;
      "dump", dumpFile (new Printer.printer) stdout

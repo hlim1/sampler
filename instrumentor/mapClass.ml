@@ -5,6 +5,7 @@ class type ['key, 'data] s =
   object
     method add : 'key -> 'data -> unit
     method remove : 'key -> unit
+    method replace : 'key -> 'data -> unit
 
     method find : 'key -> 'data
     method mem : 'key -> bool
@@ -27,6 +28,8 @@ module Make (Key : Hashtbl.HashedType) = struct
       method add = Hash.add storage
 
       method remove = Hash.remove storage
+
+      method replace = Hash.replace storage
 
       method find = Hash.find storage
 

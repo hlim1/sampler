@@ -1,7 +1,0 @@
-*-cured
-*-decured
-*.i
-*_combcured_inst.c
-*cured.c
-*cured.i
-.libs

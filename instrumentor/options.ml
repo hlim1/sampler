@@ -8,7 +8,7 @@ let idents = ref []
 
 let registerBoolean ~flag ~desc ~ident value =
   args :=
-    ("--" ^ flag, Set value, desc ^ " [default]")
+    ("--" ^ flag, Set value, desc)
     :: ("--no-" ^ flag, Clear value, "")
     :: !args;
   idents := (ident, fun () -> string_of_bool !value) :: !idents

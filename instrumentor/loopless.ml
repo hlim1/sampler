@@ -3,6 +3,22 @@ open Cil
 
 exception FoundLoop
 
+let assumeLooplessExterns = ref false
+let assumeLooplessLibraries = ref true
+
+let _ =
+  Options.registerBoolean
+    assumeLooplessExterns
+    ~flag:"assume-loopless-externs"
+    ~desc:"assume that functions defined elsewhere have no loops or recursion"
+    ~ident:"AssumeLooplessExterns";
+
+  Options.registerBoolean
+    assumeLooplessLibraries
+    ~flag:"assume-loopless-libraries"
+    ~desc:"assume that functions defined in libraries have no loops or recursion"
+    ~ident:"AssumeLooplessLibraries"
+
 
 class visitor loopless changed =
   object (self)
@@ -50,16 +66,12 @@ class visitor loopless changed =
   end
 
 
-let assumeLooplessLibraries () =
-  let loopless = new StringMap.container in
+let addLibraries loopless =
   Libraries.functions#iter (fun name -> loopless#add name true);
-  List.iter loopless#remove ["bsearch"; "qsort"];
-  loopless
+  List.iter loopless#remove ["bsearch"; "qsort"]
 
 
-let assumeLooplessExterns file =
-  let loopless = new StringMap.container in
-
+let addExterns loopless file =
   iterGlobals file
     begin
       function
@@ -74,13 +86,13 @@ let assumeLooplessExterns file =
 	| GFun ({ svar = { vname = vname }}, _) ->
 	    loopless#remove vname
 	| _ -> ()
-    end;
-
-  loopless
+    end
 
 
 let loopless file =
-  let loopless = assumeLooplessExterns file in
+  let loopless = new StringMap.container in
+  if !assumeLooplessExterns then addExterns loopless file;
+  if !assumeLooplessLibraries then addLibraries loopless;
 
   let considerGlobal = function
     | GFun (func, _) ->

@@ -1,4 +1,4 @@
 open Cil
 
 
-val main : TestHarness.phase -> unit
+val main : (file -> Prepare.visitor) -> unit

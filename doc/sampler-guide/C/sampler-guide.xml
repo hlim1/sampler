@@ -129,10 +129,8 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--include-function
-	{<function><replaceable>function</replaceable></function>|<literal>*</literal>}</option></term>
-	<term><option>--exclude-function
-	{<function><replaceable>function</replaceable></function>|<literal>*</literal>}</option></term>
+	<term><option>--include-function={<function><replaceable>function</replaceable></function>|<literal>*</literal>}</option></term>
+	<term><option>--exclude-function={<function><replaceable>function</replaceable></function>|<literal>*</literal>}</option></term>
 	<listitem>
 	  <para>Function filtering.  Each of these flags takes one
 	  mandatory argument which can be the name of a function or
@@ -147,8 +145,7 @@
 	  functions:</para>
 
 	  <informalexample>
-	    <para><userinput>&hellip; <option>--exclude-function
-	    <function>boringFunction</function></option>
+	    <para><userinput>&hellip; <option>--exclude-function=<function>boringFunction</function></option>
 	    &hellip;</userinput></para>
 	  </informalexample>
 
@@ -156,9 +153,9 @@
 	  just a few selected functions instrumented:</para>
 
 	  <informalexample>
-	    <para><userinput>&hellip; <option>--include-function
-	    <function>boringFunction</function></option>
-	    <option>--exclude-function <literal>*</literal></option>
+	    <para><userinput>&hellip;
+	    <option>--include-function=<function>interestingFunction</function></option>
+	    <option>--exclude-function=<literal>*</literal></option>
 	    &hellip;</userinput></para>
 	  </informalexample>
 
@@ -176,10 +173,8 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--include-file
-	{<filename><replaceable>filename</replaceable></filename>|<literal>*</literal>}</option></term>
-	<term><option>--exclude-file
-	{<filename><replaceable>filename</replaceable></filename>|<literal>*</literal>}</option></term>
+	<term><option>--include-file={<filename><replaceable>filename</replaceable></filename>|<literal>*</literal>}</option></term>
+	<term><option>--exclude-file={<filename><replaceable>filename</replaceable></filename>|<literal>*</literal>}</option></term>
 	<listitem>
 	  <para>File filtering.  Each of these flags takes one
 	  mandatory argument which can be the name of a source file
@@ -224,17 +219,15 @@
 	  boilerplate:</para>
 
 	  <informalexample>
-	    <para><userinput>&hellip; <option>--exclude-file
-	    <filename>/usr/gnu/share/bison.simple</filename></option>
-	    <option>--exclude-file
-	    <filename>lex.yy.c</filename></option>
+	    <para><userinput>&hellip; <option>--exclude-file=<filename>/usr/gnu/share/bison.simple</filename></option>
+	    <option>--exclude-file=<filename>lex.yy.c</filename></option>
 	    &hellip;</userinput></para>
 	  </informalexample>
 
-	  <para>Default is to include instrumentation points from
-	  all files, as though <option>--include-file
-	  <literal>*</literal></option> were implicitly the last
-	  flag given.</para>
+	  <para>Default is to include instrumentation points from all
+	  files, as though
+	  <option>--include-file=<literal>*</literal></option> were
+	  implicitly the last flag given.</para>
 
 	  <important>
 	    <para>If you use the wildcard, remember to protect it

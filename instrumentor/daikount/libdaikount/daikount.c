@@ -104,7 +104,7 @@ __attribute__((constructor)) static void initialize()
     }
   else
     {
-      fputs("logger: no $SAMPLER_FILE given in environment\n", stderr);
+      fputs("logger: no $SAMPLER_FILE given in environment; not logging\n", stderr);
       return;
     }
 }

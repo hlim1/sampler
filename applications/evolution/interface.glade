@@ -157,7 +157,7 @@
 	    <widget class="GtkLabel" id="no-details">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">&lt;small&gt;If you choose  “No”, then Evolution will not monitor its own behavior.  No automatic reports will ever be sent, though you can still use Bug Buddy to report problems manually.&lt;/small&gt;</property>
+	      <property name="label" translatable="yes">&lt;small&gt;If you choose “No”, then Evolution will not monitor its own behavior. No automatic reports will ever be sent, though you can still use Bug Buddy to report problems manually.&lt;/small&gt;</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -202,7 +202,7 @@
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">&lt;span weight=&quot;bold&quot; size=&quot;larger&quot;&gt;Evolution Bug Isolation Project&lt;/span&gt;
 
-Evolution continuously monitors its own behavior while it runs.  We can often isolate bugs by noticing &lt;i&gt;changes&lt;/i&gt; in Evolution’s behavior when it crashes versus when it does not crash.  Thus, each time you use Evolution you can help to make it better for everyone.
+Evolution continuously monitors its own behavior while it runs. We can often isolate bugs by noticing &lt;i&gt;changes&lt;/i&gt; in Evolution’s behavior when it crashes versus when it does not crash. Thus, each time you use Evolution you can help to make it better for everyone.
 
 Do you wish to provide automatic feedback when you use Evolution?</property>
 	      <property name="use_underline">False</property>
@@ -229,7 +229,7 @@ Do you wish to provide automatic feedback when you use Evolution?</property>
 	    <widget class="GtkLabel" id="yes-details">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">&lt;small&gt;If you choose  “Yes”, then Evolution will send a behavior report to the bug isolation center after each run.  Faileded runs will also include a small crash report to help us see what went wrong.&lt;/small&gt;</property>
+	      <property name="label" translatable="yes">&lt;small&gt;If you choose “Yes”, then Evolution will send a behavior report to the bug isolation center after each run. Faileded runs will also include a small crash report to help us see what went wrong.&lt;/small&gt;</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">True</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>

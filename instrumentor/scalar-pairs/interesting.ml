@@ -25,7 +25,8 @@ let hasInterestingNameLocal varinfo =
 let hasInterestingNameGlobal varinfo =
   let uninteresting = [
     "sys_nerr";
-    "gdk_debug_level"; "gdk_show_events"; "gdk_stack_trace"
+    "gdk_debug_level"; "gdk_show_events"; "gdk_stack_trace";
+    "nextEventCountdown"
   ] in
   not (List.mem varinfo.vname uninteresting)
 

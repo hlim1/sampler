@@ -2,7 +2,7 @@ open Cil
 
 
 let build file =
-  let const = [Attr ("const", [])] in
+  let const = Attrs.const in
   
   let statics =
     let rec findStatics = function

@@ -18,6 +18,9 @@ harness = $(manager) $(phases) $(tuples) $(bumper) $(bumpSign) $(describedExpres
 harness.$(cma): $(harness)
 	$(archive)
 
+cfgTest: $(libcil) $(cfgTest)
+	$(link)
+
 cfg-to-dot: $(libcil) $(cfg-to-dot)
 	$(link)
 
@@ -34,7 +37,7 @@ loopless: $(libcil) $(loopless)
 	$(link)
 
 %.i: %.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -E $< -o $@
+	$(CC) -I$(top_srcdir)/lib $(CPPFLAGS) $(CFLAGS) -E $< -o $@
 
 %.cfg.dot: cfg-to-dot %.i
 	./$^ >$@

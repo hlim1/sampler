@@ -16,6 +16,7 @@ int acyclicInitCount;
 
 double densityScale;
 unsigned short seed[3];
+FILE *entropy;
 
 SAMPLER_THREAD_LOCAL int sampling;
 SAMPLER_THREAD_LOCAL struct drand48_data buffer;
@@ -23,7 +24,15 @@ SAMPLER_THREAD_LOCAL struct drand48_data buffer;
 
 void initialize_thread()
 {
-  sampling = seed48_r(seed, &buffer) >= 0;
+  if (entropy)
+    {
+      unsigned short seed[3];
+      if (fread(seed, sizeof(seed), 1, entropy) == 1)
+	sampling = seed48_r(seed, &buffer) >= 0;
+    }
+  else
+    sampling = seed48_r(seed, &buffer) >= 0;
+
   nextEventCountdown = getNextEventCountdown();
 }
 
@@ -70,7 +79,7 @@ __attribute__((constructor)) static void initialize()
 		  seed[2] = convert.triple[2];
 		}
 	      else
-		seed[0] = seed[1] = seed[2] = 0;
+		entropy = fopen("/dev/urandom", "r");
 	      
 	      densityScale = 1 / log(1 - 1 / sparsity);
 	      initialize_thread();
@@ -80,6 +89,17 @@ __attribute__((constructor)) static void initialize()
 	  unsetenv("SAMPLER_SEED");
 	}
     }
+}
+
+
+__attribute__((destructor)) static void finalize()
+{
+  if (!--acyclicInitCount)
+    if (entropy)
+      {
+	fclose(entropy);
+	entropy = 0;
+      }
 }
 
 

@@ -1,6 +1,5 @@
 import os
 import signal
-import struct
 import sys
 
 import Outcome
@@ -29,15 +28,10 @@ def run_with_sampling(app, sparsity):
     outcome = Outcome.Outcome()
 
     # set up random number generator
-    format = 'L'
-    outcome.seed = str(struct.unpack(format, file('/dev/urandom').read(struct.calcsize(format)))[0])
     outcome.sparsity = sparsity
-    os.environ['SAMPLER_SEED'] = outcome.seed
     os.environ['SAMPLER_SPARSITY'] = str(outcome.sparsity)
-    if 'GSL_RNG_TYPE' in os.environ:
-        del os.environ['GSL_RNG_TYPE']
-    if 'GSL_RNG_SEED' in os.environ:
-        del os.environ['GSL_RNG_SEED']
+    if 'GSL_RNG_TYPE' in os.environ: del os.environ['GSL_RNG_TYPE']
+    if 'GSL_RNG_SEED' in os.environ: del os.environ['GSL_RNG_SEED']
 
     # set up reporting
     pipe = os.pipe()

@@ -10,7 +10,6 @@ class Outcome:
 
     def upload_headers(self):
         '''Contribute additional headers to report uploads.'''
-        return {'seed' : str(self.seed),
-                'sparsity' : str(self.sparsity),
+        return {'sparsity' : str(self.sparsity),
                 'exit-status' : str(self.status),
                 'exit-signal' : str(self.signal)}

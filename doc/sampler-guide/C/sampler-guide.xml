@@ -423,16 +423,19 @@
 	  <listitem>
 	    <para>Used when the executable was built with
 	    <option>--acyclic</option>.  Seeds the random number
-	    generator.</para>
+	    generator.  In multithreaded code, each new thread seeds
+	    its own generator using this same value.</para>
 
 	    <para>Not used when either <option>--cyclic</option> or
 	    <option>--no-sample</option> was given at compile
 	    time.</para>
 
-	    <para>If not set, defaults to a fixed value (zero).
-	    Therefore, one always set this environment variable to
-	    some value, preferably selected at random.  Otherwise,
-	    every run will use the same sequence of countdowns.</para>
+	    <para>If not set, the seed is selected at runtime using
+	    some system entropy source
+	    (e.g. <filename>/dev/urandom</filename>).  In
+	    multithreaded code, each new thread seeds its own
+	    generator using a new seed drawn from this system entropy
+	    source.</para>
 	  </listitem>
 	</varlistentry>
 

@@ -2,10 +2,14 @@
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include "log.h"
 
 
-unsigned nextLogCountdown = 0;
+unsigned nextLogCountdown = UINT_MAX;
+
+pid_t pid;
 
 
 static void resetCountdown()
@@ -28,6 +32,7 @@ static void resetCountdown()
 
 __attribute__((constructor, unused)) static void initialize()
 {
+  pid = getpid();
   resetCountdown();
 }
 
@@ -49,7 +54,7 @@ void logWrite(const char filename[], unsigned line,
     {
       resetCountdown();
       
-      fprintf(stderr, "%s:%u: write %p for %u bytes\n",
-	      filename, line, address, size);
+      fprintf(stderr, "%s:%u: (%d) writes %p for %u bytes\n",
+	      filename, line, pid, address, size);
     }
 }

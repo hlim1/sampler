@@ -1,19 +1,11 @@
-#define _GNU_SOURCE		/* for obstack_printf() */
-
 #include <errno.h>
-#include <obstack.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include "anchor.h"
 #include "lock.h"
 #include "report.h"
 #include "unit.h"
-
-#define obstack_chunk_alloc malloc
-#define obstack_chunk_free free
 
 
 const void * const providesLibReport;
@@ -24,38 +16,12 @@ FILE *reportFile;
 
 static void openReportFile()
 {
-  const char *start = getenv("SAMPLER_FILE");
-  struct obstack obstack;
+  const char *filename = getenv("SAMPLER_FILE");
+  reportFile = fopen(filename, "w");
+  unsetenv("SAMPLER_FILE");
 
-  if (!start)
-    return;
-  
-  obstack_init(&obstack);
-  while (*start)
-    {
-      const char *end = strstr(start, "$$");
-      if (end)
-	{
-	  obstack_grow(&obstack, start, end - start);
-	  obstack_printf(&obstack, "%d", getpid());
-	  start = end + 2;
-	}
-      else
-	break;
-    }
-
-  {
-    const int leftovers = strlen(start);
-    obstack_grow0(&obstack, start, leftovers);
-  }
-  
-  {
-    char * const filename = (char *) obstack_finish(&obstack);
-    reportFile = fopen(filename, "w");
-    if (reportFile)
-      fputs("<report id=\"samples\">\n", reportFile);
-    obstack_free(&obstack, filename);
-  }
+  if (reportFile)
+    fputs("<report id=\"samples\">\n", reportFile);
 }
 
 

@@ -25,6 +25,7 @@ __attribute__((constructor)) static void initialize()
       if (filename)
 	{
 	  storeInitialize(filename);
+	  unsetenv("SAMPLER_FILE");
 	  logTableau(logSignature, sizeof(logSignature));
 	  logTableau(&nextEventCountdown, sizeof nextEventCountdown);
 	}

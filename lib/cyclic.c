@@ -72,6 +72,7 @@ __attribute__((constructor)) static void initialize()
 	{
 	  const int fd = checkedOpen(environ);
 	  mapping = checkedMmap(PROT_READ, fd);
+	  unsetenv(envar);
 	}
       else
 	{

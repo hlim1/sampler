@@ -443,12 +443,7 @@
 	  <term><envar>$SAMPLER_FILE</envar></term>
 	  <listitem>
 	    <para>If set, names a file into which the sampler report
-	    will be written at program exit time.  Any occurrence of
-	    the substring <quote><literal>$$</literal></quote> will be
-	    replaced by the program's own process ID. This simplifies
-	    data collection from multiple invocations or from
-	    instrumented applications which spawn off multiple copies
-	    of themselves.</para>
+	    will be written at program exit time.</para>
 
 	    <para>If not set, no post-execution report will be
 	    produced.  This does not disable sampling while the

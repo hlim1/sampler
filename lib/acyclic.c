@@ -75,6 +75,9 @@ __attribute__((constructor)) static void initialize()
 	      densityScale = 1 / log(1 - 1 / sparsity);
 	      initialize_thread();
 	    }
+
+	  unsetenv("SAMPLER_SPARSITY");
+	  unsetenv("SAMPLER_SEED");
 	}
     }
 }

@@ -18,7 +18,9 @@ CREATE TABLE build (
   instrumentation_version varchar(50) NOT NULL default '',
   build_date datetime NOT NULL default '0000-00-00 00:00:00',
   PRIMARY KEY  (build_id),
-  UNIQUE KEY application_name (application_name,application_version,application_release)
+  UNIQUE KEY application_name (application_name,application_version,application_release),
+  KEY instrumentation_type (instrumentation_type),
+  CONSTRAINT `0_606` FOREIGN KEY (`instrumentation_type`) REFERENCES `instrumentation` (`instrumentation_type`)
 ) TYPE=InnoDB;
 
 --
@@ -50,6 +52,17 @@ CREATE TABLE build_site (
   operand_1 varchar(255) default NULL,
   PRIMARY KEY  (build_id,unit_signature,site_order),
   CONSTRAINT `0_599` FOREIGN KEY (`build_id`, `unit_signature`) REFERENCES `build_module` (`build_id`, `unit_signature`)
+) TYPE=InnoDB;
+
+--
+-- Table structure for table `instrumentation`
+--
+
+DROP TABLE IF EXISTS instrumentation;
+CREATE TABLE instrumentation (
+  instrumentation_type enum('branches','returns','scalar-pairs') NOT NULL default 'branches',
+  predicates_per_site tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY  (instrumentation_type)
 ) TYPE=InnoDB;
 
 --

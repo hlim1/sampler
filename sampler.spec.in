@@ -86,7 +86,7 @@ Group: Development/Tools
 Summary: Tools for building applications with sampled instrumentation
 Requires: binutils
 Requires: gcc
-Requires: @cc1@
+Requires: %(gcc -print-prog-name=cc1)
 Requires: perl >= 5.8
 Requires: scrollkeeper
 

@@ -1,0 +1,13 @@
+These heuristics preclude us from identifying certain types of errors,
+such as forgotten initialization bugs.  If a program only crashes when
+it fails to run some initialization code, \elim{lack of failing
+  coverage} will observe that the initialization code is not used on
+crashing runs, and therefore conclude that this cannot be the cause of
+the bug.  Any attempt to identify crashes caused by code that did
+\emph{not} run is just as likely to seize upon the \texttt{return}
+statement at the end of \texttt{main()}: this is a statement that is
+consistently reached by successful runs but not reached by runs that
+crash.  Yet reporting that the program crashed because it failed to
+return from \texttt{main()} is hardly useful.  A more refined
+treatment of code with differing roles may be required in order to
+capture this class of bugs.

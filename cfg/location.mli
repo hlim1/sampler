@@ -4,4 +4,4 @@ type t = {
   }
 
 
-val p : char Stream.t -> t
+val parse : char Stream.t -> t

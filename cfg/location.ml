@@ -4,7 +4,7 @@ open Basics
 type t = { file : string; line : int }
 
 
-let p =
+let parse =
   let filename = wordTab in
   let lineno = integerLine in
   parser

@@ -1,3 +1,5 @@
+SUBDIRS = graphlib
+
 noinst_SCRIPTS = resolve-cfg
 
 EXTRA_DIST =
@@ -6,16 +8,20 @@ include $(top_srcdir)/ocaml/rules.mk
 
 MOSTLYCLEANFILES += $(noinst_SCRIPTS)
 
+libgraph = graphlib/graphlib.$(cma)
+
 includes += -pp camlp4o
-libdirs += $(dir $(libcommon))
+libdirs += $(dir $(libcommon) $(libgraph))
 
 
-resolve-cfg: $(libcil) $(libcommon) $(resolve-cfg)
+resolve-cfg: $(libcommon) $(libgraph) $(resolve-cfg)
 	$(link)
 
 $(dir $(libcommon))/%.cmi: $(libcommon)
 
-$(libcommon): $(force)
+graphlib/graph.cmi: $(libgraph)
+
+$(libcommon) $(libgraph): $(force)
 	$(recurse)
 
 #input := /usr/lib/sampler/sites/usr/lib/sampler/applications/evolution/executable.cfg

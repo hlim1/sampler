@@ -1,11 +1,10 @@
-open Types
+open Types.Function
 
 
-val p : char Stream.t -> func
+type result = key * data
 
-val entry : func -> node
 
-val collectAll : symtab -> func -> symtab
-val collectExports : symtab -> func -> symtab
+val parse : Types.Compilation.key -> Symtab.t -> char Stream.t -> result
 
-val fixCallees : environment -> func -> unit
+val addNodes : result -> unit
+val addEdges : Symtab.t -> result -> unit

@@ -1,8 +1,7 @@
-open Types
+type result = Function.result list * Symtab.t
 
 
-val p : char Stream.t -> compilation
+val parse : Types.Object.key -> char Stream.t -> result
 
-
-val collectExports : symtab -> compilation -> symtab
-val fixCallees : symtab -> compilation -> unit
+val addNodes : result -> unit
+val addEdges : result -> unit

@@ -1,9 +1,11 @@
 open Basics
-open Types
 
 
-let p =
-  let header =
+type result = Function.result list * Symtab.t
+
+
+let parse objKey =
+  let version =
     parser
 	[< ''*'; ''\t'; ''0'; ''.'; ''1'; ''\n' >] ->
 	  ()
@@ -34,21 +36,22 @@ let p =
 	    hex_24 hex_25 hex_26 hex_27 hex_28 hex_29 hex_30 hex_31
   in
 
-  let functions = sequenceLine Function.p in
+  fun stream ->
+    let statics = new Symtab.t in
+    let parse = parser
+	[< _ = version;
+	   name = name;
+	   _ = signature;
+	   functions = sequenceLine (Function.parse (objKey, name) statics) >]
+	->
+	  (functions, statics)
+    in
+    parse stream
 
-  parser
-      [< _ = header; name = name; signature = signature; functions = functions >] ->
-	{ sourceName = name; signature = signature; functions = functions }
+
+let addNodes (functions, _) =
+  List.iter Function.addNodes functions
 
 
-(**********************************************************************)
-
-
-let collectExports symtab { functions = functions } =
-  List.fold_left Function.collectExports symtab functions
-
-
-let fixCallees globals { functions = functions } =
-  let locals = List.fold_left Function.collectAll StringMap.M.empty functions in
-  let environment = { locals = locals; globals = globals } in
-  List.iter (Function.fixCallees environment) functions
+let addEdges (functions, statics) =
+  List.iter (Function.addEdges statics) functions

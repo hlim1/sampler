@@ -254,6 +254,7 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 AC_CONFIG_FILES([
 Makefile
 cfg/Makefile
+cfg/graphlib/Makefile
 config.m4
 debian/Makefile
 doc/Makefile

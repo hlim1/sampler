@@ -1,66 +1,63 @@
 open Basics
-open Types
+open Types.Function
 
 
-(**********************************************************************)
+type result = key * data
 
 
-let p =
+let parse compKey statics =
   let linkage = parser
     | [< ''-' >] -> Static
-    | [< ''+' >] -> External
+    | [< ''+' >] -> Extern
   in
 
   let name = wordTab in
-  let location = Location.p in
-  let rawNodes = sequenceLine Node.p in
+  let location = Location.parse in
+  let nodes = sequenceLine Statement.parse in
 
   parser
-      [< linkage = linkage; ''\t'; name = name; location = location; raws = rawNodes >] ->
+      [< linkage = linkage; ''\t'; name = name; location = location; nodes = nodes >] ->
 
-	let nodesList = List.map fst raws in
-	let nodes = Array.of_list nodesList in
-	List.iter (Node.fixSuccessors nodes) raws;
+	let nodes = Array.of_list nodes in
+	let returns =
+	  let accumulator = ref [] in
+	  let filter id data =
+	    if Statement.isReturn data then
+	      accumulator := id :: !accumulator
+	  in
+	  Array.iteri filter nodes;
+	  !accumulator
+	in
 
-	let callers = List.filter Node.isReturn nodesList in
-	let func = {
-	  fid = Uid.next ();
-	  linkage = linkage;
-	  name = name;
-	  start = location;
+	let data = {
+	  location = location;
 	  nodes = nodes;
-	  callers = callers;
-	  returns = [];
+	  returns = returns;
 	} in
 
-	Array.iter (Node.fixParent func) nodes;
-	func
+	let funcKey = (compKey, name) in
+	let result = (funcKey, data) in
+
+	(* register function in symbol tables *)
+	statics#add name result;
+	if linkage == Extern then
+	  Symtab.externs#add name result;
+
+	(* return to caller *)
+	result
 
 
-(**********************************************************************)
+let addNodes (key, data) =
+  let iterator slot =
+    let nodeKey = (key, slot) in
+    Statement.addNodes nodeKey
+  in
+  Array.iteri iterator data.nodes
 
 
-let entry func = func.nodes.(0)
-
-
-(**********************************************************************)
-
-
-let emptySymtab = StringMap.M.empty
-
-
-let collectAll symtab ({ name = name } as func) =
-  if StringMap.M.mem name symtab then
-    Printf.eprintf "duplicate symbol: %s\n" name;
-  StringMap.M.add name func symtab
-
-
-let collectExports symtab = function
-  | { linkage = Static } -> symtab
-  | { linkage = External } as export ->
-      collectAll symtab export
-
-
-let fixCallees environment func =
-  let fixer = Node.fixCallees environment in
-  Array.iter fixer func.nodes
+let addEdges statics (key, data) =
+  let iterator slot =
+    let nodeKey = (key, slot) in
+    Statement.addEdges statics nodeKey
+  in
+  Array.iteri iterator data.nodes

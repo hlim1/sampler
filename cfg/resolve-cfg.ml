@@ -1,30 +1,37 @@
-open Types
-
-
 let argSpecs = []
 
 
-let objs = ref []
+let objects = ref []
 
 
 let doOne filename =
   let channel = open_in filename in
   let stream = Stream.of_channel channel in
-  let obj = Object.p filename stream in
-  objs := obj :: !objs
+  objects := (Object.parse filename stream) :: !objects
+
 
 ;;
 
 
 Arg.parse argSpecs doOne
 ("Usage:" ^ Sys.executable_name ^ " <module>.cfg ...");
+print_endline "done parsing";
 
-let globals = Object.fixCalleesAll !objs in
-Dotty.dump stdout !objs;
+List.iter Object.addNodes !objects;
+List.iter Object.addEdges !objects;
+print_endline "done building graph";
 
-let check origin destination =
-  let reachable = Transitive.reach origin destination in
-  Printf.printf "%d -?-> %d: %b\n\n" origin.nid destination.nid reachable
+let reach fromFunc fromSlot toFunc toSlot =
+  let origin = Find.findNode fromFunc fromSlot in
+  let destination = Find.findNode toFunc toSlot in
+  let result = Transitive.reach ignore FlowGraph.graph#succ origin destination in
+  Printf.printf "(%s, %d) --> (%s, %d) == %b\n"
+    fromFunc fromSlot
+    toFunc toSlot
+    result
 in
-let tiny = StringMap.M.find "tiny" globals in
-check tiny.nodes.(1) tiny.nodes.(0)
+
+reach "tiny" 0 "tiny" 3;
+reach "tiny" 3 "tiny" 0;
+reach "tiny" 0 "pong" 0;
+reach "pong" 0 "tiny" 3

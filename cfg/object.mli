@@ -1,8 +1,7 @@
-open Basics
-open Types
+type result = Compilation.result list
 
 
-val p : string -> char Stream.t -> obj
+val parse : string -> char Stream.t -> result
 
-
-val fixCalleesAll : obj list -> symtab
+val addNodes : result -> unit
+val addEdges : result -> unit

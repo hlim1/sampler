@@ -202,7 +202,7 @@
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">&lt;span weight=&quot;bold&quot; size=&quot;larger&quot;&gt;Nautilus Bug Isolation Project&lt;/span&gt;
 
-Nautilus continuously monitors its own behavior while it runs. We can often isolate bugs by noticing &lt;i&gt;changes&lt;/i&gt; in Nautilus’s behavior when it crashes versus when it does not crash. Thus, each time you use Nautilus you can help to make it better for everyone.
+Nautilus continuously monitors its own behavior while it runs. Each time you use Nautilus you can help to make it better for everyone.
 
 Do you wish to provide automatic feedback when you use Nautilus?</property>
 	      <property name="use_underline">False</property>
@@ -344,7 +344,7 @@ Do you wish to provide automatic feedback when you use Nautilus?</property>
 
 <widget class="GtkDialog" id="server-message">
   <property name="border_width">5</property>
-  <property name="title" translatable="yes">Message from Bug Isolation Server</property>
+  <property name="title" translatable="yes">Message from Bug Isolation Center</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -352,6 +352,7 @@ Do you wish to provide automatic feedback when you use Nautilus?</property>
   <property name="default_height">400</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
+  <property name="icon">/usr/share/pixmaps/gnome-globe.png</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">

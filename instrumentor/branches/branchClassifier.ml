@@ -29,7 +29,7 @@ class visitor (counters : Counters.builder) func =
     method vstmt stmt =
       let action = super#vstmt stmt in
       match stmt.skind with
-      | If _ ->
+      | If _ when self#includedStatement stmt ->
 	  ChangeDoChildrenPost (stmt, self#patchConditional)
       | _ ->
 	  action

@@ -33,7 +33,7 @@ class visitor file (tuples : PairTuples.builder) func =
     method vstmt stmt =
       match stmt.skind with
       | Instr [Set ((Var left, NoOffset), _, location)]
-	when isInterestingVar left ->
+	when isInterestingVar left && self#includedStatement stmt ->
 	  let bumps =
 
 	    let build =

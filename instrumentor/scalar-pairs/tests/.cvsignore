@@ -1,7 +1,8 @@
 *.i
 *.inst.c
-*.s
+*.passed
 *.report
+*.s
 *.trace
 .libs
 late-global

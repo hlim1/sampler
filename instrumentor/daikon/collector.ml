@@ -31,7 +31,7 @@ class visitor file =
   let invariants = Invariants.propose file in
 
   fun func ->
-    object
+    object (self)
       inherit Classifier.visitor
 
       val mutable sites = []
@@ -58,7 +58,7 @@ class visitor file =
       method vstmt stmt =
 	match stmt.skind with
 	| Instr [Set ((Var varinfo, NoOffset), _, location)]
-	  when isInteresting varinfo ->
+	  when isInteresting varinfo && self#includedStatement stmt ->
 	    (* ignore (eprintf "%a: assignment to %a@!"
 		      d_loc location
 		      d_var varinfo); *)

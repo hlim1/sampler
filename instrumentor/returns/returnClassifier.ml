@@ -13,7 +13,8 @@ class visitor (tuples : ReturnTuples.builder) func =
 
     method vstmt stmt =
       match stmt.skind with
-      | Instr [Call (Some result, callee, args, location)] ->
+      | Instr [Call (Some result, callee, args, location)]
+	when self#includedStatement stmt ->
 	  let info = super#prepatchCall stmt in
 	  let resultType, _, _, _ = splitFunctionType (typeOf callee) in
 	  if isInterestingType resultType then

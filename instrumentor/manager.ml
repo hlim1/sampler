@@ -4,35 +4,6 @@ open FuncInfo
 
 (**********************************************************************)
 
-let fileFilter = ref []
-
-
-let _ =
-  Clude.register
-    ~flag:"file"
-    ~desc:"<file-name> instrument this file"
-    ~ident:"FilterFile"
-    fileFilter
-
-
-let funcFilter = ref []
-
-
-let _ =
-  Clude.register
-    ~flag:"function"
-    ~desc:"<function> instrument this function"
-    ~ident:"FilterFunction"
-    funcFilter
-
-
-let selected func site =
-  Clude.selected !funcFilter func.svar.vname
-    && Clude.selected !fileFilter (get_stmtLoc site.skind).file
-
-
-(**********************************************************************)
-
 
 let sample = ref true
 
@@ -59,23 +30,7 @@ class virtual visitor file =
     method private classifyStatements func =
       let visitor = self#statementClassifier func in
       ignore (visitCilFunction (visitor :> cilVisitor) func);
-
-      let sites =
-	let unfiltered = visitor#sites in
-	let folder sites site =
-	  let location = get_stmtLoc site.skind in
-	  if selected func site then
-	    site :: sites
-	  else
-	    begin
-	      site.skind <- Instr [];
-	      sites
-	    end
-	in
-	List.fold_left folder [] unfiltered
-      in
-
-      { sites = sites;
+      { sites = visitor#sites;
 	calls = visitor#calls }
 
 

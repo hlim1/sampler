@@ -107,7 +107,7 @@ while (my $signature = <STDIN>) {
 	    last if $_ eq '';
 	    miscount 'many', $signature unless @sites;
 	    my $site = shift @sites;
-	    print "$_\t$signature\t$site\n";
+	    print "$_\t$site\n";
 	}
 
 	miscount 'few', $signature if @sites;

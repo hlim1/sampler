@@ -10,6 +10,7 @@ CFLAGS := -g -W -Wall -Werror
 objects := $(tests:=.o)
 traces := $(tests:=.trace)
 reports := $(tests:=.report)
+passed := $(tests:=.passed)
 
 countdir := $(top)/../libcountdown
 lib := ../libscalar-pairs/libscalar-pairs.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la
@@ -24,8 +25,12 @@ recurse = $(MAKE) -C $(@D) $(@F)
 all:
 .PHONY: all
 
-check: $(reports)
+check: $(passed)
 .PHONY: check
+
+$(passed): %.passed: %.expected %.report
+	cmp $^
+	touch $@
 
 $(reports): %.report: $(top)/../resolver/resolve-samples % %.trace
 	$< $* <$*.trace >$@.

@@ -28,9 +28,12 @@ class virtual visitor file () =
       stmt
 
     method vstmt stmt =
-      let outputs = self#collectOutputs stmt.skind in
-      if outputs#isEmpty then
-	DoChildren
+      if self#includedStatement stmt then
+	let outputs = self#collectOutputs stmt.skind in
+	if outputs#isEmpty then
+	  DoChildren
+	else
+	  ChangeDoChildrenPost (stmt, self#addLogging outputs)
       else
-	ChangeDoChildrenPost (stmt, self#addLogging outputs)
+	DoChildren
   end

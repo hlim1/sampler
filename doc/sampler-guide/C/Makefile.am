@@ -13,9 +13,7 @@ TESTS = $(docname).xml $(omffile)
 TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
 
 
-html-local: html/stamp
-
-html/stamp: $(docname).xml
-	rm -rf html
-	docbook2html -o html $<
+html-local: $(docname).xml
+	rm -f index.html ar??s??.html
+	xsltproc --stringparam html.stylesheet $(docname).css --param admon.graphics 1 $<
 	touch $@

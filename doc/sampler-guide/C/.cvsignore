@@ -1,5 +1,7 @@
-*.out
+*.omf.out
 Makefile
 Makefile.in
-html
+ar??s??.html
+html-local
+index.html
 omf_timestamp

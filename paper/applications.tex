@@ -7,6 +7,7 @@ impact of sampling as well as to show that sampling can offer novel
 insights into program (mis)behavior.  We report on our findings here.
 
 \subsection{Sharing the Cost of Assertions}
+\label{sec:share}
 
 In conventional usage, C \texttt{assert()} calls are used during
 program development but are disabled (``\texttt{-DNDEBUG}'') when the
@@ -36,7 +37,7 @@ have been fixed.  Thus all programs run to completion and we are
 simply measuring the overhead of performing the dynamic checks.
 
 \subsubsection{Whole-Program Sampling}
-\label{sec:ccured:whole}
+\label{sec:share:whole}
 
 \begin{table*}[tb]
   \centering
@@ -53,10 +54,10 @@ simply measuring the overhead of performing the dynamic checks.
   \end{tabular}
   \caption{Static metrics for \CCured benchmarks.  Olden benchmarks
     are listed first, followed by SPECINT95.}
-  \label{tab:ccured-static}
+  \label{tab:share:static}
 \end{table*}
 
-\autoref{tab:ccured-static} summarizes static aspects of the sampling
+\autoref{tab:share:static} summarizes static aspects of the sampling
 transformation when applied to the entirety of each benchmark.  For
 each program, we give the total number of non-library functions and
 the number of these which are weightless.  \CCured is a whole-program
@@ -67,16 +68,19 @@ of functions which directly contain at least one instrumentation site.
 but which call other functions that do have sites.)
 
 Considering just the functions which directly contain at least one
-instrumentation site, \autoref{tab:ccured-static} also presents the
+instrumentation site, \autoref{tab:share:static} also presents the
 average number of sites per function, the average number of threshold
 check points per function, and the average threshold weight for all
 such points.  (Note that the product of the last two of these metrics
 may exceed the first, as a single instrumentation site may fall under
 more than one threshold check point.  This can be seen in the example
 in \autoref{fig:code-layout} as well.)  The average site count gives
-an impression of how assertion-dense the code is, while the average
+an impression of how assertion-dense the code is.  The average
 threshold weight measures how effective our transformation has been in
 amortizing the cost of countdown checks over multiple sites.
+Single-site functions are not uncommon; thus, an average threshold
+weight above two is encouraging because it suggests that overall
+amortization rates are fairly effective.
 
 \begin{table}
   \centering
@@ -91,10 +95,10 @@ amortizing the cost of countdown checks over multiple sites.
     \hline
   \end{tabular}
   \caption{Relative speedup of various sampling rates versus always checking}
-  \label{tab:ccured-density}
+  \label{tab:share:density}
 \end{table}
 
-\autoref{tab:ccured-density} shows the performance effect of various
+\autoref{tab:share:density} shows the performance effect of various
 sampling densities.  We take the running time of standard \CCured code
 as the baseline.  We report the speedup ($>1$) or slowdown ($<1$)
 relative to this baseline when sampling at various densities.  All
@@ -137,18 +141,18 @@ In an effort to better understand the sources of overhead, we have
 performed additional experiments in which only a single function is
 instrumented at a time.  This also approximates a more realistic
 approach to managing code size.  The fully instrumented executables
-from \autoref{sec:ccured:whole} range from 2\%-76\% larger than their
+from \autoref{sec:share:whole} range from 2\%-76\% larger than their
 non-sampling counterparts.  When only a single function is
 instrumented, code expansion is small enough to not be a concern.
 
 A fully deployed system might use dynamic instrumentation to randomly
 instrument a single selected function \textit{du jour}.  For the
 present research, we build one executable for each site-containing
-function as counted in \autoref{tab:ccured-static}.  All sites in
-other functions are removed.  This, in turn, allows us to discover
-many more weightless functions: any function which cannot transitively
-call the one function being instrumented is weightless.  Thus, a suite
-of single-function sampling executables may perform better, over all,
+function as counted in \autoref{tab:share:static}.  All sites in other
+functions are removed.  This, in turn, allows us to discover many more
+weightless functions: any function which cannot transitively call the
+one function being instrumented is weightless.  Thus, a suite of
+single-function sampling executables may perform better, over all,
 than a single executable with sampling in all functions.
 
 \begin{figure}
@@ -156,14 +160,14 @@ than a single executable with sampling in all functions.
   \includegraphics[width=\columnwidth]{applications/perimeter}
   \caption{\texttt{perimeter} running times with single-function
     instrumentation}
-  \label{fig:ccured-perimeter}
+  \label{fig:share:perimeter}
 \end{figure}
 
 In the interest of space, we report only on \texttt{perimeter}: the
 stubborn worst performer from the preceding experiment.  This
 benchmark's small function count also makes overall results easier to
-visualize.  \autoref{fig:ccured-perimeter} shows absolute running
-times in seconds, with 1/100 sampling.  The two leftmost ``all'' bars
+visualize.  \autoref{fig:share:perimeter} shows absolute running times
+in seconds, with 1/100 sampling.  The two leftmost ``all'' bars
 represent instrumenting all functions, either with checks always done
 or with checks sampled.  The solo ``none'' bar represents the extreme
 limit of performance: all instrumentation statically removed from all
@@ -175,58 +179,43 @@ checked always or sampled 1/100.
 Note that the vertical baseline is nine seconds, not zero, which
 magnifies fairly small differences: the two leftmost bars differ by
 only 4\%, the same difference reported in the ``$10^{-2}$'' column for
-\texttt{perimeter} in \autoref{tab:ccured-density}.
+\texttt{perimeter} in \autoref{tab:share:density}.
 
-Among the site-containing functions, \texttt{Child()} gains a small
-performance boot from sampling, while the others slow down.  Examining
-each of these in turn, we find:
-
-\begin{description}
-\item[\texttt{CountTree()} and \texttt{sum\_adjacent()}] each contain
-  only a single instrumentation site.  Thus, threshold checks yield no
-  amortization benefit and in fact are optimized away.  Furthermore,
-  each function is self recursive (four and two times, respectively),
-  and each such call incurs countdown export/import overhead.  This
-  could be remedied by transforming each function to pass the local
-  countdown to itself as an additional parameter on recursive calls.
-  
-\item[\texttt{gtequal\_adj\_neighbor()}] is singly self recursive, and
-  could benefit form a similar transformation.  Threshold checks
-  achieve modest amortization with three instrumentation sites.  Note
-  that \texttt{perimeter} overall shows the smallest average threshold
-  weight in \autoref{tab:ccured-static}.
-  
-\item[\texttt{MakeTree()} and \texttt{perimeter()}] achieve good
-  amortization from their function-entry threshold checks (weights
-  twenty four and five, respectively), but subsequently waste time on
-  export/import with four self recursive calls.
-\end{description}
-
-Countdown export and import around recursive calls is clearly a
-problem, but one with a fairly straightforward solution.  It is worth
-noting that \texttt{child()}, which does show speedup, is the only
+Among the site-containing functions, \texttt{child()} gains a small
+performance boot from sampling.  The remaining five share a common
+quality not yet fully exploited by our current implementation: self
+recursion.  Each of the five contains between one and four recursive
+calls.  Our current system treats each of these as a call to a
+non-weightless function: the countdown must be exported before the
+call and imported after.  A faster approach would be to transform each
+function to pass the local countdown down to its recursive callees,
+and accept an updated countdown back as a returned value.  Such a
+countdown management strategy would be applicable any time both callee
+and caller can agree on the API change; the case of self-recursive
+calls is particularly straightforward.  It is worth noting that
+\texttt{child()}, which does show sampling speedup, is the only
 function of these six which is not self recursive.
 
 Benchmarks that are less dominated by recursion suggest additional
 areas for improvement.  Recurring trends include:
 
 \begin{itemize}
-\item Poor amortization due to lightweight regions in fixed-bound
+\item Low amortization due to lightweight regions in fixed-bound
   loops.  A loop with fixed iteration count $i$ and body weight $w$
   could be treated as an acyclic region of weight $iw$.  This would be
   similar to using loop unrolling to improve instruction scheduling,
   though literal unrolling is not strictly necessary: merely adjusting
   the weight calculation is sufficient.
   
-\item Poor amortization due to lightweight regions in loops with
-  bounds fixed on entry.  A similar optimization applies, except that
-  the effective region weight $iw$ would be computed from $i$ on each
-  new entry into the loop.
+\item Low amortization due to lightweight regions in loops with bounds
+  fixed on entry.  A similar optimization applies, except that the
+  effective region weight $iw$ would be computed from $i$ on each new
+  entry into the loop.
   
-\item Overly conservative identification of weightless functions.
-  Calls through function pointers or to externally-defined code are
-  assumed to potentially recurse back to the caller.  Points-to
-  analyses can improve the former; a checkable \texttt{weightless}
+\item Conservative identification of weightless functions.  Calls
+  through function pointers or to externally-defined code are assumed
+  to potentially recurse back to the caller.  Points-to analyses can
+  improve the former; a statically checkable \texttt{weightless}
   annotation on function prototypes would resolve the later.
 \end{itemize}
 
@@ -239,12 +228,12 @@ as the loop optimizations resemble loop unrolling without the literal
 code change, here we exploit a sort of virtual inlining, but of
 weights instead of code.
 
-We expect that these and other optimizations will continue to shrink
-the sampling overhead, both for single-function as well as
-whole-program instrumentation.
+We expect that these and other optimizations will continue to improve
+the performance benefit from sampling, both for single-function as
+well as whole-program instrumentation.
 
 \subsection{Statistical Debugging}
-\label{sec:applications:mining}
+\label{sec:debug}
 
 Sampled information about program behavior can be thought of as a
 database.  Data mining techniques, then, may reveal important
@@ -274,18 +263,32 @@ We instrument \texttt{bc} to guess and randomly check a large number
 of possible invariants.  Our goal is to identify predicates that hold
 when the program succeeds, but which are violated when the program
 crashes.  We cast an extremely broad net, but with an eye toward
-pointer use violations and buffer overruns.  At any direct assignment
-to a scalar variable $x$, we identify all other local or global
-variables $\{ y_1, y_2, \dots, y_n \}$ which are also in scope and
-which have the same type.  We then compare $x$ to each $y_i$, and
-update one of three counters depending on whether $x$ was smaller,
-equal to, or greater than $y_i$.  A distinct counter triple is
-maintained for each $(x, y_i)$ pair at each distinct syntactic
-assignment.  We compare pointers to same-typed pointers as well, and
-additionally compare each pointer for equality with null.  One
-comparison between $x$ and $y_i$, which bumps one of three counters,
-is considered to be one instrumentation site subject to random
-sampling.
+pointer use errors and buffer overruns.  For pointer use, null
+pointers are clearly of interest.  Relative sizes of pointers may be
+interesting as well, as this may capture cases where one pointer scans
+within a second pointed-to buffer.  Checking pointer/pointer equality
+may reveal aliasing which, when not anticipated by the programmer, can
+lead to dangling ``wild'' pointer bugs.  Scalar variables serve as
+array indexes, pointer offsets, and in many other roles; relationships
+among scalars may reveal buffer overruns, unanticipated consequences
+of negative values, invalid enumeration constants, or a variety of
+other problems.
+
+At any direct assignment to a scalar variable $x$, we identify all
+other local or global variables $\{ y_1, y_2, \dots, y_n \}$ which are
+also in scope and which have the same type.  We then compare $x$ to
+each $y_i$, and note whether $x$ was smaller, equal to, or greater
+than $y_i$.  Even with very sparse sampling, a direct trace of these
+comparisons would overwhelm both client, network, and server.
+Instead, we locally reduce the trace by merely counting how often each
+of the three relative orderings appeared.  We compare pointers to
+same-typed pointers as well, and additionally compare each pointer for
+equality with null.  One comparison between $x$ and $y_i$, which bumps
+one of three counters, is considered to be one instrumentation site
+subject to random sampling.  When an instrumented application
+terminates, it emits the vector of counter triples along with a flag
+indicating whether it completed successfully or was aborted by a fatal
+signal.
 
 As expected, this gives us a large number of candidate predicates:
 13,442 counter triples, or 40,326 counters in all.  Because our
@@ -370,19 +373,108 @@ Pentium 4 CPU with 1 GB of RAM.  \aside{If we decide to discuss the
   much the box had, not how much MATLAB used.  Alice, do we know how
   much MATLAB used?}
 
-\aside{Interpretation of logistic regression results in statistical
-  terms.  How well does the trained model predict the testing runs?
-  Of the mispredicts, how many were runs that got lucky?  And of
-  course, any other standard model validation assessments that seem
-  appropriate.}
+Once the model has been trained, predicates with the largest $\beta$
+coefficients point instruct us where to begin looking for the bug.
+The top four ranked predicates show a clear trend:
 
-\aside{Interpretation of logistic regression results in software
-  engineering terms.  Claim that they direct us to some small region
-  of code in a single function, versus 9764 lines of code in all of
-  \texttt{bc}.  Description of previously unreported buffer overrun
-  bug found on like 176 of \texttt{storage.c}.
-  
-  Yes, this is somewhat rigged.  Hey, we're new at this.}
+\newcounter{feature}
+\begin{list}{\arabic{feature}.}{\usecounter{feature}\setlength{\itemsep}{0pt}\setlength{\parsep}{0in}\ttfamily\small}
+\item storage.c:171: more\_arrays(): indx > break\_label
+\item storage.c:171: more\_arrays(): indx < next\_func
+\item storage.c:176: more\_arrays(): indx > optind
+\item storage.c:171: more\_arrays(): indx > out\_col
+\end{list}
+
+The source code for \texttt{more\_arrays()} appears in
+\autoref{fig:bc:more-arrays}.  An earlier comment suggests that this
+one of a suite of ``three functions for increasing the number of
+functions, variables, or arrays that are needed''.  The logic is a
+fairly clear instance of the buffer reallocation idiom, even to one
+unfamiliar with the code: line 167 allocates a larger chunk of memory;
+line 171 is the top of a loop that transfers values over from the old,
+smaller array; line 176 completes the resize by zeroing out the new
+extra space.  As the comment suggests, there are two other similar
+functions (\texttt{more\_functions()} and \texttt{more\_variables()})
+nearby that do largely the same thing with different storage pools.
+The text of these three functions is nearly identical, but each uses
+different global variables (e.g. \texttt{a\_count} versus
+\texttt{f\_count} versus \texttt{v\_count}).
+
+Crashes are more likely when the loop index (\texttt{indx}) is smaller
+than \texttt{next\_func} and larger than \texttt{break\_label},
+\texttt{optind}, and \texttt{out\_col}.  None of these appear to have
+a direct connection to \texttt{indx}, though: \texttt{optind} is part
+of command line flag processing, \texttt{break\_label} concerns
+evaluation of loops, \texttt{out\_col} helps output formatting, and
+\texttt{next\_func} records how much storage has been consumed in the
+pool managed by \texttt{more\_functions()}.
+
+However, we must consider indirect effects as well.  If
+\texttt{next\_func} is unusually large, it will tend to be larger than
+\texttt{indx} even if the two are not strictly related.  Perhaps
+crashes occur when \texttt{bc} tries to define too many functions.
+Similarly, if \texttt{indx} is unusually large, then it will tend to
+be larger then \texttt{break\_label}, \texttt{optind}, and
+\texttt{out\_col}.  Perhaps crashes occur when the input to
+\texttt{bc} defines large numbers of arrays.
+
+As noted, \texttt{more\_arrays()} uses \texttt{indx} to transfer data
+from an old storage buffer into a larger new one, and then to zero out
+the extra space.  It may be worth examining these two loops' bounds
+more closely, as a buffer overrun here could certainly trash the heap.
+The allocation on line 167 requests space for \texttt{a\_count} items.
+The copying loop on line 171 ranges from 1 through \texttt{old\_count
+  - 1}.  The zeroing loop on line 176 continues on from
+\texttt{old\_count} through \texttt{v\_count - 1}.  And there we find
+the bug: the new storage buffer has room for \texttt{a\_count}
+elements, but the second loop is incorrectly bound by
+\texttt{v\_count} instead.  After a quick glimpse at the neighboring
+\texttt{more\_variables()} function it is clear that
+\texttt{more\_arrays()} was created by copying and pasting
+\texttt{more\_variables()} and then changing names like
+\texttt{v\_count} and \texttt{v\_names} to \texttt{a\_count} and
+\texttt{a\_names}.  The loop bound on line 176 was missed in the
+renaming.
+
+Having found the bug, it is reasonable to ask whether the statistical
+analysis could have pointed at it more directly.  The mistaken use of
+\texttt{v\_count} instead of \texttt{a\_count} on line 176 means that
+a buffer overrun occurs when \texttt{indx > a\_count} on line 176.
+This does correspond to a predicate sampled by our system, and this
+predicate is the eleventh most highly ranked feature in the trained
+model: significant, but still below six other features which do not
+clearly relate to the bug.  Why was this, the smoking gun, not ranked
+first?
+
+There are several reasons to consider.  Samples are taken randomly,
+while the model itself is trained using stochastic gradient ascent.
+Thus, a degree of noise is fundamental to the process.  Even crashing
+is not guaranteed: out of \unknown[Alice?] runs in which sampling
+spotted \texttt{indx > a\_count}, \unknown[Alice?] did not crash.
+Thus, C programs can ``get lucky'', meaning that this is not a strict
+$\text{overrun} \implies \text{crash}$ implication.  Manual inspection
+of the data reveals a high degree of redundancy among many
+instrumentation sites within \texttt{more\_arrays()}, meaning that the
+model has several features to choose from which have equivalent
+predictive power.  This may suggest that our counters are too
+fine-grained; that we are distinguishing many behaviors which are in
+fact so tightly interrelated as to be equivalent.  Improving our
+instrumentation scheme and fine-tuning the statistical analysis
+methodology are key areas for continued development.
+
+This bug seems clear enough once found.  However it has been present
+and undiscovered at least since 1992 (the timestamp on this file in
+the oldest version of GNU \texttt{bc} that we can find).  Many bugs
+are obvious only once one knows where to look.  The logistic
+regression results directed us to a fairly narrow range of less than a
+dozen lines within a 33 line function, out of 8910 lines in
+\texttt{bc} as a whole.  Our approach does not automatically find and
+fix bugs.  But it does suggest where to start looking, and what sort
+of scenarios (large \texttt{indx}) to consider.  Although we are still
+learning about the capabilities of this system, and how to interpret
+its results, we believe that statistically guided debugging has the
+potential to become a powerful new tool in the arsenal of the
+professional software engineer.
 
 \begin{figure}
   \centering

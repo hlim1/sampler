@@ -3,7 +3,6 @@ dnl -*- m4 -*-
 AC_INIT(configure.in)
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE(sampler,0.0)
-AM_CONFIG_HEADER(config.h)
 
 dnl : ${CXX:=g++3}
 : ${CXXFLAGS:=-g -W -Wall -Werror}

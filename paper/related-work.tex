@@ -19,7 +19,7 @@ independent.  If one sample is taken, there is zero chance of taking
 any sample in the next 1--59,999 cycles and zero chance of \emph{not}
 taking exactly one sample in the next 60K--64K cycles.  We trigger
 samples based on a geometric distribution, which correctly models the
-interval between independent coin tosses.  The resulting data is a
+interval between successful independent coin tosses.  The resulting data is a
 statistically rigorous fair random sample, which in turn grants access
 to a large domain of powerful statistical analyses.
 
@@ -58,11 +58,12 @@ Software tomography as realized through the GAMMA system
 \cite{PASTE'02*2} shares our goal of low-overhead distributed
 monitoring of deployed code.  Applications to date have focused on
 code coverage and traditional performance monitoring tasks, whereas
-our primary interest is bug isolation.  Our strategy uses
-randomization within a single instrumented binary, while GAMMA
-emphasizes choices in initial probe placement and iterative refinement
-over time.  Our earlier discussion of statically selective sampling
-(Section~\ref{sec:ccured:single}) suggests that these two
-considerations are complementary.
+our primary interest is bug isolation.  
+%Our strategy uses
+%randomization within a single instrumented binary, while GAMMA
+%emphasizes choices in initial probe placement and iterative refinement
+%over time.  Our earlier discussion of statically selective sampling
+%(Section~\ref{sec:ccured:single}) suggests that these two
+%considerations are complementary.
 
 %% LocalWords: DIDUCE

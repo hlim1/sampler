@@ -155,21 +155,22 @@ tosses.
 The scheme for blocks outlined above generalizes to an arbitrary
 control flow graph as follows.  Any region of acyclic code has a
 finite number of possible paths.  Let the maximum number of
-instrumented sites on any path be the \termdef{weight} of that region.
-If the next-sample countdown exceeds the weight of an acyclic region,
-then no samples are taken on this pass through that part of the
-code.  We can place a countdown threshold check at the top of this
-region.
+instrumented sites on any path be the region's \termdef{weight}.
+A countdown threshold check can be placed at the top of each
+region.  If the next-sample countdown exceeds the weight of an 
+acyclic region $r$ on entry to $r$,
+then no samples are taken on that execution of $r$.
 
-Cycles without instrumentation are effectively weightless and may be
-disregarded.  A cycle with instrumentation must also contain a
-threshold check.  This guarantees that if we start at any threshold
-check and execute forward, we cross only a finite number of
-instrumentation sites before reaching the next threshold check.  Thus,
-we can compute a finite weight for each threshold check.
+Any cycle in a control-flow graph without instrumentation is
+weightless and may be disregarded.  Any cycle with
+instrumentation must also contain a threshold check, which guarantees
+that if we start at any threshold check and execute forward, we cross
+only a finite number of instrumentation sites before reaching the next
+threshold check.  Thus, we can compute a finite weight for each
+threshold check.
 
 There is some flexibility regarding exactly where a threshold check is
-placed; an optimal solution here is NP-hard
+placed, but computing an optimal solution is NP-hard
 \cite{Hirzel:2001:BT-FLOTP}.  For simplicity, our present system
 places one threshold check at function entry and one along each loop
 back edge.  Weights may be computed in a single bottom-up traversal of

@@ -1,7 +1,7 @@
 \section{Privacy and Security}
 \label{sec:privsec}
 
-As noted in our introduction, the most important program behaviors are
+As noted in Section~\ref{sec:introduction}, the most important program behaviors are
 those exhibited by deployed software in the hands of users.  However,
 any scheme for monitoring software post-deployment necessarily raises
 privacy and security concerns.  The issues are complex and as much
@@ -84,7 +84,7 @@ helpful here.  Such systems statically identify parts of a program
 that manipulate sensitive data; we can avoid inserting instrumentation
 that reveals such values.  Of course, this will make it difficult to
 track bugs in security-sensitive parts of an application, but that
-trade-off is always present: one can only fix bugs about which that
+trade-off is always present: one can only fix bugs about which 
 the customer is willing to provide useful information.
 
 When using statistical models such as that of Section~\ref{sec:bc}, an
@@ -104,7 +104,7 @@ A statistical approach designed to cope with noise offers some
 protection against malicious users who might try to poison the central
 database with bogus data, or overwhelm it with data representing the
 particular bugs they wish to see fixed.  Recent work on protecting
-privacy and preventing abuse in collaborative filtering systems will
+privacy and preventing abuse in collaborative filtering systems may
 also be applicable here~\cite{Canny2002,EC00*150}.
 
 

@@ -109,7 +109,7 @@ translated by \CCured and from which all dynamic memory
 safety checks are removed.  We report the speedup ($>1$) or
 slowdown ($<1$) relative to this baseline when sampling at various
 densities.  All benchmarks were compiled using \texttt{gcc} 3.2 using
-optimization level (\texttt{-O2}).  Times were collected on a 1.3
+optimization level \texttt{-O2}.  Times were collected on a 1.3
 GHz Pentium 4 Linux workstation with 512 megabytes of RAM\@.  Reported
 speedups represent the average of four runs; each run used a different
 pre-generated bank of 1024 geometrically distributed random
@@ -145,36 +145,12 @@ the worst using unconditional instrumentation perform quite well with
 sampling: \texttt{ijpeg}, for example, moves from an unconditional
 instrumentation overhead of 146\% to only 3\% with sparse sampling.
 
-From these benchmarks and the examples in Sections~\ref{sec:ccrypt}
-and~\ref{sec:bc}, we conclude that realistic deployments will use
-sampling densities between \nicefrac{1}{100} and \nicefrac{1}{1000}.
-But how effective is \nicefrac{1}{1000} sampling at observing rare
-program behavior?  Suppose we are interested in a bug occurring once
-per hundred executions.  To achieve 90\% confidence of observing this
-bug in at least one run, we need at least
-%%
-\[\log{(1-0.90)} / \log{\left( 1 - \frac{1}{100 \times 1000}\right)} = \text{230,258 runs.}\]
-%%
-While this may seem large, consider that sixty million Office XP
-licenses were sold in its first year on the market
-\cite{Microsoft:2002:AR-F10K}.  Assuming each licensee runs Microsoft
-Word twice per week, then this user base produces 230,258 runs every
-nineteen minutes and 99\% confidence of seeing a one-in-a-thousand bug
-requires 4,605,168 runs, which is less than seven hours.  With smaller
-deployments, one must either wait longer for sufficient data or
-increase the sampling density.  Thus, our techniques are likely most
-suited to applications with at least hundreds of thousands of
-executions per day.
-%The use of statistically fair
-%sampling allows one to make these calculations, and therefore these
-%trade-offs, in a mathematically well-founded manner.
-
 \subsubsection{Statically Selective Sampling}
 \label{sec:ccured:single}
 
 Because samples are taken independently, it is not necessary to put
-all instrumentation into a single executable.  One can easily build a
-suite of executables which each contain a subset of the complete
+all instrumentation into a single executable.  One can easily 
+multiple executables where each contains a subset of the complete
 instrumentation.  Partitioning instrumentation by site, by module, by
 function, or by object file are all reasonable schemes.  Any
 individual executable contains less instrumentation and therefore
@@ -200,16 +176,44 @@ over time as debugging needs and intermediate results warrant.
   function has less than a 12\% penalty.
 \end{sloppypar}
 
+\subsubsection{The Effectiveness of Sampling}
+\label{sec:ccured:single}
+From these benchmarks and the examples in Sections~\ref{sec:ccrypt}
+and~\ref{sec:bc}, we conclude that realistic deployments will use
+sampling densities between \nicefrac{1}{100} and \nicefrac{1}{1000}.
+But how effective is \nicefrac{1}{1000} sampling at observing rare
+program behavior?  Suppose we are interested in a bug occurring once
+per hundred executions.  To achieve 90\% confidence of observing this
+bug in at least one run, we need at least
+%%
+\[\log{(1-0.90)} / \log{\left( 1 - \frac{1}{100 \times 1000}\right)} = \text{230,258 runs.}\]
+%%
+While this is a large number, consider that sixty million Office XP
+licenses were sold in its first year on the market
+\cite{Microsoft:2002:AR-F10K}.  Assuming each licensee runs Microsoft
+Word twice per week, then this user base produces 230,258 runs every
+nineteen minutes.  Achieving 99\% confidence of observing a 
+bug that occurs on one in a thousand runs requires 4,605,168 runs, 
+which takes less than seven hours to gather.  
+
+For smaller deployments, we must either wait longer for sufficient
+data or increase the sampling density.  As we shall see in
+Sections~\ref{sec:ccrypt} and \ref{sec:bc}, at least for restricted
+classes of bugs we can perform useful analysis with a few thousand
+executions.  Thus, our techniques are likely most suited to
+applications where it is possible to gather data with at least  \nicefrac{1}{1000} sampling from thousands of executions per day.
+
+
 \subsection{Bug Isolation Using Predicate Elimination}
 \label{sec:ccrypt}
 
 In this section we consider automatic isolation of deterministic
 bugs.  Recall from Section~\ref{sec:introduction} that for a deterministic
-bug there is a predicate (over program variables) that becomes true
+bug there is a predicate that becomes true
 if the program must crash at some point in the future.
 Deterministic bugs are quite common, though they are generally easier
 to find and fix using any method than non-deterministic bugs (see
-Section~\ref{sec:bc}.
+Section~\ref{sec:bc}).
 
 \subsubsection{Instrumentation Strategy}
 
@@ -231,7 +235,7 @@ three classes: negative values, zero, and positive values.  This
 reduces the amount of information we must track while still making
 distinctions consistent with common C programming style.
 
-We instrument this application is as follows.
+We instrument \texttt{ccrypt} as follows.
 Consider each syntactic call site that returns
 scalar values, including both arithmetic types as well as pointers.
 After each such call, update one of three counters depending upon the
@@ -472,8 +476,8 @@ keep overhead under control.
 
 In this section we consider the automatic isolation of non-deterministic
 bugs.  Recall from Section~\ref{sec:introduction} that a bug is
-non-deterministic with respect to a set of program predicates if none of them
-is perfectly correlated with program crashes.  
+non-deterministic with respect to a set of program predicates if no predicate
+in the set is perfectly correlated with program crashes.  
 For this case study we use version 1.06 of the GNU implementation of
 \texttt{bc}.  We find that feeding \texttt{bc} nine megabytes of
 random input causes it to crash roughly one time in four from, as it
@@ -482,11 +486,11 @@ sometimes terminates successfully even when it overruns the buffer,
 this bug is non-deterministic.
 
 We instrument \texttt{bc} using a variation on our previous strategy
-of counter triples.  We abandon \elim{elimination by successful
+of counter triples.  We abandon elimination by \elim{successful
 counterexample}\footnote{Because the bug is non-deterministic, if we
-have enough runs no predicates will satisfy \elim{elimination by
-successful counterexample}.} in favor of statistical modeling to
-identify behavior which is broadly correlated with failure in spite of
+have enough runs no predicates will satisfy elimination by
+\elim{successful counterexample}.} in favor of statistical modeling to
+identify behavior that is broadly correlated with failure in spite of
 the occasional run that terminates successfully despite triggering the
 bug.
 
@@ -509,7 +513,7 @@ enumeration constants, or a variety of other problems.
 
 At any direct assignment to a scalar variable \texttt{a}, we identify
 all other local or global variables $\{ \mathtt{b}_1, \mathtt{b}_2,
-\dots, \mathtt{b}_n \}$ which are also in scope and which have the
+\dots, \mathtt{b}_n \}$ that are also in scope and that have the
 same type.  We then compare the updated \texttt{a} to each
 $\mathtt{b}_i$, and note whether \texttt{a} was less than, equal to,
 or greater than $\mathtt{b}_i$.  We compare pointers to same-typed
@@ -525,7 +529,7 @@ For \texttt{bc} there are 10,050 counter triples, or 30,150 counters
 in all.  The vast majority of these are of no interest: either they
 compare completely unrelated variables, or they express relationships
 which behave identically in both successful and failed runs.  The
-challenge is to find the few predicates which truly matter.
+challenge is to find the few predicates that matter.
 
 \subsubsection{Crash Prediction Using Logistic Regression}
 
@@ -536,7 +540,7 @@ sample point consisting of 30,150 observed \termdef{features}
 = \text{crashed}$).  Given numerous data points (sampled runs), we
 want to identify a subset of our 30,150 features that predict the
 outcome.  This is equivalent to the machine learning problem of
-learning a binary classifier with feature selection, i.e.\ using as
+learning a binary classifier with feature selection, i.e.,\ using as
 few input features as possible.
 
 In the classification setting, we take a set of data with known binary
@@ -642,7 +646,7 @@ or absence of these 647 features does not significantly affect the
 quality of the regularized logistic regression results.)
 
 To make the magnitude of the $\beta$ parameters comparable, the feature
-values have to be on the same scale.  Hence all the input features are
+values must be on the same scale.  Hence all the input features are
 shifted and scaled to lie on the interval $[0, 1]$, then normalized to
 have unit sample variance.  A suitable value for the regularization
 parameter $\lambda$ is determined through validation to be $0.3$.  The model
@@ -737,11 +741,12 @@ $\text{overrun} \implies \text{crash}$ implication.  Manual inspection
 of the data reveals a high degree of redundancy among many
 instrumentation sites within \texttt{more\_arrays()}, meaning that the
 model has several features to choose from which have equivalent
-predictive power.  This may suggest that our counters are too
-fine-grained; that we are distinguishing many behaviors which are in
-fact so tightly interrelated as to be equivalent.  Improving our
-instrumentation scheme and fine-tuning the statistical analysis
-methodology are key areas for continued development.
+predictive power.  This suggests that our counters may be too
+fine-grained---we are distinguishing many behaviors which are in
+fact so tightly interrelated as to be equivalent.  
+%Improving our
+%instrumentation scheme and fine-tuning the statistical analysis
+%methodology are key areas for continued development.
 
 This bug seems clear enough once found.  However it has been present
 and undiscovered at least since 1992 (the time\-stamp on this file in
@@ -774,12 +779,13 @@ large: 13\%.  A sampling density of \nicefrac{1}{100} cuts this in
 half (6\%).  At the \nicefrac{1}{1000} density used in our statistical
 debugging experiment, the penalty is barely measurable (0.5\%).  Still
 lower densities show small, unexpected speedups relative to
-uninstrumented code.  Again, this is apparently due to effects such as
+uninstrumented code.  This is apparently due to effects such as
 changes in relative code alignment, cache behavior, measurement noise,
-and other unpredictable factors.  Thus, we achieved an important goal:
-we can sample program behavior at densities that allow us to isolate
-real bugs while imposing an overhead on clients that is so small as to
-be unmeasurable in practice.
+and other unpredictable factors.  
+%Thus, we achieved an important goal:
+%we can sample program behavior at densities that allow us to isolate
+%real bugs while imposing an overhead on clients that is so small as to
+%be unmeasurable in practice.
 
 
 %% LocalWords: DNDEBUG SPECINT rrr rrrr pre ijpeg treeadd li ccrypt

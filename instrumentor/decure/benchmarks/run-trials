@@ -1,0 +1,13 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+
+my $sparsity = 100;
+
+foreach my $trial (1 .. 4) {
+    my $command = "env SAMPLER_COUNTDOWNS=../countdowns/$sparsity-$trial.counts /usr/bin/time @ARGV";
+    print "+$command\n";
+    system($command) == 0
+	or die "command failed: $?: $!\n";
+}

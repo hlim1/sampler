@@ -9,9 +9,6 @@ exec ?= $(name).exe
 ########################################################################
 
 
-seeds := 1 2 3 4
-sparsity := 100
-
 decure := ../..
 instrumentor := $(decure)/..
 sampler := $(instrumentor)/..
@@ -22,17 +19,17 @@ workExec := $(workDir)/$(testDir)/$(exec)
 workComb := $(workExec)_comboptimcured.i
 
 -include functions.mk
-alwaysForms := $(addprefix always-only-, $(functions))
-alwaysExecs := $(addsuffix .exe, $(alwaysForms) always-all always-none)
+alwaysForms := $(addprefix always-, $(functions:%=only-%) all none)
+alwaysExecs := $(alwaysForms:=.exe)
 alwaysSrcs  := $(alwaysForms:=.c)
 
-sampleForms := $(addprefix sample-only-, $(functions))
-sampleExecs := $(addsuffix .exe, $(sampleForms) sample-all)
+sampleForms := $(addprefix sample-, $(functions:%=only-%) all)
+sampleExecs := $(sampleForms:=.exe)
 sampleSrcs  := $(sampleForms:=.c)
 
 allForms := $(alwaysForms) $(sampleForms)
 allExecs := $(alwaysExecs) $(sampleExecs)
-allTimes := $(foreach seed, $(seeds), $(allForms:=.$(seed).time))
+allTimes := $(allForms:=.times)
 
 CFLAGS := -O2
 LOADLIBES := $(trusted:%=$(workDir)/$(testDir)/%) $(workHome)/obj/x86_LINUX/ccured_GNUCC_releaselib.a -lm
@@ -81,7 +78,7 @@ $(alwaysExecs): %.exe: %.c
 
 always-%.c: runDecure += --no-sample
 
-$(alwaysSrcs): always-only-%.c: decurable.i $(decureMain)
+always-only-%.c: decurable.i $(decureMain)
 	$(runDecure) --only $* $< >$@ || rm -f $@
 	@[ -r $@ ]
 
@@ -105,7 +102,7 @@ $(sampleExecs): %.exe: %.c
 
 sample-%.c: runDecure += --sample
 
-$(sampleSrcs): sample-only-%.c: decurable.i $(decureMain)
+sample-only-%.c: decurable.i $(decureMain)
 	$(runDecure) --only $* $< >$@ || rm -f $@
 	@[ -r $@ ]
 
@@ -134,8 +131,8 @@ functions.mk: ../make-functions-mk functions-list
 
 clean:
 	if [ -d .libs ]; then rmdir .libs; fi
-	rm -f *.*.time
-	rm -f *.*.time.
+	rm -f *.*.times
+	rm -f *.*.times.
 	rm -f *.exe
 	rm -f always-*.c
 	rm -f only-*.c
@@ -151,11 +148,8 @@ spotless: clean
 times: $(allTimes)
 .PHONY: times
 
-seed = $(subst ., , $(suffix $(basname $@)))
-countdowns = ../countdowns/$(sparsity).$(seed).counts
-
-$(allTimes): %.time: $(countdown) %.exe
-	SAMPLER_COUNTDOWNS=$(countdowns) /usr/bin/time ./$*.exe $(runArgs) >$@. 2>&1
+ $(allTimes): %.times: ../run-trials %.exe
+	./$< './$*.exe $(runArgs)' >$@. 2>&1
 	mv $@. $@
 
 ../countdowns/%:

@@ -1,6 +1,14 @@
 open Cil
 
 
+let embedCFG =
+  Options.registerBoolean
+    ~flag:"embed-cfg"
+    ~desc:"embed control flow graphs in executables"
+    ~ident:"EmbedCFG"
+    ~default:true
+
+
 class visitor =
   object (self)
     inherit FunctionBodyVisitor.visitor
@@ -21,22 +29,18 @@ class visitor =
       self#addChar '\n';
       thing
 
-    method vglob = function
-      | GFun (fundec, location) as global ->
-	  self#addChar (if fundec.svar.vstorage == Static then '-' else '+');
-	  self#addChar '\t';
-	  self#addString fundec.svar.vname;
-	  self#addChar '\t';
-	  self#addLocation location;
+    method vfunc fundec =
+      self#addChar (if fundec.svar.vstorage == Static then '-' else '+');
+      self#addChar '\t';
+      self#addString fundec.svar.vname;
+      self#addChar '\t';
+      self#addLocation fundec.svar.vdecl;
 
-	  IsolateInstructions.visit fundec;
-	  Cfg.build fundec;
-	  expectedSid := 0;
+      IsolateInstructions.visit fundec;
+      Cfg.build fundec;
+      expectedSid := 0;
 
-	  ChangeDoChildrenPost ([global], self#postNewline)
-
-      | _ ->
-	  SkipChildren
+      ChangeDoChildrenPost (fundec, self#postNewline)
 
     method vstmt statement =
       assert (statement.sid == !expectedSid);
@@ -83,16 +87,19 @@ class visitor =
 
 
 let visit file =
-  Dynamic.analyze file;
-  let visitor = new visitor in
-  visitCilFileSameGlobals (visitor :> cilVisitor) file;
-  visitor#addChar '\n';
-  let contents = visitor#contents in
+  if !embedCFG then
+    begin
+      Dynamic.analyze file;
+      let visitor = new visitor in
+      visitCilFileSameGlobals (visitor :> cilVisitor) file;
+      visitor#addChar '\n';
+      let contents = visitor#contents in
 
-  let init = SingleInit (mkString contents) in
-  let varinfo = makeGlobalVar "samplerCFG" (TArray (TInt (IChar, [Attr ("const", [])]), None, [])) in
-  varinfo.vstorage <- Static;
-  varinfo.vattr <- [Attr("section", [AStr ".debug_sampler_cfg"]); Attr("unused", [])];
-  let global = GVar (varinfo, {init = Some init}, locUnknown) in
+      let init = SingleInit (mkString contents) in
+      let varinfo = makeGlobalVar "samplerCFG" (TArray (TInt (IChar, [Attr ("const", [])]), None, [])) in
+      varinfo.vstorage <- Static;
+      varinfo.vattr <- [Attr("section", [AStr ".debug_sampler_cfg"]); Attr("unused", [])];
+      let global = GVar (varinfo, {init = Some init}, locUnknown) in
 
-  file.globals <- global :: file.globals
+      file.globals <- global :: file.globals
+    end

@@ -6,12 +6,11 @@ open Weight
 class weightsMap = [t] StmtIdHash.c 0
 
 
-let weigh sites headers =
+let weigh func sites headers balanced =
   
   let siteMap = new StmtIdHash.c 0 in
   List.iter
-    (fun site ->
-      siteMap#add site.statement site.scale)
+    (fun site -> siteMap#add site.statement site.scale)
     sites;
 
   let cache = new weightsMap in
@@ -30,21 +29,22 @@ let weigh sites headers =
 	  with Not_found -> weightless
 	in
 	let children =
-	  let maximize best succ = max best (subweight succ) in
-	  List.fold_left maximize weightless node.succs
+	  let subweights = List.map subweight node.succs in
+	  let maximum = List.fold_left max weightless subweights in
+
+	  let matched sub =
+	    maximum.threshold == sub.threshold
+	  in
+	  assert (not balanced || List.for_all matched subweights);
+	  maximum
 	in
 	let total = sum me children in
 	cache#add node total;
 	total
   in
 
-  let weights = new weightsMap in
-  
   let record header =
-    let weight = weight header in
-    (* ignore (Pretty.eprintf "%a: weight %d@!" Utils.d_stmt header weight); *)
-    weights#add header weight
+    ignore (weight header)
   in
-  
-  List.iter record headers;
-  weights
+  List.iter record func.sallstmts;
+  cache

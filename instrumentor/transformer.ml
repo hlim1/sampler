@@ -5,29 +5,6 @@ open FuncInfo
 open Weight
 
 
-let removeDeadCode = 
-  Options.registerBoolean
-    ~flag:"remove-dead-code"
-    ~desc:"remove dead code"
-    ~ident:"RemoveDeadCode"
-    ~default:true
-
-
-(**********************************************************************)
-
-
-class showCFG =
-  object
-    inherit FunctionBodyVisitor.visitor
-
-    method vstmt statement =
-      ignore (Pretty.eprintf "%a@!    @[%a@]@!"
-		Utils.d_stmt statement
-		Utils.d_stmts statement.succs);
-      DoChildren
-  end
-
-
 let visit file isWeightyCallee countdown =
   let visitFunction func =
     match Sites.registry#findAll func with
@@ -38,16 +15,30 @@ let visit file isWeightyCallee countdown =
 
 	let countdown = countdown func in
 	let afterCalls = WeightyCalls.prepatch isWeightyCallee func countdown in
+	let splits = Balance.prepatch func in
 	Cfg.build func;
 
 	let jumps = ClassifyJumps.visit func in
 	let callJumps = WeightyCalls.jumpify afterCalls in
 	let backJumps = jumps.backward @ callJumps in
 	let headers = entry :: backJumps in
-	let weights = WeighPaths.weigh sites headers in
-	
+	let weights = WeighPaths.weigh func sites headers false in
+
+	let sites, weights =
+	  if !BalancePaths.balancePaths then
+	    begin
+	      Balance.patch splits weights;
+	      Cfg.build func;
+	      let sites = Sites.registry#findAll func in
+	      let weights = WeighPaths.weigh func sites headers true in
+	      sites, weights
+	    end
+	  else
+	    sites, weights
+	in
+
 	let original, instrumented, clones = Duplicate.duplicateBody func in
-	
+
 	ForwardJumps.patch clones jumps.forward;
 	BackwardJumps.patch clones weights countdown backJumps;
 	FunctionEntry.patch func weights countdown instrumented;
@@ -71,11 +62,6 @@ let visit file isWeightyCallee countdown =
 	      func.svar.vname siteCount headerCount headerTotal
 	  end;
 
-	if !removeDeadCode then
-	  DeadCode.visit func;
-
-	FilterLabels.visit func;
-	MergeBlocks.visit func;
 	FilterLabels.visit func
   in
   Scanners.iterFuncs file visitFunction

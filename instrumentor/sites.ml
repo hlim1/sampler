@@ -41,5 +41,8 @@ let patch clones countdown site =
   let location = get_stmtLoc original.skind in
   let decrement = countdown#decrement location scale in
   let clone = ClonesMap.findCloneOf clones original in
-  original.skind <- decrement;
-  clone.skind <- countdown#decrementAndCheckZero clone.skind scale
+  clone.skind <- countdown#decrementAndCheckZero clone.skind scale;
+  if !BalancePaths.balancePaths then
+    original.skind <- Instr []
+  else
+    original.skind <- decrement

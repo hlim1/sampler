@@ -45,6 +45,9 @@ class countdown file =
       method checkThreshold location weight instrumented original =
 	assert (Labels.hasGotoLabel original);
 	assert (Labels.hasGotoLabel instrumented);
+	if !BalancePaths.balancePaths && weight.threshold > 0 then
+	  original.skind <- Block (mkBlock [mkStmt (self#decrement location weight.threshold);
+					    mkStmt original.skind]);
 	let gotoOriginal = Goto (ref original, location) in
 	let gotoInstrumented = Goto (ref instrumented, location) in
 	match weight.count with

@@ -46,6 +46,9 @@ dump: $(libcil) $(dump)
 removeDeadCode: $(libcil) $(removeDeadCode)
 	$(link)
 
+simplify: $(libcil) $(simplify)
+	$(link)
+
 loopless: $(libcil) $(loopless)
 	$(link)
 
@@ -71,3 +74,9 @@ calls.cfg.i: %.cfg.i: cfgTest %.c
 	$(CC) -c $<
 
 .DELETE_ON_ERROR:
+
+unbalanced.clean.i: %.clean.i: %.inst.i
+	egrep -v '^#' $< | indent >$@
+
+unbalanced.inst.i: %.inst.i: %.c main
+	driver/sampler-cc-here -save-temps --sampler-scheme=returns -c $<

@@ -6,14 +6,7 @@
 
 static FILE *logFile;
 
-static const struct Invariant *invariants;
-
-
-void registerInvariant(struct Invariant *invariant)
-{
-  invariant->next = invariants;
-  invariants = invariant;
-}
+const struct Invariant *invariants;
 
 
 __attribute__((destructor)) static void shutdown()

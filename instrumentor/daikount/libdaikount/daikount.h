@@ -19,7 +19,15 @@ struct Invariant
 };
 
 
-void registerInvariant(struct Invariant *);
+static inline void registerInvariant(struct Invariant *) __attribute__((no_instrument_function));
+
+static inline void registerInvariant(struct Invariant *invariant)
+{
+  extern const struct Invariant *invariants;
+
+  invariant->next = invariants;
+  invariants = invariant;
+}
 
 
 #endif /* !INCLUDE_libdaikon_daikon_h */

@@ -1,5 +1,7 @@
 *.c
 *.exe
+*.times
+.libs
 decurable.i
 functions-list
 functions.mk

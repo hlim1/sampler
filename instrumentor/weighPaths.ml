@@ -4,10 +4,10 @@ open Cil
 class weightsMap = [int] StmtIdHash.c 0
 
 
-let rec weigh ~sites:sites ~headers:headers =
+let rec weigh (sites : Site.c list) (headers : stmt list) =
   
   let siteSet = new StmtIdHash.c 0 in
-  List.iter (fun site -> siteSet#add site ()) sites;
+  List.iter (fun site -> siteSet#add site#embodiment ()) sites;
 
   let cache = new weightsMap in
 

@@ -11,4 +11,4 @@ module Key = struct
 end
 
 
-include HashClass.Make (FunctionNameKey)
+include HashClass.Make (Key)

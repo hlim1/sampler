@@ -134,19 +134,19 @@ class visitor hasDefinition hasPragmaWeightless weighty =
 type tester = lval -> bool
 
 
-let collect file allSites =
+let collect file =
   TestHarness.time "  identifying weighty functions"
     (fun () ->
       let hasDefinition = hasDefinition file in
       let hasPragmaWeightless = hasPragmaWeightless file in
       let weighty = new VariableNameHash.c 0 in
 
-      let prepopulate ({svar = svar}, _) =
+      let prepopulate {svar = svar} _ =
 	weighty#add svar ();
 	if !debugWeighty then
 	  Printf.eprintf "function %s is weighty: has sites\n" svar.vname
       in
-      List.iter prepopulate allSites;
+      Site.all#iter prepopulate;
 
       let visitor = new visitor hasDefinition hasPragmaWeightless weighty in
       let refine madeProgress =

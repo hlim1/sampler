@@ -7,4 +7,4 @@ class virtual c : fundec -> stmt ->
   end
 
 
-val all : unit -> c StmtHash.c
+val all : c list ref FunctionNameHash.c

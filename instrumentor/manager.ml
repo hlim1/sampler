@@ -41,7 +41,7 @@ class virtual visitor schemeName file =
 		  begin
 		    match self#classifyStatements func with
 		    | [] -> others
-		| sites -> (func, sites) :: others
+		    | sites -> (func, sites) :: others
 		  end
 	      | _ ->
 		  others

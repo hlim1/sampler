@@ -1,22 +1,20 @@
 open Cil
 
 
-let registry = ref []
-
-let count = ref 0
+let all = new FunctionNameHash.c 0
 
 
-class virtual c (func : fundec) (embodiment : stmt) =
-  object (self)
-    initializer
-      registry := (self :> c) :: !registry;
-      incr count
+class virtual c func =
+  let sites =
+    let list = ref [] in
+    all#add func list;
+    list
+  in
 
-    method embodiment = embodiment
-  end
+  fun (embodiment : stmt) ->
+    object (self)
+      initializer
+	sites := (self :> c) :: !sites
 
-
-let all () =
-  let hash = new StmtHash.c !count in
-  List.iter (fun site -> hash#add site#embodiment site) !registry;
-  hash
+      method embodiment = embodiment
+    end

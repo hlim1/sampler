@@ -3,4 +3,4 @@ open Cil
 
 class weightsMap : [int] StmtIdHash.c
 
-val weigh : sites:stmt list -> headers:stmt list -> weightsMap
+val weigh : Site.c list -> stmt list -> weightsMap

@@ -1,5 +1,6 @@
 SUBDIRS =					\
 	driver					\
+	balance					\
 	bounds					\
 	branches				\
 	function-entries			\
@@ -52,31 +53,6 @@ simplify: $(libcil) $(simplify)
 loopless: $(libcil) $(loopless)
 	$(link)
 
-%.i: %.c
-	$(CC) -I$(top_srcdir)/lib $(CPPFLAGS) $(CFLAGS) -E $< -o $@
-
-%.cfg.dot: cfg-to-dot %.i
-	./$^ >$@
-
-%.dom.dot: dom-to-dot %.i
-	./$^ >$@
-
-%.ps: %.dot
-	dot -Tps -Gsize=7.5,10 -Gcenter=1 -o $@ $<
-
-calls.cfg: %.cfg: %.cfg.o
-	$(top_srcdir)/tools/extract-section .debug_sampler_cfg $< >$@
-
-calls.cfg.i: %.cfg.i: cfgTest %.c
-	./$^ >$@
-
-%.o: %.i
-	$(CC) -c $<
+check-local: main
 
 .DELETE_ON_ERROR:
-
-unbalanced.clean.i: %.clean.i: %.inst.i
-	egrep -v '^#' $< | indent >$@
-
-unbalanced.inst.i: %.inst.i: %.c main
-	driver/sampler-cc-here -save-temps --sampler-scheme=returns -c $<

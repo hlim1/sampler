@@ -1,5 +1,11 @@
 -*- outline -*-
 
+* sampler-0.10.0
+
+** Implemented path balancing to make fast path even faster.
+
+** Minor bug fixes to developer tools.
+
 * sampler-0.10
 
 ** Add ability to timestamp instrumentation sites either when first

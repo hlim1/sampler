@@ -37,9 +37,6 @@ let visit isWeightyCallee countdownToken func info =
       let weightyCalls = List.filter (fun call -> isWeightyCallee call.callee) info.calls in
       let afterCalls = List.map (fun info -> info.landing) weightyCalls in
       let headers = entry :: jumps.backward @ afterCalls in
-
-      Cfg.build func;
-      (* ignore (visitCilFunction (new showCFG) func); *)
       let weights = WeighPaths.weigh info.sites headers in
       
       let countdown = countdownToken func in

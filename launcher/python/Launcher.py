@@ -43,6 +43,7 @@ def run_with_sampling(app, sparsity):
     pipe = os.pipe()
     os.environ['SAMPLER_FILE'] = '/dev/fd/%d' % pipe[1]
     os.environ['GNOME_DISABLE_CRASH_DIALOG'] = '1'
+    os.environ['SAMPLER_REAL_EXECUTABLE'] = app.executable()
     if app.debug_reporter():
         os.environ['SAMPLER_DEBUGGER'] = app.debug_reporter()
 

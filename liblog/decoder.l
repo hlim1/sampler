@@ -1,3 +1,5 @@
+/*-*- c -*-*/
+
 %{
 #include <assert.h>
 #include <limits.h>
@@ -10,7 +12,10 @@ static char recentFile[PATH_MAX];
 
 %option main
 %option nodefault
+%option nounput
 
+%x COUNTDOWN
+%x COUNTDOWN0
 %x FILENAME
 %x FILENAME0
 %x LINE
@@ -29,9 +34,20 @@ signature  \212sam\r\n\032\n
 
 
 <INITIAL>{signature} {
+  BEGIN COUNTDOWN;
+}
+
+<COUNTDOWN>{byte}{4} {
+  assert(yyleng == sizeof(unsigned));
+  siteCountdown(* (const unsigned *) yytext);
   BEGIN FILENAME;
 }
 
+<COUNTDOWN0>{byte}{4} {
+  assert(yyleng == sizeof(unsigned));
+  siteCountdown(* (const unsigned *) yytext);
+  BEGIN FILENAME0;
+}
 
 <FILENAME,FILENAME0>{string} {
   strncpy(recentFile, yytext, sizeof(recentFile) - 1);
@@ -45,7 +61,8 @@ signature  \212sam\r\n\032\n
 }
 
 <LINE>{byte}{4} {
-  siteLine(* (const unsigned *) (yytext + 1));
+  assert(yyleng == sizeof(unsigned));
+  siteLine(* (const unsigned *) yytext);
   BEGIN EXPR;
 }
 
@@ -55,7 +72,8 @@ signature  \212sam\r\n\032\n
 }
 
 <EXPR0>{null} {
-  BEGIN FILENAME0;
+  siteEnd();
+  BEGIN COUNTDOWN0;
 }
 
 <VALUE>\1{byte} {

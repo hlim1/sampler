@@ -1,5 +1,5 @@
 CPPFLAGS := -D_GNU_SOURCE
-CFLAGS := -W -Wall -Werror -O9
+CFLAGS := -W -Wall -Werror -g
 libs := log log-stdio log-syscall
 targets := $(foreach lib, $(libs), lib$(lib).so lib$(lib).a) libdecoder.a print-trace
 

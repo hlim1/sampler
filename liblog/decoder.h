@@ -6,8 +6,10 @@ extern "C" {
 #endif // C++
 
 
+void siteCountdown(unsigned);
 void siteFile(const char *);
 void siteLine(unsigned);
+void siteEnd();
 
 void sampleExpr(const char *);
 

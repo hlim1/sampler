@@ -2,6 +2,7 @@
 #include <gsl/gsl_randist.h>
 #include <limits.h>
 #include "countdown.h"
+#include "../liblog/log.h"
 
 
 unsigned nextLogCountdown = UINT_MAX;
@@ -12,8 +13,12 @@ gsl_rng *generator;
 
 unsigned resetCountdown()
 {
+  unsigned result;
   assert(generator);
-  return gsl_ran_geometric(generator, density);
+  result = gsl_ran_geometric(generator, density);
+  assert(result > 0);
+  logTableau(&result, sizeof result);
+  return result;
 }
 
 

@@ -2,6 +2,12 @@
 #include "decoder.h"
 
 
+void siteCountdown(unsigned countdown)
+{
+  printf("... %u ...\n", countdown);
+}
+
+
 void siteFile(const char *file)
 {
   printf("%s:", file);
@@ -11,6 +17,11 @@ void siteFile(const char *file)
 void siteLine(unsigned line)
 {
   printf("%u\n", line);
+}
+
+
+void siteEnd()
+{
 }
 
 

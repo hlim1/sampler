@@ -26,7 +26,7 @@ class visitor = object
 	      let (hasCall, initial, remainder) = slurp instrs in
 	      let initialStmt = mkStmt (Instr initial) in
 	      if hasCall then
-		let placeholder = mkStmt (Instr []) in
+		let placeholder = mkEmptyStmt () in
 		afterCalls <- placeholder :: afterCalls;
 		initialStmt :: placeholder :: split remainder
 	      else
@@ -73,8 +73,8 @@ let patch clones weights =
       let instrumentedAfter = clones#find standardAfter in
 	  
       let standardLabel, instrumentedLabel = nextLabels () in
-      let standardLanding = mkStmt (Instr []) in
-      let instrumentedLanding = mkStmt (Instr []) in
+      let standardLanding = mkEmptyStmt () in
+      let instrumentedLanding = mkEmptyStmt () in
       standardLanding.labels <- [standardLabel];
       instrumentedLanding.labels <- [instrumentedLabel];
       

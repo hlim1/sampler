@@ -1,1 +1,1 @@
-rpmbuild_flags := -D 'sampler_reporting_host brawnix.cs.berkeley.edu'
+rpmbuild_flags := -D 'sampler_reporting_host sampler.cs.berkeley.edu'

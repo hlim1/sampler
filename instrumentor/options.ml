@@ -6,12 +6,19 @@ let args = ref []
 let idents = ref []
 
 
-let registerBoolean value ~flag ~desc ~ident =
+let registerBoolean ~flag ~desc ~ident value =
   args :=
     ("--" ^ flag, Set value, desc ^ " [default]")
     :: ("--no-" ^ flag, Clear value, "")
     :: !args;
-  idents := (ident, value) :: !idents
+  idents := (ident, fun () -> string_of_bool !value) :: !idents
+
+
+let registerString ~flag ~desc ~ident value =
+  args :=
+    ("--" ^ flag, String (fun arg -> value := arg), desc)
+    :: !args;
+  idents := (ident, fun () -> !value) :: !idents
 
 
 let argspecs () = !args
@@ -28,7 +35,7 @@ let phase =
 
     let text =
       let folder prefix (ident, value) =
-	prefix ^ "$Sampler" ^ ident ^ ": " ^ string_of_bool !value ^ " $"
+	prefix ^ "$Sampler" ^ ident ^ ": " ^ value () ^ " $"
       in
       List.fold_left folder "" !idents
     in

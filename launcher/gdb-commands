@@ -6,7 +6,8 @@ info sharedlibrary
 echo </report>\n
 
 echo <report id="stack-trace">\n
-where
+backtrace
+thread apply all backtrace full
 echo </report>\n
 
 detach

@@ -33,7 +33,6 @@ sampleSrcs  := $(sampleForms:=.c)
 
 allForms := $(alwaysForms) $(sampleForms)
 allExecs := $(alwaysExecs) $(sampleExecs)
-allTimes := $(allForms:=.times)
 allIdents := $(allForms:=.ident)
 
 CFLAGS := -O2
@@ -185,25 +184,6 @@ spotless: clean
 ########################################################################
 
 
-times: $(allTimes)
-.PHONY: times
-
-$(allTimes): %.times: ../run-trials %.exe
-	./$< 100 './$*.exe $(runArgs)' >$@. 2>&1
-	mv $@. $@
-
-../countdowns/%:
-	$(MAKE) -C $(@D) $(@F)
-
-
-clean::
-	rm -f *.times.
-	rm -f *.times
-
-
-########################################################################
-
-
 idents: $(allIdents)
 .PHONY: idents
 
@@ -219,11 +199,21 @@ clean::
 
 
 sparsities := 100 1000 10000 1000000
-sparseTimes := $(sparsities:=.times)
+alwaysTimes := $(alwaysForms:=.times)
+sampleTimes := $(patsubst %, sample-all-%.times, $(sparsities))
+times := $(alwaysTimes) $(sampleTimes)
 
-sparse-times: $(sparseTimes)
-.PHONY: sparse-times
+times: $(times)
+.PHONY: times
 
-$(sparseTimes): %.times: ../run-trials sample-all.exe
+$(alwaysTimes): %.times: ../run-trials %.exe
+	./$< 1 './$*.exe $(runArgs)' >$@. 2>&1
+	mv $@. $@
+
+$(sampleTimes): sample-all-%.times: ../run-trials sample-all.exe
 	./$< $* './sample-all.exe $(runArgs)' >$@. 2>&1
 	mv $@. $@
+
+clean::
+	rm -f *.times.
+	rm -f *.times

@@ -3,8 +3,7 @@ open Cil
 
 let visitSameBlock visitor original =
   let replacement = visitCilBlock visitor original in
-  if replacement != original then
-    failwith "instrumentation visitor unexpectedly replaced block"
+  assert (replacement == original)
 
 
 class virtual visitor = object(self)

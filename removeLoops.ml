@@ -26,5 +26,4 @@ let phase =
 
 let visit original =
   let replacement = visitCilFunction (new visitor) original in
-  if replacement != original then
-    failwith "unexpected function replacement by RemoveLoops visitor"
+  assert (replacement == original)

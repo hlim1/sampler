@@ -31,8 +31,7 @@ end
 
 let visit original =
   let replacement = visitCilBlock (new visitor) original in
-  if replacement != original then
-    failwith "instrumenter unexpectedly replaced top-level block"
+  assert (replacement == original)
 
 
 let phase =

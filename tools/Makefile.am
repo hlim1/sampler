@@ -1,9 +1,18 @@
 SUBDIRS = cfg
 
+if DISTRO_BASIS_RPM
+distro_scripts = rpmbuild
+endif
+
+if DISTRO_BASIS_DEBIAN
+distro_data = sampler.mk
+endif
+
 tools_PROGRAMS =				\
 	decimate-samples
 
 tools_DATA =					\
+	$(distro_data)				\
 	Embedded.pm				\
 	Function.pm				\
 	Node.pm					\
@@ -12,14 +21,13 @@ tools_DATA =					\
 	Unit.pm
 
 tools_SCRIPTS =					\
-	debuild					\
+	$(distro_scripts)			\
 	extract-report				\
 	extract-section				\
 	find-sampler-info			\
 	resolve-cfg				\
 	resolve-samples				\
-	resolve-timestamps			\
-	rpmbuild
+	resolve-timestamps
 
 EXTRA_DIST =					\
 	$(tools_DATA)				\

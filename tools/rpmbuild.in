@@ -8,26 +8,28 @@ use FindBin;
 ########################################################################
 
 
-@find_driver_fragment@
+my $prefix = '@prefix@';
+my $exec_prefix = "@exec_prefix@";
+my $bindir = "@bindir@";
+my $PACKAGE = '@PACKAGE@';
+my $pkglibdir = "@pkglibdir@";
+my $pkgdatadir = "@pkgdatadir@";
 
 
 ########################################################################
 
 
 my %macros = (
-	      _sampler_datadir => '%{?sampler_datadir}%{!?sampler_datadir:%{_datadir}/sampler}',
-	      _sampler_libdir => '%{?sampler_libdir}%{!?sampler_libdir:%{_libdir}/sampler}',
-	      sampler_tooldir => "$FindBin::Bin",
+	      sampler_datadir => "$pkgdatadir",
+	      sampler_libdir => "$pkglibdir",
 
-	      sampler_cc => $driver,
+	      sampler_cc => "$bindir/sampler-cc",
 	      sampler_cc_flags => '%{nil}',
-	      sampler_cc_version => '%(rpm -q --qf "%%{version}" sampler-devel)',
+	      sampler_cc_version => '@',
 
-	      _sampler_source => '%{?sampler_source}%{!?sampler_source:1}',
 	      'sampler_tags(s:)' => <<'EOF',
 Requires: sampler >= 0.12.1
-BuildRequires: sampler-devel >= 0.12.1
-Source%{_sampler_source}: %{name}-sampler.tar.gz
+BuildRequires: sampler-devel >= 1.1
 %{nil}
 EOF
 
@@ -44,43 +46,31 @@ not need this to use %{name}.  Most users have no need to install this
 package.
 %files samplerinfo
 %defattr(-,root,root)
-%{_sampler_libdir}/sites/*
+%{sampler_libdir}/sites/*
 %{nil}
 EOF
 
-	      sampler_prep => 'tar xzf %{S:%{_sampler_source}}',
-
-	      _sampler_sparsity => '%{?sampler_sparsity}%{!?sampler_sparsity:100}',
-	      _sampler_reporting_host => '%{?sampler_reporting_host}%{!?sampler_reporting_host:www.example.org}',
-	      _sampler_reporting_url => '%{?sampler_reporting_url}%{!?sampler_reporting_url:https://%{_sampler_reporting_host}/cgi-bin/sampler-upload}',
-	      _sampler_build_distribution => '%{?sampler_build_distribution}%{!?sampler_build_distribution:@DISTRO@-@RPM_ARCH@}',
-
-	      _sampler_name => '%{?sampler_name}%{!?sampler_name:%{name}}',
-
 	      sampler_prebuild => <<'EOF',
 export CC='%{sampler_cc} %{sampler_cc_flags}'
-sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/application.schemas.in >sampler/sampler-%{name}.schemas
 %{nil}
 EOF
 
 	      'sampler_install()' => <<'EOF',
-for path in %*; do
-  install -d $RPM_BUILD_ROOT%{_sampler_libdir}/wrapped`dirname $path`
-  mv $RPM_BUILD_ROOT$path $RPM_BUILD_ROOT%{_sampler_libdir}/wrapped$path
-  sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' -e 's!@sampler_libdir@!%{_sampler_libdir}!g' -e 's/@name@/%{name}/g' -e "s!@path@!$path!g" <sampler/wrapper.in >$RPM_BUILD_ROOT$path
-  chmod --reference=$RPM_BUILD_ROOT%{_sampler_libdir}/wrapped$path $RPM_BUILD_ROOT$path
-done
-install -d $RPM_BUILD_ROOT%{_sampler_datadir}/applications/%{name}
-sed -e 's/@sampler_name@/%{_sampler_name}/g' -e 's/@sampler_cc_version@/%{sampler_cc_version}/g' -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@build_distribution@/%{_sampler_build_distribution}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >$RPM_BUILD_ROOT%{_sampler_datadir}/applications/%{name}/config
+%{sampler_libdir}/templates/install-wrappers \
+  --name='%{name}' \
+  --version='%{version}' \
+  --release='%{release}' \
+  --sparsity='%{sampler_sparsity}' \
+  --reporting-url='%{sampler_reporting_url}' \
+  --root="$RPM_BUILD_ROOT" \
+  %*
 %{sampler_tooldir}/find-sampler-info $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/gconf/schemas
-install -m 644 sampler/sampler-%{name}.schemas $RPM_BUILD_ROOT%{_sysconfdir}/gconf/schemas
 %{nil}
 EOF
 
 	      sampler_files => <<'EOF',
-%attr(-, root, root) %{_sampler_libdir}/wrapped/*
-%attr(-, root, root) %{_sampler_datadir}/applications/%{name}
+%attr(-, root, root) %{sampler_libdir}/wrapped/*
+%attr(-, root, root) %{sampler_datadir}/applications/%{name}
 EOF
 
 	      sampler_files_gconf => '%attr(-, root, root) %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas',

@@ -1,0 +1,8 @@
+#!/usr/bin/python -O
+
+import sys
+sys.path.insert(1, '@pkgdatadir@/wrapper')
+
+import Main
+Main.main(configdir = '@pkgdatadir@/applications/@name@',
+          wrapped = '@pkglibdir@/wrapped@path@')

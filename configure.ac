@@ -8,26 +8,40 @@ AM_INIT_AUTOMAKE
 #  Linux distribution
 #
 
+AC_MSG_CHECKING(for distribution)
+
 for vendor in fedora redhat; do
-  AC_MSG_CHECKING(for $vendor)
   if test -f /etc/$vendor-release; then
-    version="`rpm -q --qf '%{version}' $vendor-release`"
-    DISTRO="$vendor-$version"
-    AC_MSG_RESULT($version)
-    AC_MSG_CHECKING(RPM build architecture)
-    RPM_ARCH="`rpm -q --qf '%{arch}' $vendor-release`"
-    AC_MSG_RESULT($RPM_ARCH)
+    DISTRO_NAME=$vendor
+    DISTRO_VERSION="`rpm -q --qf '%{version}' $vendor-release`"
+    DISTRO_ARCH="`rpm -q --qf '%{arch}' $vendor-release`"
+    DISTRO_BASIS=rpm
     break
-  else
-    AC_MSG_RESULT(no)
   fi
 done
 
-: ${DISTRO:=unknown}
-: ${RPM_ARCH:=unknown}
+if test -z "$DISTRO_NAME"; then
+  DISTRO_NAME="`lsb_release -is 2>/dev/null | tr A-Z a-z`"
+  if test -n "$DISTRO_NAME"; then
+    DISTRO_VERSION="`lsb_release -rs`"
+    DISTRO_ARCH="`dpkg-architecture -s -qDEB_BUILD_ARCH`"
+    DISTRO_BASIS=debian
+  fi
+fi
 
-AC_SUBST(DISTRO)
-AC_SUBST(RPM_ARCH)
+: ${DISTRO_NAME:=unknown}
+: ${DISTRO_VERSION:=unknown}
+: ${DISTRO_ARCH:=unknown}
+: ${DISTRO_BASIS:=unknown}
+
+AC_SUBST(DISTRO_NAME)
+AC_SUBST(DISTRO_VERSION)
+AC_SUBST(DISTRO_ARCH)
+
+AM_CONDITIONAL(DISTRO_BASIS_RPM, test "$DISTRO_BASIS" = rpm)
+AM_CONDITIONAL(DISTRO_BASIS_DEBIAN, test "$DISTRO_BASIS" = debian)
+
+AC_MSG_RESULT($DISTRO_NAME-$DISTRO_VERSION-$DISTRO_ARCH ($DISTRO_BASIS-based))
 
 
 ########################################################################
@@ -110,6 +124,7 @@ AC_SUBST(package_libdir, '${libdir}/${PACKAGE}')
 AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
 AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
 AC_SUBST(driverdir, '${instrumentordir}/driver')
+AC_SUBST(templatesdir, '${package_libdir}/templates')
 AC_SUBST(toolsdir, '${package_libdir}/tools')
 AC_SUBST(traylibdir, '${package_libdir}/tray')
 AC_SUBST(package_includedir, '${driverdir}/sampler')
@@ -329,6 +344,7 @@ launcher/first-time/Makefile
 launcher/monitor/Makefile
 launcher/pixmaps/Makefile
 launcher/preferences/Makefile
+launcher/templates/Makefile
 launcher/tray/Makefile
 launcher/trayicon/Makefile
 launcher/trayicon/libegg/Makefile
@@ -351,12 +367,12 @@ www/Makefile
 www/cgi-bin/Makefile
 ])
 
-AC_CONFIG_FILES([launcher/test-by-extension], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/sampler-cc], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/sampler-cc-here], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/as], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/driver/cc1], [chmod +x $ac_file])
-AC_CONFIG_FILES([tools/debuild], [chmod +x $ac_file])
+AC_CONFIG_FILES([launcher/templates/install-wrappers], [chmod +x $ac_file])
+AC_CONFIG_FILES([launcher/test-by-extension], [chmod +x $ac_file])
 AC_CONFIG_FILES([tools/rpmbuild], [chmod +x $ac_file])
 
 AC_OUTPUT

@@ -1,2 +1,2 @@
-usr/share/omf
-usr/share/sampler/doc
+debian/tmp/usr/share/omf
+debian/tmp/usr/share/sampler/doc

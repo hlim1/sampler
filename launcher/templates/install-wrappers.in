@@ -1,0 +1,116 @@
+#!/usr/bin/perl -w
+# -*- cperl -*-
+
+use strict;
+
+use File::Basename;
+use File::Path;
+use File::stat;
+use FileHandle;
+use FindBin;
+use Getopt::Long;
+
+
+########################################################################
+#
+#  sampler install directories
+#
+
+my $prefix = '@prefix@';
+my $exec_prefix = "@exec_prefix@";
+my $libdir = "@libdir@";
+my $datadir = "@datadir@";
+my $PACKAGE = '@PACKAGE@';
+my $package_libdir = "@package_libdir@";
+my $package_datadir = "@package_datadir@";
+
+
+########################################################################
+#
+#  command line processing
+#
+
+my $name;
+my $version;
+my $release;
+my $sparsity;
+my $reporting_url;
+my $root;
+
+sub usage () {
+  die <<"EOT";
+Usage: $0 [options] [executables]
+
+  --name=NAME
+  --version=X.Y.Z
+  --release=X.Y.Z
+  --sparsity=NUM
+  --reporting-url=URL
+  --root=PATH
+
+All options are required.
+EOT
+}
+
+my $result = GetOptions ('name=s' => \$name,
+			 'version=s' => \$version,
+			 'release=s' => \$release,
+			 'sparsity=i' => \$sparsity,
+			 'reporting-url=s' => \$reporting_url,
+			 'root=s' => \$root);
+
+usage unless $result;
+usage unless $name;
+usage unless $release;
+usage unless $sparsity;
+usage unless $reporting_url;
+usage unless $root;
+
+
+########################################################################
+#
+#  helper subroutines
+#
+
+sub installdir ($) {
+  mkpath dirname $_[0];
+}
+
+
+sub instantiate ($$%) {
+  my ($template, $output, %substitutions) = @_;
+  my $input = "$FindBin::Bin/$template.in";
+  my $infile = new FileHandle $input, 'r' or die "cannot read $input: $!\n";
+  my $outfile = new FileHandle $output, 'w' or die "cannot write $output: $!\n";
+
+  while (<$infile>) {
+    s/@([[:word:]]+)@/$substitutions{$1}/g;
+    $outfile->print($_);
+  }
+}
+
+
+########################################################################
+#
+#  main activity
+#
+
+my $config = "$root$package_datadir/applications/$name/config";
+my $schemas = "$root/etc/gconf/schemas/sampler-$name.schemas";
+installdir $config;
+installdir $schemas;
+instantiate 'config', $config, 'name' => $name, 'version' => $version, 'release' => $release;
+instantiate 'application.schemas', $schemas, 'name' => $name, 'sparsity' => $sparsity, 'reporting_url' => $reporting_url;
+chmod(0644, $config) == 1 or die "cannot chmod $config: $!\n";
+chmod(0644, $schemas) == 1 or die "cannot chmod $schemas: $!\n";
+
+foreach (@ARGV) {
+  m{^/} or die "relative executable path: $_";
+  my $original = "$root$_";
+  my $wrapped = "$root$package_libdir/wrapped$_";
+  installdir $wrapped;
+  rename $original, $wrapped or die "cannot move $original to $wrapped: $!\n";
+  instantiate 'wrapper', $original, 'name' => $name, 'path' => $_;
+  my $stat = stat $wrapped or die "cannot stat $wrapped: $!\n";
+  chmod($stat->mode, $original) == 1 or die "cannot chmod $original: $!\n";
+}

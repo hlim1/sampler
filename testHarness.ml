@@ -1,11 +1,11 @@
 open Cil
 
-let doChecks = false
+let doChecks = true
 
-let check = if doChecks then
-  Check.checkFile []
+let check file = if doChecks then
+  (if not (Check.checkFile [] file) then raise Errormsg.Error)
 else
-  ignore
+  ignore file
     
 let doOneOne file stage =
   stage file;

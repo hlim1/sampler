@@ -18,6 +18,7 @@
 %{fsampler-scheme=bounds:-include sampler/bounds-unit.h} \
 %{fsampler-scheme=branches:-include sampler/branches-unit.h} \
 %{fsampler-scheme=function-entries:-include sampler/function-entries-unit.h} \
+%{fsampler-scheme=g-object-unref:-include sampler/g-object-unref-unit.h} \
 %{fsampler-scheme=returns:-include sampler/returns-unit.h} \
 %{fsampler-scheme=scalar-pairs:-include sampler/scalar-pairs-unit.h} \
 %{fsampler-scheme=*:-include sampler/unit.h}

@@ -3,6 +3,7 @@ SUBDIRS =					\
 	bounds					\
 	branches				\
 	function-entries			\
+	g-object-unref				\
 	nothing					\
 	returns					\
 	scalar-pairs

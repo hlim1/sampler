@@ -54,7 +54,13 @@
 		<para>At each assignment of a scalar value, record the
 		minimum and maximum values ever assigned.  Each
 		assignment induces one instrumentation point with one
-		global min/max pair.</para>
+		global min/max pair:</para>
+
+		<orderedlist>
+		  <listitem><para>minimum value</para></listitem>
+
+		  <listitem><para>maximum value</para></listitem>
+		</orderedlist>
 
 		<para>The minimum component is initialized to the
 		maximum representable value for the assigned type,
@@ -85,7 +91,16 @@
 		structures and certain operators
 		(<literal>&amp;&amp;</literal>, <literal>||</literal>,
 		<literal>?:</literal>).  Each branch induces one
-		instrumentation point with a pair of counters.</para>
+		instrumentation point with a pair of counters:</para>
+
+		<orderedlist>
+		  <listitem><para>branch predicate
+		  false</para></listitem>
+
+		  <listitem><para>branch predicate
+		  true</para></listitem>
+		</orderedlist>
+
 	      </listitem>
 	    </varlistentry>
 
@@ -94,7 +109,37 @@
 	      <listitem>
 		<para>Count how many times each function is called.
 		Each function body induces one instrumentation point
-		with one counter.</para>
+		with one counter:</para>
+
+		<orderedlist>
+		  <listitem><para>function entered</para></listitem>
+		</orderedlist>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><option>g-object-unref</option></term>
+	      <listitem>
+		<para>This scheme is intended for use with the GLib
+		Object System.  Before each call to
+		<function>g_object_unref</function>, check the current
+		reference count for the object about to be unref'd.
+		Each such call induces one instrumentation point with
+		a quadruple of counters:</para>
+
+		<orderedlist>
+		  <listitem><para>zero references: object already
+		  being reclaimed</para></listitem>
+
+		  <listitem><para>one reference: object about to be
+		  reclaimed</para></listitem>
+
+		  <listitem><para>more than one reference: object not
+		  about to be reclaimed</para></listitem>
+
+		  <listitem><para>invalid: argument is not a
+		  <type>GObject</type> instance</para></listitem>
+		</orderedlist>
 	      </listitem>
 	    </varlistentry>
 
@@ -104,8 +149,20 @@
 		<para>At each scalar-returning call site, count how
 		many times the called function returned a negative,
 		zero, or positive value.  Each such call induces one
-		instrumentation point with a triple of counters.  This
-		is the scheme used for the
+		instrumentation point with a triple of
+		counters:</para>
+
+		<orderedlist>
+		  <listitem><para>return value
+		  negative</para></listitem>
+
+		  <listitem><para>return value zero</para></listitem>
+
+		  <listitem><para>return value
+		  positive</para></listitem>
+		</orderedlist>
+
+		<para>This is the scheme used for the
 		<application>ccrypt</application> experiment in our
 		PLDI paper.</para>
 	      </listitem>
@@ -119,7 +176,20 @@
 		or greater than each other same-typed in-scope
 		variable. Each such comparable variable at each such
 		assignment induces one instrumentation point with a
-		triple of counters.  This is the scheme used for the
+		triple of counters:</para>
+
+		<orderedlist>
+		  <listitem><para>assigned value less than
+		  other</para></listitem>
+
+		  <listitem><para>assigned value equal to
+		  other</para></listitem>
+
+		  <listitem><para>assigned value greater than
+		  other</para></listitem>
+		</orderedlist>
+
+		<para>This is the scheme used for the
 		<application>bc</application> experiment in our PLDI
 		paper.</para>
 

@@ -1,4 +1,4 @@
-AC_INIT([sampler],[0.8],[liblit@cs.berkeley.edu])
+AC_INIT([sampler],[0.9],[liblit@cs.berkeley.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -32,6 +32,8 @@ else
   PKG_CHECK_MODULES(EGG_TRAY, gtk+-2.0)
   AC_SUBST(EGG_TRAY_CFLAGS)
   AC_SUBST(EGG_TRAY_LIBS)
+
+  AM_PATH_GLIB_2_0(, , , gobject)
 
   AM_GCONF_SOURCE_2
 
@@ -268,6 +270,7 @@ AM_CONFIG_HEADER(config.h)
 AC_CONFIG_TESTDIR(instrumentor/bounds)
 AC_CONFIG_TESTDIR(instrumentor/branches)
 AC_CONFIG_TESTDIR(instrumentor/function-entries)
+AC_CONFIG_TESTDIR(instrumentor/g-object-unref)
 AC_CONFIG_TESTDIR(instrumentor/nothing)
 AC_CONFIG_TESTDIR(instrumentor/returns)
 AC_CONFIG_TESTDIR(instrumentor/scalar-pairs)
@@ -286,6 +289,8 @@ instrumentor/bounds/Makefile
 instrumentor/branches/Makefile
 instrumentor/driver/Makefile
 instrumentor/function-entries/Makefile
+instrumentor/g-object-unref/Makefile
+instrumentor/g-object-unref/atlocal
 instrumentor/nothing/Makefile
 instrumentor/returns/Makefile
 instrumentor/scalar-pairs/Makefile

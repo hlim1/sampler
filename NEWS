@@ -1,5 +1,10 @@
 -*- outline -*-
 
+* sampler-0.9
+
+** New "g-object-unref" instrumentation scheme tracks state of GLib
+   Object System instances that are about to be unreferenced.
+
 * sampler-0.8
 
 ** Important atomicity bug fix for multithreaded applications.

@@ -10,7 +10,14 @@ lib_LIBRARIES =					\
 	$(thread_lib)
 
 
+if WITH_GNOME
+gnome_headers =
+	g-object-unref-types.h			\
+	g-object-unref-unit.h
+endif
+
 package_include_HEADERS =			\
+	$(gnome_headers)			\
 	acyclic.h				\
 	bounds-types.h				\
 	bounds-unit.h				\
@@ -40,7 +47,7 @@ package_include_HEADERS =			\
 
 
 
-INCLUDES = -ffast-math
+INCLUDES = -ffast-math @GLIB_CFLAGS@
 
 common_sources =				\
 	acyclic.c				\
@@ -84,7 +91,14 @@ libsampler_r_a_CFLAGS = -include $(srcdir)/threads.h -pthread
 ########################################################################
 
 
+if WITH_GNOME
+gnome_sources =					\
+	g-object-unref.c			\
+	g-object-unref-types.h
+endif
+
 libschemes_a_SOURCES =				\
+	$(gnome_sources)			\
 	bounds.c				\
 	bounds-types.h				\
 	branches.c				\

@@ -17,6 +17,7 @@ let schemes = [
   BoundScheme.factory;
   FunctionEntryScheme.factory;
   ReturnScheme.factory;
+  GObjectUnrefScheme.factory;
 ]
 
 

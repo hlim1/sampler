@@ -4,7 +4,8 @@ open FlowGraph
 exception Found of node
 
 
-let findNode targetFunc targetId =
+let findNode (targetFunc, targetId) =
+  let description = Printf.sprintf "find node %s:%d" targetFunc targetId in
   let consider node _ =
     match node with
     | (Before, ((_, func), id)) as key

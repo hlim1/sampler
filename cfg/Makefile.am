@@ -1,6 +1,6 @@
 SUBDIRS = graphlib
 
-noinst_SCRIPTS = resolve-cfg
+noinst_SCRIPTS = resolve-cfg order-sites
 
 EXTRA_DIST =
 
@@ -12,6 +12,7 @@ libgraph = graphlib/graphlib.$(cma)
 
 includes += -pp camlp4o
 libdirs += $(dir $(libcommon) $(libgraph))
+syslibs = unix.$(cma)
 
 
 resolve-cfg: $(libcommon) $(libgraph) $(resolve-cfg)
@@ -27,14 +28,17 @@ $(libgraph)/graph.cmi: $(libgraph)
 $(libcommon) $(libgraph): $(force)
 	$(recurse)
 
-#cfg := /usr/lib/sampler/sites/usr/lib/sampler/applications/evolution/executable.cfg
-cfg := tiny.cfg
+cfg := /usr/lib/sampler/sites/usr/lib/sampler/applications/evolution/executable.cfg
+sites := evolution-sites.txt
+
+#cfg := tiny.cfg
+#sites := sites-list.txt
 
 sampler_cc := $(top_builddir)/instrumentor/driver/sampler-cc-here
 nothing := $(top_builddir)/instrumentor/nothing/main
 
 test: order-sites $(cfg)
-	./$^ <sites-list.txt
+	./$^ <$(sites)
 
 MOSTLYCLEANFILES += *.cfg
 

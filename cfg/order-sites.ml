@@ -1,4 +1,5 @@
 open Basics
+open FlowGraph
 
 
 type site = Types.Function.extension * Types.Statement.extension
@@ -19,28 +20,39 @@ let sites =
 
   let list = parseAll (Stream.of_channel stdin) in
   let table = new HashClass.t 2 in
-  List.iter (fun site -> table#add site ()) list;
+
+  let insert ((func, id) as site) =
+    try
+      ignore (Find.findNode site);
+      table#add site ()
+    with Not_found ->
+      Printf.eprintf "warning: invalid site: %s:%d\n" func id
+  in
+  List.iter insert list;
   table
 
 
-let reach (aFunc, aId) (bFunc, bId) =
-  let aNode = Find.findNode aFunc aId in
-  let bNode = Find.findNode bFunc bId in
-  let result = Transitive.reach ignore FlowGraph.graph#succ aNode bNode in
-  result
+let reach =
+  Memoize.memoize (fun (a, b) ->
+    let aNode = Find.findNode a in
+    let bNode = Find.findNode b in
+    Transitive.reach ignore graph#succ aNode bNode)
 
 
 let iteration progress =
   let compare a b =
-    (* good place for memoization *)
-    match (reach a b, reach b a) with
-    | (false, true) ->
-	raise (Eliminate (a, b))
-    | (true, false) ->
-	raise (Eliminate (b, a))
-    | (false, false)
-    | (true, true) ->
-	()
+    let (aFunc, aId) = a in
+    let (bFunc, bId) = b in
+    let description = Printf.sprintf "reach %s:%d <-?-> %s:%d" aFunc aId bFunc bId in
+    Phase.time description (fun () ->
+      match (reach (a, b), reach (b, a)) with
+      | (false, true) ->
+	  raise (Eliminate (a, b))
+      | (true, false) ->
+	  raise (Eliminate (b, a))
+      | (false, false)
+      | (true, true) ->
+	  ())
   in
   try
     sites#iter (fun a () ->
@@ -48,7 +60,7 @@ let iteration progress =
 	compare a b))
   with Eliminate (((iFunc, iId) as inferior), ((sFunc, sId) as superior)) ->
     sites#remove inferior;
-    Printf.printf "eliminate %s:%d as inferior to %s:%d\n"
+    Printf.eprintf "eliminate %s:%d as inferior to %s:%d\n"
       iFunc iId sFunc sId;
     progress := true
 

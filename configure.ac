@@ -176,6 +176,7 @@ fi
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
+AM_PROG_LEX
 
 AC_MSG_CHECKING(for cpp0)
 AC_SUBST(cpp0, `$CC -print-prog-name=cpp0`)
@@ -236,6 +237,9 @@ AC_LINK_IFELSE(
   AC_MSG_RESULT(no)
   AC_SUBST(LIBM, -lm))
 CFLAGS=$old_CFLAGS
+
+
+AM_PATH_GSL
 
 
 ########################################################################

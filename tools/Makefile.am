@@ -1,5 +1,8 @@
 SUBDIRS = cfg
 
+tools_PROGRAMS =				\
+	decimate-samples
+
 tools_SCRIPTS =					\
 	debuild					\
 	Embedded.pm				\
@@ -31,3 +34,10 @@ EXTRA_DIST =					\
 	skip-test
 
 rpmbuild debuild: find-driver.pl
+
+LFLAGS = -f -p
+CFLAGS = -W -Wall -Werror -O9
+
+decimate_samples_SOURCES = decimate-samples.l
+decimate_samples_CFLAGS = $(GSL_CFLAGS)
+decimate_samples_LDADD = $(GSL_LIBS) $(LEXLIB)

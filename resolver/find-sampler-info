@@ -1,0 +1,21 @@
+#!/bin/sh -ex
+
+test -n "$RPM_BUILD_ROOT"
+
+BUILDDIR=$1
+: ${BUILDDIR:=.}
+LISTFILE=$BUILDDIR/samplerfiles.list
+
+extract=`dirname $0`/extract-site-info
+
+# Extract site information from ELF binaries
+( cd $RPM_BUILD_ROOT && find . -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) -exec file {} \; ) |
+sed -n 's/^\(.*\):[ 	]*ELF.*, not stripped/\1/p' |
+while read filename; do
+    input=$RPM_BUILD_ROOT/$filename
+    outbase=/usr/lib/sampler/sites/$filename.sites
+    output=$RPM_BUILD_ROOT/$outbase
+    mkdir -p `dirname $output`
+    $extract $input >$output
+    echo $outbase
+done >$LISTFILE

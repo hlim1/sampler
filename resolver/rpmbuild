@@ -1,0 +1,70 @@
+#!/usr/bin/perl -w
+
+use strict;
+use 5.008;			# for safe pipe opens using list form of open
+
+use FileHandle;
+use FindBin;
+
+
+########################################################################
+
+
+my $scheme = shift
+    or die "Usage: $0 <scheme> <rpmbuild flags> ...\n";
+
+$ENV{CC} = "$FindBin::Bin/../instrumentor/driver/main $scheme";
+
+
+########################################################################
+
+
+my %macros = (
+	      __cc => "'%{_sampler_home}/instrumentor/driver/main %{_sampler_scheme}'",
+	      _sampler_home => "$FindBin::Bin/..",
+	      _sampler_scheme => $scheme,
+	      _sampler_install_post => '%{_sampler_home}/resolver/find-sampler-info %{_builddir}/%{?buildsubdir}',
+
+	      _sampler_package => <<'EOF',
+%ifnarch noarch\
+%package samplerinfo\
+Summary: Sampler information for package %{name}\
+Group: Development/Debug\
+AutoReqProv: 0\
+%description samplerinfo\
+This package provides sampler information for package %{name}, built\
+using the "%{_sampler_scheme}" instrumentation scheme.\
+%files samplerinfo -f samplerfiles.list\
+%defattr(-,root,root)\
+%endif\
+%{nil}
+EOF
+
+	      __spec_install_post => <<'EOF',
+%{_sampler_install_post}\
+%{?__debug_package:%{__debug_install_post}}\
+%{__arch_install_post}\
+%{__os_install_post}\
+%{nil}
+EOF
+
+	      install => <<'EOF'
+%{?buildsubdir:%{_sampler_package}}\
+%{?_enable_debug_packages:%{?buildsubdir:%{debug_package}}}\
+%%install\
+LANG=C\
+export LANG\
+%{nil}
+EOF
+);
+
+
+########################################################################
+
+
+while (my ($name, $value) = each %macros) {
+    unshift @ARGV, '--define', "$name $value";
+}
+
+exec 'rpmbuild', @ARGV;
+die "cannot exec rpmbuild: $!\n";

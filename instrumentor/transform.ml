@@ -36,6 +36,25 @@ let visit isWeightlessCall countdownToken func info =
     Returns.patch func countdown;
     info.sites#iter (Sites.patch clones countdown);
 
+    if !Stats.showStats then
+      begin
+	let siteCount =
+	  info.sites#fold (fun _ count -> count + 1) 0
+	in
+
+	let headerTotal, headerCount =
+	  weights#fold
+	    (fun _ weight (total, count) ->
+	      if weight == 0 then
+		(total, count)
+	      else
+		(total + weight, count + 1))
+	    (0, 0)
+	in
+	Printf.eprintf "stats: transform: %s has sites: %d sites, %d headers, %d total header weights\n"
+	  func.svar.vname siteCount headerCount headerTotal
+      end;
+
     if !removeDeadCode then
       DeadCode.visit func;
 

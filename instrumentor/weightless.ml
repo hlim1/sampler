@@ -26,7 +26,7 @@ let _ =
 type tester = Calls.info -> bool
 
 
-let collect infos =
+let collect (infos : Prepare.infos) =
   let weightless = new StringMap.container in
 
   let isWeightlessFunction callee =
@@ -64,8 +64,23 @@ let collect infos =
 		madeProgress := true
 	      end));
 
+  if !Stats.showStats then
+    begin
+      let numFuncs, numWeightless =
+	infos#fold
+	  (fun func _ (numFuncs, numWeightless) ->
+	    (numFuncs + 1,
+	     if isWeightlessFunction func.svar then
+	       numWeightless + 1
+	     else
+	       numWeightless))
+	  (0, 0)
+      in
+      Printf.eprintf "stats: weightless: %d functions, %d weightless\n" numFuncs numWeightless
+    end;
+
   infos#iter
-    (fun func info ->
+    (fun func _ ->
       if isWeightlessFunction func.svar then
 	infos#remove func);
 

@@ -57,13 +57,13 @@ sub collectOneArgument {
 
 sub runShellOut {
     my ($self, $out, @cmd) = @_;
-    open my $oldOut, '>&STDOUT' or die "cannot dup stdout: $!\n";
+    open OLDOUT, '>&STDOUT' or die "cannot dup stdout: $!\n";
     open STDOUT, '>', $out->filename or die "cannot redirect stdout: $!\n";
 
     $self->runShell(@cmd);
 
     close STDOUT;
-    open STDOUT, '>&', $oldOut or die "cannot restore stdout: $!\n";
+    open STDOUT, '>&OLDOUT' or die "cannot restore stdout: $!\n";
 }
 
 

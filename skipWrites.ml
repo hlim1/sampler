@@ -18,7 +18,7 @@ class visitor = object
 
   method vinst inst =
     match inst with
-    | Set ((Mem _, _), _, location) ->
+    | Set ((Mem _, NoOffset), _, location) ->
 	ChangeTo [skipCall location; inst]
     | _ ->
 	SkipChildren

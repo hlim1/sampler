@@ -1,14 +1,8 @@
 open Cil
 
 
-let computation = BinOp (MinusA,
-			 Lval Countdown.lval,
-			 kinteger IUInt 1,
-			 uintType)
-
-
 let skipCall location =
-  Set (Countdown.lval, computation, location)
+  Call (None, Lval (var SkipWrite.skipWrite), [], location)
 	
 	
 class visitor = object

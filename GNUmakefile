@@ -66,7 +66,7 @@ functionEntry = $(logIsImminent) functionEntry
 identity = identity
 identity = identity
 instrument = $(functionBodyVisitor) $(logWrite) instrument
-logIsImminent = logIsImminent
+logIsImminent = $(countdown) logIsImminent
 logWrite = logWrite
 mapClass = mapClass
 patchSites = patchSites
@@ -78,7 +78,8 @@ simplifyReturns = $(simplifyVisitor) simplifyReturns
 simplifyRights = $(simplifyVisitor) simplifyRights
 simplifyVisitor = $(functionBodyVisitor) simplifyVisitor
 skipVisitor = skipVisitor
-skipWrites = $(countDown) $(functionBodyVisitor) skipWrites
+skipWrites = $(functionBodyVisitor) $(skipWrite) skipWrites
+skipWrite = skipWrite
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 stores = stores
@@ -105,7 +106,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-main := $(countdown) $(filterLabels) $(logWrite) $(transform) $(testHarness) %
+main := $(filterLabels) $(logWrite) $(skipWrite) $(transform) $(testHarness) %
 main: %: $(libs) $(addsuffix .$(cmo), $(main))
 	$(link)
 

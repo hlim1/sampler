@@ -4,6 +4,7 @@ let phases =
   [
    Countdown.phase;
    LogWrite.phase;
+   SkipWrite.phase;
    Transform.phase;
    "RemoveUnusedTemps", Rmtmps.removeUnusedTemps;
    FilterLabels.phase;

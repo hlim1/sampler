@@ -19,8 +19,8 @@ let rec weigh headers =
     try cache#find node with
       Not_found ->
 	let myWeight = Stores.count_stmt node in
-	let childWeights = List.map subweight node.succs in
-	let maxChildWeight = List.fold_left max 0 childWeights in
+	let maximize best succ = max best (subweight succ) in
+	let maxChildWeight = List.fold_left maximize 0 node.succs in
 	let total = myWeight + maxChildWeight in
 	cache#add node total;
 	total

@@ -262,7 +262,7 @@ while ($_ = shift) {
 }
 
 
-if ($mode eq 'special' || !@source) {
+if ($mode eq 'special') {
     trace_system @cc;
 
 } elsif ($mode eq 'preprocess') {

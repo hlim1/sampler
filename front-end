@@ -57,5 +57,5 @@ foreach (@source) {
 }
 
 
-push @cc, "$FindBin::Bin/liblog/liblog.a" if $linking;
+push @cc, "$FindBin::Bin/liblog/liblog.so" if $linking;
 sys @cc;

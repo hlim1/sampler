@@ -1,11 +1,12 @@
 CFLAGS := -W -Wall -Werror
-lib := liblog.a
+lib := liblog.so
 
 all: $(lib)
 
-$(lib): $(lib)(log.o)
+$(lib): log.o
+	$(LINK.o) -shared $^ -o $@
 
-log.o: %.o: %.c %.h
+log.o: %.o: %.c log.h
 
 clean:
-	rm -f *.o *.a
+	rm -f *.o *.a *.so

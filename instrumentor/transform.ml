@@ -37,7 +37,7 @@ let visit isWeightyCallee countdownToken func info =
       Returns.patch func countdown;
       List.iter (Sites.patch clones countdown) info.sites;
 
-      if !Stats.showStats then
+      if !Statistics.showStats then
 	begin
 	  let siteCount = List.length info.sites in
 

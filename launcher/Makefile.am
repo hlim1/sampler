@@ -25,5 +25,5 @@ TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(package_libdir)/applications
 if GCONF_SCHEMAS_INSTALL
-	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) gconftool-2 --makefile-install-rule $(schemadir)/$(scheme_DATA) >/dev/null
+	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) gconftool-2 --makefile-install-rule $(schemadir)/$(schema_DATA) >/dev/null
 endif

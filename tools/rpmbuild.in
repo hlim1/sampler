@@ -61,7 +61,7 @@ EOF
 export CC='%{sampler_cc} %{sampler_scheme} %{sampler_cc_flags}'
 sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/application.schemas.in >sampler/sampler-%{name}.schemas
 sed -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@scheme@/%{sampler_scheme}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >sampler/config
-sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/wrapper.in >sampler/wrapper
+sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' -e 's!@sampler_libdir@!%{_sampler_libdir}!g' -e 's!@name@!%{name}!g' <sampler/wrapper.in >sampler/wrapper
 chmod a+x sampler/wrapper
 %{nil}
 EOF

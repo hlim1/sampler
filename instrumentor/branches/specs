@@ -1,5 +1,5 @@
 *cpp:
-+ -include branches.h -include unit.h -include tuples-cil.h
++ -include branches.h -include sampler/unit.h -include sampler/tuples-cil.h
 
 *lib:
 + -lbranches

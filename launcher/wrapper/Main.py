@@ -1,10 +1,26 @@
-import AppConfig
-import BaseMain
-import UserConfig
+import sys
+sys.path.append('@commondir@')
+
+import pygtk
+pygtk.require('2.0')
+
+from AppConfig import AppConfig
+from UserConfig import UserConfig
+
+import Launcher
 
 
-def main(config_filename):
-    '''Run an instrumented application.'''
-    app = AppConfig.AppConfig(config_filename)
-    user = UserConfig.UserConfig(config_filename, app.config)
-    BaseMain.main(app, user, 'text/plain')
+########################################################################
+
+
+def main(configdir):
+    app = AppConfig(configdir)
+    user = UserConfig(configdir, app)
+
+    sparsity = user.sparsity()
+    if user.enabled() and sparsity > 0:
+        outcome = Launcher.run_with_sampling(app, sparsity)
+        Uploader.upload(app, user, outcome, 'text/html')
+        outcome.exit()
+    else:
+        Launcher.run_without_sampling(app)

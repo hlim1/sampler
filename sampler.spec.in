@@ -34,6 +34,7 @@ Requires: gnome-python2-gconf
 Requires: gnome-python2-gtkhtml2
 Requires: pygtk2
 Requires: pygtk2-libglade
+Obsoletes: sampler-gnome < 0.5
 
 %description
 This package supports instrumented applications at run time.  It
@@ -50,6 +51,7 @@ GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-in
 %{_sysconfdir}/gconf/schemas/*
 %dir %{_libdir}/%{name}
 %dir %{_libdir}/%{name}/applications
+%dir %{_libdir}/%{name}/sites
 %{_libdir}/%{name}/tray
 %{_libdir}/bonobo/servers/*
 %dir %{_datadir}/%{name}
@@ -87,7 +89,11 @@ tools for collecting and decoding sampled instrumentation reports.
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/doc
 %{_datadir}/omf/*
-%{_libdir}/%{name}
+%{_includedir}/sampler
+%{_libdir}/*.a
+%dir %{_libdir}/%{name}
+%{_libdir}/%{name}/instrumentor
+%{_libdir}/%{name}/tools
 
 %post devel
 scrollkeeper-update -q -o %{_datadir}/omf/sampler

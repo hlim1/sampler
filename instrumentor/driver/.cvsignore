@@ -3,4 +3,4 @@ Makefile.in
 cc1
 main
 sampler-cc
-stamp-link-libs
+stamp-links

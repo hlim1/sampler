@@ -4,14 +4,12 @@ driver_DATA = sampler-specs
 
 EXTRA_DIST = sampler-cc-here $(driver_DATA)
 
+MOSTLYCLEANFILES = libsampler.a libsampler_r.a stamp-links
 
-all-local: include stamp-link-libs
 
-include:
-	$(LN_S) ../../lib $@
+all-local: stamp-links
 
-stamp-link-libs:
+stamp-links:
+	rm -f $(MOSTLYCLEANFILES)
 	$(LN_S) ../../lib/libsampler.a ../../lib/libsampler_r.a .
 	touch $@
-
-MOSTLYCLEANFILES = include libsampler.a libsampler_r.a stamp-link-libs

@@ -60,13 +60,12 @@ AC_MSG_RESULT($PRECOMPUTE_COUNT)
 
 AC_SUBST(schemadir, '${GCONF_SCHEMA_FILE_DIR}')
 AC_SUBST(serversdir, '${libdir}/bonobo/servers')
+AC_SUBST(package_includedir, '${includedir}/sampler')
 
 AC_SUBST(package_libdir, '${libdir}/${PACKAGE}')
-AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
-AC_SUBST(liblibdir, '${package_libdir}/lib')
-AC_SUBST(cillibdir, '${instrumentordir}/cil/lib')
-AC_SUBST(driverdir, '${instrumentordir}/driver')
 AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
+AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
+AC_SUBST(driverdir, '${instrumentordir}/driver')
 AC_SUBST(toolsdir, '${package_libdir}/tools')
 AC_SUBST(traylibdir, '${package_libdir}/tray')
 

@@ -4,12 +4,12 @@ if HAVE_THREAD_STORAGE
 thread_lib = libsampler_r.a
 endif
 
-liblib_LIBRARIES =				\
+lib_LIBRARIES =					\
 	libsampler.a				\
 	$(thread_lib)
 
 
-liblib_HEADERS =				\
+package_include_HEADERS =			\
 	acyclic.h				\
 	countdown.h				\
 	cyclic-size.h				\

@@ -45,7 +45,7 @@ end
     
     
 let instrumentBlock =
-    visitCilBlock (new visitor)
+  visitCilBlock (new visitor)
 
 
 let phase _ =

@@ -14,7 +14,12 @@ static gsl_rng *gen;
 __attribute__((constructor)) static void initialize()
 {
   const char * const environ = getenv("SAMPLER_SPARSITY");
-  if (environ)
+  if (!environ)
+    {
+      fputs("countdown: must give sampling sparsity in $SAMPLER_SPARSITY\n", stderr);
+      exit(2);
+    }
+  else
     {
       char *end;
       const double sparsity = strtod(environ, &end);
@@ -29,19 +34,15 @@ __attribute__((constructor)) static void initialize()
 	  exit(2);
 	}
       else
-	density = 1 / sparsity;
+	{
+	  density = 1 / sparsity;
+	  assert(!generator);
+	  generator = gen = gsl_rng_alloc(gsl_rng_env_setup());
+	  nextEventCountdown = getNextCountdown();
+	}
     }
-  else
-    {
-      fputs("countdown: must give sampling sparsity in $SAMPLER_SPARSITY\n", stderr);
-      exit(2);
-    }
-  
-  assert(!generator);
-  generator = gen = gsl_rng_alloc(gsl_rng_env_setup());
-  nextEventCountdown = getNextCountdown();
 }
-
+  
 
 __attribute__((destructor)) static void shutdown()
 {

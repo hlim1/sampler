@@ -234,6 +234,8 @@ open STDOUT, '>', $instrumentor_output;
 run_stage "$FindBin::Bin/main", @inst, $instrumentor_input;
 open STDOUT, '>&', \*OLDOUT;
 
+-s $instrumentor_output or die "instrumentor produced no output\n";
+
 $$cc1_input_slot = $instrumentor_output;
 run_stage @cc1;
 

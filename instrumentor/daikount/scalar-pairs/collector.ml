@@ -6,7 +6,7 @@ let isInteresting varinfo =
   let hasInterestingName () =
     let regexp =
       let pattern =
-	let names = ["tmp"] in
+	let names = ["tmp"; "__result"; "__s[12]\\(_len\\)?"] in
 	let alpha = "\\(___[0-9]+\\)?" in
 	"\\(" ^ (String.concat "\\|" names) ^ "\\)" ^ alpha ^ "$"
       in

@@ -15,6 +15,7 @@ let rec weighPaths headers =
   and weight node =
     try cache#find node with
       Not_found ->
+	printf "      no cached weight for %i\n" node.sid;
 	let myWeight = Stores.count_stmt node in
 	let childWeights = List.map (subweight node) node.succs in
 	let maxChildWeight = List.fold_left max 0 childWeights in
@@ -26,7 +27,8 @@ let rec weighPaths headers =
   let weights = new MapClass.container headers#size in
 
   headers#iter begin
-    fun (_, destination) ->
+    fun (s, destination) ->
+      printf "    weighing (%i, %i)\n" s.sid destination.sid;
       weights#add destination (weight destination)
   end;
 
@@ -45,7 +47,9 @@ class visitor = object
     
     let cfg = Cfg.cfg func in
     let headers = CollectHeaders.collectHeaders cfg in
+    printf "    collected %i headers\n" headers#size;
     let weights = weighPaths headers in
+    print_endline "    weighed paths";
     
     let printWeight node weight =
       printf "    weight below %i: %i" node.sid weight;

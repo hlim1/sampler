@@ -59,7 +59,8 @@ class virtual basis prefix file =
 		initinfo.init <- Some (SingleInit (mkString buffer#contents));
 		global
 
-	    | GFun ({svar = {vname = "samplerReporter"}; sbody = sbody}, _) as global ->
+	    | GFun ({svar = {vname = "samplerReporter"}; sbody = sbody}, _) as global
+	      when nextId > 0 ->
 		let schemeReporter = FindFunction.find (prefix ^ "Reporter") file in
 		let call = Call (None, Lval (var schemeReporter), [], locUnknown) in
 		sbody.bstmts <- mkStmtOneInstr call :: sbody.bstmts;

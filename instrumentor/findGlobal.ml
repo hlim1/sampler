@@ -6,6 +6,8 @@ exception Missing of string
 
 let find name {globals = globals} =
   let rec findAmong = function
+    | GVarDecl ({vtype = TFun _} as varinfo, _) :: rest ->
+	findAmong rest
     | GVarDecl ({vname = vname} as varinfo, _) :: _
       when vname = name ->
 	varinfo

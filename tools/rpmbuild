@@ -21,9 +21,10 @@ $ENV{CC} = "$FindBin::Bin/../instrumentor/driver/main $scheme";
 
 my %macros = (
 	      __cc => "'%{_sampler_home}/instrumentor/driver/main %{_sampler_scheme}'",
-	      _sampler_home => "$FindBin::Bin/..",
+	      _sampler_tools => $FindBin::Bin,
+	      _sampler_home => "%{_sampler_tools}/..",
 	      _sampler_scheme => $scheme,
-	      _sampler_install_post => '%{_sampler_home}/resolver/find-sampler-info %{_builddir}/%{?buildsubdir}',
+	      _sampler_install_post => '%{_sampler_tools}/find-sampler-info %{_builddir}/%{?buildsubdir}',
 
 	      _sampler_package => <<'EOF',
 %ifnarch noarch\

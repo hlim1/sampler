@@ -4,10 +4,10 @@
 It is an unfortunate fact that essentially all deployed software
 systems have bugs, and that users often encounter these bugs.  The
 resources (measured in time, money, or people) available for making
-improvements are always limited, and the normal case is that just
-through sheer numbers the user community brings far more resources to
-bear on testing a piece of software than the team responsible for
-producing that software.  \aside{Egad, this first paragraph is dense.}
+improvements are always limited.  The normal case is that just through
+sheer numbers the user community brings far more resources to bear on
+testing a piece of software than the team responsible for producing
+that software.
 
 This paper is about making lemonade from lemons.  Given that deployed
 software has problems, perhaps we can speed up the process of
@@ -139,20 +139,28 @@ storage capacity of a central server.  In our experience, compression
 of the data must always be designed into the analysis; we discuss this
 further in Section~\ref{sec:compression}.
 
-\aside{FIX: We have three applications now.  -- Alex}
+\aside{The preceding two paragraphs are somewhat redundant with
+  respect to Section~\ref{sec:compression}.  Do we really need both,
+  or is there some way these could be coalesced?}
 
-Section~\ref{sec:applications} presents two different applications of
-our framework.  In Section~\ref{sec:ccured} we consider how we can
+Section~\ref{sec:applications} presents several different applications
+of our framework.  In Section~\ref{sec:ccured} we consider how we can
 share the cost of program assertions over a large user base through
 sampling.  Each user only executes a fraction of the assertions, and
 thus sees good performance, but in the aggregate bugs due to assertion
 failures are still extremely likely to be detected.  In
-Section~\ref{sec:bc} we show how we can use statistical techniques to
-identify the source of a likely bug from samples taken from a few
-thousand executions.  We sample information on the relationship
-between pairs of integer variables in a program from both successful
-and failing runs and use statistical regression techniques to identify
-those predicates that are highly predictive of program failure.
+Section~\ref{sec:ccrypt} we pursue a bug without the benefit of
+explicit assertions.  Instead, an initial set of broad guesses is
+whittled down over time as sampled executions reveal which behaviors
+do and do not coincide with program failure.  Section~\ref{sec:bc}
+further generalizes our approach to deal with non-deterministic
+failures.  We sample information on the relationship between pairs of
+integer variables in a program from both successful and failing runs
+and use statistical regression techniques to identify those predicates
+that are highly predictive of program failure.
+
+\aside{A very similar road map appears at the top of
+  Section~\ref{sec:applications}.  Are both needed?}
 
 Of course, monitoring of user executions raises some important privacy
 and security concerns.  The problems are both social and technical; a

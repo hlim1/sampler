@@ -30,7 +30,7 @@ foreach my $dir (@ARGV) {
 
     my $basis = getTime "$dir/always-all";
 
-    foreach my $sparsity (100, 10000, 1000000) {
+    foreach my $sparsity (100, 1000, 10000, 1000000) {
 	my $other = getTime "$dir/$sparsity";
 	printf " & %.2f", $basis / $other;
     }

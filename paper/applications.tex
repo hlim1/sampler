@@ -76,10 +76,10 @@ been in amortizing the cost of countdown checks over multiple sites.
 
 \begin{table}
   \centering
-  \begin{tabular}{|l|rrr|}
+  \begin{tabular}{|l|rrrr|}
     \hline
     \rule{0pt}{2.5ex}
-    \textbf{benchmark} & $\mathbf{10^{-2}}$ & $\mathbf{10^{-4}}$ & $\mathbf{10^{-6}}$ \\
+    \textbf{benchmark} & $\mathbf{10^{-2}}$ & $\mathbf{10^{-3}}$ & $\mathbf{10^{-4}}$ & $\mathbf{10^{-6}}$ \\
     \hline\hline
     \input{applications/olden-density}
     \hline
@@ -100,30 +100,31 @@ Linux machine with one gigabyte of RAM.  Reported speedups represent
 the average of four runs; each run used a different pre-generated bank
 of 1024 geometrically distributed random countdowns.
 
-Even at a fairly high sampling density of 1/100, two thirds of our
-benchmarks run faster then they would if all checks were performed.
-Because each single check is so small and fast, this suggests that we
-have largely been successful in amortizing our sampling overhead.  We
-are, in a sense, hiding the sampling overhead in the time that would
-otherwise have been taken to run 99/100 checks.  The most dramatic
-speedups are seen in \texttt{compress} and \texttt{ijpeg}, which run
-roughly 25\% faster with 1/100 sampling.  On the other hand, four of
-the benchmarks do run slower, with \texttt{go} showing the largest
+Even at a fairly high sampling density of 1/100, more than two thirds
+of our benchmarks run faster then they would if all checks were
+performed.  Because each single check is so small and fast, this
+suggests that we have largely been successful in amortizing our
+sampling overhead.  We are, in a sense, hiding the sampling overhead
+in the time that would otherwise have been taken to run 99/100 checks.
+The most dramatic speedups are seen in \texttt{ijpeg} (24\% faster)
+and \texttt{compress} (32\%) faster.  On the other hand, three of the
+benchmarks do run slower, with \texttt{go} showing the largest
 penalty.  In these cases, the time recovered by skipping 99/100 checks
 is not enough to mask the added overhead of the sampling
 infrastructure.
 
-As we reduce the sampling density to 1/10,000, \texttt{power} and
-\texttt{go} reach a balance point of no measurable speedup or
-slowdown, while \texttt{perimeter} remains a stubborn 2\% slower.  The
-\texttt{health} benchmark crosses over and is now slightly faster with
-sampling.  Other benchmarks, which already showed speedups at 1/100,
-show further gains ranging from $<1\%$ for \texttt{tsp} to an
-additional 9\% boost for \texttt{bh} and a 10\% boost for
-\texttt{ijpeg}.  Further reducing the sampling density to 1/1,000,000
-shows little change; we have reached a performance ceiling.  One
-benchmark continues to run slower than standard \ccured; two run at
-the same speed; the remaining ten run 2\% - 35\% faster.
+As we reduce the sampling density to 1/1,000, \texttt{power} reaches a
+balance point of no measurable speedup or slowdown, while
+\texttt{perimeter} remains a stubborn 3\% slower.  The \texttt{health}
+benchmark crosses over and is now slightly faster with sampling.
+Other benchmarks, which already showed speedups at 1/100, either
+retain their position (\texttt{treeadd} and \texttt{tsp}) or show
+additional boots, with \texttt{compress} reaching an overall 38\%
+speedup versus standard \ccured.  Further reducing the sampling
+density to 1/10,000 shows little change, and by the time we reach
+1/1,000,000 it is clear that we have reached a performance ceiling.
+One benchmark continues to run slower than standard \ccured; two run
+at the same speed; the remaining ten run 2\% - 39\% faster.
 
 \aside{I've helped the user interpret the table, but I don't really
   say anything deep about \emph{why} the numbers turn out the way they

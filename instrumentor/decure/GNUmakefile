@@ -1,7 +1,7 @@
 top := ..
 include $(top)/defs.mk
 
-targets := main
+targets := main filterComplete listCandidates
 #subdirs := tests
 libdirs := $(top)
 
@@ -11,13 +11,16 @@ include $(top)/rules.mk
 ########################################################################
 
 
-main: $(libcil) $(top)/harness.$(cma) $(main)
+libharness := $(libcil) $(top)/harness.$(cma)
+
+
+main: $(libharness) $(main)
 	$(link)
 
-filterComplete: $(filterComplete)
+filterComplete: $(libharness) $(filterComplete)
 	$(link)
 
-listCandidates: $(listCandidates)
+listCandidates: $(libharness) $(listCandidates)
 	$(link)
 
 $(top)/%.cmi: $(force)

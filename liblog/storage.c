@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../libcountdown/countdown.h"
+#include "../libcountdown/event.h"
 #include "log.h"
 #include "storage.h"
 

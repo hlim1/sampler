@@ -5,6 +5,30 @@ AM_INIT_AUTOMAKE
 
 ########################################################################
 #
+#  GNOME and GTK+ configuration
+#
+
+PKG_CHECK_MODULES(TRAY_ICON, gtk+-2.0 pygtk-2.0)
+AC_SUBST(TRAY_ICON_CFLAGS)
+AC_SUBST(TRAY_ICON_LIBS)
+
+PKG_CHECK_MODULES(MONITOR, gtk+-2.0 pygtk-2.0 libbonobo-2.0)
+AC_SUBST(MONITOR_CFLAGS)
+AC_SUBST(MONITOR_LIBS)
+
+PKG_CHECK_MODULES(BROKEN, gtk+-2.0 pygtk-2.0 ORBit-2.0 pyorbit-2)
+AC_SUBST(BROKEN_CFLAGS)
+AC_SUBST(BROKEN_LIBS)
+
+PKG_CHECK_MODULES(EGG_TRAY, gtk+-2.0)
+AC_SUBST(EGG_TRAY_CFLAGS)
+AC_SUBST(EGG_TRAY_LIBS)
+
+AM_GCONF_SOURCE_2
+
+
+########################################################################
+#
 #  XML configuration
 #
 
@@ -34,6 +58,9 @@ AC_SUBST(PRECOMPUTE_COUNT, $PRECOMPUTE_COUNT)
 AC_MSG_RESULT($PRECOMPUTE_COUNT)
 
 
+AC_SUBST(schemadir, '${GCONF_SCHEMA_FILE_DIR}')
+AC_SUBST(serversdir, '${libdir}/bonobo/servers')
+
 AC_SUBST(package_libdir, '${libdir}/${PACKAGE}')
 AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
 AC_SUBST(liblibdir, '${package_libdir}/lib')
@@ -41,12 +68,16 @@ AC_SUBST(cillibdir, '${instrumentordir}/cil/lib')
 AC_SUBST(driverdir, '${instrumentordir}/driver')
 AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
 AC_SUBST(toolsdir, '${package_libdir}/tools')
-AC_SUBST(aclocaldir, '${datadir}/aclocal')
+AC_SUBST(traylibdir, '${package_libdir}/tray')
+
 AC_SUBST(package_datadir, '${datadir}/${PACKAGE}')
+AC_SUBST(commondir, '${package_datadir}/common')
+AC_SUBST(first_timedir, '${package_datadir}/first-time')
 AC_SUBST(launcherdir, '${package_datadir}/launcher')
-AC_SUBST(fragmentsdir, '${package_datadir}/fragments')
-AC_SUBST(fragments_samplerdir, '${fragmentsdir}/sampler')
-AC_SUBST(templatesdir, '${package_datadir}/templates')
+AC_SUBST(pixmapsdir, '${package_datadir}/pixmaps')
+AC_SUBST(traydir, '${package_datadir}/tray')
+AC_SUBST(wrapperdir, '${package_datadir}/wrapper')
+
 AC_SUBST(wwwdir, '${localstatedir}/www')
 
 find_driver_fragment=tools/find-driver.pl
@@ -63,7 +94,6 @@ AC_MSG_CHECKING(for CIL in sibling build tree)
 if test -d ../cil; then
   cil_absolute=`cd ../cil; pwd`
   cil_libdir=$cil_absolute/obj/x86_LINUX
-  cil_datadir=$cil_absolute/lib
   AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)
@@ -72,9 +102,8 @@ fi
 if test -z "$cil_libdir"; then
   for cil_prefix in /usr/local /usr; do
     AC_MSG_CHECKING(for CIL in $cil_prefix)
-    if test -d $cil_prefix/lib/cil -a -d $cil_prefix/share/cil; then
+    if test -d $cil_prefix/lib/cil; then
       cil_libdir=$cil_prefix/lib/cil
-      cil_datadir=$cil_prefix/share/cil
       AC_MSG_RESULT(yes)
       break
     else
@@ -88,7 +117,6 @@ if test -z "$cil_libdir"; then
 fi
 
 AC_SUBST(cil_libdir)
-AC_SUBST(cil_datadir)
 
 
 ########################################################################
@@ -146,18 +174,6 @@ AC_MSG_RESULT($cpp0)
 AC_MSG_CHECKING(for cc1)
 AC_SUBST(cc1, `$CC -print-prog-name=cc1`)
 AC_MSG_RESULT($cc1)
-
-PKG_CHECK_MODULES(TRAY_ICON, pygtk-2.0)
-AC_SUBST(TRAY_ICON_CFLAGS)
-AC_SUBST(TRAY_ICON_LIBS)
-
-PKG_CHECK_MODULES(TRAY_SAMPLER, gtk+-2.0 libbonobo-2.0)
-AC_SUBST(TRAY_SAMPLER_CFLAGS)
-AC_SUBST(TRAY_SAMPLER_LIBS)
-
-PKG_CHECK_MODULES(EGG_TRAY, gtk+-2.0)
-AC_SUBST(EGG_TRAY_CFLAGS)
-AC_SUBST(EGG_TRAY_LIBS)
 
 AC_MSG_CHECKING(format string type modifer j)
 AC_COMPILE_IFELSE(
@@ -223,21 +239,6 @@ AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
 
 AC_CONFIG_FILES([
 Makefile
-benchmarks/Makefile
-benchmarks/ccured/Makefile
-benchmarks/ccured/bh/Makefile
-benchmarks/ccured/bisort/Makefile
-benchmarks/ccured/compress/Makefile
-benchmarks/ccured/em3d/Makefile
-benchmarks/ccured/go/Makefile
-benchmarks/ccured/health/Makefile
-benchmarks/ccured/ijpeg/Makefile
-benchmarks/ccured/li/Makefile
-benchmarks/ccured/mst/Makefile
-benchmarks/ccured/perimeter/Makefile
-benchmarks/ccured/power/Makefile
-benchmarks/ccured/treeadd/Makefile
-benchmarks/ccured/tsp/Makefile
 config.m4
 debian/Makefile
 doc/Makefile
@@ -260,11 +261,17 @@ instrumentor/returns/tests/Makefile
 instrumentor/scalar-pairs/Makefile
 instrumentor/scalar-pairs/tests/Makefile
 launcher/Makefile
-launcher/python/Makefile
+launcher/broken/Makefile
+launcher/common/Makefile
+launcher/common/Config.py
+launcher/first-time/Makefile
+launcher/monitor/Makefile
+launcher/pixmaps/Makefile
 launcher/tray/Makefile
-launcher/tray/Config.py
-launcher/tray/libegg/Makefile
-launcher/tray/libegg/tray/Makefile
+launcher/trayicon/Makefile
+launcher/trayicon/libegg/Makefile
+launcher/trayicon/libegg/tray/Makefile
+launcher/wrapper/Makefile
 lib/Makefile
 lib/cyclic-size.h
 package.m4

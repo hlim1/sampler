@@ -15,7 +15,7 @@ tray_PYTHON = $(sort $(wildcard *.py) Paths.py)
 tray_SCRIPTS = tray
 
 EXTRA_DIST =					\
-	$(servers_DATA)				\
+	$(servers_DATA:=.in)			\
 	$(tray_DATA)				\
 	$(filter-out Paths.py, $(tray_PYTHON))	\
 	Paths.py.in				\
@@ -29,9 +29,6 @@ MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 TESTS = $(servers_DATA)
 TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
 
-
-dist-hook:
-	rm $(BUILT_SOURCES:%=$(distdir)/%)
 
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(traydir)

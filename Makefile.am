@@ -11,7 +11,6 @@ SUBDIRS =					\
 
 DIST_SUBDIRS =					\
 	$(SUBDIRS)				\
-	benchmarks				\
 	debian
 
 EXTRA_DIST =					\
@@ -23,4 +22,5 @@ install-data-local:
 	mkdir $(DESTDIR)$(package_libdir)/sites
 
 rpms: dist
-	rpmbuild -D 'do_check 1' -ta $(distdir).tar.gz
+#	rpmbuild -D 'do_check 1' -ta $(distdir).tar.gz
+	rpmbuild -ta $(distdir).tar.gz

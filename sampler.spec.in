@@ -29,6 +29,11 @@ BuildRequires: scrollkeeper
 Summary: Support for applications with sampled instrumentation
 Requires: gdb
 Requires: python >= 2.2
+Requires: gnome-python2
+Requires: gnome-python2-gconf
+Requires: gnome-python2-gtkhtml2
+Requires: pygtk2
+Requires: pygtk2-libglade
 
 %description
 This package supports instrumented applications at run time.  It
@@ -36,58 +41,25 @@ includes tools for launching instrumented applications, collecting
 sample and crash reports, and uploading those reports to the central
 bug isolation server.
 
+%post
+GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/%{name}.schemas
+
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING
+%{_sysconfdir}/gconf/schemas/*
 %dir %{_libdir}/%{name}
 %dir %{_libdir}/%{name}/applications
+%{_libdir}/%{name}/tray
+%{_libdir}/bonobo/servers/*
 %dir %{_datadir}/%{name}
+%{_datadir}/%{name}/common
+%{_datadir}/%{name}/first-time
 %{_datadir}/%{name}/gdb-commands
+%{_datadir}/%{name}/pixmaps
 %{_datadir}/%{name}/print-debug-info
-%dir %{_datadir}/%{name}/launcher
-%{_datadir}/%{name}/launcher/AppConfig.py[co]
-%{_datadir}/%{name}/launcher/BaseMain.py[co]
-%{_datadir}/%{name}/launcher/BaseUserConfig.py[co]
-%{_datadir}/%{name}/launcher/Launcher.py[co]
-%{_datadir}/%{name}/launcher/Main.py[co]
-%{_datadir}/%{name}/launcher/Outcome.py[co]
-%{_datadir}/%{name}/launcher/RedirectHandler.py[co]
-%{_datadir}/%{name}/launcher/ReportsReader.py[co]
-%{_datadir}/%{name}/launcher/Upload.py[co]
-%{_datadir}/%{name}/launcher/Uploader.py[co]
-%{_datadir}/%{name}/launcher/UserConfig.py[co]
-
-
-########################################################################
-#
-#  Package sampler-gnome
-#
-
-%package gnome
-Group: Applications/System
-Summary: Support for GNOME applications with sampled instrumentation
-Requires: %{name}
-Requires: gnome-python2
-Requires: gnome-python2-gconf
-Requires: gnome-python2-gtkhtml2
-Requires: pygtk2
-Requires: pygtk2-libglade
-
-%description gnome
-This package supports instrumented GNOME applications at run time.  It
-contains a modified launcher and uploader that presents GNOME dialogs
-for first-time opt-in and uses GConf to store user preferences.
-
-%files gnome
-%defattr(-,root,root,-)
-%doc AUTHORS COPYING
-%{_datadir}/%{name}/launcher/DialogWrapper.py[co]
-%{_datadir}/%{name}/launcher/FirstTime.py[co]
-%{_datadir}/%{name}/launcher/GnomeMain.py[co]
-%{_datadir}/%{name}/launcher/GnomeUserConfig.py[co]
-%{_datadir}/%{name}/launcher/GtkImporter.py[co]
-%{_datadir}/%{name}/launcher/SamplerConfig.py[co]
-%{_datadir}/%{name}/launcher/ServerMessage.py[co]
+%{_datadir}/%{name}/tray
+%{_datadir}/%{name}/wrapper
 
 
 ########################################################################
@@ -163,6 +135,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
+export GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 %makeinstall
 rm -rf $RPM_BUILD_ROOT/var/scrollkeeper
 

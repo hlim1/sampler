@@ -13,6 +13,8 @@ let main manager =
   in
   
   initCIL ();
+  lineDirectiveStyle := Some LinePreprocessorOutput;
+
   Arg.parse (Options.argspecs ())
     (TestHarness.doOne phases)
     ("Usage:" ^ Sys.executable_name ^ " [<flag> | <source>] ...")

@@ -32,7 +32,8 @@ noinst_LIBRARIES = libtrayicon.a
 
 libtrayicon_a_SOURCES =				\
 	trayicon-wrap.c				\
-	trayicon-module.c
+	trayicon-module.c			\
+	trayicon-module.h
 
 trayicon-wrap.c: %-wrap.c: %.defs %.override
 	pygtk-codegen-2.0			\

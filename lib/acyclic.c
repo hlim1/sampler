@@ -121,12 +121,15 @@ __attribute__((constructor)) static void initialize()
 int getNextEventCountdown()
 {
   if (__builtin_expect(sampling, 1))
-    {
-      double real;
-      const int error = drand48_r(&buffer, &real);
-      if (__builtin_expect(error >= 0, 1))
-	return log(real) * densityScale + 1;
-    }
+    while (1)
+      {
+	double real;
+	const int error = drand48_r(&buffer, &real);
+	if (__builtin_expect(error < 0, 0))
+	  break;
+	if (__builtin_expect(real != 0., 1))
+	  return log(real) * densityScale + 1;
+      }
 
   return INT_MAX;
 }

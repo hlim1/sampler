@@ -4,6 +4,7 @@ else
 SUBDIRS =					\
 	gaim					\
 	gimp					\
+	gnumeric				\
 	evolution
 endif
 

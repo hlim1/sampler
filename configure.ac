@@ -1,4 +1,4 @@
-AC_INIT(sampler,0.2,liblit@cs.berkeley.edu)
+AC_INIT(sampler,0.2.1,liblit@cs.berkeley.edu)
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -234,6 +234,7 @@ applications/Makefile
 applications/evolution/Makefile
 applications/gaim/Makefile
 applications/gimp/Makefile
+applications/gnumeric/Makefile
 applications/nautilus/Makefile
 benchmarks/Makefile
 benchmarks/ccured/Makefile

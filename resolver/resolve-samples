@@ -169,6 +169,6 @@ local ($,, $\) = ("\t", "\n");
 foreach my $signature (sort keys %compilationUnit) {
     my $unit = $compilationUnit{$signature};
     foreach my $site (@{$unit->{sites}}) {
-	print $signature, $unit->{name}, $site->{description}, @{$site->{counters}} if exists $site->{counters};
+	print $unit->{name}, $site->{description}, @{$site->{counters}} if exists $site->{counters};
     }
 }

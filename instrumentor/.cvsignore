@@ -5,6 +5,8 @@
 *.cmxa
 *.di
 *.do
+
 cfg-to-dot
 checker
 dump
+removeDeadCode

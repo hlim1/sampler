@@ -25,6 +25,8 @@ my $cpp0_output_slot;
 my @cc1 = ("@cc1@", '-fpreprocessed');
 my $cc1_input_slot;
 
+my @inst;
+
 
 sub slurp_0 (@) {
     push @cpp0, @_;
@@ -40,8 +42,8 @@ sub slurp_1 ($) {
 my %flag_specs =
     (
      # Sampler Options
-     #'-facyclic' => sub { $countdowns = 'cyclic' },
-     #'-fcyclic' => sub { $countdowns = 'cyclic' },
+     '-fthreads' => sub { },
+     '-fno-threads' => sub { },
 
      # Overall Options
      '-o' => sub { slurp_1 $_; $cpp0_output_slot = \$cpp0[@cpp0 - 1]; },
@@ -93,6 +95,8 @@ while (@ARGV) {
 	    push @cc1, $_;
 	} elsif (/^-fsampler-scheme=(.*)/) {
 	    $scheme = $1;
+	} elsif (/^-f((in|ex)clude-(file|function))=(.*)/) {
+	    push @inst, "--$1", $4
 	} else {
 	    slurp_0 $_;
 	}
@@ -153,7 +157,7 @@ my @instrumentor_output = tempfile $input, '.inst.i';
 
 open OLDOUT, '>&', \*STDOUT;
 open STDOUT, '>&', $instrumentor_output[0];
-run_stage "$FindBin::Bin/../$scheme/main", $instrumentor_input;
+run_stage "$FindBin::Bin/../$scheme/main", @inst, $instrumentor_input;
 open STDOUT, '>&', \*OLDOUT;
 
 $$cc1_input_slot = $instrumentor_output[1];

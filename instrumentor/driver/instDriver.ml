@@ -56,7 +56,7 @@ class virtual c homeDir instrumentor compiler arguments =
       let outputName, outputFd =
 	if saveTemps then
 	  let name = savedTempName input ".i" ".inst.c" in
-	  name, openfile name [O_WRONLY; O_CREAT] 0o666
+	  name, openfile name [O_WRONLY; O_CREAT; O_TRUNC] 0o666
 	else
 	  TempFile.get ".inst.c"
       in

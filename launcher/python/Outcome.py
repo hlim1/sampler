@@ -12,5 +12,5 @@ class Outcome:
         '''Contribute additional headers to report uploads.'''
         return {'seed' : str(self.seed),
                 'sparsity' : str(self.sparsity),
-                'status' : str(self.status),
-                'signal' : str(self.signal)}
+                'exit-status' : str(self.status),
+                'exit-signal' : str(self.signal)}

@@ -4,10 +4,10 @@ import RedirectHandler
 import Upload
 
 
-def __add_headers(upload, prefix, contributor):
+def __add_headers(upload, contributor):
     contribution = contributor.upload_headers()
     for key in contribution:
-        upload.headers['Sampler-' + prefix + '-' + key] = contribution[key]
+        upload.headers['sampler-' + key] = contribution[key]
 
 
 def upload(app, user, outcome, accept):
@@ -25,8 +25,8 @@ def upload(app, user, outcome, accept):
         # collect headers from various contributors
         upload.headers['sampler-uploader-version'] = '0.1'
         upload.headers['accept'] = accept
-        __add_headers(upload, 'application', app)
-        __add_headers(upload, 'outcome', outcome)
+        __add_headers(upload, app)
+        __add_headers(upload, outcome)
 
         # install our special redirect hander
         redirect = RedirectHandler.RedirectHandler()

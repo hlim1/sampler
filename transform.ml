@@ -11,10 +11,11 @@ class visitor = object
     ignore (computeCFGInfo func false);
     
     let forwards, backwards = ClassifyJumps.visit func in
+    let weights = WeighPaths.weigh backwards in
     let instrumented, clones = Duplicate.duplicateBody func in
 
     ForwardJumps.patch clones forwards;
-    BackwardJumps.patch clones backwards;
+    BackwardJumps.patch clones weights backwards;
     InstrumentWrites.visit func instrumented;
     
     let predicate = zero in

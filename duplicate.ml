@@ -29,38 +29,42 @@ class visitor = object
 
 
   method vstmt stmt =
-    if stmt.sid == -1 then
-      SkipChildren
-    else
-      let clone = { stmt with
-		    labels = mapNoCopy cloneLabel stmt.labels;
-		    sid = -1 }
-      in
-      
-      begin
-	match clone.skind with
-	| Goto (dest, location) ->
-	    begin
-	      try
-		let clonedDest = clones#find !dest in
-		let choice = If (zero,
-				 mkBlock [mkStmt (Goto (ref clonedDest, location))],
-				 mkBlock [mkStmt clone.skind],
-				 locUnknown) in
+    let clone = { stmt with
+		  labels = mapNoCopy cloneLabel stmt.labels;
+		  sid = -1 }
+    in
+    
+    let result =
+      match clone.skind with
+      | Goto (dest, location) ->
+	  begin
+	    try
+	      let clonedDest = clones#find !dest in
+	      let choice = If (zero,
+			       mkBlock [mkStmt (Goto (ref clonedDest, location))],
+			       mkBlock [mkStmt clone.skind],
+			       locUnknown) in
+	      let update s =
 		clone.skind <- choice;
-		stmt.skind <- choice
-	      with
-		Not_found ->
-		  let patchSite = ref !dest in
-		  clone.skind <- Goto (patchSite, location);
-		  forwardJumps <- patchSite :: forwardJumps
-	    end
-	      
-	| _ -> ()
-      end;
+		stmt.skind <- choice;
+		s
+	      in
 
-      clones#add stmt clone;
-      ChangeDoChildrenPost (clone, identity)
+	      ChangeDoChildrenPost (clone, update)
+
+	    with
+	      Not_found ->
+		let patchSite = ref !dest in
+		clone.skind <- Goto (patchSite, location);
+		forwardJumps <- patchSite :: forwardJumps;
+		ChangeTo clone
+	  end
+	    
+      | _ -> ChangeDoChildrenPost (clone, identity)
+    in
+    
+    clones#add stmt clone;
+    result
 end
 
 

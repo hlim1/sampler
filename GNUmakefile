@@ -2,7 +2,7 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot harness.$(cma)
-subdirs := heapStores localVars
+subdirs := assignments heapStores libcountdown localVars
 
 include rules.mk
 

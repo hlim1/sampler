@@ -9,52 +9,212 @@ use FindBin;
 ########################################################################
 
 
-sub sys (@) {
-    system @_;
-}
+sub trace_system (@) {
+    my $error = system @_;
 
-
-my $compiler = shift;
-my @cpp = ($compiler);
-my @cc = ($compiler);
-my @source;
-
-my $linking = 1;
-
-
-while ($_ = shift) {
-    if (/^-/) {
-	if (/^-D./) {
-	    push @cpp, $_;
-	} elsif (/^-I./) {
-	    push @cpp, $_;
-	} elsif ($_ eq '-o') {
-	    push @cc, $_, shift;
-	} elsif ($_ eq '-c') {
-	    $linking = 0;
-	    push @cc, $_;
-	} else {
-	    push @cc, $_;
-	}
-    } elsif (/(.*)\.c$/) {
-	push @source, $1;
-	my $base = basename $1;
-	push @cc, '-o', "$base.o", "$base.inst.c";
-    } elsif (/\.([ao]|so)$/) {
-	push @cc, $_;
-    } else {
-	die "unrecognized command-line option: $_\n";
+    if ($error == -1) {
+	die "cannot run $_[0]: $!\n";
+    } elsif ($error) {
+	my $result = $error >> 8 || $error & 127 || -1;
+	exit $result;
     }
 }
 
 
-foreach (@source) {
-    my $base = basename $_;
-    sys @cpp, '-o', "$base.i", '-E', "$_.c";
-    sys "$FindBin::Bin/main $base.i >$base.inst.c";
-    die unless -s "$base.inst.c";
+########################################################################
+
+
+my $gcc = shift;
+my @cpp = ($gcc);
+my @cc = ($gcc);
+my @ld = ($gcc);
+
+my $mode = 'link';
+my @source;
+
+my $outfile;
+my $static;
+
+my @chaff;
+END { unlink @chaff; }
+
+
+########################################################################
+
+
+
+sub push_all (@) {
+    push @cpp, @_;
+    push @cc, @_;
+    push @ld, @_;
 }
 
 
-push @cc, "$FindBin::Bin/liblog/liblog.so" if $linking;
-sys @cc;
+sub handle_1 ($) {
+    push_all @_, shift @ARGV;
+}
+
+
+sub handle_c ($) {
+    push @cc, @_;
+    $mode = 'compile';
+}
+
+
+sub handle_cpp_1 ($) {
+    push @cpp, @_, shift @ARGV;
+}
+
+
+sub handle_E ($) {
+    push @cpp, @_;
+    $mode = 'preprocess';
+}
+
+
+sub handle_o ($) {
+    $outfile = shift @ARGV;
+}
+
+
+sub handle_special ($) {
+    push @cc, @_;
+    $mode = 'special';
+}
+
+
+sub handle_static ($) {
+    &push_all;
+    $static = 1;
+}
+
+
+sub handle_x ($) {
+    &push_all;
+    my $language = shift @ARGV;
+    die if $language ne 'c';
+    push_all $language;
+}
+
+
+my %flag_spec = (
+		 # overall options
+		 'c' => \&handle_c,
+		 'o' => \&handle_o,
+
+		 # C dialect options
+		 'x' => \&handle_x,
+
+		 # warning options
+		 'fsyntax-only' => \&handle_special,
+
+		 # preprocessor options
+		 'include' => \&handle_cpp_1,
+		 'imacros' => \&handle_1,
+		 'idirafter' => \&handle_1,
+		 'iprefix' => \&handle_1,
+		 'iwithprefix' => \&handle_1,
+		 'iwithprefixbefore' => \&handle_1,
+		 'isystem' => \&handle_1,
+		 'isystem-c++' => \&handle_1,
+		 'E' => \&handle_E,
+		 'M' => \&handle_E,
+		 'MM' => \&handle_E,
+		 'MD' => \&handle_E,
+		 'MMD' => \&handle_E,
+
+		 # link options
+		 'static' => \&handle_static,
+		 'Xlinker' => \&handle_1,
+		 'u' => \&handle_1,
+
+		 # target options
+		 'b' => \&handle_1,
+		 'V' => \&handle_1,
+
+		 # submodel options
+		 'G' => \&handle_1,
+		 );
+
+
+########################################################################
+
+
+while ($_ = shift) {
+    if (/^-(.*)/) {
+	
+	my $key = $1;
+	my $handler = $flag_spec{$key};
+
+	if ($handler) {
+	    &{$handler}($_);
+	    next;
+	}
+
+	# debugging options
+	if ($key =~ /^print-/) {
+	    handle_special $_;
+	    next;
+	}
+
+	# link options
+	if ($key =~ /^l/) {
+	    push @ld, $_;
+	    next;
+	}
+
+	# everything else
+	push_all $_;
+
+    } elsif (/(.*)\.c$/) {
+	push @source, $_;
+	my $base = basename $1;
+	push @ld, "$base.inst.c";
+	
+    } elsif (/\.([ao]|so)$/) {
+	push @ld, $_;
+	
+    } else {
+	die "unrecognized command-line argument: $_\n";
+    }
+}
+
+
+if ($mode eq 'special') {
+    trace_system @cc;
+
+} elsif ($mode eq 'preprocess') {
+    foreach (@source) {
+	my @out = ('-o', $outfile) if $outfile;
+	trace_system @cpp, @out, $_;
+    }
+    
+} else {
+
+    my $outdir = $outfile ? dirname $outfile : '.';
+
+    foreach (@source) {
+	my $base = "$outdir/" . basename $_, '.c';
+	my $i = "$base.i";
+	my $inst = "$base.inst.c";
+	
+	push @chaff, $i;
+	trace_system @cpp, '-o', $i, '-E', $_;
+
+	push @chaff, $inst;
+	trace_system "$FindBin::Bin/main $i >$inst";
+	die unless -s $inst;
+
+	if ($mode eq 'compile') {
+	    my $o = $outfile || "$base.o";
+	    trace_system @cc, '-o', $o, $inst;
+	}
+    }
+
+    if ($mode eq 'link') {
+	my @out = ('-o', $outfile) if $outfile;
+	my $suffix = $static ? 'a' : 'so';
+	push @ld, "$FindBin::Bin/liblog/liblog.$suffix";
+	trace_system @ld, @out;
+    }
+}

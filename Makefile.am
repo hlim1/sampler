@@ -6,7 +6,8 @@ SUBDIRS =					\
 	instrumentor				\
 	launcher				\
 	libcountdown				\
-	libreport
+	libreport				\
+	tools
 
 DIST_SUBDIRS =					\
 	$(SUBDIRS)				\
@@ -16,8 +17,7 @@ DIST_SUBDIRS =					\
 
 EXTRA_DIST =					\
 	$(PACKAGE).spec				\
-	package.m4				\
-	tools
+	package.m4
 
 rpm: dist
 	rpmbuild -tb $(distdir).tar.gz

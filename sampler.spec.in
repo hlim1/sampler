@@ -6,12 +6,11 @@
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
 Release: 1
-License: BSD style
+License: MIT style
 Group: Applications/System
 Packager: Ben Liblit <@PACKAGE_BUGREPORT@>
 URL: http://www.cs.berkeley.edu/~liblit/bug-isolation/
 Source0: %{name}-%{version}.tar.gz
-BuildArchitectures: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: binutils
 BuildRequires: gcc
@@ -92,6 +91,30 @@ for first-time opt-in and uses GConf to store user preferences.
 %{_datadir}/%{name}/launcher/GtkImporter.py[co]
 %{_datadir}/%{name}/launcher/SamplerConfig.py[co]
 %{_datadir}/%{name}/launcher/ServerMessage.py[co]
+
+
+########################################################################
+#
+#  Package sampler-devel
+#
+
+%package devel
+Group: Development/Tools
+Summary: Tools for building applications with sampled instrumentation
+Requires: binutils
+Requires: gcc
+Requires: perl >= 5.8
+
+%description devel
+This package provides tools for building applications with sampled
+instrumentation.  It includes an instrumenting C compiler and various
+simple scripts for collecting and decoding sampled instrumentation
+reports.
+
+%files devel
+%defattr(-,root,root,-)
+%doc AUTHORS COPYING
+%{_libdir}/%{name}
 
 
 ########################################################################

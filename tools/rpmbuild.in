@@ -11,7 +11,8 @@ use FindBin;
 my $scheme = shift
     or die "Usage: $0 <scheme> <rpmbuild flags> ...\n";
 
-$ENV{CC} = "$FindBin::Bin/../instrumentor/driver/main $scheme";
+@find_driver_fragment@
+$ENV{CC} = "$driver $scheme";
 
 
 ########################################################################

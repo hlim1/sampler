@@ -37,8 +37,13 @@ AC_SUBST(BUILD_HOST, `hostname`)
 AC_MSG_RESULT($BUILD_HOST)
 
 
+AC_SUBST(package_libdir, '$(libdir)/$(PACKAGE)')
+AC_SUBST(toolsdir, '$(package_libdir)/tools')
 AC_SUBST(package_datadir, '$(datadir)/$(PACKAGE)')
 AC_SUBST(launcherdir, '$(package_datadir)/launcher')
+
+find_driver_fragment=tools/find-driver.pl
+AC_SUBST_FILE(find_driver_fragment)
 
 
 ########################################################################
@@ -214,6 +219,9 @@ libthreads/Makefile
 libtuples/Makefile
 package.m4
 sampler.spec
+tools/Makefile
+tools/debuild
+tools/rpmbuild
 ])
 
 AC_OUTPUT

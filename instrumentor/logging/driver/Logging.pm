@@ -18,23 +18,25 @@ sub new {
     my $class = ref($proto) || $proto;
     my $self = $class->SUPER::new(@_);
 
-    $self->{instrumentor} = [$instrumentor];
+    $self->{instrumentor} = $instrumentor;
 
     return $self;
 }
 
 
-sub setPaths {
+sub root {
+    my $self = shift;
+    return "$self->{home}/../..";
+}
+
+
+sub setDefaultArguments {
     my $self = shift;
 
-    my $root = '../../..';
-    my $liblog = "$root/liblog";
-    my $libcountdown = "$root/libcountdown";
+    $self->SUPER::setDefaultArguments;
 
-    $self->{root} = "$FindBin::Bin/../../..";
-    $self->{libdir} = "$daikon/libdaikon";
-
-    $self->SUPER::setPaths(@_);
+    $self->{home} = "$FindBin::Bin/..";
+    $self->{liblog} = $self->root . '/liblog';
 }
 
 
@@ -42,8 +44,8 @@ sub preprocess_before_cil {
     my $self = shift;
     my @ppargs = @{(pop)};
 
-    push @ppargs, ('-include', "$liblog/log.h",
-		   '-include', "$liblog/primitive.h");
+    push @ppargs, ('-include', "$self->{liblog}/log.h",
+		   '-include', "$self->{liblog}/primitive.h");
     
     $self->SUPER::preprocess_before_cil(@_, \@ppargs);
 }
@@ -60,12 +62,9 @@ sub applyCil {
 }
 
 
-sub link_after_cil {
+sub extraLibs {
     my $self = shift;
-    my @ldargs = @{(pop)};
-
-    push @ldargs, ("-L$liblog", '-llog-syscall', '-llog-storage', '-llog-syscall',
-		   "-L$libcountdown", '-lcyclic');
-
-    $self->SUPER::link_after_cil(@_, \@ldargs);
+    my @extras = $self->SUPER::extraLibs;
+    push @extras, "-L$self->{liblog}", '-llog-syscall', '-llog-storage', '-llog-syscall';
+    return @extras;
 }

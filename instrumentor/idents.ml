@@ -1,7 +1,7 @@
 open Cil
 
 
-let idents = ref []
+let idents = ref ["Version", fun () -> Version.version]
 
 
 let register ident =

@@ -1,1 +1,1 @@
-val require : unit
+val version : string

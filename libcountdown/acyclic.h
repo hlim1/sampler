@@ -10,7 +10,7 @@ static inline unsigned getNextEventCountdown()
   extern void *generator;
   extern unsigned gsl_ran_geometric();
 
-  return gsl_ran_geometric(generator, density);
+  return generator ? gsl_ran_geometric(generator, density) : (unsigned) -1;
 }
 
 

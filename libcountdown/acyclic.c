@@ -15,12 +15,8 @@ static gsl_rng *gen;
 __attribute__((constructor)) static void initialize()
 {
   const char * const environ = getenv("SAMPLER_SPARSITY");
-  if (!environ)
-    {
-      fputs("countdown/acyclic: must give sampling sparsity in $SAMPLER_SPARSITY\n", stderr);
-      exit(2);
-    }
-  else
+
+  if (environ)
     {
       char *end;
       const double sparsity = strtod(environ, &end);

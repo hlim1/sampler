@@ -391,26 +391,18 @@
 	<term><option>--no-threads</option></term>
 	<listitem>
 	  <para>Generate code suitable for multi-threaded execution.
-	  Defaults to generating single-threaded code.
-	  Multi-threaded code is also generated if any of the
-	  following standard <application>GCC</application> flags
-	  are observed on the command line:</para>
+	  Defaults to generating single-threaded code.  Multi-threaded
+	  code is also generated if the standard
+	  <application>GCC</application> <option>-pthread</option>
+	  flag is observed on the command line.</para>
 
-	  <itemizedlist spacing="compact" mark="none">
-	    <listitem><para><option>-pthread</option></para></listitem>
-	    <listitem><para><option>-D_REENTRANT</option></para></listitem>
-	    <listitem><para><option>-D_THREAD_SAFE</option></para></listitem>
-	    <listitem><para><option>-lpthread</option></para></listitem>
-	  </itemizedlist>
-
-	  <para>If the instrumentor is operating in multithreaded
-	  mode, it must do so when compiling as well as when
-	  linking.  Threaded and non-threaded code cannot be mixed
-	  safely, and will yield an error at link time.  For this
-	  reason, the <option>-pthread</option> flag is preferred:
-	  it can be used both when compiling and when linking and
-	  adds the other necessary macro definitions and link
-	  libraries automatically.</para>
+	  <para>If both <option>--no-threads</option> and
+	  <option>-pthread</option> are given, then the former
+	  overrides the later regardless of the order in which they
+	  appear.  This can be useful to override automatically
+	  generated <application>GCC</application> command lines which
+	  use <option>-pthread</option> but which do not actually need
+	  thread support.</para>
 
 	  <para>Multithreaded code requires a native C compiler with
 	  support for thread-local storage:

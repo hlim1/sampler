@@ -3,7 +3,9 @@
 -fsave-site-info=%g.sites
 
 *cpp_threads:
-%{fno-threads:-include sampler/no-threads.h} %{fthreads:-include sampler/threads.h} %{!fno-threads:%{!fthreads:%{!pthread:-include sampler/no-threads.h} %{pthread:-include sampler/threads.h}}}
+%{fno-threads:-include sampler/no-threads.h} \
+%{fthreads:-include sampler/threads.h} \
+%{!fno-threads:%{!fthreads:%{!pthread:-include sampler/no-threads.h} %{pthread:-include sampler/threads.h}}}
 
 *cpp_cyclic:
 %{!fcyclic:-include sampler/acyclic.h} %{fcyclic:-include sampler/acyclic.h}
@@ -22,6 +24,7 @@
 
 *cc1:
 + %{save-temps} %{v} \
+%{!fno-threads:%{!fthreads:%{pthread:-fthreads}}} \
 %(embedding)
 
 *asm_final:

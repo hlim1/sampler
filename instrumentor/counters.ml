@@ -16,7 +16,7 @@ class manager name file =
       let counter = (Var counters, Index (integer nextId, selector)) in
       nextId <- nextId + 1;
       let result = mkStmtOneInstr (self#bump counter location) in
-      Sites.registry#add func result;
+      Sites.registry#add func (Site.build result);
       siteInfos#push (func, location, description, result);
       result
 

@@ -1,4 +1,5 @@
 open Cil
+open Weight
 
 
 let specializeEmptyRegions =
@@ -32,8 +33,9 @@ class countdown file =
     let local = var (Locals.makeTempVar fundec ~name:"localEventCountdown" uintType) in
 
     object (self)
-      method decrement location =
-	Instr [Set (local, increm (Lval local) (-1), location)]
+      method decrement location scale =
+	Printf.eprintf "decrement scale: %d\n" scale;
+	Instr [Set (local, increm (Lval local) (- scale), location)]
 
       method export location =
 	Set (global, (Lval local), location)
@@ -46,11 +48,11 @@ class countdown file =
 	assert (Labels.hasGotoLabel instrumented);
 	let gotoOriginal = Goto (ref original, location) in
 	let gotoInstrumented = Goto (ref instrumented, location) in
-	match weight with
+	match weight.count with
 	| 0 when !specializeEmptyRegions -> gotoOriginal
 	| 1 when !specializeSingletonRegions -> gotoInstrumented
 	| _ ->
-	    let within = kinteger IUInt weight in
+	    let within = kinteger IUInt weight.threshold in
 	    let predicate = BinOp (Gt, Lval local, within, intType) in
 	    let choice = If (predicate,
 			     mkBlock [mkStmt gotoOriginal],
@@ -58,11 +60,11 @@ class countdown file =
 			     location) in
 	    choice
 
-      method decrementAndCheckZero skind =
+      method decrementAndCheckZero skind scale =
 	let location = get_stmtLoc skind in
 	let callReset = mkStmtOneInstr (Call (Some local, reset, [], location)) in
-	Block (mkBlock [ mkStmt (self#decrement location);
-			 mkStmt (If (BinOp (Eq, Lval local, zero, intType),
+	Block (mkBlock [ mkStmt (self#decrement location scale);
+			 mkStmt (If (BinOp (Le, Lval local, zero, intType),
 				     mkBlock [ mkStmt skind; callReset ],
 				     mkBlock [],
 				     location)) ])

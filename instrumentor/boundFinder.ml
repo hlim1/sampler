@@ -95,7 +95,7 @@ class visitor global func =
 	let site = mkStmt (Block (mkBlock [mkStmt (updateBound min (Lval newLeft) Min location);
 					   mkStmt (updateBound max (Lval newLeft) Max location)]))
 	in
-	Sites.registry#add func site;
+	Sites.registry#add func (Site.build site);
 	BoundManager.register
 	  (min, max)
 	  (func, location, d_columns [d_lval () left; text host; text offset], site);

@@ -168,6 +168,11 @@ let build func =
 
 	(* block body falls through to statement after block *)
 	scanBlock context body
+
+    | TryFinally _
+    | TryExcept _ ->
+	ignore (bug "cannot compute control flow for structured exceptions");
+	failwith "internal error"
   in
 
   (* away we go! *)

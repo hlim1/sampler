@@ -129,6 +129,8 @@ while (@ARGV) {
 	    push @cc1, $_;
 	} elsif (/^-fsampler-scheme=(.*)/) {
 	    push @inst, "--scheme-$1";
+	} elsif (/^-fsampler-scales=(.*)/) {
+	    push @inst, '--load-scales', $1;
 	} elsif (/^-f((in|ex)clude-(file|function))=(.*)/) {
 	    push @inst, "--$1", $4;
 	} elsif (/^-fsave-cfg=(.+)/) {

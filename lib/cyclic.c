@@ -15,12 +15,12 @@
 #include "lock.h"
 
 
-#define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(unsigned))
+#define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(int))
 
 
 const void * const SAMPLER_REENTRANT(providesLibCyclic);
 
-const unsigned *nextEventPrecomputed = 0;
+const int *nextEventPrecomputed = 0;
 SAMPLER_THREAD_LOCAL unsigned nextEventSlot = 0;
 
 unsigned cyclicInitCount;
@@ -106,7 +106,7 @@ __attribute__((constructor)) static void initialize()
 	  }
 
 	atexit(finalize);
-	nextEventPrecomputed = (const unsigned *) mapping;
+	nextEventPrecomputed = (const int *) mapping;
 	initialize_thread();
       }
   });

@@ -1,29 +1,46 @@
 open Cil
+open Site
+open Weight
 
 
-class weightsMap = [int] StmtIdHash.c 0
+class weightsMap = [t] StmtIdHash.c 0
 
 
-let rec weigh ~sites ~headers =
+let weigh func sites headers =
   
-  let siteSet = new StmtIdHash.c 0 in
-  List.iter (fun site -> siteSet#add site ()) sites;
+  let siteMap = new StmtIdHash.c 0 in
+  List.iter
+    (fun site ->
+      siteMap#add site.statement site.scale)
+    sites;
 
   let cache = new weightsMap in
 
   let rec subweight succ =
     if List.mem succ headers then
-      0
+      weightless
     else
       weight succ
 
   and weight node =
     try cache#find node with
       Not_found ->
-	let myWeight = if siteSet#mem node then 1 else 0 in
-	let maximize best succ = max best (subweight succ) in
-	let maxChildWeight = List.fold_left maximize 0 node.succs in
-	let total = myWeight + maxChildWeight in
+	let me =
+	  try
+	    let weight = { threshold = siteMap#find node; count = 1; } in
+	    ignore (Pretty.eprintf "%a: site with weight %d, id %d, func %s\n"
+		      d_loc (get_stmtLoc node.skind)
+		      weight.threshold
+		      node.sid
+		      func.svar.vname);
+	    weight
+	  with Not_found -> weightless
+	in
+	let children =
+	  let maximize best succ = max best (subweight succ) in
+	  List.fold_left maximize weightless node.succs
+	in
+	let total = sum me children in
 	cache#add node total;
 	total
   in

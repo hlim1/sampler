@@ -7,7 +7,7 @@
 #pragma sampler_assume_weightless("getNextEventCountdown")
 #endif
 
-unsigned getNextEventCountdown();
+int getNextEventCountdown();
 
 
 #endif /* !INCLUDE_libcountdown_acyclic_h */

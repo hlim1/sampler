@@ -2,6 +2,7 @@ open Calls
 open Cil
 open ClassifyJumps
 open FuncInfo
+open Weight
 
 
 let removeDeadCode = 
@@ -43,7 +44,7 @@ let visit file isWeightyCallee countdown =
 	let callJumps = WeightyCalls.jumpify afterCalls in
 	let backJumps = jumps.backward @ callJumps in
 	let headers = entry :: backJumps in
-	let weights = WeighPaths.weigh sites headers in
+	let weights = WeighPaths.weigh func sites headers in
 	
 	let original, instrumented, clones = Duplicate.duplicateBody func in
 	
@@ -59,11 +60,11 @@ let visit file isWeightyCallee countdown =
 
 	    let headerTotal, headerCount =
 	      weights#fold
-		(fun _ weight (total, count) ->
-		  if weight == 0 then
+		(fun _ { threshold = threshold } (total, count) ->
+		  if threshold == 0 then
 		    (total, count)
 		  else
-		    (total + weight, count + 1))
+		    (total + threshold, count + 1))
 		(0, 0)
 	    in
 	    Printf.eprintf "stats: transform: %s has sites: %d sites, %d headers, %d total header weights\n"

@@ -118,7 +118,7 @@ __attribute__((constructor)) static void initialize()
 /**********************************************************************/
 
 
-unsigned getNextEventCountdown()
+int getNextEventCountdown()
 {
   if (__builtin_expect(sampling, 1))
     {
@@ -128,5 +128,5 @@ unsigned getNextEventCountdown()
 	return log(real) * densityScale + 1;
     }
 
-  return UINT_MAX;
+  return INT_MAX;
 }

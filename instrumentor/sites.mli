@@ -1,7 +1,9 @@
 open Cil
 
 
-val registry : stmt FunctionNameHash.c
+val registry : Site.t FunctionNameHash.c
 
 
-val patch : ClonesMap.clonesMap -> Countdown.countdown -> stmt -> unit
+val setScales : unit -> unit
+
+val patch : ClonesMap.clonesMap -> Countdown.countdown -> Site.t -> unit

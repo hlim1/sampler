@@ -2,11 +2,10 @@ open Cil
 
 
 let saveSiteInfo =
-  let value = ref "" in
-  Options.push ("--save-site-info",
-		Arg.String ((:=) value),
-		"save instrumentation site info in the named file");
-  value
+  Options.registerString
+    ~flag:"save-site-info"
+    ~desc:"save instrumentation site info in the named file"
+    ~ident:""
 
 
 let visit schemes digest =

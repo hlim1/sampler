@@ -1,6 +1,6 @@
 open Cil
 
 
-class weightsMap : [int] StmtIdHash.c
+class weightsMap : [Weight.t] StmtIdHash.c
 
-val weigh : sites:stmt list -> headers:stmt list -> weightsMap
+val weigh : fundec -> Site.t list -> stmt list -> weightsMap

@@ -2,19 +2,17 @@ open Cil
 
 
 let saveCFG =
-  let value = ref "" in
-  Options.push ("--save-cfg",
-		Arg.String ((:=) value),
-		"save control flow graph in the named file");
-  value
+  Options.registerString
+    ~flag:"save-cfg"
+    ~desc:"save control flow graph in the named file"
+    ~ident:""
 
 
 let dumpBase =
-  let value = ref "" in
-  Options.push ("--dumpbase",
-		Arg.String ((:=) value),
-		"original source file name");
-  value
+  Options.registerString
+    ~flag:"dumpbase"
+    ~desc:"original source file name"
+    ~ident:""
 
 
 class visitor file digest channel =

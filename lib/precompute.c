@@ -6,7 +6,7 @@
 #include "cyclic-size.h"
 
 
-unsigned nextEventCountdown;
+int nextEventCountdown;
 
 
 static void writeCountdown(FILE *outfile)

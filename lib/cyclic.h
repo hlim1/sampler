@@ -9,13 +9,13 @@
 #pragma sampler_exclude_function("getNextEventCountdown")
 #endif
 
-static inline unsigned getNextEventCountdown()
+static inline int getNextEventCountdown()
 {
-  extern const unsigned *nextEventPrecomputed;
+  extern const int *nextEventPrecomputed;
   extern unsigned nextEventSlot;
 
   unsigned slot = nextEventSlot;
-  const unsigned result = nextEventPrecomputed[slot];
+  const int result = nextEventPrecomputed[slot];
   slot = (slot + 1) % PRECOMPUTE_COUNT;
   nextEventSlot = slot;
   return result;

@@ -15,7 +15,7 @@ int main()
 
   while (1)
     {
-      if (nextEventCountdown == UINT_MAX) ++saturations;
+      if (nextEventCountdown == INT_MAX) ++saturations;
       assert(total + nextEventCountdown > total);
       total += nextEventCountdown;
       ++trials;

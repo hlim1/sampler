@@ -41,6 +41,7 @@ let phase =
       begin
 	let tester = Weighty.collect file in
 	let countdown = new Countdown.countdown file in
+	time "  loading site scales" Sites.setScales;
 	time "  applying sampling transformation"
 	  (fun () -> Transform.visit file tester countdown)
       end

@@ -21,4 +21,12 @@ let registerBoolean ~flag ~desc ~ident ~default =
   storage
 
 
+let registerString ~flag ~desc ~ident =
+  let storage = ref "" in
+  push ("--" ^ flag, String ((:=) storage), desc);
+  if ident <> "" then
+    Idents.register (ident, fun () -> !storage);
+  storage
+
+
 let argspecs () = !args

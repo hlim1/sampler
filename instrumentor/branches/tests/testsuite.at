@@ -21,3 +21,14 @@ SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./modular
 $abs_top_srcdir/resolver/resolve-samples modular <trace
 , 0, expout)
 AT_CLEANUP
+
+AT_SETUP(threads)
+AT_CHECK(
+set -e
+cp $abs_srcdir/threads.c .
+cp $abs_srcdir/threads.expected expout
+$abs_top_builddir/instrumentor/driver/main branches -pthread -o threads threads.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./threads >/dev/null
+$abs_top_srcdir/resolver/resolve-samples threads <trace
+, 0, expout)
+AT_CLEANUP

@@ -1,5 +1,15 @@
 AT_INIT(nothing)
 
+AT_SETUP(pipes)
+AT_CHECK([
+set -e
+cp $abs_srcdir/pipes.c .
+cc="$abs_top_builddir/instrumentor/driver/sampler-cc-here"
+$cc -pipe -c pipes.c
+$abs_top_srcdir/tools/extract-section .debug_sampler_cfg pipes.o >/dev/null
+])
+AT_CLEANUP
+
 AT_SETUP(last-switch)
 AT_CHECK([
 set -e

@@ -29,12 +29,8 @@ while (@ARGV) {
 	$verbose = 1;
     } elsif (/^-fsave-cfg=(.+)/) {
 	$saved_cfg = $1;
-	push @objcopy, '--add-section', ".debug_sampler_cfg=$1"
-	    unless -z $1;
     } elsif (/^-fsave-site-info=(.+)/) {
 	$saved_site_info = $1;
-	push @objcopy, '--add-section', ".debug_site_info=$1"
-	    unless -z $1;
     } else {
 	push @as, $_;
     }
@@ -53,8 +49,9 @@ sub run_stage (@) {
 
 run_stage @as;
 
-run_stage 'objcopy', @objcopy, $outfile
-    if @objcopy && defined $outfile;
+push @objcopy, '--add-section', ".debug_sampler_cfg=$saved_cfg" unless -z $saved_cfg;
+push @objcopy, '--add-section', ".debug_site_info=$saved_site_info" unless -z $saved_site_info;
+run_stage 'objcopy', @objcopy, $outfile if @objcopy && defined $outfile;
 
 
 exit 0;

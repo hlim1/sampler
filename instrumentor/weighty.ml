@@ -168,4 +168,23 @@ let collect file (fileInfo : FileInfo.container) =
     iterGlobals file iterator
   in
   Fixpoint.compute refine;
-  isWeightyLval hasDefinition hasPragmaWeightless weighty
+
+  let tester = isWeightyLval hasDefinition hasPragmaWeightless weighty in
+
+  if !Statistics.showStats then
+    begin
+      let numFuncs = ref 0 in
+      let numWeightless = ref 0 in
+      let iterator = function
+	| GFun (func, _) ->
+	    incr numFuncs;
+	    if not (tester (var func.svar)) then
+	      incr numWeightless
+	| _ ->
+	    ()
+      in
+      iterGlobals file iterator;
+      Printf.eprintf "stats: weightless: %d functions, %d weightless\n" !numFuncs !numWeightless
+    end;
+
+  tester

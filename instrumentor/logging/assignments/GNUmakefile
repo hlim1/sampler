@@ -4,7 +4,6 @@ include $(top)/defs.mk
 targets := main
 subdirs := tests
 libdirs := .. $(top)
-syslibs := str.$(cma)
 
 include $(top)/rules.mk
 
@@ -12,16 +11,7 @@ include $(top)/rules.mk
 ########################################################################
 
 
-findOutputs = findOutputs
-log = $(findOutputs) log
-transform = $(log) transform
-
-
-########################################################################
-
-
-main := $(transform) %
-main: %: $(libcil) $(top)/harness.$(cma) ../logging.$(cma) $(addsuffix .$(cmo), $(main))
+main: %: $(libcil) $(top)/harness.$(cma) ../logging.$(cma) $(main)
 	$(link)
 
 $(top)/%.cma: force

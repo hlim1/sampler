@@ -1,7 +1,7 @@
 top := ..
 include $(top)/defs.mk
 
-targets := main
+targets := main driver.$(cma)
 
 include $(top)/rules.mk
 
@@ -9,16 +9,10 @@ include $(top)/rules.mk
 ########################################################################
 
 
-driver = driver
-gccDriver = $(driver) $(gccInput) $(prefix) gccDriver
-instDriver = $(gccDriver) $(tempFile) instDriver
-prefix = prefix
-tempFile = tempFile
+driver.$(cma): libs := str.$(cma) unix.$(cma)
+driver.$(cma): $(instDriver)
+	$(archive)
 
-
-########################################################################
-
-
-main = $(instDriver) %
-main: %: $(addsuffix .$(cmo), $(main))
+main = driver.$(cma) main.cmo
+main: $(main)
 	$(link)

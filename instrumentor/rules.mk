@@ -8,8 +8,8 @@ compiler := $(ocamlc) $(ocamlflags)
 
 depend = ocamldep $(includes) $< | $(fixdeps) >$@
 compile = $(compiler) $(includes) -c $<
-archive = $(compiler) -a -o $@ $^
-link = $(compiler) -o $@ $(syslibs) $^
+archive = $(compiler) -a -o $@ $(libs) $^
+link = $(compiler) -o $@ $(libs) $^
 
 recurse = $(MAKE) -C $(@D) $(@F)
 
@@ -18,7 +18,6 @@ recurse = $(MAKE) -C $(@D) $(@F)
 
 
 libcil := $(cilobjdir)/cil.$(cma)
-syslibs += unix.$(cma) str.$(cma)
 
 impls := $(basename $(wildcard *.ml))
 ifaces := $(basename $(wildcard *.mli))
@@ -98,7 +97,9 @@ browse: force
 ########################################################################
 
 
+ifdef impls
 -include $(impls:=.do)
+endif
 
 ifdef ifaces
 -include $(ifaces:=.di)

@@ -2,6 +2,16 @@
 
 use strict;
 
+
+sub print_interface ($@) {
+    my $target = shift;
+    # interface recompile
+    print "$target.cmi:";
+    print " $_.cmi" foreach @_;
+    print "\n";
+}
+
+
 while (<>) {
     my $line;
     my $long;
@@ -15,19 +25,32 @@ while (<>) {
 
     $_ = $line;
     my @F = split;
-
-    my @deps = @F;
-    s/\.cm[ox]$/\.cmi/ foreach @deps[1 .. $#F];
-    print "@deps\n";
     
-    print "@deps\n" if $deps[0] =~ s/(.*)\.cmo:$/$1.cmi:/ && ! -e "$1.mli";
+    my $target = shift @F;
+    next unless $target =~ s/(.*)\.cm([io]):/$1/;
+    my $implementation = $2 eq 'o';
+    (s/^(.*)\.cm[io]$/$1/ or die) foreach @F;
 
-    if ($F[0] =~ s/\.cm([io]):$/.d$1:/) {
-	foreach (@F[1 .. $#F]) {
-	    s/\.cmi$/.mli/;
-	    s/\.cmo$/.ml/;
+    if ($implementation) {
+	# implementation recompile
+	print "${target}.cmo:";
+	print " $_.cmi" foreach @F;
+	print "\n";
+
+	if (-e "$target.mli") {
+	    pop @F;
+	} else {
+	    # implicit interface recompile
+	    print_interface $target, @F;
 	}
-	print "@F\n";
-	print "@F[1 .. $#F]:\n";
+
+	# implementation link order
+	my $clean = $target;
+	print "$target =";
+	print " \$($_)" foreach @F;
+	print " $target.cmo\n";
+    } else {
+	# explicit interface recompile
+	print_interface $target, @F;
     }
 }

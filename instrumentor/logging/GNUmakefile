@@ -11,18 +11,8 @@ include $(top)/rules.mk
 ########################################################################
 
 
-logCollector = $(logger) $(outputSet) logCollector
-dissect = $(outputSet) dissect
-logger = $(outputSet) logger
-outputHash = outputHash
-outputSet = $(outputHash) outputSet
-
-
-########################################################################
-
-
 logging := $(dissect) $(logCollector)
-logging.$(cma): $(libcil) $(top)/harness.$(cma) $(addsuffix .$(cmo), $(logging))
+logging.$(cma): $(libcil) $(top)/harness.$(cma) $(logging)
 	$(archive)
 
 $(top)/%.cma: force

@@ -10,15 +10,7 @@ include $(top)/rules.mk
 ########################################################################
 
 
-find = find
-transform = $(find) transform
-
-
-########################################################################
-
-
-main := $(transform) %
-main: %: $(libcil) $(top)/harness.$(cma) $(addsuffix .$(cmo), $(main))
+main: %: $(libcil) $(top)/harness.$(cma) $(main)
 	$(link)
 
 $(top)/%.cma: force

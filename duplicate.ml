@@ -9,7 +9,7 @@ let cloneLabel = function
 	
 	
 class visitor = object(self)
-  inherit CurrentFunctionVisitor.visitor
+  inherit FunctionBodyVisitor.visitor
 
   method vfunc func =
     let predicate = one in
@@ -24,10 +24,8 @@ class visitor = object(self)
     let replacements = mapNoCopy cloneLabel originals in
     if replacements == originals then
       SkipChildren
-	else
+    else
       ChangeTo { stmt with labels = replacements }
-
-  method vinst = Instrument.vinst !currentFunction
 end
 
 

@@ -1,3 +1,4 @@
 open Cil
 
-class visitor : cilVisitor
+
+val visit : fundec -> stmt list

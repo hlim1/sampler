@@ -8,10 +8,11 @@ class visitor = object
   method vfunc func =
     prepareCFG func;
     RemoveLoops.visit func;
+    let calls = SplitAfterCalls.visit func in
     ignore (computeCFGInfo func false);
 
     let forwards, backwards = ClassifyJumps.visit func in
-    let headers = FunctionEntry.find func :: backwards in
+    let headers = FunctionEntry.find func :: calls @ backwards in
     let weights = WeighPaths.weigh headers in
     let instrumented, clones = Duplicate.duplicateBody func in
 

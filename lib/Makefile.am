@@ -43,6 +43,7 @@ package_include_HEADERS =			\
 	scalar-pairs-unit.h			\
 	signature.h				\
 	threads.h				\
+	timestamps.h				\
 	tuple-1.h				\
 	tuple-2.h				\
 	tuple-3.h				\

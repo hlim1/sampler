@@ -4,6 +4,7 @@
 
 ** Fix duplicate symbol errors in bounds scheme.
 ** Avoid several GCC warnings.
+** Fix missing header in timestamps scheme overlay.
 
 * sampler-0.14
 

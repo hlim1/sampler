@@ -121,10 +121,10 @@ sub extraLibs {
 
     if ($self->sampling) {
 	my $_r = $self->{threads} ? '_r' : '';
+	push @extras, '-Wl,--wrap,pthread_create' if $self->{threads};
 	push @extras, "-L$::root/libcountdown";
 	push @extras, "-l$self->{countdowns}$_r";
 	push @extras, "-lcountdown$_r";
-	push @extras, '-ldl' if $self->{threads};
 	push @extras, $::libm if $::libm && $self->{countdowns} eq 'acyclic';
     }
 

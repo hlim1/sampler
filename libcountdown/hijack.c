@@ -1,6 +1,5 @@
 #define _GNU_SOURCE		/* for RTLD_NEXT in <dlfcn.h> */
 
-#include <dlfcn.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,8 +17,6 @@
 
 typedef void * (*Starter)(void *);
 
-typedef int (*Creator)(pthread_t *, const pthread_attr_t *, Starter, void *);
-
 
 typedef struct Closure
 {
@@ -31,12 +28,12 @@ typedef struct Closure
 static void *starter(Closure *closure)
 {
   void *result;
-  pthread_cleanup_push(finalize_thread, 0);
-  initialize_thread();
-
   const Starter start = closure->start;
   void * const argument = closure->argument;
   free(closure);
+
+  pthread_cleanup_push(finalize_thread, 0);
+  initialize_thread();
 
   result = start(argument);
   pthread_cleanup_pop(1);
@@ -44,23 +41,17 @@ static void *starter(Closure *closure)
 }
 
 
-int pthread_create(pthread_t * __restrict thread,
-		   const pthread_attr_t * __restrict attributes,
-		   Starter start, void * __restrict argument)
-{
-  static Creator next;
-  if (!next)
-    {
-      next = (Creator) dlsym(RTLD_NEXT, __func__);
-      if (dlerror()) return -1;
-      if (!next) return -1;
-      if (next == pthread_create) return -1;
-    }
+typeof(pthread_create) __real_pthread_create;
+typeof(pthread_create) __wrap_pthread_create;
 
+int __wrap_pthread_create(pthread_t *thread,
+			  const pthread_attr_t *attributes,
+			  Starter start, void *argument)
+{
   Closure * const closure = (Closure *) malloc(sizeof(Closure));
   if (!closure) return -1;
 
   closure->start = start;
   closure->argument = argument;
-  return next(thread, attributes, (Starter) starter, closure);
+  return __real_pthread_create(thread, attributes, (Starter) starter, closure);
 }

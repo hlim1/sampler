@@ -46,7 +46,7 @@ let hasInterestingName = function
 		       "__s2"; "__s2_len";
 		       "__u";
 		       "__c"] in
-	  let scope = "\\([_0-9A-Za-z]+\\$\\)" in
+	  let scope = "\\([_0-9A-Za-z]+\\$\\)?" in
 	  let alpha = "\\(___[0-9]+\\)?" in
 	  "\\(" ^ scope ^ (String.concat "\\|" names) ^ "\\)" ^ alpha ^ "$"
 	in

@@ -1,19 +1,12 @@
-from ConfigParser import ConfigParser
-import os.path
-
 import gconf
 
 from GConfNotifier import GConfNotifier
 
-import Keys
-
 
 class Application:
     def __init__(self, client, model, path):
-        config = ConfigParser()
-        config.read(os.path.join(path, 'config'))
-        self.__root = config.get('application', 'gconf-root')
-        self.name = config.get('application', 'name')
+        self.__root = path
+        self.name = path.split('/')[-1]
 
         self.__client = client
         self.__notify = GConfNotifier(client, self.__key('enabled'), self.__gconf_notify, model)

@@ -12,7 +12,7 @@ class UserConfig:
     def __init__(self, name):
         '''Look for preferences under GConf area for the given application.'''
         self.__client = gconf.client_get_default()
-        self.__namespace = '/apps/sampler/applications/' + name
+        self.__namespace = Keys.applications + '/' + name
 
     def __key(self, extension):
         return self.__namespace + '/' + extension

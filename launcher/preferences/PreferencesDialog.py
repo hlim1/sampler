@@ -19,7 +19,7 @@ class PreferencesDialog:
         self.__dialog = xml.get_widget('preferences')
         self.__client = client
 
-        finder = AppFinder()
+        finder = AppFinder(client)
         model = AppModel()
         for path in finder:
             app = Application(client, model, path)

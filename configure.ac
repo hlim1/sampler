@@ -70,7 +70,6 @@ fi
 : ${CXXFLAGS:=-O9 -W -Wall -Werror}
 
 AC_PROG_CC
-AM_PROG_LEX
 AC_PROG_RANLIB
 
 AC_MSG_CHECKING(format string type modifer j)

@@ -11,7 +11,7 @@ AM_INIT_AUTOMAKE
 
 AC_PATH_PROGS(XSL_HTML, docbook.xsl, , /usr/share/sgml/docbook/xsl-stylesheets/xhtml:/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/xhtml:/usr/share/apps/ksgmltools2/docbook/xsl/html)
 if test -z "$XSL_HTML"; then
-  AC_MSG_WARN(cannot find DocBook-to-XHTML style sheet)
+  AC_MSG_WARN(cannot find DocBook XML-to-XHTML style sheet)
   AC_MSG_WARN(HTML documentation will not be built)
   AC_MSG_WARN(consider setting \$XSL_HTML)
 fi

@@ -442,9 +442,10 @@
 	<term><option>--use-points-to</option></term>
 	<term><option>--no-use-points-to</option></term>
 	<listitem>
-	  <para>Experimental optimizations for indirect function
-	  calls.  Defaults to disabled.  Not yet trusted as correct,
-	  and should not be used.</para>
+	  <para>Use a conservative points-to analysis to identify
+	  possible callees at indirect function call sites.  This
+	  feature is experimental and should be used with
+	  caution.</para>
 	</listitem>
       </varlistentry>
 

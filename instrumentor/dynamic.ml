@@ -19,6 +19,7 @@ let analyze file =
   if !usePointsTo then
     begin
       prerr_endline "=== Points-to analysis active!";
+      conservative_undefineds := true;
       analyze_file file;
       compute_results false
     end

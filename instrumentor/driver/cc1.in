@@ -105,6 +105,8 @@ my %flag_specs =
      '-fno-assume-weighty-interns' => \&inst_toggle,
      '-fassume-weighty-libraries' => \&inst_toggle,
      '-fno-assume-weighty-libraries' => \&inst_toggle,
+     '-fuse-points-to' => \&inst_toggle,
+     '-fno-use-points-to' => \&inst_toggle,
      '-fsave-cfg' => \&inst_embed,
      '-fsave-site-info' => \&inst_embed,
      '-finstrumentor-input' => sub { $instrumentor_input = shift @ARGV },

@@ -1,8 +1,11 @@
 -*- outline -*-
 
-* sampler-0.11.1
+* sampler-0.12
 
 ** Improved developer documentation.
+
+** Reorganize "/usr/lib/sampler/applications" to allow multiple
+   wrapped executables in a single package.
 
 * sampler-0.11
 

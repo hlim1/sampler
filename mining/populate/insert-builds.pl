@@ -68,7 +68,6 @@ my ($upload, $upload_filename) = tempfile(UNLINK => 1);
 my $upload_count = 0;
 
 foreach my $package (@ARGV) {
-    print "consider $package\n";
     my @command = ('rpm', '-qp', '--qf', '%{name}\t%{version}\t%{release}\n%{buildtime}\n', $package);
     my $rpm_query = new FileHandle;
     open $rpm_query, '-|', @command;
@@ -81,6 +80,8 @@ foreach my $package (@ARGV) {
     next if exists $known{$app_id};
     $known{$app_id} = 1;
     ++$upload_count;
+
+    print "new: $package\n";
 
     # not previously seen, so also need build date
     my $raw_date = <$rpm_query>;

@@ -51,7 +51,6 @@ my ($upload, $upload_filename) = tempfile(UNLINK => 1);
 my $upload_count = 0;
 
 foreach my $package (@ARGV) {
-    print "consider $package\n";
     my @command = ('rpm', '-qp', '--qf', '%{name}\t%{version}\t%{release}\n[%{filenames}\n]', $package);
     my $rpm_query = new FileHandle;
     open $rpm_query, '-|', @command;
@@ -66,6 +65,7 @@ foreach my $package (@ARGV) {
     ++$upload_count;
 
     # not previously seen, so unpack site information
+    print "new: $package\n";
     print "\tunpack cpio\n";
     my $tempdir = tempdir(CLEANUP => 1);
     $ENV{package} = $package;

@@ -120,8 +120,10 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--include-function={<function><replaceable>function</replaceable></function>|<literal>*</literal>}</option></term>
-	<term><option>--exclude-function={<function><replaceable>function</replaceable></function>|<literal>*</literal>}</option></term>
+	<term><option>--include-function=<function><replaceable>function</replaceable></function></option></term>
+	<term><option>--include-function=<literal>*</literal></option></term>
+	<term><option>--exclude-function=<function><replaceable>function</replaceable></function></option></term>
+	<term><option>--exclude-function=<literal>*</literal></option></term>
 	<listitem>
 	  <para>Function filtering.  Each of these flags takes one
 	  mandatory argument which can be the name of a function or
@@ -164,8 +166,10 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--include-file={<filename><replaceable>filename</replaceable></filename>|<literal>*</literal>}</option></term>
-	<term><option>--exclude-file={<filename><replaceable>filename</replaceable></filename>|<literal>*</literal>}</option></term>
+	<term><option>--include-file=<filename><replaceable>filename</replaceable></filename></option></term>
+	<term><option>--include-file=<literal>*</literal></option></term>
+	<term><option>--exclude-file=<filename><replaceable>filename</replaceable></filename></option></term>
+	<term><option>--exclude-file=<literal>*</literal></option></term>
 	<listitem>
 	  <para>File filtering.  Each of these flags takes one
 	  mandatory argument which can be the name of a source file

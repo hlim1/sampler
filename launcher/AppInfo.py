@@ -1,4 +1,4 @@
-import ConfigParser
+from ConfigParser import ConfigParser
 import os
 import sys
 
@@ -8,13 +8,12 @@ import sys
 #  Interface to static application configuration
 #
 
-class AppInfo (ConfigParser.ConfigParser):
+class AppInfo (ConfigParser):
 
     def __init__(self):
-        ConfigParser.ConfigParser.__init__(self)
-        base = os.path.realpath(sys.path[0])
-        self.name = os.path.basename(sys.argv[0])
-        self.__dir = os.path.join(base, 'applications', self.name)
+        ConfigParser.__init__(self)
+        self.__dir = sys.path[0]
+        self.name = os.path.basename(self.__dir)
         self.executable = self.path('executable')
         assert os.access(self.executable, os.X_OK)
         self.readfp(file(self.path('config')))

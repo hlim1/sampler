@@ -1,5 +1,6 @@
 open Cil
 open Pretty
+open Str
 
 
 let multimap transformer =
@@ -68,10 +69,16 @@ class visitor logger func = object (self)
 	| TVoid _
 	  -> failwith "unexpected variable type"
       in
+
       dissect NoOffset varinfo.vtype
     in
     
-    let outputs = multimap dissectVar (func.sformals @ func.slocals) in
+    let notTemporary {vname = vname} =
+      let pattern = regexp "^__\|^tmp$\|^tmp___[0-9]+$" in
+      not (string_match pattern vname 0)
+    in
+
+    let outputs = multimap dissectVar (func.sformals @ List.filter notTemporary func.slocals) in
     let formats, arguments = List.split outputs in
     let format = mkString ("%s:%u:\n\t" ^ String.concat "\n\t" formats ^ "\n") in
     

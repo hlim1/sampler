@@ -27,11 +27,9 @@ let rec weigh sites headers =
 
   let weights = new StmtMap.container in
   
-  let compute trivial header =
-    let w = weight header in
-    weights#add header w;
-    trivial && w == 0
+  let record header =
+    weights#add header (weight header)
   in
   
-  let trivial = List.fold_left compute true headers in
-  if trivial then None else Some weights
+  List.iter record headers;
+  weights

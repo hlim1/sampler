@@ -6,7 +6,6 @@ nodist_tray_PYTHON = Paths.py
 tray_PYTHON =					\
 	AboutDialog.py				\
 	BusyCursor.py				\
-	control.py				\
 	Factory.py				\
 	LazyDialog.py				\
 	LazyWidget.py				\

@@ -267,7 +267,6 @@ AM_CONFIG_HEADER(config.h)
 
 AC_CONFIG_TESTDIR(instrumentor/bounds)
 AC_CONFIG_TESTDIR(instrumentor/branches)
-AC_CONFIG_TESTDIR(instrumentor/decure/tests)
 AC_CONFIG_TESTDIR(instrumentor/function-entries)
 AC_CONFIG_TESTDIR(instrumentor/nothing)
 AC_CONFIG_TESTDIR(instrumentor/returns)

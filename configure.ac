@@ -8,13 +8,17 @@ AM_INIT_AUTOMAKE
 #  Linux distribution
 #
 
-AC_MSG_CHECKING(Linux distribution)
-
 for vendor in fedora redhat; do
-  if test -f /etc/$vendor-release; then
-    DISTRO=`rpm -q --qf '%{name}-%{version}-%{arch}\n' $vendor-release | sed s/-release//`
-    RPM_ARCH=`rpm -q --qf '%{arch}\n' $vendor-release | sed s/-release//`
+  AC_MSG_CHECKING(for $vendor)
+  if version="`rpm -q --qf '%{version}' $vendor-release`"; then
+    DISTRO="$vendor-$version"
+    AC_MSG_RESULT($version)
+    AC_MSG_CHECKING(RPM build architecture)
+    RPM_ARCH="`rpm -q --qf '%{arch}' $vendor-release`"
+    AC_MSG_RESULT($RPM_ARCH)
     break
+  else
+    AC_MSG_RESULT(no)
   fi
 done
 
@@ -23,7 +27,6 @@ done
 
 AC_SUBST(DISTRO)
 AC_SUBST(RPM_ARCH)
-AC_MSG_RESULT($DISTRO)
 
 
 ########################################################################

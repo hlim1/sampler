@@ -6,4 +6,4 @@ ylabel('Number of "good" features left', 'fontsize', 12);
 set(gca, 'ytick', 0:20:150);
 axis([-50 3000 0 150]);
 grid on;
-print -f1 -deps ccrypt-data/ds1000ngood_plot.eps
+print -f1 -deps ds1000ngood_plot.eps

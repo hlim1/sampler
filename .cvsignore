@@ -9,6 +9,7 @@
 *.d
 *.i
 
+cfg-bug
 cfg-to-dot
 collectHeaders
 dom-to-dot

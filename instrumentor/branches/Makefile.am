@@ -1,7 +1,6 @@
 SUBDIRS = tests
 
 scheme = branches
-scheme_SCRIPTS = main
 scheme_DATA = specs
 scheme_LIBRARIES = libbranches.a
 scheme_HEADERS = branches.h
@@ -12,7 +11,7 @@ EXTRA_DIST = $(scheme_DATA)
 
 include $(top_srcdir)/ocaml/rules.mk
 
-MOSTLYCLEANFILES += main
+MOSTLYCLEANFILES += $(scheme).$(cma)
 
 
 libdirs += .. $(top_builddir)/ocaml
@@ -25,5 +24,5 @@ $(dir $(libcommon))/%.cmi: $(libcommon); :
 	$(recurse)
 
 
-main: $(libcil) $(libcommon) $(libharness) $(main)
-	$(link)
+$(scheme).$(cma): $($(scheme)Scheme)
+	$(archive)

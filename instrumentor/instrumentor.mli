@@ -1,1 +1,6 @@
-val addScheme : (Cil.file -> Scheme.c) -> unit
+open Cil
+
+
+val addScheme : (file -> Scheme.c) -> unit
+
+val phase : string * (file -> unit)

@@ -1,10 +1,12 @@
 open Cil
 
 
-class virtual c : fundec -> stmt ->
+class virtual c : fundec ->
   object
-    method embodiment : stmt
+    method virtual enact : stmt
   end
 
 
-val all : c list ref FunctionNameHash.c
+type index = stmt list FunctionNameHash.c
+
+val enactAll : unit -> index

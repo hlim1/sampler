@@ -1,4 +1,4 @@
 open Cil
 
 
-val visit : Weighty.tester -> (fundec -> Countdown.countdown) -> unit
+val visit : Weighty.tester -> Site.index -> (fundec -> Countdown.countdown) -> unit

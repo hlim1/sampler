@@ -1,17 +1,17 @@
 open Cil
 
 
-let main manager =
+let main () =
   let phases =
     [
      "removing unused symbols (early)", (fun file -> Rmtmps.removeUnusedTemps file);
-     "instrumenting", (fun file -> ignore (manager file));
+     Instrumentor.phase;
      "removing unused symbols (late)", (fun file -> Rmtmps.removeUnusedTemps file);
      Idents.phase;
      "printing transformed code", dumpFile (new Printer.printer) stdout
    ]
   in
-  
+
   initCIL ();
   lineDirectiveStyle := Some LinePreprocessorOutput;
 

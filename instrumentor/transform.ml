@@ -27,9 +27,9 @@ class showCFG =
   end
 
 
-let visit isWeightyCallee countdown =
+let visit isWeightyCallee siteIndex countdown =
   let visitFunction func sites =
-    assert (!sites <> []);
+    assert (sites <> []);
 
     IsolateInstructions.visit func;
     let entry = mkStmt (Block func.sbody) in
@@ -43,7 +43,7 @@ let visit isWeightyCallee countdown =
     let callJumps = WeightyCalls.jumpify afterCalls in
     let backJumps = jumps.backward @ callJumps in
     let headers = entry :: backJumps in
-    let weights = WeighPaths.weigh !sites headers in
+    let weights = WeighPaths.weigh sites headers in
     
     let original, instrumented, clones = Duplicate.duplicateBody func in
     
@@ -51,11 +51,11 @@ let visit isWeightyCallee countdown =
     BackwardJumps.patch clones weights countdown backJumps;
     FunctionEntry.patch func weights countdown instrumented;
     Returns.patch func countdown;
-    List.iter (Sites.patch clones countdown) !sites;
+    List.iter (Sites.patch clones countdown) sites;
 
     if !Statistics.showStats then
       begin
-	let siteCount = List.length !sites in
+	let siteCount = List.length sites in
 
 	let headerTotal, headerCount =
 	  weights#fold
@@ -77,4 +77,4 @@ let visit isWeightyCallee countdown =
     MergeBlocks.visit func;
     FilterLabels.visit func
   in
-  Site.all#iter visitFunction
+  siteIndex#iter visitFunction

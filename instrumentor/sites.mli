@@ -1,4 +1,4 @@
 open Cil
 
 
-val patch : ClonesMap.clonesMap -> Countdown.countdown -> Site.c -> unit
+val patch : ClonesMap.clonesMap -> Countdown.countdown -> stmt -> unit

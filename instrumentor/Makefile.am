@@ -8,15 +8,20 @@ extra_impls = libraries version
 include $(top_srcdir)/ocaml/rules.mk
 
 libdirs += $(top_builddir)/ocaml
+syslibs = str.$(cma) unix.$(cma)
 
 
-all-local: harness.$(cma)
+all-local: main
 
 libraries.ml: %: build-libraries %.in
 	./$^ >$@.tmp
 	mv $@.tmp $@
 
-harness = $(manager) $(phases) $(tuples) $(bumper) $(bumpSign) $(describedExpression) $(int64Set)
+main = main.$(cmo)
+main: $(libcil) $(libcommon) harness.$(cma) main.$(cmo)
+	$(link)
+
+harness = $(phases)
 harness.$(cma): $(harness)
 	$(archive)
 

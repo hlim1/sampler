@@ -19,7 +19,7 @@ class ReportsReader (dict):
                 if not name in self:
                     self[name] = cStringIO.StringIO()
 
-                for line in lines:
+                for line in source:
                     if line == '</report>\n':
                         break
                     else:

@@ -3,6 +3,8 @@ libdecoder = ../../liblog/libdecoder.a
 noinst_PROGRAMS = populate
 populate_LDADD = -lcurses -lpq++ $(libdecoder)
 populate_SOURCES =				\
+	Progress.cc				\
+	Progress.h				\
 	Sample.cc				\
 	Sample.h				\
 	Session.cc				\

@@ -24,7 +24,7 @@ sub check_signature ($) {
 my %compilationUnit;
 
 
-foreach my $objectName (<@ARGV>) {
+foreach my $objectName (@ARGV) {
     my $buffer;
 
     if ($objectName =~ /\.sites$/) {

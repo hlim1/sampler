@@ -35,7 +35,7 @@ sub preprocess_compile {
 	$self->preprocess_after_cil($src, $aftercilpp, $ppargs);
 	return $self->compile_cil($aftercilpp, $dest, $ppargs, $ccargs);
     } else {
-	return $self->CCured::applyCilAndCompile(@_);
+	return $self->CCured::preprocess_compile(@_);
     }
 }
 

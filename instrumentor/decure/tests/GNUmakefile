@@ -1,4 +1,5 @@
 cildir := ../../../../cil
+link = $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 all:
 .PHONY: all
@@ -9,11 +10,11 @@ check: echo-cured echo-decured
 %-cured: CC := $(cildir)/bin/ccured
 %-decured: CC := ../driver/main
 
-echo-cured: echo.c main.c
-	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+echo-cured echo-decured: echo.c main.c
+	$(link)
 
-echo-decured: echo.c main.c
-	$(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+crasher-cured crasher-decured: crasher.c
+	$(link)
 
 force:
 .PHONY: force
@@ -21,6 +22,6 @@ force:
 clean:
 	rm -f *-cured *cured.c
 	rm -f *-decured *-decured.c
-	rm -f *.inst.c
+	rm -f *_inst.c
 	rm -f  *.[ios]
 .PHONY: clean

@@ -273,7 +273,7 @@
 	  </informalexample>
 
 	  <para>Default is to include all functions, as though
-	  <option>--include-function <literal>*</literal></option>
+	  <option>--include-function=<literal>*</literal></option>
 	  were implicitly the last flag given.</para>
 
 	  <tip>

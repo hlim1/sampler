@@ -1,5 +1,8 @@
 combine patch and postpatch in Calls module
 
+Remember which functions are loopless.  Use this to optimize treatment
+of calls to known loopless functions.
+
 start trace with magic number for easy recognition; use PNG for
 inspiration here
 

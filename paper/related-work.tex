@@ -1,3 +1,58 @@
 \section{Related Work}
 \label{sec:related-work}
 
+Sampling has a long history, with most applications focusing on
+performance profiling and optimization.  Any sampling system must
+define a trigger mechanism that signals when a sample is to be taken.
+Typical triggers include periodic hardware timers/interrupts
+\cite{Burrows:2000:EFV,Traub:200:EILPP,Whaley:337483}, periodic
+software event counters (e.g.  every $n$th function call)
+\cite{Arnold:2000:ACCTS}, or both.  In most cases, the sampling
+interval is strictly periodic; this may suffice when hunting for large
+performance bottlenecks, but may systematically miss rare events such
+as crash-causing invariant violations.
+
+The Digital Continuous Profiling Infrastructure
+\cite{Anderson:1997:CPW} is unusual in that sampling intervals are
+chosen randomly.  However, the random distribution is uniform, such as
+one sample every 60K to 64K cycles.  Samples thus extracted are not
+statistically fair in the sense of a Bernoulli (coin-tossing) process.
+If one sample is taken, there is zero chance of taking any sample in
+the next 1-59,999 cycles.  Similarly, there is zero chance of
+\emph{not} taking exactly one sample in the next 60K-60K cycles.  We
+trigger samples based on a geometric distribution, which correctly
+models the time between independently randomized coin tosses.  The
+resulting data is a statistically rigorous fair random sample, which
+in turn grants access to a large domain of powerful statistical
+analysis methodologies.
+
+Our effort to understand and debug programs by identifying invariants
+relates to prior work by the Daikon project \cite{ernst2001}.  Like
+Daikon, we begin with fairly unstructured guesses as to possible
+invariants, and eliminate those which do not appear to hold.  Daikon
+collects a complete trace of individual program values; generation and
+testing of possible invariants occurs off line.  This gives Daikon
+greater flexibility to consider a much larger family of possible
+invariants then we have examined here, as a significant part of our
+invariant testing happens within the client itself.  With a large
+enough user population, though, the myriad invariants considered by
+Daikon could certainly be farmed out and tested in the field.
+
+The DIDUCE project \cite{Hangal:DIDUCE:2002} also attempts to identify
+program invariants.  Unlike Daikon, most processing does take place
+within the client program.  As in our study, DIDUCE attempts to relate
+changes in invariants to the manifestation of bugs.  However, DIDUCE
+performs complete tracing and focuses on discrete state changes, such
+as the first time an invariant was seen to be false.  Our approach is
+more probabilistic: we with to identify broad trends over time that
+correlate invariant violations with increased likelihood of failure.
+Our approach explicitly accommodates the possibility of ``getting
+lucky'', such as overrunning a buffer but not actually crashing.
+DIDUCE works in the context of a safe language (Java) in which most
+forms of getting lucky cannot happen.
+
+\aside{Perhaps we should discuss various non-sampling tracing systems.
+  Value tracing, for example could yield data we could mine as we did
+  for \texttt{bc}.  Or could it?  Does it provide the necessary
+  statistical rigor?  Also, would discussing these dilute our efforts
+  to present sampling and mining as a single unified story?}

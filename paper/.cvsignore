@@ -8,3 +8,5 @@
 *.ps
 *.xyc
 auto
+body.tmp
+head.tmp

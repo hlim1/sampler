@@ -283,11 +283,11 @@ within each function:
 
 In order to maintain agreement across all functions, we must also
 export just before each function call and import again after each call
-returns.  Again, though, we find that calls to weightless functions
-may simply be ignored.  They will not change or even inspect the
-countdown.  Similarly, the bodies of weightless functions need not
-import and export at entry and exit, since they always leave the
-countdown unchanged.
+returns.  Again, though, calls to weightless functions may simply be
+ignored.  They will not change or even inspect the countdown.
+Similarly, the bodies of weightless functions need not import and
+export at entry and exit, since they always leave the countdown
+unchanged.
 
 With this change, the native C compiler is well positioned to coalesce
 decrements and perform other standard but important optimizations.

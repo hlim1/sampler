@@ -16,5 +16,11 @@ main: $(libcil) $(top)/harness.$(cma) ../decure.$(cma) $(main)
 $(top)/%.cmi: $(force)
 	$(recurse)
 
+$(top)/%.$(cma): $(force)
+	$(recurse)
+
 ../%.cmi: $(force)
+	$(recurse)
+
+../%.$(cma): $(force)
 	$(recurse)

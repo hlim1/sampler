@@ -1,8 +1,12 @@
 #ifndef INCLUDE_liblog_log_h
 #define INCLUDE_liblog_log_h
 
-#include "../libcountdown/countdown.h"
-#include "primitive.h"
+
+
+extern const char logSignature[];
+
+#pragma cilnoremove("requireLogSignature")
+static const char * const requireLogSignature __attribute__((unused)) = logSignature;
 
 
 void logTableau(const void *, unsigned);

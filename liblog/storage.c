@@ -5,7 +5,7 @@
 #include "storage.h"
 
 
-static const char signature[] = {
+const char logSignature[] = {
   '\212',
   's', 'a', 'm',
   '\r', '\n',
@@ -21,7 +21,7 @@ __attribute__((constructor)) static void initialize()
   if (filename)
     {
       storeInitialize(filename);
-      logTableau(signature, sizeof(signature));
+      logTableau(logSignature, sizeof(logSignature));
       logTableau(&nextEventCountdown, sizeof nextEventCountdown);
     }
   else
@@ -33,6 +33,6 @@ __attribute__((destructor)) static void shutdown()
 {
   const char terminator = -1;
   logTableau(&terminator, sizeof(terminator));
-  logTableau(signature, sizeof(signature));
+  logTableau(logSignature, sizeof(logSignature));
   storeShutdown();
 }

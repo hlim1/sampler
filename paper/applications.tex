@@ -321,15 +321,15 @@ local maximum of the penalized log likelihood.  Let $\mu(x) = P(Y = 1
 While other ways of doing feature selection exist, none of them are
 particularly well-suited for this problem.  Some methods
 \cite{Golub:MCC:1999,Tibshirani2002} calculate a univariate
-correlation coefficient independently for each feature; other methods
-are more computationally intensive \cite{00000048}.  In our dataset,
-the features are clearly not independent of each other, and the size
-of the problem is too large for more computationally intensive
-methods.  Furthermore, logistic regression, being a discriminative
-training method, does not require modeling the distribution of the
-input features.  This is crucial, since our features arise from a
-decidedly artificial process and would be difficult to characterize
-using traditional statistical distributions.
+correlation coefficient independently for each feature; other methods,
+such as decision trees \cite{00000048}, are more computationally
+intensive.  In our dataset, the features are clearly not independent
+of each other, and the size of the problem is too large for more
+computationally intensive methods.  Furthermore, logistic regression,
+being a discriminative training method, does not require modeling the
+distribution of the input features.  This is crucial, since our
+features arise from a decidedly artificial process and would be
+difficult to characterize using traditional statistical distributions.
 
 Our \texttt{bc} dataset consists of 4058 runs with distinct random
 inputs and distinct randomized 1/100 sampling.  We partition these

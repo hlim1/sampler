@@ -10,30 +10,32 @@ use FileHandle;
 ########################################################################
 
 
-die "Usage: $0 <executable>\n" unless @ARGV == 1;
-my $name = shift;
-my $objdump = new FileHandle;
-open $objdump, '-|', 'objdump', '-h', '-w', $name
-    or die "cannot run objdump: $!\n";
+die "Usage: $0 [<executable> | <object> | <library>] ...\n" unless @ARGV >= 1;
 
-my $size;
-my $offset;
-while (<$objdump>) {
-    my @field = split;
-    next unless @field >= 7;
-    next unless $field[1] eq '.debug_site_info';
-    next unless $field[0] =~ /^\d+$/;
-    $size = hex $field[2];
-    $offset = hex $field[5];
-    last;
+foreach my $name (@ARGV) {
+    my $objdump = new FileHandle;
+    open $objdump, '-|', 'objdump', '-h', '-w', $name
+	or die "cannot run objdump: $!\n";
+
+    my $size;
+    my $offset;
+    while (<$objdump>) {
+	my @field = split;
+	next unless @field >= 7;
+	next unless $field[1] eq '.debug_site_info';
+	next unless $field[0] =~ /^\d+$/;
+	$size = hex $field[2];
+	$offset = hex $field[5];
+	last;
+    }
+
+    die "\".debug_site_info\" section is missing\n" unless defined $offset;
+    die "\".debug_site_info\" section is empty\n" unless $size;
+
+    my $buffer;
+    my $executable = new FileHandle $name, 'r';
+    $executable->seek($offset, &SEEK_SET);
+    $executable->read($buffer, $size);
+    $buffer =~ s/\0//g;
+    print $buffer, "\n";
 }
-
-die "\".debug_site_info\" section is missing\n" unless defined $offset;
-die "\".debug_site_info\" section is empty\n" unless $size;
-
-my $buffer;
-my $executable = new FileHandle $name, 'r';
-$executable->seek($offset, &SEEK_SET);
-$executable->read($buffer, $size);
-$buffer =~ s/\0//g;
-print $buffer;

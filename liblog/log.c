@@ -15,3 +15,8 @@ void logWrite(const char filename[], unsigned line,
   fprintf(stderr, "%s:%u: write %p for %u bytes\n",
 	  filename, line, address, size);
 }
+
+
+void logSkip()
+{
+}

@@ -17,8 +17,8 @@ class visitor = object
 
     ForwardJumps.patch clones forwards;
     BackwardJumps.patch clones weights func backwards;
+    SkipWrites.visit func;
     FunctionEntry.patch func weights instrumented;
-
     InstrumentWrites.visit func instrumented;
     
     SkipChildren

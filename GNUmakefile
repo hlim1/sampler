@@ -55,6 +55,7 @@ identity = identity
 instrument = $(functionBodyVisitor) $(logWrite) instrument
 instrumentWrites = $(simplifyLefts) $(simplifyReturns) $(simplifyRights) $(checkSimplicity) $(instrument) instrumentWrites
 logIsImminent = logIsImminent
+logSkip = logSkip
 logWrite = logWrite
 mapClass = mapClass
 removeLoops = $(functionBodyVisitor) removeLoops
@@ -64,12 +65,13 @@ simplifyReturns = $(simplifyVisitor) simplifyReturns
 simplifyRights = $(simplifyVisitor) simplifyRights
 simplifyVisitor = $(functionBodyVisitor) simplifyVisitor
 skipVisitor = skipVisitor
+skipWrites = $(functionBodyVisitor) $(logSkip) skipWrites
 splitAfterCalls = $(functionBodyVisitor) splitAfterCalls
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 stores = stores
 testHarness = testHarness
-transform = $(backwardJumps) $(cfgToDot) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrumentWrites) $(logIsImminent) $(logWrite) $(removeLoops) $(weighPaths) transform
+transform = $(backwardJumps) $(cfgToDot) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrumentWrites) $(removeLoops) $(skipWrites) $(weighPaths) transform
 utils = utils
 weighPaths = $(stmtMap) $(stores) weighPaths
 
@@ -91,7 +93,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libs) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-main := $(transform) $(testHarness) %
+main := $(logIsImminent) $(logSkip) $(logWrite) $(transform) $(testHarness) %
 main: %: $(libs) $(addsuffix .$(cmo), $(main))
 	$(link)
 

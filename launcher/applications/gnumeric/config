@@ -1,0 +1,7 @@
+[general]
+gconf-root: /apps/gnumeric/bug-isolation
+
+[synopsis]
+Program-Version: 1.18
+Instrumentation-Type: branches
+Instrumentation-Version: 0.1

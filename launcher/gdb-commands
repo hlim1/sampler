@@ -1,0 +1,13 @@
+set width 0
+set height 0
+
+echo <report id="shared-libraries">\n
+info sharedlibrary
+echo </report>\n
+
+echo <report id="stack-trace">\n
+where
+echo </report>\n
+
+detach
+quit

@@ -245,11 +245,11 @@ CFLAGS=$old_CFLAGS
 
 AM_CONFIG_HEADER(config.h)
 
-AC_CONFIG_TESTDIR(instrumentor/branches/tests)
+AC_CONFIG_TESTDIR(instrumentor/branches)
 AC_CONFIG_TESTDIR(instrumentor/decure/tests)
-AC_CONFIG_TESTDIR(instrumentor/nothing/tests)
-AC_CONFIG_TESTDIR(instrumentor/returns/tests)
-AC_CONFIG_TESTDIR(instrumentor/scalar-pairs/tests)
+AC_CONFIG_TESTDIR(instrumentor/nothing)
+AC_CONFIG_TESTDIR(instrumentor/returns)
+AC_CONFIG_TESTDIR(instrumentor/scalar-pairs)
 
 AC_CONFIG_FILES([
 Makefile
@@ -262,17 +262,13 @@ doc/sampler-guide/C/Makefile
 fuzz/Makefile
 instrumentor/Makefile
 instrumentor/branches/Makefile
-instrumentor/branches/tests/Makefile
 instrumentor/daikon/Makefile
 instrumentor/decure/Makefile
 instrumentor/decure/tests/Makefile
 instrumentor/driver/Makefile
 instrumentor/nothing/Makefile
-instrumentor/nothing/tests/Makefile
 instrumentor/returns/Makefile
-instrumentor/returns/tests/Makefile
 instrumentor/scalar-pairs/Makefile
-instrumentor/scalar-pairs/tests/Makefile
 instrumentor/version.ml
 launcher/Makefile
 launcher/broken/Makefile

@@ -1,11 +1,6 @@
-*.annot
-*.cma
-*.cmi
-*.cmo
-*.cmx
-*.di
-*.dl
-*.do
-.libs
 Makefile
 Makefile.in
+atconfig
+testsuite
+testsuite.dir
+testsuite.log

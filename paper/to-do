@@ -1,3 +1,7 @@
 Cite Trishul's FDDO paper
 
 Mention that we use a points-to analysis for call graph approximation.
+Or do we?  Actually, I think we don't.  We should, though.
+
+State that the ccrypt bug was already known.  (The bc bug, by
+contrast, was not.)

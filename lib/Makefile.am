@@ -1,3 +1,5 @@
+CFLAGS = -O9 -W -Wall -Werror
+
 if HAVE_THREAD_STORAGE
 thread_lib = libsampler_r.a
 endif

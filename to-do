@@ -37,8 +37,7 @@ each sampled application RPM.
 
 ** general
 
-Document --{no-,}assume-weightless-{libraries,externs} and hook them
-up in the Perl driver.
+Document --{no-,}assume-weighty-{libraries,externs,interns}.
 
 Remember which functions are loopless.  Use this to optimize treatment
 of calls to known loopless functions.

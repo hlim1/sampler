@@ -4,19 +4,26 @@ open Scanners
 open Str
 
 
-let assumeWeightlessExterns =
+let assumeWeightyExterns =
   Options.registerBoolean
-    ~flag:"assume-weightless-externs"
-    ~desc:"assume that functions defined elsewhere have no sample sites"
-    ~ident:"AssumeWeightlessExterns"
+    ~flag:"assume-weighty-externs"
+    ~desc:"assume that functions defined elsewhere have sample sites"
+    ~ident:"AssumeWeightyExterns"
+    ~default:true
+
+let assumeWeightyLibraries =
+  Options.registerBoolean
+    ~flag:"assume-weighty-libraries"
+    ~desc:"assume that functions defined in libraries have sample sites"
+    ~ident:"AssumeWeightyLibraries"
     ~default:false
 
-let assumeWeightlessLibraries =
+let assumeWeightyInterns =
   Options.registerBoolean
-    ~flag:"assume-weightless-libraries"
-    ~desc:"assume that functions defined in libraries have no sample sites"
-    ~ident:"AssumeWeightlessLibraries"
-    ~default:true
+    ~flag:"assume-weighty-interns"
+    ~desc:"assume that functions defined here have sample sites"
+    ~ident:"AssumeWeightyInterns"
+    ~default:false
 
 let debugWeighty =
   Options.registerBoolean
@@ -68,19 +75,17 @@ let isWeightyVarinfo hasDefinition hasPragmaWeightless weighty callee =
   if weighty#mem callee then
     true
   else if hasDefinition callee then
-    false
+    !assumeWeightyInterns
   else if hasPragmaWeightless callee then
     false
   else if isWeightyLibrary callee then
     true
-  else if !assumeWeightlessLibraries && Libraries.functions#mem callee.vname then
-    false
+  else if Libraries.functions#mem callee.vname then
+    !assumeWeightyLibraries
   else if isBuiltin callee then
     false
-  else if !assumeWeightlessExterns then
-    false
   else
-    true
+    !assumeWeightyExterns
 
 
 let isWeightyLval hasDefinition hasPragmaWeightless weighty lval =
@@ -141,7 +146,7 @@ let collect file =
       let weighty = new VariableNameHash.c 0 in
 
       let prepopulate func =
-	if Sites.registry#mem func then
+	if !assumeWeightyInterns || Sites.registry#mem func then
 	  begin
 	    weighty#add func.svar ();
 	    if !debugWeighty then

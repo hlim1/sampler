@@ -9,6 +9,9 @@ let threads =
     ~default:false
 
 
+let enabled () = !threads
+
+
 let bump file =
   if !threads then
     let helper = Lval (var (FindFunction.find "atomicIncrementCounter" file)) in

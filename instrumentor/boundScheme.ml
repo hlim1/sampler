@@ -26,6 +26,10 @@ class visitor =
 
 class c file : Scheme.c =
   object (self)
+    initializer
+      if Threads.enabled () then
+	failwith "bounds scheme is not thread safe"
+
     method findAllSites =
       let visitor = new visitor in
       ignore (Cil.visitCilFile visitor file);

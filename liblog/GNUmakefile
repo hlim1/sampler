@@ -1,12 +1,12 @@
 CPPFLAGS := -D_GNU_SOURCE
 CFLAGS := -W -Wall -Werror -O9
 libs := log log-stdio log-syscall
-targets := $(foreach lib, $(libs), lib$(lib).so lib$(lib).a)
+targets := $(foreach lib, $(libs), lib$(lib).so lib$(lib).a) libdecoder.a print-trace
 
 -include strategy.mk
 
 
-all: decoder $(targets)
+all: $(targets)
 .PHONY: all
 
 liblog.%: liblog-$(strategy).% strategy.mk
@@ -21,11 +21,17 @@ liblog-stdio.so liblog-syscall.so: liblog-%.so: storage.o %.o
 storage.o: %.o: %.c %.h
 stdio.o syscall.o: %.o: %.c primitive.h storage.h
 
-decoder.c: decoder.lex
-	$(LEX) -o$@ $<
+libdecoder.a: %: %(decoder.o)
+
+decoder.o: decoder.c decoder.h
+
+print-trace: print-trace.o libdecoder.a
+
+print-trace.o: print-trace.c decoder.h
 
 clean:
 	rm -f *.o *.a *.so
+	rm -f decoder.c print-trace
 .PHONY: clean
 
 spotless: clean

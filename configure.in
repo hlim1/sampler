@@ -1,0 +1,20 @@
+dnl -*- m4 -*-
+
+AC_INIT(configure.in)
+AC_CONFIG_AUX_DIR(config-aux)
+AM_INIT_AUTOMAKE(sampler,0.0)
+AM_CONFIG_HEADER(config.h)
+
+: ${CXX:=g++3}
+: ${CXXFLAGS:=-g -W -Wall -Werror}
+
+AC_PROG_CXX
+
+AC_PROG_RANLIB
+
+AC_OUTPUT(
+Makefile
+mining/Makefile
+mining/libodbc++/Makefile
+mining/populate/Makefile
+)

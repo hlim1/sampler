@@ -4,12 +4,24 @@
 #include "storage.h"
 
 
+static const char signature[] = {
+  '\212',
+  's', 'a', 'm',
+  '\r', '\n',
+  '\032',
+  '\n'
+};
+
+
 __attribute__((constructor)) static void initialize()
 {
   const char * const filename = getenv("SAMPLER_FILE");
   
   if (filename)
-    storeInitialize(filename);
+    {
+      storeInitialize(filename);
+      logTableau(signature, sizeof(signature));
+    }
   else
     fprintf(stderr, "logger: not recording samples; no $SAMPLER_FILE given in environment\n");
 }

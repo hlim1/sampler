@@ -1,0 +1,6 @@
+*.i
+*.inst.c
+*.trace
+*.trace.
+
+test

@@ -1,0 +1,50 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Config;
+use FileHandle;
+use File::Spec;
+
+
+########################################################################
+
+
+my @names = split ' ', $Config{sig_name};
+my @numbers = split ' ', $Config{sig_num};
+my %signals = map { $_ => $names[$_] } @numbers;
+undef @names;
+undef @numbers;
+
+
+########################################################################
+
+
+my ($command, $input, $trace, $signal) = @ARGV;
+
+
+########################################################################
+
+
+print "$input: ";
+
+my $pid = fork;
+die "cannot fork: $pid/$!\n" unless defined $pid;
+
+if ($pid == 0) {
+    $command = File::Spec->rel2abs($command);
+    $input = File::Spec->rel2abs($input);
+    chdir '/';
+    -x $command or die "cannot execute $command: $!\n";
+    open STDIN, $input or die "cannot read $input: $!\n";
+    open STDOUT, '>/dev/null' or die "cannot write /dev/null: $!\n";
+    open STDERR, '>/dev/null' or die "cannot write /dev/null: $!\n";
+    undef %ENV;
+    exec $command or die "cannot exec $command: $!\n";
+} else {
+    my $reap = waitpid $pid, 0;
+    die "cannot waitpid: $!\n" unless $reap == $pid;
+    my $signum = $? & 127;
+    print(($signum ? "fail ($signals{$signum})" : "pass"), "\n");
+    my $sigfile = new FileHandle $signal, 'w';
+    $sigfile->print("$signum\n");
+}

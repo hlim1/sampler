@@ -4,6 +4,7 @@ let check = Check.checkFile []
 
 let process filename =
   let file = Frontc.parse filename () in
+  Rmtmps.removeUnusedTemps file;
   dumpFile defaultCilPrinter stdout file
 
 ;;

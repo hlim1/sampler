@@ -35,6 +35,8 @@ my $verbose;
 my @holes;
 my $save_temps;
 
+my $root = "$FindBin::Bin/..";
+
 
 ########################################################################
 
@@ -209,8 +211,8 @@ sub temp ($$) {
 ########################################################################
 
 
-push @ARGV, '-include', "$FindBin::Bin/libcountdown/countdown.h";
-push @ARGV, '-include', "$FindBin::Bin/liblog/log.h";
+push @ARGV, '-include', "$root/libcountdown/countdown.h";
+push @ARGV, '-include', "$root/liblog/log.h";
 
 
 while ($_ = shift) {
@@ -293,8 +295,8 @@ if ($mode eq 'special') {
 
     if ($mode eq 'link') {
 	my @out = ('-o', $outfile) if $outfile;
-	push_library "$FindBin::Bin/libcountdown", 'countdown';
-	push_library "$FindBin::Bin/liblog", 'log';
+	push_library "$root/libcountdown", 'countdown';
+	push_library "$root/liblog", 'log';
 	trace_system @ld, @out;
     }
 }

@@ -5,6 +5,8 @@
 #define PRECOMPUTE_COUNT 1024
 
 
+static inline unsigned getNextCountdown() __attribute__((no_instrument_function));
+
 static inline unsigned getNextCountdown()
 {
   extern unsigned nextCountdownSlot;

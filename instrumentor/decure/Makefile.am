@@ -8,18 +8,17 @@ EXTRA_DIST = $(noinst_DATA)
 include $(top_srcdir)/ocaml/rules.mk
 
 
-libcil = $(cil_libdir)/cil.$(cma)
-libharness = ../harness.$(cma)
 libdirs += ..
 syslibs = str.$(cma) unix.$(cma)
 
-../%.cmi: $(libharness)
+$(dir $(libharness))/%.cmi: $(libharness)
+$(dir $(libcommon))/%.cmi: $(libcommon)
 
 %.cma: $(force)
 	$(recurse)
 
 
-main: $(libcil) $(libharness) $(main)
+main: $(libcil) $(libcommon) $(libharness) $(main)
 	$(link)
 
 filterComplete: $(libcil) $(libharness) $(filterComplete)

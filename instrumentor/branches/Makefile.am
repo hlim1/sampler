@@ -15,16 +15,15 @@ include $(top_srcdir)/ocaml/rules.mk
 MOSTLYCLEANFILES += main
 
 
-libcil = $(cil_libdir)/cil.$(cma)
-libharness = ../harness.$(cma)
-libdirs += ..
+libdirs += .. $(top_builddir)/ocaml
 syslibs = str.$(cma) unix.$(cma)
 
-../%.cmi: $(libharness)
+$(dir $(libharness))/%.cmi: $(libharness)
+$(dir $(libcommon))/%.cmi: $(libcommon)
 
 %.$(cma): $(force)
 	$(recurse)
 
 
-main: $(libcil) $(libharness) $(main)
+main: $(libcil) $(libcommon) $(libharness) $(main)
 	$(link)

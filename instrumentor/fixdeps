@@ -33,7 +33,7 @@ while (<>) {
 
     if ($implementation) {
 	# implementation recompile
-	print "${target}.cmo:";
+	print "${target}.\$(cmo):";
 	print " $_.cmi" foreach @F;
 	print "\n";
 
@@ -48,7 +48,7 @@ while (<>) {
 	my $clean = $target;
 	print "$target =";
 	print " \$($_)" foreach @F;
-	print " $target.cmo\n";
+	print " $target.\$(cmo)\n";
     } else {
 	# explicit interface recompile
 	print_interface $target, @F;

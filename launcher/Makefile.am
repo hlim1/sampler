@@ -1,5 +1,4 @@
 SUBDIRS =					\
-	broken					\
 	common					\
 	first-time				\
 	monitor					\

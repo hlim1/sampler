@@ -27,10 +27,6 @@ else
   AC_SUBST(MONITOR_CFLAGS)
   AC_SUBST(MONITOR_LIBS)
 
-  PKG_CHECK_MODULES(BROKEN, gtk+-2.0 pygtk-2.0 ORBit-2.0 pyorbit-2)
-  AC_SUBST(BROKEN_CFLAGS)
-  AC_SUBST(BROKEN_LIBS)
-
   PKG_CHECK_MODULES(EGG_TRAY, gtk+-2.0)
   AC_SUBST(EGG_TRAY_CFLAGS)
   AC_SUBST(EGG_TRAY_LIBS)
@@ -292,7 +288,6 @@ instrumentor/returns/Makefile
 instrumentor/scalar-pairs/Makefile
 instrumentor/version.ml
 launcher/Makefile
-launcher/broken/Makefile
 launcher/common/Makefile
 launcher/first-time/Makefile
 launcher/monitor/Makefile

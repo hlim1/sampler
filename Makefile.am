@@ -25,6 +25,8 @@ all-local: package.m4
 
 install-data-local:
 	mkdir $(DESTDIR)$(package_libdir)/sites
+	mkdir $(DESTDIR)$(package_libdir)/wrapped
+	mkdir $(DESTDIR)$(package_datadir)/applications
 
 rpms: dist
 #	rpmbuild -D 'do_check 1' -ta $(distdir).tar.gz

@@ -1,6 +1,5 @@
 EXTRA_DIST =					\
 	test.c					\
-	testsuite				\
 	testsuite.at
 
 TESTSUITE = $(srcdir)/testsuite

@@ -1,7 +1,6 @@
 EXTRA_DIST =					\
 	late-global.c				\
 	late-global.expected			\
-	testsuite				\
 	testsuite.at				\
 	upcase-bad.c				\
 	upcase-bad.expected			\
@@ -10,7 +9,7 @@ EXTRA_DIST =					\
 
 TESTSUITE = $(srcdir)/testsuite
 check_SCRIPTS = $(TESTSUITE)
-check-local: atconfig
+check-local: atconfig $(TESTSUITE)
 	$(SHELL) $(TESTSUITE)
 
 AUTOTEST = autom4te --language=autotest
@@ -20,5 +19,6 @@ $(TESTSUITE): $(srcdir)/testsuite.at $(top_srcdir)/package.m4
 CLEANFILES = atconfig
 clean-local: $(TESTSUITE)
 	$(TESTSUITE) --clean
+	rm -f $(TESTSUITE)
 
 .DELETE_ON_ERROR:

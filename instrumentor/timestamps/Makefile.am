@@ -2,12 +2,11 @@ EXTRA_DIST =					\
 	first.expected				\
 	last.expected				\
 	simple.c				\
-	testsuite				\
 	testsuite.at
 
 TESTSUITE = $(srcdir)/testsuite
 check_SCRIPTS = $(TESTSUITE)
-check-local: atconfig
+check-local: atconfig $(TESTSUITE)
 	$(SHELL) $(TESTSUITE)
 
 AUTOTEST = autom4te --language=autotest
@@ -17,5 +16,6 @@ $(TESTSUITE): $(srcdir)/testsuite.at $(top_srcdir)/package.m4
 CLEANFILES = atconfig
 clean-local: $(TESTSUITE)
 	$(TESTSUITE) --clean
+	rm -f $(TESTSUITE)
 
 .DELETE_ON_ERROR:

@@ -251,7 +251,7 @@ while ($_ = shift) {
     } elsif (/(.*)\.c$/) {
 	push @source, $_;
 	push @ld, undef;
-	push @holes, $#ld;
+	push @holes, \$ld[$#ld];
 	
     } elsif (/\.(a|lo|o|so)$/) {
 	push @ld, $_;
@@ -288,9 +288,7 @@ if ($mode eq 'special') {
 	    my $o = $outfile || (resuffix $_, '.s');
 	    trace_system @cc, '-o', $o, $c_name;
 	} else {
-	    die "internal error: hole mismatch\n"
-		if defined $ld[$holes[0]];
-	    $ld[shift @holes] = $c_name;
+	    ${shift @holes} = $c_name;
 	}
     }
 

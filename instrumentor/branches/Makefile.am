@@ -1,8 +1,13 @@
-SUBDIRS = libbranches tests
+SUBDIRS = tests
 
 scheme = branches
 scheme_SCRIPTS = main
 scheme_DATA = Driver.pm
+scheme_LIBRARIES = libbranches.a
+scheme_HEADERS = branches.h
+
+libbranches_a_SOURCES = branches.c branches.h
+
 EXTRA_DIST = $(scheme_DATA)
 
 include ../rules.mk

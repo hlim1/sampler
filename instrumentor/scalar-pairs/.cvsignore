@@ -4,6 +4,7 @@
 *.di
 *.dl
 *.do
+.deps
 Makefile
 Makefile.in
 dumpConstants

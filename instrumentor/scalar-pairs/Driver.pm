@@ -25,7 +25,7 @@ sub collectOneArgument {
 sub extraHeaders {
     my $self = shift;
     my @extras = $self->SUPER::extraHeaders;
-    push @extras, '-include', "$::home/libscalar-pairs/scalar-pairs.h";
+    push @extras, '-include', "$::scheme/scalar-pairs.h";
     push @extras, '-include', "$::root/lib/requires.h";
     push @extras, '-include', "$::root/lib/unit.h";
     push @extras, '-include', "$::root/lib/tuples-cil.h";
@@ -37,7 +37,7 @@ sub extraLibs {
     my $self = shift;
     my @extras = $self->SUPER::extraLibs;
     push @extras, '-lpthread' if $self->threading;
-    push @extras, "-L$::home/libscalar-pairs", '-lscalar-pairs';
+    push @extras, "-L$::scheme", '-lscalar-pairs';
     return @extras;
 }
 

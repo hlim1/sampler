@@ -15,6 +15,7 @@ liblib_HEADERS =				\
 	no-threads.h				\
 	requires.h				\
 	threads.h				\
+	tuples-cil.h				\
 	unit.h
 
 

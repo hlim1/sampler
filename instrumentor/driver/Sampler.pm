@@ -2,7 +2,6 @@ package Sampler;
 
 use strict;
 
-use CilConfig;
 use FindBin;
 
 
@@ -15,7 +14,7 @@ sub setDefaultArguments {
     $self->{countdowns} = 'acyclic';
     $self->{sample_events} = 1;
     $self->{TRACE_COMMANDS} = 0;
-    $self->{instrumentor} = ["$::home/main"];
+    $self->{instrumentor} = ["$::scheme/main"];
     $self->{threads} = 0;
 }
 

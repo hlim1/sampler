@@ -1,6 +1,6 @@
-#include <report.h>
-#include <unit.h>
-#include "branches.h"
+#include <lib/report.h>
+#include <lib/unit.h>
+#include "returns.h"
 
 
 void reportCompilationUnit(const struct CompilationUnit *unit)
@@ -11,9 +11,10 @@ void reportCompilationUnit(const struct CompilationUnit *unit)
     fprintf(reportFile, "%02x", unit->signature[scan]);
 
   for (scan = 0; scan < unit->count; ++scan)
-    fprintf(reportFile, "\n%u\t%u",
+    fprintf(reportFile, "\n%u\t%u\t%u",
 	    unit->tuples[scan].values[0],
-	    unit->tuples[scan].values[1]);
+	    unit->tuples[scan].values[1],
+	    unit->tuples[scan].values[2]);
 
   fputs("\n\n", reportFile);
 }

@@ -2,6 +2,7 @@ AT_INIT(decure)
 
 AT_SETUP(test)
 AT_CHECK(
+if ! test -e $abs_srcdir/../../cil/lib/CCured.pm; then exit 77; fi
 set -e
 cp $abs_srcdir/test.c .
 $abs_top_builddir/instrumentor/driver/main decure -o test $abs_srcdir/test.c

@@ -16,5 +16,9 @@ EXTRA_DIST =					\
 	$(PACKAGE).spec				\
 	package.m4
 
+
+install-data-local:
+	mkdir $(DESTDIR)$(package_libdir)/sites
+
 srpm: dist
-	rpmbuild -ta $(distdir).tar.gz
+	rpmbuild -D 'do_check 1' -ta $(distdir).tar.gz

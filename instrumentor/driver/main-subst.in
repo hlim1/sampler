@@ -2,21 +2,22 @@
 
 use strict;
 use FindBin;
-use lib "$FindBin::Bin/@srcdir@";
-use lib "$FindBin::Bin/@srcdir@/../cil/bin";
-use lib "$FindBin::Bin/@srcdir@/../cil/lib";
+use lib "$FindBin::Bin";
+use lib "$FindBin::Bin/../cil/lib";
 
-my $scheme = shift or die "Usage: $0 <scheme> [<compiler arguments> ...]\n";
+my $schemeName = shift or die "Usage: $0 <scheme> [<compiler arguments> ...]\n";
 
 our $have_thread_storage = '@HAVE_THREAD_STORAGE@';
+our $cc = '@CC@';
 our $libm = '@LIBM@';
 our $root = "$FindBin::Bin/@top_srcdir@";
-our $home = "$root/instrumentor/$scheme";
+our $scheme = "$FindBin::Bin/../$schemeName";
 
-die unless -d $root;
-die unless -d $home;
+# sanity checks
+die "internal error: $root is not sampler's root directory\n" unless -f "$root/lib/countdown.h";
+die "no such instrumentation scheme: $schemeName ($scheme/main is not executable)\n" unless -x "$scheme/main";
 
-my $module = "$home/Driver.pm";
+my $module = "$::scheme/Driver.pm";
 unless (my $return = do $module) {
     warn "cannot parse instrumentation module $module: $!\n" if $@;
     warn "cannot read instrumentation module $module: $!\n" unless defined $return;

@@ -1,7 +1,9 @@
 package Driver;
 
 use strict;
+use FindBin;
 
+use lib "$FindBin::Bin/../cil/bin";
 use CCured;
 use Sampler
 our @ISA = qw(CCured Sampler);

@@ -107,9 +107,8 @@ Requires: perl >= 5.8
 
 %description devel
 This package provides tools for building applications with sampled
-instrumentation.  It includes an instrumenting C compiler and various
-simple scripts for collecting and decoding sampled instrumentation
-reports.
+instrumentation.  It includes an instrumenting C compiler and utility
+tools for collecting and decoding sampled instrumentation reports.
 
 %files devel
 %defattr(-,root,root,-)
@@ -132,7 +131,7 @@ reports.
 %build
 %configure --enable-native
 make %{?_smp_mflags}
-#make check
+%{?do_check:make check}
 
 %install
 rm -rf $RPM_BUILD_ROOT

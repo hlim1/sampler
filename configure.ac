@@ -40,6 +40,7 @@ AC_MSG_RESULT($BUILD_HOST)
 AC_SUBST(package_libdir,  '${libdir}/${PACKAGE}')
 AC_SUBST(instrumentordir, '${package_libdir}/instrumentor')
 AC_SUBST(liblibdir, '${package_libdir}/lib')
+AC_SUBST(cillibdir, '${instrumentordir}/cil/lib')
 AC_SUBST(driverdir, '${instrumentordir}/driver')
 AC_SUBST(schemedir, '${instrumentordir}/${scheme}')
 AC_SUBST(toolsdir, '${package_libdir}/tools')
@@ -218,10 +219,8 @@ fuzz/Makefile
 instrumentor/Makefile
 instrumentor/config.mk
 instrumentor/branches/Makefile
-instrumentor/branches/libbranches/Makefile
 instrumentor/branches/tests/Makefile
 instrumentor/daikon/Makefile
-instrumentor/daikon/libdaikon/Makefile
 instrumentor/decure/Makefile
 instrumentor/decure/tests/Makefile
 instrumentor/driver/main-subst
@@ -230,10 +229,8 @@ instrumentor/driver/Makefile
 instrumentor/nothing/Makefile
 instrumentor/nothing/tests/Makefile
 instrumentor/returns/Makefile
-instrumentor/returns/libreturns/Makefile
 instrumentor/returns/tests/Makefile
 instrumentor/scalar-pairs/Makefile
-instrumentor/scalar-pairs/libscalar-pairs/Makefile
 instrumentor/scalar-pairs/tests/Makefile
 launcher/Makefile
 launcher/python/Makefile

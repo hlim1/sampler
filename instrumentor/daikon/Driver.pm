@@ -12,7 +12,7 @@ our @ISA = qw(CillySampler);
 sub extraHeaders {
     my $self = shift;
     my @extras = $self->SUPER::extraHeaders;
-    push @extras, '-include', "$::home/libdaikon/daikon-cil.h";
+    push @extras, '-include', "$::scheme/daikon-cil.h";
     return @extras;
 }
 
@@ -20,7 +20,7 @@ sub extraHeaders {
 sub extraLibs {
     my $self = shift;
     my @extras = $self->SUPER::extraLibs;
-    push @extras, "-L$::home/libdaikon", '-ldaikon';
+    push @extras, "-L$::scheme", '-ldaikon';
     return @extras;
 }
 

@@ -5,7 +5,7 @@
 *.di
 *.dl
 *.do
-*.o
+.deps
 Makefile
 Makefile.in
 main

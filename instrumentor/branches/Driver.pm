@@ -12,7 +12,7 @@ our @ISA = qw(CillySampler);
 sub extraHeaders {
     my $self = shift;
     my @extras = $self->SUPER::extraHeaders;
-    push @extras, '-include', "$::home/libbranches/branches.h";
+    push @extras, '-include', "$::scheme/branches.h";
     push @extras, '-include', "$::root/lib/requires.h";
     push @extras, '-include', "$::root/lib/unit.h";
     push @extras, '-include', "$::root/lib/tuples-cil.h";
@@ -24,7 +24,7 @@ sub extraLibs {
     my $self = shift;
     my @extras = $self->SUPER::extraLibs;
     push @extras, '-lpthread' if $self->threading;
-    push @extras, "-L$::home/libbranches", '-lbranches';
+    push @extras, "-L$::scheme", '-lbranches';
     return @extras;
 }
 

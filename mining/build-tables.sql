@@ -3,6 +3,10 @@ CREATE SEQUENCE session_seq;
 
 CREATE TABLE sessions (
   session int NOT NULL CHECK (session > 0) PRIMARY KEY DEFAULT NEXTVAL('session_seq'),
+  application text NOT NULL CHECK (application <> ''),
+  sparsity int NOT NULL CHECK (sparsity > 0),
+  seed int NOT NULL CHECK (seed > 0),
+  inputSize int NOT NULL CHECK (inputSize > 0),
   signal smallint NOT NULL CHECK (signal >= 0)
 );
 

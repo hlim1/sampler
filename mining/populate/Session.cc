@@ -2,16 +2,27 @@
 #include <sstream>
 #include "Progress.h"
 #include "Session.h"
+#include "quote.h"
 #include "require.h"
 
 
 Session Session::singleton;
 
 
-void Session::upload(PgDatabase &database, unsigned short signum) const
+void Session::upload(PgDatabase &database,
+		     const char application[],
+		     unsigned sparsity,
+		     unsigned seed,
+		     unsigned inputSize,
+		     unsigned short signum) const
 {
   ostringstream command;
-  command << "INSERT INTO sessions (signal) VALUES (" << signum << ")";
+  command << "INSERT INTO sessions (application, sparsity, seed, inputSize, signal) VALUES ('"
+	  << quote(application) << "', "
+	  << sparsity << ", "
+	  << seed << ", "
+	  << inputSize << ", "
+	  << signum << ')';
   require(database.ExecCommandOk(command.str().c_str()), database);
       
   require(database.ExecTuplesOk("SELECT currval('session_seq')"), database);

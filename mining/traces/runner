@@ -19,8 +19,8 @@ undef @numbers;
 ########################################################################
 
 
-@ARGV == 5 or die "usage: $0 <input> <seed> <trace> <signal> <command>\n";
-my ($command, $input, $seed, $trace, $signal) = @ARGV;
+@ARGV == 6 or die "usage: $0 <trace> <input> <signal> <seed> <sparsity> <command>\n";
+my ($trace, $input, $signal, $seed, $sparsity, $command) = @ARGV;
 
 
 ########################################################################
@@ -41,7 +41,7 @@ if ($pid == 0) {
     open STDOUT, '>/dev/null' or die "cannot write /dev/null: $!\n";
     open STDERR, '>/dev/null' or die "cannot write /dev/null: $!\n";
     %ENV = (SAMPLER_FILE => $trace,
-	    SAMPLER_SPARSITY => 4000,
+	    SAMPLER_SPARSITY => $sparsity,
 	    GSL_RNG_SEED => $seed);
     exec $command or die "cannot exec $command: $!\n";
 } else {

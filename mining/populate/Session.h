@@ -11,7 +11,12 @@ struct Session : public list<Site>
 {
   static Session singleton;
 
-  void upload(PgDatabase &, unsigned short) const;
+  void upload(PgDatabase &,
+	      const char application[],
+	      unsigned sparsity,
+	      unsigned seed,
+	      unsigned inputSize,
+	      unsigned short signum) const;
 };
 
 

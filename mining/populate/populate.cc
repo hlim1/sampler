@@ -38,15 +38,29 @@ static int decode(unsigned short signum)
 }
 
 
-int main(int argc, char *argv[])
+template <typename T>
+T parse(const char text[], const char usage[])
 {
-  const char usage[] = "usage: populate <signum>\n";
-  require(argc == 2, usage);
-  istringstream parse(argv[1]);
-  unsigned short signum;
-  parse >> signum;
+  istringstream parse(text);
+  T result;
+  parse >> result;
   require(parse.good(), usage);
   require(parse.peek() == EOF, usage);
+  return result;
+}
+
+
+int main(int argc, char *argv[])
+{
+  static const char usage[] = "usage: populate <application> <sparsity> <seed> <input-size> <signum>\n";
+  require(argc == 6, usage);
+  
+  const char * const *arg = &argv[1];
+  const char *application = *arg++;
+  const unsigned sparsity = parse<unsigned>(*arg++, usage);
+  const unsigned seed = parse<unsigned>(*arg++, usage);
+  const unsigned inputSize = parse<unsigned>(*arg++, usage);
+  const unsigned short signum = parse<unsigned short>(*arg++, usage);
   
   const int error = decode(signum);
   if (error)
@@ -56,7 +70,7 @@ int main(int argc, char *argv[])
   require(!database.ConnectionBad(), database);
 
   require(database.ExecCommandOk("BEGIN"), database);
-  Session::singleton.upload(database, signum);
+  Session::singleton.upload(database, application, sparsity, seed, inputSize, signum);
   cerr << "commit: " << flush;
   require(database.ExecCommandOk("COMMIT"), database);
   cerr << "done" << endl;

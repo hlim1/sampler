@@ -23,10 +23,35 @@ const char *tag;
 }
 
 
+<INITIAL>.|\n {
+  fprintf(stderr,
+	  "modernization error: malformed input\n"
+	  "  expected unadorned compilation unit signature\n"
+	  "  instead, read \"%s\"\n", yytext);
+  exit(1);
+}
+
+
 <COUNTS>(.+\n)*\n {
   BEGIN(INITIAL);
   fwrite(yytext, 1, yyleng - 1, stdout);
   printf("</%s>\n", tag);
+}
+
+
+<COUNTS><<EOF>> {
+  fputs("modernization error: malformed input\n"
+	"  expected sequence of newline-terminated counts\n"
+	"  instead, read end-of-file\n", stderr);
+  exit(1);
+}
+
+
+<COUNTS>.+ {
+  fprintf(stderr, "modernization error: malformed input\n"
+	  "  expected sequence of newline-terminated counts\n"
+	  "  instead, read \"%s\"\n", yytext);
+  exit(1);
 }
 
 

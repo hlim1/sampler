@@ -82,6 +82,15 @@
 	    counters.  This is the scheme used for the
 	    <application>bc</application> experiment in our PLDI
 	    paper.</para>
+
+	    <para>This scheme can also optionally compare each
+	    assigned value to each constant-valued integer expression
+	    seen in the program.  This can be useful to trap problems
+	    relating to fixed-size buffers, structure sizes, or other
+	    <quote>magic</quote> values.  To turn on constant
+	    expression comparisons, add
+	    <option>--compare-constants</option> to the compiler
+	    command line.</para>
 	  </listitem>
 	</varlistentry>
 
@@ -283,6 +292,22 @@
 	    <para>Experimental optimizations for indirect function
 	    calls.  Defaults to disabled.  Not yet trusted as correct,
 	    and should not be used.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><option>--compare-constants</option></term>
+	  <term><option>--no-compare-constants</option></term>
+	  <listitem>
+	    <para>When using the <option>scalar-pairs</option>
+	    instrumentation scheme, compare each assigned value to
+	    each constant-valued integer expression seen anywhere in
+	    the program.  This can be useful to trap problems relating
+	    to fixed-size buffers, structure sizes, or other
+	    <quote>magic</quote> values, but may substantially
+	    increase the amount of instrumentation in the code.
+	    Defaults to not comparing with constant
+	    expressions.</para>
 	  </listitem>
 	</varlistentry>
       </variablelist>

@@ -7,7 +7,7 @@ class visitor =
     inherit BufferClass.c 16
 
     initializer
-      self#addString "*0.0\n";
+      self#addString "*\t0.0\n";
 
     val expectedSid = ref 0
 

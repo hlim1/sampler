@@ -7,6 +7,10 @@ use Fcntl qw(SEEK_SET);
 use FileHandle;
 use FindBin;
 
+use lib $FindBin::Bin;
+use SymbolTable;
+use Unit;
+
 
 ########################################################################
 
@@ -33,7 +37,7 @@ sub check_signature ($$$) {
 }
 
 
-my %compilationUnit;
+my @units;
 
 
 foreach my $objectName (@ARGV) {
@@ -58,46 +62,16 @@ foreach my $objectName (@ARGV) {
 	}
     }
 
-    while (my $signature = <$handle>) {
-	chomp $signature;
-	check_signature $objectName, $handle, $signature;
-	my $unit = { sites => [], name => $objectName };
-
-	while (my $function = <$handle>) {
-	    chomp $function;
-	    last if $function eq '';
-
-	    $function =~ /^([-+])\t([\w\$]+)\t(.+)\t(\d+)$/ or malformed $objectName, $handle, 'function header', $function;
-	    my ($linkage, $name, $file, $line) = ($1, $2, $3, $4);
-	    print "$file:$line:	function $name()\n";
-
-	    while (my $node = <$handle>) {
-		chomp $node;
-		last if $node eq '';
-
-		$node =~ /^(.+)\t(\d+)$/ or malformed $objectName, $handle, 'node header', $node;
-		my ($file, $line) = ($1, $2);
-		print "$file:$line:		node\n";
-
-		my $successors = <$handle>;
-		chomp $successors;
-		$successors =~ /^(\d+\t)*$/ or malformed $objectName, $handle, 'successors list', $successors;
-		my @successors = split /\t/, $successors;
-		print "$file:$line:			succs: @successors\n" if @successors;
-
-		my $callees = <$handle>;
-		chomp $callees;
-		my @callees;
-		if ($callees eq '???') {
-		    @callees = ('???');
-		} else {
-		    $callees =~ /^([\w\$]+\t)*$/ or malformed $objectName, $handle, 'callees list', $callees;
-		    @callees = split /\t/, $callees;
-		}
-		print "$file:$line:			callees: @callees\n" if @callees;
-	    }
-	}
+    while (my $unit = new Unit $objectName, $handle) {
+	push @units, $unit;
+	print "got unit $unit\n";
     }
+
+    my $exports = new SymbolTable;
+    $_->collectExports($exports) foreach @units;
+    $_->resolveCallees($exports) foreach @units;
+
+    $handle->close or error "error after reading CFG from $objectName\n";
 }
 
 

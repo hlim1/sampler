@@ -1,14 +1,15 @@
-CPPFLAGS := -I../../libcountdown
-CFLAGS := -W -Wall -Werror -g
 libs := liblog.a liblog.so
-countlib := ../../libcountdown/libcountdown.so
+libcountdown := ../../libcountdown
+CPPFLAGS := -I$(libcountdown)
+CFLAGS := -W -Wall -Werror -g
+LDFLAGS := -L$(libcountdown)
 
 all: $(libs)
 
 liblog.a: %: %(log.o)
 
-liblog.so: log.o $(countlib)
-	$(LINK.o) -shared $^ -o $@
+liblog.so: log.o $(libcountdown)/libcountdown.so
+	$(LINK.o) -shared $< -lcountdown -o $@
 
 log.o: %.o: %.c log.h ../../libcountdown/countdown.h
 

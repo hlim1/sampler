@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include "log.h"
 #include "storage.h"

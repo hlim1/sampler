@@ -7,13 +7,23 @@ AM_INIT_AUTOMAKE(sampler,0.0)
 dnl : ${CXX:=g++3}
 : ${CXXFLAGS:=-g -W -Wall -Werror}
 
+AC_PROG_CC
 AC_PROG_CXX
+AM_PROG_LEX
+AC_PROG_LIBTOOL
 
-AC_PROG_RANLIB
+AC_C_INLINE
+AC_EGREP_CPP(inline, inline, 
+  AC_DEFINE(HAVE_INLINE, 1,
+	   [Define to tell GSL that we can handle inline functions.])
+)
 
+AM_CONFIG_HEADER(config.h)
 AC_OUTPUT(
 Makefile
 fuzz/Makefile
+libcountdown/Makefile
+liblog/Makefile
 mining/Makefile
 mining/libodbc++/Makefile
 mining/populate/Makefile

@@ -4,5 +4,4 @@
 .libs
 Makefile
 Makefile.in
-decoder.c
-print-trace
+mean

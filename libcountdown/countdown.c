@@ -1,14 +1,13 @@
+#include <config.h>
+
 #include <assert.h>
 #include <gsl/gsl_randist.h>
 #include <limits.h>
 #include "countdown.h"
+#include "internals.h"
 
 
 unsigned nextEventCountdown = UINT_MAX;
-
-double density;
-void *generator;
-static gsl_rng *gen;
 
 
 __attribute__((constructor)) static void initialize()
@@ -35,18 +34,9 @@ __attribute__((constructor)) static void initialize()
 	}
       else
 	{
-	  density = 1 / sparsity;
-	  assert(!generator);
-	  generator = gen = gsl_rng_alloc(gsl_rng_env_setup());
-	  nextEventCountdown = getNextCountdown();
+	  const double density = 1 / sparsity;
+	  gsl_rng * const generator = gsl_rng_alloc(gsl_rng_env_setup());
+	  precomputeCountdowns(density, generator);
 	}
     }
-}
-  
-
-__attribute__((destructor)) static void shutdown()
-{
-  assert(generator);
-  gsl_rng_free(gen);
-  generator = gen = 0;
 }

@@ -9,6 +9,7 @@ config.log
 config.status
 configure
 instrumentor
+libtool
 sampler
 stamp-h
 stamp-h.in

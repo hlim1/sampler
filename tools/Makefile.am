@@ -3,14 +3,16 @@ SUBDIRS = cfg
 tools_PROGRAMS =				\
 	decimate-samples
 
-tools_SCRIPTS =					\
-	debuild					\
+tools_DATA =					\
 	Embedded.pm				\
 	Function.pm				\
 	Node.pm					\
 	Object.pm				\
 	SymbolTable.pm				\
 	Unit.pm					\
+
+tools_SCRIPTS =					\
+	debuild					\
 	extract-report				\
 	extract-section				\
 	find-sampler-info			\
@@ -20,12 +22,7 @@ tools_SCRIPTS =					\
 	rpmbuild
 
 EXTRA_DIST =					\
-	Embedded.pm				\
-	Function.pm				\
-	Node.pm					\
-	Object.pm				\
-	SymbolTable.pm				\
-	Unit.pm					\
+	$(tools_DATA)				\
 	extract-report				\
 	extract-section				\
 	find-sampler-info			\

@@ -30,9 +30,9 @@ $(decodes): %.decode: %.trace $(decoder)
 $(traces): %.trace: %
 	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 
-$(objects): %.o: %.c $(top)/liblog/log.h $(top)/libcountdown/countdown.h ../main
+$(objects): %.o: %.c $(top)/liblog/log.h $(top)/libcountdown/countdown.h $(front_end)
 
-../main: force
+$(front_end): force
 	$(recurse)
 
 $(decoder): force

@@ -540,15 +540,6 @@ not weightless.  Thus, for much of \texttt{ccrypt}, our sampling
 transformation devolves to a simpler but slower pattern of checking
 the next-sample countdown at each and every site.
 
-\begin{figure}
-  \centering
-  \small
-  \includegraphics[width=\columnwidth]{applications/ccrypt_density}
-  \caption{Relative performance of \texttt{ccrypt} with unconditional or
-    sampled instrumentation}
-  \label{fig:ccrypt:slowdown}
-\end{figure}
-
 In spite of this, the performance impact of sampled instrumentation is
 minimal.  Using an experimental setup similar to that described
 earlier in Section~\ref{sec:share:whole}, we find that the overhead

@@ -145,24 +145,26 @@ instrumentation perform quite well with sampling: \texttt{ijpeg}, for
 example, moves from an unconditional instrumentation overhead of 146\%
 to only 3\% with sparse sampling.
 
-From these benchmarks and the examples in Sections~\ref{sec:ccrypt} and
-~\ref{sec:bc}, we conclude that realistic deployments will use sampling
-densities between 1/100 and 1/1000.  But how efficient is 1/1000
-sampling at observing rare program behavior?
-Suppose we are interested in a bug occurring in $1\%$ of executions.  
-To achieve 90\%
-confidence of observing this bug in at least one run, we
-need at least $\log{(1-0.90)} / \log{( 1 - 1/100000)} = 230,258$ runs.
+From these benchmarks and the examples in Sections~\ref{sec:ccrypt}
+and~\ref{sec:bc}, we conclude that realistic deployments will use
+sampling densities between 1/100 and 1/1000.  But how effective is
+1/1000 sampling at observing rare program behavior?  Suppose we are
+interested in a bug occurring once per hundred executions.  To achieve
+90\% confidence of observing this bug in at least one run, we need at
+least
+%%
+\[\log{(1-0.90)} / \log{\left( 1 - \frac{1}{100 \times 1000}\right)} = \text{230,258 runs.}\]
+%%
 While this may seem large, consider that sixty million Office XP
 licenses were sold in its first year on the market
 \cite{Microsoft:2002:AR-F10K}.  Assuming each licensee runs Microsoft
 Word twice per week, then this user base produces 230,258 runs every
-nineteen minutes and  99\% confidence of seeing a one-in-a-thousand bug
+nineteen minutes and 99\% confidence of seeing a one-in-a-thousand bug
 requires 4,605,168 runs, which is less than seven hours.  With smaller
 deployments, one must either wait longer for sufficient data or
-increase the sampling density.  Thus, our techniques are likely
-most suited to applications with at least hundreds of thousands of executions
-per day.
+increase the sampling density.  Thus, our techniques are likely most
+suited to applications with at least hundreds of thousands of
+executions per day.
 %The use of statistically fair
 %sampling allows one to make these calculations, and therefore these
 %trade-offs, in a mathematically well-founded manner.

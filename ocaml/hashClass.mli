@@ -4,10 +4,12 @@ class type ['key, 'value] t =
 
     method add : 'key -> 'value -> unit
     method remove : 'key -> unit
+    method replace : 'key -> 'value -> unit
 
     method find : 'key -> 'value
     method findAll : 'key -> 'value list
     method mem : 'key -> bool
+    method empty : bool
 
     method iter : ('key -> 'value -> unit) -> unit
     method fold : ('key -> 'value -> 'result -> 'result) -> 'result -> 'result

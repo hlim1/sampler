@@ -54,3 +54,6 @@ force:
 clean:
 	rm -f $(decodes) $(traces) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i) $(tests:=.inst.i) $(tests:=.inst.s)
 .PHONY: clean
+
+spotless: clean
+.PHONY: spotless

@@ -63,35 +63,21 @@ sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@repo
 %{nil}
 EOF
 
-	      sampler_wrapped => '%{_bindir}/%{name}',
-
-	      'sampler_wrap()' => <<'EOF',
-install -d %{_sampler_libdir}/applications%1
-mv %{buildroot}%1 %{_sampler_libdir}/applications%1/executable
-sed -e 's/@sampler_name@/%{_sampler_name}/g' \
-    -e 's/@sampler_cc_version@/%{sampler_cc_version}/g' \
-    -e 's/@name@/%{name}/g' \
-    -e 's/@version@/%{version}/g' \
-    -e 's/@release@/%{release}/g' \
-    -e 's!@path@!%1!g' \
-    -e 's/@build_distribution@/%{_sampler_build_distribution}/g' \
-    -e 's!@sampler_datadir@!%{_sampler_datadir}!g' \
-    <sampler/config.in %{_sampler_libdir}/applications%1/config
-sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' \
-    -e 's!@sampler_libdir@!%{_sampler_libdir}!g' \
-    -e 's!@path@!%1!g' \
-    <sampler/wrapper.in >%{buildroot}%1
-chmod --reference=%{_sampler_libdir}/applications%1/executable %{buildroot}%1
-EOF
-
-	      sampler_install => <<'EOF',
-install -d %{buildroot}%{_sysconfdir}/gconf/schemas
-install -m 644 sampler/sampler-%{name}.schemas %{buildroot}%{_sysconfdir}/gconf/schemas
+	      'sampler_install()' => <<'EOF',
+for path in %*; do
+  install -d $RPM_BUILD_ROOT%{_sampler_libdir}/applications$path
+  mv $RPM_BUILD_ROOT$path $RPM_BUILD_ROOT%{_sampler_libdir}/applications$path/executable
+  sed -e 's/@sampler_name@/%{_sampler_name}/g' -e 's/@sampler_cc_version@/%{sampler_cc_version}/g' -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e "s!@path@!$path!g" -e 's/@build_distribution@/%{_sampler_build_distribution}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >$RPM_BUILD_ROOT%{_sampler_libdir}/applications$path/config
+  sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' -e 's!@sampler_libdir@!%{_sampler_libdir}!g' -e "s!@path@!$path!g" <sampler/wrapper.in >$RPM_BUILD_ROOT$path
+  chmod --reference=$RPM_BUILD_ROOT%{_sampler_libdir}/applications$path/executable $RPM_BUILD_ROOT$path
+done
 %{sampler_tooldir}/find-sampler-info $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/gconf/schemas
+install -m 644 sampler/sampler-%{name}.schemas $RPM_BUILD_ROOT%{_sysconfdir}/gconf/schemas
 %{nil}
 EOF
 
-	      sampler_files => '%attr(-, root, root) %{_sampler_libdir}/applications',
+	      sampler_files => '%attr(-, root, root) %{_sampler_libdir}/applications/*',
 	      sampler_files_gconf => '%attr(-, root, root) %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas',
 
 	      sampler_post => 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas >/dev/null'

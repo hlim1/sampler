@@ -23,5 +23,9 @@ class visitor = object(self)
 end
 
 
+let simplifyBlock block =
+  ignore (visitCilBlock (new visitor) block)
+
+
 let phase _ =
   ("SimplifyReturns", visitCilFileSameGlobals new visitor)

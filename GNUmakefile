@@ -50,7 +50,7 @@ implicits := $(filter-out $(ifaces), $(impls))
 
 
 afterCalls = $(functionBodyVisitor) $(logIsImminent) afterCalls
-backwardJumps = $(logIsImminent) $(targets) backwardJumps
+backwardJumps = $(logIsImminent) backwardJumps
 bitFields = bitFields
 cfg = cfg
 cfgToDot = $(dotify) cfgToDot
@@ -82,7 +82,6 @@ skipWrites = $(countDown) $(functionBodyVisitor) skipWrites
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 stores = stores
-targets = targets
 testHarness = testHarness
 transform = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(instrument) $(patchSites) $(removeLoops) $(simplify) $(skipWrites) $(weighPaths) transform
 utils = utils

@@ -4,7 +4,7 @@ open Printf
 
 let showPhaseTimes =
   Options.registerBoolean
-    ~flag:"debug-phase-times"
+    ~flag:"show-phase-times"
     ~desc:"print the length of time taken to complete each phase"
     ~ident:""
     ~default:false

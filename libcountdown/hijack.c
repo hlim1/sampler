@@ -1,9 +1,5 @@
-#define _GNU_SOURCE		/* for RTLD_NEXT in <dlfcn.h> */
-
 #include <pthread.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include "countdown.h"
 #include "lifetime.h"
 
 #ifdef SAMPLER_CYCLIC

@@ -1,7 +1,4 @@
 open Cil
 
 
-class visitor : Logger.builder -> fundec -> object
-  inherit Sites.visitor
-  method consider : stmtkind -> Sites.instrumentation
-end
+val collect : fundec -> stmtkind -> Sites.outputs

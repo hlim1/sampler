@@ -1,26 +1,18 @@
 open Cil
+open OutputSet
 
 
-type instrumentation = instr list
+type outputs = OutputSet.t
 
-class map = [instrumentation] StmtMap.container
+class map = [outputs] StmtMap.container
 
 
-class virtual visitor =
-  object (self)
-    inherit FunctionBodyVisitor.visitor
-	
-    val sites = new map
-    method result = sites
-
-    method virtual consider : stmtkind -> instrumentation
-	
-    method vstmt statement =
-      begin
-	let instrumentation = self#consider statement.skind in
-	if instrumentation != [] then
-	  sites#add statement instrumentation
-      end;
-
-      DoChildren
-  end
+let collect collector cfg =
+  let map = new map in
+  let iterator statement =
+    let outputs = collector statement.skind in
+    if not (OutputSet.is_empty outputs) then
+      map#add statement outputs
+  in
+  List.iter iterator cfg;
+  map

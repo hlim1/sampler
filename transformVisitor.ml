@@ -12,7 +12,7 @@ class virtual visitor file = object(self)
   val logger = Logger.call file
   val countdownToken = Countdown.find file
 
-  method virtual findSites : fundec -> Sites.visitor
+  method virtual collectOutputs : fundec -> stmtkind -> Sites.outputs
   method virtual placeInstrumentation : stmt -> stmt list -> stmt list
 
   method vfunc func =
@@ -20,16 +20,14 @@ class virtual visitor file = object(self)
     RemoveLoops.visit func;
     IsolateInstructions.visit func;
     let afterCalls = Calls.prepatch func in
-    ignore (computeCFGInfo func false);
+    let cfg = computeCFGInfo func false in
     
     let forwardJumps, backwardJumps = ClassifyJumps.visit func in
     
     let entry = FunctionEntry.find func in
     let headers = entry :: backwardJumps @ afterCalls in
 
-    let sitesVisitor = self#findSites func in
-    ignore (visitCilFunction (sitesVisitor :> cilVisitor) func);
-    let sites = sitesVisitor#result in
+    let sites = Sites.collect (self#collectOutputs func) cfg in
     
     begin
       match WeighPaths.weigh sites headers with
@@ -50,17 +48,18 @@ class virtual visitor file = object(self)
 	    code.skind <- Block (mkBlock combined)
 	  in
 	  
-	  let instrument original instrumentation =
+	  let instrument original outputs =
 	    let location = get_stmtLoc original.skind in
 	    let skip = countdown#decrement location in
 	    combine original [mkStmtOneInstr skip];
 	    
 	    let clone = ClonesMap.findCloneOf clones original in
+	    let instrumentation = logger location outputs in
 	    let conditional = countdown#log location instrumentation in
 	    combine clone conditional
 	  in
 	  
-	  sites#iter instrument;
+	  sites#iter instrument
     end;
 
     SkipChildren

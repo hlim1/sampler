@@ -6,6 +6,6 @@ class virtual visitor : file -> object
 
   val logger : Logger.builder
 
-  method virtual findSites : fundec -> Sites.visitor
+  method virtual collectOutputs : fundec -> stmtkind -> Sites.outputs
   method virtual placeInstrumentation : stmt -> stmt list -> stmt list
 end

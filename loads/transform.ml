@@ -4,7 +4,7 @@ open Cil
 class visitor file = object
   inherit TransformVisitor.visitor file
 
-  method findSites _ = new FindSites.visitor logger
+  method collectOutputs _ = FindSites.collect
   method placeInstrumentation code log = log @ [code]
 end
 

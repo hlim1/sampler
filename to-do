@@ -5,3 +5,6 @@ handle "-save-temps" gcc option
 combine patch and postpatch in Calls module
 
 should reset or recreate Choices set on each file
+
+Does WeighPaths.weigh return None precisely when the sites map is
+empty?  If so, we can simplify that interface.

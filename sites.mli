@@ -1,14 +1,8 @@
 open Cil
 
 
-type instrumentation = instr list
+type outputs = OutputSet.OutputSet.t
 
-class map : [instrumentation] StmtMap.container
+class map : [outputs] StmtMap.container
 
-
-class virtual visitor : object
-  inherit cilVisitor
-
-  method virtual consider : stmtkind -> instrumentation
-  method result : map
-end
+val collect : (stmtkind -> outputs) -> stmt list -> map

@@ -12,7 +12,8 @@ reports := $(tests:=.report)
 passed := $(tests:=.passed)
 
 countdir := $(top)/../libcountdown
-lib := ../libreturns/libreturns.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la
+reportdir := $(top)/../libreport
+lib := ../libreturns/libreturns.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la $(reportdir)/libreport.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -45,7 +46,7 @@ test: test.o $(lib) ../main
 extern: extern-caller.o extern-callee.o $(lib) ../main
 	$(LINK.o) extern-caller.o extern-callee.o $(LOADLIBES) $(LDLIBS) -o $@
 
-test.o extern-caller.o extern-callee.o: %.o: %.c $(front_end) ../main ../libreturns/returns.h ../libreturns/returns-cil.h
+test.o extern-caller.o extern-callee.o: %.o: %.c $(front_end) ../main ../libreturns/returns.h ../libreturns/returns-cil.h $(countdir)/$(cyclic).h $(reportdir)/requires.h $(reportdir)/report.h
 
 ../main: $(force)
 	$(recurse)

@@ -13,7 +13,8 @@ reports := $(tests:=.report)
 passed := $(tests:=.passed)
 
 countdir := $(top)/../libcountdown
-lib := ../libscalar-pairs/libscalar-pairs.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la
+reportdir := $(top)/../libreport
+lib := ../libscalar-pairs/libscalar-pairs.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la $(reportdir)/libreport.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -50,7 +51,7 @@ late-global.trace: late-global $(countdowns)
 
 $(tests): %: %.o $(lib)
 
-$(objects): %.o: %.c $(front_end) ../main ../libscalar-pairs/scalar-pairs.h ../libscalar-pairs/scalar-pairs-cil.h
+$(objects): %.o: %.c $(front_end) ../main ../libscalar-pairs/scalar-pairs.h ../libscalar-pairs/scalar-pairs-cil.h $(countdir)/$(cyclic).h $(reportdir)/requires.h $(reportdir)/report.h
 
 ../main: $(force)
 	$(recurse)

@@ -12,7 +12,8 @@ reports := $(tests:=.report)
 passed := $(tests:=.passed)
 
 countdir := $(top)/../libcountdown
-lib := ../libbranches/libbranches.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la
+reportdir := $(top)/../libreport
+lib := ../libbranches/libbranches.la $(countdir)/lib$(cyclic).la $(countdir)/libcountdown.la $(reportdir)/libreport.la
 
 force := force
 recurse = $(MAKE) -C $(@D) $(@F)
@@ -45,7 +46,7 @@ simple: %: %.o $(lib) ../main
 modular: %: %-a.o %-b.o $(lib) ../main
 	$(LINK.o) $*-a.o $*-b.o $(LOADLIBES) $(LDLIBS) -o $@
 
-simple.o modular-a.o modular-b.o: %.o: %.c $(front_end) ../main ../libbranches/branches.h ../libbranches/branches-cil.h $(countdir)/$(cyclic).h
+simple.o modular-a.o modular-b.o: %.o: %.c $(front_end) ../main ../libbranches/branches.h ../libbranches/branches-cil.h $(countdir)/$(cyclic).h $(reportdir)/requires.h $(reportdir)/report.h
 
 ../main: $(force)
 	$(recurse)

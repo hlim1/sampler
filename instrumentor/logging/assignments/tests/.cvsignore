@@ -1,7 +1,7 @@
+*.decode
 *.i
 *.inst.c
 *.inst.s
 *.trace
-*.trace.
 
 test

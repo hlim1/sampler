@@ -1,11 +1,11 @@
-top = ../../../..
+top := ../../../..
 
 CC := $(top)/instrumentor/front-end ../main $(CC)
 CFLAGS := -g -W -Wall -Werror -save-temps
 
 tests := test
 
-decodes := $(addprefix decode-, $(tests))
+decodes := $(tests:=.decode)
 traces := $(tests:=.trace)
 objects := $(tests:=.o)
 
@@ -17,12 +17,15 @@ recurse = $(MAKE) -C $(@D) $(@F)
 ########################################################################
 
 
-all: $(decodes)
+all:
 .PHONY: all
 
-$(decodes): decode-%: %.trace $(decoder)
-	$(decoder) <$<
-.PHONY: $(decodes)
+check: $(decodes)
+.PHONY: check
+
+$(decodes): %.decode: %.trace $(decoder)
+	$(decoder) <$< >$@
+	cat $@
 
 $(traces): %.trace: %
 	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
@@ -39,5 +42,5 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(traces) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i) $(tests:=.inst.i) $(tests:=.inst.s)
+	rm -f $(decodes) $(traces) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i) $(tests:=.inst.i) $(tests:=.inst.s)
 .PHONY: clean

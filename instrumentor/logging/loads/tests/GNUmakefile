@@ -1,4 +1,4 @@
-top = ../../../..
+top := ../../../..
 
 CC := $(top)/instrumentor/front-end ../main $(CC)
 CFLAGS := -g -W -Wall -Werror -save-temps
@@ -27,8 +27,11 @@ recurse = $(MAKE) -C $(@D) $(@F)
 ########################################################################
 
 
-all: $(decodes)
+all:
 .PHONY: all
+
+check: $(decodes)
+.PHONY: check
 
 $(decodes): %.decode: %.trace $(decoder)
 	$(decoder) <$< >$@

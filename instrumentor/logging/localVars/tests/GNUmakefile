@@ -1,12 +1,15 @@
-CC := ../../front-end ../main $(CC)
+top := ../../../..
+
+CC := ../front-end $(CC)
+CFLAGS := -g -W -Wall -Werror -save-temps
 
 tests := test
 
-decodes := $(addprefix decode-, $(tests))
+decodes := $(tests:=.decode)
 traces := $(tests:=.trace)
 objects := $(tests:=.o)
 
-decoder := ../../liblog/decoder
+decoder := $(top)/liblog/print-trace
 
 recurse = $(MAKE) -C $(@D) $(@F)
 
@@ -14,18 +17,20 @@ recurse = $(MAKE) -C $(@D) $(@F)
 ########################################################################
 
 
-all: $(decodes)
+all:
 .PHONY: all
 
-$(decodes): decode-%: %.trace $(decoder)
-	$(decoder) <$<
-.PHONY: $(decodes)
+check: $(decodes)
+.PHONY: check
+
+$(decodes): %.decode: %.trace $(decoder)
+	$(decoder) <$< >$@
+	cat $@
 
 $(traces): %.trace: %
-	./$< 2>$@.
-	mv $@. $@
+	SAMPLER_FILE=$@ SAMPLER_SPARSITY=1 ./$<
 
-$(objects): %.o: %.c ../../liblog/log.h ../../libcountdown/countdown.h ../main
+$(objects): %.o: %.c $(top)/liblog/log.h $(top)/libcountdown/countdown.h ../main
 
 ../main: force
 	$(recurse)
@@ -37,5 +42,5 @@ force:
 .PHONY: force
 
 clean:
-	rm -f $(traces) $(traces:=.) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i)
+	rm -f $(decodes) $(traces) $(tests) $(objects) $(tests:=.inst.c) $(tests:=.i) $(tests:=.inst.i) $(tests:=.inst.s)
 .PHONY: clean

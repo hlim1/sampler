@@ -2,6 +2,7 @@ top := ../..
 include $(top)/defs.mk
 
 targets := main
+subdirs := tests
 libdirs := .. $(top)
 syslibs := str.$(cma)
 

@@ -2,7 +2,6 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot checker dump harness.$(cma)
-#subdirs := assignments decure diduce heapStores loads localVars
 subdirs := decure logging
 
 include rules.mk

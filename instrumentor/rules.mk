@@ -59,6 +59,7 @@ $(libcil): force
 force:
 .PHONY: force
 
+
 clean-here:: force
 	rm -f $(targets)
 	rm -f $(foreach suffix, cmi cmo cmx o, *.$(suffix))
@@ -71,6 +72,7 @@ clean:: force clean-here $(addsuffix /clean, $(subdirs))
 	$(recurse)
 .PHONY: %/clean
 
+
 spotless: force clean-here $(addsuffix /spotless, $(subdirs))
 	rm -f *.d *.di *.do
 .PHONY: spotless
@@ -78,6 +80,14 @@ spotless: force clean-here $(addsuffix /spotless, $(subdirs))
 %/spotless: force
 	$(recurse)
 .PHONY: %/spotless
+
+
+check:: force $(addsuffix /check, $(subdirs))
+.PHONY: check
+
+%/check: force
+	$(recurse)
+.PHONY: %/check
 
 
 ########################################################################

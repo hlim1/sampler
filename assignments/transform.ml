@@ -1,15 +1,15 @@
 open Cil
 
 
-class visitor file =
-  let logger = FindLogger.find file in
-  
-  object inherit TransformVisitor.visitor file
+class visitor file = object
+  inherit [FindSites.set] TransformVisitor.visitor file
       
-    method weigh = Weigh.weigh
-    method insertSkips = new Skips.visitor
-    method insertLogs = new Logs.visitor logger
-  end
+  val logger = FindLogger.find file
+
+  method findSites = FindSites.visit
+  method insertSkips sites skipLog = (new InsertSkipsAfter.visitor sites skipLog :> cilVisitor)
+  method insertLogs = new Logs.visitor logger
+end
 
 
 let phase =

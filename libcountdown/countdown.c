@@ -11,6 +11,7 @@ __attribute__((constructor)) void resetCountdown()
 {
   unsigned countUp = 1;
   
+#if 0
   while (random() % 4096 != 0)
     {
       ++countUp;
@@ -20,6 +21,7 @@ __attribute__((constructor)) void resetCountdown()
 	break;
       }
     }
+#endif
 
   nextLogCountdown = countUp;
 }

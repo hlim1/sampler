@@ -1,4 +1,5 @@
 open Cil
+open OutputSet
 
 
-val collect : (cilVisitor -> 'root -> 'result) -> 'root -> OutputSet.OutputSet.t
+val collect : (cilVisitor -> 'root -> _) -> 'root -> OutputSet.t

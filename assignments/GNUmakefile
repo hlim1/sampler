@@ -13,11 +13,10 @@ include $(top)/rules.mk
 
 
 findLogger = findLogger
-logs = $(where) logs
+findSites = findSites
+logs = $(findSites) logs
 skips = $(functionBodyVisitor) skips
-transform = $(findLogger) $(logs) $(skips) $(weigh) transform
-weigh = weigh
-where = where
+transform = $(findLogger) $(findSites) $(logs) transform
 
 
 ########################################################################

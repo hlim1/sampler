@@ -25,3 +25,8 @@ let collect visit root =
   let visitor = new visitor in
   ignore (visit (visitor :> cilVisitor) root);
   visitor#result
+
+
+let collectExpr = collect visitCilExpr
+
+let collectInstr = collect visitCilInstr

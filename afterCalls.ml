@@ -4,46 +4,19 @@ open Cil
 class visitor = object
   inherit FunctionBodyVisitor.visitor
 
-  val mutable afterCalls : stmt list = []
+  val mutable afterCalls = []
   method result = afterCalls
 
   method vstmt stmt =
-    match stmt.skind with
-    | Instr(instrs) ->
-	let rec split = function
-	  | [] -> []
-	  | instrs ->
-	      let rec slurp = function
-		| [] ->
-		    (false, [], [])
-		| Call _ as call :: tail ->
-		    (true, [call], tail)
-		| other :: tail ->
-		    let hasCall, more, remainder = slurp tail in
-		    (hasCall, other :: more, remainder)
-	      in
-	      
-	      let (hasCall, initial, remainder) = slurp instrs in
-	      let initialStmt = mkStmt (Instr initial) in
-	      if hasCall then
-		let placeholder = mkEmptyStmt () in
-		afterCalls <- placeholder :: afterCalls;
-		initialStmt :: placeholder :: split remainder
-	      else
-		initialStmt :: split remainder
-	in
-	
-	begin
-	  match split instrs with
-	  | [] -> ()
-	  | [_] -> ()
-	  | splits -> stmt.skind <- Block (mkBlock splits)
-	end;
-
-	SkipChildren
-	  
-    | _ ->
-	DoChildren
+    begin
+      match stmt.skind with
+      | Instr [Call _] as call ->
+	  let placeholder = mkEmptyStmt () in
+	  afterCalls <- placeholder :: afterCalls;
+	  stmt.skind <- Block (mkBlock [mkStmt call; placeholder])
+      | _ -> ()
+    end;
+    DoChildren
 end
 
 
@@ -70,7 +43,7 @@ let patch clones weights countdown =
   let patchOne standardAfter =
     let weight = weights#find standardAfter in
     if weight != 0 then
-      let instrumentedAfter = clones#find standardAfter in
+      let instrumentedAfter = ClonesMap.findCloneOf clones standardAfter in
 	  
       let standardLabel, instrumentedLabel = nextLabels () in
       let standardLanding = mkEmptyStmt () in

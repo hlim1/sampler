@@ -15,12 +15,10 @@ include $(top)/rules.mk
 collect = $(dissect) $(outputSet) collect
 dissect = $(outputSet) dissect
 findLogger = findLogger
-logs = $(collect) $(where) logs
+findSites = $(collect) $(outputSet) findSites
+logs = $(findSites) $(outputSet) $(where) logs
 outputSet = outputSet
-skips = $(functionBodyVisitor) skips
-transform = $(findLogger) $(logs) $(skips) $(weigh) transform
-weigh = weigh
-where = where
+transform = $(findLogger) $(findSites) $(logs) transform
 
 
 ########################################################################

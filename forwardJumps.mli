@@ -1,1 +1,1 @@
-val patch : Duplicate.clonesMap -> Cil.stmt list -> unit
+val patch : ClonesMap.clonesMap -> Cil.stmt list -> unit

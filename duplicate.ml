@@ -2,9 +2,6 @@ open Cil
 open Identity
 
 
-type clonesMap = stmt StmtMap.container
-
-
 let cloneLabel = function
   | Label (name, location, fromSource) ->
       Label (name ^ "__dup", location, fromSource)
@@ -14,25 +11,26 @@ let cloneLabel = function
 (**********************************************************************)
 
 
-class visitor = object
+class visitor pairs = object
   inherit FunctionBodyVisitor.visitor
 
-  val clones = new StmtMap.container
-  method result = clones
-
   method vstmt stmt =
-    let clone = { stmt with sid = -1;
-		  labels = mapNoCopy cloneLabel stmt.labels }
+    let clone = { stmt with labels = mapNoCopy cloneLabel stmt.labels }
     in
-
+    
     if stmt.sid != -1 then
-      clones#add stmt clone;
+      pairs.(stmt.sid) <- (stmt, clone);
     
     ChangeDoChildrenPost (clone, identity)
 end
 
 
-let duplicateBody {sbody = original} =
-  let visitor = new visitor in
-  let clone = visitCilBlock (visitor :> cilVisitor) original in
-  (original, clone, visitor#result)
+let duplicateBody fundec =
+  match fundec.smaxstmtid with
+  | None ->
+      failwith "no maximum statement id; please call Cil.computeCFGInfo before duplicating"
+  | Some max ->
+      let pairs = Array.make max (dummyStmt, dummyStmt) in
+      let visitor = new visitor pairs in
+      let clone = visitCilBlock visitor fundec.sbody in
+      (fundec.sbody, clone, pairs)

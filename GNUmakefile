@@ -2,7 +2,7 @@ top := .
 include defs.mk
 
 targets := cfg-to-dot harness.$(cma)
-subdirs := assignments heapStores libcountdown loads
+subdirs := assignments libcountdown loads
 
 include rules.mk
 
@@ -16,22 +16,26 @@ infile := hello
 ########################################################################
 
 
-afterCalls = $(functionBodyVisitor) $(logIsImminent) afterCalls
-backwardJumps = $(logIsImminent) backwardJumps
+afterCalls = $(clonesMap) $(functionBodyVisitor) $(logIsImminent) afterCalls
+backwardJumps = $(clonesMap) $(logIsImminent) backwardJumps
 cfg = cfg
 cfgToDot = $(dotify) cfgToDot
 classifyJumps = $(functionBodyVisitor) $(stmtSet) classifyJumps
+clonesMap = clonesMap
 countdown = $(findGlobal) countdown
 dotify = $(utils) dotify
 duplicate = $(functionBodyVisitor) $(identity) $(stmtMap) duplicate
 filterLabels = $(functionBodyVisitor) $(stmtSet) filterLabels
 findFunction = $(findGlobal) findFunction
 findGlobal = findGlobal
-forwardJumps = forwardJumps
+forwardJumps = $(clonesMap) forwardJumps
 functionBodyVisitor = $(skipVisitor) functionBodyVisitor
 functionEntry = $(logIsImminent) functionEntry
 identity = identity
-identity = identity
+insertSkipsAfter = $(insertSkipsVisitor) insertSkipsAfter
+insertSkipsBefore = $(insertSkipsVisitor) insertSkipsBefore
+insertSkipsVisitor = $(functionBodyVisitor) $(where) insertSkipsVisitor
+isolateInstructions = $(functionBodyVisitor) isolateInstructions
 logIsImminent = $(countdown) logIsImminent
 mapClass = mapClass
 patchSites = patchSites
@@ -42,9 +46,10 @@ skipVisitor = skipVisitor
 stmtMap = $(mapClass) stmtMap
 stmtSet = $(setClass) stmtSet
 testHarness = testHarness
-transformVisitor = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(removeLoops) $(weighPaths) transformVisitor
+transformVisitor = $(afterCalls) $(backwardJumps) $(classifyJumps) $(duplicate) $(forwardJumps) $(functionBodyVisitor) $(functionEntry) $(insertSkipsVisitor) $(isolateInstructions) $(removeLoops) $(skipLog) $(weighPaths) transformVisitor
 utils = utils
 weighPaths = $(stmtMap) weighPaths
+where = where
 
 
 ########################################################################
@@ -54,7 +59,7 @@ cfg_to_dot := $(cfg) $(cfgToDot) $(functionBodyVisitor) $(testHarness) %
 cfg-to-dot: %: $(libcil) $(addsuffix .$(cmo), $(cfg_to_dot))
 	$(link)
 
-harness := $(filterLabels) $(logWrite) $(skipLog) $(testHarness) $(transformVisitor)
+harness := $(filterLabels) $(insertSkipsAfter) $(insertSkipsBefore) $(testHarness) $(transformVisitor)
 harness.$(cma): $(addsuffix .$(cmo), $(harness))
 	$(archive)
 

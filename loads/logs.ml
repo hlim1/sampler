@@ -1,42 +1,27 @@
 open Cil
-open OutputSet
 open Pretty
 
 
-class visitor logger =
-
-  let insert self visit root location =
-    let dissection = Collect.collect visit root in
-    let formats, arguments = List.split (OutputSet.elements dissection) in
-    let format = ("%s:%u:\n" ^ String.concat "" formats) in
-    let call = 
-      Call (None, logger,
-	    mkString format
-	    :: mkString location.file
-	    :: kinteger IUInt location.line
-	    :: arguments,
-	    location)
-    in
-    self#queueInstr [call]
-  in
-  
-  object (self)
-
+class visitor logger (sites : FindSites.map) = object (self)
     inherit FunctionBodyVisitor.visitor
 
-    method vstmt stmt =
+    method vstmt statement =
       begin
-	match stmt.skind with
-	(* Switch should already have been removed by Cil.prepareCFG *)
-	| Return (Some expression, location)
-	| If (expression, _, _, location) ->
-	    insert self visitCilExpr expression location
-	|	_ -> ()
+	try
+	  let outputs = sites#find statement in
+	  let formats, arguments = List.split (OutputSet.OutputSet.elements outputs) in
+	  let format = ("%s:%u:\n" ^ String.concat "" formats) in
+	  let location = Where.statement statement in
+	  let call =
+	    Call (None, logger,
+		  mkString format
+		  :: mkString location.file
+		  :: kinteger IUInt location.line
+		  :: arguments,
+		  location)
+	  in
+	  self#queueInstr [call]
+	with Not_found -> ()
       end;
       DoChildren
-
-    method vinst instr =
-      let dissection = Collect.collect in
-      insert self visitCilInstr instr (Where.locationOf instr);
-      SkipChildren
   end

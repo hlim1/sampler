@@ -1,4 +1,4 @@
 open Cil
 
 
-class visitor : exp -> cilVisitor
+class visitor : exp -> FindSites.set -> cilVisitor

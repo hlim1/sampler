@@ -4,6 +4,14 @@
 #include "cyclic-size.h"
 
 
+extern const void * const providesLibCyclic;
+
+#ifdef CIL
+#pragma cilnoremove("requiresLibCyclic")
+static const void * const requiresLibCyclic = &providesLibCyclic;
+#endif
+
+
 static inline unsigned getNextEventCountdown() __attribute__((no_instrument_function));
 
 static inline unsigned getNextEventCountdown()

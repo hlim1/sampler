@@ -2,6 +2,14 @@
 #define INCLUDE_libcountdown_acyclic_h
 
 
+extern const void * const providesLibAcyclic;
+
+#ifdef CIL
+#pragma cilnoremove("requiresLibAcyclic")
+static const void * const requiresLibAcyclic = &providesLibAcyclic;
+#endif
+
+
 static inline unsigned getNextEventCountdown() __attribute__((no_instrument_function));
 
 static inline unsigned getNextEventCountdown()

@@ -7,6 +7,8 @@
 #include "countdown.h"
 
 
+const void * const providesLibAcyclic;
+
 double density;
 void *generator;
 static gsl_rng *gen;

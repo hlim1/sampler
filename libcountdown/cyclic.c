@@ -14,6 +14,8 @@
 #define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(unsigned))
 
 
+const void * const providesLibCyclic;
+
 const unsigned *nextEventPrecomputed = 0;
 unsigned nextEventSlot = 0;
 

@@ -3,8 +3,8 @@
 <gconfschemafile>
   <schemalist>
     <schema>
-      <key>/schemas/apps/@name@/sampler/@scheme@/asked</key>
-      <applyto>/apps/@name@/sampler/@scheme@/asked</applyto>
+      <key>/schemas/apps/@name@/sampler/asked</key>
+      <applyto>/apps/@name@/sampler/asked</applyto>
       <owner>@name@</owner>
       <type>bool</type>
       <default>false</default>
@@ -14,8 +14,8 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/@name@/sampler/@scheme@/enabled</key>
-      <applyto>/apps/@name@/sampler/@scheme@/enabled</applyto>
+      <key>/schemas/apps/@name@/sampler/enabled</key>
+      <applyto>/apps/@name@/sampler/enabled</applyto>
       <owner>@name@</owner>
       <type>bool</type>
       <default>true</default>
@@ -25,8 +25,8 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/@name@/sampler/@scheme@/sparsity</key>
-      <applyto>/apps/@name@/sampler/@scheme@/sparsity</applyto>
+      <key>/schemas/apps/@name@/sampler/sparsity</key>
+      <applyto>/apps/@name@/sampler/sparsity</applyto>
       <owner>@name@</owner>
       <type>int</type>
       <default>@sparsity@</default>
@@ -36,8 +36,8 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/@name@/sampler/@scheme@/compression-level</key>
-      <applyto>/apps/@name@/sampler/@scheme@/compression-level</applyto>
+      <key>/schemas/apps/@name@/sampler/compression-level</key>
+      <applyto>/apps/@name@/sampler/compression-level</applyto>
       <owner>@name@</owner>
       <type>int</type>
       <default>9</default>
@@ -47,8 +47,8 @@
       </locale>
     </schema>
     <schema>
-      <key>/schemas/apps/@name@/sampler/@scheme@/reporting-url</key>
-      <applyto>/apps/@name@/sampler/@scheme@/reporting-url</applyto>
+      <key>/schemas/apps/@name@/sampler/reporting-url</key>
+      <applyto>/apps/@name@/sampler/reporting-url</applyto>
       <owner>@name@</owner>
       <type>string</type>
       <default>@reporting_url@</default>

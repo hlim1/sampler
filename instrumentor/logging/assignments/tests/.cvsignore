@@ -1,7 +1,0 @@
-*.decode
-*.i
-*.inst.c
-*.inst.s
-*.trace
-.libs
-test

@@ -1,12 +1,24 @@
+-*- outline -*-
+
+* launcher
+
+GNOME launcher's server reply dialog has bad tab navigation.  If focus
+is on a hyperlink in the HTML area, you cannot tab out to the "OK"
+button.
+
+how does launcher propagate SIGINT (^C) down to child?
+
+* packaging
+
 Check copyright notice in configure scripts that use SAMPLER_INIT.
 Check both script text as well as "configure --version" output.
 
 Consider adding some sort of "README.sampler" to the documentation for
 each sampled application RPM.
 
-GNOME launcher's server reply dialog has bad tab navigation.  If focus
-is on a hyperlink in the HTML area, you cannot tab out to the "OK"
-button.
+* instrumentor
+
+** threads
 
 Each thread starts its own random sequence of countdowns with the same
 initial state used when the application first launched.  An
@@ -19,10 +31,10 @@ initial state.  If they're not sharing state, can we still seed each
 one with a different initial state?  Can we do this without giving up
 the ability to record a single starting seed for the entire app?
 
+** general
+
 Document --{no-,}assume-weightless-{libraries,externs} and hook them
 up in the Perl driver.
-
-how does launcher propagate SIGINT (^C) down to child?
 
 PairClassifier.visitor does a lot of redundant work to re-scan for
 globals from the start of the file for each new instance.  We should

@@ -1,7 +1,5 @@
 open Cil
 
-let check = Check.checkFile []
-
 let process filename =
   let file = Frontc.parse filename () in
   dumpFile defaultCilPrinter stdout file

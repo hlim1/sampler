@@ -1,8 +1,8 @@
-from BaseUserConfig import BaseUserConfig
-
 import shutil
 from sys import stderr
 import xreadlines
+
+from BaseUserConfig import BaseUserConfig
 
 
 class UserConfig (BaseUserConfig):

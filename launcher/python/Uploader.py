@@ -1,7 +1,7 @@
+import urllib2
+
 import RedirectHandler
 import Upload
-
-import urllib2
 
 
 def __add_headers(upload, prefix, contributor):

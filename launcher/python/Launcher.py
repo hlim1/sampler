@@ -1,10 +1,10 @@
-import Outcome
-import ReportsReader
-
 import os
 import signal
 import struct
 import sys
+
+import Outcome
+import ReportsReader
 
 
 def run_without_sampling(app):

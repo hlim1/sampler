@@ -1,7 +1,9 @@
-import gtk.glade
-
 import new
 import types
+
+import pygtk
+pygtk.require('2.0')
+import gtk.glade
 
 
 ########################################################################

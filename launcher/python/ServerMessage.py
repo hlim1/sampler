@@ -1,11 +1,13 @@
-from DialogWrapper import DialogWrapper
-
-import gnome
-import gtkhtml2
-
 import cgi
 import urllib2
 import urlparse
+
+import pygtk
+pygtk.require('2.0')
+import gnome
+import gtkhtml2
+
+from DialogWrapper import DialogWrapper
 
 
 ########################################################################

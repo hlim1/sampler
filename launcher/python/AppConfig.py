@@ -1,5 +1,6 @@
-from ConfigParser import ConfigParser
 import os.path
+
+from ConfigParser import ConfigParser
 
 
 class AppConfig:

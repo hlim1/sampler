@@ -8,5 +8,7 @@ let process filename =
 ;;
 
 initCIL ();
+lineDirectiveStyle := None;
+
 let filenames = List.tl (Array.to_list Sys.argv) in
 List.iter process filenames

@@ -152,10 +152,12 @@ $dbh->do(q{
 	sparsity,
 	exit_signal,
 	exit_status,
-	date
+	date,
+	0
 
 	FROM upload
 	NATURAL LEFT JOIN build
+	WHERE suppress IS NULL
     }) or die;
 
 

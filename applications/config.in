@@ -10,4 +10,4 @@ instrumentation-type: @scheme@
 instrumentation-version: 0.1
 
 [user]
-gconf-root: /apps/@name@/sampler/@scheme@
+gconf-root: /apps/@name@/sampler

@@ -7,7 +7,6 @@ use File::Path;
 use File::stat;
 use FileHandle;
 use FindBin;
-use Scalar::Util qw(tainted);
 
 my $buildRoot = shift;
 die "Usage: $0 <rpm-build-root>\n" unless defined $buildRoot;
@@ -36,7 +35,6 @@ sub wanted {
     die "$subpath is not under $buildRoot" unless $subpath =~ s{^\Q$buildRoot\E/}{};
 
     print "extracting sampler site info from $_\n";
-    die if tainted $subpath;
     my $output = "$buildRoot/usr/lib/sampler/sites/$subpath";
     my $outdir = dirname $output;
     mkpath $outdir;

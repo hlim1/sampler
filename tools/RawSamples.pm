@@ -40,6 +40,8 @@ sub merge ($\@\@) {
 
 	$sum[$_] = join "\t", @sumTuple;
     }
+
+    return \@sum;
 }
 
 

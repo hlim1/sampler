@@ -124,7 +124,7 @@ sub extraLibs {
 	push @extras, "-l$self->{countdowns}$_r";
 	push @extras, "-lcountdown$_r";
 	push @extras, '-ldl' if $self->{threads};
-	push @extras, $libm if $libm && $self->{countdowns} eq 'acyclic';
+	push @extras, $::libm if $::libm && $self->{countdowns} eq 'acyclic';
     }
 
     return @extras;

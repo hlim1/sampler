@@ -12,6 +12,7 @@ tools_SCRIPTS =					\
 	RawSamples.pm				\
 	SiteInfo.pm				\
 	SymbolTable.pm				\
+	TaggedLoader.pm				\
 	Unit.pm					\
 	extract-report				\
 	extract-section				\
@@ -28,6 +29,7 @@ EXTRA_DIST =					\
 	RawSamples.pm				\
 	SiteInfo.pm				\
 	SymbolTable.pm				\
+	TaggedLoader.pm				\
 	Unit.pm					\
 	extract-report				\
 	extract-section				\

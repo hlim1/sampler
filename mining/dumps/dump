@@ -1,6 +1,6 @@
 #!/bin/sh
 
 site=../site-config.sh
-if [ -e $site ]; source $site; fi
+if [ -e $site ]; then source $site; fi
 
 exec mysqldump $mysql_flags --opt "$@" sampler

@@ -4,6 +4,7 @@ import SamplerConfig
 import ServerMessage
 
 import gtk
+import sys
 
 
 class GnomeUserConfig (BaseUserConfig.BaseUserConfig):

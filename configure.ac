@@ -70,7 +70,6 @@ fi
 : ${CXXFLAGS:=-O9 -W -Wall -Werror}
 
 AC_PROG_CC
-AC_PROG_CXX
 AM_PROG_LEX
 AC_PROG_RANLIB
 
@@ -164,9 +163,6 @@ libcountdown/cyclic-size.h
 libreport/Makefile
 libthreads/Makefile
 libtuples/Makefile
-mining/Makefile
-mining/libodbc++/Makefile
-mining/populate/Makefile
 ])
 
 AC_OUTPUT

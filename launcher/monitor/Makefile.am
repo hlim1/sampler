@@ -4,7 +4,6 @@ defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
 
 EXTRA_DIST =					\
 	Sampler_Monitor.idl			\
-	Sampler_Monitor.server			\
 	monitor.override
 
 BUILT_SOURCES =					\

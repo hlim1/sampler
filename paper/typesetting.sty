@@ -20,9 +20,12 @@
 \newcommand{\abs}[1]{\lvert#1\rvert}
 \newcommand{\norm}[1]{\lVert#1\rVert}
 
-\renewcommand\floatpagefraction{.9}
-\renewcommand\topfraction{.9}
-\renewcommand\bottomfraction{.9}
-\renewcommand\textfraction{.1}
-
 \providecommand{\disregard}[1]{}
+
+\newcommand{\elim}[1]{$\langle$\textsf{#1}$\rangle$}
+
+\newcounter{feature}
+\newenvironment{features}[0]{
+  \begin{list}{\arabic{feature}.}{\usecounter{feature}\setlength{\itemsep}{0pt}\setlength{\parsep}{0in}\ttfamily\small}
+  }{
+  \end{list}}

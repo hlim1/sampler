@@ -97,18 +97,18 @@ willing to provide useful information.  \disregard{A greater challenge
   in the presence of memory safety bugs, but the \CCured project has
   shown that this too is possible.}
 
-In the context of statistical analyses in the style of
-\autoref{sec:bc}, an attractive mechanism for protecting user
-anonymity becomes available.  Many statistical analyses are
-characterized by a set of \termdef{sufficient statistics}: a
-collection of values which completely capture the internal state of
-the analysis.  For example, if one wanted to compute the mean of a
-stream of numbers, a running total and a count would be sufficient
-statistics: the mean can be computed from these without retaining the
-individual numbers in the stream.  Similarly, once the logistic
-regression parameters have been updated with a new trace, the trace
-itself may be discarded.  If the analysis host is compromised, an
-attacker cannot recover the precise details of any single past trace.
+When using statistical models such that of \autoref{sec:bc}, an
+attractive mechanism for protecting user anonymity becomes available.
+Many statistical analyses are characterized by a set of
+\termdef{sufficient statistics}: a collection of values which
+completely capture the internal state of the analysis.  For example,
+if one wanted to compute the mean of a stream of numbers, then a
+running total and a count would be sufficient statistics: the mean can
+be computed from these without retaining the individual numbers in the
+stream.  Similarly, once the logistic regression parameters have been
+updated with a new trace, the trace itself may be discarded.  If the
+analysis host is compromised, an attacker cannot recover the precise
+details of any single past trace.
 
 A statistical approach designed to cope with noise offers some
 protection against malicious users who might try to poison the central

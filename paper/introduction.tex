@@ -73,8 +73,8 @@ Commercial databases, for example, routinely produce extensive log
 files, and the first action when a user reports a problem is to
 inspect those logs.  Similarly, each flight of the Boeing 777
 generates logs which are subsequently combed for signs of possible
-problems\needcite[Honeywell's AMOSS system?].  There are many other
-similar examples in the world of commercial software.
+problems \cite{Esler:2001:WVR}.  There are many other similar examples
+in the world of commercial software.
 
 A more recent development is the result of ubiquitous Internet
 connectivity.  Netscape/Mozilla, Microsoft, GNOME, and KDE have all
@@ -146,14 +146,13 @@ framework.  In \autoref{sec:ccured} we consider how we can share the
 cost of program assertions over a large user base through sampling.
 Each user only executes a fraction of the assertions, and thus sees
 good performance, but in the aggregate bugs due to assertion failures
-are still extremely likely to be detected.  \aside{We should calculate
-  this probability, as Alice did for \texttt{ccrypt}.}  In
-\autoref{sec:bc} we show how we can use statistical techniques to
-identify the source of a likely bug from samples taken from a few
-thousand executions.  We sample information on the relationship
-between pairs of integer variables in a program from both successful
-and failing runs and use statistical regression techniques to identify
-those predicates that are highly predictive of program failure.
+are still extremely likely to be detected.  In \autoref{sec:bc} we
+show how we can use statistical techniques to identify the source of a
+likely bug from samples taken from a few thousand executions.  We
+sample information on the relationship between pairs of integer
+variables in a program from both successful and failing runs and use
+statistical regression techniques to identify those predicates that
+are highly predictive of program failure.
 
 Of course, monitoring of user executions raises some important privacy
 and security concerns.  The problems are both social and technical; a

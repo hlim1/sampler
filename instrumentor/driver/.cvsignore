@@ -6,4 +6,4 @@
 *.di
 *.do
 
-main
+main-gcc

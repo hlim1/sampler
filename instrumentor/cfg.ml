@@ -67,7 +67,7 @@ let build func =
     | None ->
 	Errormsg.s (errorLoc
 		      (get_stmtLoc pred.skind)
-		      "break or continue with no enclosing loop");
+		      "continue with no enclosing loop");
   in
 
   (* pick the next statement: first in list or inherited fall-through *)

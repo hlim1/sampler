@@ -2,7 +2,9 @@ open Cil
 
 let phases =
   [
-   Transform.phase ();
+   LogIsImminent.phase;
+   LogWrite.phase;
+   Transform.phase;
    "dump", dumpFile defaultCilPrinter stdout
  ]
     

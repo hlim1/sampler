@@ -1,3 +1,3 @@
 class visitor : Cil.cilVisitor
 
-val phase : unit -> TestHarness.phase
+val phase : TestHarness.phase

@@ -23,5 +23,6 @@ class visitor initialFunction = object(self)
 end
 
 
-let phase _ =
-  ("SimplifyReturns", visitCilFileSameGlobals (new visitor dummyFunDec))
+let phase =
+  "SimplifyReturns",
+  visitCilFileSameGlobals (new visitor dummyFunDec)

@@ -28,7 +28,8 @@ class visitor = object
 end
 
 
-let phase _ =
-  ("Instrument", fun file ->
+let phase =
+  "Instrument",
+  fun file ->
     LogWrite.addPrototype file;
-    visitCilFileSameGlobals new visitor file)
+    visitCilFileSameGlobals new visitor file

@@ -19,7 +19,9 @@ class visitor = object
 end
 
 
-let phase _ = "RemoveLoops", visitCilFileSameGlobals new visitor
+let phase =
+  "RemoveLoops",
+  visitCilFileSameGlobals new visitor
 
 
 let visit original =

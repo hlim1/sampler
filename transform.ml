@@ -25,9 +25,6 @@ class visitor = object
 end
 
 
-let phase _ =
-  ("Transform",
-   fun file ->
-     LogIsImminent.addPrototype file;
-     LogWrite.addPrototype file;
-     visitCilFileSameGlobals new visitor file)
+let phase =
+  "Transform",
+  visitCilFileSameGlobals new visitor

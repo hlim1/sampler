@@ -1,1 +1,1 @@
-val phase : unit -> TestHarness.phase
+val phase : TestHarness.phase

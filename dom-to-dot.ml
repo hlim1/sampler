@@ -21,15 +21,14 @@ class visitor = object
     SkipChildren
 end
     
+
+let phase =
+  "Dom-to-dot",
+  fun file ->
+    print_string "digraph Dominators {\n";
+    visitCilFileSameGlobals new visitor file;
+    print_string "}\n"
+
 ;;
 
-let phase _ =
-  ("Dom-to-dot",
-   fun file ->
-     print_string "digraph Dominators {\n";
-     visitCilFileSameGlobals new visitor file;
-     print_string "}\n")
-
-;;
-
-ignore(TestHarness.main [phase ()]);
+ignore(TestHarness.main [phase]);

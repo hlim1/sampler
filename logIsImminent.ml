@@ -18,3 +18,7 @@ let choose func location weight original instrumented =
     
 let addPrototype file =
   file.globals <- GVarDecl (logIsImminent, logIsImminent.vdecl) :: file.globals
+
+let phase =
+  "LogWrite",
+  addPrototype

@@ -41,5 +41,6 @@ class visitor = object
 end
 
 
-let phase _ =
-  ("CheckSimplicity", visitCilFileSameGlobals new visitor)
+let phase =
+  "CheckSimplicity",
+  visitCilFileSameGlobals new visitor

@@ -3,4 +3,4 @@ open Cil
   
 class visitor : cilVisitor
 
-val phase : unit -> TestHarness.phase
+val phase : TestHarness.phase

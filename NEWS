@@ -1,8 +1,15 @@
 -*- outline -*-
 
-* sampler-0.10.0
+* sampler-0.11
 
-** Implemented path balancing to make fast path even faster.
+** Implemented path balancing to make fast path even faster.  Disabled
+   by default, though, as I want to test it more before rolling it out
+   for general use.
+
+** Store absolute file names in static site information and CFG for
+   more reliable source file linking later.  Updated RPM packaging
+   tools remap these absolute names to point to the sources bundled up
+   in the corresponding "*-debuginfo" package.
 
 ** Minor bug fixes to developer tools.
 

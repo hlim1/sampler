@@ -20,7 +20,7 @@
       <child>
 	<widget class="GtkImage" id="image">
 	  <property name="visible">True</property>
-	  <property name="pixbuf">small-enabled.png</property>
+	  <property name="pixbuf">enabled-32.png</property>
 	  <property name="xalign">0.5</property>
 	  <property name="yalign">0.5</property>
 	  <property name="xpad">0</property>
@@ -68,8 +68,8 @@
 
 <widget class="GnomeAbout" id="about">
   <property name="destroy_with_parent">False</property>
-  <property name="icon">enabled.png</property>
-  <property name="logo">enabled.png</property>
+  <property name="icon">enabled-16.png</property>
+  <property name="logo">enabled-48.png</property>
   <property name="copyright" translatable="yes">Copyright © 2003 The Regents
 of the University of California</property>
   <property name="comments" translatable="yes">Bug isolation report uploader</property>
@@ -86,7 +86,7 @@ of the University of California</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">enabled.png</property>
+  <property name="icon">enabled-16.png</property>
   <property name="has_separator">False</property>
   <signal name="response" handler="on_dialog_response" last_modification_time="Wed, 03 Sep 2003 06:40:22 GMT"/>
   <signal name="delete_event" handler="on_dialog_delete" last_modification_time="Wed, 03 Sep 2003 06:40:38 GMT"/>
@@ -105,6 +105,7 @@ of the University of California</property>
 	  <child>
 	    <widget class="GtkButton" id="helpbutton3">
 	      <property name="visible">True</property>
+	      <property name="sensitive">False</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-help</property>
@@ -340,7 +341,7 @@ of the University of California</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">True</property>
-  <property name="icon">enabled.png</property>
+  <property name="icon">enabled-16.png</property>
   <property name="has_separator">False</property>
   <signal name="response" handler="on_response" last_modification_time="Thu, 04 Sep 2003 20:13:17 GMT"/>
 
@@ -485,7 +486,7 @@ of the University of California</property>
 	  <child>
 	    <widget class="GtkImage" id="image">
 	      <property name="visible">True</property>
-	      <property name="pixbuf">enabled.png</property>
+	      <property name="pixbuf">enabled-48.png</property>
 	      <property name="xalign">0.5</property>
 	      <property name="yalign">0</property>
 	      <property name="xpad">0</property>
@@ -681,7 +682,7 @@ Feedback from users like you can help us find and fix the bugs that matter most.
   <property name="default_height">400</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">enabled.png</property>
+  <property name="icon">enabled-16.png</property>
   <property name="has_separator">False</property>
 
   <child internal-child="vbox">

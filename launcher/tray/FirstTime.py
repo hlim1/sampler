@@ -2,11 +2,10 @@ import gnome.ui
 import gtk
 import gtk.glade
 
-from GConfNotifier import GConfNotifier
+from MasterNotifier import MasterNotifier
 from StatusIcon import StatusIcon
 from WindowIcon import WindowIcon
 
-import IconPair
 import Keys
 import Paths
 import Signals
@@ -39,16 +38,14 @@ class FirstTime:
 
         # hook up state-linked icons
         image = self.__get_widget('image')
-        self.__image_updater = StatusIcon(client, IconPair.big, image.set_from_pixbuf)
+        self.__image_updater = StatusIcon(client, image, 'disabled-48.png', 'enabled-48.png')
         self.__icon_updater = WindowIcon(client, self.__dialog)
 
         # hook up state-linked radio buttons
         self.__client = client
-        self.__notifier_enabled = GConfNotifier(client, Keys.master, self.__enabled_refresh)
-        self.__enabled_refresh()
+        self.__notifier = MasterNotifier(client, self.__enabled_refresh)
 
-    def __enabled_refresh(self, *args):
-        enabled = self.__client.get_bool(Keys.master)
+    def __enabled_refresh(self, enabled):
         self.__radio_refresh('yes', enabled)
         self.__radio_refresh('no', not enabled)
 

@@ -16,12 +16,11 @@ class Application:
         self.name = config.get('application', 'name')
 
         self.__client = client
-        self.__notify = GConfNotifier(client, Keys.master, self.__gconf_notify, model)
+        self.__notify = GConfNotifier(client, self.__key('enabled'), self.__gconf_notify, model)
 
         self.__iter = model.add_application(self)
 
-    def __gconf_notify(self, client, id, entry, model):
-        value = entry.value and entry.value.get_bool()
+    def __gconf_notify(self, client, connection, entry, model):
         model.row_changed(model.get_path(self.__iter), self.__iter)
 
     def __key(self, item):

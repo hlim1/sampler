@@ -2,19 +2,17 @@ import types
 
 import gtk.gdk
 
-from GConfNotifier import GConfNotifier
+from MasterNotifier import MasterNotifier
+from LazyIcon import LazyIcon
 
 import Keys
 
 
 class StatusIcon:
-    def __init__(self, client, icons, callback):
-        self.__client = client
-        self.__icons = icons
-        self.__callback = callback
+    def __init__(self, client, widget, disabled, enabled):
+        self.__widget = widget
+        self.__icons = map(LazyIcon, [disabled, enabled])
+        self.__notifier = MasterNotifier(client, self.__enabled_refresh)
 
-        self.__notify = GConfNotifier(client, Keys.master, self.__enabled_refresh)
-        self.__enabled_refresh()
-
-    def __enabled_refresh(self, *args):
-        self.__callback(self.__icons.get(self.__client))        
+    def __enabled_refresh(self, enabled):
+        self.__widget.set_from_pixbuf(self.__icons[enabled].get())        

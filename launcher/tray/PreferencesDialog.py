@@ -2,8 +2,8 @@ import gconf
 import gtk.gdk
 import gtk.glade
 
-from GConfNotifier import GConfNotifier
 from LazyDialog import LazyDialog
+from MasterNotifier import MasterNotifier
 
 import Keys
 import Paths
@@ -26,11 +26,10 @@ class PreferencesDialog(LazyDialog):
 
     def populate(self, xml, widget):
         LazyDialog.populate(self, xml, widget)
-        self.__notifier = GConfNotifier(self.__client, Keys.master, self.__master_refresh)
 
-        self.__applications_group = xml.get_widget('applications-group')
         self.__master = xml.get_widget('master')
-        self.__master_refresh()
+        self.__applications_group = xml.get_widget('applications-group')
+        self.__notifier = MasterNotifier(self.__client, self.__master_refresh)
 
         view = xml.get_widget('applications')
 
@@ -58,12 +57,10 @@ class PreferencesDialog(LazyDialog):
     def on_master_toggled(self, master):
         active = master.get_active()
         self.__client.set_bool(Keys.master, active)
-        self.__master_refresh()
 
-    def __master_refresh(self, *args):
-        active = self.__client.get_bool(Keys.master)
-        self.__master.set_active(active)
-        self.__applications_group.set_sensitive(active)
+    def __master_refresh(self, enabled):
+        self.__master.set_active(enabled)
+        self.__applications_group.set_sensitive(enabled)
 
     def on_application_toggled(self, renderer, path, model):
         path = int(path)

@@ -3,8 +3,8 @@ import gtk.gdk
 import gtk.glade
 
 from AboutDialog import AboutDialog
-from GConfNotifier import GConfNotifier
 from LazyWidget import LazyWidget
+from MasterNotifier import MasterNotifier
 
 import Keys
 import Paths
@@ -18,9 +18,8 @@ class PopupMenu(LazyWidget):
         self.__preferences = preferences
 
     def populate(self, xml, widget):
-        self.__notifier = GConfNotifier(self.__client, Keys.master, self.__master_refresh)
         self.__master = xml.get_widget('menu-master')
-        self.__master_refresh()
+        self.__notifier = MasterNotifier(self.__client, self.__master.set_active)
 
     def popup(self, event):
         assert event.type == gtk.gdk.BUTTON_PRESS
@@ -29,10 +28,6 @@ class PopupMenu(LazyWidget):
     def on_master_toggled(self, item):
         active = item.get_active()
         self.__client.set_bool(Keys.master, active)
-        self.__master_refresh()
-
-    def __master_refresh(self, *args):
-        self.__master.set_active(self.__client.get_bool(Keys.master))
 
     def on_preferences_activate(self, item):
         self.__preferences.present()

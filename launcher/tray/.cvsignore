@@ -6,6 +6,7 @@
 *.pyc
 *.pyo
 .deps
+.xvpics
 Config.py
 Makefile
 Makefile.in

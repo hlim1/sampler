@@ -2,9 +2,9 @@ import gtk.gdk
 import gtk.glade
 
 from BusyCursor import BusyCursor
-from GConfNotifier import GConfNotifier
 from PreferencesDialog import PreferencesDialog
 from PopupMenu import PopupMenu
+from StatusIcon import StatusIcon
 
 import Keys
 import Signals
@@ -20,14 +20,6 @@ class UploaderTrayIcon(trayicon.TrayIcon):
             elif event.button == 3:
                 self.__popup.popup(event)
 
-    def __master_refresh(self, *args):
-        if self.__client.get_bool(Keys.master):
-            file = 'small-enabled.png'
-        else:
-            file = 'small-disabled.png'
-
-        self.__image.set_from_file(file)
-
     def __init__(self, client, model):
         trayicon.TrayIcon.__init__(self, 'sampler')
         BusyCursor.top = self
@@ -40,7 +32,5 @@ class UploaderTrayIcon(trayicon.TrayIcon):
         Signals.autoconnect(self, xml)
         self.add(xml.get_widget('eventbox'))
 
-        self.__image = xml.get_widget('image')
-        self.__client = client
-        self.__notifier = GConfNotifier(client, Keys.master, self.__master_refresh)
-        self.__master_refresh()
+        image = xml.get_widget('image')
+        self.__notifier = StatusIcon(client, image, 'disabled-32.png', 'enabled-32.png')

@@ -11,6 +11,7 @@ EXTRA_DIST =					\
 	trayicon.override
 
 BUILT_SOURCES =					\
+	Config.py				\
 	Sampler_ReportCollector-common.c	\
 	Sampler_ReportCollector-skels.c		\
 	Sampler_ReportCollector.h		\

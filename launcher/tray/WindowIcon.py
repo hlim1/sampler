@@ -1,8 +1,16 @@
-from StatusIcon import StatusIcon
+from LazyIcon import LazyIcon
+from MasterNotifier import MasterNotifier
 
-import IconPair
 
+class WindowIcon:
+    __disabled = LazyIcon('disabled-32.png')
+    __enabled = LazyIcon('enabled-32.png')
+    __images = [__disabled, __enabled]
 
-class WindowIcon(StatusIcon):
     def __init__(self, client, widget):
-        StatusIcon.__init__(self, client, IconPair.big, widget.set_icon)
+        self.__widget = widget
+        self.__notify = MasterNotifier(client, self.__enabled_refresh)
+
+    def __enabled_refresh(self, enabled):
+        image = WindowIcon.__images[enabled].get()
+        self.__widget.set_icon(image)

@@ -14,7 +14,7 @@ let doOneOne file stage =
   check file
       
 let doOne stages filename =
-  Printf.printf "%s:\n" filename;
+  Printf.eprintf "%s:\n" filename;
   let file = Frontc.parse filename () in
   (* Rmtmps.removeUnusedTemps file; *)
   check file;

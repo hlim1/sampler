@@ -1,5 +1,6 @@
-include $(top_builddir)/ocaml/config.mk
+ocamlflags = -warn-error A
 
+include $(top_builddir)/ocaml/config.mk
 
 linkorder = $(top_srcdir)/ocaml/link-order
 

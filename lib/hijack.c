@@ -24,17 +24,12 @@ typedef struct Closure
 
 static void *starter(Closure *closure)
 {
-  void *result;
   const Starter start = closure->start;
   void * const argument = closure->argument;
   free(closure);
 
-  pthread_cleanup_push(finalize_thread, 0);
   initialize_thread();
-
-  result = start(argument);
-  pthread_cleanup_pop(1);
-  return result;
+  return start(argument);
 }
 
 

@@ -1,4 +1,6 @@
-#include "anchor.h"
+#define _GNU_SOURCE		/* for PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP */
+
+#include <pthread.h>
 #include "lock.h"
 #include "report.h"
 #include "unit.h"
@@ -10,10 +12,12 @@ struct CompilationUnit compilationUnitAnchor = { &compilationUnitAnchor,
 
 unsigned compilationUnitCount;
 
+pthread_mutex_t compilationUnitLock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+
 
 void registerCompilationUnit(struct CompilationUnit *unit)
 {
-  CRITICAL_REGION({
+  CRITICAL_REGION(compilationUnitLock, {
     if (!unit->next && !unit->prev)
       {
 	++compilationUnitCount;
@@ -28,7 +32,7 @@ void registerCompilationUnit(struct CompilationUnit *unit)
 
 void unregisterCompilationUnit(struct CompilationUnit *unit)
 {
-  CRITICAL_REGION({
+  CRITICAL_REGION(compilationUnitLock, {
     if (unit->next && unit->prev)
       {
 	unit->prev->next = unit->next;
@@ -41,5 +45,14 @@ void unregisterCompilationUnit(struct CompilationUnit *unit)
 	    --compilationUnitCount;
 	  }
       }
+  });
+}
+
+
+void unregisterAllCompilationUnits()
+{
+  CRITICAL_REGION(compilationUnitLock, {
+    while (compilationUnitAnchor.next != &compilationUnitAnchor)
+      unregisterCompilationUnit(compilationUnitAnchor.next);
   });
 }

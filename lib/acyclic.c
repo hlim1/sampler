@@ -1,14 +1,18 @@
+#define _GNU_SOURCE		/* for PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP */
+
 #include <config.h>
 
 #include <assert.h>
 #include <limits.h>
 #include <math.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
 #include "acyclic.h"
 #include "countdown.h"
 #include "lifetime.h"
+#include "lock.h"
 
 
 const void * const SAMPLER_REENTRANT(providesLibAcyclic);
@@ -20,6 +24,8 @@ FILE *entropy;
 
 SAMPLER_THREAD_LOCAL int sampling;
 SAMPLER_THREAD_LOCAL struct drand48_data buffer;
+
+pthread_mutex_t acyclicLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
 void initialize_thread()
@@ -37,74 +43,75 @@ void initialize_thread()
 }
 
 
-__attribute__((constructor)) static void initialize()
+static void finalize()
 {
-  if (!acyclicInitCount++)
-    {
-      const char * const environ = getenv("SAMPLER_SPARSITY");
-      if (environ)
-	{
-	  char *end;
-	  const double sparsity = strtod(environ, &end);
-	  if (*end != '\0')
-	    {
-	      fprintf(stderr, "countdown/acyclic: trailing garbage in $SAMPLER_SPARSITY: %s\n", end);
-	      exit(2);
-	    }
-	  else if (sparsity < 1)
-	    {
-	      fputs("countdown/acyclic: $SAMPLER_SPARSITY must be at least 1\n", stderr);
-	      exit(2);
-	    }
-	  else
-	    {
-	      const char * const environ = getenv("SAMPLER_SEED");
-	      if (environ)
-		{
-		  char *end;
-		  union {
-		    uint64_t all;
-		    uint16_t triple[3];
-		  } convert;
-
-		  convert.all = strtoull(environ, &end, 0);
-		  if (*end != '\0')
-		    {
-		      fprintf(stderr, "countdown/acyclic: trailing garbage in $SAMPLER_SEED: %s\n", end);
-		      exit(2);
-		    }
-
-		  seed[0] = convert.triple[0];
-		  seed[1] = convert.triple[1];
-		  seed[2] = convert.triple[2];
-		}
-	      else
-		entropy = fopen("/dev/urandom", "r");
-	      
-	      densityScale = 1 / log(1 - 1 / sparsity);
-	      initialize_thread();
-	    }
-
-	  unsetenv("SAMPLER_SPARSITY");
-	  unsetenv("SAMPLER_SEED");
-	}
-    }
-}
-
-
-__attribute__((destructor)) static void finalize()
-{
-  if (!--acyclicInitCount)
+  CRITICAL_REGION(acyclicLock, {
     if (entropy)
       {
 	fclose(entropy);
 	entropy = 0;
       }
+  });
 }
 
 
-void finalize_thread()
+__attribute__((constructor)) static void initialize()
 {
+  CRITICAL_REGION(acyclicLock, {
+    if (!acyclicInitCount++)
+      {
+	const char * const environ = getenv("SAMPLER_SPARSITY");
+	if (environ)
+	  {
+	    char *end;
+	    const double sparsity = strtod(environ, &end);
+	    if (*end != '\0')
+	      {
+		fprintf(stderr, "countdown/acyclic: trailing garbage in $SAMPLER_SPARSITY: %s\n", end);
+		exit(2);
+	      }
+	    else if (sparsity < 1)
+	      {
+		fputs("countdown/acyclic: $SAMPLER_SPARSITY must be at least 1\n", stderr);
+		exit(2);
+	      }
+	    else
+	      {
+		const char * const environ = getenv("SAMPLER_SEED");
+		if (environ)
+		  {
+		    char *end;
+		    union {
+		      uint64_t all;
+		      uint16_t triple[3];
+		    } convert;
+
+		    convert.all = strtoull(environ, &end, 0);
+		    if (*end != '\0')
+		      {
+			fprintf(stderr, "countdown/acyclic: trailing garbage in $SAMPLER_SEED: %s\n", end);
+			exit(2);
+		      }
+
+		    seed[0] = convert.triple[0];
+		    seed[1] = convert.triple[1];
+		    seed[2] = convert.triple[2];
+		  }
+		else
+		  {
+		    atexit(finalize);
+		    entropy = fopen("/dev/urandom", "r");
+		  }
+	      
+		densityScale = 1 / log(1 - 1 / sparsity);
+		initialize_thread();
+	      }
+
+	    unsetenv("SAMPLER_SPARSITY");
+	    unsetenv("SAMPLER_SEED");
+	  }
+      }
+  });
 }
 
 

@@ -23,6 +23,7 @@ struct CompilationUnit
 
 void registerCompilationUnit(struct CompilationUnit *);
 void unregisterCompilationUnit(struct CompilationUnit *);
+void unregisterAllCompilationUnits();
 
 
 #endif /* !INCLUDE_libreport_unit_h */

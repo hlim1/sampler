@@ -57,7 +57,6 @@ libsampler_a_CFLAGS = -include $(srcdir)/no-threads.h
 libsampler_r_a_SOURCES =			\
 	$(common_sources)			\
 	hijack.c				\
-	lock.c					\
 	threads.h
 
 libsampler_r_a_CFLAGS = -include $(srcdir)/threads.h -pthread

@@ -1,6 +1,9 @@
+#define _GNU_SOURCE		/* for PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +12,7 @@
 #include "countdown.h"
 #include "cyclic.h"
 #include "cyclic-size.h"
+#include "lock.h"
 
 
 #define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(unsigned))
@@ -20,6 +24,8 @@ const unsigned *nextEventPrecomputed = 0;
 SAMPLER_THREAD_LOCAL unsigned nextEventSlot = 0;
 
 unsigned cyclicInitCount;
+
+pthread_mutex_t cyclicLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
 static void failed(const char function[])
@@ -60,46 +66,48 @@ void initialize_thread()
 }
 
 
+static void finalize()
+{
+  CRITICAL_REGION(cyclicLock, {
+    if (nextEventPrecomputed)
+      {
+	munmap((void *) nextEventPrecomputed, MAP_SIZE);
+	nextEventPrecomputed = 0;
+      }
+  });
+}
+
+
 __attribute__((constructor)) static void initialize()
 {
-  if (!cyclicInitCount++)
-    {
-      const char envar[] = "SAMPLER_EVENT_COUNTDOWNS";
-      const char * const environ = getenv(envar);
-      void *mapping;
+  CRITICAL_REGION(cyclicLock, {
+    if (!cyclicInitCount++)
+      {
+	const char envar[] = "SAMPLER_EVENT_COUNTDOWNS";
+	const char * const environ = getenv(envar);
+	void *mapping;
   
-      if (environ)
-	{
-	  const int fd = checkedOpen(environ);
-	  mapping = checkedMmap(PROT_READ, fd);
-	  unsetenv(envar);
-	}
-      else
-	{
-	  int fd;
-	  fprintf(stderr, "%s: no countdowns file named in $%s; using extreme sparsity\n",  __FUNCTION__, envar);
-	  fd = checkedOpen("/dev/zero");
-	  mapping = checkedMmap(PROT_READ | PROT_WRITE, fd);
-	  memset(mapping, -1, MAP_SIZE);
-	  mapping = mremap(mapping, MAP_SIZE, MAP_SIZE, PROT_READ);
-	  if (mapping == (void *) -1)
-	    failed("mremap");
-	}
+	if (environ)
+	  {
+	    const int fd = checkedOpen(environ);
+	    mapping = checkedMmap(PROT_READ, fd);
+	    unsetenv(envar);
+	  }
+	else
+	  {
+	    int fd;
+	    fprintf(stderr, "%s: no countdowns file named in $%s; using extreme sparsity\n",  __FUNCTION__, envar);
+	    fd = checkedOpen("/dev/zero");
+	    mapping = checkedMmap(PROT_READ | PROT_WRITE, fd);
+	    memset(mapping, -1, MAP_SIZE);
+	    mapping = mremap(mapping, MAP_SIZE, MAP_SIZE, PROT_READ);
+	    if (mapping == (void *) -1)
+	      failed("mremap");
+	  }
 
-      nextEventPrecomputed = (const unsigned *) mapping;
-      initialize_thread();
-    }
-}
-
-
-void finalize_thread()
-{
-}
-
-
-__attribute__((destructor)) static void finalize()
-{
-  if (!--cyclicInitCount)
-    if (nextEventPrecomputed)
-      munmap((void *) nextEventPrecomputed, MAP_SIZE);
+	atexit(finalize);
+	nextEventPrecomputed = (const unsigned *) mapping;
+	initialize_thread();
+      }
+  });
 }

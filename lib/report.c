@@ -1,8 +1,10 @@
+#define _GNU_SOURCE		/* for PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP */
+
 #include <errno.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include "anchor.h"
 #include "lock.h"
 #include "report.h"
 #include "unit.h"
@@ -12,6 +14,8 @@ const void * const providesLibReport;
 
 unsigned reportInitCount;
 FILE *reportFile;
+
+pthread_mutex_t reportLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
 static void openReportFile()
@@ -39,13 +43,10 @@ static void reportAllCompilationUnits()
 {
   if (reportFile)
     {
-      while (compilationUnitAnchor.next != &compilationUnitAnchor)
-	unregisterCompilationUnit(compilationUnitAnchor.next);
-      
+      unregisterAllCompilationUnits();
       fputs("</report>\n", reportFile);
+      fflush(reportFile);
     }
-
-  fflush(reportFile);
 }
 
 
@@ -82,7 +83,7 @@ static void reportDebugInfo()
 
 static void finalize()
 {
-  CRITICAL_REGION({
+  CRITICAL_REGION(reportLock, {
     if (reportFile)
       {
 	reportAllCompilationUnits();
@@ -96,7 +97,7 @@ static void handleSignal(int signum)
 {
   signal(signum, SIG_DFL);
 
-  CRITICAL_REGION({
+  CRITICAL_REGION(reportLock, {
     if (reportFile)
       {
 	reportAllCompilationUnits();
@@ -112,7 +113,7 @@ static void handleSignal(int signum)
 
 __attribute__((constructor)) static void initialize()
 {
-  CRITICAL_REGION({
+  CRITICAL_REGION(reportLock, {
     if (!reportInitCount++)
       {
 	openReportFile();

@@ -1,5 +1,5 @@
 late-global.c	6	incr	counter	early	0	0	1
-late-global.c	6	incr	counter	0	0	0	1
+late-global.c	6	incr	counter	0LL	0	0	1
 late-global.c	13	decr	counter	early	0	1	0
 late-global.c	13	decr	counter	late	0	1	0
-late-global.c	13	decr	counter	0	0	1	0
+late-global.c	13	decr	counter	0LL	0	1	0

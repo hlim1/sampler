@@ -1,4 +1,5 @@
 open Cil
+open Interesting
 open Invariant
 
 
@@ -18,15 +19,19 @@ class visitor file =
       method vstmt stmt =
 	match stmt.skind with
 	| Instr [Call (Some result, callee, args, location)] ->
-	    let left = {
-	      exp = Lval result;
-	      name = Pretty.sprint max_int (d_exp () callee)
-	    } in
-	    let right = { exp = zero; name = "0" } in
-	    let (global, site) = invariant location left right in
-	    globals <- global :: globals;
-	    sites <- site :: sites;
-	    stmt.skind <- Block (mkBlock ([mkStmt stmt.skind; site]));
+	    let resultType, _, _, _ = splitFunctionType (typeOf callee) in
+	    if isInterestingType resultType then
+	      begin
+		let left = {
+		  exp = Lval result;
+		  name = Pretty.sprint max_int (d_exp () callee)
+		} in
+		let right = { exp = zero; name = "0" } in
+		let (global, site) = invariant location left right in
+		globals <- global :: globals;
+		sites <- site :: sites;
+		stmt.skind <- Block (mkBlock ([mkStmt stmt.skind; site]))
+	      end;
 	    SkipChildren
 
 	| Instr (_ :: _ :: _) as instr ->

@@ -23,7 +23,11 @@ void precomputeCountdowns(double density_, gsl_rng *generator_)
 
 __attribute__((destructor)) static void shutdown()
 {
-  assert(generator && gen);
-  gsl_rng_free(gen);
-  generator = gen = 0;
+  assert(!generator == !gen);
+
+  if (gen)
+    {
+      gsl_rng_free(gen);
+      generator = gen = 0;
+    }
 }

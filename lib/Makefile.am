@@ -12,10 +12,28 @@ lib_LIBRARIES =					\
 
 package_include_HEADERS =			\
 	acyclic.h				\
+	bounds-types.h				\
+	bounds-unit.h				\
+	branches-types.h			\
+	branches-unit.h				\
 	countdown.h				\
 	cyclic-size.h				\
 	cyclic.h				\
+	function-entries-types.h		\
+	function-entries-unit.h			\
+	lifetime.h				\
+	lock.h					\
+	log.h					\
 	no-threads.h				\
+	registry.h				\
+	report.h				\
+	returns-types.h				\
+	returns-unit.h				\
+	returns.h				\
+	scalar-pairs-types.h			\
+	scalar-pairs-unit.h			\
+	scalar-pairs.h				\
+	signature.h				\
 	threads.h				\
 	unit-signature.h			\
 	unit.h

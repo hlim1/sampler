@@ -250,7 +250,7 @@ while ($_ = shift) {
 
     } elsif (/(.*)\.c$/) {
 	push @source, $_;
-	push @ld, '';
+	push @ld, undef;
 	push @holes, $#ld;
 	
     } elsif (/\.(a|lo|o|so)$/) {

@@ -1,6 +1,9 @@
 top := ..
+include $(top)/defs.mk
+
 targets := main
 libdirs := $(top)
+syslibs := str.$(cma)
 
 include $(top)/rules.mk
 
@@ -19,7 +22,7 @@ where = where
 
 
 main := $(transform) %
-main: %: $(libcil) $(top)/harness.cma $(addsuffix .$(cmo), $(main))
+main: %: $(libcil) $(top)/harness.$(cma) $(addsuffix .$(cmo), $(main))
 	$(link)
 
 $(top)/%.cma: force

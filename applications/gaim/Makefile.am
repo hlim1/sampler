@@ -1,5 +1,5 @@
 name = gaim
-version = 0.66
+version = 0.67
 release = 1
 sam_release = 1
 extra_sources =

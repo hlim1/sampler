@@ -1,6 +1,6 @@
 Summary:    A Gtk+ based multiprotocol instant messaging client
 Name:       gaim
-Version:    0.66
+Version:    0.67
 Release:    1.sam.1
 Epoch:      1
 License:    GPL
@@ -11,12 +11,12 @@ Url:        http://gaim.sourceforge.net/
 Source:     %{name}-%{version}.tar.gz
 Packager:   Ben Liblit <liblit@cs.berkeley.edu>
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
-%if %{_vendor} != MandrakeSoft
+%if "%{_vendor}" != "MandrakeSoft"
 Requires:   gtk2 >= 2.0.0
-BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel
+BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig
 %else
 Requires:   gtk+2.0 >= 2.0.0
-BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel
+BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig
 %endif
 %{?sampler_tags}
 
@@ -82,11 +82,13 @@ rm -rf %{buildroot}
 %doc README ChangeLog
 %doc %{_mandir}/man1/*
 
+%dir %{_libdir}/gaim
 %attr(755, root, root) %{_libdir}/gaim/*
 %attr(755, root, root) %{_libdir}/libgaim-remote.so.*
 %{_bindir}/*
 %{_datadir}/locale/*/*/*
 %{_datadir}/pixmaps/*
+%dir %{_datadir}/sounds/gaim
 %{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
 %{?sampler_files}
@@ -94,9 +96,10 @@ rm -rf %{buildroot}
 %files devel
 
 %doc plugins/SIGNALS plugins/HOWTO plugins/PERL-HOWTO 
-%doc HACKING TODO
+%doc HACKING PROGRAMMING_NOTES
 
 %attr(755, root, root) %{_libdir}/libgaim-remote.la
+%dir %{_includedir}/gaim-remote
 %{_includedir}/gaim-remote/*.h
 
 %{?sampler_package}
@@ -105,8 +108,13 @@ rm -rf %{buildroot}
 %{?sampler_post}
 
 %changelog
-* Tue Aug 12 2003 Ben Liblit <liblit@cs.berkeley.edu> 0.66-1.sam.1
-- Added hooks for sampled instrumenation.
+* Sun Aug 17 2003 Ben Liblit <liblit@cs.berkeley.edu> 1:0.67-1.sam.1
+- Added hooks for sampled instrumentation.
+
+* Sun Jul 20 2003 Bjoern Voigt <bjoern@cs.tu-berlin.de>
+- Added pkgconfig build dependency.
+- if "%{_vendor}" != "MandrakeSoft" now also works with rpm 3.x.
+- Added Gaim-specific directories to list of Gaim's files.
 
 * Wed Jul 16 2003 Ethan Blanton <eblanton@cs.ohiou.edu>
 - Complete spec file rewrite to take advantage of "new" RPM features

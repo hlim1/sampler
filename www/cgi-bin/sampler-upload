@@ -4,7 +4,6 @@ use strict;
 
 use CGI qw(:standard -private_tempfiles);
 use CGI::Carp qw(fatalsToBrowser);
-use CGI::Pretty;
 
 use File::Copy;
 use FileHandle;
@@ -65,22 +64,18 @@ use POSIX qw(S_IRUSR S_IWUSR);
 my $remote = $query->remote_host;
 
 my %survey;
-tie %survey, 'DB_File::Lock', '/var/www/sampler-survey.db', O_RDONLY, 0, $DB_HASH, 'read';
+tie %survey, 'DB_File::Lock', '/var/www/sampler-survey/distro.db', O_RDONLY, 0, $DB_HASH, 'read';
 my $novel = not exists $survey{$remote};
 untie %survey;
 
-
 if ($novel) {
+    my $pollster = 'http://www.cs.berkeley.edu/~liblit/sampler/survey/';
+    
     print($query->start_html('Distribution Change Survey'),
 	  $query->h1('Distribution Change Survey'),
-	  $query->p('Thank you for participating in the Cooperative Bug Isolation Project.  We are considering changing our CBI build platform and would like your input.'),
-	  $query->p('Red Hat Linux 9 officially reaches end-of-life on April 30, 2004.  Red Hat will no longer release errata or security updates for this distribution.  For this reason, we are considering changing our CBI build platform to Fedora Core 1.  The existing Red Hat Linux 9 packages would still be available, but future builds and new releases would be for Fedora Core 1.'),
-	  $query->p('If we made this change to Fedora Core 1, would you still be able to use our packages?  Would you be able to use them on more machines than you use now?  Please let us know:'),
-	  $query->ul($query->li($query->a({href => 'http://sampler.cs.berkeley.edu/cgi-bin/sampler-survey?distro=fedora-core-1'},
-					  'Yes, switch to Fedora Core 1.  I will be able to use new packages on as many or more computers than I do now.')),
-		     $query->li($query->a({href => 'http://sampler.cs.berkeley.edu/cgi-bin/sampler-survey?distro=either'},
-					  'Neutral.  My use of CBI packages would remain about the same either way.')),
-		     $query->li($query->a({href => 'http://sampler.cs.berkeley.edu/cgi-bin/sampler-survey?distro=redhat-linux-9'},
-					  'No, stay with Red Hat Linux 9.  I am not using Fedora Core 1 and have no plans to use it any time soon.'))),
+	  $query->p('Thank you for participating in the Cooperative Bug Isolation Project.  We are considering changing our CBI build platform and would like your input.  Please',
+		    $query->a({href => $pollster}, 'visit the survey page'),
+		    'and let us know what you think.'),
+	  $query->p("(If that hyperlink does not work, use your bowser to go to &lt;$pollster&gt; manually.)"),
 	  $query->end_html);
 }

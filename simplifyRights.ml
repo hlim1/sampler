@@ -8,7 +8,7 @@ class visitor = object
     | Set ((Mem _, _) as lval, data, location) ->
 	begin
 	  match data with
-	  | Lval (Var varinfo, NoOffset) -> SkipChildren
+	  | Lval (Var _, NoOffset) -> SkipChildren
 	  | _ ->
 	      let temp = var (makeTempVar !currentFunction ~name:"right" (typeOf data)) in
 	      ChangeTo [Set (temp, data, location);

@@ -1,0 +1,43 @@
+Source: sampler
+Section: devel
+Priority: optional
+Maintainer: Ben Liblit <liblit@cs.berkeley.edu>
+Build-Depends: debhelper (>> 4.0.0)
+Build-Depends: docbook-xsl
+Build-Depends: ocaml
+Build-Depends: perl-modules
+Build-Depends: python
+Build-Depends: xsltproc
+Standards-Version: 3.5.8
+
+Package: sampler
+Architecture: all
+Depends: ${shlibs:Depends} ${misc:Depends}
+Description: Support for applications with sampled instrumentation
+ This package supports instrumented applications at run time.  It
+ includes tools for launching instrumented applications, collecting
+ sample and crash reports, and uploading those reports to the central
+ bug isolation server.
+
+Package: sampler-gnome
+Architecture: all
+Depends: ${shlibs:Depends} ${misc:Depends}
+Description: Support for GNOME applications with sampled instrumentation
+ This package supports instrumented GNOME applications at run time.
+ It contains a modified launcher and uploader that presents GNOME
+ dialogs for first-time opt-in and uses GConf to store user
+ preferences.
+
+Package: sampler-dev
+Architecture: any
+Depends: ${shlibs:Depends} ${misc:Depends}
+Description: Tools for building applications with sampled instrumentation
+ This package provides tools for building applications with sampled
+ instrumentation.  It includes an instrumenting C compiler and utility
+ tools for collecting and decoding sampled instrumentation reports.
+
+Package: sampler-doc
+Architecture: all
+Description: Documentation for sampler
+ This package contains the documentation files for sampler in general,
+ and sampler-dev in particular.

@@ -1,0 +1,10 @@
+Document: sampler
+Title: Guide to the Bug Isolation Sampler
+Author: Ben Liblit
+Abstract: This manual describes what sampler is
+ and how it can be used to build and deploy
+ applications with sampled instrumentation.
+Section: Apps/Programming
+
+Format: HTML
+Index: /usr/share/doc/sampler/html/sampler.html

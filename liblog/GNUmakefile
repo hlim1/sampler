@@ -1,4 +1,4 @@
-CFLAGS := -W -Wall -Werror
+CFLAGS := -W -Wall -Werror -g
 lib := liblog.so
 
 all: $(lib)

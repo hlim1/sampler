@@ -26,7 +26,7 @@ let findGlobal =
   FindGlobal.find predicate "nextEventCountdown"
 
 
-let findReset = FindFunction.find "getNextEventCountdown"
+let findReset file = Lval (var (FindFunction.find "getNextEventCountdown" file))
 
 
 let find file = (findGlobal file, findReset file)

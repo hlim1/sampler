@@ -27,7 +27,7 @@ let d_vars =
 
 
 class visitor file =
-  let logger = FindFunction.find "checkInvariant" file in
+  let logger = Lval (var (FindFunction.find "checkInvariant" file)) in
   let invariants = Invariants.propose file in
 
   fun func ->

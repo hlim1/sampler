@@ -1,4 +1,4 @@
 open Cil
 
 
-val find : string -> file -> exp
+val find : string -> file -> varinfo

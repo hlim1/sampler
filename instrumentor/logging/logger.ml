@@ -20,7 +20,7 @@ let nextTableauName =
 
 let call file =
 
-  let logTableau = FindFunction.find "logTableau" file in
+  let logTableau = Lval (var (FindFunction.find "logTableau" file)) in
 
   let primitiveEnum =
     let rec search = function

@@ -5,7 +5,7 @@ AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE(sampler,0.0)
 
 AC_MSG_CHECKING(for CIL build tree)
-AC_ARG_WITH(cil, [location of CIL build tree], , with_cil=../cil)
+AC_ARG_WITH(cil, [  --with-cil=DIR          CIL build tree], , with_cil=../cil)
 if ! test -d "$with_cil"; then
   AC_MSG_ERROR(cannot find CIL build tree; please use --with-cil=DIR)
 fi

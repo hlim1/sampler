@@ -7,6 +7,7 @@ class ['element] container =
 
     method clear = Queue.clear storage
     method isEmpty = Queue.is_empty storage
+    method length = Queue.length storage
 
     method iter iterator = Queue.iter iterator storage
 

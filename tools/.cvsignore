@@ -1,3 +1,12 @@
+*.annot
+*.cma
+*.cmi
+*.cmo
+*.cmx
+*.cmxa
+*.di
+*.dl
+*.do
 .deps
 Makefile
 Makefile.in
@@ -5,4 +14,6 @@ debuild
 decimate-samples
 decimate-samples.c
 find-driver.pl
+resolve-samples
+resolve-timestamps
 rpmbuild

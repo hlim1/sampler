@@ -15,6 +15,7 @@ common =					\
 	$(hashClass)				\
 	$(mapClass)				\
 	$(queueClass)				\
+	$(stringHash)				\
 	$(stackClass)
 
 common.$(cma): $(common)

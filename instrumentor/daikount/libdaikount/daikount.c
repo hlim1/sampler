@@ -23,13 +23,13 @@ static const char *logFileName()
 
 static FILE *openLogFile()
 {
-  struct obstack obstack;
-  obstack_init(&obstack);
-
   const char *start = logFileName();
+  struct obstack obstack;
+
   if (!start)
     return 0;
   
+  obstack_init(&obstack);
   while (*start)
     {
       const char *end = strstr(start, "$$");

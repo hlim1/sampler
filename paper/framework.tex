@@ -8,7 +8,7 @@ following C code:
 
 \begin{code}
   \{\+ \\
-  check(p != NULL); \\
+  check(p !=\ NULL); \\
   \up p = p->next; \\
   \\
   check(i < max); \\
@@ -34,12 +34,12 @@ Maintaining a global counter modulo one hundred is simple, but has the
 disadvantage of being trivially periodic.  If the above fragment were
 in a loop, for example, one of the checks would execute on every
 fiftieth iteration while the other would never execute.  We wish
-sampling to be fair and uniformly random: each check should independently have a
-1/100 chance of being sampled each time it occurs.  This is a
-so-called \termdef{Bernoulli process}, the most common example of
-which is repeatedly tossing a coin.  We wish to sample based on the
-outcome of tossing a coin which is biased to come up heads only one
-time in a hundred.
+sampling to be fair and uniformly random: each check should
+independently have a \nicefrac{1}{100} chance of being sampled each
+time it occurs.  This is a so-called \termdef{Bernoulli process}, the
+most common example of which is repeatedly tossing a coin.  We wish to
+sample based on the outcome of tossing a coin which is biased to come
+up heads only one time in a hundred.
 
 A \naive approach would be to use a simple random number generator.
 Suppose \texttt{rnd($n$)} yields a random integer uniformly
@@ -62,22 +62,22 @@ check unconditionally.  Furthermore, what was previously straight-line
 code is now dense with branches and joins, which may impede other
 optimizations.
 
-Sampling is sparse.  Each of the conditionals has a 99/100 = 99\%
-chance of not sampling.  On any run through this block, there is a
-$(99/100)^2 \approx 98\%$ chance that both instrumentation sites are
-skipped.  If we determine, upon reaching the top of a basic
-block, that no site in that block is sampled, then we can
-branch into fast-path code with all conditionally-guarded
-checks removed.  This requires two versions of the code: one
-with sampled instrumentation, one without.  It also requires that we
-can predict how many future sampling opportunities are
-skipped before the next one is taken.
+Sampling is sparse.  Each of the conditionals has a \nicefrac{99}{100}
+= 99\% chance of not sampling.  On any run through this block, there
+is a $(\nicefrac{99}{100})^2 \approx 98\%$ chance that both
+instrumentation sites are skipped.  If we determine, upon reaching the
+top of a basic block, that no site in that block is sampled, then we
+can branch into fast-path code with all conditionally-guarded checks
+removed.  This requires two versions of the code: one with sampled
+instrumentation, one without.  It also requires that we can predict
+how many future sampling opportunities are skipped before the next one
+is taken.
 
 Anticipating future samples requires a change in randomization
 strategy.  Consider a sequence of biased coin tosses, with ``0''
 indicating no sample and ``1'' indicating that a sample is to be
-taken.  Temporarily increasing the sampling density to 1/5, we might
-have:
+taken.  Temporarily increasing the sampling density to
+\nicefrac{1}{5}, we might have:
 %%
 \begin{equation*}
   \langle
@@ -131,27 +131,30 @@ threshold, but that one check suffices to predict a larger number of
 skipped sampling opportunities.
 
 Consider the distribution of countdown values.  With a sampling
-density of 1/100, there is a 1/100 chance that we sample at the very
-next opportunity.  There is a $(99/100) \times (1/100)$ that the next
-chance is skipped but that the one after that is taken.  A countdown
-of three appears on a $(99/100)^2 \times (1/100)$ chance, and so on.
-These numbers form a \termdef{geometric distribution} whose mean value
-is the inverse of the sampling density (that is, 100).  Numbers in a
-geometric distribution characterize the expected inter-arrival times
-of a Bernoulli process.  However, repeated tossing of a biased coin is
-not necessary: geometrically distributed random numbers can be
-generated directly using a standard uniform random generator and some
-simple floating-point operations.\footnote{In theory, a countdown may
-  need to be arbitrarily large.  However, the odds of a 1/100
+density of \nicefrac{1}{100}, there is a \nicefrac{1}{100} chance that
+we sample at the very next opportunity.  There is a
+$(\nicefrac{99}{100}) \times (\nicefrac{1}{100})$ that the next chance
+is skipped but that the one after that is taken.  A countdown of three
+appears on a $(\nicefrac{99}{100})^2 \times (\nicefrac{1}{100})$
+chance, and so on.  These numbers form a \termdef{geometric
+  distribution} whose mean value is the inverse of the sampling
+density (that is, 100).  Numbers in a geometric distribution
+characterize the expected inter-arrival times of a Bernoulli process.
+However, repeated tossing of a biased coin is not necessary:
+geometrically distributed random numbers can be generated directly
+using a standard uniform random generator and some simple
+floating-point operations.\footnote{In theory, a countdown may need to
+  be arbitrarily large.  However, the odds of a \nicefrac{1}{100}
   countdown exceeding $2^{32}-1$ are less than one in $10^{10^7}$.}
 
-As can be seen in the instrumented slow path, the countdown is
-reset once it reaches zero.  Thus, we consume next-sample countdowns
+As can be seen in the instrumented slow path, the countdown is reset
+once it reaches zero.  Thus, we consume next-sample countdowns
 gradually over time.  However, the rate of consumption is slower than
-that for raw coin tosses: $n$ countdowns for $1/d$ sampling encode, on
-average, $nd$ tosses.  A bank of pre-generated random countdowns,
-then, is quite reasonable and will exhaust or repeat $d$ times more
-slowly than would a similar bank of raw coin tosses.
+that for raw coin tosses: $n$ countdowns for $\nicefrac{1}{d}$
+sampling encode, on average, $nd$ tosses.  A bank of pre-generated
+random countdowns, then, is quite reasonable and will exhaust or
+repeat $d$ times more slowly than would a similar bank of raw coin
+tosses.
 
 \subsection{From Blocks to Functions}
 

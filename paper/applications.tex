@@ -115,43 +115,43 @@ speedups represent the average of four runs; each run used a different
 pre-generated bank of 1024 geometrically distributed random
 countdowns.
 
-Unconditional instrumentation imposes slowdowns that vary widely from 
-(\texttt{health}: 2\%) to (\texttt{bh}: 181\%;
-\texttt{ijpeg}: 146\%).  Even at a fairly high sampling density of
-1/100, more than two thirds of our benchmarks run faster than
-when all checks are always performed.  Because each single check
-is small and fast, this suggests that we have been successful in
-amortizing the sampling overhead.  On the other hand, three benchmarks
-run slower, with \texttt{go} showing the largest penalty.  In these
-cases, the time recovered by skipping 99/100 checks is not enough to
-mask the added overhead of sampling.  Furthermore, in all benchmarks,
-the overhead relative to instrumentation-free code remains large.
-Only five benchmarks have less than a 10\% slowdown, and only one is
-below 5\%.
+Unconditional instrumentation imposes slowdowns that vary widely from
+(\texttt{health}: 2\%) to (\texttt{bh}: 181\%; \texttt{ijpeg}: 146\%).
+Even at a fairly high sampling density of \nicefrac{1}{100}, more than
+two thirds of our benchmarks run faster than when all checks are
+always performed.  Because each single check is small and fast, this
+suggests that we have been successful in amortizing the sampling
+overhead.  On the other hand, three benchmarks run slower, with
+\texttt{go} showing the largest penalty.  In these cases, the time
+recovered by skipping \nicefrac{99}{100} checks is not enough to mask
+the added overhead of sampling.  Furthermore, in all benchmarks, the
+overhead relative to instrumentation-free code remains large.  Only
+five benchmarks have less than a 10\% slowdown, and only one is below
+5\%.
 
-Performance improves as we reduce the sampling density to 1/1000.
-Most benchmarks suffer less than a 10\% penalty relative to
-uninstrumented code, and half are below 5\%.  Further reducing the
-sampling density to 1/10,000 shows little change, and by the time we
-reach 1/1,000,000 it is clear that we have reached a performance
-floor.  Three benchmarks (\texttt{perimeter}, \texttt{tsp},
-\texttt{go}) are unable to compensate for their sampling overhead
-relative to unconditional instrumentation, while the remaining ten do
-run faster.  Among these, a few benchmarks (\texttt{treeadd},
-\texttt{compress}, \texttt{li}) retain high overhead relative to
-instrumentation-free code, but in most cases the penalty is quite
-modest.  Some benchmarks which perform the worst using unconditional
-instrumentation perform quite well with sampling: \texttt{ijpeg}, for
-example, moves from an unconditional instrumentation overhead of 146\%
-to only 3\% with sparse sampling.
+Performance improves as we reduce the sampling density to
+\nicefrac{1}{1000}.  Most benchmarks suffer less than a 10\% penalty
+relative to uninstrumented code, and half are below 5\%.  Further
+reducing the sampling density to \nicefrac{1}{10,000} shows little
+change, and by the time we reach \nicefrac{1}{1,000,000} it is clear
+that we have reached a performance floor.  Three benchmarks
+(\texttt{perimeter}, \texttt{tsp}, \texttt{go}) are unable to
+compensate for their sampling overhead relative to unconditional
+instrumentation, while the remaining ten do run faster.  Among these,
+a few benchmarks (\texttt{treeadd}, \texttt{compress}, \texttt{li})
+retain high overhead relative to instrumentation-free code, but in
+most cases the penalty is quite modest.  Some benchmarks which perform
+the worst using unconditional instrumentation perform quite well with
+sampling: \texttt{ijpeg}, for example, moves from an unconditional
+instrumentation overhead of 146\% to only 3\% with sparse sampling.
 
 From these benchmarks and the examples in Sections~\ref{sec:ccrypt}
 and~\ref{sec:bc}, we conclude that realistic deployments will use
-sampling densities between 1/100 and 1/1000.  But how effective is
-1/1000 sampling at observing rare program behavior?  Suppose we are
-interested in a bug occurring once per hundred executions.  To achieve
-90\% confidence of observing this bug in at least one run, we need at
-least
+sampling densities between \nicefrac{1}{100} and \nicefrac{1}{1000}.
+But how effective is \nicefrac{1}{1000} sampling at observing rare
+program behavior?  Suppose we are interested in a bug occurring once
+per hundred executions.  To achieve 90\% confidence of observing this
+bug in at least one run, we need at least
 %%
 \[\log{(1-0.90)} / \log{\left( 1 - \frac{1}{100 \times 1000}\right)} = \text{230,258 runs.}\]
 %%
@@ -317,9 +317,9 @@ present or absent files, randomized command line flags, and randomized
 responses to \texttt{ccrypt} prompts including the occasional
 \texttt{EOF}.
 
-We have collected 2990 trial runs at a sampling rate of $1/1000$; 88
-of these end in a crash.  Applying each elimination strategy
-independently to the counter traces:
+We have collected 2990 trial runs at a sampling rate of
+\nicefrac{1}{1000}; 88 of these end in a crash.  Applying each
+elimination strategy independently to the counter traces:
 
 \begin{description}\sloppy
 \item[\elim{Universal falsehood}] discards 1569 counters which are
@@ -462,8 +462,8 @@ the next-sample countdown at each and every site.
 In spite of this, the performance impact of sampled instrumentation is
 minimal.  Using an experimental setup similar to that described
 earlier in Section~\ref{sec:share:whole}, we find that the overhead
-for 1/1000 sampling is less than 4\%, and progressively sparser
-sampling rates shrink this still further.  Unconditional
+for \nicefrac{1}{1000} sampling is less than 4\%, and progressively
+sparser sampling rates shrink this still further.  Unconditional
 instrumentation also performs well here, making either reasonable for
 this particular application.  In the next section, though, we consider
 a more invasive instrumentation strategy that requires sampling to
@@ -569,14 +569,15 @@ continuous ``S''-shaped curve approaching 0 on one end, and 1 on the
 other.  The output can be interpreted as a probability measure of how
 likely the data point falls within class 0 or 1.  Quantizing the
 logistic function output then gives us a binary classifier: if the
-output is greater than $1/2$, then the data point is classified as
-class 1 (a crash), otherwise it falls under class 0 (a successful
-run).  Feature selection can be achieved by \termdef{regularizing} the
-function parameters to ignore most input features, forcing it to form
-a model that predicts success or failure using just a small selection
-of sampled features.  Regularization is important for our purposes
-because we expect that most of our features are wild guesses, but that
-there may be just a few which correctly characterize the bug.
+output is greater than \nicefrac{1}{2}, then the data point is
+classified as class 1 (a crash), otherwise it falls under class 0 (a
+successful run).  Feature selection can be achieved by
+\termdef{regularizing} the function parameters to ignore most input
+features, forcing it to form a model that predicts success or failure
+using just a small selection of sampled features.  Regularization is
+important for our purposes because we expect that most of our features
+are wild guesses, but that there may be just a few which correctly
+characterize the bug.
 
 While other techniques for combined classification and feature
 selection exist, none of them are particularly well-suited for this
@@ -643,9 +644,9 @@ only a small number of features from the complete feature set.
 \subsubsection{Data Collection and Analysis}
 
 Our \texttt{bc} data set consists of 4390 runs with distinct random
-inputs and distinct randomized $1/1000$ sampling, of which 2729 are
-randomly chosen for training, 322 for validation, and 1339 for
-testing.  Although there are 30,150 raw features, many can be
+inputs and distinct randomized \nicefrac{1}{1000} sampling, of which
+2729 are randomly chosen for training, 322 for validation, and 1339
+for testing.  Although there are 30,150 raw features, many can be
 discarded immediately using \elim{elimination by universal falsehood}:
 in the training set 27,242 features are always zero.  Hence the
 effective number of features used in training is 2908.  (Elimination
@@ -783,16 +784,16 @@ the process of finding and fixing bugs more efficient.
 Our \texttt{bc} instrumentation is quite dense.  The leftmost bar in
 Figure~\ref{fig:bc:slowdown} shows that if this instrumentation is
 added without sampling, the performance penalty is correspondingly
-large: 13\%.  A sampling density of 1/100 cuts this in half (6\%).  At
-the 1/1000 density used in our statistical debugging experiment, the
-penalty is barely measurable (0.5\%).  Still lower densities show
-small, unexpected speedups relative to uninstrumented code.  Again,
-this is apparently due to effects such as changes in relative code
-alignment, cache behavior, measurement noise, and other unpredictable
-factors.  Thus, we achieved an important goal: we can sample program
-behavior at densities that allow us to isolate real bugs while
-imposing an overhead on clients that is so small as to be unmeasurable
-in practice.
+large: 13\%.  A sampling density of \nicefrac{1}{100} cuts this in
+half (6\%).  At the \nicefrac{1}{1000} density used in our statistical
+debugging experiment, the penalty is barely measurable (0.5\%).  Still
+lower densities show small, unexpected speedups relative to
+uninstrumented code.  Again, this is apparently due to effects such as
+changes in relative code alignment, cache behavior, measurement noise,
+and other unpredictable factors.  Thus, we achieved an important goal:
+we can sample program behavior at densities that allow us to isolate
+real bugs while imposing an overhead on clients that is so small as to
+be unmeasurable in practice.
 
 
 %% LocalWords: DNDEBUG SPECINT rrr rrrr pre ijpeg treeadd li ccrypt

@@ -25,8 +25,8 @@ my %macros = (
 
 	      _sampler_source => '%{?sampler_source}%{!?sampler_source:1}',
 	      'sampler_tags(s:)' => <<'EOF',
-Requires: sampler >= 0.4
-BuildRequires: sampler-devel >= 0.12
+Requires: sampler >= 0.12.1
+BuildRequires: sampler-devel >= 0.12.1
 Source%{_sampler_source}: %{name}-sampler.tar.gz
 %{nil}
 EOF

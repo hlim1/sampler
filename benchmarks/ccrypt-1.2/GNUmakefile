@@ -14,10 +14,10 @@ clean:: $(builds:=/clean)
 	rm -f pristine-stamp
 	rm -rf cyphertext pristine
 
-$(builds:=/src/ccrypt): %/ccrypt: %
+$(builds:=/src/ccrypt): %/src/ccrypt: %/Makefile force
 	make -C $(dir $(@D))
 
-$(builds:=/src):
+$(builds:=/Makefile):
 	cd $(@D) && CC=$$PWD/cc ../src/configure
 
 $(builds:=/clean):

@@ -6,7 +6,7 @@ builds := always-none always-all sample-all
 
 all: $(builds:=/bc/bc)
 
-$(builds:=/bc/bc): %/bc/bc: %/Makefile
+$(builds:=/bc/bc): %/bc/bc: %/Makefile force
 	make -C $(dir $(@D))
 
 $(builds:=/Makefile):

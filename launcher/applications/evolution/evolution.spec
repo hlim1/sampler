@@ -1,7 +1,7 @@
 # RPM specfile for evolution module
 # Generated Tue Jul  8 20:57:03 2003 GMT by Ximian build system
-# $Id: evolution.spec,v 1.2 2003/08/12 07:23:26 liblit Exp $
-# from $Id: evolution.spec,v 1.2 2003/08/12 07:23:26 liblit Exp $
+# $Id: evolution.spec,v 1.3 2003/08/12 07:40:35 liblit Exp $
+# from $Id: evolution.spec,v 1.3 2003/08/12 07:40:35 liblit Exp $
 
 %define nam	evolution
 %define ver	1.4.3
@@ -273,7 +273,7 @@ install|all)
     rm -f ${DESTDIR}/usr/lib/gnome-pilot/conduits/libe*_conduit.la
     ;;
 esac
-%sampler_install -x %{_bindir}/%{name}-%{version}
+%sampler_install -x %{_bindir}/%{name}-1.4
 
 %clean
 DESTDIR=${DESTDIR:-"$RPM_BUILD_ROOT"}

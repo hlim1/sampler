@@ -95,7 +95,7 @@ class visitor file =
 		  let (site, global) = invariant rightOperand in
 		  let site = mkStmt site in
 		  sites <- site :: sites;
-		  self#globals#add global;
+		  self#addGlobal global;
 		  site
 	      in
 

@@ -77,7 +77,7 @@ class virtual visitor file =
 
       { sites = sites;
 	calls = visitor#calls;
-	globals = visitor#globals#fold (fun tail head -> head :: tail) [] }
+	globals = visitor#globals }
 
 
     method private normalize func =

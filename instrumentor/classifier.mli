@@ -6,8 +6,9 @@ class visitor : global ->
     inherit FunctionBodyVisitor.visitor
 
     method private prepatchCall : stmt -> Calls.info
+    method private addGlobal : global -> unit
 
     method calls : Calls.infos
     method sites : stmt list
-    method globals : GlobalQueue.container
+    method globals : global list
   end

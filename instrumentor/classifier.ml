@@ -6,16 +6,17 @@ class visitor initial =
     inherit FunctionBodyVisitor.visitor
 
     val mutable calls = []
+
     method calls = calls
 
     method sites : stmt list = []
 
-    val globals =
-      let container = new GlobalQueue.container in
-      container#add initial;
-      container
+    val mutable globals : global list = [initial]
 
     method globals = globals
+	
+    method private addGlobal global =
+      globals <- global :: globals
 
     method private prepatchCall stmt =
       let info = Calls.prepatch stmt in

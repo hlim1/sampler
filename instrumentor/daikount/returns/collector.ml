@@ -30,7 +30,7 @@ class visitor file =
 		let right = { exp = zero; name = "0" } in
 		let (site, global) = invariant location left right in
 		sites <- info.site :: sites;
-		self#globals#add global;
+		self#addGlobal global;
 		let call = mkStmt stmt.skind in
 		info.site.skind <- site;
 	      end;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -wT
 
 use strict;
 
@@ -19,8 +19,8 @@ print header();
 my $query = new CGI;
 
 exists $ENV{UNIQUE_ID} or die "\$UNIQUE_ID missing from environment\n";
-$ENV{UNIQUE_ID} =~ /^[-A-Za-z0-9@]+$/ or die "\$UNIQUE_ID looks suspicious: \"$ENV{UNIQUE_ID}\"\n";
-my $dir = "/var/www/uploads/$ENV{UNIQUE_ID}";
+$ENV{UNIQUE_ID} =~ /^([-A-Za-z0-9@]+)$/ or die "\$UNIQUE_ID looks suspicious: \"$ENV{UNIQUE_ID}\"\n";
+my $dir = "/var/www/uploads/$1";
 mkdir $dir or die "cannot build upload directory $dir: $!\n";
 END { rmdir $dir if $dir; }
 

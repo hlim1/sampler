@@ -7,8 +7,8 @@ However, any scheme for monitoring software post-deployment
 necessarily raises important privacy and security concerns.  The
 issues are complex, and as much social as technical.  However, our
 approach will only succeed to the extent that users feel safe
-contributing to the shared data pool, so these concerns must be
-addressed.
+contributing to the shared data pool.  Thus, addressing these concerns
+is both a moral and a practical imperative.
 
 \begin{figure}
   \centering
@@ -67,15 +67,14 @@ system so that users are fully informed.  The system is strictly
 opt-in on a per-failure basis, or may be disabled entirely.  The user
 may optionally examine the contents of the crash report, and no
 information is ever sent to Netscape without explicit authorization
-from the user.  Figure~\ref{fig:netscape} shows the sort of
-information presented each time Netscape or Mozilla has crash data to
-submit.
+from the user.  \autoref{fig:netscape} shows the sort of information
+presented each time Netscape or Mozilla has crash data to submit.
 
-Of course, not all users will read or understand these disclaimers.
+Of course, not all users will read or understand these assurances.
 Furthermore, while one can visually scan a Mozilla crash report for
 incriminating strings, users cannot be expected to make informed
-privacy judgments about an invariants-checking report that reveals
-that \texttt{indx} was found to be greater than \texttt{a_count} 5280
+privacy judgments about an invariants report that reveals that
+\texttt{indx} was found to be greater than \texttt{a\_count} 5280
 times.
 
 Even so, there are some technical measures we can take to protect the
@@ -86,12 +85,38 @@ little revelatory power, and the information which is revealed will
 generally be so randomly scattered as to make coherent reassembly of a
 compound value, such as a password string, infeasible.
 
-\aside{Statistics facet of things can yield anonymity: keep subtotals
-  only, never store original data.}
+Some data, or some parts of execution, may be so sensitive that even
+this diffuse information leakage is unacceptable.  Several type-based
+analyses under the broad heading of secure information flow
+\cite{volpano96:sound,1997:tapsoft:volpano,ZdZhNyMy2001} may be
+helpful here.  Such systems statically identify those parts of a
+program that manipulate secure or sensitive data; we can avoid
+inserting instrumentation that reveals such values.  Of course, this
+will make it difficult to track down bugs in security-sensitive parts
+of an application, but that trade-off is always present: one can only
+fix bugs about which that the customer is willing to provide useful
+information.  A greater challenge is assuring the correctness of these
+(or any) type-based approaches in the presence of memory safety bugs,
+but the \CCured project has shown that this too is possible.
 
-\aside{Non-interference, taint analysis, etc. might help identify data
-  which should never be leaked into a sample.}
+If the ultimate use of sampled data is the sort of data mining used in
+\autoref{sec:applications:mining}, then an attractive mechanism for
+protecting user anonymity becomes available.  Many statistical
+analyses are characterized by a set of \termdef{sufficient
+  statistics}: a collection of values which completely characterize
+the internal state of the analysis.  For example, if one wanted to
+compute the mean of a stream of numbers, a running total and a count
+would be sufficient statistics: the mean can be computed from these
+without retaining the individual numbers in the stream.  Similarly,
+once the logistic regression has been updated with a new trace, the
+trace itself may be discarded.  If the analysis host is compromised,
+the attacker will learn aggregate information about all collected
+traces, but cannot recover the precise details of any single trace.
 
-\aside{Briefly mention database poisoning by malicious or selfish
-  clients}
+A statistical approach designed to cope with noise offers some
+protection against malicious users who might try to poison the central
+database with bogus data, or overwhelm it with data representing the
+particular bugs they wish to see fixed.  Recent work on protecting
+privacy and preventing abuse in collaborative filtering systems will
+also be applicable here~\cite{Canny2002,EC00*150}.
 

@@ -133,20 +133,20 @@ number of skipped sampling opportunities.
 
 Consider the distribution of likely countdown values.  With a sampling
 density of 1/100, there is a 1/100 chance that we will sample at the
-very next opportunity.  There is a $(99/100)\dot(1/100)$ that the next
-chance will be skipped, and that the one after that will be taken.  A
-countdown of three appears on a $(99/100)^2\dot(1/100)$ chance, and so
-on.  These numbers form a \termdef{geometric distribution} whose mean
-value is the inverse of the sampling density (that is, 100).  Numbers
-in a geometric distribution characterize the expected inter-arrival
-times of a Bernoulli process.  However, repeated tossing of a biased
-coin is not necessary: geometrically distributed random numbers can be
-generated directly using a standard (uniform) random generator and
-some simple floating-point operations.\footnote{In theory, a countdown
-  may need to be arbitrarily large.  However, the odds of a 1/100
-  countdown exceeding $2^{32}-1$ are less than one in $10^{10^7}$.
-  This divisor is many orders of magnitude beyond all reasonable
-  estimates of the number of elementary particles in the universe.}
+very next opportunity.  There is a $(99/100) \times (1/100)$ that the
+next chance will be skipped but that the one after that will be taken.
+A countdown of three appears on a $(99/100)^2 \times (1/100)$ chance,
+and so on.  These numbers form a \termdef{geometric distribution}
+whose mean value is the inverse of the sampling density (that is,
+100).  Numbers in a geometric distribution characterize the expected
+inter-arrival times of a Bernoulli process.  However, repeated tossing
+of a biased coin is not necessary: geometrically distributed random
+numbers can be generated directly using a standard (uniform) random
+generator and some simple floating-point operations.\footnote{In
+  theory, a countdown may need to be arbitrarily large.  However, the
+  odds of a 1/100 countdown exceeding $2^{32}-1$ are less than one in
+  $10^{10^7}$.  This divisor vastly exceeds any reasonable estimate of
+  the number of elementary particles in the universe.}
 
 As can be seen in the instrumented slow path, the countdown must be
 reset once it reaches zero.  Thus, we consume next-sample countdowns
@@ -201,7 +201,7 @@ fast path code instead.
   \label{fig:code-layout}
 \end{figure}
 
-Figure~\ref{fig:code-layout} shows an example of code layout for a
+\autoref{fig:code-layout} shows an example of code layout for a
 function containing one conditional and one loop.  Dotted nodes
 represent instrumentation sites; these are reduced to mere countdown
 decrements in the fast path.  The boxed nodes represent threshold

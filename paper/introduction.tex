@@ -37,10 +37,6 @@ report no information for successful runs.  This makes it difficult to
 distinguish anomalous (crash-causing) behavior from innocuous behavior
 common to all runs.
 
-\aside{I've actually \emph{met} with the Mozilla crash feedback
-  people.  If I can find an excuse to mention that, it might improve
-  our credibility.}
-
 Therefore, we wish to trace or monitor program behavior continuously
 throughout a run.  Furthermore, we want to measure reality: actual use
 by actual users.  Any monitoring scheme, then, must be sufficiently
@@ -62,18 +58,18 @@ cost is spread thin across a great many users, the incremental burden
 on any single user can be made arbitrarily small.
 
 This paper presents a framework for fair random sampling of program
-behavior.  Section~\ref{sec:framework} presents the program
-transformation at the heart this framework, which allows us to add
-randomly sampled instrumentation code to an existing application.  In
-this section we also discuss some of the design issues
-\unknown[something about keeping data size down, and doing client-side
-data reduction].  Section~\ref{sec:applications} presents two example
-applications of our system: sharing the cost of checking assertions,
-and hunting for bugs using trace data mining.  Monitoring of deployed
-code raises important privacy and security concerns, both social and
-technical; a discussion of these issues appears in
-Section~\ref{sec:privsec}.  In Section~\ref{sec:related-work} we
-discuss related work, and Section~\ref{sec:conclusions} concludes.
+behavior.  \autoref{sec:framework} details the program transformation
+at the heart this framework, which allows us to add randomly sampled
+instrumentation code to an existing application.  In this section we
+also discuss some of the design issues \unknown[something about
+keeping data size down, and doing client-side data reduction].
+\autoref{sec:applications} presents two example applications of our
+system: sharing the cost of checking assertions, and hunting for bugs
+using statistical data mining.  In \autoref{sec:related-work} we
+discuss related work.  Monitoring of deployed code raises important
+privacy and security concerns, both social and technical; a discussion
+of these issues appears in \autoref{sec:privsec}.
+\autoref{sec:conclusions} concludes.
 
 \aside{Did this introduction take too long to get to the point?}
 

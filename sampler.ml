@@ -38,4 +38,4 @@ end
 ;;
 
 let files = TestHarness.main [new visitor] in
-List.iter (printFile defaultCilPrinter stdout) files
+List.iter (dumpFile defaultCilPrinter stdout) files

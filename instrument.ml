@@ -13,7 +13,7 @@ class visitor = object
 
   method vinst inst =
     match inst with
-    | Set((Mem addr, _), data, location) as original ->
+    | Set((Mem addr, NoOffset), data, location) as original ->
 	Printf.eprintf "%s:%i: adding instrumentation point\n"
 	  location.file location.line;
 	ChangeTo [Call (None, Lval (var LogWrite.logWrite),
@@ -26,6 +26,12 @@ class visitor = object
 		  original]
     | _ -> SkipChildren
 end
+
+
+let visit original =
+  let replacement = visitCilBlock (new visitor) original in
+  if replacement != original then
+    failwith "instrumenter unexpectedly replaced top-level block"
 
 
 let phase =

@@ -9,7 +9,7 @@ let cloneLabel = function
 	
 	
 class visitor = object(self)
-  inherit Instrument.visitor
+  inherit CurrentFunctionVisitor.visitor
 
   method vfunc func =
     let predicate = one in

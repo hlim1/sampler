@@ -10,8 +10,17 @@ use FindBin;
 ########################################################################
 
 
-my $transformer = shift;
-my $gcc = shift;
+my $transformer = '<transformer>';
+my $gcc = '<gcc>';
+
+
+sub usage () {
+    die "usage: $0 $transformer $gcc <gcc-options> ...\n"
+}
+
+
+$transformer = shift || usage;
+$gcc = shift || usage;
 my @cpp = ($gcc);
 my @cc = ($gcc);
 my @ld = ($gcc);
@@ -150,7 +159,7 @@ sub check_system (@) {
     my $error = system @_;
 
     if ($error == -1) {
-	die "cannot run $_[0]: $!\n";
+	exit 2;
     } elsif ($error) {
 	my $result = $error >> 8 || $error & 127 || -1;
 	exit $result;
@@ -256,39 +265,41 @@ while ($_ = shift) {
 if ($mode eq 'special') {
     trace_system @cc;
 
-} elsif ($mode eq 'preprocess') {
-    foreach (@source) {
-	my @out = ('-o', $outfile) if $outfile;
-	trace_system @cpp, @out, $_;
-    }
-    
 } else {
-
-    foreach (@source) {
-	my $base = basename $_, '.c';
-	my ($i_handle, $i_name) = temp $base, 'i';
-	trace_redirect $i_handle, $i_name, @cpp, '-E', $_;
-	
-	my ($c_handle, $c_name) = temp "$base.inst", 'c';
-	trace_redirect $c_handle, $c_name, $transformer, $i_name;
-	
-	if ($mode eq 'compile') {
-	    my $o = $outfile || (resuffix $_, '.o');
-	    trace_system @cc, '-o', $o, $c_name;
-	} elsif ($mode eq 'codegen') {
-	    my $o = $outfile || (resuffix $_, '.s');
-	    trace_system @cc, '-o', $o, $c_name;
-	} else {
-	    warn "ld hole filling: before: @ld\n";
-	    $ld[shift @holes] = $c_name;
-	    warn "ld hole filling: after:  @ld\n";
+    usage unless @source;
+    
+    if ($mode eq 'preprocess') {
+	foreach (@source) {
+	    my @out = ('-o', $outfile) if $outfile;
+	    trace_system @cpp, @out, $_;
 	}
-    }
+	
+    } else {
 
-    if ($mode eq 'link') {
-	my @out = ('-o', $outfile) if $outfile;
-	push_library "$FindBin::Bin/libcountdown", 'countdown';
-	push_library "$FindBin::Bin/liblog", 'log';
-	trace_system @ld, @out;
+	foreach (@source) {
+	    my $base = basename $_, '.c';
+	    my ($i_handle, $i_name) = temp $base, 'i';
+	    trace_redirect $i_handle, $i_name, @cpp, '-E', $_;
+	    
+	    my ($c_handle, $c_name) = temp "$base.inst", 'c';
+	    trace_redirect $c_handle, $c_name, $transformer, $i_name;
+	    
+	    if ($mode eq 'compile') {
+		my $o = $outfile || (resuffix $_, '.o');
+		trace_system @cc, '-o', $o, $c_name;
+	    } elsif ($mode eq 'codegen') {
+		my $o = $outfile || (resuffix $_, '.s');
+		trace_system @cc, '-o', $o, $c_name;
+	    } else {
+		$ld[shift @holes] = $c_name;
+	    }
+	}
+
+	if ($mode eq 'link') {
+	    my @out = ('-o', $outfile) if $outfile;
+	    push_library "$FindBin::Bin/libcountdown", 'countdown';
+	    push_library "$FindBin::Bin/liblog", 'log';
+	    trace_system @ld, @out;
+	}
     }
 }

@@ -7,7 +7,6 @@ let main transformer =
      Choices.phase;
      transformer;
      "RemoveUnusedTemps", (fun file -> Rmtmps.removeUnusedTemps file);
-     FilterLabels.phase;
      "dump", dumpFile (new Printer.printer) stdout
    ]
   in

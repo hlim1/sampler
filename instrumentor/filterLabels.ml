@@ -76,25 +76,14 @@ class reduceLabels destinations =
   end
 
 
-class visitor =
-  object
-    inherit FunctionBodyVisitor.visitor
+let visit func =
+  ignore (visitCilFunction (new numberStatements) func);
 
-    method vfunc func =
-      ignore (visitCilFunction (new numberStatements) func);
+  let destinations =
+    let collector = new collectDestinations in
+    ignore (visitCilFunction (collector :> cilVisitor) func);
+    collector#result
+  in
 
-      let destinations =
-	let collector = new collectDestinations in
-	ignore (visitCilFunction (collector :> cilVisitor) func);
-	collector#result
-      in
-      
-      let simplifier = new reduceLabels destinations in
-      ignore (visitCilFunction simplifier func);
-      SkipChildren
-  end
-
-
-let phase =
-  "FilterLabels",
-  visitCilFileSameGlobals new visitor
+  let simplifier = new reduceLabels destinations in
+  ignore (visitCilFunction simplifier func);

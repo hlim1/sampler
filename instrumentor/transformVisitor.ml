@@ -51,7 +51,10 @@ class virtual visitor file =
 	    
 	    sites#iter instrument;
 
-	    (* DeadCode.visit func *)
+	    DeadCode.visit func;
+	    FilterLabels.visit func;
+	    MergeBlocks.visit func;
+	    FilterLabels.visit func
       end;
 
       collector#globals

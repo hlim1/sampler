@@ -12,7 +12,7 @@ Standards-Version: 3.5.8
 
 Package: sampler
 Architecture: all
-Depends: ${shlibs:Depends} ${misc:Depends}
+Depends: python >= 2.2
 Description: Support for applications with sampled instrumentation
  This package supports instrumented applications at run time.  It
  includes tools for launching instrumented applications, collecting
@@ -21,7 +21,8 @@ Description: Support for applications with sampled instrumentation
 
 Package: sampler-gnome
 Architecture: all
-Depends: ${shlibs:Depends} ${misc:Depends}
+Depends: sampler
+Depends: python-glade2, python-gnome2
 Description: Support for GNOME applications with sampled instrumentation
  This package supports instrumented GNOME applications at run time.
  It contains a modified launcher and uploader that presents GNOME
@@ -30,7 +31,7 @@ Description: Support for GNOME applications with sampled instrumentation
 
 Package: sampler-dev
 Architecture: any
-Depends: ${shlibs:Depends} ${misc:Depends}
+Depends: perl >= 5.8, perl-modules
 Description: Tools for building applications with sampled instrumentation
  This package provides tools for building applications with sampled
  instrumentation.  It includes an instrumenting C compiler and utility
@@ -38,6 +39,7 @@ Description: Tools for building applications with sampled instrumentation
 
 Package: sampler-doc
 Architecture: all
+Depends: ${misc:Depends}
 Description: Documentation for sampler
  This package contains the documentation files for sampler in general,
  and sampler-dev in particular.

@@ -1,0 +1,9 @@
+*-stamp
+*.debhelper
+*.substvars
+files
+sampler
+sampler-dev
+sampler-doc
+sampler-gnome
+tmp

@@ -17,7 +17,7 @@ DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 
-CFLAGS = -Wall -g
+CFLAGS = -W -Wall -Werror -g
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0
@@ -31,89 +31,44 @@ endif
 
 config.status: configure
 	dh_testdir
-	# Add here commands to configure the package.
-	CFLAGS="$(CFLAGS)" ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info $(configflags)
+	CFLAGS="$(CFLAGS)" ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr $(configflags)
 
-
-#Architecture 
-build: build-arch build-indep
-
-build-arch: build-arch-stamp
-build-arch-stamp:  config.status
-	# Add here commands to compile the arch part of the package.
-	#$(MAKE) 
-
-build-indep: build-indep-stamp
-build-indep-stamp:  config.status
-	# Add here commands to compile the indep part of the package.
-	#$(MAKE) doc
+build: debian/build-stamp
+debian/build-stamp: config.status
+	dh_testdir
+	$(MAKE)
+	touch $@
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-arch-stamp build-indep-stamp config-stamp
-
-	# Add here commands to clean up after the build process.
 	-$(MAKE) distclean
-ifneq "$(wildcard /usr/share/misc/config.sub)" ""
-	cp -f /usr/share/misc/config.sub config-aux/config.sub
-endif
-ifneq "$(wildcard /usr/share/misc/config.guess)" ""
-	cp -f /usr/share/misc/config.guess config-aux/config.guess
-endif
-
+	rm -f debian/build-stamp debian/install-stamp
 	dh_clean
 
-install: install-indep install-arch
-install-indep:
+install: debian/install-stamp
+debian/install-stamp: debian/build-stamp
 	dh_testdir
 	dh_testroot
-	dh_clean -k -i
-	dh_installdirs -i
+	dh_clean
+	dh_installdirs
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	install -D doc/sampler.xml debian/tmp/usr/share/doc/sampler-dev/sampler.xml
+	dh_install --list-missing --sourcedir=$(CURDIR)/debian/tmp
+	touch $@
 
-	# Add here commands to install the indep part of the package into
-	# debian/<package>-doc.
-	#INSTALLDOC#
-
-	dh_install --list-missing --sourcedir=$(CURDIR)/debian/sampler -i
-
-install-arch:
+binary: build install
 	dh_testdir
 	dh_testroot
-	dh_clean -k -a
-	dh_installdirs -a
-
-	# Add here commands to install the arch part of the package into 
-	# debian/tmp.
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/sampler
-
-	dh_install --list-missing --sourcedir=$(CURDIR)/debian/sampler -a
-# Must not depend on anything. This is to be called by
-# binary-arch/binary-multi
-# in another 'make' thread.
-binary-common:
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs 
+	dh_installchangelogs
 	dh_installdocs
-	dh_link
+	dh_scrollkeeper -v debian/sampler-doc
 	dh_strip
-	dh_compress 
+	dh_compress
 	dh_fixperms
-	dh_perl
-	dh_python
-	dh_shlibdeps
 	dh_installdeb
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
-# Build architecture independant packages using the common target.
-binary-indep: build-indep install-indep
-	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
 
-# Build architecture dependant packages using the common target.
-binary-arch: build-arch install-arch
-	$(MAKE) -f debian/rules DH_OPTIONS=-a binary-common
-
-binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch 
+.PHONY: clean build install binary

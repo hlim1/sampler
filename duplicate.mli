@@ -1,1 +1,3 @@
-val phase : unit -> TestHarness.phase
+open Cil
+
+val duplicateBody : fundec -> block

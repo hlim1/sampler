@@ -1,4 +1,5 @@
 open Cil
+open Identity
 
 
 let cloneLabel = function
@@ -8,25 +9,19 @@ let cloneLabel = function
 	
 	
 class visitor = object(self)
-  inherit FunctionBodyVisitor.visitor
+  inherit SkipVisitor.visitor
 
-  method vfunc func =
-    let predicate = one in
-    let original = func.sbody in
-    let clone = visitCilBlock (self :> cilVisitor) original in
-    let choice = mkStmt (If (predicate, original, clone, func.svar.vdecl)) in
-    func.sbody <- mkBlock [choice];
-    SkipChildren
+  method vblock block =
+    let duplicate = {block with bstmts = block.bstmts} in
+    ChangeDoChildrenPost (duplicate, identity)
 
   method vstmt stmt =
     let originals = stmt.labels in
     let replacements = mapNoCopy cloneLabel originals in
-    if replacements == originals then
-      SkipChildren
-    else
-      ChangeTo { stmt with labels = replacements }
+    let clone = { stmt with labels = replacements } in
+    ChangeDoChildrenPost (clone, identity)
 end
 
 
-let phase _ =
-  ("Duplicate", visitCilFileSameGlobals new visitor)
+let duplicateBody {sbody = original} =
+  visitCilBlock new visitor original

@@ -1,6 +1,7 @@
 open Cil
 
   
-val vinst : fundec -> instr -> instr list visitAction
+val addPrototype : file -> unit
+val instrumentBlock : block -> block
 
 val phase : unit -> TestHarness.phase

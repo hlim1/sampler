@@ -38,6 +38,7 @@ AC_OUTPUT(
 Makefile
 benchmarks/ccured/config.mk
 fuzz/Makefile
+instrumentor/branches/libbranches/Makefile
 instrumentor/daikon/libdaikon/Makefile
 instrumentor/daikount/libdaikount/Makefile
 libcountdown/Makefile

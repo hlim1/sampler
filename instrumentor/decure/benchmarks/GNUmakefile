@@ -36,6 +36,11 @@ loopless: $(benchmarks:=/loopless)
 $(benchmarks:=/loopless): force
 	+$(recurse)
 
+idents: $(benchmarks:=/idents)
+.PHONY: idents
+$(benchmarks:=/idents): force
+	+$(recurse)
+
 clean: $(benchmarks:=/clean)
 .PHONY: clean
 $(benchmarks:=/clean): force

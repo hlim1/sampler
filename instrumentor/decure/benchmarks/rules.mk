@@ -30,6 +30,7 @@ sampleSrcs  := $(sampleForms:=.c)
 allForms := $(alwaysForms) $(sampleForms)
 allExecs := $(alwaysExecs) $(sampleExecs)
 allTimes := $(allForms:=.times)
+allIdents := $(allForms:=.ident)
 
 CFLAGS := -O2
 LOADLIBES := $(trusted:%=$(workDir)/$(testDir)/%) $(workHome)/obj/x86_LINUX/ccured_GNUCC_releaselib.a -lm
@@ -90,6 +91,11 @@ always-none.c: decurable.i $(decureMainDep)
 	$(runDecure) --only @ $< >$@ || rm -f $@
 
 
+clean::
+	rm -f always-*.exe
+	rm -f always-*.c
+
+
 ########################################################################
 
 
@@ -111,6 +117,11 @@ sample-all.c: decurable.i $(decureMainDep)
 	$(runDecure) $< >$@ || rm -f $@
 
 
+clean::
+	rm -f sample-*.exe
+	rm -f sample-*.c
+
+
 ########################################################################
 
 
@@ -119,12 +130,20 @@ stats: decurable.i $(decureMainDep)
 	@[ -r $@ ]
 
 
+clean::
+	rm -f stats
+
+
 ########################################################################
 
 
 loopless: $(instrumentor)/loopless decurable.i
 	$^ >$@ || rm -f $@
 	@[ -r $@ ]
+
+
+clean::
+	rm -f loopless
 
 
 ########################################################################
@@ -138,15 +157,8 @@ functions.mk: ../make-functions-mk functions-list
 	$< <functions-list >$@ || rm -f $@
 	@[ -r $@ ]
 
-clean:
+clean::
 	if [ -d .libs ]; then rmdir .libs; fi
-	rm -f stats
-	rm -f *.*.times
-	rm -f *.*.times.
-	rm -f *.exe
-	rm -f always-*.c
-	rm -f only-*.c
-	rm -f loopless
 
 spotless: clean
 	rm -f functions.mk functions-list basis-cured.c decurable.i
@@ -164,6 +176,25 @@ $(allTimes): %.times: ../run-trials %.exe
 
 ../countdowns/%:
 	$(MAKE) -C $(@D) $(@F)
+
+
+clean::
+	rm -f *.times.
+	rm -f *.times
+
+
+########################################################################
+
+
+idents: $(allIdents)
+.PHONY: idents
+
+$(allIdents): %.ident: %.exe
+	ident $< >$@ || rm -f $@
+	@[ -r $@ ]
+
+clean::
+	rm -f *.ident
 
 
 ########################################################################

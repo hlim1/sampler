@@ -15,10 +15,9 @@ let phase =
   "adding ident strings",
   fun file ->
     let element = TInt (IChar, constAttr) in
-    let typ = TPtr (element, [Attr ("unused", [])]) in
+    let typ = TPtr (element, Attr ("unused", []) :: constAttr) in
     let varinfo = makeGlobalVar "samplerIdent" typ in
     varinfo.vstorage <- Static;
-    varinfo.vattr <- constAttr;
 
     let text =
       let folder prefix (name, renderer) =

@@ -39,8 +39,9 @@ bug isolation server.
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING
+%dir %{_libdir}/%{name}
+%dir %{_libdir}/%{name}/applications
 %dir %{_datadir}/%{name}
-%dir %{_datadir}/%{name}/applications
 %{_datadir}/%{name}/gdb-commands
 %{_datadir}/%{name}/print-debug-info
 %dir %{_datadir}/%{name}/launcher

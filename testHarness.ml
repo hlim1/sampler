@@ -25,7 +25,6 @@ let doOneOne file (title, action) =
 let doOne stages filename =
   eprintf "%s:\n" filename;
   let file = Frontc.parse filename () in
-  (* Rmtmps.removeUnusedTemps file; *)
   check file;
   List.iter (doOneOne file) stages
     

@@ -119,7 +119,7 @@ $(ifaces:=.di): %.di: %.mli $(fixdeps)
 	$(depend)
 
 $(libcil): $(force)
-	$(MAKE) -C $(cildir) -f Makefile.cil NATIVE=$(native) cillib
+	$(MAKE) -C $(cildir) -f Makefile.cil NATIVECAML=$(native) cillib
 
 force:
 .PHONY: force

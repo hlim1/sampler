@@ -39,6 +39,7 @@ class ServerMessage:
         document.open_stream(type)
         document.write_stream(body)
         document.close_stream()
+        self.__document = document
 
         view = gtkhtml2.View()
         view.set_document(document)
@@ -48,6 +49,8 @@ class ServerMessage:
 
     def run(self):
         result = self.__dialog.run()
+        # GNOME bugzilla bug 119496
+        self.__document.clear()
         self.__dialog.destroy()
         return result
 

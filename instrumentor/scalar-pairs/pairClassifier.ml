@@ -30,6 +30,7 @@ class visitor file (constants : Constants.collection) (tuples : PairTuples.build
     method vstmt stmt =
       match stmt.skind with
       | Instr [Set ((Var left, NoOffset), _, location)]
+      | Instr [Call (Some (Var left, NoOffset), _, _, location)]
 	when isInterestingVar left && self#includedStatement stmt ->
 	  let bumps =
 

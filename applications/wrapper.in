@@ -6,4 +6,4 @@ import sys
 sys.path[0:0] = [sys.path[0], '@_launcherdir@']
 
 import GnomeMain
-GnomeMain.main(os.path.join(sys.path[0], 'config'))
+GnomeMain.main(os.path.join(os.path.realpath(sys.path[0]), 'config'))

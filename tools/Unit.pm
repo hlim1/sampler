@@ -30,6 +30,7 @@ sub new ($$) {
     $_ eq "*\t0.1" or $self->malformed('compilation unit signature');
 
     $self->{name} = <$handle>;
+    chomp $self->{name};
     $self->{handle} = $handle;
     $self->{functions} = new SymbolTable $self->name;
 

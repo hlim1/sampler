@@ -39,6 +39,20 @@ sub slurp_1 ($) {
 }
 
 
+sub verbose ($) {
+    slurp_0 $_;
+    push @inst, '--show-phase-times';
+    $verbose = 1;
+}
+
+
+sub dumpbase ($) {
+    my $value = shift @ARGV;
+    push @cc1, $_, $value;
+    push @inst, '--dumpbase', $value;
+}
+
+
 my %flag_specs =
     (
      # Sampler Options
@@ -49,7 +63,7 @@ my %flag_specs =
 
      # Overall Options
      '-o' => sub { slurp_1 $_; $cpp0_output_slot = \$cpp0[@cpp0 - 1]; },
-     '-v' => sub { slurp_0 $_; $verbose = 1; push @inst, '--show-phase-times'; },
+     '-v' => \&verbose,
 
      # C Language Options
      '-aux-info' => sub { push @cc1, $_ },
@@ -78,7 +92,7 @@ my %flag_specs =
      '-U' => \&slurp_1,
 
      # Undocumented Options
-     '-dumpbase' => sub { push @cc1, $_, shift @ARGV },
+     '-dumpbase' => \&dumpbase,
      '-quiet' => sub { push @cc1, $_ }
      );
 

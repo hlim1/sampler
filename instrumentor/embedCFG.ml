@@ -9,14 +9,26 @@ let embedCFG =
     ~default:true
 
 
+let dumpBase =
+  let value = ref "" in
+  Options.push ("--dumpbase",
+		Arg.Set_string value,
+		"original source file name");
+  value
+
+
 class visitor file =
   object (self)
     inherit FunctionBodyVisitor.visitor
     inherit BufferClass.c 16
 
     initializer
+      let filename =
+	if !dumpBase = "" then file.fileName
+	else !dumpBase
+      in
       self#addString "*\t0.1\n";
-      self#addString file.fileName;
+      self#addString filename;
       self#addChar '\n';
 
     val expectedSid = ref 0

@@ -1,3 +1,4 @@
-type direction = Forward | Backward
+open Cil
 
-val visit : Cil.fundec -> direction StmtMap.container
+
+val visit : fundec -> (stmt list * stmt list)

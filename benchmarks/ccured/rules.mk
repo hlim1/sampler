@@ -13,8 +13,7 @@ sampler = ../../..
 instrumentor = $(sampler)/instrumentor
 decure = SAMPLER_ALREADY_CURED=1 $(instrumentor)/driver/main decure $(sampling) $(filtering)
 
-include $(top_builddir)/benchmarks/ccured/config.mk
-workDir = $(workHome)/test
+workDir = ../../../instrumentor/cil/test
 workExec = $(workDir)/$(testDir)/$(exec)
 workComb = $(workExec:.exe=.cured.i)
 

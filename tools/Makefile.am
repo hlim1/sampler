@@ -35,8 +35,8 @@ EXTRA_DIST =					\
 
 rpmbuild debuild: find-driver.pl
 
-LFLAGS = -f -p
-CFLAGS = -W -Wall -Werror -O9
+AM_LFLAGS = -f -p
+AM_CFLAGS = -W -Wall -Werror
 
 decimate_samples_SOURCES = decimate-samples.l
 decimate_samples_CFLAGS = $(GSL_CFLAGS)

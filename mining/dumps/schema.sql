@@ -11,7 +11,7 @@
 DROP TABLE IF EXISTS build;
 CREATE TABLE build (
   build_id int(10) unsigned NOT NULL auto_increment,
-  application_name enum('evolution','gaim','gimp','gnumeric','nautilus') NOT NULL default 'evolution',
+  application_name varchar(50) NOT NULL default '',
   application_version varchar(50) NOT NULL default '',
   application_release varchar(50) NOT NULL default '',
   instrumentation_type enum('branches','returns','scalar-pairs') NOT NULL default 'branches',

@@ -10,16 +10,6 @@ double density;
 gsl_rng *generator;
 
 
-unsigned getNextCountdown()
-{
-  unsigned result;
-  assert(generator);
-  result = gsl_ran_geometric(generator, density);
-  assert(result > 0);
-  return result;
-}
-
-
 __attribute__((constructor)) static void initialize()
 {
   const char * const environ = getenv("SAMPLER_SPARSITY");

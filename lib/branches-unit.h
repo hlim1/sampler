@@ -22,7 +22,7 @@ static unsigned branchesTimestampsLast[];
 
 #pragma cilnoremove("branchesReporter")
 #pragma sampler_exclude_function("branchesReporter")
-static void branchesReporter()
+static void branchesReporter() __attribute__((unused))
 {
   branchesReport(samplerUnitSignature,
 		 sizeof(branchesCounters) / sizeof(*branchesCounters),

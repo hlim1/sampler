@@ -22,7 +22,7 @@ static unsigned gObjectUnrefTimestampsLast[];
 
 #pragma cilnoremove("gObjectUnrefReporter")
 #pragma sampler_exclude_function("gObjectUnrefReporter")
-static void gObjectUnrefReporter()
+static void gObjectUnrefReporter() __attribute__((unused))
 {
   gObjectUnrefReport(samplerUnitSignature,
 		    sizeof(gObjectUnrefCounters) / sizeof(*gObjectUnrefCounters),

@@ -21,7 +21,7 @@ static void boundsReportDump();
 
 #pragma cilnoremove("boundsReporter")
 #pragma sampler_exclude_function("boundsReporter")
-static void boundsReporter()
+static void boundsReporter() __attribute__((unused))
 {
   boundsReportBegin(samplerUnitSignature);
   boundsReportDump();

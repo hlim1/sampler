@@ -22,7 +22,7 @@ static unsigned returnsTimestampsLast[];
 
 #pragma cilnoremove("returnsReporter")
 #pragma sampler_exclude_function("returnsReporter")
-static void returnsReporter()
+static void returnsReporter() __attribute__((unused))
 {
   returnsReport(samplerUnitSignature,
 		sizeof(returnsCounters) / sizeof(*returnsCounters),

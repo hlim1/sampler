@@ -22,7 +22,7 @@ static unsigned scalarPairsTimestampsLast[];
 
 #pragma cilnoremove("scalarPairsReporter")
 #pragma sampler_exclude_function("scalarPairsReporter")
-static void scalarPairsReporter()
+static void scalarPairsReporter() __attribute__((unused))
 {
   scalarPairsReport(samplerUnitSignature,
 		    sizeof(scalarPairsCounters) / sizeof(*scalarPairsCounters),

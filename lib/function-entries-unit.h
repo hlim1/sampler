@@ -22,7 +22,7 @@ static unsigned functionEntriesTimestampsLast[sizeof(functionEntriesCounters) / 
 
 #pragma cilnoremove("functionEntriesReporter")
 #pragma sampler_exclude_function("functionEntriesReporter")
-static void functionEntriesReporter()
+static void functionEntriesReporter() __attribute__((unused))
 {
   functionEntriesReport(samplerUnitSignature,
 		 sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters),

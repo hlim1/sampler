@@ -6,7 +6,7 @@ use FileHandle;
 
 local $, = "\t";
 local $\ = "\n";
-print('suite', 'benchmark', 'when', 'where', 'seed',
+print('suite', 'benchmark', 'when', 'where', 'sparsity', 'seed',
       'user', 'system', 'elapsed', 'cpu', 'text', 'data', 'max',
       'inputs', 'outputs', 'major', 'minor', 'swaps');
 
@@ -20,9 +20,9 @@ my %suite = (
 sub collate_log ($$) {
     my ($suite, $logName) = @_;
 
-    $logName =~ /^(.+)\/([^-]+)-(.+)\.times$/
+    $logName =~ /^(.+)\/(.+)-(.+)-(.+)\.times$/
 	or die "malformed log name: $logName";
-    my ($benchmark, $when, $where) = ($1, $2, $3);
+    my ($benchmark, $when, $where, $sparsity) = ($1, $2, $3, $4);
 
     my $file = new FileHandle $logName, 'r';
     while (not $file->eof) {
@@ -47,7 +47,7 @@ sub collate_log ($$) {
 	    die unless defined $inputs;
 	    
 	    my $elapsed = 60 * $elapsedMin + $elapsedSec;
-	    print($suite, $benchmark, $when, $where, $seed,
+	    print($suite, $benchmark, $when, $where, $sparsity, $seed,
 		  $user, $system, $elapsed, $cpu, $text, $data, $max,
 		  $inputs, $outputs, $major, $minor, $swaps);
 	}

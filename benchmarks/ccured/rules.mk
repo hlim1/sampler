@@ -20,14 +20,16 @@ workComb := $(workExec)_comboptimcured.i
 
 ifdef buildOnlys
 -include functions.mk
-onlys := $(functions:%=only-%)
+ifneq (,$(filter all none, $(functions)))
+$(name conflict: error benchmark defines an "all" or "none" function)
+endif
 endif
 
-alwaysForms := $(addprefix always-, $(onlys) all none)
+alwaysForms := $(addprefix always-, $(functions) all none)
 alwaysExecs := $(alwaysForms:=.exe)
 alwaysSrcs  := $(alwaysForms:=.c)
 
-sampleForms := $(addprefix sample-, $(onlys) all)
+sampleForms := $(addprefix sample-, $(functions) all)
 sampleExecs := $(sampleForms:=.exe)
 sampleSrcs  := $(sampleForms:=.c)
 
@@ -92,15 +94,15 @@ $(alwaysExecs): %.exe: %.c
 
 always-%.c: runDecure += --no-sample
 
-always-only-%.c: decurable.i
-	$(runDecure) --include-function $* --exclude-function \* $< >$@ || rm -f $@
-	[ -r $@ ]
-
 always-all.c: decurable.i
 	$(runDecure) $< >$@ || rm -f $@
 
 always-none.c: decurable.i
 	$(runDecure) --exclude-function \* $< >$@ || rm -f $@
+
+always-%.c: decurable.i
+	$(runDecure) --include-function $* --exclude-function \* $< >$@ || rm -f $@
+	[ -r $@ ]
 
 
 clean::
@@ -121,12 +123,12 @@ $(sampleExecs): %.exe: %.c
 
 sample-%.c: runDecure += --sample
 
-sample-only-%.c: decurable.i
-	$(runDecure) --include-function $* --exclude-function \* $< >$@ || rm -f $@
-	[ -r $@ ]
-
 sample-all.c: decurable.i
 	$(runDecure) $< >$@ || rm -f $@
+
+sample-%.c: decurable.i
+	$(runDecure) --include-function $* --exclude-function \* $< >$@ || rm -f $@
+	[ -r $@ ]
 
 
 clean::
@@ -196,24 +198,20 @@ clean::
 
 
 sparsities := 100 1000 10000 1000000
-alwaysTimes := $(alwaysForms:=.times)
+alwaysTimes := $(alwaysForms:=-1.times)
 sampleAllTimes := $(sparsities:%=sample-all-%.times)
-sampleOnlyTimes := $(onlys:%=sample-%.times)
+sampleOnlyTimes := $(functions:%=sample-%-1000.times)
 times := $(alwaysTimes) $(sampleAllTimes) $(sampleOnlyTimes)
 
 times: $(times)
 .PHONY: times
 
-$(alwaysTimes): %.times: ../run-trials %.exe
-	./$< 1 './$*.exe $(runArgs)' >$@. 2>&1
-	mv $@. $@
-
-$(sampleAllTimes): sample-all-%.times: ../run-trials sample-all.exe
-	./$< $* './sample-all.exe $(runArgs)' >$@. 2>&1
-	mv $@. $@
-
-$(sampleOnlyTimes): sample-only-%.times: ../run-trials sample-only-%.exe
-	./$< 1000 './sample-only-$*.exe $(runArgs)' >$@. 2>&1
+%.times: when       = $(word 1, $(subst -, , $*))
+%.times: where      = $(word 2, $(subst -, , $*))
+%.times: sparsity   = $(word 3, $(subst -, , $*))
+%.times: executable = $(when)-$(where).exe
+%.times: ../run-trials $(executable)
+	./$< $(sparsity) './$(executable) $(runArgs)' >$@. 2>&1
 	mv $@. $@
 
 clean::

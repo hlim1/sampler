@@ -40,14 +40,16 @@ class visitor = object
   inherit nopCilVisitor
       
   method vfunc func =
-    printf "  visiting %s\n" func.svar.vname;
+    printf "  weighing %s()" func.svar.vname;
+    print_newline ();
     
     let cfg = Cfg.cfg func in
     let headers = CollectHeaders.collectHeaders cfg in
     let weights = weighPaths headers in
     
     let printWeight node weight =
-      printf "    weight below %i: %i\n" node.sid weight
+      printf "    weight below %i: %i" node.sid weight;
+      print_newline ()
     in
 
     weights#iter printWeight;

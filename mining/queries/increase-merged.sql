@@ -52,15 +52,6 @@ INNER JOIN run USING (run_id)
 GROUP BY merged_site_id, predicate;
 
 
--- combine all predicates at each site
-DROP TABLE IF EXISTS merged_run_sample_site;
-CREATE TABLE merged_run_sample_site
-(PRIMARY KEY (run_id, merged_site_id))
-
-SELECT DISTINCT run_id, merged_site_id
-FROM merged_run_sample;
-
-
 -- compute Badness(P)
 DROP TABLE IF EXISTS tally_badness;
 CREATE TABLE tally_badness
@@ -68,6 +59,15 @@ CREATE TABLE tally_badness
 
 SELECT merged_site_id, predicate, failure_count / (failure_count + success_count) AS badness
 FROM tally_predicate;
+
+
+-- combine all predicates at each site
+DROP TABLE IF EXISTS merged_run_sample_site;
+CREATE TABLE merged_run_sample_site
+(PRIMARY KEY (run_id, merged_site_id))
+
+SELECT DISTINCT run_id, merged_site_id
+FROM merged_run_sample;
 
 
 -- compute F(P | ¬P) and S(P | ¬P)

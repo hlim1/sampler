@@ -340,7 +340,7 @@ If we eliminate all predicates for which this hypothesis is disproved
 by observed runtime behavior, then the predicates which remain
 describe the conditions under which the program fails.
 
-\subsubsection{Elimination Heuristics}
+\subsubsection{Elimination Strategies}
 
 We have made no effort to restrict instrumentation to only known
 system or library calls; neither have we attempted to distinguish
@@ -348,7 +348,7 @@ functions which return status codes from those which report errors
 through other means or not at all.  Most of those 1710 predicates,
 then, are wild guesses with no bearing on program success or failure.
 Given a body of actual runs, we can discard bad guesses using a set of
-tests we term \termdef{elimination heuristics}:
+tests we term \termdef{elimination strategies}:
 
 \begin{description}
 \item[\elim{Elimination by universal falsehood}:] disregard any
@@ -371,22 +371,21 @@ tests we term \termdef{elimination heuristics}:
   causing a failure.
 \end{description}
 
-We characterize these as heuristics because they are subject to noise
+We characterize these as strategies because they are subject to noise
 from random sampling, and also because not all are equally applicable
 to all bugs.  For example, \elim{Elimination by successful
-counterexample} assumes that the bug is deterministic: whenever the
+  counterexample} assumes that the bug is deterministic: whenever the
 bad behavior occurs, the program \emph{must} crash.  The first three
-heuristics do not have this dependency, but do require a large enough
+strategies do not have this dependency, but do require a large enough
 body of runs so that any predicate which is ever true is likely to
 have been observed true at least once.  Note as well that these
-heuristics are not independent: \elim{universal falsehood} and
+strategies are not independent: \elim{universal falsehood} and
 \elim{lack of failing coverage} each eliminate a subset of the
-counters identified by
-\elim{lack of failing example}.  Elimination heuristics also vary in
-which kinds of runs they exploit: \elim{successful counterexample}
-considers only successful runs; \elim{lack of failing example} and
-\elim{lack of failing coverage} consider only failures;
-\elim{universal falsehood} uses both.
+counters identified by \elim{lack of failing example}.  Elimination
+strategies also vary in which kinds of runs they exploit:
+\elim{successful counterexample} considers only successful runs;
+\elim{lack of failing example} and \elim{lack of failing coverage}
+consider only failures; \elim{universal falsehood} uses both.
 
 \subsubsection{Data Collection and Analysis}
 
@@ -401,7 +400,7 @@ responses to \texttt{ccrypt} prompts including the occasional
 \texttt{EOF}.
 
 We have collected 2990 trial runs at a sampling rate of $1/1000$; 88
-of these end in a crash.  Applying each elimination heuristic
+of these end in a crash.  Applying each elimination strategy
 independently to the counter traces:
 
 \begin{description}
@@ -424,8 +423,8 @@ nature of our guesses, the limited coverage of our automated test
 suite, and the filtering effect of sparse sampling.  Thus, at first
 glance, \elim{elimination by universal falsehood} is quite effective
 while \elim{elimination by successful counterexample} seems rather
-poor.  However, these two heuristics test disjoint properties and
-can be combined to good effect.
+poor.  However, these two strategies test disjoint properties and can
+be combined to good effect.
 
 The combination leaves only those predicates which are sometimes
 observed to be true in failed runs but never observed to be true in
@@ -470,23 +469,18 @@ of code itself does not always cause a crash.
 \subsubsection{Refinement over time}
 
 In order to gain a better understanding of how the elimination
-heuristics benefit from seeing larger populations of runs, we have
-experimented with randomized subsets of our complete run suite.
-%Assume that \elim{elimination by universal falsehood} mainly
-%identifies foolish guesses that could have been avoided entirely given
-%a more refined guessing procedure.  
-We have seen that
-\elim{elimination by successful counterexample} is quite effective
-when given a few thousand successful runs; how well does it perform
-with a smaller suite?
-We start with the 141 candidate predicates that are ever nonzero on
-any run.  We assemble a random subset of fifty successful runs and
-filter the predicate set using \elim{elimination by successful
-  counterexample}.  We then add another fifty runs, and another fifty,
-and so on in steps up to the full set of 2902 successful runs.  We
-repeat this entire process one hundred times to gauge how rapidly one
-can expect the predicate set to shrink as more runs arrive
-over time.
+strategies benefit from seeing larger populations of runs, we have
+experimented with randomized subsets of our complete run suite.  We
+have seen that \elim{elimination by successful counterexample} is
+quite effective when given a few thousand successful runs; how well
+does it perform with a smaller suite?  We start with the 141 candidate
+predicates that are ever nonzero on any run.  We assemble a random
+subset of fifty successful runs and filter the predicate set using
+\elim{elimination by successful counterexample}.  We then add another
+fifty runs, and another fifty, and so on in steps up to the full set
+of 2902 successful runs.  We repeat this entire process one hundred
+times to gauge how rapidly one can expect the predicate set to shrink
+as more runs arrive over time.
 
 \begin{figure}
   \centering

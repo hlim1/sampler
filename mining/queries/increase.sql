@@ -15,7 +15,7 @@ FROM run_sample NATURAL JOIN run
 DROP TEMPORARY TABLE IF EXISTS fail_predicate;
 CREATE TEMPORARY TABLE fail_predicate
 (INDEX (unit_signature, site_order, predicate))
-SELECT unit_signature, site_order, predicate, count(*) as count
+SELECT unit_signature, site_order, predicate, COUNT(*) as count
 FROM focus INNER JOIN run USING (run_id)
 WHERE exit_signal > 0
 GROUP BY unit_signature, site_order, predicate;
@@ -24,7 +24,7 @@ GROUP BY unit_signature, site_order, predicate;
 DROP TEMPORARY TABLE IF EXISTS succeed_predicate;
 CREATE TEMPORARY TABLE succeed_predicate
 (INDEX (unit_signature, site_order, predicate))
-SELECT unit_signature, site_order, predicate, count(*) as count
+SELECT unit_signature, site_order, predicate, COUNT(*) as count
 FROM focus INNER JOIN run USING (run_id)
 WHERE exit_signal = 0
 GROUP BY unit_signature, site_order, predicate;
@@ -33,7 +33,7 @@ GROUP BY unit_signature, site_order, predicate;
 DROP TEMPORARY TABLE IF EXISTS fail_site;
 CREATE TEMPORARY TABLE fail_site
 (INDEX (unit_signature, site_order))
-SELECT unit_signature, site_order, count(*) as count
+SELECT unit_signature, site_order, COUNT(DISTINCT run_id) as count
 FROM focus INNER JOIN run USING (run_id)
 WHERE exit_signal > 0
 GROUP BY unit_signature, site_order;
@@ -42,7 +42,7 @@ GROUP BY unit_signature, site_order;
 DROP TEMPORARY TABLE IF EXISTS succeed_site;
 CREATE TEMPORARY TABLE succeed_site
 (INDEX (unit_signature, site_order))
-SELECT unit_signature, site_order, count(*) as count
+SELECT unit_signature, site_order, COUNT(DISTINCT run_id) as count
 FROM focus INNER JOIN run USING (run_id)
 WHERE exit_signal = 0
 GROUP BY unit_signature, site_order;
@@ -90,4 +90,5 @@ INNER JOIN fail_predicate
 	AND increase.site_order = fail_predicate.site_order
 	AND increase.predicate = fail_predicate.predicate
 ORDER BY crash DESC, context ASC, count DESC
-LIMIT 200;
+-- LIMIT 200
+;

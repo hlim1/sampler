@@ -21,8 +21,8 @@
     <title>Compiling Instrumented Executables</title>
 
     <para>The instrumentor provides a driver script that acts as a
-    transparent wrapper around <application>GCC</application>.  It is run as
-    follows:</para>
+    transparent wrapper around <application>GCC</application>.  It is
+    run as follows:</para>
 
     <cmdsynopsis>
       <command>sampler-cc</command>

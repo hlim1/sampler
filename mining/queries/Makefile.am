@@ -17,6 +17,9 @@ EXTRA_DIST =					\
 	run-query				\
 	untabbify
 
+answers: $(query_out)
+.PHONY: answers
+
 $(query_out): %.out: run-query %.sql ../populate/sync-stamp
 	./$< $*.sql >$@
 

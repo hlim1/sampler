@@ -230,17 +230,18 @@ sub convert_reports ($\@@) {
 #
 
 
-sub analyze_reports ($\@\@\@\@) {
-    my ($outdir, $schemes, $runs, $sites, $debugs) = @_;
+sub analyze_reports ($$\@\@\@\@) {
+    my ($outdir, $name, $schemes, $runs, $sites, $debugs) = @_;
     check_outdir $outdir;
 
-    my $numRuns = @runs;
+    my $numRuns = @$runs;
     my $makefile = new FileHandle "$outdir/GNUmakefile", 'w'
 	or die "cannot write $outdir/GNUmakefile: $!\n";
     $makefile->print(<<EOT);
 sites = @$sites
 schemes = all @$schemes
 numRuns = $numRuns
+name = $name
 
 include $FindBin::Bin/one.mk
 EOT

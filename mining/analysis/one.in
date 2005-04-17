@@ -66,6 +66,11 @@ Utils::try_mkdir $outdir;
 
 warn "Counting reports for $build on $distro ...\n";
 
+# Suppress run_id "itPCJH8AAAEAACvQfX8AAAAE" because it picked up an
+# instrumented compilation unit from some other package.  Probably a
+# shared library provided by Rhythmbox as a Nautilus plugin.  Simpler
+# to ignore it for now.
+
 my $dbh = Common::connect;
 my @runs =
     @{$dbh->selectcol_arrayref(q{
@@ -76,6 +81,7 @@ my @runs =
 	    AND application_release = ?
 	    AND build_distribution = ?
 	    AND reason IS NULL
+	    AND run_id != 'itPCJH8AAAEAACvQfX8AAAAE'
 	},
 			       undef, $name, $version, $release, $distro)};
 
@@ -96,5 +102,5 @@ my @schemes = Utils::guess_schemes $name;
 my @sites = Utils::unpack_sites $outdir, @schemes, $rpm_samplerinfo;
 my @debugs = Utils::unpack_debuginfo $outdir, $rpm_debuginfo;
 Utils::convert_reports $outdir, @schemes, @runs;
-Utils::analyze_reports $outdir, @schemes, @runs, @sites, @debugs;
+Utils::analyze_reports $outdir, $name, @schemes, @runs, @sites, @debugs;
 Utils::clean $outdir;

@@ -5,7 +5,7 @@ type ('node, 'edge) edge = ('node * 'edge * 'node)
 
 
 class ['node, 'nodeData, 'edge] graph nodeCount edgeCount =
-  let _ = Printf.eprintf "build graph with %d, %d nodes, edges\n%!" nodeCount edgeCount in
+  let _ = Printf.eprintf "build graph with %d nodes and %d edges\n%!" nodeCount edgeCount in
   object (self)
     val mutable nodes = new HashClass.c nodeCount
     val mutable edges = new HashClass.c edgeCount

@@ -52,6 +52,8 @@ sub print_dump () {
 
 sub print_dot () {
     print "digraph CFG {\n";
+    print "\tcompound=true;\n";
+    print "\tcolor=red;\n";
     $_->dot foreach @objects;
     print "}\n";
 }

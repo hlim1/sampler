@@ -54,7 +54,8 @@ sub dump ($) {
 sub dot ($) {
     my $self = shift;
 
-    print "\tsubgraph \"$self\" {\n";
+    print "\tsubgraph \"cluster:$self\" {\n";
+    print "\t\tcolor=red;\n";
     print "\t\tlabel=\"$self->{name}\";\n";
     $_->dot foreach @{$self->{units}};
     print "\t}\n";
@@ -64,7 +65,8 @@ sub dot ($) {
 sub dot_calls ($) {
     my $self = shift;
 
-    print "\tsubgraph \"$self\" {\n";
+    print "\tsubgraph \"cluster:$self\" {\n";
+    print "\t\tcolor=red;\n";
     print "\t\tlabel=\"$self->{name}\";\n";
     $_->dot_calls foreach @{$self->{units}};
     print "\t}\n";

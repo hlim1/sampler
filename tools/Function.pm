@@ -60,7 +60,8 @@ sub dump ($) {
 sub dot ($) {
     my $self = shift;
 
-    print "\t\t\tsubgraph \"$self\" {\n";
+    print "\t\t\tsubgraph \"cluster:$self\" {\n";
+    print "\t\t\t\tcolor=blue;\n";
     print "\t\t\t\tlabel=\"$self->{name}()\";\n";
     $_->dot foreach @{$self->{nodes}};
     print "\t\t\t}\n"
@@ -70,7 +71,7 @@ sub dot ($) {
 sub dot_calls ($) {
     my $self = shift;
 
-    print "\t\t\t\"$self\" [label=\"$self->{name}\", shape=box];\n";
+    print "\t\t\t\"$self\" [label=\"$self->{name}\", shape=box, color=blue];\n";
 
     my %callees;
     $_->count_callees(\%callees) foreach @{$self->{nodes}};

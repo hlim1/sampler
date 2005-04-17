@@ -112,7 +112,7 @@ sub dot ($) {
 
     if (exists $self->{callees} && @{$self->{callees}}) {
 	print "\t\t\t\t\"$self\" -> { ";
-	print "\"$_\"; " foreach @{$self->{callees}};
+	print "\"$_->{nodes}[0]\"; " foreach @{$self->{callees}};
 	print "} [style=dotted]\n";
     }
 }

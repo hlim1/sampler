@@ -1,4 +1,4 @@
-AM_CFLAGS = -Wall -Werror -Wformat=2
+AM_CFLAGS = -Wall -Werror -Wformat=2 -Wno-return-type
 INCLUDES = $(MONITOR_CFLAGS) $(PYTHON_CFLAGS)
 
 defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"

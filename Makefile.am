@@ -5,8 +5,12 @@ if WITH_GNOME
 launcher = launcher
 endif
 
+if DISTRO_BASIS_DEBIAN
+debian = debian
+endif
+
 SUBDIRS =					\
-	debian					\
+	$(debian)				\
 	doc					\
 	driver					\
 	fuzz					\

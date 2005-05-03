@@ -5,7 +5,7 @@
 
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
-Release: 1
+Release: 1@deployment_release_suffix@
 License: BSD
 Group: Applications/System
 Packager: Ben Liblit <@PACKAGE_BUGREPORT@>
@@ -147,7 +147,7 @@ $UNIQUE_ID environment variable.
 %setup -q
 
 %build
-%configure --without-cil-sibling
+%configure --without-cil-sibling --enable-deployment=@enable_deployment@
 make %{?_smp_mflags}
 %{?do_check:make check}
 

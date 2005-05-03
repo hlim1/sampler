@@ -5,6 +5,26 @@ AM_INIT_AUTOMAKE
 
 ########################################################################
 #
+#  Deployment-specific defaults
+#
+
+
+AC_MSG_CHECKING(for deployment site)
+AC_ARG_ENABLE(deployment, AC_HELP_STRING([--enable-deployment=SITE], [Use settings for deployment at SITE]), , enable_deployment=default)
+AC_MSG_RESULT($enable_deployment)
+
+source deployments/$enable_deployment
+if test "$enable_deployment" != default; then
+  source deployments/$enable_deployment
+fi
+
+AC_SUBST(deployment_learn_more_url, $deployment_learn_more_url)
+AC_SUBST(deployment_release_suffix, $deployment_release_suffix)
+AC_SUBST(enable_deployment, $enable_deployment)
+
+
+########################################################################
+#
 #  Linux distribution
 #
 
@@ -154,12 +174,6 @@ AM_CONDITIONAL(ENABLE_MINING, test "$enable_mining" = yes)
 AC_MSG_RESULT($enable_mining)
 
 AC_PATH_PROG(PERL, perl)
-
-
-AC_MSG_CHECKING(for "learn more" URL)
-AC_ARG_ENABLE(learn-more, AC_HELP_STRING([--enable-learn-more=URL], [Use non-default URL for "learn more" link]), , enable_learn_more='http://www.cs.wisc.edu/cbi/learn-more/')
-AC_SUBST(learn_more_url, $enable_learn_more)
-AC_MSG_RESULT($learn_more_url)
 
 
 ########################################################################

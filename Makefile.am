@@ -22,7 +22,7 @@ SUBDIRS =					\
 	tools					\
 	www
 
-EXTRA_DIST = $(PACKAGE).spec
+EXTRA_DIST = $(PACKAGE).spec deployments
 
 
 all-local: $(srcdir)/package.m4

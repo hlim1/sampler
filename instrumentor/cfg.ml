@@ -80,9 +80,9 @@ let build func =
   (* scan a single statement *)
   and scanStatement context statement =
     match statement.skind with
-    | Instr _ ->
-	(* fall through to next *)
-	linkMaybe statement context.next
+    | Instr instructions ->
+	(* fall through to next unless calling a non-returning function *)
+	scanInstructions instructions statement context.next
 
     | Return _ ->
 	(* end of the line *)
@@ -151,6 +151,15 @@ let build func =
     | TryExcept _ ->
 	ignore (bug "cannot compute control flow for structured exceptions");
 	failwith "internal error"
+
+  and scanInstructions = function
+    | [] ->
+	linkMaybe
+    | Call (_, callee, _, _) :: _
+      when hasAttribute "noreturn" (typeAttrs (typeOf callee)) ->
+	(fun _ _ -> ())
+    | _ :: remainder ->
+	scanInstructions remainder
   in
 
   NumberStatements.visit func;

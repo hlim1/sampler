@@ -10,16 +10,17 @@ import re
 
 class ReportsReader (dict):
     def __init__(self, source):
+        lines = source.__iter__()
         startTag = re.compile('^<report id="([^"]+)">\n$')
 
-        for line in source:
+        for line in lines:
             match = startTag.match(line)
             if match:
                 name = match.group(1)
                 if not name in self:
                     self[name] = cStringIO.StringIO()
 
-                for line in source:
+                for line in lines:
                     if line == '</report>\n':
                         break
                     else:

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.1.2
+
+** Fix nasty line buffering bug in report reader.
+
 * sampler-1.1.1
 
 ** Fix empty applications list in sampler-preferences dialog.

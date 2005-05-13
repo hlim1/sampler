@@ -2,6 +2,9 @@ AC_INIT([sampler],[1.1.2],[liblit@cs.wisc.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
+if test -d $srcdir/papers; then
+  AC_CONFIG_SUBDIRS(papers)
+fi
 
 ########################################################################
 #

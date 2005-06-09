@@ -13,6 +13,7 @@ my $verbose;
 my $outfile;
 
 my $saved_cfg;
+my $saved_dataflow;
 my $saved_site_info;
 
 
@@ -20,6 +21,7 @@ my %flag_specs =
     (
      # Sampler Options
      '-fsave-cfg' => sub { $saved_cfg = shift @ARGV },
+     '-fsave-dataflow' => sub { $saved_dataflow = shift @ARGV },
      '-fsave-site-info' => sub { $saved_site_info = shift @ARGV },
 
      # Overall Options
@@ -53,6 +55,7 @@ sub run_stage (@) {
 run_stage @as;
 
 push @objcopy, '--add-section', ".debug_sampler_cfg=$saved_cfg" unless -z $saved_cfg;
+push @objcopy, '--add-section', ".debug_sampler_dataflow=$saved_dataflow" unless -z $saved_dataflow;
 push @objcopy, '--add-section', ".debug_site_info=$saved_site_info" unless -z $saved_site_info;
 run_stage 'objcopy', @objcopy, $outfile if @objcopy && defined $outfile;
 

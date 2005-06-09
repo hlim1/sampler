@@ -34,6 +34,7 @@ let phase =
     let digest = lazy (Digest.file file.fileName) in
     EmbedSignature.visit file digest;
     EmbedCFG.visit file digest;
+    EmbedDataflow.visit file digest;
     EmbedSiteInfo.visit schemes digest;
 
     if !sample then

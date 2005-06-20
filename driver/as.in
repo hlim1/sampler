@@ -55,8 +55,8 @@ sub run_stage (@) {
 run_stage @as;
 
 push @objcopy, '--add-section', ".debug_sampler_cfg=$saved_cfg" unless -z $saved_cfg;
-push @objcopy, '--add-section', ".debug_sampler_dataflow=$saved_dataflow" unless -z $saved_dataflow;
 push @objcopy, '--add-section', ".debug_site_info=$saved_site_info" unless -z $saved_site_info;
+push @objcopy, '--add-section', ".debug_sampler_dataflow=$saved_dataflow" if $saved_dataflow && -s $saved_dataflow;
 run_stage 'objcopy', @objcopy, $outfile if @objcopy && defined $outfile;
 
 

@@ -9,31 +9,40 @@ let saveDataflow =
     ~ident:""
 
 
+type value = Unknown | Complex | Simple of doc
+
+
 let isInterestingType = isIntegralType
+
+
+let simple = function
+  | Complex -> None
+  | Unknown -> Some (chr '*')
+  | Simple doc -> Some doc
 
 
 let format_receiver lval =
   if isInterestingType (typeOfLval lval) then
     match lval with
-    | Var var, NoOffset -> Some (text var.vname)
-    | Mem _, NoOffset -> Some (chr '*')
-    | _, Field _ -> None
-    | _, Index _ -> None
+    | Var var, NoOffset -> Simple (text var.vname)
+    | Mem _, NoOffset -> Unknown
+    | _, Field _ -> Complex
+    | _, Index _ -> Complex
   else
-    None
+    Complex
 
 
 let format_sender expr =
     if isInterestingType (typeOf expr) then
       match expr with
-      | Lval (Var var, NoOffset) -> Some (text var.vname)
-      | Lval (Mem _, NoOffset) -> Some (chr '*')
+      | Lval (Var var, NoOffset) -> Simple (text var.vname)
+      | Lval (Mem _, NoOffset) -> Unknown
       | other ->
 	  match isInteger other with
-	  | Some constant -> Some (text (Int64.to_string constant))
-	  | None -> Some (chr '*')
+	  | Some constant -> Simple (text (Int64.to_string constant))
+	  | None -> Unknown
     else
-      None
+      Complex
 
 
 let embedGlobal channel = function
@@ -52,10 +61,11 @@ let embedGlobal channel = function
       | Some (SingleInit expr) ->
 	  begin
 	    match format_sender expr with
-	    | None ->
+	    | Complex ->
 		ignore (bug "interesting receiver with uninteresting sender");
 		failwith "internal error"
-	    | Some sender -> sender
+	    | Simple sender -> sender
+	    | Unknown -> chr '*'
 	  end
       | Some (CompoundInit _) ->
 	  chr '*'
@@ -87,22 +97,27 @@ class visitor file digest channel =
       ChangeDoChildrenPost (fundec, fun _ -> output_char channel '\n'; fundec)
 
     method vstmt statement =
+      let comparison = function
+	| Lt | Gt | Le | Ge | Eq | Ne -> true
+	| _ -> false
+      in
+
       let flag, args =
 	let noop = '~', [] in
 	match statement.skind with
 	| Return (Some sender, _) ->
 	    begin
-	      match format_sender sender with
+	      match simple (format_sender sender) with
 	      | None -> noop
 	      | Some sender -> '<', [sender]
 	    end
 
 	| Instr [Set (receiver, sender, _)] ->
 	    begin
-	      match format_receiver receiver with
+	      match simple (format_receiver receiver) with
 	      | None -> noop
 	      | Some receiver ->
-		  match format_sender sender with
+		  match simple (format_sender sender) with
 		  | None ->
 		      ignore (bug "interesting receiver with uninteresting sender");
 		      failwith "internal error"
@@ -114,13 +129,13 @@ class visitor file digest channel =
 	    let receiver = match receiver with
 	    | None -> chr '.'
 	    | Some receiver ->
-		match format_receiver receiver with
+		match simple (format_receiver receiver) with
 		| None -> chr '.'
 		| Some receiver -> receiver
 	    in
 	    let senders = List.fold_right
 		(fun sender senders ->
-		  match format_sender sender with
+		  match simple (format_sender sender) with
 		  | None -> senders
 		  | Some sender -> sender :: senders)
 		senders []
@@ -134,7 +149,7 @@ class visitor file digest channel =
 	      else
 		List.fold_left
 		  (fun receivers (_, receiver) ->
-		    match format_receiver receiver with
+		    match simple (format_receiver receiver) with
 		    | None -> receivers
 		    | Some receiver -> receiver :: receivers)
 		  [] receivers
@@ -145,8 +160,17 @@ class visitor file digest channel =
 	    ignore (bug "instr should have been atomized");
 	    failwith "internal error"
 
-	| If _ ->
-	    noop
+	| If (BinOp(op, left, right, _), _, _, _)
+	  when comparison op ->
+	    begin
+	      match format_sender left with
+	      | Unknown | Complex -> noop
+	      | Simple left ->
+		  match format_sender right with
+		  | Unknown | Complex -> noop
+		  | Simple right ->
+		      '?', [d_binop () op; left; right]
+	    end
 
 	| _ ->
 	    noop

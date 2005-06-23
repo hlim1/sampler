@@ -163,7 +163,7 @@ class visitor file digest channel =
 	    ignore (bug "instr should have been atomized");
 	    failwith "internal error"
 
-	| If (BinOp(op, left, right, _), _, elseBlock, _)
+	| If (BinOp(op, left, right, _), _, _, _)
 	  when comparison op ->
 	    begin
 	      match format_sender left with
@@ -172,8 +172,7 @@ class visitor file digest channel =
 		  match format_sender right with
 		  | Unknown | Complex -> noop
 		  | Simple right ->
-		      (if elseBlock.bstmts = [] then '?' else '/'),
-		      [d_binop () op; left; right]
+		      '?', [d_binop () op; left; right]
 	    end
 
 	| _ ->

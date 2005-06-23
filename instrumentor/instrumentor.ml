@@ -27,6 +27,7 @@ let phase =
     Dynamic.analyze file;
     FunctionFilter.filter#collectPragmas file;
     iterFuncs file IsolateInstructions.visit;
+    iterFuncs file ElaborateIfs.visit;
 
     let schemes = List.map (fun scheme -> scheme file) schemes in
     List.iter (fun scheme -> scheme#findAllSites) schemes;

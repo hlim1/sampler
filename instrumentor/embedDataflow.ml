@@ -45,17 +45,21 @@ let format_sender expr =
       Complex
 
 
+let storageCode var =
+  match var.vstorage with
+  | Extern -> '&'
+  | Static when var.vaddrof -> '&'
+  | Static -> '-'
+  | NoStorage | Register -> '+'
+
+
 let embedGlobal channel = function
+  | GVarDecl (var, _)
+    when isInterestingType var.vtype ->
+      ignore (fprintf channel "%c%s\n" (storageCode var) var.vname)
+
   | GVar (var, init, _)
     when isInterestingType var.vtype ->
-      let storage = match var.vstorage with
-      | Static when var.vaddrof -> '&'
-      | Static -> '-'
-      | NoStorage -> '+'
-      | Register | Extern ->
-	  ignore (bug "unexpected storage class for global variable");
-	  failwith "internal error"
-      in
       let sender = match init.init with
       | None -> num 0
       | Some (SingleInit expr) ->
@@ -70,7 +74,8 @@ let embedGlobal channel = function
       | Some (CompoundInit _) ->
 	  chr '*'
       in
-      ignore (fprintf channel "%c%s\t%a\n" storage var.vname insert sender)
+      ignore (fprintf channel "%c%s\t%a\n" (storageCode var) var.vname insert sender)
+
   | _ ->
       ()
 

@@ -80,6 +80,46 @@ let embedGlobal channel = function
       ()
 
 
+let rec simpleCondition =
+  let isComparison = function
+    | Lt | Gt | Le | Ge | Eq | Ne -> true
+    | _ -> false
+  in
+  let negate = function
+    | Lt -> Ge
+    | Gt -> Le
+    | Le -> Gt
+    | Ge -> Lt
+    | Eq -> Ne
+    | Ne -> Eq
+    | other ->
+	ignore (bug "cannot negate operator \"%a\"" d_binop other);
+	failwith "internal error"
+  in
+  function
+    | BinOp(op, left, right, _)
+      when isComparison op ->
+	begin
+	  match format_sender left, format_sender right with
+	  | Simple left, Simple right ->
+	      Some (op, left, right)
+	  | _ ->
+	      None
+	end
+    | UnOp(LNot, subcondition, _) ->
+	begin
+	  match simpleCondition subcondition with
+	  | None -> None
+	  | Some (op, left, right) ->
+	      Some (negate op, left, right)
+	end
+    | Lval (Var var, NoOffset) ->
+	Some (Ne, text var.vname, num 0)
+    | _ ->
+	None
+
+
+
 class visitor file digest channel =
   object (self)
     inherit FunctionBodyVisitor.visitor
@@ -102,11 +142,6 @@ class visitor file digest channel =
       ChangeDoChildrenPost (fundec, fun _ -> output_char channel '\n'; fundec)
 
     method vstmt statement =
-      let comparison = function
-	| Lt | Gt | Le | Ge | Eq | Ne -> true
-	| _ -> false
-      in
-
       let flag, args =
 	let noop = '~', [] in
 	match statement.skind with
@@ -168,16 +203,12 @@ class visitor file digest channel =
 	    ignore (bug "instr should have been atomized");
 	    failwith "internal error"
 
-	| If (BinOp(op, left, right, _), _, _, _)
-	  when comparison op ->
+	| If (condition, _, _, _) ->
 	    begin
-	      match format_sender left with
-	      | Unknown | Complex -> noop
-	      | Simple left ->
-		  match format_sender right with
-		  | Unknown | Complex -> noop
-		  | Simple right ->
-		      '?', [d_binop () op; left; right]
+	      match simpleCondition condition with
+	      | None -> noop
+	      | Some (op, left, right) ->
+		  '?', [d_binop () op; left; right]
 	    end
 
 	| _ ->

@@ -113,11 +113,13 @@ let rec simpleCondition =
 	  | Some (op, left, right) ->
 	      Some (negate op, left, right)
 	end
-    | Lval (Var var, NoOffset) ->
-	Some (Ne, text var.vname, num 0)
-    | _ ->
-	None
-
+    | other ->
+	match format_sender other with
+	| Unknown
+	| Complex ->
+	    None
+	| Simple arg ->
+	    Some (Ne, arg, num 0)
 
 
 class visitor file digest channel =

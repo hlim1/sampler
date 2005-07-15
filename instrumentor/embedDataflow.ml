@@ -21,6 +21,7 @@ type value = Unknown | Complex | Simple of doc
 
 
 let anything = chr '*'
+let arrayElem = chr '@'
 
 
 let rec isInterestingType = function
@@ -42,7 +43,7 @@ let rec onlyFields = function
 
 let collectLval result lval =
   match snd (removeOffset (snd lval)) with
-  | Index _ -> chr '.' :: result
+  | Index _ -> arrayElem :: result
   | NoOffset
   | Field _ ->
       let isDirect =

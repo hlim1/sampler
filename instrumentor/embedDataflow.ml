@@ -131,8 +131,14 @@ let embedGlobal channel = function
 	  | NoStorage | Register -> '+'
 	in
 	match isInterestingType var.vtype, collectVar [] var, init with
-	| true, [single], Some (SingleInit expr) ->
-	    ignore (fprintf channel "%c%a\t%a\n" storage insert single d_exp expr)
+	| true, [receiver], Some (SingleInit init) ->
+	    begin
+	      match collectExpr [] init with
+	      | [sender] ->
+		  ignore (fprintf channel "%c%a\t%a\n" storage insert receiver insert sender)
+	      | _ ->
+		  ignore (fprintf channel "%c%a\n" storage insert receiver)
+	    end
 	| true, [single], None ->
 	    ignore (fprintf channel "%c%a\t0\n" storage insert single)
 	| _, fields, _ ->

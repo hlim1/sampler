@@ -37,7 +37,9 @@ let rec isInterestingType = function
 
 let rec onlyFields = function
   | NoOffset -> true
-  | Field (_, offset) -> onlyFields offset
+  | Field ({fcomp = {cstruct = true}}, offset) ->
+      onlyFields offset
+  | Field _
   | Index _ -> false
 
 
@@ -151,6 +153,14 @@ let embedGlobal channel = function
       ()
 
 
+let simpleExpr expr =
+  match collectExpr [] expr with
+  | [single]
+    when single != anything && single != arrayElem ->
+      Some single
+  | _ -> None
+
+
 let rec simpleCondition =
   let isComparison = function
     | Lt | Gt | Le | Ge | Eq | Ne -> true
@@ -171,13 +181,9 @@ let rec simpleCondition =
     | BinOp(op, left, right, _)
       when isComparison op ->
 	begin
-	  match collectExpr [] left, collectExpr [] right with
-	  | [left], [right]
-	    when left != anything
-		&& left != arrayElem
-		&& right != anything
-		&& right != arrayElem ->
-		  Some (op, left, right)
+	  match simpleExpr left, simpleExpr right with
+	  | Some left, Some right ->
+	      Some (op, left, right)
 	  | _ ->
 	      None
 	end
@@ -189,8 +195,8 @@ let rec simpleCondition =
 	      Some (negate op, left, right)
 	end
     | other ->
-	match collectExpr [] other with
-	| [arg] ->
+	match simpleExpr other with
+	| Some arg ->
 	    Some (Ne, arg, num 0)
 	| _ ->
 	    None

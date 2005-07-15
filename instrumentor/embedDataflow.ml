@@ -9,73 +9,139 @@ let saveDataflow =
     ~ident:""
 
 
+let saveDataflowFields =
+  Options.registerBoolean
+    ~flag:"save-dataflow-fields"
+    ~desc:"include structure fields in data flow information"
+    ~ident:""
+    ~default:true
+
+
 type value = Unknown | Complex | Simple of doc
 
 
-let isInterestingType = isIntegralType
+let anything = chr '*'
 
 
-let simple = function
-  | Complex -> None
-  | Unknown -> Some (chr '*')
-  | Simple doc -> Some doc
+let rec isInterestingType = function
+  | TInt _
+  | TPtr _
+  | TEnum _ ->
+      true
+  | TNamed ({ttype = ttype}, _) ->
+      isInterestingType ttype
+  | TBuiltin_va_list _ | TComp _ | TFun _ | TArray _ | TFloat _ | TVoid _ ->
+      false
 
 
-let format_receiver lval =
-  if isInterestingType (typeOfLval lval) then
-    match lval with
-    | Var var, NoOffset -> Simple (text var.vname)
-    | Mem _, NoOffset -> Unknown
-    | _, Field _ -> Complex
-    | _, Index _ -> Complex
-  else
-    Complex
+let rec onlyFields = function
+  | NoOffset -> true
+  | Field (_, offset) -> onlyFields offset
+  | Index _ -> false
 
 
-let format_sender expr =
-    if isInterestingType (typeOf expr) then
-      match expr with
-      | Lval (Var var, NoOffset) -> Simple (text var.vname)
-      | Lval (Mem _, NoOffset) -> Unknown
-      | other ->
-	  match isInteger other with
-	  | Some constant -> Simple (text (Int64.to_string constant))
-	  | None -> Unknown
-    else
-      Complex
+let collectLval result lval =
+  match snd (removeOffset (snd lval)) with
+  | Index _ -> chr '.' :: result
+  | NoOffset
+  | Field _ ->
+      let isDirect =
+	match (fst lval) with
+	| Mem _ -> false
+	| Var _ -> onlyFields (snd lval)
+      in
+      let rec traverse result name typ =
+	match typ with
+	| TVoid _
+	| TFloat _
+	| TArray _
+	| TFun _
+	| TBuiltin_va_list _ ->
+	    result
+	| TInt _
+	| TPtr _
+	| TEnum _ ->
+	    (if isDirect then name else anything) :: result
+	| TNamed ({ttype = ttype}, _) ->
+	    traverse result name ttype
+	| TComp ({cstruct = true; cfields = cfields}, _)
+	  when !saveDataflowFields ->
+	    let prefix = name ++ chr '.' in
+	    List.fold_left
+	      (fun result fieldinfo ->
+		traverse result (prefix ++ text fieldinfo.fname) fieldinfo.ftype)
+	      result cfields
+	| TComp _ ->
+	    result
+      in
+      traverse result (d_lval () lval) (typeOfLval lval)
 
 
-let storageCode var =
-  match var.vstorage with
-  | Extern -> '&'
-  | Static when var.vaddrof -> '&'
-  | Static -> '-'
-  | NoStorage | Register -> '+'
+let collectVar result varinfo =
+  collectLval result (var varinfo)
+
+
+let collectExpr result expr =
+  let rec collect result = function
+    | Const (CInt64 (value, _, _)) ->
+	text (Int64.to_string value) :: result
+(*
+	d_const () constant :: result
+*)
+    | Const (CChr character) ->
+	num (Char.code character) :: result
+    | Const (CStr _)
+    | Const (CWStr _)
+    | Const (CReal _) ->
+	result
+    | Lval lval ->
+	collectLval result lval
+    | SizeOf _
+    | SizeOfE _
+    | SizeOfStr _
+    | AlignOf _
+    | AlignOfE _ ->
+	anything :: result
+    | UnOp (_, _, typ)
+    | BinOp (_, _, _, typ) ->
+	if isInterestingType typ then
+	  anything :: result
+	else
+	  result
+    | CastE (_, expr) ->
+	collect result expr
+    | AddrOf _
+    | StartOf _ ->
+	anything :: result
+  in
+  collect result (constFold true expr)
 
 
 let embedGlobal channel = function
-  | GVarDecl (var, _)
-    when isInterestingType var.vtype ->
-      ignore (fprintf channel "%c%s\n" (storageCode var) var.vname)
-
-  | GVar (var, init, _)
-    when isInterestingType var.vtype ->
-      let sender = match init.init with
-      | None -> num 0
-      | Some (SingleInit expr) ->
-	  begin
-	    match format_sender expr with
-	    | Complex ->
-		ignore (bug "interesting receiver with uninteresting sender");
-		failwith "internal error"
-	    | Simple sender -> sender
-	    | Unknown -> chr '*'
-	  end
-      | Some (CompoundInit _) ->
-	  chr '*'
-      in
-      ignore (fprintf channel "%c%s\t%a\n" (storageCode var) var.vname insert sender)
-
+  | GVarDecl (var, _) ->
+      let fields = collectVar [] var in
+      List.iter
+	(fun field -> ignore (fprintf channel "&%a\n" insert field))
+	fields
+  | GVar (var, {init = init}, _) ->
+      begin
+	let storage =
+	  match var.vstorage with
+	  | Extern -> '&'
+	  | Static when var.vaddrof -> '&'
+	  | Static -> '-'
+	  | NoStorage | Register -> '+'
+	in
+	match isInterestingType var.vtype, collectVar [] var, init with
+	| true, [single], Some (SingleInit expr) ->
+	    ignore (fprintf channel "%c%a\t%a\n" storage insert single d_exp expr)
+	| true, [single], None ->
+	    ignore (fprintf channel "%c%a\t0\n" storage insert single)
+	| _, fields, _ ->
+	    List.iter
+	      (fun field -> ignore (fprintf channel "%c%a\n" storage insert field))
+	      fields
+      end
   | _ ->
       ()
 
@@ -100,8 +166,9 @@ let rec simpleCondition =
     | BinOp(op, left, right, _)
       when isComparison op ->
 	begin
-	  match format_sender left, format_sender right with
-	  | Simple left, Simple right ->
+	  match collectExpr [] left, collectExpr [] right with
+	  | [left], [right]
+	    when left != anything && right != anything ->
 	      Some (op, left, right)
 	  | _ ->
 	      None
@@ -128,19 +195,19 @@ class visitor file digest channel =
 
     method vfunc fundec =
       ignore (fprintf channel "%s\n" fundec.svar.vname);
-      let printVars vars =
-	let isInterestingVar var = isInterestingType var.vtype in
-	let noteworthy = List.filter isInterestingVar vars in
-	let format_var () var =
-	  if var.vaddrof then
-	    chr '&' ++ text var.vname
-	  else
-	    text var.vname
+      let embedVars vars =
+	let embedVar var =
+	  let storage = if var.vaddrof then (chr '&') else nil in
+	  let fields = collectVar [] var in
+	  List.iter
+	    (fun field -> ignore (fprintf channel "%a%a\n" insert storage insert field))
+	    fields;
 	in
-	ignore (fprintf channel "%a\n" (d_list "\t" format_var) noteworthy)
+	List.iter embedVar vars;
+	output_char channel '\n'
       in
-      printVars fundec.sformals;
-      printVars fundec.slocals;
+      embedVars fundec.sformals;
+      embedVars fundec.slocals;
       ChangeDoChildrenPost (fundec, fun _ -> output_char channel '\n'; fundec)
 
     method vstmt statement =
@@ -149,37 +216,33 @@ class visitor file digest channel =
 	match statement.skind with
 	| Return (Some sender, _) ->
 	    begin
-	      match simple (format_sender sender) with
-	      | None -> noop
-	      | Some sender -> '<', [sender]
+	      match collectExpr [] sender with
+	      | [sender] -> '<', [sender]
+	      | _ -> noop
 	    end
 
-	| Instr [Set (receiver, sender, _)] ->
-	    begin
-	      match simple (format_receiver receiver) with
-	      | None -> noop
-	      | Some receiver ->
-		  match simple (format_sender sender) with
-		  | None ->
-		      ignore (bug "interesting receiver with uninteresting sender");
-		      failwith "internal error"
-		  | Some sender ->
-		      '=', [receiver; sender]
-	    end
+	| Instr [Set (receiver, sender, location)] ->
+	    let receivers = collectLval [] receiver in
+	    let senders = collectExpr [] sender in
+	    let folder args receiver sender =
+	      receiver :: sender :: args
+	    in
+	    let args =
+	      List.fold_left2 folder [] receivers senders
+	    in
+	    '=', args
 
 	| Instr [Call (receiver, _, senders, _)] ->
 	    let receiver = match receiver with
 	    | None -> chr '.'
 	    | Some receiver ->
-		match simple (format_receiver receiver) with
-		| None -> chr '.'
-		| Some receiver -> receiver
+		match collectLval [] receiver with
+		| [receiver] -> receiver
+		| _ -> chr '.'
 	    in
 	    let senders = List.fold_right
 		(fun sender senders ->
-		  match simple (format_sender sender) with
-		  | None -> senders
-		  | Some sender -> sender :: senders)
+		  collectExpr senders sender)
 		senders []
 	    in
 	    '>', receiver :: senders
@@ -191,9 +254,7 @@ class visitor file digest channel =
 	      else
 		List.fold_left
 		  (fun receivers (_, receiver) ->
-		    match simple (format_receiver receiver) with
-		    | None -> receivers
-		    | Some receiver -> receiver :: receivers)
+		    collectLval receivers receiver)
 		  [] receivers
 	    in
 	    '!', receivers
@@ -228,7 +289,7 @@ let visit file digest =
       (fun () ->
 	let channel = open_out !saveDataflow in
 	Printf.fprintf channel
-	  "*\tdataflow\t0.1\n%s\n"
+	  "*\tdataflow\t0.2\n%s\n"
 	  (Digest.to_hex (Lazy.force digest));
 
 	iterGlobals file (embedGlobal channel);

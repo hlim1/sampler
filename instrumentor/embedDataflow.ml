@@ -14,7 +14,7 @@ let saveDataflowFields =
     ~flag:"save-dataflow-fields"
     ~desc:"include structure fields in data flow information"
     ~ident:""
-    ~default:true
+    ~default:false
 
 
 type value = Unknown | Complex | Simple of doc

@@ -110,6 +110,8 @@ my %flag_specs =
      '-fsave-cfg' => \&inst_embed,
      '-fsave-cfg' => \&inst_embed,
      '-fsave-dataflow' => \&inst_embed,
+     '-fsave-dataflow-fields' => \&inst_toggle,
+     '-fno-save-dataflow-fields' => \&inst_toggle,
      '-fsave-site-info' => \&inst_embed,
      '-fsampler-dataflow' => sub { },
      '-finstrumentor-input' => sub { $instrumentor_input = shift @ARGV },

@@ -85,12 +85,10 @@ let collectExpr result expr =
   let rec collect result = function
     | Const (CInt64 (value, _, _)) ->
 	text (Int64.to_string value) :: result
-(*
-	d_const () constant :: result
-*)
     | Const (CChr character) ->
 	num (Char.code character) :: result
-    | Const (CStr _)
+    | Const (CStr _) ->
+	anything :: result
     | Const (CWStr _)
     | Const (CReal _) ->
 	result
@@ -227,7 +225,15 @@ class visitor file digest channel =
 	      receiver :: sender :: args
 	    in
 	    let args =
-	      List.fold_left2 folder [] receivers senders
+	      try
+		List.fold_left2 folder [] receivers senders
+	      with Invalid_argument _ ->
+		ignore (bug "mismatched list lengths in assignment:\nreceivers:\t%a\t[%a]\nsenders:\t%a\t[%a]\n"
+			  d_lval receiver
+			  (d_list ", " insert) receivers
+			  d_exp sender
+			  (d_list ", " insert) senders);
+		failwith "internal error"
 	    in
 	    '=', args
 

@@ -173,8 +173,11 @@ let rec simpleCondition =
 	begin
 	  match collectExpr [] left, collectExpr [] right with
 	  | [left], [right]
-	    when left != anything && right != anything ->
-	      Some (op, left, right)
+	    when left != anything
+		&& left != arrayElem
+		&& right != anything
+		&& right != arrayElem ->
+		  Some (op, left, right)
 	  | _ ->
 	      None
 	end

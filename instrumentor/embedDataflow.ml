@@ -181,12 +181,11 @@ let rec simpleCondition =
 	      Some (negate op, left, right)
 	end
     | other ->
-	match format_sender other with
-	| Unknown
-	| Complex ->
-	    None
-	| Simple arg ->
+	match collectExpr [] other with
+	| [arg] ->
 	    Some (Ne, arg, num 0)
+	| _ ->
+	    None
 
 
 class visitor file digest channel =

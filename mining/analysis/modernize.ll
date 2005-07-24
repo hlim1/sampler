@@ -1,4 +1,7 @@
 %{ // -*- c++ -*-
+#include <cerrno>
+#include <cstring>
+
 const char *scheme;
 const char *tag;
 %}
@@ -34,7 +37,13 @@ const char *tag;
 
 <COUNTS>(.+\n)*\n {
   BEGIN(INITIAL);
-  fwrite(yytext, 1, yyleng - 1, stdout);
+  const size_t wrote = fwrite(yytext, 1, yyleng - 1, stdout);
+  if (wrote != (size_t) yyleng - 1)
+    {
+      const int status = errno;
+      fprintf(stderr, "modernization error: cannot write counts: %s\n", strerror(status));
+      exit(status ? status : 1);
+    }
   printf("</%s>\n", tag);
 }
 

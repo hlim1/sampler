@@ -49,8 +49,6 @@
 + %{v:--verbose} \
 %(embedding)
 
-%rename lib old_lib
-
 *lib_threads_yes:
 sampler/threads/yes/libearly.a%s \
 %{fsampler-random=fixed:sampler/threads/yes/librandom-fixed.a%s} \
@@ -75,7 +73,9 @@ sampler/threads/no/liblate.a%s
 %{!fthreads:%{!fno-threads:%{pthread:%(lib_threads_yes)}}} \
 %{!fthreads:%{!fno-threads:%{!pthread:%(lib_threads_no)}}}
 
-*lib:
+%rename libgcc old_libgcc
+
+*libgcc:
 sampler/schemes/libschemes.a%s \
 %(lib_threads) \
-%(old_lib)
+%(old_libgcc)

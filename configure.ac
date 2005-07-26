@@ -1,4 +1,4 @@
-AC_INIT([sampler],[1.1.2],[liblit@cs.wisc.edu])
+AC_INIT([sampler],[1.2],[liblit@cs.wisc.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -323,6 +323,9 @@ AC_LINK_IFELSE(
   AC_MSG_RESULT(no)
   AC_SUBST(LIBM, -lm))
 CFLAGS=$old_CFLAGS
+
+
+CPPFLAGS="$CPPFLAGS -D_FORTIFY_SOURCE=2"
 
 
 AM_PATH_GSL

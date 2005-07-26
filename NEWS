@@ -1,5 +1,10 @@
 -*- outline -*-
 
+* sampler-1.2
+
+** Assorted small tweaks for Fedora Core 4 and GCC 4.0.
+** Experimental dataflow transfer function serialization.
+
 * sampler-1.1.2
 
 ** Fix nasty line buffering bug in report reader.

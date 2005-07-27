@@ -17,25 +17,25 @@ const void * const samplerFeatureRandom;
 const void * const samplerFeatureRandomOnline;
 
 double densityScale;
-unsigned short seed[3];
-FILE *entropy;
+unsigned short samplerSeed[3];
+FILE *samplerEntropy;
 
 SAMPLER_THREAD_LOCAL int sampling;
-SAMPLER_THREAD_LOCAL struct drand48_data buffer;
+SAMPLER_THREAD_LOCAL struct drand48_data samplerRandomBuffer;
 
 sampler_once_t randomOnlineInitOnce = SAMPLER_ONCE_INIT;
 
 
 void initialize_thread()
 {
-  if (entropy)
+  if (samplerEntropy)
     {
       unsigned short seed[3];
-      if (fread(seed, sizeof(seed), 1, entropy) == 1)
-	sampling = seed48_r(seed, &buffer) >= 0;
+      if (fread(seed, sizeof(seed), 1, samplerEntropy) == 1)
+	sampling = seed48_r(seed, &samplerRandomBuffer) >= 0;
     }
   else
-    sampling = seed48_r(seed, &buffer) >= 0;
+    sampling = seed48_r(samplerSeed, &samplerRandomBuffer) >= 0;
 
   nextEventCountdown = getNextEventCountdown();
 }
@@ -43,10 +43,10 @@ void initialize_thread()
 
 static void finalize()
 {
-  if (entropy)
+  if (samplerEntropy)
     {
-      fclose(entropy);
-      entropy = 0;
+      fclose(samplerEntropy);
+      samplerEntropy = 0;
     }
 }
 
@@ -86,16 +86,16 @@ static void initializeOnce()
 		  exit(2);
 		}
 
-	      seed[0] = convert.triple[0];
-	      seed[1] = convert.triple[1];
-	      seed[2] = convert.triple[2];
+	      samplerSeed[0] = convert.triple[0];
+	      samplerSeed[1] = convert.triple[1];
+	      samplerSeed[2] = convert.triple[2];
 	    }
 	  else
 	    {
 	      atexit(finalize);
-	      entropy = fopen("/dev/urandom", "r");
+	      samplerEntropy = fopen("/dev/urandom", "r");
 	    }
-	      
+
 	  densityScale = 1 / log(1 - 1 / sparsity);
 	  initialize_thread();
 	}
@@ -121,7 +121,7 @@ int getNextEventCountdown()
     while (1)
       {
 	double real;
-	const int error = drand48_r(&buffer, &real);
+	const int error = drand48_r(&samplerRandomBuffer, &real);
 	if (__builtin_expect(error < 0, 0))
 	  break;
 	if (__builtin_expect(real != 0., 1))

@@ -9,6 +9,19 @@
 
 static gsl_rng *generator;
 static double probability;
+
+#define ECHO							\
+ do								\
+   {								\
+     const size_t actual = fwrite(yytext, yyleng, 1, yyout);	\
+     if (actual != yyleng)					\
+       {							\
+	 const int status = errno;				\
+	 perror("write failed");				\
+	 exit(status || EXIT_FAILURE);				\
+       }							\
+   }								\
+ while (0)
 %}
 
 

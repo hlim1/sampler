@@ -6,7 +6,9 @@ INCLUDES = $(TRAY_ICON_CFLAGS) $(PYTHON_CFLAGS)
 
 defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
 
-EXTRA_DIST = trayicon.override
+EXTRA_DIST =					\
+	is-installed				\
+	trayicon.override
 
 BUILT_SOURCES = trayicon-wrap.c
 
@@ -17,7 +19,7 @@ MOSTLYCLEANFILES =				\
 	*.defs					\
 	*.so
 
-traylib_DATA = trayicon.so
+egglib_DATA = trayicon.so
 
 
 dist-hook:

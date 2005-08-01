@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.2.1
+
+** Use installed Python libegg tray icon wrapper if available.
+
 * sampler-1.2
 
 ** Assorted small tweaks for Fedora Core 4 and GCC 4.0.

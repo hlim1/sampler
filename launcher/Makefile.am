@@ -5,8 +5,11 @@ SUBDIRS =					\
 	pixmaps					\
 	preferences				\
 	tray					\
-	trayicon				\
 	wrapper
+
+if !HAVE_PYTHON_TRAYICON
+SUBDIRS += trayicon
+endif !HAVE_PYTHON_TRAYICON
 
 pkgdata_DATA = gdb-commands
 pkgdata_SCRIPTS = print-debug-info

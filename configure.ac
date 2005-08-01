@@ -1,4 +1,4 @@
-AC_INIT([sampler],[1.2],[liblit@cs.wisc.edu])
+AC_INIT([sampler],[1.2.1],[liblit@cs.wisc.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 
@@ -92,6 +92,9 @@ AC_PROG_LN_S
 
 
 AC_ARG_WITH(gnome, AC_HELP_STRING([--without-gnome], [do not build GNOME-based GUI tools]), , with_gnome=yes)
+AC_MSG_CHECKING(for GNOME support)
+AM_CONDITIONAL(WITH_GNOME, test "$with_gnome" = yes)
+AC_MSG_RESULT($with_gnome)
 
 if test "$with_gnome" = yes; then
 
@@ -112,13 +115,20 @@ if test "$with_gnome" = yes; then
   AM_PATH_PYTHON
   AC_SUBST(PYTHON_CFLAGS, '-I/usr/include/python${PYTHON_VERSION}')
   AC_SUBST(PYTHON_LIBS, '-L/usr/lib/python${PYTHON_VERSION}/config -lpython${PYTHON_VERSION}')
+
+  AC_MSG_CHECKING(for python tray icon support)
+  if $PYTHON launcher/trayicon/is-installed; then
+    AC_MSG_RESULT(yes)
+    have_python_tray=yes
+  else
+    AC_MSG_RESULT([no, using our own])
+    have_python_tray=no
+  fi
+  AM_CONDITIONAL(HAVE_PYTHON_TRAYICON, test "$have_python_tray" = yes)
+
 fi
 
 AM_GCONF_SOURCE_2
-
-AC_MSG_CHECKING(for GNOME support)
-AM_CONDITIONAL(WITH_GNOME, test "$with_gnome" = yes)
-AC_MSG_RESULT($with_gnome)
 
 
 ########################################################################
@@ -158,6 +168,7 @@ AC_SUBST(threads_yesdir, '${threadsdir}/yes')
 AC_SUBST(threads_nodir, '${threadsdir}/no')
 AC_SUBST(toolsdir, '${pkglibdir}/tools')
 AC_SUBST(traylibdir, '${pkglibdir}/tray')
+AC_SUBST(egglibdir, '${traylibdir}/egg')
 
 AC_SUBST(pkgdatadir, '${datadir}/${PACKAGE}')
 AC_SUBST(commondir, '${pkgdatadir}/common')

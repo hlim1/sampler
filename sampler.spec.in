@@ -3,6 +3,10 @@
 #  General configuration
 #
 
+%if %(test ! \( "`lsb_release -si`" = FedoraCore -a "`lsb_release -sr`" -ge 4 \) ; echo $?)
+%define gnome_python2_libegg gnome-python2-libegg
+%endif
+
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
 Release: 1@deployment_release_suffix@
@@ -27,6 +31,7 @@ BuildRequires: perl
 BuildRequires: pygtk2-devel
 BuildRequires: python-devel
 BuildRequires: scrollkeeper
+BuildRequires: %gnome_python2_libegg
 
 
 ########################################################################
@@ -42,6 +47,7 @@ Requires: gnome-python2-gconf
 Requires: gnome-python2-gtkhtml2
 Requires: pygtk2 >= 1.99.14
 Requires: pygtk2-libglade
+Requires: %gnome_python2_libegg
 Obsoletes: sampler-gnome < 0.5
 
 %description

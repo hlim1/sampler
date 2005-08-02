@@ -70,7 +70,7 @@ resolve-samples: $(libcommon) $(resolve-samples)
 resolve-timestamps: $(libcommon) $(resolve-timestamps)
 	$(link)
 
-wrapper.in: %: %.in
+wrapper.in: %: %.in Makefile
 	sed							\
 		-e 's!@''pkgdatadir@!$(pkgdatadir)!'		\
 		-e 's!@''pkglibdir@!$(pkglibdir)!'		\
@@ -80,7 +80,7 @@ wrapper.in: %: %.in
 		-e 's!@''DISTRO_ARCH@!$(DISTRO_ARCH)!'		\
 		<$< >$@
 
-sampler.mk: %: %.in
+sampler.mk: %: %.in Makefile
 	sed							\
 		-e 's!@''toolsdir@!$(toolsdir)!'		\
 		<$< >$@

@@ -51,7 +51,7 @@ esac
 
 case "$DISTRO_BASIS" in
   (rpm)
-    DISTRO_ARCH="`rpm -q --qf '%{arch}' -f /etc/issue`"
+    DISTRO_ARCH="`rpm -q --qf '%{arch}' rpm`"
     ;;
   (debian)
     DISTRO_ARCH="`dpkg-architecture -s -qDEB_BUILD_ARCH`"

@@ -3,6 +3,7 @@
 * sampler-1.2.1
 
 ** Use installed Python libegg tray icon wrapper if available.
+** Fix architecture detection bug on Fedora Core 4.
 
 * sampler-1.2
 

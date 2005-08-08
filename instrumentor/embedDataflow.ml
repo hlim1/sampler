@@ -37,7 +37,8 @@ let rec isInterestingType = function
 
 let rec onlyFields = function
   | NoOffset -> true
-  | Field ({fcomp = {cstruct = true}}, offset) ->
+  | Field ({fcomp = {cstruct = true}}, offset)
+    when !saveDataflowFields ->
       onlyFields offset
   | Field _
   | Index _ -> false

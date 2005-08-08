@@ -57,9 +57,7 @@ sub wanted {
 
 stamps += $stamp
 $stamp: $File::Find::name modernize one
-	mkdir -p \$(\@D)
 	./one \$< \$(\@D)
-	touch \$@
 EOT
   }
 }

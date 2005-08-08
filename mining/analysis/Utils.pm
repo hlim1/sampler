@@ -41,6 +41,12 @@ sub try_mkdir ($) {
 }
 
 
+sub try_mkpath ($) {
+    my $dir = shift;
+    mkpath $dir or die "cannot mkpath $dir: $!\n";
+}
+
+
 ########################################################################
 #
 #  guess the instrumentation scheme used by older builds

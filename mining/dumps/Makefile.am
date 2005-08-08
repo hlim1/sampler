@@ -9,8 +9,8 @@ schema.sql:
 	sed -e '/^COMMENT ON SCHEMA public IS /s/^/-- /' <$@. >$@
 	rm $@.
 
-complete.sql.gz: dump ../populate/sync-stamp
-	./$< --opt | gzip >$@.tmp
+complete.pg: ../populate/sync-stamp
+	pg_dump --format=c --file=$@.tmp
 	mv $@.tmp $@
 
 .DELETE_ON_ERROR:

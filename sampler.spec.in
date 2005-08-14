@@ -31,7 +31,7 @@ BuildRequires: perl
 BuildRequires: pygtk2-devel
 BuildRequires: python-devel
 BuildRequires: scrollkeeper
-BuildRequires: %gnome_python2_libegg
+%{?gnome_python2_libegg:BuildRequires: %gnome_python2_libegg}
 
 
 ########################################################################
@@ -47,7 +47,7 @@ Requires: gnome-python2-gconf
 Requires: gnome-python2-gtkhtml2
 Requires: pygtk2 >= 1.99.14
 Requires: pygtk2-libglade
-Requires: %gnome_python2_libegg
+%{?gnome_python2_libegg:Requires: %gnome_python2_libegg}
 Obsoletes: sampler-gnome < 0.5
 
 %description

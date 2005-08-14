@@ -9,7 +9,7 @@
 
 Name: @PACKAGE_NAME@
 Version: @PACKAGE_VERSION@
-Release: 2@deployment_release_suffix@
+Release: 1@deployment_release_suffix@
 License: BSD
 Group: Applications/System
 Packager: Ben Liblit <@PACKAGE_BUGREPORT@>

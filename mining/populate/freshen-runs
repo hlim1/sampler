@@ -6,9 +6,6 @@ test -x ./insert-runs.pl
 
 ./sync-from-www
 
-#backup=$HOME/research
-#tar cf - sampler-uploads | gpg --encrypt --recipient=liblit >$backup/sampler-uploads.tar.gpg
-
-find /afs/cs.wisc.edu/p/cbi/uploads/reports -maxdepth 1 | { read; cat; } | ./insert-runs.pl "$@"
+find $(cat uploads) -name environment | ./insert-runs.pl
 
 touch sync-stamp

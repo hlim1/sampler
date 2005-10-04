@@ -7,6 +7,10 @@ open ScalarPairSiteInfo
 let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
 
 
+let isInterestingVar  = isInterestingVar  isDiscreteType
+let isInterestingLval = isInterestingLval isDiscreteType
+
+
 class visitor (constants : Constants.collection) globals (tuples : Counters.manager) func =
   object (self)
     inherit SiteFinder.visitor

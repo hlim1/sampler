@@ -4,9 +4,9 @@ open SchemeName
 
 
 let name = {
-  flag = "scalar-pairs";
-  prefix = "scalarPairs";
-  ident = "ScalarPairs";
+  flag = "float-kinds";
+  prefix = "floatKinds";
+  ident = "FloatKinds";
 }
 
 
@@ -14,19 +14,14 @@ class c file : Scheme.c =
   object (self)
     val tuples = new Counters.manager name file
 
-    val constants = Constants.collect file
-    val mutable globals = []
+    val classifier = FloatKindFinder.classifier file
 
     method findAllSites =
       TestHarness.time ("finding " ^ name.flag ^ " sites")
 	(fun () ->
 	  let scanner = function
-	    | GVar (varinfo, _, _)
-	    | GVarDecl (varinfo, _)
-	      when isInterestingVar isDiscreteType varinfo ->
-		globals <- varinfo :: globals
 	    | GFun (func, _) ->
-		let finder = new ScalarPairFinder.visitor constants globals tuples func in
+		let finder = new FloatKindFinder.visitor classifier tuples func in
 		ignore (Cil.visitCilFunction finder func)
 	    | _ ->
 		()

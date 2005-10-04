@@ -19,6 +19,8 @@ schemes_HEADERS =				\
 	bounds-unit.h				\
 	branches.h				\
 	branches-unit.h				\
+	float-kinds.h				\
+	float-kinds-unit.h			\
 	function-entries.h			\
 	function-entries-unit.h			\
 	returns.h				\
@@ -28,7 +30,8 @@ schemes_HEADERS =				\
 	tuple-1.h				\
 	tuple-2.h				\
 	tuple-3.h				\
-	tuple-4.h
+	tuple-4.h				\
+	tuple-9.h
 
 
 schemes_LIBRARIES = libschemes.a
@@ -39,6 +42,8 @@ libschemes_a_SOURCES =				\
 	bounds.h				\
 	branches.c				\
 	branches.h				\
+	float-kinds.c				\
+	float-kinds.h				\
 	function-entries.c			\
 	function-entries.h			\
 	returns.c				\
@@ -55,4 +60,6 @@ libschemes_a_SOURCES =				\
 	tuple-3.c				\
 	tuple-3.h				\
 	tuple-4.c				\
-	tuple-4.h
+	tuple-4.h				\
+	tuple-9.c				\
+	tuple-9.h

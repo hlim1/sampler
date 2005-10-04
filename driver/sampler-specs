@@ -24,6 +24,7 @@
 *cpp_schemes:
 %{fsampler-scheme=bounds:-include sampler/schemes/bounds-unit.h%s} \
 %{fsampler-scheme=branches:-include sampler/schemes/branches-unit.h%s} \
+%{fsampler-scheme=float-kinds:-include sampler/schemes/float-kinds-unit.h%s} \
 %{fsampler-scheme=function-entries:-include sampler/schemes/function-entries-unit.h%s} \
 %{fsampler-scheme=g-object-unref:-include sampler/schemes/g-object-unref-unit.h%s} \
 %{fsampler-scheme=returns:-include sampler/schemes/returns-unit.h%s} \
@@ -73,9 +74,13 @@ sampler/threads/no/liblate.a%s
 %{!fthreads:%{!fno-threads:%{pthread:%(lib_threads_yes)}}} \
 %{!fthreads:%{!fno-threads:%{!pthread:%(lib_threads_no)}}}
 
+*lib_scheme:
+%{fsampler-scheme=float-kinds:-lm}
+
 %rename libgcc old_libgcc
 
 *libgcc:
 sampler/schemes/libschemes.a%s \
 %(lib_threads) \
+%(lib_scheme) \
 %(old_libgcc)

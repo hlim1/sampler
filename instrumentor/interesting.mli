@@ -1,5 +1,8 @@
 open Cil
 
 
-val isInterestingVar  : varinfo -> bool
-val isInterestingLval : lval    -> (string * string) option
+val isDiscreteType : typ -> bool
+val isFloatType    : typ -> bool
+
+val isInterestingVar  : (typ -> bool) -> varinfo -> bool
+val isInterestingLval : (typ -> bool) -> lval    -> (string * string) option

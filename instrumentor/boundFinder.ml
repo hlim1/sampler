@@ -107,6 +107,8 @@ class visitor global func =
 			mkStmtOneInstr (Set (left, Lval newLeft, location))])
       in
 
+      let isInterestingLval = isInterestingLval isDiscreteType in
+
       match IsolateInstructions.isolated stmt with
       | Some (Set (left, expr, location))
 	when self#includedStatement stmt ->

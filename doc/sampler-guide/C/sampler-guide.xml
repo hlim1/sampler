@@ -126,6 +126,70 @@
 	    </varlistentry>
 
 	    <varlistentry>
+	      <term><option>float-kinds</option></term>
+	      <listitem>
+		<para>At each assignment of a floating point value,
+		count how many times the assigned value is in each of
+		nine possible categories.  Each such assignment
+		induces one instrumentation point with a nonuple of
+		counters:
+
+		  <orderedlist>
+		    <listitem>
+		      <para>assigned value is <literal>-Inf</literal></para>
+		    </listitem>
+
+		    <listitem>
+		      <para>assigned value is negative and normalized, but neither <literal>-Inf</literal> nor <literal>-0</literal></para>
+		    </listitem>
+
+		    <listitem>
+		      <para>assigned value is negative and denormalized</para>
+		    </listitem>
+
+		    <listitem>
+		      <para>assigned value is <literal>-0</literal></para>
+		    </listitem>
+
+		    <listitem>
+		      <para>assigned value is <literal>NaN</literal></para>
+		    </listitem>
+
+		    <listitem>
+		      <para>assigned value is <literal>+0</literal></para>
+		    </listitem>
+
+		    <listitem>
+		      <para>assigned value is positive and denormalized</para>
+		    </listitem>
+
+		    <listitem>
+		      <para>assigned value is positive and normalized, but neither <literal>+Inf</literal> nor <literal>+0</literal></para>
+		    </listitem>
+
+		    <listitem>
+		      <para>assigned value is <literal>+Inf</literal></para>
+		    </listitem>
+		  </orderedlist>
+		</para>
+
+		<para>This scheme applies to all real floating point
+		types:  <type>float</type>, <type>double</type>, and
+		<type>long double</type>.  It does not apply to
+		complex floating types.</para>
+
+		<para>See also the <link
+		linkend="assign-across-pointer"><option>--assign-across-pointer</option></link>,
+		<link
+		linkend="assign-into-field"><option>--assign-into-field</option></link>,
+		and <link
+		linkend="assign-into-index"><option>--assign-into-index</option></link>
+		flags for ways to customize which kinds of assignments
+		are instrumented.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
 	      <term><option>function-entries</option></term>
 	      <listitem>
 		<para>Count how many times each function is
@@ -469,10 +533,11 @@
 	<term><option>--assign-across-pointer</option></term>
 	<term><option>--no-assign-across-pointer</option></term>
 	<listitem>
-	  <para>When using the <option>scalar-pairs</option>
-	  instrumentation scheme, instrument an assignment whose
-	  left-hand side crosses a pointer.  Defaults to not
-	  instrumenting pointer-crossing assignments.</para>
+	  <para>When using the <option>float-kinds</option> or
+	  <option>scalar-pairs</option> instrumentation scheme,
+	  instrument an assignment whose left-hand side crosses a
+	  pointer.  Defaults to not instrumenting pointer-crossing
+	  assignments.</para>
 
 	  <remark>Clarification is needed here about treatment of
 	  complex lvalues with a mix of pointer, field, and array
@@ -484,10 +549,11 @@
 	<term><option>--assign-into-field</option></term>
 	<term><option>--no-assign-into-field</option></term>
 	<listitem>
-	  <para>When using the <option>scalar-pairs</option>
-	  instrumentation scheme, instrument an assignment whose
-	  left-hand side is a structure field access.  Defaults to not
-	  instrumenting structure field assignments.</para>
+	  <para>When using the <option>float-kinds</option> or
+	  <option>scalar-pairs</option> instrumentation scheme,
+	  instrument an assignment whose left-hand side is a structure
+	  field access.  Defaults to not instrumenting structure field
+	  assignments.</para>
 
 	  <remark>Clarification is needed here about treatment of
 	  complex lvalues with a mix of pointer, field, and array
@@ -499,10 +565,11 @@
 	<term><option>--assign-into-index</option></term>
 	<term><option>--no-assign-into-index</option></term>
 	<listitem>
-	  <para>When using the <option>scalar-pairs</option>
-	  instrumentation scheme, instrument an assignment whose
-	  left-hand side is an array index access.  Defaults to not
-	  instrumenting indexed array assignments.</para>
+	  <para>When using the <option>float-kinds</option> or
+	  <option>scalar-pairs</option> instrumentation scheme,
+	  instrument an assignment whose left-hand side is an array
+	  index access.  Defaults to not instrumenting indexed array
+	  assignments.</para>
 
 	  <remark>Clarification is needed here about treatment of
 	  complex lvalues with a mix of pointer, field, and array
@@ -1045,6 +1112,67 @@
 		  <?dbhtml start="5"?>
 		  <listitem>
 		    <para>the predicate of the instrumented branch</para>
+		  </listitem>
+		</orderedlist>
+	      </listitem>
+	      <listitem>
+		<para>float-kinds</para>
+		<orderedlist>
+		  <?dbhtml start="5"?>
+		  <listitem>
+		    <para>the left hand side of the instrumented assignment</para>
+		  </listitem>
+		  <listitem>
+		    <para>one of:
+		      <variablelist>
+			<varlistentry>
+			  <term><computeroutput>local</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a named local variable</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>global</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a named global variable</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>mem</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to an indirectly
+			    addressed memory location</para>
+			  </listitem>
+			</varlistentry>
+		      </variablelist>
+		    </para>
+		  </listitem>
+		  <listitem>
+		    <para>one of:
+		      <variablelist>
+			<varlistentry>
+			  <term><computeroutput>direct</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a direct base
+			    location with no offset</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>field</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to a named field within
+			    a structure</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>index</computeroutput></term>
+			  <listitem>
+			    <para>assignment is to an indexed element
+			    within an array</para>
+			  </listitem>
+			</varlistentry>
+		      </variablelist>
+		    </para>
 		  </listitem>
 		</orderedlist>
 	      </listitem>

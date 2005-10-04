@@ -25,8 +25,14 @@ let assignIntoIndex =
     ~default:false
 
 
-let isInterestingType typ =
+let isDiscreteType typ =
   isIntegralType typ || isPointerType typ
+
+
+let isFloatType typ =
+  match unrollType typ with
+  | TFloat _ -> true
+  | _ -> false
 
 
 let isInterestingGlobalName =
@@ -65,12 +71,12 @@ let hasInterestingName varinfo =
     isInterestingLocalName varinfo.vname
 
 
-let isInterestingVar varinfo =
+let isInterestingVar isInterestingType varinfo =
   isInterestingType varinfo.vtype &&
   hasInterestingName varinfo
 
 
-let isInterestingLval lval =
+let isInterestingLval isInterestingType lval =
   let isInterestingHost = function
     | Var var when hasInterestingName var ->
 	Some (if var.vglob then "global" else "local")

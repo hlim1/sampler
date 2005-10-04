@@ -70,3 +70,10 @@ loopless: $(libcil) $(loopless)
 check-local: main
 
 .DELETE_ON_ERROR:
+
+
+########################################################################
+
+
+floaty: floaty.c main
+	../driver/sampler-cc-here -g -save-temps --no-sample --sampler-scheme=float-kinds -o floaty floaty.c

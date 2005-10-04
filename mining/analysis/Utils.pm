@@ -269,23 +269,21 @@ sub clean ($) {
     check_outdir $outdir;
 
     rmtree ["$outdir/data",
+	    "$outdir/debug",
 	    "$outdir/sites"];
 
     unlink
 	"$outdir/f.runs",
 	"$outdir/s.runs",
 	"$outdir/sites.cc",
-	"$outdir/sites.o",
+	"$outdir/sites.so",
 	"$outdir/units.cc",
-	"$outdir/units.o",
-	"$outdir/compute-results",
-	"$outdir/convert-reports",
-	"$outdir/gen-views",
+	"$outdir/units.so",
 	"$outdir/GNUmakefile",
 	glob("$outdir/*.tmp.txt");
 
     if (-z "$outdir/preds.txt") {
-	rmtree "$outdir/debug" ;
+	rmtree "$outdir/debug";
 	unlink
 	    "$outdir/logo.css",
 	    "$outdir/logo.xsl",

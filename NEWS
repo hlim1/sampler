@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.3
+
+** New "float-kinds" scheme for diagnosing floating point glitches.
+
 * sampler-1.2.1
 
 ** Use installed Python libegg tray icon wrapper if available.

@@ -7,22 +7,39 @@ open ScalarPairSiteInfo
 let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
 
 
-type classifier = fundec -> lval * (exp -> location -> instr)
+type classifier = fundec -> exp -> location -> (exp * stmt)
 
 
 let classifier file =
   let callee = Lval (var (FindFunction.find "floatKindsClassify" file)) in
-  fun fundec ->
+  fun fundec value location ->
     let classification = var (Locals.makeTempVar fundec ~name:"floatKind" uintType) in
-    (classification,
-     fun value location ->
-       Call (Some classification, callee, [value], location))
+    let classifier = mkStmtOneInstr (Call (Some classification, callee, [value], location)) in
+    (Lval classification, classifier)
 
 
 class visitor (classifier : classifier) (tuples : Counters.manager) func =
-  let classification, classifier = classifier func in
+  let classifier = classifier func in
   object (self)
     inherit SiteFinder.visitor
+
+    method vfunc func =
+      let body =
+	let testFormal body formal =
+	  if isInterestingVar isFloatType formal then
+	    let location = formal.vdecl in
+	    let lval = var formal in
+	    let (classification, classify) = classifier (Lval lval) location in
+	    let siteInfo = new FloatKindSiteInfo.c func location (lval, "local", "direct") in
+	    let selector = Index (classification, NoOffset) in
+	    let bump = tuples#addSite siteInfo selector in
+	    classify :: bump :: body
+	  else
+	    body
+	in
+	mkBlock (List.fold_left testFormal [mkStmt (Block func.sbody)] func.sformals)
+      in
+      ChangeDoChildrenPost (func, fun func -> func.sbody <- body; func)
 
     method vstmt stmt =
 
@@ -33,9 +50,9 @@ class visitor (classifier : classifier) (tuples : Counters.manager) func =
 	let first = mkStmtOneInstr (first newLeft) in
 	let last = mkStmt (Instr [Set (left, newLeftVal, location)]) in
 
-	let classify = mkStmtOneInstr (classifier newLeftVal location) in
+	let (classification, classify) = classifier newLeftVal location in
 	let siteInfo = new FloatKindSiteInfo.c func location (left, host, off) in
-	let selector = Index (Lval classification, NoOffset) in
+	let selector = Index (classification, NoOffset) in
 	let bump = tuples#addSite siteInfo selector in
 	
 	Block (mkBlock [first; classify; bump; last])

@@ -12,3 +12,4 @@ import Config
 Config.pixmapsdir = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), '..', 'pixmaps')
 
 import Main
+Main.main(1)

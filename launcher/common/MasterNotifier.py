@@ -1,5 +1,4 @@
 from GConfNotifier import GConfNotifier
-
 import Keys
 
 

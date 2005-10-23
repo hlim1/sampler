@@ -1,8 +1,3 @@
-import os
-import sys
-
-import gconf
-
 import Keys
 
 
@@ -11,6 +6,7 @@ class UserConfig:
 
     def __init__(self, name):
         '''Look for preferences under GConf area for the given application.'''
+        import gconf
         self.__client = gconf.client_get_default()
         self.__namespace = Keys.applications + '/' + name
 

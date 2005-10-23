@@ -1,18 +1,17 @@
-import os.path
-import sys
-
 import gtk
-
-import Config
 
 
 ########################################################################
 
 
 def __source(abled, size):
+    import Config
+    import os.path
+
     source = gtk.IconSource()
     filename = abled + '-' + str(size) + '.png'
     source.set_filename(os.path.join(Config.pixmapsdir, filename))
+
     return source
 
 

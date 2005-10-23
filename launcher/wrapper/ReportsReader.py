@@ -1,7 +1,3 @@
-import cStringIO
-import re
-
-
 ########################################################################
 #
 #  Read report stream from instrumented application and split it apart
@@ -10,6 +6,7 @@ import re
 
 class ReportsReader (dict):
     def __init__(self, source):
+        import re
         lines = source.__iter__()
         startTag = re.compile('^<report id="([^"]+)">\n$')
 
@@ -18,6 +15,7 @@ class ReportsReader (dict):
             if match:
                 name = match.group(1)
                 if not name in self:
+                    import cStringIO
                     self[name] = cStringIO.StringIO()
 
                 for line in lines:

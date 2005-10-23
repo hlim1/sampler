@@ -1,26 +1,26 @@
 import egg.trayicon
-import gtk
-
-from BusyCursor import BusyCursor
-from PopupMenu import PopupMenu
-from StatusIcon import StatusIcon
-
-import Keys
-import Paths
-import PreferencesDialog
-import Signals
 
 
 class UploaderTrayIcon(egg.trayicon.TrayIcon):
 
     def on_button_press(self, widget, event):
+        import gtk.gdk
         if event.type == gtk.gdk.BUTTON_PRESS:
             if event.button == 1:
+                import PreferencesDialog
                 PreferencesDialog.present()
             elif event.button == 3:
                 self.__popup.popup(event)
 
     def __init__(self, client):
+        import gtk
+        import gtk.glade
+        from BusyCursor import BusyCursor
+        import Paths
+        from PopupMenu import PopupMenu
+        import Signals
+        from StatusIcon import StatusIcon 
+
         egg.trayicon.TrayIcon.__init__(self, 'sampler')
         BusyCursor.top = self
 

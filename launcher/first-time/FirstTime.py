@@ -1,14 +1,6 @@
-import gnome.ui
 import gtk
-import gtk.glade
-
-from MasterNotifier import MasterNotifier
-from StatusIcon import StatusIcon
-from WindowIcon import WindowIcon
 
 import Keys
-import Paths
-import Signals
 
 
 ########################################################################
@@ -22,17 +14,23 @@ class FirstTime:
         return self.__xml.get_widget(name)
 
     def __init__(self, client):
+        import gtk.glade
+        import Paths
+        import Signals
         root = 'first-time'
         self.__xml = gtk.glade.XML(Paths.glade, root)
         self.__dialog = self.__get_widget(root)
         Signals.autoconnect(self, self.__xml)
 
         # hook up state-linked icons
+        from StatusIcon import StatusIcon
+        from WindowIcon import WindowIcon
         image = self.__get_widget('image')
         self.__image_updater = StatusIcon(client, image, gtk.ICON_SIZE_DIALOG)
         self.__icon_updater = WindowIcon(client, self.__dialog)
 
         # hook up state-linked radio buttons
+        from MasterNotifier import MasterNotifier
         self.__client = client
         self.__notifier = MasterNotifier(client, self.__enabled_refresh)
 

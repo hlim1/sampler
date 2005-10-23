@@ -1,11 +1,9 @@
-import sys
-
-
 class Outcome:
     '''Outcome of one run of a sampled application.'''
 
     def exit(self):
         '''Propagate exit status out to whoever ran this wrapper script.'''
+        import sys
         sys.exit(self.signal or self.status)
 
     def upload_headers(self):

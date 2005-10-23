@@ -1,9 +1,4 @@
 import os
-import sys
-
-from Outcome import Outcome
-
-import Config
 
 
 ########################################################################
@@ -16,13 +11,15 @@ class Launcher:
         self.app = app
 
     def spawn(self):
+        import sys
         self.__pid = os.spawnv(os.P_NOWAIT, self.app.executable, sys.argv)
 
     def prep_outcome(self, outcome):
         pass
 
     def wait(self):
-        outcome = Outcome()
+        import Outcome
+        outcome = Outcome.Outcome()
         self.prep_outcome(outcome)
         
         [pid, exit_codes] = os.waitpid(self.__pid, 0)

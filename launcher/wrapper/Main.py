@@ -1,9 +1,3 @@
-import os.path
-from ConfigParser import ConfigParser
-
-import Main2
-
-
 ########################################################################
 #
 #  Backward compatibility adaptor
@@ -11,6 +5,10 @@ import Main2
 
 
 def main(configdir, wrapped = 'executable'):
+    import os.path
+    from ConfigParser import ConfigParser
+    import Main2
+
     configfile = os.path.join(configdir, 'config')
     config = ConfigParser()
     config.readfp(file(configfile))

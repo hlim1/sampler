@@ -1,11 +1,9 @@
 import bonobo
-import gtk
-
-import Config
 
 
 class Factory(bonobo.GenericFactory):
     def __builder(self, factory, product):
+        import gtk
         gtk.idle_add(self.__dialog.present)
 
     def __init__(self, dialog):

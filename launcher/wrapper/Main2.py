@@ -6,35 +6,30 @@ import pygtk
 pygtk.require('2.0')
 
 import ORBit
-import bonobo.activation
-
 ORBit.load_typelib('Everything')
-import CORBA
-
-from AppConfig import AppConfig
-from SampledLauncher import SampledLauncher
-from UnsampledLauncher import UnsampledLauncher
-from UserConfig import UserConfig
-
-import Config
-import Uploader
 
 
 ########################################################################
 
 
 def main(name, wrapped, debug_reporter, upload_headers):
+    from AppConfig import AppConfig
+    from UserConfig import UserConfig
+
     app = AppConfig(name, wrapped, debug_reporter, upload_headers)
     user = UserConfig(name)
 
     sparsity = user.sparsity()
     if sparsity > 0:
-        launcher = SampledLauncher(app, user, sparsity)
+        import SampledLauncher
+        launcher = SampledLauncher.SampledLauncher(app, user, sparsity)
     else:
-        launcher = UnsampledLauncher(app)
+        import UnsampledLauncher
+        launcher = UnsampledLauncher.UnsampledLauncher(app)
 
     launcher.spawn()
 
+    import bonobo.activation
     if not user.asked():
         bonobo.activation.activate("iid == 'OAFIID:SamplerFirstTime:0.1'")
 
@@ -45,6 +40,7 @@ def main(name, wrapped, debug_reporter, upload_headers):
 
     finally:
         if monitor != None:
+            import CORBA
             try:
                 monitor.unref()
             except CORBA.COMM_FAILURE:

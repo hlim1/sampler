@@ -1,13 +1,9 @@
-import gconf
-
-from GConfNotifier import GConfNotifier
-
-
 class Application:
     def __init__(self, client, model, path):
         self.__root = path
         self.name = path.split('/')[-1]
 
+        from GConfNotifier import GConfNotifier
         self.__client = client
         self.__notify = GConfNotifier(client, self.__key('enabled'), self.__gconf_notify, model)
 

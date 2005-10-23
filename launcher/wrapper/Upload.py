@@ -1,9 +1,4 @@
 import cStringIO
-import gzip
-import random
-import re
-import shutil
-import sys
 
 
 ########################################################################
@@ -26,6 +21,8 @@ class Upload:
         # compress each individual report
         self.__compressed = {}
         for name in reports:
+            import gzip
+            import shutil
             accumulator = cStringIO.StringIO()
             compressor = gzip.GzipFile(None, 'wb', 9, accumulator)
             reports[name].seek(0)
@@ -38,6 +35,8 @@ class Upload:
         self.headers = {'Content-type' : 'multipart/form-data; boundary="' + self.__boundary + '"'}
 
     def __pick_boundary(self):
+        import random
+        import re
         candidate = ('=' * 15) + repr(random.random()).split('.')[1] + '=='
         pattern = re.compile('^--' + re.escape(candidate) + '(--)?$', re.MULTILINE)
 

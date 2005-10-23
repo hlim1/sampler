@@ -1,17 +1,4 @@
-import cgi
-import sys
-import urllib2
 import urlparse
-
-import gnome
-import gtk
-import gtk.glade
-import gtkhtml2
-
-import BlipIcons
-import Config
-import Paths
-import Signals
 
 
 ########################################################################
@@ -22,6 +9,16 @@ import Signals
 
 class ServerMessage:
     def __init__(self, base, content_type, body):
+        import cgi
+        import gnome
+        import gtk.glade
+        import gtkhtml2
+        import sys
+        import BlipIcons
+        import Config
+        import Paths
+        import Signals
+
         argv = sys.argv
         sys.argv = [sys.argv[0]]
         gnome.program_init('wrapper', Config.version)
@@ -62,6 +59,7 @@ class ServerMessage:
         return result
 
     def on_request_url(self, document, url, stream):
+        import urllib2
         full = urlparse.urljoin(document.base, url)
         reply = urllib2.urlopen(full)
         stream.write(reply.read())

@@ -2,10 +2,6 @@ from fcntl import *
 import os
 
 from Launcher import Launcher
-from Outcome import Outcome
-from ReportsReader import ReportsReader
-
-import Uploader
 
 
 ########################################################################
@@ -45,12 +41,14 @@ class SampledLauncher(Launcher):
         return
 
     def prep_outcome(self, outcome):
+        import ReportsReader
         outcome.sparsity = self.__sparsity
-        outcome.reports = ReportsReader(os.fdopen(self.__pipe[0]))
+        outcome.reports = ReportsReader.ReportsReader(os.fdopen(self.__pipe[0]))
 
     def wait(self):
         outcome = Launcher.wait(self)
         if self.__user.enabled():
+            import Uploader
             Uploader.upload(self.app, self.__user, outcome, 'text/html')
 
         return outcome

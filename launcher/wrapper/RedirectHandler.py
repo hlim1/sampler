@@ -1,5 +1,4 @@
 from urllib2 import HTTPRedirectHandler
-import urlparse
 
 
 class RedirectHandler (HTTPRedirectHandler):
@@ -10,6 +9,7 @@ class RedirectHandler (HTTPRedirectHandler):
         self.permanent = None
 
     def __set_permanent(self, req, newurl):
+        import urlparse
         self.permanent = urlparse.urljoin(req.get_full_url(), newurl)
 
     def http_error_301(self, req, fp, code, msg, headers):

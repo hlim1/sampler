@@ -1,16 +1,3 @@
-import os
-import urllib2
-
-from RedirectHandler import RedirectHandler
-from ServerMessage import ServerMessage
-from Upload import Upload
-
-import Config
-
-
-########################################################################
-
-
 def __add_headers(upload, contributor):
     contribution = contributor.upload_headers()
     for key in contribution:
@@ -24,20 +11,25 @@ def upload(app, user, outcome, accept):
     if reporting_url and outcome.reports:
 
         # upload in the background, in case the network is slow
+        import os
         if os.fork() > 0:
             return
 
         # compress reports in preparation for upload
-        upload = Upload(outcome.reports)
+        import Upload
+        upload = Upload.Upload(outcome.reports)
 
         # collect headers from various contributors
+        import Config
         upload.headers['sampler-version'] = Config.version
         upload.headers['accept'] = accept
         __add_headers(upload, app)
         __add_headers(upload, outcome)
 
         # install our special redirect hander
-        redirect = RedirectHandler()
+        import urllib2
+        import RedirectHandler
+        redirect = RedirectHandler.RedirectHandler()
         urllib2.install_opener(urllib2.build_opener(redirect))
 
         # post the upload and read server's response
@@ -58,11 +50,12 @@ def upload(app, user, outcome, accept):
 
         # server may have posted a message for the user
         message = reply.read()
-        if message:
+        if message and 'DISPLAY' in os.environ:
             base = reply.geturl()
             content_type = reply.info()['content-type']
             del reply
-            dialog = ServerMessage(base, content_type, message)
+            import ServerMessage
+            dialog = ServerMessage.ServerMessage(base, content_type, message)
             dialog.run()
 
         # child is done; exit without fanfare

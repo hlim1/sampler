@@ -1,29 +1,26 @@
-import gtk
-import gtk.glade
-
-from AppFinder import AppFinder
-from Application import Application
-from AppModel import AppModel
-from MasterNotifier import MasterNotifier
-from WindowIcon import WindowIcon
-
 import Keys
-import Paths
-import Signals
 
 
 class PreferencesDialog:
     def __init__(self, client):
+        import gtk.glade
+        import Paths
+        import Signals
         xml = gtk.glade.XML(Paths.glade, 'preferences')
         Signals.autoconnect(self, xml)
         self.__dialog = xml.get_widget('preferences')
         self.__client = client
 
+        from AppFinder import AppFinder
+        from AppModel import AppModel
+        from Application import Application
         finder = AppFinder(client)
         model = AppModel()
         for path in finder:
             app = Application(client, model, path)
 
+        from MasterNotifier import MasterNotifier
+        from WindowIcon import WindowIcon
         self.__master = xml.get_widget('master')
         self.__applications_group = xml.get_widget('applications-group')
         self.__notifier = MasterNotifier(self.__client, self.__master_refresh)
@@ -31,6 +28,7 @@ class PreferencesDialog:
 
         view = xml.get_widget('applications')
 
+        import gtk
         selection = view.get_selection()
         selection.set_mode(gtk.SELECTION_NONE)
 

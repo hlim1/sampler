@@ -1,9 +1,4 @@
-import gtk
-
 from LazyWidget import LazyWidget
-from WindowIcon import WindowIcon
-
-import Paths
 
 
 class LazyDialog(LazyWidget):
@@ -12,6 +7,7 @@ class LazyDialog(LazyWidget):
         self.__client = client
 
     def populate(self, xml, widget):
+        from WindowIcon import WindowIcon
         LazyWidget.populate(self, xml, widget)
         self.__icon_updater = WindowIcon(self.__client, widget)
 

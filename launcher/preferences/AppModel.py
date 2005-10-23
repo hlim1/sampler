@@ -1,12 +1,4 @@
-from ConfigParser import ConfigParser
-
-import os.path
-import locale
-
-import gobject
 import gtk
-
-from Application import Application
 
 
 class AppModel(gtk.ListStore):
@@ -22,6 +14,7 @@ class AppModel(gtk.ListStore):
         return iter
 
     def __sort_name(self, model, a, b):
+        import locale
         a = self.get_value(a, self.COLUMN_NAME)
         b = self.get_value(b, self.COLUMN_NAME)
         return locale.strcoll(a.name, b.name)
@@ -32,6 +25,7 @@ class AppModel(gtk.ListStore):
         return a.get_enabled() - b.get_enabled()
 
     def __init__(self):
+        import gobject
         gtk.ListStore.__init__(self, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT)
         assert self.get_flags() & gtk.TREE_MODEL_ITERS_PERSIST
 

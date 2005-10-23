@@ -1,7 +1,5 @@
 #!/usr/bin/python -O
 
-import os
-
 import pygtk
 pygtk.require('2.0')
 
@@ -15,8 +13,6 @@ from UploaderTrayIcon import UploaderTrayIcon
 
 import Config
 import Keys
-import Paths
-import monitor
 
 
 ########################################################################

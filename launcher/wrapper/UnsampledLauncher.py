@@ -1,5 +1,3 @@
-import os
-
 from Launcher import Launcher
 
 
@@ -14,6 +12,7 @@ class UnsampledLauncher(Launcher):
 
     def spawn(self):
         # force sampling off
+        import os
         if 'SAMPLER_SPARSITY' in os.environ:
             del os.environ['SAMPLER_SPARSITY']
 

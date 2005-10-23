@@ -1,11 +1,9 @@
 import bonobo
 
-import Config
-import monitor
-
 
 class Factory(bonobo.GenericFactory):
     def __builder(self, factory, product):
+        import monitor
         return monitor.Monitor()
 
     def __init__(self):

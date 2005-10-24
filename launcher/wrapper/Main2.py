@@ -29,11 +29,11 @@ def main(name, wrapped, debug_reporter, upload_headers):
 
     launcher.spawn()
 
-    import bonobo.activation
+    import Activation
     if not user.asked():
-        bonobo.activation.activate("iid == 'OAFIID:SamplerFirstTime:0.1'")
+        Activation.activate("iid == 'OAFIID:SamplerFirstTime:0.1'")
 
-    monitor = bonobo.activation.activate("iid == 'OAFIID:SamplerMonitor:0.1'")
+    monitor = Activation.activate("iid == 'OAFIID:SamplerMonitor:0.1'")
 
     try:
         outcome = launcher.wait()

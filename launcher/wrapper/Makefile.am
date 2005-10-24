@@ -2,6 +2,7 @@ wrapper_DATA = wrapper.glade
 
 nodist_wrapper_PYTHON = Paths.py
 wrapper_PYTHON =				\
+	Activation.py				\
 	AppConfig.py				\
 	Launcher.py				\
 	Main.py					\

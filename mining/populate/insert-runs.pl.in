@@ -180,7 +180,7 @@ $dbh->do(q{
 my $upload_run = new Upload($dbh, 'upload_run');
 
 sub insert_run ($) {
-    my $dir = shift;
+    my $dir = dirname shift;
     my $run_id = basename $dir;
 
     # skip already-known reports

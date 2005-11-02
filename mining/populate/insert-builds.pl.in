@@ -77,7 +77,9 @@ sub insert_build ($) {
     my $package = shift;
 
     # deduce build distribution
-    my $distro = basename dirname dirname $package;
+    $package =~ /\/((fedora|redhat)-\d+-i386)(-older)?\//
+	or die "cannot find distribution for $package\n";
+    my $distro = $1;
 
     # ask the rpm who it thinks it is
     (basename $package) =~ /^(.+)-samplerinfo-([^-]+)-([^-]+)\.[^.]+\.rpm$/

@@ -297,6 +297,13 @@ AC_SUBST(as, `$CC -print-prog-name=as`)
 AC_MSG_RESULT($as)
 AC_MAKE_ABSOLUTE(as)
 
+AC_MSG_CHECKING(for objcopy)
+AC_ARG_WITH(objcopy, AC_HELP_STRING([--with-objcopy=EXE], [use EXE as objcopy (default: search in $PATH)]), ,
+  with_objcopy=objcopy)
+AC_SUBST(objcopy, $with_objcopy)
+AC_MSG_RESULT($objcopy)
+AC_MAKE_ABSOLUTE(objcopy)
+
 
 AC_MSG_CHECKING(for thread-local support in compiler)
 AC_COMPILE_IFELSE(
@@ -308,7 +315,7 @@ AC_MSG_RESULT($have_thread_storage)
 
 if test "$have_thread_storage" != no; then
   AC_MSG_CHECKING(for thread-local support in objcopy)
-  objcopy conftest-tls.o
+  $objcopy conftest-tls.o
   if ! nm -f sysv conftest-tls.o | egrep -q '^global .* TLS\|'; then
     have_thread_storage=no
   fi

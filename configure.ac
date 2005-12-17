@@ -298,15 +298,26 @@ AC_MSG_RESULT($as)
 AC_MAKE_ABSOLUTE(as)
 
 
-AC_MSG_CHECKING(for thread-local storage qualifier)
+AC_MSG_CHECKING(for thread-local support in compiler)
 AC_COMPILE_IFELSE(
-  AC_LANG_PROGRAM([__thread int global;], []),
-  have_thread_storage=yes,
+  AC_LANG_PROGRAM([extern __thread int global;], [global = 0; return 0;]),
+  have_thread_storage=yes
+  cp conftest.o conftest-tls.o,
   have_thread_storage=no)
 AC_MSG_RESULT($have_thread_storage)
 
 if test "$have_thread_storage" != no; then
-  AC_MSG_CHECKING(whether thread-local storage actually works)
+  AC_MSG_CHECKING(for thread-local support in objcopy)
+  objcopy conftest-tls.o
+  if ! nm -f sysv conftest-tls.o | egrep -q '^global .* TLS\|'; then
+    have_thread_storage=no
+  fi
+  rm -f conftest-tls.o
+  AC_MSG_RESULT($have_thread_storage)
+fi
+
+if test "$have_thread_storage" != no; then
+  AC_MSG_CHECKING(for thread-local support at runtime)
   AC_RUN_IFELSE(
     AC_LANG_PROGRAM([__thread int global;], [global = 0; return 0;]),
     have_thread_storage=yes,

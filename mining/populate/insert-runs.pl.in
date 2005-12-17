@@ -105,20 +105,17 @@ sub read_environment ($\%) {
 	$environment{$1} = $2;
     }
 
-    unless (defined $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION}) {
-	$environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} =
-	    guess_distro %environment;
-    }
     $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} = 'fedora-4-i386'
 	if $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} eq 'fedora-4-noarch';
 
-    unless (defined $environment{HTTP_SAMPLER_VERSION}) {
-	$environment{HTTP_SAMPLER_VERSION} = $environment{HTTP_SAMPLER_INSTRUMENTOR_VERSION};
-    }
+    $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} = guess_distro %environment
+	unless defined $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION};
 
-    unless (defined $environment{HTTP_SAMPLER_VERSION}) {
-	$environment{HTTP_SAMPLER_VERSION} = $environment{HTTP_SAMPLER_INSTRUMENTATION_VERSION};
-    }
+    $environment{HTTP_SAMPLER_VERSION} = $environment{HTTP_SAMPLER_INSTRUMENTOR_VERSION}
+	unless defined $environment{HTTP_SAMPLER_VERSION};
+
+    $environment{HTTP_SAMPLER_VERSION} = $environment{HTTP_SAMPLER_INSTRUMENTATION_VERSION}
+	unless defined $environment{HTTP_SAMPLER_VERSION};
 
     unless (defined $environment{DATE}) {
 	my $stat = stat($filename) or die;
@@ -126,8 +123,8 @@ sub read_environment ($\%) {
     }
 
     foreach (@slot) {
-	next if defined $environment{$_};
-	die "$filename: $_ is undefined\n";
+	die "$filename: $_ is undefined\n"
+	    unless defined $environment{$_};
     }
 
     my $app_id = join("\t", @environment{@slot[0 .. 3]});

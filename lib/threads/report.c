@@ -111,6 +111,21 @@ static void reportDebugInfo()
 }
 
 
+/**********************************************************************/
+
+
+#define SIGNAL_PRIOR(sig)  struct sigaction samplerPrior_ ## sig = { .sa_handler = SIG_DFL }
+#define SIGNAL_CASE(sig)  case SIG ## sig: prior = &samplerPrior_ ## sig; break
+#define SIGNAL_INST(sig)  do { const struct sigaction action = { .sa_handler = handleSignal }; sigaction(SIG ## sig, &action, &samplerPrior_ ## sig); } while (0)
+
+
+SIGNAL_PRIOR(ABRT);
+SIGNAL_PRIOR(BUS);
+SIGNAL_PRIOR(FPE);
+SIGNAL_PRIOR(SEGV);
+SIGNAL_PRIOR(TRAP);
+
+
 static void finalize()
 {
   CRITICAL_REGION(reportLock, {
@@ -125,7 +140,21 @@ static void finalize()
 
 static void handleSignal(int signum)
 {
-  signal(signum, SIG_DFL);
+  static const struct sigaction defaultAction = { .sa_handler = SIG_DFL };
+  const struct sigaction *prior;
+
+  switch (signum)
+    {
+      SIGNAL_CASE(ABRT);
+      SIGNAL_CASE(BUS);
+      SIGNAL_CASE(FPE);
+      SIGNAL_CASE(SEGV);
+      SIGNAL_CASE(TRAP);
+    default:
+      prior = &defaultAction;
+    }
+
+  sigaction(signum, prior, 0);
 
   CRITICAL_REGION(reportLock, {
     if (reportFile)
@@ -147,11 +176,11 @@ static void initializeOnce()
   if (reportFile)
     {
       atexit(finalize);
-      signal(SIGABRT, handleSignal);
-      signal(SIGBUS, handleSignal);
-      signal(SIGFPE, handleSignal);
-      signal(SIGSEGV, handleSignal);
-      signal(SIGTRAP, handleSignal);
+      SIGNAL_INST(ABRT);
+      SIGNAL_INST(BUS);
+      SIGNAL_INST(FPE);
+      SIGNAL_INST(SEGV);
+      SIGNAL_INST(TRAP);
     }
 }
 

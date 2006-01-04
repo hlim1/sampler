@@ -93,6 +93,13 @@ let collectExpr result expr =
 	num (Char.code character) :: result
     | Const (CStr _) ->
 	anything :: result
+    | Const (CEnum (exp, _, _)) ->
+	let contribution =
+	  match isInteger exp with
+	  | Some value -> text (Int64.to_string value)
+	  | None -> anything
+	in
+	contribution :: result
     | Const (CWStr _)
     | Const (CReal _) ->
 	result

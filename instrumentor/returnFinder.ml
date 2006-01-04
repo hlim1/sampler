@@ -15,7 +15,6 @@ class visitor (tuples : Counters.manager) func =
 	  if isInterestingType resultType then
 	    begin
 	      let exp = Lval result in
-	      let desc = d_exp () callee in
 	      let compare op = BinOp (op, exp, zero, intType) in
 	      let selector = Index (BinOp (PlusA, compare Gt, compare Ge, intType), NoOffset) in
 	      let siteInfo = new ExprSiteInfo.c func location callee in

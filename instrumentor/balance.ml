@@ -42,7 +42,7 @@ let addDefaultCases func =
 
 let prepatchSplits func =
   let isSplit = function
-    | { skind = If (_, thenBlock, elseBlock, _) } as stmt ->
+    | { skind = If (_, thenBlock, elseBlock, _) } ->
 	(* make space for possible future counterweights *)
 	let reserveSpace block =
 	  block.bstmts <- mkEmptyStmt () :: block.bstmts

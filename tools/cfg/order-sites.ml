@@ -59,7 +59,7 @@ let eliminate description follow sites =
       sites#iter (fun a () ->
 	sites#iter (fun b () ->
 	  compare a b))
-    with Eliminate (((iFunc, iId) as inferior), ((sFunc, sId) as superior)) ->
+    with Eliminate ((iFunc, iId) as inferior, (sFunc, sId)) ->
       sites#remove inferior;
       Printf.eprintf "eliminate %s:%d as inferior to %s:%d\n%!"
 	iFunc iId sFunc sId;

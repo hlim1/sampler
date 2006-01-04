@@ -65,9 +65,9 @@ let extremes typ =
 	| ILongLong -> extremesSigned 64
 	| IUChar | IUInt | IUShort | IULong | IULongLong -> extremesUnsigned
       end
-  | TPtr _ as typ ->
+  | TPtr _ ->
       extremesUnsigned
-  | TEnum _ as typ ->
+  | TEnum _ ->
       extremesSigned 32
   | other ->
       ignore (bug "don't know extreme values of type %a\n" d_type other);

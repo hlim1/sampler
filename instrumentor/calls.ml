@@ -41,7 +41,7 @@ let prepatch stmt =
       stmt.skind <- block;
       info
 
-  | Instr [Call (_, callee, _, _) as call] ->
+  | Instr [Call (_, callee, _, _)] ->
       ignore (bug "unexpected non-lval callee: %a" d_exp callee);
       failwith "internal error"
 

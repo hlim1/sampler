@@ -11,7 +11,7 @@ let _ =
        Instrumentor.phase;
        "removing unused symbols (late)", (fun file -> Rmtmps.removeUnusedTemps file);
        Idents.phase;
-       "printing transformed code", dumpFile (new Printer.printer) stdout
+       "printing transformed code", (dumpFile (new Printer.printer) stdout "")
      ]
     in
 

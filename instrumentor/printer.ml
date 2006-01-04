@@ -34,7 +34,6 @@ class printer =
 	    ({ battrs = []; bstmts = [{ skind = Goto _ }] } as original),
 	    ({ battrs = []; bstmts = [{ skind = Goto _ }] } as instrumented),
 	    location)
-	  as skind
 	  when !predictChecks && isCountdown local
 	->
 	  self#pLineDirective location

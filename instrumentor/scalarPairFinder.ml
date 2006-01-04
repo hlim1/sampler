@@ -23,9 +23,6 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
       let build first left location (host, off) =
 	let leftType = typeOfLval left in
 	let leftTypeSig = typeSig leftType in
-	let leftDoc = d_columns
-	    [d_lval () left; text host; text off]
-	in
 	let siteInfo = new ScalarPairSiteInfo.c func location (left, host, off) in
 
 	let newLeft = var (Locals.makeTempVar func leftType) in
@@ -40,8 +37,6 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	let compareToVarMaybe right =
 	  if leftTypeSig = typeSig right.vtype then
 	    let selector = selector (Lval (var right)) in
-	    let detail = if right.vglob then "global" else "local" in
-	    let description = d_columns [leftDoc; text right.vname; text detail] in
 	    let siteInfo = siteInfo (Variable right) in
 	    let bump = tuples#addSite siteInfo selector in
 	    statements := bump :: !statements
@@ -53,7 +48,6 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	begin
 	  let compareToConst right =
 	    let selector = selector right in
-	    let description = d_columns [leftDoc; d_exp () right; text "const"] in
 	    let siteInfo = siteInfo (Constant right) in
 	    let bump = tuples#addSite siteInfo selector in
 	    statements := bump :: !statements

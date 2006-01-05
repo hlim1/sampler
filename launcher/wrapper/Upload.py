@@ -42,7 +42,7 @@ class Upload:
 
         for name in self.__compressed:
             if pattern.search(self.__compressed[name]):
-                return __pick_boundary(reports)
+                return self.__pick_boundary()
 
         return candidate
 

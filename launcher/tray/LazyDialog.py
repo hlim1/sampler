@@ -22,3 +22,5 @@ class LazyDialog(LazyWidget):
             dialog.hide()
             dialog.emit_stop_by_name('response')
             return True
+        else:
+            return False

@@ -7,11 +7,11 @@ class AppModel(gtk.ListStore):
     COLUMN_ENABLED = 1
 
     def add_application(self, app):
-        iter = self.append()
-        self.set(iter,
+        iterator = self.append()
+        self.set(iterator,
                  self.COLUMN_NAME, app,
                  self.COLUMN_ENABLED, app)
-        return iter
+        return iterator
 
     def __sort_name(self, model, a, b):
         import locale

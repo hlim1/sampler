@@ -11,5 +11,5 @@ class BusyCursor:
             gtk.gdk.flush()
 
     def __del__(self):
-        if BusyCursor.top.window:
+        if BusyCursor.top and BusyCursor.top.window:
             BusyCursor.top.window.set_cursor(None)

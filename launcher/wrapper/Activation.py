@@ -1,7 +1,6 @@
-import bonobo.activation
-
 def activate(requirements):
+    from bonobo.activation import activate
     try:
-        return bonobo.activation.activate(requirements)
+        return activate(requirements)
     except RuntimeError:
         return None

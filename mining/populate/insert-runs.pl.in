@@ -105,11 +105,11 @@ sub read_environment ($\%) {
 	$environment{$1} = $2;
     }
 
-    $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} = 'fedora-4-i386'
-	if $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} eq 'fedora-4-noarch';
-
     $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} = guess_distro %environment
 	unless defined $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION};
+
+    $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} = 'fedora-4-i386'
+	if $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} eq 'fedora-4-noarch';
 
     $environment{HTTP_SAMPLER_VERSION} = $environment{HTTP_SAMPLER_INSTRUMENTOR_VERSION}
 	unless defined $environment{HTTP_SAMPLER_VERSION};

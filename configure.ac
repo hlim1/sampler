@@ -113,8 +113,11 @@ if test "$with_gnome" = yes; then
   AM_PATH_GLIB_2_0(, , , gobject)
 
   AM_PATH_PYTHON
-  AC_SUBST(PYTHON_CFLAGS, '-I/usr/include/python${PYTHON_VERSION}')
-  AC_SUBST(PYTHON_LIBS, '-L/usr/lib/python${PYTHON_VERSION}/config -lpython${PYTHON_VERSION}')
+  AC_MSG_CHECKING(for python prefix)
+  AC_SUBST(PYTHON_PREFIX, "`$PYTHON -c 'import sys; print sys.prefix'`")
+  AC_MSG_RESULT($PYTHON_PREFIX)
+  AC_SUBST(PYTHON_CFLAGS, '-I${PYTHON_PREFIX}/include/python${PYTHON_VERSION}')
+  AC_SUBST(PYTHON_LIBS, '-L${PYTHON_PREFIX}/lib/python${PYTHON_VERSION}/config -lpython${PYTHON_VERSION}')
 
   AC_MSG_CHECKING(for python tray icon support)
   if $PYTHON launcher/trayicon/is-installed; then

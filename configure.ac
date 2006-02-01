@@ -6,6 +6,25 @@ if test -d $srcdir/papers; then
   AC_CONFIG_SUBDIRS(papers)
 fi
 
+
+########################################################################
+#
+#  Site-specific defaults
+#
+
+
+AC_MSG_CHECKING(for domain defaults)
+
+domain="`dnsdomainname`"
+case "$domain" in
+  (cs.wisc.edu)
+    : ${with_objcopy:=/afs/cs.wisc.edu/s/binutils-2.16.1/bin/objcopy}
+  ;;
+esac
+
+AC_MSG_RESULT($domain)
+
+
 ########################################################################
 #
 #  Deployment-specific defaults

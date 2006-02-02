@@ -12,11 +12,11 @@ ORBit.load_typelib('Everything')
 ########################################################################
 
 
-def main(name, wrapped, debug_reporter, upload_headers):
+def main(name, wrapped, upload_headers, **extras):
     from AppConfig import AppConfig
     from UserConfig import UserConfig
 
-    app = AppConfig(name, wrapped, debug_reporter, upload_headers)
+    app = AppConfig(name, wrapped, upload_headers)
     user = UserConfig(name)
 
     sparsity = user.sparsity()

@@ -40,7 +40,6 @@ BuildRequires: scrollkeeper
 #
 
 Summary: Support for applications with sampled instrumentation
-Requires: gdb
 Requires: python >= 2.2
 Requires: gnome-python2
 Requires: gnome-python2-gconf
@@ -72,10 +71,8 @@ GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-in
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/common
 %{_datadir}/%{name}/first-time
-%{_datadir}/%{name}/gdb-commands
 %{_datadir}/%{name}/pixmaps
 %{_datadir}/%{name}/preferences
-%{_datadir}/%{name}/print-debug-info
 %{_datadir}/%{name}/tray
 %{_datadir}/%{name}/wrapper
 %{_datadir}/control-center-2.0/capplets/*

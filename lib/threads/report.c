@@ -1,6 +1,7 @@
 #define _GNU_SOURCE    /* for PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP */
 
 #include <errno.h>
+#include <execinfo.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -82,32 +83,13 @@ static void reportAllCompilationUnits()
 
 static void reportDebugInfo()
 {
-  const char * const debugger = getenv("SAMPLER_DEBUGGER");
-  if (debugger)
-    {
-      const pid_t pid = fork();
-      switch (pid)
-	{
-	case -1:
-	  break;
+  void *stack[1024];
+  const int entries = backtrace(stack, sizeof(stack) / sizeof(*stack));
 
-	case 0:
-	  if (dup2(fileno(reportFile), STDOUT_FILENO) == -1)
-	    perror("dup2 failed");
-	  else
-	    {
-	      char arg[21];
-	      snprintf(arg, sizeof(arg), "%d", getppid());
-	      execl(debugger, debugger, arg, 0);
-	      perror("debugger exec failed");
-	    }
-
-	  exit(errno);
-
-	default:
-	  waitpid(pid, 0, 0);
-	}
-    }
+  fputs("<report id=\"main-backtrace\">\n", reportFile);
+  fflush(reportFile);
+  backtrace_symbols_fd(stack, entries, fileno(reportFile));
+  fputs("</report>\n", reportFile);
 }
 
 

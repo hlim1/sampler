@@ -2,7 +2,7 @@ open Cil
 open Interesting
 open Pretty
 open ScalarPairSiteInfo
-
+open MustBeUninitialized 
 
 let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
 
@@ -17,6 +17,12 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 
     val formals = List.filter isInterestingVar func.sformals
     val locals = List.filter isInterestingVar func.slocals
+    val isAssignedFunc = ref identFilter
+
+    method vfunc func =
+      Cfg.build func;
+      isAssignedFunc := computeUninitialized (splitFormalsAndAddressTaken locals) func;
+      DoChildren 
 
     method vstmt stmt =
 
@@ -43,7 +49,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	in
 	List.iter compareToVarMaybe globals;
 	List.iter compareToVarMaybe formals;
-	List.iter compareToVarMaybe locals;
+	List.iter compareToVarMaybe (List.filter (!isAssignedFunc stmt) locals);
 
 	begin
 	  let compareToConst right =

@@ -17,11 +17,11 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 
     val formals = List.filter isInterestingVar func.sformals
     val locals = List.filter isInterestingVar func.slocals
-    val isAssignedFunc = ref identFilter
+    val isAssignedFunc = ref (fun _ _ -> true) 
 
     method vfunc func =
       Cfg.build func;
-      isAssignedFunc := computeUninitialized (splitFormalsAndAddressTaken locals) func;
+      isAssignedFunc := computeUninitialized func locals; 
       DoChildren 
 
     method vstmt stmt =

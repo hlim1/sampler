@@ -82,19 +82,23 @@ let computeUninitialized (f : fundec) (vars : varinfo list) =
     try
       let tbl = IH.find Upward.stmtStartData s.sid in
       let isInitialized vi  =
-        if List.mem vi already_at_top then begin 
-          if (!debug) then
-            ignore (E.log "Variable: %s always top\n" vi.vname); true end else
-               try
-                 let result = IH.find tbl vi.vid in
-                 if (!debug) then
-                   ignore (E.log "Variable: %s is %s\n" vi.vname (if result then "possibly assigned" else "definitely unassigned"));
-                   result
-               with
-                 Not_found -> 
-                   if (!debug) then
-                     ignore (E.log "Variable: %s was not included in the analysis\n" vi.vname); 
-                 raise Not_found 
+        if List.mem vi already_at_top then
+	  begin 
+            if (!debug) then
+              ignore (E.log "Variable: %s always top\n" vi.vname);
+	    true
+	  end
+	else
+          try
+            let result = IH.find tbl vi.vid in
+            if (!debug) then
+              ignore (E.log "Variable: %s is %s\n" vi.vname (if result then "possibly assigned" else "definitely unassigned"));
+            result
+          with
+            Not_found -> 
+              if (!debug) then
+                ignore (E.log "Variable: %s was not included in the analysis\n" vi.vname); 
+              raise Not_found 
       in isInitialized
     with
       Not_found -> 

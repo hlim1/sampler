@@ -2,7 +2,7 @@ open Cil
 open Interesting
 open Pretty
 open ScalarPairSiteInfo
-open MustBeUninitialized 
+open MustBeUninitialized
 
 
 let compareUninitialized =
@@ -26,13 +26,13 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 
     val formals = List.filter isInterestingVar func.sformals
     val locals = List.filter isInterestingVar func.slocals
-    val isAssignedFunc = ref (fun _ _ -> true) 
+    val isAssignedFunc = ref (fun _ _ -> true)
 
     method vfunc func =
       Cfg.build func;
       if not !compareUninitialized then
-	isAssignedFunc := computeUninitialized func locals; 
-      DoChildren 
+	isAssignedFunc := computeUninitialized func locals;
+      DoChildren
 
     method vstmt stmt =
 
@@ -91,7 +91,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	let first = mkStmtOneInstr (first newLeft) in
 	Block (mkBlock (first :: !statements))
       in
-      
+
       match IsolateInstructions.isolated stmt with
       | Some (Set (left, expr, location))
 	when self#includedStatement stmt ->

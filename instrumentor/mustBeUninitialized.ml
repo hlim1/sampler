@@ -1,7 +1,7 @@
 open Cil
 open Pretty
 
-let debug = ref true
+let debug = ref false
 
 let log formatter =
   if !debug then formatter ()

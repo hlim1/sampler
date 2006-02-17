@@ -25,7 +25,6 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 
     val formals = List.filter isInterestingVar func.sformals
     val locals = List.filter isInterestingVar func.slocals
-    val isAssignedFunc = ref (fun _ _ -> true)
 
     method vfunc func =
       if not !compareUninitialized then

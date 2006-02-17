@@ -4,6 +4,15 @@ open Pretty
 open ScalarPairSiteInfo
 open MustBeUninitialized 
 
+
+let compareUninitialized =
+  Options.registerBoolean
+    ~flag:"compare-uninitialized"
+    ~desc:"consider uninitialized variables in scalar-pairs comparisons"
+    ~ident:"CompareUninitialized"
+    ~default:false
+
+
 let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
 
 
@@ -21,7 +30,8 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 
     method vfunc func =
       Cfg.build func;
-      isAssignedFunc := computeUninitialized func locals; 
+      if not !compareUninitialized then
+	isAssignedFunc := computeUninitialized func locals; 
       DoChildren 
 
     method vstmt stmt =

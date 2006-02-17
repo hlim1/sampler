@@ -3,10 +3,14 @@ open Pretty
 
 let debug = ref true
 
+let log formatter =
+  if !debug then formatter ()
+
 module E = Errormsg
 module IH = Inthash
 module DF = Dataflow
 module UD = Usedef
+
 
 let _ = UD.considerVariableUse := (fun _ -> false)
 let _ = UD.considerVariableAddrOfAsUse := (fun _ -> false)
@@ -67,8 +71,7 @@ let partitionAddressTaken (f : fundec) (vars_of_interest : varinfo list) =
       init, d_vars
 
 let computeUninitialized (f : fundec) (vars : varinfo list) =
-  let _ = if (!debug) then
-    ignore (E.log "Analyzing function %s\n" f.svar.vname) in
+  log (fun () -> E.log "Analyzing function %s\n" f.svar.vname);
   let _ = IH.clear Upward.stmtStartData in
   let bdy = f.sbody in
   let slst = bdy.bstmts in
@@ -77,33 +80,28 @@ let computeUninitialized (f : fundec) (vars : varinfo list) =
   let _ = IH.add Upward.stmtStartData fst_stm.sid start_tbl in
   MBU.compute [fst_stm];
   let passInitialized s =
-    if(!debug) then
-      ignore (E.log "Instrumenting for statement number: %i looks like: %t \n" s.sid (fun _ -> printStmt defaultCilPrinter () s));
+    log (fun () -> E.log "Instrumenting for statement number: %i looks like: %t \n" s.sid (fun _ -> printStmt defaultCilPrinter () s));
     try
       let tbl = IH.find Upward.stmtStartData s.sid in
       let isInitialized vi  =
         if List.mem vi already_at_top then
 	  begin
-            if (!debug) then
-              ignore (E.log "Variable: %s always top\n" vi.vname);
+            log (fun () -> E.log "Variable: %s always top\n" vi.vname);
 	    true
 	  end
 	else
           try
             let result = IH.find tbl vi.vid in
-            if (!debug) then
-              ignore (E.log "Variable: %s is %s\n" vi.vname (if result then "possibly assigned" else "definitely unassigned"));
+            log (fun () -> E.log "Variable: %s is %s\n" vi.vname (if result then "possibly assigned" else "definitely unassigned"));
             result
           with
             Not_found ->
-              if (!debug) then
-                ignore (E.log "Variable: %s was not included in the analysis\n" vi.vname);
+              log (fun () -> E.log "Variable: %s was not included in the analysis\n" vi.vname);
               raise Not_found
       in isInitialized
     with
       Not_found ->
-        if (!debug) then
-          ignore (E.log "Statement with id: %i is unreachable" s.sid);
+	log (fun () -> E.log "Statement with id: %i is unreachable" s.sid);
         let isInitialized vi = false in
         isInitialized
     in passInitialized

@@ -102,6 +102,5 @@ let computeUninitialized (f : fundec) (vars : varinfo list) =
     with
       Not_found ->
 	log (fun () -> E.log "Statement with id: %i is unreachable" s.sid);
-        let isInitialized vi = false in
-        isInitialized
+      (fun _ -> false)
     in passInitialized

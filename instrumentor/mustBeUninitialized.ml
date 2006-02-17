@@ -8,8 +8,6 @@ module IH = Inthash
 module DF = Dataflow
 module UD = Usedef
 
-type initialization = Initialized | Uncertain | Uninitialized
-
 let _ = UD.considerVariableUse := (fun _ -> false)
 let _ = UD.considerVariableAddrOfAsUse := (fun _ -> false)
 

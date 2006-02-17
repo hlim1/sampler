@@ -3,6 +3,7 @@ open Interesting
 open Pretty
 open ScalarPairSiteInfo
 open MustBeUninitialized
+open Timed
 
 
 let compareUninitialized =
@@ -31,7 +32,14 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
     method vfunc func =
       Cfg.build func;
       if not !compareUninitialized then
-	isAssignedFunc := computeUninitialized func locals;
+	begin
+	  let b = timed (Initialized.analyze func) locals in
+	  let a = timed (computeUninitialized func) locals in
+	  let d = timed (computeUninitialized func) locals in
+	  let c = timed (Initialized.analyze func) locals in
+	  isAssignedFunc := snd a;
+	  Errormsg.log "=== %f %f %f %f ===\n" (fst a) (fst b) (fst c) (fst d)
+	end;
       DoChildren
 
     method vstmt stmt =
@@ -57,9 +65,26 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	    let bump = tuples#addSite siteInfo selector in
 	    statements := bump :: !statements
 	in
+
+	let d_vars = d_list ", " (fun () var -> text var.vname) in
+
+	let assignedLocals = List.filter (!isAssignedFunc stmt) locals in
+	let initializedLocals = List.filter (Initialized.possibly stmt) locals in
+	let same =
+	  try List.for_all2 (==) assignedLocals initializedLocals
+	  with Invalid_argument _ -> false
+	in
+	Errormsg.log "%t same: %b\n" d_thisloc same;
+	if not same then
+	  begin
+	    ignore (bug "initialized vars mismatch: {%a} versus {%a}\n"
+		      d_vars assignedLocals
+		      d_vars initializedLocals)
+	  end;
+
 	List.iter compareToVarMaybe globals;
 	List.iter compareToVarMaybe formals;
-	List.iter compareToVarMaybe (List.filter (!isAssignedFunc stmt) locals);
+	List.iter compareToVarMaybe assignedLocals;
 
 	begin
 	  let compareToConst right =

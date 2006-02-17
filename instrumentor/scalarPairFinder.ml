@@ -59,6 +59,13 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	in
 
 	let initializedLocals = List.filter (Initialized.possibly stmt) locals in
+	if !Statistics.showStats then
+	  ignore (Pretty.eprintf "%t: stats: scalar-pairs: %d globals, %d formals, %d initialized locals, %d uninitialized locals\n"
+		    d_thisloc
+		    (List.length globals)
+		    (List.length formals)
+		    (List.length initializedLocals)
+		    (List.length locals - List.length initializedLocals));
 
 	List.iter compareToVarMaybe globals;
 	List.iter compareToVarMaybe formals;

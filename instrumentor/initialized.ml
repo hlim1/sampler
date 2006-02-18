@@ -128,7 +128,7 @@ let analyze func vars =
 (* probe the most recent analysis results at a statement of interest *)
 let possibly stmt =
   (* find the set of uninitialized variables at this statement *)
-  let uninits : VariableSet.t = Inthash.find Transfer.stmtStartData stmt.sid in
+  let uninits = Inthash.find Transfer.stmtStartData stmt.sid in
 
   (* invert "must be uninitialized" to answer "may be initialized" *)
   fun var -> not (VariableSet.mem var uninits)

@@ -58,7 +58,14 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	    statements := bump :: !statements
 	in
 
-	let initializedLocals = List.filter (Initialized.possibly stmt) locals in
+	let initializedLocals =
+	  let isInitialized =
+	    try Initialized.possibly stmt
+	    with Not_found -> fun _ -> false
+	  in
+	  List.filter isInitialized locals
+	in
+
 	if !Statistics.showStats then
 	  ignore (Pretty.eprintf "%t: stats: scalar-pairs: %d globals, %d formals, %d initialized locals, %d uninitialized locals\n"
 		    d_thisloc

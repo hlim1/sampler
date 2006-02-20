@@ -100,7 +100,6 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	end;
 
 	if !Statistics.showStats then
-	if !Statistics.showStats then
 	  ignore (Pretty.eprintf "%t: stats: scalar-pairs: %d constants, %d globals, %d formals, %d initialized locals, %d uninitialized locals\n"
 		    d_thisloc
 		    !constantsCount

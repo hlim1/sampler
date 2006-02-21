@@ -146,9 +146,9 @@ if test "$with_gnome" = yes; then
     AC_MSG_RESULT([no, using our own])
     have_python_tray=no
   fi
-  AM_CONDITIONAL(HAVE_PYTHON_TRAYICON, test "$have_python_tray" = yes)
-
 fi
+
+AM_CONDITIONAL(HAVE_PYTHON_TRAYICON, test "$have_python_tray" = yes)
 
 AM_GCONF_SOURCE_2
 

@@ -1,5 +1,6 @@
 open Cil
 open Printf
+open Timed
 
 
 let showPhaseTimes =
@@ -23,11 +24,9 @@ let time =
 	Printf.eprintf "%s%s: begin\n" indent description;
 	incr depth;
 	flush stderr;
-	let before = Unix.gettimeofday () in
-	let result = action () in
-	let after = Unix.gettimeofday () in
+	let elapsed, result = timed action () in
 	decr depth;
-	Printf.eprintf "%s%s: end; %f sec\n" indent description (after -. before);
+	Printf.eprintf "%s%s: end; %f sec\n" indent description elapsed;
 	flush stderr;
 	result
       end

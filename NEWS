@@ -4,6 +4,7 @@
 
 ** Collect active thread's stack trace without GDB.
 ** Signal handling improvements.
+** Avoid uninitialized variables in scalar-pairs instrumentation.
 
 * sampler-1.3
 

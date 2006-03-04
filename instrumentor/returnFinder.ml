@@ -18,7 +18,7 @@ class visitor (tuples : Counters.manager) func =
 	      let compare op = BinOp (op, exp, zero, intType) in
 	      let selector = Index (BinOp (PlusA, compare Gt, compare Ge, intType), NoOffset) in
 	      let siteInfo = new ExprSiteInfo.c func location callee in
-	      let bump = tuples#addSite siteInfo selector in
+	      let bump,_ = tuples#addSite siteInfo selector in
 	      stmt.skind <- Block (mkBlock [mkStmt stmt.skind; bump]);
 	    end;
 	  SkipChildren

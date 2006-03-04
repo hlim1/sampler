@@ -17,7 +17,7 @@ class visitor (tuples : Counters.manager) func =
 	  let predTemp = var (Locals.makeTempVar func (typeOf predicate)) in
 	  let selector = Index (BinOp (Ne, Lval predTemp, zero, intType), NoOffset) in
 	  let siteInfo = new ExprSiteInfo.c func location predicate in
-	  let bump = tuples#addSite siteInfo selector in
+	  let bump,_ = tuples#addSite siteInfo selector in
 	  let replacement = Block (mkBlock [mkStmtOneInstr (Set (predTemp, predicate, location));
 					    bump;
 					    mkStmt (If (Lval predTemp,

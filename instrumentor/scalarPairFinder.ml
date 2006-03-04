@@ -44,6 +44,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	let newLeft = var (Locals.makeTempVar func leftType) in
 	let last = mkStmt (Instr [Set (left, Lval newLeft, location)]) in
 	let statements = ref [last] in
+  let constantsTable = ref [] in 
 
 	let selector right =
 	  let compare op = BinOp (op, Lval newLeft, right, intType) in
@@ -54,7 +55,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	  if leftTypeSig = typeSig right.vtype then
 	    let selector = selector (Lval (var right)) in
 	    let siteInfo = siteInfo (Variable right) in
-	    let bump = tuples#addSite siteInfo selector in
+	    let bump,_ = tuples#addSite siteInfo selector in
 	    statements := bump :: !statements
 	in
 
@@ -70,11 +71,17 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	List.iter compareToVarMaybe formals;
 	List.iter compareToVarMaybe initializedLocals;
 
+  let extractInt64 e =
+    match e with
+      | Const (CInt64 (v, _, _)) -> v
+      | _ -> assert false
+  in
 	let constantsCount = ref 0 in
 	let compareToConst right =
 	  let selector = selector right in
 	  let siteInfo = siteInfo (Constant right) in
-	  let bump = tuples#addSite siteInfo selector in
+	  let bump,id = tuples#addSite siteInfo selector in
+    constantsTable := (id, (extractInt64 right)) :: !constantsTable;
 	  statements := bump :: !statements;
 	  incr constantsCount
 	in
@@ -107,6 +114,9 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 		    (List.length formals)
 		    (List.length initializedLocals)
 		    (List.length locals - List.length initializedLocals));
+
+  let res = Implications.makeImplications (!constantsTable)
+  in res#print ;
 
 	let first = mkStmtOneInstr (first newLeft) in
 	Block (mkBlock (first :: !statements))

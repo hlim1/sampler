@@ -1,4 +1,4 @@
-AM_CFLAGS = -ffast-math
+AM_CFLAGS = -ffast-math -fpic
 
 include ../threads.mk
 

@@ -1,4 +1,4 @@
-AM_CFLAGS = -W -Wall -Werror -Wformat=2
+AM_CFLAGS = -W -Wall -Werror -Wformat=2 -fpic
 INCLUDES = @GLIB_CFLAGS@
 
 

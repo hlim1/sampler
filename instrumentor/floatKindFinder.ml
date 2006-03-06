@@ -31,8 +31,7 @@ class visitor (classifier : classifier) (tuples : Counters.manager) func =
 	    let lval = var formal in
 	    let (classification, classify) = classifier (Lval lval) location in
 	    let siteInfo = new FloatKindSiteInfo.c func location (lval, "local", "direct") in
-	    let selector = Index (classification, NoOffset) in
-	    let bump = tuples#addSite siteInfo selector in
+	    let bump = tuples#addSiteExpr siteInfo classification in
 	    classify :: bump :: body
 	  else
 	    body
@@ -52,8 +51,7 @@ class visitor (classifier : classifier) (tuples : Counters.manager) func =
 
 	let (classification, classify) = classifier newLeftVal location in
 	let siteInfo = new FloatKindSiteInfo.c func location (left, host, off) in
-	let selector = Index (classification, NoOffset) in
-	let bump = tuples#addSite siteInfo selector in
+	let bump = tuples#addSiteExpr siteInfo classification in
 	
 	Block (mkBlock [first; classify; bump; last])
       in

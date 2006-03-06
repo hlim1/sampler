@@ -47,14 +47,14 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 
 	let selector right =
 	  let compare op = BinOp (op, Lval newLeft, right, intType) in
-	  Index (BinOp (PlusA, compare Gt, compare Ge, intType), NoOffset)
+	  BinOp (PlusA, compare Gt, compare Ge, intType)
 	in
 
 	let compareToVarMaybe right =
 	  if leftTypeSig = typeSig right.vtype then
 	    let selector = selector (Lval (var right)) in
 	    let siteInfo = siteInfo (Variable right) in
-	    let bump = tuples#addSite siteInfo selector in
+	    let bump = tuples#addSiteExpr siteInfo selector in
 	    statements := bump :: !statements
 	in
 
@@ -74,7 +74,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	let compareToConst right =
 	  let selector = selector right in
 	  let siteInfo = siteInfo (Constant right) in
-	  let bump = tuples#addSite siteInfo selector in
+	  let bump = tuples#addSiteExpr siteInfo selector in
 	  statements := bump :: !statements;
 	  incr constantsCount
 	in

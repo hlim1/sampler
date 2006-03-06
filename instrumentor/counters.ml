@@ -14,7 +14,10 @@ class manager name file =
 
     method private bump = Threads.bump file
 
-    method addSite (siteInfo : SiteInfo.c) selector =
+    method addSiteExpr siteInfo selector =
+      self#addSiteOffset siteInfo (Index (selector, NoOffset))
+
+    method addSiteOffset siteInfo selector =
       let site = (Var counters, Index (integer nextId, NoOffset)) in
       let func = siteInfo#fundec in
       let location = siteInfo#inspiration in
@@ -22,7 +25,8 @@ class manager name file =
       let counter = addOffsetLval selector site in
       let bump = self#bump counter location in
       let implementation = siteInfo#implementation in
-      implementation.skind <- IsolateInstructions.isolate (bump :: stamp);
+      let instructions = bump :: stamp in
+      implementation.skind <- IsolateInstructions.isolate instructions;
       Sites.registry#add func (Site.build implementation);
       siteInfos#push siteInfo;
       nextId <- nextId + 1;

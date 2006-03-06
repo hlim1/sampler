@@ -87,9 +87,13 @@ module Transfer =
 	  let filtered = List.fold_left folder uninits outputs in
 	  Done filtered
 
-    let doStmt stmt _ =
+    let doStmt _ _ =
       (* standard traversal of contained instructions, then successors *)
-      Default
+      SDefault
+
+    let doGuard _ _ =
+      (* standard guard predicate treatment *)
+      GDefault
 
     let filterStmt _ =
       (* all statements are worth examining *)

@@ -2,7 +2,7 @@ open Cil
 
 let process filename =
   let file = Frontc.parse filename () in
-  dumpFile defaultCilPrinter stdout file
+  dumpFile defaultCilPrinter stdout "" file
 
 ;;
 

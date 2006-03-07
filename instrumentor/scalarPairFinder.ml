@@ -70,11 +70,14 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	List.iter compareToVarMaybe globals;
 	List.iter compareToVarMaybe formals;
 	List.iter compareToVarMaybe initializedLocals;
-
+  
   let extractInt64 e =
-    match e with
-      | Const (CInt64 (v, _, _)) -> v
-      | _ -> assert false
+    let rec unfoldInt64 e = 
+      match e with
+        | Const (CInt64 (v,_,_)) -> v 
+        | CastE (_,v) -> unfoldInt64 v
+        | _ -> assert false
+    in unfoldInt64 e
   in
 	let constantsCount = ref 0 in
 	let compareToConst right =

@@ -1,4 +1,6 @@
-type rel = | Gt of int | Lt of int | Eq of int 
+type data = {id: int; value: int64}
+
+type rel = | Gt of data | Lt of data | Eq of data 
 
 class type c_type =
   object
@@ -6,29 +8,31 @@ class type c_type =
   end
 
 class c_internal data = 
-  object
+  object (self)
     val impl_pairs = data 
 
+    method private print_rel rel =
+      match rel with 
+        | Gt d -> prerr_string ("Gt "); prerr_string "value: "; prerr_string (Int64.to_string d.value); prerr_string " at site "; prerr_int d.id 
+        | Lt d -> prerr_string ("Lt "); prerr_string "value: "; prerr_string (Int64.to_string d.value); prerr_string " at site "; prerr_int d.id
+        | Eq d -> prerr_string ("Eq "); prerr_string "value: "; prerr_string (Int64.to_string d.value); prerr_string " at site "; prerr_int d.id
+      
     method print = 
-      let print_rel rel =
-        match rel with 
-          | Gt v -> prerr_string ("Gt "); prerr_int v 
-          | Lt v -> prerr_string ("Lt "); prerr_int v
-          | Eq v -> prerr_string ("Eq "); prerr_int v
-      in 
-      List.iter (fun (l, r) -> print_rel l; prerr_string " -> "; print_rel r; prerr_newline () ) impl_pairs  
+      List.iter (fun (l, r) -> self#print_rel l; prerr_string " -> "; self#print_rel r; prerr_newline () ) impl_pairs  
   end
 
 class c_impl d = (c_internal d : c_type)
 
 let deriveImplications (lid, ln) (rid, rn) = 
-  let res = Pervasives.compare ln rn in
+  let res = Int64.compare ln rn in
+  let l = {id = lid; value = ln} in
+  let r = {id = rid; value = rn} in
     if res > 0 then 
-      [(Gt lid, Gt rid); (Lt rid, Lt lid); (Eq lid, Gt rid); (Eq rid, Lt lid)] 
+      [(Gt l, Gt r); (Lt r, Lt l); (Eq l, Gt r); (Eq r, Lt l)] 
     else if res < 0 then 
-      [(Gt rid, Gt lid); (Lt lid, Lt rid); (Eq rid, Gt lid); (Eq lid, Lt rid)] 
+      [(Gt r, Gt l); (Lt l, Lt r); (Eq r, Gt l); (Eq l, Lt r)] 
     else 
-      [ (Gt rid, Gt lid); (Gt lid, Gt rid); (Lt rid, Lt lid); (Lt lid, Lt rid); (Eq rid, Eq lid); (Eq lid, Eq rid)] 
+      [(Gt r, Gt l); (Gt l, Gt r); (Lt r, Lt l); (Lt l, Lt r); (Eq r, Eq l); (Eq l, Eq r)] 
 
 
 let analyze l =
@@ -44,5 +48,9 @@ in
   process l;
   !impl_list
 
+let debug = true
+
 let makeImplications l =
+  if debug then
+      prerr_string "Building implications....\n";
   new c_impl (analyze l) 

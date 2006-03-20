@@ -19,7 +19,7 @@ let isInterestingVar  = isInterestingVar  isDiscreteType
 let isInterestingLval = isInterestingLval isDiscreteType
 
 
-class visitor (constants : Constants.collection) globals (tuples : Counters.manager) func =
+class visitor (constants : Constants.collection) globals (tuples : Counters.manager) (implInfo : Implications.constantComparisonAccumulator) func =
   object (self)
     inherit SiteFinder.visitor
 
@@ -71,13 +71,11 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	List.iter compareToVarMaybe formals;
 	List.iter compareToVarMaybe initializedLocals;
   
-  let extractInt64 e =
-    let rec unfoldInt64 e = 
-      match e with
-        | Const (CInt64 (v,_,_)) -> v 
-        | CastE (_,v) -> unfoldInt64 v
-        | _ -> assert false
-    in unfoldInt64 e
+  let rec extractInt64 e =
+    match e with
+      | Const (CInt64 (v,_,_)) -> v 
+      | CastE (_,v) -> extractInt64 v
+      | _ -> assert false
   in
 	let constantsCount = ref 0 in
 	let compareToConst right =
@@ -118,8 +116,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 		    (List.length initializedLocals)
 		    (List.length locals - List.length initializedLocals));
 
-  let res = Implications.makeImplications (!constantsTable)
-  in res#print ;
+  implInfo#addInspirationInfo (!constantsTable);
 
 	let first = mkStmtOneInstr (first newLeft) in
 	Block (mkBlock (first :: !statements))

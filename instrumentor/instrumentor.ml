@@ -10,9 +10,10 @@ let sample =
     ~ident:"Sample"
     ~default:true
 
+let impls = Implications.getAccumulator
 
 let schemes = [
-  ScalarPairScheme.factory;
+  ScalarPairScheme.factory impls;
   BranchScheme.factory;
   BoundScheme.factory;
   FunctionEntryScheme.factory;
@@ -33,11 +34,14 @@ let phase =
     let schemes = List.map (fun scheme -> scheme file) schemes in
     List.iter (fun scheme -> scheme#findAllSites) schemes;
 
+    let impls = Implications.analyzeAll (impls#getInfos ()) in 
+
     let digest = lazy (Digest.file file.fileName) in
     EmbedSignature.visit file digest;
     EmbedCFG.visit file digest;
     EmbedDataflow.visit file digest;
     EmbedSiteInfo.visit schemes digest;
+    EmbedImplications.visit impls digest;
 
     if !sample then
       begin

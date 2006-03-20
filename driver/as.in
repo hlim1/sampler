@@ -15,6 +15,7 @@ my $outfile;
 my $saved_cfg;
 my $saved_dataflow;
 my $saved_site_info;
+my $saved_implications;
 
 
 my %flag_specs =
@@ -23,6 +24,7 @@ my %flag_specs =
      '-fsave-cfg' => sub { $saved_cfg = shift @ARGV },
      '-fsave-dataflow' => sub { $saved_dataflow = shift @ARGV },
      '-fsave-site-info' => sub { $saved_site_info = shift @ARGV },
+     '-fsave-implications' => sub { $saved_implications = shift @ARGV },
 
      # Overall Options
      '-o' => sub { $outfile = shift @ARGV; push @as, $_, $outfile },
@@ -58,6 +60,7 @@ my @objcopy;
 push @objcopy, '--add-section', ".debug_sampler_cfg=$saved_cfg" unless -z $saved_cfg;
 push @objcopy, '--add-section', ".debug_site_info=$saved_site_info" unless -z $saved_site_info;
 push @objcopy, '--add-section', ".debug_sampler_dataflow=$saved_dataflow" if $saved_dataflow && -s $saved_dataflow;
+push @objcopy, '--add-section', ".debug_sampler_implications=$saved_implications" if $saved_implications && -s $saved_implications;
 run_stage $objcopy, @objcopy, $outfile if @objcopy && defined $outfile;
 
 

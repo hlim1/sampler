@@ -1,6 +1,7 @@
 *embedding:
 -fsave-cfg %g.cfg \
 -fsave-site-info %g.sites \
+-fsave-implications %g.impls \
 %{fsampler-dataflow:-fsave-dataflow %g.dataflow}
 
 *cpp_threads_yes:

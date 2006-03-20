@@ -117,6 +117,7 @@ my %flag_specs =
      '-fsave-dataflow-fields' => \&inst_toggle,
      '-fno-save-dataflow-fields' => \&inst_toggle,
      '-fsave-site-info' => \&inst_embed,
+     '-fsave-implications' => \&inst_embed,
      '-fsampler-dataflow' => sub { },
      '-finstrumentor-input' => sub { $instrumentor_input = shift @ARGV },
      '-finstrumentor-output' => sub { $instrumentor_output = shift @ARGV },

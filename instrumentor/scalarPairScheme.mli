@@ -1,1 +1,1 @@
-val factory : SchemeFactory.t
+val factory : Implications.constantComparisonAccumulator -> SchemeFactory.t

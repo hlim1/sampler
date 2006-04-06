@@ -34,14 +34,12 @@ let phase =
     let schemes = List.map (fun scheme -> scheme file) schemes in
     List.iter (fun scheme -> scheme#findAllSites) schemes;
 
-    let impls = Implications.analyzeAll (impls#getInfos ()) in 
-
     let digest = lazy (Digest.file file.fileName) in
     EmbedSignature.visit file digest;
     EmbedCFG.visit file digest;
     EmbedDataflow.visit file digest;
     EmbedSiteInfo.visit schemes digest;
-    EmbedImplications.visit impls digest;
+    EmbedImplications.visit (impls#getInfos ()) digest;
 
     if !sample then
       begin

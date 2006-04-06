@@ -4,8 +4,6 @@ type data = {id: int; value: int64}
 
 type rel = | Gt of data | Lt of data | Eq of data 
 
-type t = (rel * rel) list list 
-
 let deriveImplications (lid, ln) (rid, rn) = 
   let res = Int64.compare ln rn in
   let l = {id = lid; value = ln} in
@@ -54,7 +52,7 @@ let printAll digest channel l =
   let printPair l r =
     Pretty.fprint channel max_int ((docImpl l r)++line)
 
-  in List.iter (fun x -> List.iter (fun (l,r) -> printPair l r) x) l
+  in List.iter (fun x -> List.iter (fun (l,r) -> printPair l r) (analyze x)) l
 
 class type constantComparisonAccumulator = 
   object 

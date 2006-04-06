@@ -1,1 +1,1 @@
-val visit : Implications.t -> Digest.t Lazy.t -> unit
+val visit : (int * int64) list list -> Digest.t Lazy.t -> unit

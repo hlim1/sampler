@@ -1,5 +1,3 @@
-type t
-
 class type constantComparisonAccumulator =
  object
    method addInspirationInfo : (int * int64) list -> unit 
@@ -8,6 +6,4 @@ class type constantComparisonAccumulator =
 
 val getAccumulator : constantComparisonAccumulator 
 
-val analyzeAll : (int * int64) list list -> t 
-
-val printAll : Digest.t Lazy.t -> out_channel -> t -> unit
+val printAll : Digest.t Lazy.t -> out_channel -> (int * int64) list list -> unit

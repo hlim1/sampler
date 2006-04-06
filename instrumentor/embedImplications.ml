@@ -11,5 +11,5 @@ let visit impls digest =
         let channel = open_out !saveImplications in
         output_string channel "<implications>\n";
         Implications.printAll digest channel impls;
-        output_string channel "\n</implications>\n";
+        output_string channel "</implications>\n";
         close_out channel) 

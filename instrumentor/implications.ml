@@ -4,7 +4,7 @@ type data = {id: int; value: int64}
 
 type rel = | Gt of data | Lt of data | Eq of data 
 
-type t = (rel * rel) list 
+type t = (rel * rel) list list 
 
 let deriveImplications (lid, ln) (rid, rn) = 
   let res = Int64.compare ln rn in
@@ -31,12 +31,12 @@ in
   !impl_list
 
 let analyzeAll l =
-  let result = List.fold_left (fun l x -> analyze x::l) [] l in
-  List.flatten result
+  List.fold_left (fun l x -> analyze x::l) [] l 
 
 let printAll digest channel l =   
   let compilationUnit = Digest.to_hex (Lazy.force digest) in
   let scheme = "scalar-pairs" in
+
   let docImpl r1 r2 =
     let docRel r =
       (text compilationUnit)++
@@ -49,7 +49,12 @@ let printAll digest channel l =
         | Gt d -> (num d.id)++(chr '\t')++(num 2)
       )
     in (docRel r1)++(chr '\t')++(docRel r2) 
-  in Pretty.fprint channel max_int (seq line (fun (l,r) -> docImpl l r) l)
+  in
+
+  let printPair l r =
+    Pretty.fprint channel max_int ((docImpl l r)++line)
+
+  in List.iter (fun x -> List.iter (fun (l,r) -> printPair l r) x) l
 
 class type constantComparisonAccumulator = 
   object 

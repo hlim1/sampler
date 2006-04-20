@@ -1,11 +1,33 @@
 open Pretty
+open Cil
 
-type data = {id: int; value: int64}
+type data = {id: int; value: exp}
 
 type rel = | Gt of data | Lt of data | Eq of data 
 
+let compare x y =
+  match x,y with
+    | Const(CInt64(ix, kx, _)), Const(CInt64(iy, ky, _)) ->
+        (match kx, ky with 
+          | ILongLong, ILongLong ->
+              Int64.compare ix iy
+          | IULongLong, IULongLong ->
+              if (Int64.compare ix Int64.zero >= 0 & 
+                  Int64.compare iy Int64.zero >= 0) or
+                 (Int64.compare ix Int64.zero < 0 & 
+                  Int64.compare iy Int64.zero < 0)
+                then Int64.compare ix iy
+                else 
+                  if (Int64.compare ix Int64.zero >= 0 & 
+                      Int64.compare iy Int64.zero < 0)
+                    then -1
+                    else 1
+          | _, _ -> assert (false)
+        ) 
+    | _, _ -> assert (false)
+
 let deriveImplications (lid, ln) (rid, rn) = 
-  let res = Int64.compare ln rn in
+  let res = compare ln rn in 
   let l = {id = lid; value = ln} in
   let r = {id = rid; value = rn} in
     if res > 0 then 
@@ -56,15 +78,15 @@ let printAll digest channel l =
 
 class type constantComparisonAccumulator = 
   object 
-    method addInspirationInfo : (int * int64) list -> unit
-    method getInfos : unit -> (int * int64) list list
+    method addInspirationInfo : (int * exp) list -> unit
+    method getInfos : unit -> (int * exp) list list
   end
 
 class c_impl : constantComparisonAccumulator =
   object (self)
     val inspirationInfos = ref [] 
 
-    method addInspirationInfo (info : (int * int64) list) =  
+    method addInspirationInfo (info : (int * exp) list) =  
       inspirationInfos := info :: !inspirationInfos
 
     method getInfos () = !inspirationInfos

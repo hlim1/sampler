@@ -71,18 +71,12 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	List.iter compareToVarMaybe formals;
 	List.iter compareToVarMaybe initializedLocals;
   
-  let rec extractInt64 e =
-    match e with
-      | Const (CInt64 (v,_,_)) -> v 
-      | CastE (_,v) -> extractInt64 v
-      | _ -> assert false
-  in
 	let constantsCount = ref 0 in
 	let compareToConst right =
 	  let selector = selector right in
 	  let siteInfo = siteInfo (Constant right) in
 	  let bump,id = tuples#addSite siteInfo selector in
-    constantsTable := (id, (extractInt64 right)) :: !constantsTable;
+    constantsTable := (id, (stripCasts right)) :: !constantsTable;
 	  statements := bump :: !statements;
 	  incr constantsCount
 	in

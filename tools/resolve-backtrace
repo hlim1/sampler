@@ -14,11 +14,11 @@ use IPC::Open2;
 
 unless (@ARGV == 1) {
     die <<EOT;
-Usage: $0 executable <reports
+Usage: $0 <executable>
 
-Reads a raw CBI feedback reports file containing a "main-backtrace"
-report.  For each frame of the stack, prints one line with the following
-columns of tab-delimited information:
+Reads a raw CBI "main-backtrace" report on standard input.  For each
+frame of the stack, prints one line with the following columns of
+tab-delimited information:
 
     1. hexadecimal PC address
     2. function name
@@ -27,17 +27,19 @@ columns of tab-delimited information:
 
 The hexadecimal PC address is always present.  Each of the columns may
 be empty if the corresponding information is unavailable.
+
+Typically this script will be placed in a pipeline with "extract-report"
+extracting the report and "resolve-backtrace" resolving it, as in:
+
+    % extract-report main-backtrace | resolve-backtrace <executable>
 EOT
 }
 
 
-my $raw = new FileHandle;
-open $raw, '-|', "$FindBin::Bin/extract-report", 'main-backtrace';
-
 my %resolver;
 open2 $resolver{read}, $resolver{write}, 'addr2line', '-f', '-e', $ARGV[0];
 
-while (<$raw>) {
+while (<STDIN>) {
     # grab next PC and send it to resolver
     /^.*\[(0x[0-9a-f]+)\]$/
 	or die 'malformed backtrace';

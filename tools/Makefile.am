@@ -35,6 +35,7 @@ tools_SCRIPTS =					\
 	find-sampler-info			\
 	install-gconf				\
 	install-wrappers			\
+	resolve-backtrace			\
 	resolve-cfg				\
 	resolve-samples				\
 	resolve-timestamps

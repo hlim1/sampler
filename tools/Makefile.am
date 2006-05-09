@@ -46,6 +46,7 @@ EXTRA_DIST =					\
 	extract-report				\
 	extract-section				\
 	find-sampler-info			\
+	resolve-backtrace			\
 	resolve-cfg				\
 	sampler.mk.in				\
 	skip-test				\

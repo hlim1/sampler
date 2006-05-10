@@ -6,5 +6,4 @@ Icon=sampler
 Exec=sampler-preferences
 Terminal=false
 Type=Application
-StartupNotify=true
-Categories=Application;Settings;AdvancedSettings;X-Ximian-Settings;
+Categories=GTK;Gnome;Settings;

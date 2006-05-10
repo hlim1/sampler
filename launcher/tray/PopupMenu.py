@@ -14,7 +14,7 @@ class PopupMenu(LazyWidget):
         self.__about = AboutDialog(client)
         self.__client = client
 
-    def __populate(self, xml, widget):
+    def populate(self, xml, widget):
         from MasterNotifier import MasterNotifier
         self.__master = xml.get_widget('menu-master')
         self.__notifier = MasterNotifier(self.__client, self.__master.set_active)
@@ -30,9 +30,8 @@ class PopupMenu(LazyWidget):
         self.__client.set_bool(Keys.master, active)
 
     def on_preferences_activate(self, item):
-        from subprocess import Popen
-        import Paths
-        Popen([Paths.bin + '/sampler-preferences'])
+        import PreferencesDialog
+        PreferencesDialog.present()
 
     def on_about_activate(self, item):
         self.__about.present()

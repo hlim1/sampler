@@ -9,7 +9,7 @@ class LazyDialog(LazyWidget):
         LazyWidget.__init__(self, root)
         self.__client = client
 
-    def __populate(self, xml, widget):
+    def populate(self, xml, widget):
         from WindowIcon import WindowIcon
         self.__icon_updater = WindowIcon(self.__client, widget)
 

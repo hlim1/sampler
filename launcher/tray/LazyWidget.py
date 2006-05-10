@@ -6,7 +6,7 @@ class LazyWidget(object):
         self.__root = root
         self.__widget = None
 
-    def __populate(self, xml, widget):
+    def populate(self, xml, widget):
         raise NotImplementedError
 
     def widget(self):
@@ -20,7 +20,7 @@ class LazyWidget(object):
             xml = gtk.glade.XML(Paths.glade, self.__root)
             self.__widget = xml.get_widget(self.__root)
             Signals.autoconnect(self, xml)
-            self.__populate(xml, self.__widget)
+            self.populate(xml, self.__widget)
             del busy
 
         return self.__widget

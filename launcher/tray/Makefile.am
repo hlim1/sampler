@@ -11,6 +11,7 @@ tray_PYTHON =					\
 	LazyWidget.py				\
 	Main.py					\
 	PopupMenu.py				\
+	PreferencesDialog.py			\
 	UploaderTrayIcon.py
 
 all_python = $(nodist_tray_PYTHON) $(tray_PYTHON)
@@ -50,6 +51,7 @@ $(BUILT_SOURCES): %: %.in Makefile
 		-e 's!@''traydir@!$(traydir)!'			\
 		-e 's!@''traylibdir@!$(traylibdir)!'		\
 		<$< >$@
+	if [ -x $< ]; then chmod +x $@; fi
 
 
 check-am: oaf.dtd $(link_python)

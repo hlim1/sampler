@@ -10,9 +10,9 @@ class AboutDialog(LazyDialog):
         LazyDialog.__init__(self, client, 'about')
         self.__notifier = MasterNotifier(client, self.__enabled_refresh)
 
-    def __populate(self, xml, widget):
+    def populate(self, xml, widget):
         import SamplerConfig
-        LazyDialog.__populate(self, xml, widget)
+        LazyDialog.populate(self, xml, widget)
         widget.set_property('name', 'Bug Isolation Monitor')
         widget.set_property('version', SamplerConfig.version)
 

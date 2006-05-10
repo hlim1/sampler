@@ -24,6 +24,7 @@ EXTRA_DIST =					\
 	$(tray_DATA)				\
 	$(tray_PYTHON)				\
 	Paths.py.in				\
+	activate				\
 	tray.gladep				\
 	tray.in
 

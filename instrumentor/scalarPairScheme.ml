@@ -17,8 +17,6 @@ class c impls file : Scheme.c =
     val constants = Constants.collect file
     val mutable globals = []
 
-    val implicationsInfo = impls
-
     method findAllSites =
       TestHarness.time ("finding " ^ name.flag ^ " sites")
 	(fun () ->
@@ -28,7 +26,7 @@ class c impls file : Scheme.c =
 	      when isInterestingVar isDiscreteType varinfo ->
 		globals <- varinfo :: globals
 	    | GFun (func, _) ->
-		let finder = new ScalarPairFinder.visitor constants globals tuples implicationsInfo func in
+		let finder = new ScalarPairFinder.visitor constants globals tuples impls func in
 		ignore (Cil.visitCilFunction finder func)
 	    | _ ->
 		()

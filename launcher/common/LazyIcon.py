@@ -1,4 +1,7 @@
-class LazyIcon:
+class LazyIcon(object):
+
+    __slots__ = ['__image']
+
     def __init__(self, filename):
         self.__image = filename
 

@@ -1,8 +1,10 @@
 import Keys
 
 
-class UserConfig:
+class UserConfig(object):
     '''User preferences for an instrumened application.'''
+
+    __slots__ = ['__client', '__namespace']
 
     def __init__(self, name):
         '''Look for preferences under GConf area for the given application.'''

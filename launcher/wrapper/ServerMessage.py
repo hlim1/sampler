@@ -7,7 +7,10 @@ import urlparse
 #
 
 
-class ServerMessage:
+class ServerMessage(object):
+
+    __slots__ = ['__dialog', '__document']
+
     def __init__(self, base, content_type, body):
         import cgi
         import gnome

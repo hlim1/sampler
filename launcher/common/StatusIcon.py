@@ -1,4 +1,6 @@
-class StatusIcon:
+class StatusIcon(object):
+
+    __slots__ = ['__notifier', '__size', '__widget']
 
     def __init__(self, client, widget, size):
         from MasterNotifier import MasterNotifier

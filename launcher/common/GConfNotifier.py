@@ -1,4 +1,7 @@
-class GConfNotifier:
+class GConfNotifier(object):
+
+    __slots__ = ['__client', '__id']
+
     def __init__(self, client, namespace, callback, data = None):
         self.__client = client
         self.__id = client.notify_add(namespace, callback, data)

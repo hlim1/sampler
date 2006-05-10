@@ -4,8 +4,10 @@ import os
 ########################################################################
 
 
-class Launcher:
+class Launcher(object):
     '''Manage launching and waiting for an application.'''
+
+    __slots__ = ['__pid', 'app']
 
     def __init__(self, app):
         self.app = app

@@ -1,6 +1,7 @@
 # -*- python -*-
 
 suppressions = {
+    'BusyCursor.BusyCursor': 'no-emptyslots',
     'Factory.Factory.__builder': 'no-argsused',
     'LazyDialog.LazyDialog.populate': 'no-argsused',
     'PopupMenu.PopupMenu.on_about_activate': 'no-argsused',

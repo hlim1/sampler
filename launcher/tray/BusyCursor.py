@@ -1,4 +1,7 @@
-class BusyCursor:
+class BusyCursor(object):
+
+    __slots__ = []
+
     top = None
     __cursor = None
 

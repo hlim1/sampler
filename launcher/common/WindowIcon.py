@@ -1,4 +1,7 @@
-class WindowIcon:
+class WindowIcon(object):
+
+    __slots__ = ['__notify', '__widget']
+
     def __init__(self, client, widget):
         from MasterNotifier import MasterNotifier
         self.__widget = widget

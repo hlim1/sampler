@@ -1,4 +1,7 @@
-class GConfDir:
+class GConfDir(object):
+
+    __slots__ = ['__client', '__id']
+
     def __init__(self, client, namespace, preload):
         self.__client = client
         self.__id = client.add_dir(namespace, preload)

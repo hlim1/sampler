@@ -1,7 +1,7 @@
-import egg.trayicon
+from egg.trayicon import TrayIcon
 
 
-class UploaderTrayIcon(egg.trayicon.TrayIcon):
+class UploaderTrayIcon(TrayIcon):
 
     def on_button_press(self, widget, event):
         import gtk.gdk
@@ -21,7 +21,7 @@ class UploaderTrayIcon(egg.trayicon.TrayIcon):
         import Signals
         from StatusIcon import StatusIcon 
 
-        egg.trayicon.TrayIcon.__init__(self, 'sampler')
+        TrayIcon.__init__(self, 'sampler')
         BusyCursor.top = self
 
         self.__busy = None

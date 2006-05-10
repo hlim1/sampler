@@ -19,6 +19,11 @@ def main():
     gnome.program_init('first-time', SamplerConfig.version)
 
     client = gconf.client_get_default()
+    gconf_dir = GConfDir(client, Keys.root, gconf.CLIENT_PRELOAD_NONE)
+
     dialog = FirstTime(client)
-    Factory(dialog)
+    factory = Factory(dialog)
     dialog.run()
+
+    del factory
+    del gconf_dir

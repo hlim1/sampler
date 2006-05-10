@@ -44,7 +44,7 @@ Paths.py: %: %.in Makefile
 
 
 check-local: $(all_python) $(link_python)
-	pychecker $(all_python)
+	pychecker --quiet $(all_python)
 
 $(link_python): %: ../common/%
 	$(LN_S) $< $@

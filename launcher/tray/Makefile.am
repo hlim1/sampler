@@ -11,7 +11,6 @@ tray_PYTHON =					\
 	LazyWidget.py				\
 	Main.py					\
 	PopupMenu.py				\
-	PreferencesDialog.py			\
 	UploaderTrayIcon.py
 
 all_python = $(nodist_tray_PYTHON) $(tray_PYTHON)
@@ -59,7 +58,7 @@ oaf.dtd: %: ../%
 	$(LN_S) $< $@
 
 check-local: $(all_python) $(link_python)
-	pychecker $(all_python)
+	pychecker --quiet $(all_python)
 
 $(link_python): %: ../common/%
 	$(LN_S) $< $@

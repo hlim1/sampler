@@ -19,7 +19,7 @@ BUILT_SOURCES = SamplerConfig.py
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
 check-local: $(all_python)
-	pychecker $(all_python)
+	pychecker --quiet $(all_python)
 
 install-data-hook:
 	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.py)

@@ -4,3 +4,4 @@ def present():
 
     busy = BusyCursor()
     activate("iid == 'OAFIID:SamplerPreferences:0.1'")
+    del busy

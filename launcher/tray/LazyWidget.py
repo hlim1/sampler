@@ -4,7 +4,7 @@ class LazyWidget:
         self.__widget = None
 
     def populate(self, xml, widget):
-        return
+        raise NotImplementedError
 
     def widget(self):
         if not self.__widget:
@@ -18,5 +18,6 @@ class LazyWidget:
             self.__widget = xml.get_widget(self.__root)
             Signals.autoconnect(self, xml)
             self.populate(xml, self.__widget)
+            del busy
 
         return self.__widget

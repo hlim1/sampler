@@ -8,10 +8,10 @@ class AboutDialog(LazyDialog):
         self.__notifier = MasterNotifier(client, self.__enabled_refresh)
 
     def populate(self, xml, widget):
-        import Config
+        import SamplerConfig
         LazyDialog.populate(self, xml, widget)
         widget.set_property('name', 'Bug Isolation Monitor')
-        widget.set_property('version', Config.version)
+        widget.set_property('version', SamplerConfig.version)
 
     def __enabled_refresh(self, enabled):
         import BlipIcons

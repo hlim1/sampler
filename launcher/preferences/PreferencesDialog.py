@@ -17,7 +17,7 @@ class PreferencesDialog:
         finder = AppFinder(client)
         model = AppModel()
         for path in finder:
-            app = Application(client, model, path)
+            Application(client, model, path)
 
         from MasterNotifier import MasterNotifier
         from WindowIcon import WindowIcon
@@ -68,8 +68,8 @@ class PreferencesDialog:
 
     def on_application_toggled(self, renderer, path, model):
         path = int(path)
-        iter = model.get_iter(path)
-        app = model.get_value(iter, model.COLUMN_ENABLED)
+        iterator = model.get_iter(path)
+        app = model.get_value(iterator, model.COLUMN_ENABLED)
         app.set_enabled(not app.get_enabled())
 
     def on_dialog_delete(self, dialog, event):

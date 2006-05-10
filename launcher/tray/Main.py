@@ -11,18 +11,17 @@ from Factory import Factory
 from GConfDir import GConfDir
 from UploaderTrayIcon import UploaderTrayIcon
 
-import Config
-import Keys
+import SamplerConfig
 
 
 ########################################################################
 
 
-gnome.program_init('tray', Config.version)
-client = gconf.client_get_default()
-dir = GConfDir(client, Keys.root, gconf.CLIENT_PRELOAD_ONELEVEL)
+def main():
+    gnome.program_init('tray', SamplerConfig.version)
+    client = gconf.client_get_default()
 
-factory = Factory()
-tray = UploaderTrayIcon(client)
-tray.show_all()
-bonobo.main()
+    Factory()
+    tray = UploaderTrayIcon(client)
+    tray.show_all()
+    bonobo.main()

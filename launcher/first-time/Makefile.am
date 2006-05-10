@@ -9,6 +9,7 @@ first_time_PYTHON =				\
 	Main.py
 
 all_python = $(nodist_first_time_PYTHON) $(first_time_PYTHON)
+link_python = GConfDir.py Keys.py SamplerConfig.py
 
 first_time_SCRIPTS = first-time
 
@@ -25,7 +26,7 @@ BUILT_SOURCES =					\
 	Sampler_FirstTime.server		\
 	first-time
 
-MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(link_python) $(BUILT_SOURCES)
 
 TESTS = $(servers_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
@@ -48,5 +49,13 @@ check-am: oaf.dtd
 
 oaf.dtd: %: ../%
 	$(LN_S) $< $@
+
+check-local: $(all_python) $(link_python)
+	pychecker $(all_python)
+
+$(link_python): %: ../common/%
+	$(LN_S) $< $@
+
+
 
 .DELETE_ON_ERROR:

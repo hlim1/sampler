@@ -1,6 +1,11 @@
 class Outcome:
     '''Outcome of one run of a sampled application.'''
 
+    def __init__(self):
+        self.signal = None
+        self.status = None
+        self.sparsity = None
+
     def exit(self):
         '''Propagate exit status out to whoever ran this wrapper script.'''
         import sys

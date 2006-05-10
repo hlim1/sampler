@@ -4,7 +4,8 @@ top_srcdir='@top_srcdir@'
 XMLLINT="@XMLLINT@"
 
 case $1 in
-    (*.server)  exec $XMLLINT --valid --noout $1 ;;
-    (*.desktop) exec desktop-file-validate $1 ;;
-    (*) false ;;
+  (*.desktop) exec desktop-file-validate $1 ;;
+  (*.py) exec pychecker -q $1 ;;
+  (*.server)  exec $XMLLINT --valid --noout $1 ;;
+  (*) false ;;
 esac

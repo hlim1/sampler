@@ -18,6 +18,7 @@ wrapper_PYTHON =				\
 	UserConfig.py
 
 all_python = $(nodist_wrapper_PYTHON) $(wrapper_PYTHON)
+link_python = Keys.py
 
 EXTRA_DIST =					\
 	$(wrapper_DATA)				\
@@ -27,7 +28,7 @@ EXTRA_DIST =					\
 
 BUILT_SOURCES = Paths.py
 
-MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo $(link_python) $(BUILT_SOURCES)
 
 
 install-data-hook:
@@ -39,5 +40,14 @@ Paths.py: %: %.in Makefile
 		-e 's!@''wrapperdir@!$(wrapperdir)!'	\
 		-e 's!@''commondir@!$(commondir)!'	\
 		<$< >$@
+
+
+check-local: $(all_python) $(link_python)
+	pychecker $(all_python)
+
+$(link_python): %: ../common/%
+	$(LN_S) $< $@
+
+
 
 .DELETE_ON_ERROR:

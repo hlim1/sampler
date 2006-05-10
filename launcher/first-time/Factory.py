@@ -3,6 +3,8 @@ import bonobo
 
 class Factory(bonobo.GenericFactory):
     def __builder(self, factory, product):
+        import pygtk
+        pygtk.require('2.0')
         import gtk
         gtk.idle_add(self.__dialog.present)
 

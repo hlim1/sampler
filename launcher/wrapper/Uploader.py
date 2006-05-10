@@ -20,8 +20,8 @@ def upload(app, user, outcome, accept):
         upload = Upload.Upload(outcome.reports)
 
         # collect headers from various contributors
-        import Config
-        upload.headers['sampler-version'] = Config.version
+        import SamplerConfig
+        upload.headers['sampler-version'] = SamplerConfig.version
         upload.headers['accept'] = accept
         __add_headers(upload, app)
         __add_headers(upload, outcome)

@@ -13,6 +13,8 @@ endif !HAVE_PYTHON_TRAYICON
 
 schema_DATA = sampler.schemas
 
+noinst_SCRIPTS = test-by-extension
+
 EXTRA_DIST =					\
 	$(pkgdata_DATA)				\
 	$(pkgdata_SCRIPTS)			\

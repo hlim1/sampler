@@ -12,6 +12,7 @@ preferences_PYTHON =				\
 	PreferencesDialog.py
 
 all_python = $(nodist_preferences_PYTHON) $(preferences_PYTHON)
+link_python = Keys.py
 
 
 preferences_SCRIPTS = preferences
@@ -37,9 +38,9 @@ BUILT_SOURCES =					\
 	preferences				\
 	sampler-preferences
 
-MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(link_python) $(BUILT_SOURCES)
 
-TESTS = $(capplet_DATA) $(servers_DATA)
+TESTS = $(applications_DATA) $(servers_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
 
 
@@ -70,5 +71,12 @@ check-am: oaf.dtd
 
 oaf.dtd: %: ../%
 	$(LN_S) $< $@
+
+check-local: $(all_python) $(link_python)
+	pychecker $(all_python)
+
+$(link_python): %: ../common/%
+	$(LN_S) $< $@
+
 
 .DELETE_ON_ERROR:

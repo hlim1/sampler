@@ -15,13 +15,13 @@ class ServerMessage:
         import gtkhtml2
         import sys
         import BlipIcons
-        import Config
+        import SamplerConfig
         import Paths
         import Signals
 
         argv = sys.argv
         sys.argv = [sys.argv[0]]
-        gnome.program_init('wrapper', Config.version)
+        gnome.program_init('wrapper', SamplerConfig.version)
         sys.argv = argv
 
         xml = gtk.glade.XML(Paths.glade)
@@ -39,8 +39,8 @@ class ServerMessage:
         document.dialog = self.__dialog
         document.base = ''
         self.on_set_base(document, base)
-        [type, options] = cgi.parse_header(content_type)
-        document.open_stream(type)
+        [mime_type, options] = cgi.parse_header(content_type)
+        document.open_stream(mime_type)
         document.write_stream(body)
         document.close_stream()
         self.__document = document
@@ -69,8 +69,8 @@ class ServerMessage:
         document.base = urlparse.urljoin(document.base, base)
 
     def on_link_clicked(self, document, link):
+        import gnome
         full = urlparse.urljoin(document.base, link)
-	print 'Showing clicked URL:', full
         gnome.url_show(full)
 
     def on_title_changed(self, document, title):

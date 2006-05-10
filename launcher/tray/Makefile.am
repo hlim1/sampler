@@ -15,6 +15,7 @@ tray_PYTHON =					\
 	UploaderTrayIcon.py
 
 all_python = $(nodist_tray_PYTHON) $(tray_PYTHON)
+link_python = BlipIcons.py GConfDir.py GConfNotifier.py Keys.py MasterNotifier.py SamplerConfig.py Signals.py StatusIcon.py
 
 tray_SCRIPTS = tray
 
@@ -31,7 +32,7 @@ BUILT_SOURCES =					\
 	Sampler_Monitor.server			\
 	tray
 
-MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(link_python) $(BUILT_SOURCES)
 
 TESTS = $(servers_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
@@ -56,5 +57,12 @@ check-am: oaf.dtd
 
 oaf.dtd: %: ../%
 	$(LN_S) $< $@
+
+check-local: $(all_python) $(link_python)
+	pychecker $(all_python)
+
+$(link_python): %: ../common/%
+	$(LN_S) $< $@
+
 
 .DELETE_ON_ERROR:

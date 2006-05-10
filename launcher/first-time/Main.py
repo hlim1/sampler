@@ -8,18 +8,17 @@ from Factory import Factory
 from FirstTime import FirstTime
 from GConfDir import GConfDir
 
-import Config
 import Keys
+import SamplerConfig
 
 
 ########################################################################
 
 
-gnome.program_init('first-time', Config.version)
+def main():
+    gnome.program_init('first-time', SamplerConfig.version)
 
-client = gconf.client_get_default()
-dir = GConfDir(client, Keys.root, gconf.CLIENT_PRELOAD_NONE)
-
-dialog = FirstTime(client)
-factory = Factory(dialog)
-dialog.run()
+    client = gconf.client_get_default()
+    dialog = FirstTime(client)
+    Factory(dialog)
+    dialog.run()

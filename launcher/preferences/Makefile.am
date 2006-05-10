@@ -22,10 +22,10 @@ applicationsdir = ${datadir}/applications
 applications_DATA = sampler-preferences.desktop
 
 EXTRA_DIST =					\
-	$(capplet_DATA)				\
+	$(applications_DATA)			\
 	$(preferences_DATA)			\
-	$(servers_DATA:=.in)			\
 	$(preferences_PYTHON)			\
+	$(servers_DATA:=.in)			\
 	Paths.py.in				\
 	preferences.gladep			\
 	preferences.in				\

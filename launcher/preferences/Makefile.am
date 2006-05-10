@@ -23,7 +23,6 @@ EXTRA_DIST =					\
 	$(preferences_PYTHON)			\
 	Paths.py.in				\
 	preferences.gladep			\
-	preferences.in				\
 	sampler-preferences.in
 
 BUILT_SOURCES =					\

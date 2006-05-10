@@ -32,7 +32,7 @@ BUILT_SOURCES =					\
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(link_python) $(BUILT_SOURCES)
 
-TESTS = $(applications_DATA)
+TESTS = $(all_python) $(applications_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
 
 
@@ -57,8 +57,7 @@ sampler-preferences: %: %.in Makefile
 	chmod a+x $@
 
 
-check-local: $(all_python) $(link_python)
-	pychecker --quiet $(all_python)
+check-am: $(link_python)
 
 $(link_python): %: ../common/%
 	$(LN_S) $< $@

@@ -18,8 +18,8 @@ BUILT_SOURCES = SamplerConfig.py
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
-check-local: $(all_python)
-	pychecker --quiet $(all_python)
+TESTS = $(all_python)
+TESTS_ENVIRONMENT = ../test-by-extension
 
 install-data-hook:
 	rm -f $(all_python:%.py=$(DESTDIR)$(commondir)/%.py)
@@ -31,5 +31,6 @@ SamplerConfig.py: %: %.in Makefile
 		-e 's!@''VERSION@!$(VERSION)!'			\
 		-e 's!@''pixmapsdir@!$(pixmapsdir)!'		\
 		<$< >$@
+
 
 .DELETE_ON_ERROR:

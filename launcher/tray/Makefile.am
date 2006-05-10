@@ -33,7 +33,7 @@ BUILT_SOURCES =					\
 
 MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(link_python) $(BUILT_SOURCES)
 
-TESTS = $(servers_DATA)
+TESTS = $(all_python) $(servers_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
 
 
@@ -52,13 +52,10 @@ $(BUILT_SOURCES): %: %.in Makefile
 		<$< >$@
 
 
-check-am: oaf.dtd
+check-am: oaf.dtd $(link_python)
 
 oaf.dtd: %: ../%
 	$(LN_S) $< $@
-
-check-local: $(all_python) $(link_python)
-	pychecker --quiet $(all_python)
 
 $(link_python): %: ../common/%
 	$(LN_S) $< $@

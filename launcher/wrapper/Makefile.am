@@ -30,6 +30,9 @@ BUILT_SOURCES = Paths.py
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(link_python) $(BUILT_SOURCES)
 
+TESTS = $(all_python)
+TESTS_ENVIRONMENT = ../test-by-extension
+
 
 install-data-hook:
 	rm -f $(all_python:%.py=$(DESTDIR)$(wrapperdir)/%.py)
@@ -43,12 +46,10 @@ Paths.py: %: %.in Makefile
 		<$< >$@
 
 
-check-local: $(all_python) $(link_python)
-	pychecker --quiet $(all_python)
+check-am: $(link_python)
 
 $(link_python): %: ../common/%
 	$(LN_S) $< $@
-
 
 
 .DELETE_ON_ERROR:

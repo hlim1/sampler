@@ -1,10 +1,7 @@
-servers_DATA = Sampler_FirstTime.server
-
 first_time_DATA = first-time.glade
 
 nodist_first_time_PYTHON = Paths.py
 first_time_PYTHON =				\
-	Factory.py				\
 	FirstTime.py				\
 	Main.py
 
@@ -14,7 +11,6 @@ link_python = GConfDir.py Keys.py SamplerConfig.py
 first_time_SCRIPTS = first-time
 
 EXTRA_DIST =					\
-	$(servers_DATA:=.in)			\
 	$(first_time_DATA)			\
 	$(first_time_PYTHON)			\
 	Paths.py.in				\
@@ -23,13 +19,9 @@ EXTRA_DIST =					\
 
 BUILT_SOURCES =					\
 	Paths.py				\
-	Sampler_FirstTime.server		\
 	first-time
 
-MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(link_python) $(BUILT_SOURCES)
-
-TESTS = $(servers_DATA)
-TESTS_ENVIRONMENT = ../test-by-extension
+MOSTLYCLEANFILES = *.pyc *.pyo $(link_python) $(BUILT_SOURCES)
 
 
 install-data-hook:
@@ -44,11 +36,6 @@ $(BUILT_SOURCES): %: %.in Makefile
 		<$< >$@
 	chmod a+x $@
 
-
-check-am: oaf.dtd
-
-oaf.dtd: %: ../%
-	$(LN_S) $< $@
 
 check-local: $(all_python) $(link_python)
 	pychecker $(all_python)

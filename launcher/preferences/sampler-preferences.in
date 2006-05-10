@@ -4,4 +4,4 @@ import sys
 sys.path.extend(['@preferencesdir@', '@commondir@'])
 
 import Main
-Main.main(0)
+Main.main()

@@ -37,8 +37,9 @@ install-data-hook:
 
 Paths.py: %: %.in Makefile
 	sed						\
-		-e 's!@''wrapperdir@!$(wrapperdir)!'	\
 		-e 's!@''commondir@!$(commondir)!'	\
+		-e 's!@''first_time@!$(first_timedir)!'	\
+		-e 's!@''wrapperdir@!$(wrapperdir)!'	\
 		<$< >$@
 
 

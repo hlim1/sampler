@@ -1,4 +1,7 @@
-class Application:
+class Application(object):
+
+    __slots__ = ['__client', '__iter', '__notify', '__root', 'name']
+
     def __init__(self, client, model, path):
         self.__root = path
         self.name = path.split('/')[-1]

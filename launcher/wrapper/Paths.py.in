@@ -1,5 +1,6 @@
 import os.path
 
 common = '@commondir@'
+first_time = '@first_timedir@'
 home = '@wrapperdir@'
 glade = os.path.join(home, 'wrapper.glade')

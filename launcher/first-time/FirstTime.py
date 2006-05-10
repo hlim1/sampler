@@ -16,11 +16,14 @@ import Keys
 #
 
 
-class FirstTime:
+class FirstTime(object):
+
+    __slots__ = ['__client', '__dialog', '__dir', '__icon_updater', '__image_updater', '__notifier', '__xml']
+
     def __get_widget(self, name):
         return self.__xml.get_widget(name)
 
-    def __init__(self, client):
+    def __init__(self):
         import gtk.glade
         import Paths
         import Signals
@@ -29,17 +32,22 @@ class FirstTime:
         self.__dialog = self.__get_widget(root)
         Signals.autoconnect(self, self.__xml)
 
+        # hook up GConf configuration monitoring
+        import gconf
+        from GConfDir import GConfDir
+        self.__client = gconf.client_get_default()
+        self.__dir = GConfDir(self.__client, Keys.root, gconf.CLIENT_PRELOAD_NONE)
+
         # hook up state-linked icons
         from StatusIcon import StatusIcon
         from WindowIcon import WindowIcon
         image = self.__get_widget('image')
-        self.__image_updater = StatusIcon(client, image, gtk.ICON_SIZE_DIALOG)
-        self.__icon_updater = WindowIcon(client, self.__dialog)
+        self.__image_updater = StatusIcon(self.__client, image, gtk.ICON_SIZE_DIALOG)
+        self.__icon_updater = WindowIcon(self.__client, self.__dialog)
 
         # hook up state-linked radio buttons
         from MasterNotifier import MasterNotifier
-        self.__client = client
-        self.__notifier = MasterNotifier(client, self.__enabled_refresh)
+        self.__notifier = MasterNotifier(self.__client, self.__enabled_refresh)
 
     def __enabled_refresh(self, enabled):
         self.__radio_refresh('yes', enabled)

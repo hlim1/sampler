@@ -46,11 +46,11 @@ install-data-hook:
 $(BUILT_SOURCES): %: %.in Makefile
 	sed							\
 		-e 's!@''VERSION@!$(VERSION)!'			\
+		-e 's!@''bindir@!$(bindir)!'			\
 		-e 's!@''commondir@!$(commondir)!'		\
 		-e 's!@''traydir@!$(traydir)!'			\
 		-e 's!@''traylibdir@!$(traylibdir)!'		\
 		<$< >$@
-	chmod a+x $@
 
 
 check-am: oaf.dtd

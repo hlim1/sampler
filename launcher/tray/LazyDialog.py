@@ -2,13 +2,15 @@ from LazyWidget import LazyWidget
 
 
 class LazyDialog(LazyWidget):
+
+    __slots__ = ['__client', '__icon_updater']
+
     def __init__(self, client, root):
         LazyWidget.__init__(self, root)
         self.__client = client
 
-    def populate(self, xml, widget):
+    def __populate(self, xml, widget):
         from WindowIcon import WindowIcon
-        LazyWidget.populate(self, xml, widget)
         self.__icon_updater = WindowIcon(self.__client, widget)
 
     def present(self):

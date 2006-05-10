@@ -29,10 +29,11 @@ def main(name, wrapped, upload_headers, **extras):
 
     launcher.spawn()
 
-    import Activation
     if not user.asked():
-        Activation.activate("iid == 'OAFIID:SamplerFirstTime:0.1'")
+        from subprocess import Popen
+        Popen([Paths.first_time + '/first-time'])
 
+    import Activation
     monitor = Activation.activate("iid == 'OAFIID:SamplerMonitor:0.1'")
 
     try:

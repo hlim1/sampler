@@ -1,6 +1,6 @@
 # -*- python -*-
 
 suppressions = {
-    'Factory.Factory.__builder': 'no-argsused',
     'FirstTime.FirstTime.on_response': 'no-argsused',
+    'Main.new_instance': 'no-argsused',
     }

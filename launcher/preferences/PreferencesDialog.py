@@ -1,30 +1,37 @@
 import Keys
 
 
-class PreferencesDialog:
-    def __init__(self, client):
+class PreferencesDialog(object):
+
+    __slots__ = ['__applications_group', '__client', '__dialog', '__dir', '__icon', '__master', '__notifier']
+
+    def __init__(self):
         import gtk.glade
         import Paths
         import Signals
         xml = gtk.glade.XML(Paths.glade, 'preferences')
         Signals.autoconnect(self, xml)
         self.__dialog = xml.get_widget('preferences')
-        self.__client = client
+
+        import gconf
+        from GConfDir import GConfDir
+        self.__client = gconf.client_get_default()
+        self.__dir = GConfDir(self.__client, Keys.root, gconf.CLIENT_PRELOAD_NONE)
 
         from AppFinder import AppFinder
         from AppModel import AppModel
         from Application import Application
-        finder = AppFinder(client)
+        finder = AppFinder(self.__client)
         model = AppModel()
         for path in finder:
-            Application(client, model, path)
+            Application(self.__client, model, path)
 
         from MasterNotifier import MasterNotifier
         from WindowIcon import WindowIcon
         self.__master = xml.get_widget('master')
         self.__applications_group = xml.get_widget('applications-group')
         self.__notifier = MasterNotifier(self.__client, self.__master_refresh)
-        self.__icon = WindowIcon(client, self.__dialog)
+        self.__icon = WindowIcon(self.__client, self.__dialog)
 
         view = xml.get_widget('applications')
 

@@ -31,6 +31,5 @@ SamplerConfig.py: %: %.in Makefile
 		-e 's!@''VERSION@!$(VERSION)!'			\
 		-e 's!@''pixmapsdir@!$(pixmapsdir)!'		\
 		<$< >$@
-	chmod a+x $@
 
 .DELETE_ON_ERROR:

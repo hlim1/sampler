@@ -10,12 +10,14 @@ let name = {
 }
 
 
-class c file : Scheme.c =
+class c impls file : Scheme.c =
   object (self)
     val tuples = new Counters.manager name file
 
     val constants = Constants.collect file
     val mutable globals = []
+
+    val implicationsInfo = impls 
 
     method findAllSites =
       TestHarness.time ("finding " ^ name.flag ^ " sites")
@@ -26,7 +28,7 @@ class c file : Scheme.c =
 	      when isInterestingVar isDiscreteType varinfo ->
 		globals <- varinfo :: globals
 	    | GFun (func, _) ->
-		let finder = new ScalarPairFinder.visitor constants globals tuples func in
+		let finder = new ScalarPairFinder.visitor constants globals tuples implicationsInfo func in
 		ignore (Cil.visitCilFunction finder func)
 	    | _ ->
 		()
@@ -38,4 +40,4 @@ class c file : Scheme.c =
   end
 
 
-let factory = SchemeFactory.build name new c
+let factory impls = SchemeFactory.build name (new c impls)

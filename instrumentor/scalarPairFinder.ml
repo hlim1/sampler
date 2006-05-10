@@ -19,7 +19,7 @@ let isInterestingVar  = isInterestingVar  isDiscreteType
 let isInterestingLval = isInterestingLval isDiscreteType
 
 
-class visitor (constants : Constants.collection) globals (tuples : Counters.manager) func =
+class visitor (constants : Constants.collection) globals (tuples : Counters.manager) (implInfo : Implications.constantComparisonAccumulator) func =
   object (self)
     inherit SiteFinder.visitor
 
@@ -44,6 +44,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	let newLeft = var (Locals.makeTempVar func leftType) in
 	let last = mkStmt (Instr [Set (left, Lval newLeft, location)]) in
 	let statements = ref [last] in
+	let constantsTable = ref [] in 
 
 	let selector right =
 	  let compare op = BinOp (op, Lval newLeft, right, intType) in
@@ -54,7 +55,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	  if leftTypeSig = typeSig right.vtype then
 	    let selector = selector (Lval (var right)) in
 	    let siteInfo = siteInfo (Variable right) in
-	    let bump = tuples#addSiteExpr siteInfo selector in
+	    let bump, _ = tuples#addSiteExpr siteInfo selector in
 	    statements := bump :: !statements
 	in
 
@@ -69,12 +70,13 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	List.iter compareToVarMaybe globals;
 	List.iter compareToVarMaybe formals;
 	List.iter compareToVarMaybe initializedLocals;
-
+	
 	let constantsCount = ref 0 in
 	let compareToConst right =
 	  let selector = selector right in
 	  let siteInfo = siteInfo (Constant right) in
-	  let bump = tuples#addSiteExpr siteInfo selector in
+	  let bump, id = tuples#addSiteExpr siteInfo selector in
+	  constantsTable := (id, (stripCasts right)) :: !constantsTable;
 	  statements := bump :: !statements;
 	  incr constantsCount
 	in
@@ -107,6 +109,8 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 		    (List.length formals)
 		    (List.length initializedLocals)
 		    (List.length locals - List.length initializedLocals));
+
+	implInfo#addInspirationInfo (!constantsTable);
 
 	let first = mkStmtOneInstr (first newLeft) in
 	Block (mkBlock (first :: !statements))

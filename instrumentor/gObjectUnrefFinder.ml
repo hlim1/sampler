@@ -20,7 +20,7 @@ class visitor file =
 	    let classify = Call (Some slot, classifier, [chaff], location) in
 	    let selector = Lval slot in
 	    let siteInfo = new ExprSiteInfo.c func location chaff in
-	    let bump = tuples#addSiteExpr siteInfo selector in
+	    let bump, _ = tuples#addSiteExpr siteInfo selector in
 	    let replacement = Block (mkBlock [mkStmtOneInstr classify;
 					      bump;
 					      mkStmt stmt.skind])

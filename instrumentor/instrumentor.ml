@@ -10,9 +10,10 @@ let sample =
     ~ident:"Sample"
     ~default:true
 
+let impls = Implications.getAccumulator
 
 let schemes = [
-  ScalarPairScheme.factory;
+  ScalarPairScheme.factory impls;
   BranchScheme.factory;
   BoundScheme.factory;
   FunctionEntryScheme.factory;
@@ -38,6 +39,7 @@ let phase =
     EmbedCFG.visit file digest;
     EmbedDataflow.visit file digest;
     EmbedSiteInfo.visit schemes digest;
+    EmbedImplications.visit (impls#getInfos ()) digest;
 
     if !sample then
       begin

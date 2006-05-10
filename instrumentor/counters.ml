@@ -8,7 +8,7 @@ class manager name file =
   let counters = FindGlobal.find (name.prefix ^ "Counters") file in
 
   object (self)
-    val mutable nextId = 0
+    val mutable nextId : int = 0
     val siteInfos = new QueueClass.container
     val stamper = Timestamps.set file
 
@@ -30,7 +30,7 @@ class manager name file =
       Sites.registry#add func (Site.build implementation);
       siteInfos#push siteInfo;
       nextId <- nextId + 1;
-      implementation
+      implementation, nextId - 1
 
     method patch =
       mapGlobals file

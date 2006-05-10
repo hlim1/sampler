@@ -3,4 +3,4 @@ open Cil
 
 class visitor :
     Constants.collection -> varinfo list ->
-      Counters.manager -> fundec -> SiteFinder.visitor
+      Counters.manager -> Implications.constantComparisonAccumulator -> fundec -> SiteFinder.visitor

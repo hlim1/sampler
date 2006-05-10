@@ -12,4 +12,4 @@ let visit impls digest =
         output_string channel "<implications>\n";
         Implications.printAll digest channel impls;
         output_string channel "</implications>\n";
-        close_out channel) 
+        close_out channel)

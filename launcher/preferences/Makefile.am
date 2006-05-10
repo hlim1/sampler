@@ -18,8 +18,8 @@ preferences_SCRIPTS = preferences
 
 bin_SCRIPTS = sampler-preferences
 
-cappletdir = ${datadir}/control-center-2.0/capplets
-capplet_DATA = sampler-preferences.desktop
+applicationsdir = ${datadir}/applications
+applications_DATA = sampler-preferences.desktop
 
 EXTRA_DIST =					\
 	$(capplet_DATA)				\

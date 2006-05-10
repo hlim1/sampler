@@ -6,25 +6,24 @@ type data = {id: int; value: exp}
 type rel = | Gt of data | Lt of data | Eq of data 
 
 let compare x y =
-  match x,y with
-  | Const(CInt64(ix, kx, _)), Const(CInt64(iy, ky, _)) ->
-      (match kx, ky with 
-      | ILongLong, ILongLong ->
-          Int64.compare ix iy
-      | IULongLong, IULongLong ->
-          if (Int64.compare ix Int64.zero >= 0 & 
-              Int64.compare iy Int64.zero >= 0) or
-            (Int64.compare ix Int64.zero < 0 & 
-             Int64.compare iy Int64.zero < 0)
-          then Int64.compare ix iy
-          else 
-            if (Int64.compare ix Int64.zero >= 0 & 
-                Int64.compare iy Int64.zero < 0)
-            then -1
-            else 1
-      | _, _ -> assert (false)
-      ) 
-  | _, _ -> assert (false)
+  match x, y with
+  | Const(CInt64(ix, ILongLong, _)), Const(CInt64(iy, ILongLong, _)) ->
+      Int64.compare ix iy
+  | Const(CInt64(ix, IULongLong, _)), Const(CInt64(iy, IULongLong, _)) ->
+      (* "huge" unsigned values look negative when treated as signed *)
+      let xHuge = Int64.compare ix 0L < 0 in
+      let yHuge = Int64.compare iy 0L < 0 in
+      begin
+	match xHuge, yHuge with
+	| false, false
+	| true, true ->
+	    Int64.compare ix iy
+	| false, true -> -1
+	| true, false ->  1
+      end
+  | _ ->
+      ignore (bug "cannot compare %a with %a" d_exp x d_exp y);
+      failwith "internal error"
 
 let deriveImplications (lid, ln) (rid, rn) = 
   let res = compare ln rn in 

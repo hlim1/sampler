@@ -17,7 +17,7 @@ class c impls file : Scheme.c =
     val constants = Constants.collect file
     val mutable globals = []
 
-    val implicationsInfo = impls 
+    val implicationsInfo = impls
 
     method findAllSites =
       TestHarness.time ("finding " ^ name.flag ^ " sites")

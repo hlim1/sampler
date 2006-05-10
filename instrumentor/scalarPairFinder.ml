@@ -44,7 +44,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	let newLeft = var (Locals.makeTempVar func leftType) in
 	let last = mkStmt (Instr [Set (left, Lval newLeft, location)]) in
 	let statements = ref [last] in
-	let constantsTable = ref [] in 
+	let constantsTable = ref [] in
 
 	let selector right =
 	  let compare op = BinOp (op, Lval newLeft, right, intType) in

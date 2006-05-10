@@ -5,7 +5,7 @@ type disposition = Include | Exclude
 
 
 let d_pattern (disposition, template) =
-  let operator = 
+  let operator =
     match disposition with
     | Include -> "include"
     | Exclude -> "exclude"

@@ -3,7 +3,7 @@ open Cil
 
 type data = {id: int; value: exp}
 
-type rel = | Gt of data | Lt of data | Eq of data 
+type rel = | Gt of data | Lt of data | Eq of data
 
 let compare x y =
   match x, y with
@@ -25,34 +25,34 @@ let compare x y =
       ignore (bug "cannot compare %a with %a" d_exp x d_exp y);
       failwith "internal error"
 
-let deriveImplications (lid, ln) (rid, rn) = 
-  let res = compare ln rn in 
+let deriveImplications (lid, ln) (rid, rn) =
+  let res = compare ln rn in
   let l = {id = lid; value = ln} in
   let r = {id = rid; value = rn} in
-  if res > 0 then 
-    [(Gt l, Gt r); (Lt r, Lt l); (Eq l, Gt r); (Eq r, Lt l)] 
-  else if res < 0 then 
-    [(Gt r, Gt l); (Lt l, Lt r); (Eq r, Gt l); (Eq l, Lt r)] 
-  else 
-    [(Gt r, Gt l); (Gt l, Gt r); (Lt r, Lt l); (Lt l, Lt r); (Eq r, Eq l); (Eq l, Eq r)] 
+  if res > 0 then
+    [(Gt l, Gt r); (Lt r, Lt l); (Eq l, Gt r); (Eq r, Lt l)]
+  else if res < 0 then
+    [(Gt r, Gt l); (Lt l, Lt r); (Eq r, Gt l); (Eq l, Lt r)]
+  else
+    [(Gt r, Gt l); (Gt l, Gt r); (Lt r, Lt l); (Lt l, Lt r); (Eq r, Eq l); (Eq l, Eq r)]
 
 let analyze l =
   let impl_list = ref [] in
-  let rec process l = 
+  let rec process l =
     let action l r  =
-      List.iter (fun e -> impl_list := e :: !impl_list) (deriveImplications l r) 
+      List.iter (fun e -> impl_list := e :: !impl_list) (deriveImplications l r)
     in
     match l with
     | [] -> ()
-    | hd :: tl -> List.iter (action hd) tl; process tl 
+    | hd :: tl -> List.iter (action hd) tl; process tl
   in
   process l;
   !impl_list
 
 let analyzeAll l =
-  List.fold_left (fun l x -> analyze x::l) [] l 
+  List.fold_left (fun l x -> analyze x::l) [] l
 
-let printAll digest channel l =   
+let printAll digest channel l =
   let compilationUnit = Digest.to_hex (Lazy.force digest) in
   let scheme = "scalar-pairs" in
 
@@ -67,7 +67,7 @@ let printAll digest channel l =
         | Eq d -> (num d.id)++(chr '\t')++(num 1)
         | Gt d -> (num d.id)++(chr '\t')++(num 2)
 	)
-    in (docRel r1)++(chr '\t')++(docRel r2) 
+    in (docRel r1)++(chr '\t')++(docRel r2)
   in
 
   let printPair l r =
@@ -75,17 +75,17 @@ let printAll digest channel l =
 
   in List.iter (fun x -> List.iter (fun (l,r) -> printPair l r) (analyze x)) l
 
-class type constantComparisonAccumulator = 
-  object 
+class type constantComparisonAccumulator =
+  object
     method addInspirationInfo : (int * exp) list -> unit
     method getInfos : unit -> (int * exp) list list
   end
 
 class c_impl : constantComparisonAccumulator =
   object (self)
-    val inspirationInfos = ref [] 
+    val inspirationInfos = ref []
 
-    method addInspirationInfo (info : (int * exp) list) =  
+    method addInspirationInfo (info : (int * exp) list) =
       inspirationInfos := info :: !inspirationInfos
 
     method getInfos () = !inspirationInfos

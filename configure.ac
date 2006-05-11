@@ -121,7 +121,7 @@ if test "$with_gnome" = yes; then
   AC_SUBST(TRAY_ICON_CFLAGS)
   AC_SUBST(TRAY_ICON_LIBS)
 
-  PKG_CHECK_MODULES(MONITOR, gtk+-2.0 pygtk-2.0 libbonobo-2.0)
+  PKG_CHECK_MODULES(MONITOR, libbonobo-2.0 pygobject-2.0)
   AC_SUBST(MONITOR_CFLAGS)
   AC_SUBST(MONITOR_LIBS)
 
@@ -136,7 +136,15 @@ if test "$with_gnome" = yes; then
   AC_SUBST(PYTHON_PREFIX, "`$PYTHON -c 'import sys; print sys.prefix'`")
   AC_MSG_RESULT($PYTHON_PREFIX)
   AC_SUBST(PYTHON_CFLAGS, '-I${PYTHON_PREFIX}/include/python${PYTHON_VERSION}')
-  AC_SUBST(PYTHON_LIBS, '-L${PYTHON_PREFIX}/lib/python${PYTHON_VERSION}/config -lpython${PYTHON_VERSION}')
+
+  old_LDFLAGS=$LDFLAGS
+  PYTHON_LDFLAGS="-L${PYTHON_PREFIX}/lib"
+  PYTHON_LIBS='-lpython${PYTHON_VERSION}'
+  LDFLAGS="$LDFLAGS $PYTHON_LDFLAGS"
+  AC_CHECK_LIB(python${PYTHON_VERSION}, Py_BuildValue, , PYTHON_LDFLAGS="$PYTHON_LDFLAGS/python${PYTHON_VERSION}/config" PYTHON_LIBS="$PYTHON_LIBS -lutil")
+  AC_SUBST(PYTHON_LDFLAGS)
+  AC_SUBST(PYTHON_LIBS)
+  LDFLAGS=$old_LDFLAGS
 
   AC_MSG_CHECKING(for python tray icon support)
   if $PYTHON launcher/trayicon/is-installed; then

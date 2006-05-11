@@ -2,7 +2,7 @@
 %%
 headers
 
-#include <pygtk/pygtk.h>
+#include <pygobject.h>
 #include "monitor.h"
 #include "monitor-module.h"
 

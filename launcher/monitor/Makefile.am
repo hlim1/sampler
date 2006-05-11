@@ -1,4 +1,4 @@
-AM_CFLAGS = -Wall -Werror -Wformat=2 -Wno-return-type
+AM_CFLAGS = -fpic -Wall -Werror -Wformat=2 -Wno-return-type
 INCLUDES = $(MONITOR_CFLAGS) $(PYTHON_CFLAGS)
 
 defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
@@ -27,7 +27,7 @@ dist-hook:
 
 
 monitor.so: %.so: lib%.a
-	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(MONITOR_LIBS) $(PYTHON_LIBS) -lutil
+	$(CC) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) $(PYTHON_LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(MONITOR_LIBS) $(PYTHON_LIBS)
 
 
 noinst_LIBRARIES = libmonitor.a
@@ -42,9 +42,6 @@ libmonitor_a_SOURCES =				\
 monitor-wrap.c: %-wrap.c: %.override %.defs
 	pygtk-codegen-2.0				\
 	  --prefix $*					\
-	  --register $(defsdir)/gdk-types.defs		\
-	  --register $(defsdir)/gtk-types.defs		\
-	  --register $(defsdir)/bonobo-types.defs	\
 	  --override $<					\
 	  $*.defs >$@
 

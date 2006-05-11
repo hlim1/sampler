@@ -1,5 +1,3 @@
-AM_CFLAGS = -ffast-math
-
 SUBDIRS = schemes threads
 
 

@@ -116,7 +116,8 @@ PKG_CHECK_MODULES(TRAY_ICON, gtk+-2.0 pygtk-2.0, , gnome_ok=no)
 AC_SUBST(TRAY_ICON_CFLAGS)
 AC_SUBST(TRAY_ICON_LIBS)
 
-PKG_CHECK_MODULES(MONITOR, libbonobo-2.0 pygobject-2.0, , gnome_ok=no)
+PKG_CHECK_MODULES(MONITOR, libbonobo-2.0 pygobject-2.0, ,
+  [PKG_CHECK_MODULES(MONITOR, libbonobo-2.0 pygtk-2.0, , gnome_ok=no)])
 AC_SUBST(MONITOR_CFLAGS)
 AC_SUBST(MONITOR_LIBS)
 

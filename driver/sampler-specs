@@ -1,6 +1,7 @@
 *embedding:
 -fsave-cfg %g.cfg \
 -fsave-site-info %g.sites \
+%{fadd-blast-markers:-fsave-blast-spec %g.spc} \
 -fsave-implications %g.impls \
 %{fsampler-dataflow:-fsave-dataflow %g.dataflow}
 
@@ -32,8 +33,12 @@
 %{fsampler-scheme=scalar-pairs:-include sampler/schemes/scalar-pairs-unit.h%s} \
 %{fsampler-scheme=*:-include sampler/unit.h%s}
 
+*cpp_blast:
+%{fadd-blast-markers:-include sampler/blast-markers.h%s}
+
 *cpp:
 + -DCIL \
+%(cpp_blast) \
 %(cpp_threads) \
 %(cpp_timestamps) \
 -include sampler/threads/countdown.h%s \

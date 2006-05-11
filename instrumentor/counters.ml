@@ -18,10 +18,11 @@ class manager name file =
       self#addSiteOffset siteInfo (Index (selector, NoOffset))
 
     method addSiteOffset siteInfo selector =
-      let site = (Var counters, Index (integer nextId, NoOffset)) in
+      let thisId = nextId in
+      let site = (Var counters, Index (integer thisId, NoOffset)) in
       let func = siteInfo#fundec in
       let location = siteInfo#inspiration in
-      let stamp = stamper name nextId location in
+      let stamp = stamper name thisId location in
       let counter = addOffsetLval selector site in
       let bump = self#bump counter location in
       let implementation = siteInfo#implementation in
@@ -30,7 +31,7 @@ class manager name file =
       Sites.registry#add func (Site.build implementation);
       siteInfos#push siteInfo;
       nextId <- nextId + 1;
-      implementation, nextId - 1
+      implementation, thisId
 
     method patch =
       mapGlobals file

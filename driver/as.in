@@ -21,6 +21,7 @@ my $saved_implications;
 my %flag_specs =
     (
      # Sampler Options
+     '-fsave-blast-spec' => sub { shift @ARGV },
      '-fsave-cfg' => sub { $saved_cfg = shift @ARGV },
      '-fsave-dataflow' => sub { $saved_dataflow = shift @ARGV },
      '-fsave-site-info' => sub { $saved_site_info = shift @ARGV },

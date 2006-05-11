@@ -13,9 +13,10 @@ class c file : Scheme.c =
     val tuples = new Counters.manager name file
 
     method private findAllSites =
+      let finder = new BranchFinder.visitor file tuples in
       Scanners.iterFuncs file
 	(fun func ->
-	  let finder = new BranchFinder.visitor tuples func in
+	  let finder = finder func in
 	  ignore (Cil.visitCilFunction finder func));
       tuples#patch
 

@@ -29,6 +29,7 @@ let phase =
     Dynamic.analyze file;
     FunctionFilter.filter#collectPragmas file;
     iterFuncs file IsolateInstructions.visit;
+    Blast.markTerminations file;
     iterFuncs file ElaborateIfs.visit;
 
     let schemes = List.map (fun scheme -> scheme file) schemes in
@@ -48,4 +49,4 @@ let phase =
 	time "loading site scales" Sites.setScales;
 	time "applying sampling transformation"
 	  (fun () -> Transformer.visit file tester countdown)
-      end
+      end;

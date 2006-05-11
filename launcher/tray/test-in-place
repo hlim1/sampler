@@ -12,8 +12,8 @@ Paths.glade = os.path.join(home, 'tray.glade')
 for subdir in ['common', 'monitor', 'trayicon']:
     sys.path.append(os.path.realpath(os.path.join(Paths.home, '..', subdir)))
 
-import Config
-Config.pixmapsdir = os.path.realpath(os.path.join(home, '..', 'pixmaps'))
-
+import SamplerConfig
+SamplerConfig.pixmapsdir = os.path.realpath(os.path.join(home, '..', 'pixmaps'))
 
 import Main
+Main.main()

@@ -106,59 +106,59 @@ AC_PROG_LN_S
 
 ########################################################################
 #
-#  GNOME and GTK+ configuration
+#  GNOME, GTK+, and Python configuration
 #
 
 
-AC_ARG_WITH(gnome, AC_HELP_STRING([--without-gnome], [do not build GNOME-based GUI tools]), , with_gnome=yes)
-AC_MSG_CHECKING(for GNOME support)
-AM_CONDITIONAL(WITH_GNOME, test "$with_gnome" = yes)
-AC_MSG_RESULT($with_gnome)
+gnome_ok=yes
 
-if test "$with_gnome" = yes; then
+PKG_CHECK_MODULES(TRAY_ICON, gtk+-2.0 pygtk-2.0, , gnome_ok=no)
+AC_SUBST(TRAY_ICON_CFLAGS)
+AC_SUBST(TRAY_ICON_LIBS)
 
-  PKG_CHECK_MODULES(TRAY_ICON, gtk+-2.0 pygtk-2.0)
-  AC_SUBST(TRAY_ICON_CFLAGS)
-  AC_SUBST(TRAY_ICON_LIBS)
+PKG_CHECK_MODULES(MONITOR, libbonobo-2.0 pygobject-2.0, , gnome_ok=no)
+AC_SUBST(MONITOR_CFLAGS)
+AC_SUBST(MONITOR_LIBS)
 
-  PKG_CHECK_MODULES(MONITOR, libbonobo-2.0 pygobject-2.0)
-  AC_SUBST(MONITOR_CFLAGS)
-  AC_SUBST(MONITOR_LIBS)
+PKG_CHECK_MODULES(EGG_TRAY, gtk+-2.0, , gnome_ok=no)
+AC_SUBST(EGG_TRAY_CFLAGS)
+AC_SUBST(EGG_TRAY_LIBS)
 
-  PKG_CHECK_MODULES(EGG_TRAY, gtk+-2.0)
-  AC_SUBST(EGG_TRAY_CFLAGS)
-  AC_SUBST(EGG_TRAY_LIBS)
+AM_PATH_GLIB_2_0(, , gnome_ok=no, gobject)
 
-  AM_PATH_GLIB_2_0(, , , gobject)
+AM_PATH_PYTHON
+AC_MSG_CHECKING(for python prefix)
+AC_SUBST(PYTHON_PREFIX, "`$PYTHON -c 'import sys; print sys.prefix'`")
+AC_MSG_RESULT($PYTHON_PREFIX)
+AC_SUBST(PYTHON_CFLAGS, '-I${PYTHON_PREFIX}/include/python${PYTHON_VERSION}')
 
-  AM_PATH_PYTHON
-  AC_MSG_CHECKING(for python prefix)
-  AC_SUBST(PYTHON_PREFIX, "`$PYTHON -c 'import sys; print sys.prefix'`")
-  AC_MSG_RESULT($PYTHON_PREFIX)
-  AC_SUBST(PYTHON_CFLAGS, '-I${PYTHON_PREFIX}/include/python${PYTHON_VERSION}')
+old_LDFLAGS=$LDFLAGS
+PYTHON_LDFLAGS="-L${PYTHON_PREFIX}/lib"
+PYTHON_LIBS='-lpython${PYTHON_VERSION}'
+LDFLAGS="$LDFLAGS $PYTHON_LDFLAGS"
+AC_CHECK_LIB(python${PYTHON_VERSION}, Py_BuildValue, , PYTHON_LDFLAGS="$PYTHON_LDFLAGS/python${PYTHON_VERSION}/config" PYTHON_LIBS="$PYTHON_LIBS -lutil")
+AC_SUBST(PYTHON_LDFLAGS)
+AC_SUBST(PYTHON_LIBS)
+LDFLAGS=$old_LDFLAGS
 
-  old_LDFLAGS=$LDFLAGS
-  PYTHON_LDFLAGS="-L${PYTHON_PREFIX}/lib"
-  PYTHON_LIBS='-lpython${PYTHON_VERSION}'
-  LDFLAGS="$LDFLAGS $PYTHON_LDFLAGS"
-  AC_CHECK_LIB(python${PYTHON_VERSION}, Py_BuildValue, , PYTHON_LDFLAGS="$PYTHON_LDFLAGS/python${PYTHON_VERSION}/config" PYTHON_LIBS="$PYTHON_LIBS -lutil")
-  AC_SUBST(PYTHON_LDFLAGS)
-  AC_SUBST(PYTHON_LIBS)
-  LDFLAGS=$old_LDFLAGS
-
-  AC_MSG_CHECKING(for python tray icon support)
-  if $PYTHON launcher/trayicon/is-installed; then
-    AC_MSG_RESULT(yes)
-    have_python_tray=yes
-  else
-    AC_MSG_RESULT([no, using our own])
-    have_python_tray=no
-  fi
+AC_MSG_CHECKING(for python tray icon support)
+if $PYTHON launcher/trayicon/is-installed; then
+  AC_MSG_RESULT(yes)
+  have_python_tray=yes
+else
+  AC_MSG_RESULT([no, using our own])
+  have_python_tray=no
 fi
 
 AM_CONDITIONAL(HAVE_PYTHON_TRAYICON, test "$have_python_tray" = yes)
 
 AM_GCONF_SOURCE_2
+
+AC_ARG_WITH(gnome, AC_HELP_STRING([--without-gnome], [do not build GNOME-based GUI tools]), , with_gnome=yes)
+if test "$gnome_ok" = no; then with_gnome=no; fi
+AC_MSG_CHECKING(for GNOME support)
+AM_CONDITIONAL(WITH_GNOME, test "$with_gnome" = yes)
+AC_MSG_RESULT($with_gnome)
 
 
 ########################################################################

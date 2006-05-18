@@ -30,7 +30,7 @@ dist-hook:
 
 
 trayicon.so: %.so: lib%.a libegg/tray/libtray.a
-	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(TRAY_ICON_LIBS) $(PYTHON_LIBS) -lpthread -lutil -Llibegg/tray -ltray -L/usr/X11R6/lib -lX11
+	$(CC) $(CFLAGS) $(LDFLAGS) $(PYTHON_LDFLAGS) -Wl,--no-undefined -shared -o $@ -Wl,--whole-archive $< -Wl,--no-whole-archive $(TRAY_ICON_LIBS) $(PYTHON_LIBS) -lpthread -lutil -Llibegg/tray -ltray -L/usr/X11R6/lib -lX11
 
 noinst_LIBRARIES = libtrayicon.a
 

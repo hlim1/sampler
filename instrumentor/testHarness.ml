@@ -49,7 +49,7 @@ let doOneOne file (description, action) =
 
 
 let doOne phases filename =
-  let thunk : unit -> file = time "parsing" (fun () -> Frontc.parse filename) in
-  let file : file = time "converting to CIL" thunk in
+  let thunk = time "parsing" (fun () -> Frontc.parse filename) in
+  let file = time "converting to CIL" thunk in
   check file;
   List.iter (doOneOne file) phases

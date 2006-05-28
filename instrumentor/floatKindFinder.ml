@@ -24,21 +24,24 @@ class visitor (classifier : classifier) (tuples : Counters.manager) func =
     inherit SiteFinder.visitor
 
     method vfunc func =
-      let body =
-	let testFormal body formal =
-	  if isInterestingVar isFloatType formal then
-	    let location = formal.vdecl in
-	    let lval = var formal in
-	    let (classification, classify) = classifier (Lval lval) location in
-	    let siteInfo = new FloatKindSiteInfo.c func location (lval, "local", "direct") in
-	    let bump, _ = tuples#addSiteExpr siteInfo classification in
-	    classify :: bump :: body
-	  else
-	    body
+      if self#includedFunction func then
+	let body =
+	  let testFormal body formal =
+	    if isInterestingVar isFloatType formal then
+	      let location = formal.vdecl in
+	      let lval = var formal in
+	      let (classification, classify) = classifier (Lval lval) location in
+	      let siteInfo = new FloatKindSiteInfo.c func location (lval, "local", "direct") in
+	      let bump, _ = tuples#addSiteExpr siteInfo classification in
+	      classify :: bump :: body
+	    else
+	      body
+	  in
+	  mkBlock (List.fold_left testFormal [mkStmt (Block func.sbody)] func.sformals)
 	in
-	mkBlock (List.fold_left testFormal [mkStmt (Block func.sbody)] func.sformals)
-      in
-      ChangeDoChildrenPost (func, fun func -> func.sbody <- body; func)
+	ChangeDoChildrenPost (func, fun func -> func.sbody <- body; func)
+      else
+	SkipChildren
 
     method vstmt stmt =
 

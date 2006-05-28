@@ -27,12 +27,19 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
     val locals = List.filter isInterestingVar func.slocals
 
     method vfunc func =
-      if not !compareUninitialized then
+      if self#includedFunction func then
 	begin
-	  Cfg.build func;
-	  Initialized.analyze func locals
-	end;
-      DoChildren
+	  if not !compareUninitialized then
+	    begin
+	      Cfg.build func;
+	      Initialized.analyze func locals
+	    end;
+	  ignore (Pretty.eprintf "scalar pair finder in %s@!" func.svar.vname);
+	  flush stderr;
+	  DoChildren
+	end
+      else
+	SkipChildren
 
     method vstmt stmt =
 

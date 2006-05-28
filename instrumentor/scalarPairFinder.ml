@@ -34,8 +34,6 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	      Cfg.build func;
 	      Initialized.analyze func locals
 	    end;
-	  ignore (Pretty.eprintf "scalar pair finder in %s@!" func.svar.vname);
-	  flush stderr;
 	  DoChildren
 	end
       else

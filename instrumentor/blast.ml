@@ -20,7 +20,6 @@ let predicateMarker2 file =
   if !addBlastMarkers then
     let markerFunc = Lval (var (FindFunction.find "blastMarker" file)) in
     let specChannel = open_out !saveBlastSpec in
-    let printSpec = Printf.fprintf specChannel in
     fun siteId predExpr location ->
       Printf.fprintf specChannel "global int pred_%d_0 = 0;\n" siteId;
       Printf.fprintf specChannel "global int pred_%d_1 = 0;\n" siteId;

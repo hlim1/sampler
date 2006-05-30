@@ -103,6 +103,8 @@ static void initializeOnce()
       unsetenv("SAMPLER_SPARSITY");
       unsetenv("SAMPLER_SEED");
     }
+  else
+    fputs("$SAMPLER_SPARSITY is not set; CBI data collection disabled\n", stderr);
 }
 
 

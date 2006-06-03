@@ -49,7 +49,6 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	let newLeft = var (Locals.makeTempVar func leftType) in
 	let last = mkStmt (Instr [Set (left, Lval newLeft, location)]) in
 	let statements = ref [last] in
-	let constantsTable = ref [] in
 
 	let selector right =
 	  let compare op = BinOp (op, Lval newLeft, right, intType) in
@@ -81,7 +80,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	  let selector = selector right in
 	  let siteInfo = siteInfo (Constant right) in
 	  let bump, id = tuples#addSiteExpr siteInfo selector in
-	  constantsTable := (id, (stripCasts right)) :: !constantsTable;
+          implInfo#addInfo (id, location, newLeft, (stripCasts right));
 	  statements := bump :: !statements;
 	  incr constantsCount
 	in
@@ -115,7 +114,6 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 		    (List.length initializedLocals)
 		    (List.length locals - List.length initializedLocals));
 
-	implInfo#addInspirationInfo (!constantsTable);
 
 	let first = mkStmtOneInstr (first newLeft) in
 	Block (mkBlock (first :: !statements))

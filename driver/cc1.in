@@ -121,6 +121,7 @@ my %flag_specs =
      '-fsave-site-info' => \&inst_embed,
      '-fsave-implications' => \&inst_embed,
      '-fsampler-dataflow' => sub { },
+     '-fsampler-implications' => sub { },
      '-finstrumentor-input' => sub { $instrumentor_input = shift @ARGV },
      '-finstrumentor-output' => sub { $instrumentor_output = shift @ARGV },
 

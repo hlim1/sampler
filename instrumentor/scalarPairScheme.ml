@@ -18,6 +18,7 @@ class c impls file : Scheme.c =
     val mutable globals = []
 
     method findAllSites =
+      let impls = Lazy.force impls in
       TestHarness.time ("finding " ^ name.flag ^ " sites")
 	(fun () ->
 	  let scanner = function

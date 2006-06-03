@@ -2,7 +2,7 @@
 -fsave-cfg %g.cfg \
 -fsave-site-info %g.sites \
 %{fadd-blast-markers:-fsave-blast-spec %g.spc} \
--fsave-implications %g.impls \
+%{fsampler-implications:-fsave-implications %g.impls} \
 %{fsampler-dataflow:-fsave-dataflow %g.dataflow}
 
 *cpp_threads_yes:

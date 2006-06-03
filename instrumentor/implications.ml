@@ -1,6 +1,12 @@
 open Pretty
 open Cil
 
+let saveImplications =
+  Options.registerString
+    ~flag:"save-implications"
+    ~desc:"save implication information in the named file"
+    ~ident:""
+
 type data = {id: int; value: exp}
 
 type rel = | Gt of data | Lt of data | Eq of data
@@ -25,7 +31,13 @@ let compare x y =
       ignore (bug "cannot compare %a with %a" d_exp x d_exp y);
       failwith "internal error"
 
-let deriveImplications (lid, ln) (rid, rn) =
+let deriveImplications (lid, lloc, lval, ln) (rid, rloc, rval, rn) =
+  if (lloc <> rloc || lval <> rval) then
+    begin
+    ignore (bug "cannot derive an implication when comparisons are with different variables"); 
+    failwith "internal error"
+    end
+  else
   let res = compare ln rn in
   let l = {id = lid; value = ln} in
   let r = {id = rid; value = rn} in
@@ -36,21 +48,27 @@ let deriveImplications (lid, ln) (rid, rn) =
   else
     [(Gt r, Gt l); (Gt l, Gt r); (Lt r, Lt l); (Lt l, Lt r); (Eq r, Eq l); (Eq l, Eq r)]
 
-let analyze l =
-  let impl_list = ref [] in
-  let rec process l =
-    let action l r  =
-      List.iter (fun e -> impl_list := e :: !impl_list) (deriveImplications l r)
+let analyze pp l =
+
+  let rec process_all l =
+    
+    let rec process_set l =
+      match l with
+      | [] -> [] 
+      | hd::tl -> 
+          List.fold_left (fun l x -> List.rev_append (deriveImplications hd x) l) (process_set tl) tl
     in
+
     match l with
     | [] -> ()
-    | hd :: tl -> List.iter (action hd) tl; process tl
-  in
-  process l;
-  !impl_list
+    | hd::tl ->
+      let (_,lh,vh,_) = hd in 
+      let (sameVar, diffVar) = 
+        List.partition (fun (_,l,v,_) -> l = lh && v = vh) tl in
+        List.iter (fun (l,r) -> pp l r) (process_set (hd::sameVar)); process_all diffVar 
 
-let analyzeAll l =
-  List.fold_left (fun l x -> analyze x::l) [] l
+  in
+    process_all l
 
 let printAll digest channel l =
   let compilationUnit = Digest.to_hex (Lazy.force digest) in
@@ -73,25 +91,30 @@ let printAll digest channel l =
   let printPair l r =
     Pretty.fprint channel max_int ((docImpl l r)++line)
 
-  in List.iter (fun x -> List.iter (fun (l,r) -> printPair l r) (analyze x)) l
+  in analyze printPair l
 
 class type constantComparisonAccumulator =
   object
-    method addInspirationInfo : (int * exp) list -> unit
-    method getInfos : unit -> (int * exp) list list
+    method getInfos : unit -> (int * location * lval * exp) list 
+    method addInfo : (int * location * lval * exp) -> unit 
   end
 
 class c_impl : constantComparisonAccumulator =
   object (self)
-    val inspirationInfos = ref []
+    val infos = ref [] 
 
-    method addInspirationInfo (info : (int * exp) list) =
-      inspirationInfos := info :: !inspirationInfos
-
-    method getInfos () = !inspirationInfos
+    method addInfo (info : (int * location * lval * exp)) = 
+      infos := info::!infos 
+    
+    method getInfos () = !infos
 
   end
 
+class c_null : constantComparisonAccumulator =
+  object (self)
+    method addInfo (info : (int * location * lval * exp)) = () 
+    method getInfos () = ([] : (int * location * lval * exp) list) 
+  end
 
-
-let getAccumulator = new c_impl
+let getAccumulator = 
+    lazy (if !saveImplications <> "" then new c_impl else new c_null)

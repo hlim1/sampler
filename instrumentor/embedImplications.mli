@@ -1,1 +1,1 @@
-val visit : (int * Cil.exp) list list -> Digest.t Lazy.t -> unit
+val visit : (int * Cil.location * Cil.lval * Cil.exp) list -> Digest.t Lazy.t -> unit

@@ -40,7 +40,7 @@ let phase =
     EmbedCFG.visit file digest;
     EmbedDataflow.visit file digest;
     EmbedSiteInfo.visit schemes digest;
-    EmbedImplications.visit (impls#getInfos ()) digest;
+    EmbedImplications.visit ((Lazy.force impls)#getInfos ()) digest;
 
     if !sample then
       begin

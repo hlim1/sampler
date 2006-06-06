@@ -182,6 +182,7 @@ my @uploads;
 sub insert_run ($) {
     my $dir = dirname shift;
     my $run_id = basename $dir;
+    push @uploads, $dir;
 
     # skip already-known reports
     return if exists $known{$run_id};
@@ -195,7 +196,6 @@ sub insert_run ($) {
     print "new: $dir\n";
     my @environment = environment_fields %{$environment};
     $upload_run->row($run_id, @environment);
-    push @uploads, $dir;
 }
 
 
@@ -251,7 +251,8 @@ $dbh->commit;
 $dbh->disconnect;
 
 foreach (@uploads) {
-    my ($archive, $run_id) = fileparse $_;
-    $archive = dirname($archive) . "/archive/$run_id";
-    print "archive $_ to $archive\n";
+    my $run_id = basename $_;
+    my $archive = dirname(dirname $_) . "/archive/$run_id";
+    rename $_, $archive
+	or warn "cannot rename $_ to $archive: $!\n";
 }

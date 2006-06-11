@@ -10,6 +10,7 @@ class LazyDialog(LazyWidget):
         self.__client = client
 
     def populate(self, xml, widget):
+        __pychecker__ = 'no-argsused'
         from WindowIcon import WindowIcon
         self.__icon_updater = WindowIcon(self.__client, widget)
 

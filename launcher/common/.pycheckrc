@@ -1,5 +1,0 @@
-# -*- python -*-
-
-suppressions = {
-    'MasterNotifier.MasterNotifier.__changed': 'no-argsused',
-    }

@@ -21,12 +21,14 @@ class AppModel(gtk.ListStore):
         return iterator
 
     def __sort_name(self, model, a, b):
+        __pychecker__ = 'no-argsused'
         import locale
         a = self.get_value(a, self.COLUMN_NAME)
         b = self.get_value(b, self.COLUMN_NAME)
         return locale.strcoll(a.name, b.name)
 
     def __sort_enabled(self, model, a, b):
+        __pychecker__ = 'no-argsused'
         a = self.get_value(a, self.COLUMN_ENABLED)
         b = self.get_value(b, self.COLUMN_ENABLED)
         return a.get_enabled() - b.get_enabled()

@@ -6,6 +6,7 @@ pygtk.require('2.0')
 
 
 def new_instance(app, argc, argv, dialog):
+    __pychecker__ = 'no-argsused'
     dialog.present()
     return 0
 

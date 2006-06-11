@@ -13,6 +13,7 @@ class Application(object):
         self.__iter = model.add_application(self)
 
     def __gconf_notify(self, client, connection, entry, model):
+        __pychecker__ = 'no-argsused'
         model.row_changed(model.get_path(self.__iter), self.__iter)
 
     def __key(self, item):

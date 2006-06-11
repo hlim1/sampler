@@ -1,5 +1,0 @@
-# -*- python -*-
-
-suppressions = {
-    'Main2.main': 'no-argsused',
-    }

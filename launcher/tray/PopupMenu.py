@@ -15,6 +15,7 @@ class PopupMenu(LazyWidget):
         self.__client = client
 
     def populate(self, xml, widget):
+        __pychecker__ = 'no-argsused'
         from MasterNotifier import MasterNotifier
         self.__master = xml.get_widget('menu-master')
         self.__notifier = MasterNotifier(self.__client, self.__master.set_active)
@@ -30,8 +31,10 @@ class PopupMenu(LazyWidget):
         self.__client.set_bool(Keys.master, active)
 
     def on_preferences_activate(self, item):
+        __pychecker__ = 'no-argsused'
         import PreferencesDialog
         PreferencesDialog.present()
 
     def on_about_activate(self, item):
+        __pychecker__ = 'no-argsused'
         self.__about.present()

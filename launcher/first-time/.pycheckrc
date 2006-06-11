@@ -1,6 +1,0 @@
-# -*- python -*-
-
-suppressions = {
-    'FirstTime.FirstTime.on_response': 'no-argsused',
-    'Main.new_instance': 'no-argsused',
-    }

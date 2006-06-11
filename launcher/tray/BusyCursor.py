@@ -1,6 +1,7 @@
 class BusyCursor(object):
 
     __slots__ = []
+    __pychecker__ = 'no-emptyslots'
 
     top = None
     __cursor = None

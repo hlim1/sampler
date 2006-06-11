@@ -13,6 +13,7 @@ ORBit.load_typelib('Everything')
 
 
 def main(name, wrapped, upload_headers, **extras):
+    __pychecker__ = 'no-argsused'
     from AppConfig import AppConfig
     from UserConfig import UserConfig
 

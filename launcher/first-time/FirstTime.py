@@ -64,6 +64,7 @@ class FirstTime(object):
         self.__client.set_bool(Keys.master, enabled)
 
     def on_response(self, dialog, response):
+        __pychecker__ = 'no-argsused'
         if response == gtk.RESPONSE_OK:
             self.__client.set_bool(Keys.asked, True)
 

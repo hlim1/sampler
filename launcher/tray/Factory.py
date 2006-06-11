@@ -2,7 +2,12 @@ import bonobo
 
 
 class Factory(bonobo.GenericFactory):
+
+    __slots__ = []
+    __pychecker__ = 'no-emptyslots'
+
     def __builder(self, factory, product):
+        __pychecker__ = 'no-argsused'
         import monitor
         return monitor.Monitor()
 

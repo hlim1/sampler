@@ -58,10 +58,12 @@ class PreferencesDialog(object):
         view.set_model(model)
 
     def __name_data_func(self, column, renderer, model, iter):
+        __pychecker__ = 'no-argsused'
         app = model.get_value(iter, model.COLUMN_NAME)
         renderer.set_property('text', app.name)
 
     def __enabled_data_func(self, column, renderer, model, iter):
+        __pychecker__ = 'no-argsused'
         app = model.get_value(iter, model.COLUMN_ENABLED)
         renderer.set_property('active', app.get_enabled())
 
@@ -74,6 +76,7 @@ class PreferencesDialog(object):
         self.__applications_group.set_sensitive(enabled)
 
     def on_application_toggled(self, renderer, path, model):
+        __pychecker__ = 'no-argsused'
         path = int(path)
         iterator = model.get_iter(path)
         app = model.get_value(iterator, model.COLUMN_ENABLED)

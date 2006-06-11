@@ -3,7 +3,10 @@ from egg.trayicon import TrayIcon
 
 class UploaderTrayIcon(TrayIcon):
 
+    __slots__ = ['__busy', '__icon_notifier', '__popup', '__tooltips', '__tooltip_notifier']
+
     def on_button_press(self, widget, event):
+        __pychecker__ = 'no-argsused'
         import gtk.gdk
         if event.type == gtk.gdk.BUTTON_PRESS:
             if event.button == 1:
@@ -32,4 +35,15 @@ class UploaderTrayIcon(TrayIcon):
         self.add(xml.get_widget('eventbox'))
 
         image = xml.get_widget('image')
-        self.__notifier = StatusIcon(client, image, gtk.ICON_SIZE_LARGE_TOOLBAR)
+        self.__icon_notifier = StatusIcon(client, image, gtk.ICON_SIZE_LARGE_TOOLBAR)
+
+        from MasterNotifier import MasterNotifier
+        self.__tooltips = gtk.Tooltips()
+        self.__tooltip_notifier = MasterNotifier(client, self.__tooltip_refresh)
+        self.__tooltips.enable()
+
+    def __tooltip_refresh(self, enabled):
+        messages = {True:  'Automatic reporting is enabled',
+                    False: 'Automatic reporting is disabled'}
+        message = messages[enabled]
+        self.__tooltips.set_tip(self, message, None)

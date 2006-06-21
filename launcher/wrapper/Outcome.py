@@ -1,9 +1,10 @@
 class Outcome(object):
     '''Outcome of one run of a sampled application.'''
 
-    __slots__ = ['signal', 'sparsity', 'status']
+    __slots__ = ['reports', 'signal', 'sparsity', 'status']
 
     def __init__(self):
+        self.reports = None
         self.signal = None
         self.status = None
         self.sparsity = None

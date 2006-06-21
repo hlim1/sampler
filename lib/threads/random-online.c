@@ -36,7 +36,7 @@ void initialize_thread()
     sampling = seed48_r(samplerSeed, &samplerRandomBuffer) >= 0;
 
   nextEventCountdown = getNextEventCountdown();
-  VERBOSE("initialized thread; next event countdown == %d\n", nextEventCountdown);
+  VERBOSE("initialized thread; next event countdown *%p == %d\n", &nextEventCountdown, nextEventCountdown);
 }
 
 

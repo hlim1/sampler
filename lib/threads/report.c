@@ -10,13 +10,11 @@
 #include "../registry.h"
 #include "../report.h"
 #include "lock.h"
-#include "once.h"
 
 
 FILE *reportFile;
 
 pthread_mutex_t reportLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
-sampler_once_t reportInitOnce = SAMPLER_ONCE_INIT;
 
 
 static void closeOnExec(int fd)
@@ -152,24 +150,18 @@ static void handleSignal(int signum)
 }
 
 
-static void initializeOnce()
-{
-  openReportFile();
-  if (reportFile)
-    {
-      atexit(finalize);
-      SIGNAL_INST(ABRT);
-      SIGNAL_INST(BUS);
-      SIGNAL_INST(FPE);
-      SIGNAL_INST(SEGV);
-      SIGNAL_INST(TRAP);
-    }
-}
-
-
-__attribute__((constructor)) static void initialize()
+void samplerInitializeReport()
 {
   CRITICAL_REGION(reportLock, {
-    sampler_once(&reportInitOnce, initializeOnce);
-  });
+      openReportFile();
+      if (reportFile)
+	{
+	  atexit(finalize);
+	  SIGNAL_INST(ABRT);
+	  SIGNAL_INST(BUS);
+	  SIGNAL_INST(FPE);
+	  SIGNAL_INST(SEGV);
+	  SIGNAL_INST(TRAP);
+	}
+    });
 }

@@ -9,8 +9,8 @@
 #include <stdio.h>
 #include "countdown.h"
 #include "lifetime.h"
-#include "once.h"
 #include "random-online.h"
+#include "verbose.h"
 
 
 const void * const samplerFeatureRandom;
@@ -22,8 +22,6 @@ FILE *samplerEntropy;
 
 SAMPLER_THREAD_LOCAL int sampling;
 SAMPLER_THREAD_LOCAL struct drand48_data samplerRandomBuffer;
-
-sampler_once_t randomOnlineInitOnce = SAMPLER_ONCE_INIT;
 
 
 void initialize_thread()
@@ -38,6 +36,7 @@ void initialize_thread()
     sampling = seed48_r(samplerSeed, &samplerRandomBuffer) >= 0;
 
   nextEventCountdown = getNextEventCountdown();
+  VERBOSE("initialized thread; next event countdown == %d\n", nextEventCountdown);
 }
 
 
@@ -51,7 +50,7 @@ static void finalize()
 }
 
 
-static void initializeOnce()
+void samplerInitializeRandom()
 {
   const char * const environ = getenv("SAMPLER_SPARSITY");
   if (environ)
@@ -102,13 +101,8 @@ static void initializeOnce()
 
       unsetenv("SAMPLER_SPARSITY");
       unsetenv("SAMPLER_SEED");
+      VERBOSE("initialized online random countdown generator\n");
     }
-}
-
-
-__attribute__((constructor)) static void initialize()
-{
-  sampler_once(&randomOnlineInitOnce, initializeOnce);
 }
 
 
@@ -125,8 +119,13 @@ int getNextEventCountdown()
 	if (__builtin_expect(error < 0, 0))
 	  break;
 	if (__builtin_expect(real != 0., 1))
-	  return log(real) * densityScale + 1;
+	  {
+	    const int next = log(real) * densityScale + 1;
+	    VERBOSE("got next event countdown == %d\n", next);
+	    return next;
+	  }
       }
 
+  VERBOSE("not sampling; next event countdown == INT_MAX\n");
   return INT_MAX;
 }

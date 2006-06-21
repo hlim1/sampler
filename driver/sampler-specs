@@ -86,6 +86,7 @@ sampler/threads/no/liblate.a%s
 %rename libgcc old_libgcc
 
 *libgcc:
+--undefined=samplerInitialize \
 sampler/schemes/libschemes.a%s \
 %(lib_threads) \
 %(lib_scheme) \

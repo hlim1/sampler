@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include "countdown.h"
 #include "lifetime.h"
-#include "once.h"
+#include "random.h"
 #include "random-offline.h"
 #include "random-offline-size.h"
 
@@ -22,8 +22,6 @@ const void * const samplerFeatureRandomOffline;
 
 const int *nextEventPrecomputed = 0;
 SAMPLER_THREAD_LOCAL unsigned nextEventSlot = 0;
-
-sampler_once_t randomOfflineInitOnce = SAMPLER_ONCE_INIT;
 
 
 static void failed(const char function[])
@@ -77,7 +75,7 @@ static void finalize()
 }
 
 
-static void initializeOnce()
+void samplerInitializeRandom()
 {
   const char envar[] = "SAMPLER_EVENT_COUNTDOWNS";
   const char * const environ = getenv(envar);
@@ -104,10 +102,4 @@ static void initializeOnce()
   atexit(finalize);
   nextEventPrecomputed = (const int *) mapping;
   initialize_thread();
-}
-
-
-__attribute__((constructor)) static void initialize()
-{
-  sampler_once(&randomOfflineInitOnce, initializeOnce);
 }

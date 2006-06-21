@@ -11,7 +11,7 @@ threads_no_HEADERS = $(headers)
 
 tools_PROGRAMS = precompute
 precompute_SOURCES = precompute.c
-precompute_LDADD = librandom-online.a $(LIBM)
+precompute_LDADD = librandom-online.a liblate.a $(LIBM)
 
 force:
 .PHONY: force

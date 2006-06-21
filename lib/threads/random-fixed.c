@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "countdown.h"
 #include "lifetime.h"
-#include "once.h"
+#include "random.h"
 #include "random-fixed.h"
 
 
@@ -12,8 +12,6 @@ const void * const samplerFeatureRandomFixed;
 
 int randomFixedCountdown;
 
-sampler_once_t randomFixedInitOnce = SAMPLER_ONCE_INIT;
-
 
 void initialize_thread()
 {
@@ -21,7 +19,7 @@ void initialize_thread()
 }
 
 
-static void initializeOnce()
+void samplerInitializeRandom()
 {
   const char * const environ = getenv("SAMPLER_SPARSITY");
   if (environ)
@@ -42,10 +40,4 @@ static void initializeOnce()
       initialize_thread();
       unsetenv("SAMPLER_SPARSITY");
     }
-}
-
-
-__attribute__((constructor)) static void initialize()
-{
-  sampler_once(&randomFixedInitOnce, initializeOnce);
 }

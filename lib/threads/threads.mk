@@ -13,9 +13,11 @@ libearly_a_SOURCES = hijack.c
 
 liblate_a_SOURCES =				\
 	../countdown.c				\
+	../initialize.c				\
 	../registry.c				\
 	../report.c				\
-	../timestamps-set.c
+	../timestamps-set.c			\
+	../verbose.c
 
 librandom_fixed_a_SOURCES = ../random-fixed.c
 librandom_offline_a_SOURCES = ../random-offline.c

@@ -8,13 +8,16 @@ SUBDIRS = no $(threads_yes)
 threads_HEADERS =				\
 	countdown.h				\
 	local.h					\
+	random.h				\
 	random-fixed.h				\
 	random-offline.h			\
 	random-offline-size.h			\
-	random-online.h
+	random-online.h				\
+	report.h
 
 EXTRA_DIST =					\
 	countdown.c				\
+	initialize.c				\
 	lifetime.h				\
 	random-fixed.c				\
 	random-offline.c			\

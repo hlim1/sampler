@@ -1,4 +1,2 @@
-import os.path
-
 home = '@preferencesdir@'
-glade = os.path.join(home, 'preferences.glade')
+glade = home + '/preferences.glade'

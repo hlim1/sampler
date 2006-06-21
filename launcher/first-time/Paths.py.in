@@ -1,4 +1,2 @@
-import os.path
-
 home = '@first_timedir@'
-glade = os.path.join(home, 'first-time.glade')
+glade = home + '/first-time.glade'

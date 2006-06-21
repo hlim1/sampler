@@ -39,10 +39,10 @@ install-data-hook:
 	rm -f $(all_python:%.py=$(DESTDIR)$(wrapperdir)/%.pyc)
 
 Paths.py: %: %.in Makefile
-	sed						\
-		-e 's!@''commondir@!$(commondir)!'	\
-		-e 's!@''first_time@!$(first_timedir)!'	\
-		-e 's!@''wrapperdir@!$(wrapperdir)!'	\
+	sed							\
+		-e 's!@''commondir@!$(commondir)!'		\
+		-e 's!@''first_timedir@!$(first_timedir)!'	\
+		-e 's!@''wrapperdir@!$(wrapperdir)!'		\
 		<$< >$@
 
 

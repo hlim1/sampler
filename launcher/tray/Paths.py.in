@@ -1,5 +1,3 @@
-import os.path
-
 home = '@traydir@'
 bin = '@bindir@'
-glade = os.path.join(home, 'tray.glade')
+glade = home + '/tray.glade'

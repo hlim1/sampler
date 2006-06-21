@@ -770,6 +770,18 @@
 	    <envar>$SAMPLER_FILE</envar> is disregarded.</para>
 	  </listitem>
 	</varlistentry>
+
+	<varlistentry id="output">
+	  <term><envar>$SAMPLER_VERBOSE</envar></term>
+	  <listitem>
+	    <para>If <envar>$SAMPLER_VERBOSE</envar> is set, then
+	    instrumented applications will print some additional CBI
+	    debugging information to standard error.  This is intended
+	    as a tool for debugging the instrumentation
+	    infrastructure.  The exact messages printed may vary from
+	    release to release.</para>
+	  </listitem>
+	</varlistentry>
       </variablelist>
     </section>
 

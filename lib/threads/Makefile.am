@@ -8,23 +8,23 @@ SUBDIRS = no $(threads_yes)
 threads_HEADERS =				\
 	countdown.h				\
 	local.h					\
-	random.h				\
 	random-fixed.h				\
 	random-offline.h			\
 	random-offline-size.h			\
-	random-online.h				\
-	report.h				\
-	verbose.h
+	random-online.h
 
 EXTRA_DIST =					\
 	countdown.c				\
 	initialize.c				\
 	lifetime.h				\
+	random.h				\
 	random-fixed.c				\
 	random-offline.c			\
 	random-online.c				\
 	registry.c				\
 	report.c				\
+	report.h				\
 	threads.mk				\
 	timestamps-set.c			\
-	verbose.c
+	verbose.c				\
+	verbose.h

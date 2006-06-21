@@ -771,7 +771,7 @@
 	  </listitem>
 	</varlistentry>
 
-	<varlistentry id="output">
+	<varlistentry>
 	  <term><envar>$SAMPLER_VERBOSE</envar></term>
 	  <listitem>
 	    <para>If <envar>$SAMPLER_VERBOSE</envar> is set, then

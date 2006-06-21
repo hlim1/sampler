@@ -13,7 +13,8 @@ threads_HEADERS =				\
 	random-offline.h			\
 	random-offline-size.h			\
 	random-online.h				\
-	report.h
+	report.h				\
+	verbose.h
 
 EXTRA_DIST =					\
 	countdown.c				\
@@ -25,4 +26,5 @@ EXTRA_DIST =					\
 	registry.c				\
 	report.c				\
 	threads.mk				\
-	timestamps-set.c
+	timestamps-set.c			\
+	verbose.c

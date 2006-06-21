@@ -18,7 +18,7 @@ import cStringIO
 
 class Upload(object):
 
-    __slots__ = ['boundary', '__compressed', 'headers']
+    __slots__ = ['__boundary', '__compressed', 'headers']
 
     def __init__(self, reports):
         # compress each individual report

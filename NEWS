@@ -5,7 +5,6 @@
 ** Collect active thread's stack trace without GDB.
 ** Signal handling improvements.
 ** Avoid uninitialized variable comparisons in scalar-pairs.
-** Experimental static implication-finding code.
 
 * sampler-1.3
 

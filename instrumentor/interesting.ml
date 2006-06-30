@@ -39,7 +39,14 @@ let isInterestingGlobalName =
   let uninteresting = [
     "sys_nerr";
     "gdk_debug_level"; "gdk_show_events"; "gdk_stack_trace";
-    "nextEventCountdown"
+    "nextEventCountdown";
+    "boundsCounters";
+    "branchesCounters";
+    "floatKindsCounters";
+    "functionEntriesCounters";
+    "gObjectUnrefCounters";
+    "returnsCounters";
+    "scalarPairsCounters";
   ] in
   (fun name -> not (List.mem name uninteresting))
 
@@ -47,7 +54,7 @@ let isInterestingGlobalName =
 let isInterestingLocalName =
   let regexp =
     let pattern =
-      let names = ["__cil_tmp";
+      let names = ["__cil_tmp[0-9]*";
 		   "tmp";
 		   "__result";
 		   "__s";

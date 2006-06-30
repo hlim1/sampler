@@ -1,5 +1,10 @@
 -*- outline -*-
 
+* sampler-1.4.1
+
+** Avoid instrumenting introduced temporaries and counter arrays.
+** Avoid instrumenting a generated CBI support function.
+
 * sampler-1.4
 
 ** Collect active thread's stack trace without GDB.

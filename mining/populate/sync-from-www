@@ -1,6 +1,7 @@
-#!/bin/sh
+#!/bin/sh -ex
 
-rsync -rlto -v --compare-dest=/afs/cs.wisc.edu/p/cbi/uploads/archive "$@" sampler.cs.berkeley.edu:/var/www/sampler-uploads/ /afs/cs.wisc.edu/p/cbi/uploads/reports
-
-find /afs/cs.wisc.edu/p/cbi/uploads/reports -type d -empty |
-xargs rmdir
+host=sampler.cs.berkeley.edu
+if ssh $host 'mv /var/www/sampler-uploads/* /var/www/sampler-transfer'; then
+  rsync -rlto -v --compare-dest=/afs/cs.wisc.edu/p/cbi/uploads/archive "$@" $host:/var/www/sampler-transfer/ /afs/cs.wisc.edu/p/cbi/uploads/reports
+  ssh $host 'mv /var/www/sampler-transfer/* /var/www/sampler-archive'
+fi

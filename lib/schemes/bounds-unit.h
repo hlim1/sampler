@@ -16,6 +16,8 @@ static samplerTimestamp boundsTimestampsLast[];
 #endif /* SAMPLER_TIMESTAMP_LAST */
 
 
+#pragma cilnoremove("boundsReportDump")
+#pragma sampler_exclude_function("boundsReportDump")
 static void boundsReportDump();
 
 

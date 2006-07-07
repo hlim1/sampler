@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.4.2
+
+** GConf schema installation bug fix.
+
 * sampler-1.4.1
 
 ** Avoid instrumenting introduced temporaries and counter arrays.

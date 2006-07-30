@@ -28,7 +28,7 @@ class UploaderTrayIcon(TrayIcon):
         BusyCursor.top = self
 
         self.__busy = None
-        self.__popup = PopupMenu(client)
+        self.__popup = PopupMenu(client, self)
 
         xml = gtk.glade.XML(Paths.glade, 'eventbox')
         Signals.autoconnect(self, xml)

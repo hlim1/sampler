@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.4.3
+
+** Nicer tray icon popup menu placement.
+
 * sampler-1.4.2
 
 ** GConf schema installation bug fix.

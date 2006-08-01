@@ -6,6 +6,15 @@ class visitor (tuples : Counters.manager) func =
   object (self)
     inherit SiteFinder.visitor
 
+    method vfunc func =
+      if self#includedFunction func then
+	begin
+	  StoreReturns.visit func;
+	  DoChildren
+	end
+      else
+	SkipChildren
+
     method vstmt stmt =
       match IsolateInstructions.isolated stmt with
       | Some (Call (Some result, callee, args, location))

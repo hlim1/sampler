@@ -15,7 +15,6 @@ class c file : Scheme.c =
     method private findAllSites =
       Scanners.iterFuncs file
 	(fun func ->
-	  StoreReturns.visit func;
 	  let finder = new ReturnFinder.visitor tuples func in
 	  ignore (Cil.visitCilFunction finder func));
       tuples#patch

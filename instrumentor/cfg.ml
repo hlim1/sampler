@@ -110,7 +110,7 @@ let build func =
 	scanBlock context thenBlock;
 	scanBlock context elseBlock
 
-    | Switch (_, body, cases, location) ->
+    | Switch (_, body, cases, _) ->
 	(* continue in any of the case handlers *)
 	List.iter (link statement) cases;
 
@@ -127,7 +127,7 @@ let build func =
 	let switchContext = {context with break = context.next} in
 	scanBlock switchContext body
 
-    | Loop (body, location, _, _) ->
+    | Loop (body, _, _, _) ->
 	(* fall through to top of loop, or self if loop body is empty *)
 	linkMaybe statement (pickNext (Some statement) body.bstmts);
 

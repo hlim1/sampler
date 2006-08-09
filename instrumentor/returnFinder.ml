@@ -17,7 +17,7 @@ class visitor (tuples : Counters.manager) func =
 
     method vstmt stmt =
       match IsolateInstructions.isolated stmt with
-      | Some (Call (Some result, callee, args, location))
+      | Some (Call (Some result, callee, _, location))
 	when self#includedStatement stmt
 	    && isInterestingCallee callee ->
 	  let resultType, _, _, _ = splitFunctionType (typeOf callee) in

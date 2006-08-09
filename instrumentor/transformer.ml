@@ -37,7 +37,7 @@ let visit file isWeightyCallee countdown =
 	    sites, weights
 	in
 
-	let original, instrumented, clones = Duplicate.duplicateBody func in
+	let _, instrumented, clones = Duplicate.duplicateBody func in
 
 	ForwardJumps.patch clones jumps.forward;
 	BackwardJumps.patch clones weights countdown backJumps;

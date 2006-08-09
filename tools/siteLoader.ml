@@ -6,7 +6,7 @@ let extractor = (dirname Sys.executable_name) ^ "/extract-section .debug_site_in
 
 
 class loader registry filename =
-  object (self)
+  object
     inherit TaggedLoader.t "sites"
 
     method private sectionHandler attributes =

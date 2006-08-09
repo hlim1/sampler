@@ -100,7 +100,7 @@ class type constantComparisonAccumulator =
   end
 
 class c_impl : constantComparisonAccumulator =
-  object (self)
+  object
     val infos = ref [] 
 
     method addInfo (info : (int * location * lval * exp)) = 
@@ -111,8 +111,8 @@ class c_impl : constantComparisonAccumulator =
   end
 
 class c_null : constantComparisonAccumulator =
-  object (self)
-    method addInfo (info : (int * location * lval * exp)) = () 
+  object
+    method addInfo (_ : (int * location * lval * exp)) = () 
     method getInfos () = ([] : (int * location * lval * exp) list) 
   end
 

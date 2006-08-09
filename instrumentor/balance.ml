@@ -127,7 +127,7 @@ let patch func splits weights =
 
   let patchOneSplit stmt =
     match stmt.skind with
-    | If (_, thenBlock, elseBlock, location) ->
+    | If (_, thenBlock, elseBlock, _) ->
 	let prependCounterweights = prependCounterweights stmt in
 	let balanceClause clause =
 	  clause.bstmts <- prependCounterweights (List.hd clause.bstmts) clause.bstmts
@@ -135,7 +135,7 @@ let patch func splits weights =
 	balanceClause thenBlock;
 	balanceClause elseBlock
 
-    | Switch (expr, body, cases, location) ->
+    | Switch (_, _, cases, _) ->
 	let prependCounterweights = prependCounterweights stmt in
 	let balanceCase case =
 	  let switchLabels, gotoLabels =
@@ -159,7 +159,7 @@ let patch func splits weights =
 
 	  let redirectGoto pred =
 	    match pred.skind with
-	    | Goto (target, location) ->
+	    | Goto (target, _) ->
 		assert (!target == case);
 		target := gotoTarget
 	    | Switch _ ->

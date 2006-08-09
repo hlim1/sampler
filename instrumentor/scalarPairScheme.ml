@@ -11,7 +11,7 @@ let name = {
 
 
 class c impls file : Scheme.c =
-  object (self)
+  object
     val tuples = new Counters.manager name file
 
     val constants = Constants.collect file

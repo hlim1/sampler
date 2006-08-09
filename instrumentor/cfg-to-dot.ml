@@ -30,7 +30,6 @@ class printEdges =
 let process filename =
   let file = Frontc.parse filename () in
   let action func =
-    DeadCode.visit func;
     Cfg.build func;
     printf "digraph %s {\n" func.svar.vname;
     ignore (visitCilFunction (new printNodes) func);

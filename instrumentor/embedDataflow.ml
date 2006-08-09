@@ -211,7 +211,7 @@ let rec simpleCondition =
 
 
 class visitor file digest channel =
-  object (self)
+  object
     inherit FunctionBodyVisitor.visitor
 
     method vfunc fundec =
@@ -242,7 +242,7 @@ class visitor file digest channel =
 	      | _ -> noop
 	    end
 
-	| Instr [Set (receiver, sender, location)] ->
+	| Instr [Set (receiver, sender, _)] ->
 	    let receivers = collectLval [] receiver in
 	    let senders = collectExpr [] sender in
 	    let folder args receiver sender =

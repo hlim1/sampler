@@ -17,7 +17,7 @@ let dump sink objects =
 	      let stubCallee = function
 		| Raw symbol ->
 		    Printf.fprintf sink "\t\t\"%s()\" [shape=box];\n" symbol
-		| Resolved func ->
+		| Resolved _ ->
 		    ()
 	      in
 	      List.iter stubCallee callees;

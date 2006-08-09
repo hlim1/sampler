@@ -1,9 +1,9 @@
 open Cil
 
 let dump file =
-  let constants = Constants.visit file in
+  let constants = Constants.collect file in
   print_endline "constants:";
-  let scanner n = Printf.printf "\t%Ld\n" n in
+  let scanner n () = Printf.printf "\t%Ld\n" n in
   constants#iter scanner;
   print_newline ()
 
@@ -12,7 +12,7 @@ let process filename =
   dump file;
   Rmtmps.removeUnusedTemps file;
   dump file;
-  dumpFile defaultCilPrinter stdout file
+  dumpFile defaultCilPrinter stdout filename file
 
 ;;
 

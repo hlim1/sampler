@@ -11,7 +11,7 @@ let name = {
 
 
 class c file : Scheme.c =
-  object (self)
+  object
     val tuples = new Counters.manager name file
 
     val classifier = FloatKindFinder.classifier file

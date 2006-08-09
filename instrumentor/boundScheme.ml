@@ -25,7 +25,7 @@ class visitor =
       
 
 class c file : Scheme.c =
-  object (self)
+  object
     initializer
       if Threads.enabled () then
 	failwith "bounds scheme is not thread safe"

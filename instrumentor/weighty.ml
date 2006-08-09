@@ -121,7 +121,7 @@ class visitor hasDefinition hasPragmaWeightless weighty =
 	  when isWeightyLval hasDefinition hasPragmaWeightless weighty lval ->
 	    raise (ContainsWeightyCall (location, lval))
 
-	| Call (_, Lval lval, _, location) ->
+	| Call (_, Lval _, _, _) ->
 	    ()
 
 	| Call (_, callee, _, _) ->

@@ -87,7 +87,7 @@ let isInterestingLval isInterestingType lval =
   let isInterestingHost = function
     | Var var when hasInterestingName var ->
 	Some (if var.vglob then "global" else "local")
-    | Mem expr when !assignAcrossPointer -> Some "mem"
+    | Mem _ when !assignAcrossPointer -> Some "mem"
     | _ -> None
   in
 

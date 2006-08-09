@@ -2,7 +2,7 @@ open Types.Function
 
 
 class t =
-  object (self)
+  object
     val table : (extension, (key * data)) HashClass.t
 	= new HashClass.c 1
 

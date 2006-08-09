@@ -4,7 +4,7 @@ open SchemeName
 
 
 class c func inspiration =
-  object (self)
+  object
     val implementation = mkEmptyStmt ()
 
     method fundec = func

@@ -2,22 +2,22 @@ open Cil
 open Pretty
 
 let instr_what = function
-  | Set(_, _, location) -> "Set"
-  | Call(_, _, _, location) -> "Call"
-  | Asm(_, _, _, _, _, location) -> "Asm"
+  | Set _ -> "Set"
+  | Call _ -> "Call"
+  | Asm _ -> "Asm"
 
 let stmt_what = function
-  | Instr(instrs) -> Printf.sprintf "Instr × %i" (List.length instrs)
-  | Return(_) -> "Return"
-  | Goto(_) -> "Goto"
-  | Break(_) -> "Break"
-  | Continue(_) -> "Continue"
-  | If(_) -> "If"
-  | Switch(_) -> "Switch"
-  | Loop(_) -> "Loop"
-  | Block({bstmts = bstmts}) -> Printf.sprintf "Block × %i" (List.length bstmts)
-  | TryFinally(_) -> "TryFinally"
-  | TryExcept(_) -> "TryExcept"
+  | Instr instrs -> Printf.sprintf "Instr × %i" (List.length instrs)
+  | Return _ -> "Return"
+  | Goto _ -> "Goto"
+  | Break _ -> "Break"
+  | Continue _ -> "Continue"
+  | If _ -> "If"
+  | Switch _ -> "Switch"
+  | Loop _ -> "Loop"
+  | Block {bstmts = bstmts} -> Printf.sprintf "Block × %i" (List.length bstmts)
+  | TryFinally _ -> "TryFinally"
+  | TryExcept _ -> "TryExcept"
 
 let stmt_describe stmt =
   let where = get_stmtLoc stmt in

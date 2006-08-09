@@ -1,8 +1,6 @@
 AM_CFLAGS = -fpic -Wall -Werror -Wformat=2 -Wno-return-type
 INCLUDES = $(MONITOR_CFLAGS) $(PYTHON_CFLAGS)
 
-defsdir = "`pkg-config --variable=defsdir pygtk-2.0`"
-
 EXTRA_DIST =					\
 	monitor.override
 

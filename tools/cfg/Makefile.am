@@ -1,6 +1,6 @@
 SUBDIRS = graphlib
 
-tools_SCRIPTS = resolve-cfg order-sites find-cliff
+tools_SCRIPTS = resolve-cfg order-sites
 
 EXTRA_DIST =
 
@@ -19,9 +19,6 @@ resolve-cfg: $(libcommon) $(libgraph) $(resolve-cfg)
 	$(link)
 
 order-sites: $(libcommon) $(libgraph) $(order-sites)
-	$(link)
-
-find-cliff: $(libcommon) $(libgraph) $(find-cliff)
 	$(link)
 
 $(dir $(libcommon))/%.cmi: $(libcommon); @:

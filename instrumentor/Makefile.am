@@ -55,14 +55,6 @@ MOSTLYCLEANFILES += dump
 dump: $(libcil) $(dump)
 	$(link)
 
-MOSTLYCLEANFILES += removeDeadCode
-removeDeadCode: $(libcil) $(removeDeadCode)
-	$(link)
-
-MOSTLYCLEANFILES += simplify
-simplify: $(libcil) $(simplify)
-	$(link)
-
 MOSTLYCLEANFILES += loopless
 loopless: $(libcil) $(loopless)
 	$(link)

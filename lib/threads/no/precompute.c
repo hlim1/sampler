@@ -16,7 +16,7 @@ char *envSeed;
 static void writeCountdown(FILE *outfile, int value)
 {
   const size_t actual = fwrite(&value, sizeof(value), 1, outfile);
-  if (actual != sizeof(value))
+  if (actual != 1)
     fprintf(stderr, "precompute: cannot write countdown: %s\n", strerror(errno));
 }
 

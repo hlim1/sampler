@@ -12,6 +12,7 @@ Makefile.in
 build-libraries
 cfg-to-dot
 checker
+cfgTest
 config.mk
 dump
 libraries.ml

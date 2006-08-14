@@ -1,3 +1,6 @@
+*.pyc
+.scons-cache
+.sconsign.dblite
 Makefile
 Makefile.in
 aclocal.m4

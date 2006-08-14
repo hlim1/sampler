@@ -1,0 +1,83 @@
+from glob import glob
+from itertools import chain, ifilter, imap
+from os.path import splitext
+from string import Template
+import re
+
+from utils import instantiate, read_pipe
+
+
+Import('env')
+env = env.Copy(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael')
+env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '../cil/obj/x86_LINUX'])
+
+
+########################################################################
+#
+#  create OCaml source defining sampler version number
+#
+
+
+def literal(target, source, env):
+    target = file(str(target[0]), 'w')
+    target.write(source[0].get_contents())
+    target.close()
+
+Import('version')
+version_ml = env.Command('version.ml', Value('let version = "%s"' % version), literal)
+
+
+########################################################################
+#
+#  create OCaml source listing standard library functions
+#
+
+
+symbolPattern = re.compile('^[0-9a-f]{8} [TW] ([$\\w]+)')
+
+
+def findSymbols(library):
+    command = ['nm', '--defined-only', '-g', '-p', str(library)]
+    if library.get_suffix() != '.a':
+        command.append('-D')
+    nm = read_pipe([command], env)
+    matches = imap(symbolPattern.match, nm)
+    matches = ifilter(None, matches)
+    return ( match.group(1) for match in matches )
+
+
+def libfuncs(target, source, env):
+    libraries = source[1:]
+    symbols = chain(*imap(findSymbols, libraries))
+    symbols = ('"%s"' % symbol for symbol in symbols )
+    symbols = ';\n'.join(symbols)
+
+    instantiate(str(env.File(source[0])), str(target[0]),
+                function_list=symbols, function_count=len(symbols))
+
+
+libraries_ml = env.Command('libraries.ml', ['libraries.ml.template',
+                                            '/usr/lib/libc_nonshared.a',
+                                            '/lib/libc.so.6',
+                                            '/lib/libm.so.6'],
+                           libfuncs)
+
+
+########################################################################
+#
+#  main build targets
+#
+
+
+env.OcamlObject([version_ml, libraries_ml] + glob('*.ml') + glob('*.mli'))
+
+env.OcamlProgram('main.ml')
+env.OcamlProgram('cfgTest.ml')
+env.OcamlProgram('cfg-to-dot.ml')
+env.OcamlProgram('checker.ml')
+env.OcamlProgram('dump.ml')
+env.OcamlProgram('loopless.ml')
+
+Default('main')
+
+# todo: various regression test subdirs

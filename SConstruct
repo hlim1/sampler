@@ -16,7 +16,10 @@ Export('version')
 SConsignFile()
 
 opts = Options(None, ARGUMENTS)
-opts.AddOptions(BoolOption('OCAML_NATIVE', 'compile OCaml to native code', False))
+opts.AddOptions(
+    BoolOption('OCAML_NATIVE', 'compile OCaml to native code', False),
+    PathOption('prefix', 'install in the given directory', '/usr/local'),
+    )
 
 env = Environment(
     tools=['default', 'ocaml'], toolpath=['.'],
@@ -24,6 +27,7 @@ env = Environment(
     CCFLAGS=['-W', '-Wall', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
     options=opts,
+    prefix='/usr',
     )
 
 env.SourceCode('.', None)
@@ -50,4 +54,12 @@ SetOption('max_drift', 1)
 #  subsidiary scons scripts
 #
 
-SConscript(dirs=['fuzz', 'instrumentor', 'launcher', 'lib', 'ocaml', 'tools'])
+SConscript(dirs=[
+    'doc',
+    'fuzz',
+    'instrumentor',
+    'launcher',
+    'lib',
+    'ocaml',
+    'tools',
+    ])

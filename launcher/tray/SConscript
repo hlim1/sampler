@@ -1,0 +1,5 @@
+from glob import glob
+
+Import('env')
+Alias('test', env.TestPython(glob('*.py')))
+Alias('test', env.TestXML(['Sampler_Monitor.server', 'oaf.dtd']))

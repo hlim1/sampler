@@ -25,6 +25,7 @@ EXTRA_DIST =					\
 	$(tray_PYTHON)				\
 	Paths.py.in				\
 	activate				\
+	oaf.dtd					\
 	tray.gladep				\
 	tray.in
 
@@ -33,7 +34,7 @@ BUILT_SOURCES =					\
 	Sampler_Monitor.server			\
 	tray
 
-MOSTLYCLEANFILES = *.pyc *.pyo oaf.dtd $(link_python) $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo $(link_python) $(BUILT_SOURCES)
 
 TESTS = $(all_python) $(servers_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
@@ -55,10 +56,7 @@ $(BUILT_SOURCES): %: %.in Makefile
 	if [ -x $< ]; then chmod +x $@; fi
 
 
-check-am: oaf.dtd $(link_python)
-
-oaf.dtd: %: ../%
-	$(LN_S) $< $@
+check-am: $(link_python)
 
 $(link_python): %: ../common/%
 	$(LN_S) $< $@

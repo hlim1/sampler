@@ -1,3 +1,4 @@
+import os
 from os.path import exists
 
 from SCons.Errors import UserError
@@ -37,12 +38,18 @@ opts.AddOptions(
 #
 
 env = Environment(
-    tools=['default', 'ocaml'], toolpath=['.'],
+    tools=['default', 'ocaml', 'test'], toolpath=['.'],
     CCFLAGS=['-W', '-Wall', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
     options=opts,
     prefix='/usr',
     )
+
+# needed for some pychecker tests
+if 'DISPLAY' in os.environ:
+    env.AppendUnique(ENV={'DISPLAY': os.environ['DISPLAY']})
+if 'XAUTHORITY' in os.environ:
+    env.AppendUnique(ENV={'XAUTHORITY': os.environ['XAUTHORITY']})
 
 env.SourceCode('.', None)
 SConsignFile()

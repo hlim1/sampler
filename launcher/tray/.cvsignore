@@ -1,3 +1,4 @@
+*.passed
 *.pyc
 *.pyo
 *.server

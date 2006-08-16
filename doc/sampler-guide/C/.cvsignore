@@ -1,4 +1,5 @@
 *.omf.out
+*.passed
 Makefile
 Makefile.in
 ar??s??.html

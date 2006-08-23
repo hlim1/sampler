@@ -2,12 +2,16 @@
 -- PostgreSQL database dump
 --
 
+SET client_encoding = 'UNICODE';
+SET check_function_bodies = false;
+
 SET search_path = public, pg_catalog;
 
+ALTER TABLE ONLY public.build DROP CONSTRAINT "$1";
 ALTER TABLE ONLY public.build DROP CONSTRAINT build_distribution;
 ALTER TABLE ONLY public.build_suppress DROP CONSTRAINT build_suppress_id;
 ALTER TABLE ONLY public.run DROP CONSTRAINT run_build_id;
-ALTER TABLE ONLY public.scheme DROP CONSTRAINT scheme_pkey;
+ALTER TABLE ONLY public.deployment DROP CONSTRAINT deployment_pkey;
 ALTER TABLE ONLY public.distribution DROP CONSTRAINT distribution_pkey;
 ALTER TABLE ONLY public.run_suppress DROP CONSTRAINT run_suppress_pkey;
 ALTER TABLE ONLY public.run DROP CONSTRAINT run_pkey;
@@ -16,27 +20,34 @@ ALTER TABLE ONLY public.build DROP CONSTRAINT build_pkey;
 DROP INDEX public.run_exit_signal;
 DROP INDEX public.run_run_id_build_id;
 DROP INDEX public.run_build_id;
+DROP TABLE public.deployment;
 DROP TABLE public.distribution;
-DROP TABLE public.foo;
 DROP TABLE public.build_suppress;
 DROP TABLE public.run_suppress;
 DROP TABLE public.run;
 DROP TABLE public.build;
-DROP TABLE public.scheme;
+DROP PROCEDURAL LANGUAGE plpgsql;
+DROP FUNCTION public.plpgsql_call_handler();
 --
--- TOC entry 4 (OID 62143717)
--- Name: scheme; Type: TABLE; Schema: public; Owner: liblit
+-- TOC entry 21 (OID 14352816)
+-- Name: plpgsql_call_handler(); Type: FUNC PROCEDURAL LANGUAGE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE scheme (
-    scheme_name character varying(16) NOT NULL,
-    predicates_per_site smallint NOT NULL,
-    CONSTRAINT scheme_predicates_per_site CHECK ((predicates_per_site > 0))
-);
+CREATE FUNCTION plpgsql_call_handler() RETURNS language_handler
+    AS '$libdir/plpgsql', 'plpgsql_call_handler'
+    LANGUAGE c;
 
 
 --
--- TOC entry 5 (OID 62143722)
+-- TOC entry 20 (OID 14352817)
+-- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: public; Owner: 
+--
+
+CREATE TRUSTED PROCEDURAL LANGUAGE plpgsql HANDLER plpgsql_call_handler;
+
+
+--
+-- TOC entry 5 (OID 2101557)
 -- Name: build; Type: TABLE; Schema: public; Owner: liblit
 --
 
@@ -46,12 +57,13 @@ CREATE TABLE build (
     application_version character varying(50) NOT NULL,
     application_release character varying(50) NOT NULL,
     build_distribution character varying(50) NOT NULL,
-    build_date timestamp without time zone NOT NULL
+    build_date timestamp without time zone NOT NULL,
+    deployment_name character varying(50) NOT NULL
 );
 
 
 --
--- TOC entry 6 (OID 62143725)
+-- TOC entry 6 (OID 2101560)
 -- Name: run; Type: TABLE; Schema: public; Owner: liblit
 --
 
@@ -71,7 +83,7 @@ CREATE TABLE run (
 
 
 --
--- TOC entry 7 (OID 62143731)
+-- TOC entry 7 (OID 2101566)
 -- Name: run_suppress; Type: TABLE; Schema: public; Owner: liblit
 --
 
@@ -82,7 +94,7 @@ CREATE TABLE run_suppress (
 
 
 --
--- TOC entry 8 (OID 62144182)
+-- TOC entry 8 (OID 2101568)
 -- Name: build_suppress; Type: TABLE; Schema: public; Owner: liblit
 --
 
@@ -93,17 +105,7 @@ CREATE TABLE build_suppress (
 
 
 --
--- TOC entry 9 (OID 62228194)
--- Name: foo; Type: TABLE; Schema: public; Owner: liblit
---
-
-CREATE TABLE foo (
-    date timestamp without time zone
-);
-
-
---
--- TOC entry 10 (OID 62228287)
+-- TOC entry 9 (OID 2101572)
 -- Name: distribution; Type: TABLE; Schema: public; Owner: liblit
 --
 
@@ -113,7 +115,17 @@ CREATE TABLE distribution (
 
 
 --
--- TOC entry 14 (OID 62143733)
+-- TOC entry 10 (OID 32934615)
+-- Name: deployment; Type: TABLE; Schema: public; Owner: liblit
+--
+
+CREATE TABLE deployment (
+    deployment_name character varying(50) NOT NULL
+);
+
+
+--
+-- TOC entry 13 (OID 2118965)
 -- Name: run_build_id; Type: INDEX; Schema: public; Owner: liblit
 --
 
@@ -121,7 +133,7 @@ CREATE INDEX run_build_id ON run USING btree (build_id);
 
 
 --
--- TOC entry 17 (OID 62143734)
+-- TOC entry 16 (OID 2118966)
 -- Name: run_run_id_build_id; Type: INDEX; Schema: public; Owner: liblit
 --
 
@@ -129,7 +141,7 @@ CREATE INDEX run_run_id_build_id ON run USING btree (run_id, build_id);
 
 
 --
--- TOC entry 15 (OID 62143735)
+-- TOC entry 14 (OID 2118967)
 -- Name: run_exit_signal; Type: INDEX; Schema: public; Owner: liblit
 --
 
@@ -137,7 +149,7 @@ CREATE INDEX run_exit_signal ON run USING btree (exit_signal);
 
 
 --
--- TOC entry 13 (OID 62143738)
+-- TOC entry 12 (OID 2118968)
 -- Name: build_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
 --
 
@@ -146,7 +158,7 @@ ALTER TABLE ONLY build
 
 
 --
--- TOC entry 12 (OID 62143740)
+-- TOC entry 11 (OID 2118970)
 -- Name: build_application_name_key; Type: CONSTRAINT; Schema: public; Owner: liblit
 --
 
@@ -155,7 +167,7 @@ ALTER TABLE ONLY build
 
 
 --
--- TOC entry 16 (OID 62143742)
+-- TOC entry 15 (OID 2118972)
 -- Name: run_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
 --
 
@@ -164,7 +176,7 @@ ALTER TABLE ONLY run
 
 
 --
--- TOC entry 18 (OID 62143744)
+-- TOC entry 17 (OID 2118974)
 -- Name: run_suppress_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
 --
 
@@ -173,7 +185,7 @@ ALTER TABLE ONLY run_suppress
 
 
 --
--- TOC entry 19 (OID 62228289)
+-- TOC entry 18 (OID 2118976)
 -- Name: distribution_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
 --
 
@@ -182,16 +194,16 @@ ALTER TABLE ONLY distribution
 
 
 --
--- TOC entry 11 (OID 62228368)
--- Name: scheme_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
+-- TOC entry 19 (OID 32934617)
+-- Name: deployment_pkey; Type: CONSTRAINT; Schema: public; Owner: liblit
 --
 
-ALTER TABLE ONLY scheme
-    ADD CONSTRAINT scheme_pkey PRIMARY KEY (scheme_name);
+ALTER TABLE ONLY deployment
+    ADD CONSTRAINT deployment_pkey PRIMARY KEY (deployment_name);
 
 
 --
--- TOC entry 21 (OID 62143746)
+-- TOC entry 24 (OID 2118980)
 -- Name: run_build_id; Type: FK CONSTRAINT; Schema: public; Owner: liblit
 --
 
@@ -200,7 +212,7 @@ ALTER TABLE ONLY run
 
 
 --
--- TOC entry 22 (OID 62144493)
+-- TOC entry 25 (OID 2118984)
 -- Name: build_suppress_id; Type: FK CONSTRAINT; Schema: public; Owner: liblit
 --
 
@@ -209,7 +221,7 @@ ALTER TABLE ONLY build_suppress
 
 
 --
--- TOC entry 20 (OID 62228431)
+-- TOC entry 22 (OID 2118988)
 -- Name: build_distribution; Type: FK CONSTRAINT; Schema: public; Owner: liblit
 --
 
@@ -218,7 +230,16 @@ ALTER TABLE ONLY build
 
 
 --
--- TOC entry 2 (OID 2200)
+-- TOC entry 23 (OID 268567849)
+-- Name: $1; Type: FK CONSTRAINT; Schema: public; Owner: liblit
+--
+
+ALTER TABLE ONLY build
+    ADD CONSTRAINT "$1" FOREIGN KEY (deployment_name) REFERENCES deployment(deployment_name);
+
+
+--
+-- TOC entry 3 (OID 2200)
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
 --
 

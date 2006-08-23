@@ -60,7 +60,8 @@ $dbh->do(q{
 	 application_version VARCHAR(50) NOT NULL,
 	 application_release VARCHAR(50) NOT NULL,
 	 build_distribution VARCHAR(50) NOT NULL,
-	 build_date TIMESTAMP NOT NULL)
+	 build_date TIMESTAMP NOT NULL,
+	 deployment_name VARCHAR(50) NOT NULL)
     }) or die;
 
 
@@ -80,6 +81,17 @@ sub insert_build ($) {
     $package =~ /\/((fedora|redhat)-\d+-i386)(-older)?\//
 	or die "cannot find distribution for $package\n";
     my $distro = $1;
+
+    # deduce deployment
+    my $deployment;
+    if ($package =~ /^\/afs\/cs\.wisc\.edu\//) {
+	$deployment = 'default';
+    } elsif ($package =~ /^\/afs\/cs\.stanford\.edu\//) {
+	$deployment = 'stanford';
+    } else {
+	die "cannot find deployment for \"$package\"\n";
+    }
+    print "$deployment: $package\n";
 
     # ask the rpm who it thinks it is
     (basename $package) =~ /^(.+)-samplerinfo-([^-]+)-([^-]+)\.[^.]+\.rpm$/
@@ -111,7 +123,7 @@ sub insert_build ($) {
     my $build_date = strftime('%F %T', gmtime $raw_date);
 
     # add to uploads for build table
-    my @fields = (@app_id, $build_date);
+    my @fields = (@app_id, $build_date, $deployment);
     $upload_build->row(@fields);
 }
 

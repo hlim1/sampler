@@ -1,260 +1,231 @@
 #!@PYTHON@ -O
+# @configure_input@
 
-#!/s/std/bin/perl -w
+from itertools import imap
+from optparse import OptionParser
+from os import rename, stat
+from os.path import basename, dirname
+from time import gmtime, strftime
+import sys
 
-use strict;
-use 5.008;			# for safe pipe opens using list form of open
-
-use DBI;
-use File::Basename;
-use File::stat;
-use File::Temp qw(tempfile);
-use FileHandle;
-use POSIX qw(strftime);
-
-use Common;
-use Upload;
-
-my $dry_run = (@ARGV && $ARGV[0] eq '--dry-run') ? shift : undef;
-
-my $dbh = Common::connect;
+from common import Upload, connect
 
 
-########################################################################
-#
-#  get the list of already-known sample reports
-#
-
-
-sub get_known ($) {
-    my ($dbh) = @_;
-    my $column = $dbh->selectcol_arrayref('SELECT run_id FROM run UNION SELECT run_id FROM run_suppress ORDER BY run_id');
-
-    print scalar @{$column}, " runs already known or suppressed\n";
-
-    my %known;
-    $known{$_} = 1 foreach @{$column};
-    return %known;
-}
-
-
-my %known = get_known $dbh;
-
-
-########################################################################
-#
-#  get the list of suppressed builds
-#
-
-
-sub get_suppressed ($) {
-    my ($dbh) = @_;
-    my $rows = $dbh->selectall_arrayref(q{
-	SELECT application_name, application_version, application_release, build_distribution
-	    FROM build
-	    NATURAL JOIN build_suppress});
-
-    print scalar @{$rows}, " builds suppressed\n";
-
-    my %suppressed;
-    foreach my $row (@{$rows}) {
-	my $app_id = join("\t", @{$row});
-	$suppressed{$app_id} = 1;
+columns = {
+    'HTTP_SAMPLER_APPLICATION_NAME': 'application_name',
+    'HTTP_SAMPLER_APPLICATION_VERSION': 'application_version',
+    'HTTP_SAMPLER_APPLICATION_RELEASE': 'application_release',
+    'HTTP_SAMPLER_BUILD_DISTRIBUTION': 'build_distribution',
+    'HTTP_SAMPLER_VERSION': 'version',
+    'HTTP_SAMPLER_SPARSITY': 'sparsity',
+    'HTTP_SAMPLER_EXIT_SIGNAL': 'exit_signal',
+    'HTTP_SAMPLER_EXIT_STATUS': 'exit_status',
+    'DATE': 'date',
+    'SERVER_NAME': 'server_name',
     }
 
-    return %suppressed;
-}
 
-
-my %suppressed = get_suppressed $dbh;
-
-
-########################################################################
-#
-#  simple helper functions
-#
-
-
-my @slot = ('HTTP_SAMPLER_APPLICATION_NAME',
-	    'HTTP_SAMPLER_APPLICATION_VERSION',
-	    'HTTP_SAMPLER_APPLICATION_RELEASE',
-	    'HTTP_SAMPLER_BUILD_DISTRIBUTION',
-	    'HTTP_SAMPLER_VERSION',
-	    'HTTP_SAMPLER_SPARSITY',
-	    'HTTP_SAMPLER_EXIT_SIGNAL',
-	    'HTTP_SAMPLER_EXIT_STATUS',
-	    'DATE');
-
-
-sub guess_distro (\%) {
-    my $environment = shift;
-    my $instrumentor = $environment->{HTTP_SAMPLER_INSTRUMENTOR_VERSION};
-    return 'redhat-9-i386' unless defined $instrumentor;
-    return 'fedora-1-i386' if $instrumentor eq '0.9.1';
-    return 'redhat-9-i386';
-}
-
-
-sub read_environment ($\%) {
-    my ($dir, $known) = @_;
-
-    my $filename = "$dir/environment";
-    my $file = new FileHandle($filename) or die "cannot read $filename: $!";
-    my %environment;
-
-    while (my $line = <$file>) {
-	$line =~ /^([^	]+)	(.*)$/ or die;
-	$environment{$1} = $2;
+servers = {
+    '/afs/cs.wisc.edu/p/cbi/uploads/reports': 'www.cs.wisc.edu',
+    '/afs/cs.wisc.edu/p/cbi/uploads/archive': 'www.cs.wisc.edu',
+    '/afs/cs.wisc.edu/p/cbi/uploads/berkeley/reports': 'sampler.cs.berkeley.edu',
+    '/afs/cs.stanford.edu/group/cbi/www/sampler-uploads': 'www.cs.stanford.edu',
     }
 
-    $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} = guess_distro %environment
-	unless defined $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION};
 
-    $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} = 'fedora-4-i386'
-	if $environment{HTTP_SAMPLER_BUILD_DISTRIBUTION} eq 'fedora-4-noarch';
-
-    $environment{HTTP_SAMPLER_VERSION} = $environment{HTTP_SAMPLER_INSTRUMENTOR_VERSION}
-	unless defined $environment{HTTP_SAMPLER_VERSION};
-
-    $environment{HTTP_SAMPLER_VERSION} = $environment{HTTP_SAMPLER_INSTRUMENTATION_VERSION}
-	unless defined $environment{HTTP_SAMPLER_VERSION};
-
-    unless (defined $environment{DATE}) {
-	my $stat = stat($filename) or die;
-	$environment{DATE} = strftime('%F %T', gmtime $stat->mtime);
+archives = {
+    'www.cs.wisc.edu': '/afs/cs.wisc.edu/p/cbi/uploads/archive',
+    'sampler.cs.berkeley.edu': '/afs/cs.wisc.edu/p/cbi/uploads/berkeley/archive',
+    'www.cs.stanford.edu': '/afs/cs.stanford.edu/group/cbi/www/archive'
     }
 
-    foreach (@slot) {
-	die "$filename: $_ is undefined\n"
-	    unless defined $environment{$_};
-    }
 
-    my $app_id = join("\t", @environment{@slot[0 .. 3]});
-    return undef if $suppressed{$app_id};
-    return undef if $environment{HTTP_SAMPLER_APPLICATION_NAME} eq 'gnumeric';
-
-    return \%environment;
-}
+def readEnvironment(environPath):
+    items = file(environPath)
+    items = imap(str.rstrip, items)
+    items = ( item.split('\t') for item in items )
+    return dict(items)
 
 
-sub environment_fields (\%) {
-    my ($environment) = @_;
-    my @result;
+class MalformedRun(StandardError):
 
-    foreach (@slot) {
-	exists $environment->{$_} or die "missing environment field: $_";
-	push @result, $environment->{$_};
-    }
+    __slots__ = ['run']
 
-    return @result;
-}
+    def __init__(self, run, reason):
+        StandardError.__init__(self, reason)
+        self.run = run
 
 
-########################################################################
-#
-#  prepare receiving area for bulk upload
-#
+class Run(object):
+
+    __fields = ['run_id', 'application_name', 'application_version', 'application_release', 'build_distribution', 'version', 'sparsity', 'exit_signal', 'exit_status', 'date', 'server_name']
+    __slots__ = __fields + ['subdir']
+
+    def __init__(self, subdir):
+        self.subdir = subdir
+        self.run_id = basename(subdir)
+
+        environPath = '%s/environment' % subdir
+        environment = readEnvironment(environPath)
+        for name, value in environment.iteritems():
+            if name in columns:
+                setattr(self, columns[name], value)
+
+        if not hasattr(self, 'build_distribution'):
+            self.build_distribution = self.__guessDistro(environment)
+
+        if self.build_distribution == 'fedora-4-noarch':
+            self.build_distribution = 'fedora-4-i386'
+
+        if not hasattr(self, 'version'):
+            self.version = self.__guessVersion(environment)
+
+        if not hasattr(self, 'date'):
+            self.date = self.__guessDate(environPath)
+
+        if not hasattr(self, 'server_name'):
+            self.server_name = self.__guessServer(environPath)
+
+        for slot in self.__slots__:
+            problem = False
+            if not hasattr(self, slot):
+                problem = True
+                print 'error: %s: missing attribute "%s"' % (subdir, slot)
+            if problem:
+                sys.exit(1)
+
+        self.sparsity = int(self.sparsity)
+        self.exit_signal = int(self.exit_signal)
+        self.exit_status = int(self.exit_status)
 
 
-$dbh->do(q{
-    CREATE TEMPORARY TABLE upload_run
-	(run_id VARCHAR(24) NOT NULL,
-	 application_name VARCHAR(50) NOT NULL,
-	 application_version VARCHAR(50) NOT NULL,
-	 application_release VARCHAR(50) NOT NULL,
-	 build_distribution VARCHAR(50) NOT NULL,
-	 version VARCHAR(255),
-	 sparsity INTEGER NOT NULL CHECK (sparsity > 0),
-	 exit_signal SMALLINT NOT NULL CHECK (exit_signal >= 0),
-	 exit_status SMALLINT NOT NULL CHECK (exit_status >= 0),
-	 CHECK (exit_status = 0 OR exit_signal = 0),
-	 date TIMESTAMP NOT NULL)
-    }) or die;
+    def __guessDistro(self, environment):
+        instrumentor = environment.get('HTTP_SAMPLER_INSTRUMENTOR_VERSION')
+        if instrumentor == '0.9.1': return 'fedora-1-i386'
+        return 'redhat-9-i386'
 
 
-########################################################################
-#
-#  insert any new reports
-#
+    def __guessVersion(self, environment):
+        guess = environment.get('HTTP_SAMPLER_INSTRUMENTOR_VERSION')
+        if guess: return guess
+        guess = environment.get('HTTP_SAMPLER_INSTRUMENTATION_VERSION')
+        if guess: return guess
+        self.__malformed('cannot guess version')
 
 
-my $upload_run = new Upload($dbh, 'upload_run');
-my @uploads;
-
-sub insert_run ($) {
-    my $dir = dirname shift;
-    my $run_id = basename $dir;
-    push @uploads, $dir;
-
-    # skip already-known reports
-    return if exists $known{$run_id};
-    $known{$run_id} = 1;
-
-    # load environment, and skip reports from bad builds
-    my $environment = read_environment $dir, %known;
-    return unless defined $environment;
-
-    # new report of good build, so add to upload
-    print "new: $dir\n";
-    my @environment = environment_fields %{$environment};
-    $upload_run->row($run_id, @environment);
-}
+    def __guessDate(self, environPath):
+        status = stat(environPath)
+        return strftime('%F %T', gmtime(status.st_mtime))
 
 
-if (@ARGV) {
-    insert_run $_ foreach @ARGV;
-} else {
-    while (local $_ = <STDIN>) {
-	chomp;
-	insert_run $_;
-    }
-}
+    def __guessServer(self, environPath):
+        prefix = environPath
+        while prefix != '/':
+            if prefix in servers:
+                return servers[prefix]
+            else:
+                prefix = dirname(prefix)
+
+        self.__malformed('cannot guess server')
 
 
-print $upload_run->count, " new runs:\n";
-
-print "\tupload\n";
-$upload_run->done;
+    def __malformed(self, reason):
+        raise MalformedRun(self, reason)
 
 
-########################################################################
-#
-#  add to existing tables
-#
+    def row(self):
+        return [ getattr(self, field) for field in self.__fields ]
 
 
-unless ($dry_run) {
+def uploadRuns(db, subdirs):
+    upload = Upload(db, 'upload_run')
 
-    print "\tinsert\n";
+    def uploadRun(subdir):
+        print 'upload:', subdir
+        try:
+            run = Run(subdir)
+            row = run.row()
+            upload.append(row)
+            return run
+        except MalformedRun, error:
+            print 'error: %s: %s' % (subdir, error)
+            return None
 
-    $dbh->do(q{
-	INSERT INTO run
-	    SELECT
-		run_id,
-		build_id,
-		version,
-		sparsity,
-		exit_signal,
-		exit_status,
-		date
-	    FROM upload_run
-	    NATURAL LEFT JOIN build
-	}) or die;
-}
-
-
-########################################################################
-#
-#  finish up
-#
+    runs = filter(bool, imap(uploadRun, subdirs))
+    print 'uploading %d runs' % len(runs)
+    upload.commit()
+    print '\tdone'
+    return runs
 
 
-$dbh->commit;
-$dbh->disconnect;
+def main():
+    parser = OptionParser(usage='%prog [options]')
+    parser.add_option('-n', '--dry-run', action='store_true', default=False,
+                      help='show what would be inserted without actually doing it')
+    options, args = parser.parse_args()
 
-foreach (@uploads) {
-    my $run_id = basename $_;
-    my $archive = dirname(dirname $_) . "/archive/$run_id";
-    rename $_, $archive
-	or warn "cannot rename $_ to $archive: $!\n";
-}
+    # temporary table to receive new runs
+    db = connect()
+    db.autocommit = False
+
+    db.cursor().execute("""
+    CREATE TEMPORARY TABLE upload_run (
+        run_id VARCHAR(24) PRIMARY KEY NOT NULL,
+        application_name VARCHAR(50) NOT NULL,
+        application_version VARCHAR(50) NOT NULL,
+        application_release VARCHAR(50) NOT NULL,
+        build_distribution VARCHAR(50) NOT NULL,
+        version VARCHAR(255) NOT NULL,
+        sparsity INTEGER NOT NULL CHECK (sparsity > 0),
+        exit_signal SMALLINT NOT NULL CHECK (exit_signal >= 0),
+        exit_status SMALLINT NOT NULL CHECK (exit_status >= 0),
+        CHECK (exit_status = 0 OR exit_signal = 0),
+        date TIMESTAMP NOT NULL,
+        server_name VARCHAR(50) NOT NULL
+    )""")
+
+    if args:
+        subdirs = args
+    else:
+        subdirs = sys.stdin
+        subdirs = imap(str.rstrip, subdirs)
+
+    # upload new runs into temporary table
+    subdirs = imap(dirname, subdirs)
+    runs = uploadRuns(db, subdirs)
+
+    # merge new runs into main table
+    db.cursor().execute("""
+    INSERT INTO run SELECT
+        run_id,
+        build_id,
+        version,
+        sparsity,
+        exit_signal,
+        exit_status,
+        date,
+        server_name
+    FROM upload_run
+    NATURAL LEFT JOIN build
+    """)
+
+    # finish up with database
+    if options.dry_run:
+        db.rollback()
+    else:
+        db.commit()
+
+    db.close()
+
+    # archive new runs
+    for run in runs:
+        archive = archives[run.server_name]
+        year = run.date.split('-')[0]
+        destination = '%s/%s/%s' % (archive, year, run.run_id)
+        if not options.dry_run:
+            print 'archive: %s --> %s' % (run.subdir, destination)
+            rename(run.subdir, destination)
+
+
+if __name__ == '__main__':
+    main()

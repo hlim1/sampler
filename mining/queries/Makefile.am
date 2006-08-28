@@ -1,5 +1,7 @@
 query_sql :=					\
+	nautilus.sql				\
 	outcome-summary.sql			\
+	outcome-summary-per-version.sql		\
 	popular-apps.sql			\
 	popular-builds.sql			\
 	popular-crashing-builds.sql		\

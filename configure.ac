@@ -19,6 +19,7 @@ domain="`dnsdomainname`"
 case "$domain" in
   (cs.wisc.edu)
     : ${with_objcopy:=/afs/cs.wisc.edu/s/binutils-2.16.1/bin/objcopy}
+    : ${PYTHON:=/s/python-2.4.3/bin/python}
   ;;
 esac
 

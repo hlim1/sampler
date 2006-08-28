@@ -1,8 +1,10 @@
+*.pyc
+*.pyo
 Makefile
 Makefile.in
 Site.pm
 insert-builds.pl
-insert-runs.pl
-integrity-checks.pl
+insertRuns.py
+integrityChecks.py
 sampler-uploads
 sync-stamp

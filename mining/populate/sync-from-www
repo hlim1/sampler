@@ -1,7 +1,9 @@
 #!/bin/sh -ex
 
 host=sampler.cs.berkeley.edu
-if ssh $host 'mv /var/www/sampler-uploads/* /var/www/sampler-transfer'; then
-  rsync -rlto -v --compare-dest=/afs/cs.wisc.edu/p/cbi/uploads/archive "$@" $host:/var/www/sampler-transfer/ /afs/cs.wisc.edu/p/cbi/uploads/reports
-  ssh $host 'mv /var/www/sampler-transfer/* /var/www/sampler-archive'
+xfer=/var/www/sampler-transfer
+
+if ssh $host "mv /var/www/sampler-uploads/* $xfer"; then
+  rsync -rlto -v "$@" $host:$xfer/ /afs/cs.wisc.edu/p/cbi/uploads/berkeley/reports
+  ssh $host "rm -r $xfer/*"
 fi

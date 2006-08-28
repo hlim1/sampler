@@ -1,4 +1,6 @@
-#!@PERL@ -w
+#!@PYTHON@ -O
+
+#!/s/std/bin/perl -w
 
 use strict;
 use 5.008;			# for safe pipe opens using list form of open

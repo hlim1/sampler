@@ -1,5 +1,5 @@
 from os.path import dirname
-from itertools import ifilter, imap
+from itertools import chain, ifilter, imap
 
 import sys
 sys.path[1:1] = ['/usr/lib/scons']
@@ -57,7 +57,6 @@ def obj_emitter(target, source, env):
 
 
 def ocamldep(node, env, path):
-    source = str(node)
     suffix = node.get_suffix()
     if not suffix in source_to_object[env['OCAML_NATIVE']]:
         warn('%s does not have a suitable suffix' % node)
@@ -65,14 +64,13 @@ def ocamldep(node, env, path):
 
     if not node.exists():
         warn('%s does not exist' % node)
-        return
 
     stdout = read_pipe([['$OCAMLDEP', '$_OCAML_PATH', '$_OCAML_PP', str(node)]], env)
     if stdout == 0:
         return
     elif isinstance(stdout, int):
         env.Exit(stdout)
-            
+
     target = node.target_from_source('', source_to_object[env['OCAML_NATIVE']][suffix])
     target = str(target) + ':'
 
@@ -85,12 +83,12 @@ def ocamldep(node, env, path):
                 yield accum + line
                 accum = ''
 
-    lines = joinLines(stdout)
-    lines = imap(str.split, lines)
-    lines = ( fields[1:] for fields in lines if fields[0] == target )
-    for deps in lines:
-        for dependency in deps:
-            yield env.File(dependency)
+    deps = joinLines(stdout)
+    deps = imap(str.split, deps)
+    deps = ( fields[1:] for fields in deps if fields[0] == target )
+    deps = chain(*deps)
+    deps = imap(env.File, deps)
+    return files
 
 
 ocamldep_scanner = Scanner(function=ocamldep, name='ocamldep',
@@ -206,15 +204,15 @@ def link_order_expand(cmo, env, seen):
         prereqs = ( pre.target_from_source('', obj_suffix) for pre in prereqs )
         prereqs = ( pre for pre in prereqs if pre != cmo )
         prereqs = ( link_order_expand(pre, env, seen) for pre in prereqs )
-        for pre in prereqs:
-            order += pre
+        prereqs = chain(*prereqs)
+        order += prereqs
         order.append(cmo)
         seen.add(cmo)
     return order
 
-def var_ocaml_link_order(target, source, env, for_signature):
+def __var_ocaml_link_order(target, source, env, for_signature):
     order = link_order_expand(source[0], env, set([]))
-    assert len(order) == len(set(order)), 'for target %s: duplicates in link order: %s' % (node, strs(order))
+    assert len(order) == len(set(order)), 'for target %s: duplicates in link order: %s' % (target[0], strs(order))
     return order
 
 
@@ -242,60 +240,69 @@ exe_builder = { False: exe_builder_bytecode,
 ########################################################################
 
 
-def var_ocamlc(target, source, env, for_signature):
+def __var_ocamlc(target, source, env, for_signature):
     if env['OCAML_NATIVE']:
         return env['OCAMLOPT']
     else:
         return env['OCAMLC']
 
-def var_ocaml_cma(target, source, env, for_signature):
+def __var_ocaml_cma(target, source, env, for_signature):
     return { False: '.cma', True: '.cmxa' }[env['OCAML_NATIVE']]
 
-def var_ocaml_debug(target, source, env, for_signature):
+def __var_ocaml_debug(target, source, env, for_signature):
     if env['OCAML_DEBUG']:
         return '-g'
 
-def var_ocaml_dtypes(target, source, env, for_signature):
+def __var_ocaml_dtypes(target, source, env, for_signature):
     if env['OCAML_DTYPES']:
         return ['$(', '-dtypes', '$)']
 
-def var_ocaml_pp(target, source, env, for_signature):
+def __var_ocaml_pp(target, source, env, for_signature):
     if env['OCAML_PP']:
         return ['-pp', env['OCAML_PP']]
 
-def var_ocaml_warn(target, source, env, for_signature):
+def __var_ocaml_warn(target, source, env, for_signature):
     if env['OCAML_WARN']:
         return ['$(', '-w', env['OCAML_WARN'], '$)']
 
-def var_ocaml_warn_error(target, source, env, for_signature):
+def __var_ocaml_warn_error(target, source, env, for_signature):
     if env['OCAML_WARN_ERROR']:
         return ['$(', '-warn-error', env['OCAML_WARN_ERROR'], '$)']
 
 
 def generate(env):
-    env.AppendUnique(OCAML_NATIVE=False,
-                     OCAMLC=env.Detect(['ocamlc.opt', 'ocamlc']),
-                     OCAMLOPT=env.Detect(['ocamlopt.opt', 'ocamlopt']),
-                     _OCAMLC=var_ocamlc,
-                     OCAMLDEP=env.Detect(['ocamldep.opt', 'ocamldep']),
-                     OCAML_PATH=[], _OCAML_PATH='${_concat("-I ", OCAML_PATH, "", __env__)}',
-                     OCAML_STDLIB=None,
-                     OCAML_LIBS=[], _OCAML_LIBS='${_concat("", OCAML_LIBS, _OCAML_CMA, __env__)}',
-                     _OCAML_CMA=var_ocaml_cma,
-                     OCAML_DEBUG=False, _OCAML_DEBUG=var_ocaml_debug,
-                     OCAML_DTYPES=False, _OCAML_DTYPES=var_ocaml_dtypes,
-                     OCAML_PP='', _OCAML_PP=var_ocaml_pp,
-                     OCAML_WARN='', _OCAML_WARN=var_ocaml_warn,
-                     OCAML_WARN_ERROR='', _OCAML_WARN_ERROR=var_ocaml_warn_error,
-                     _OCAML_LINK_ORDER=var_ocaml_link_order,
-                     )
+    env.AppendUnique(
+        OCAMLC=env.Detect(['ocamlc.opt', 'ocamlc']),
+        OCAMLDEP=env.Detect(['ocamldep.opt', 'ocamldep']),
+        OCAMLOPT=env.Detect(['ocamlopt.opt', 'ocamlopt']),
+        OCAML_DEBUG=False,
+        OCAML_DTYPES=False,
+        OCAML_LIBS=[],
+        OCAML_NATIVE=False,
+        OCAML_PATH=[],
+        OCAML_PP='',
+        OCAML_STDLIB=None,
+        OCAML_WARN='',
+        OCAML_WARN_ERROR='',
+        _OCAMLC=__var_ocamlc,
+        _OCAML_CMA=__var_ocaml_cma,
+        _OCAML_DEBUG=__var_ocaml_debug,
+        _OCAML_DTYPES=__var_ocaml_dtypes,
+        _OCAML_LIBS='${_concat("", OCAML_LIBS, _OCAML_CMA, __env__)}',
+        _OCAML_LINK_ORDER=__var_ocaml_link_order,
+        _OCAML_PATH='${_concat("-I ", OCAML_PATH, "", __env__)}',
+        _OCAML_PP=__var_ocaml_pp,
+        _OCAML_WARN=__var_ocaml_warn,
+        _OCAML_WARN_ERROR=__var_ocaml_warn_error,
 
-    env.AppendUnique(SCANNERS=[ocamldep_scanner])
+        SCANNERS=[ocamldep_scanner],
 
-    env.AppendUnique(BUILDERS={'OcamlObject': obj_builder,
-                               'OcamlLibrary': lib_builder[env['OCAML_NATIVE']],
-                               'OcamlProgram': exe_builder[env['OCAML_NATIVE']],
-                               })
+        BUILDERS={
+        'OcamlObject': obj_builder,
+        'OcamlLibrary': lib_builder[env['OCAML_NATIVE']],
+        'OcamlProgram': exe_builder[env['OCAML_NATIVE']],
+        },
+        )
 
 
 def exists(env):

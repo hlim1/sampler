@@ -5,9 +5,9 @@
 #include "tuple-4.h"
 
 
-void gObjectUnrefReport(const SamplerUnitSignature, unsigned, const SamplerTuple4 []);
+void cbi_gObjectUnrefReport(const cbi_UnitSignature, unsigned, const cbi_Tuple4 []);
 
-unsigned gObjectUnrefClassify(void *);
+unsigned cbi_gObjectUnrefClassify(void *);
 
 
 #endif /* !INCLUDE_sampler_g_object_unref_h */

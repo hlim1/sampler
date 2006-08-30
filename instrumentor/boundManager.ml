@@ -16,17 +16,17 @@ let patch file =
   let findDecl target = find target file in
   let findDefn target = findDefinition target file in
 
-  let dumpSignedChar = findDecl "boundDumpSignedChar" in
-  let dumpUnsignedChar = findDecl "boundDumpUnsignedChar" in
-  let dumpSignedShort = findDecl "boundDumpSignedShort" in
-  let dumpUnsignedShort = findDecl "boundDumpUnsignedShort" in
-  let dumpSignedInt = findDecl "boundDumpSignedInt" in
-  let dumpUnsignedInt = findDecl "boundDumpUnsignedInt" in
-  let dumpSignedLong = findDecl "boundDumpSignedLong" in
-  let dumpUnsignedLong = findDecl "boundDumpUnsignedLong" in
-  let dumpSignedLongLong = findDecl "boundDumpSignedLongLong" in
-  let dumpUnsignedLongLong = findDecl "boundDumpUnsignedLongLong" in
-  let dumpPointer = findDecl "boundDumpPointer" in
+  let dumpSignedChar = findDecl "cbi_boundDumpSignedChar" in
+  let dumpUnsignedChar = findDecl "cbi_boundDumpUnsignedChar" in
+  let dumpSignedShort = findDecl "cbi_boundDumpSignedShort" in
+  let dumpUnsignedShort = findDecl "cbi_boundDumpUnsignedShort" in
+  let dumpSignedInt = findDecl "cbi_boundDumpSignedInt" in
+  let dumpUnsignedInt = findDecl "cbi_boundDumpUnsignedInt" in
+  let dumpSignedLong = findDecl "cbi_boundDumpSignedLong" in
+  let dumpUnsignedLong = findDecl "cbi_boundDumpUnsignedLong" in
+  let dumpSignedLongLong = findDecl "cbi_boundDumpSignedLongLong" in
+  let dumpUnsignedLongLong = findDecl "cbi_boundDumpUnsignedLongLong" in
+  let dumpPointer = findDecl "cbi_boundDumpPointer" in
 
   let calls =
     let calls = ref [] in
@@ -60,13 +60,13 @@ let patch file =
     mkBlock !calls
   in
 
-  let dumper = emptyFunction "boundsReportDump" in
+  let dumper = emptyFunction "cbi_boundsReportDump" in
   dumper.sbody <- calls;
   dumper.svar <- findDecl dumper.svar.vname;
   file.globals <- file.globals @ [GFun (dumper, locUnknown)];
 
-  let boundsReporter = findDecl "boundsReporter" in
-  let reporter = findDefn "samplerReporter" in
+  let boundsReporter = findDecl "cbi_boundsReporter" in
+  let reporter = findDefn "cbi_reporter" in
   let call = Call (None, Lval (var boundsReporter), [], locUnknown) in
   reporter.sbody.bstmts <- mkStmtOneInstr call :: reporter.sbody.bstmts
 

@@ -5,7 +5,7 @@ open SchemeName
 
 
 class manager name file =
-  let counters = FindGlobal.find (name.prefix ^ "Counters") file in
+  let counters = FindGlobal.find ("cbi_" ^ name.prefix ^ "Counters") file in
 
   object (self)
     val mutable nextId : int = 0
@@ -45,9 +45,9 @@ class manager name file =
 						    attributes)},
 		      initinfo, location)
 
-	    | GFun ({svar = {vname = "samplerReporter"}; sbody = sbody}, _) as global
+	    | GFun ({svar = {vname = "cbi_reporter"}; sbody = sbody}, _) as global
 	      when nextId > 0 ->
-		let schemeReporter = FindFunction.find (name.prefix ^ "Reporter") file in
+		let schemeReporter = FindFunction.find ("cbi_" ^ name.prefix ^ "Reporter") file in
 		let call = Call (None, Lval (var schemeReporter), [], locUnknown) in
 		sbody.bstmts <- mkStmtOneInstr call :: sbody.bstmts;
 		global

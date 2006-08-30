@@ -4,33 +4,33 @@
 #include "registry.h"
 
 
-#pragma sampler_exclude_function("samplerReporter")
-static void samplerReporter()
+#pragma sampler_exclude_function("cbi_reporter")
+static void cbi_reporter()
 {
 }
 
 
-static struct SamplerUnit samplerUnit = { 0, 0, samplerReporter };
+static struct cbi_Unit cbi_unit = { 0, 0, cbi_reporter };
 
 
-#pragma sampler_exclude_function("samplerConstructor")
-static void samplerConstructor() __attribute__((constructor))
+#pragma sampler_exclude_function("cbi_constructor")
+static void cbi_constructor() __attribute__((constructor))
 {
-  samplerRegisterUnit(&samplerUnit);
+  cbi_registerUnit(&cbi_unit);
 }
 
 
-#pragma sampler_exclude_function("samplerDestructor")
-static void samplerDestructor() __attribute__((destructor))
+#pragma sampler_exclude_function("cbi_destructor")
+static void cbi_destructor() __attribute__((destructor))
 {
-  samplerUnregisterUnit(&samplerUnit);
+  cbi_unregisterUnit(&cbi_unit);
 }
 
 
-#ifdef SAMPLER_THREADS
-#pragma cilnoremove("atomicIncrementCounter")
-#pragma sampler_exclude_function("atomicIncrementCounter")
-static inline void atomicIncrementCounter(unsigned *counter)
+#ifdef CBI_THREADS
+#pragma cilnoremove("cbi_atomicIncrementCounter")
+#pragma sampler_exclude_function("cbi_atomicIncrementCounter")
+static inline void cbi_atomicIncrementCounter(unsigned *counter)
 {
 #if __i386__
   asm ("lock incl %0"
@@ -41,7 +41,7 @@ static inline void atomicIncrementCounter(unsigned *counter)
 #error "don't know how to atomically increment on this architecture"
 #endif
 }
-#endif /* SAMPLER_THREADS */
+#endif /* CBI_THREADS */
 
 
 #endif /* !INCLUDE_sampler_unit_h */

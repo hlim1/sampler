@@ -11,7 +11,7 @@ type classifier = fundec -> exp -> location -> (exp * stmt)
 
 
 let classifier file =
-  let callee = Lval (var (FindFunction.find "floatKindsClassify" file)) in
+  let callee = Lval (var (FindFunction.find "cbi_floatKindsClassify" file)) in
   fun fundec value location ->
     let classification = var (Locals.makeTempVar fundec ~name:"floatKind" uintType) in
     let classifier = mkStmtOneInstr (Call (Some classification, callee, [value], location)) in

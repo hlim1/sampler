@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 
-extern FILE *reportFile;
+extern FILE *cbi_reportFile;
 
 
 #endif /* !INCLUDE_sampler_report_h */

@@ -5,7 +5,7 @@
 #include "tuple-3.h"
 
 
-void scalarPairsReport(const SamplerUnitSignature, unsigned, const SamplerTuple3 []);
+void cbi_scalarPairsReport(const cbi_UnitSignature, unsigned, const cbi_Tuple3 []);
 
 
 #endif /* !INCLUDE_sampler_scalar_pairs_h */

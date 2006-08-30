@@ -2,10 +2,10 @@
 #include "samples.h"
 
 
-void returnsReport(const SamplerUnitSignature signature,
-		   unsigned count, const SamplerTuple3 tuples[])
+void cbi_returnsReport(const cbi_UnitSignature signature,
+		       unsigned count, const cbi_Tuple3 tuples[])
 {
-  samplesBegin(signature, "returns");
-  samplesDump3(count, tuples);
-  samplesEnd();
+  cbi_samplesBegin(signature, "returns");
+  cbi_samplesDump3(count, tuples);
+  cbi_samplesEnd();
 }

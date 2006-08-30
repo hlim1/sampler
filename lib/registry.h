@@ -4,17 +4,17 @@
 #include "signature.h"
 
 
-struct SamplerUnit {
-  struct SamplerUnit *next;
-  struct SamplerUnit *prev;
+struct cbi_Unit {
+  struct cbi_Unit *next;
+  struct cbi_Unit *prev;
   void (*reporter)(void);
 };
 
 
-void samplerRegisterUnit(struct SamplerUnit *);
-void samplerUnregisterUnit(struct SamplerUnit *);
+void cbi_registerUnit(struct cbi_Unit *);
+void cbi_unregisterUnit(struct cbi_Unit *);
 
-void samplerUnregisterAllUnits();
+void cbi_unregisterAllUnits();
 
 
 #endif /* !INCLUDE_sampler_registry_h */

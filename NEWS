@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.4.4
+
+** Avoid clashing with application symbols.
+
 * sampler-1.4.3
 
 ** Nicer tray icon popup menu placement.

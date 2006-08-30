@@ -4,82 +4,82 @@
 #include "samples.h"
 
 
-void boundsReportBegin(const SamplerUnitSignature signature)
+void cbi_boundsReportBegin(const cbi_UnitSignature signature)
 {
-  samplesBegin(signature, "bounds");
+  cbi_samplesBegin(signature, "bounds");
 }
 
 
-void boundsReportEnd()
+void cbi_boundsReportEnd()
 {
-  samplesEnd();
+  cbi_samplesEnd();
 }
 
 
 /**********************************************************************/
 
 
-void boundDumpSignedChar(signed char min, signed char max)
+void cbi_boundDumpSignedChar(signed char min, signed char max)
 {
-  fprintf(reportFile, "%hhd\t%hhd\n", min, max);
+  fprintf(cbi_reportFile, "%hhd\t%hhd\n", min, max);
 }
 
 
-void boundDumpUnsignedChar(unsigned char min, unsigned char max)
+void cbi_boundDumpUnsignedChar(unsigned char min, unsigned char max)
 {
-  fprintf(reportFile, "%hhu\t%hhu\n", min, max);
+  fprintf(cbi_reportFile, "%hhu\t%hhu\n", min, max);
 }
 
 
-void boundDumpSignedShort(signed short min, signed short max)
+void cbi_boundDumpSignedShort(signed short min, signed short max)
 {
-  fprintf(reportFile, "%hd\t%hd\n", min, max);
+  fprintf(cbi_reportFile, "%hd\t%hd\n", min, max);
 }
 
 
-void boundDumpUnsignedShort(unsigned short min, unsigned short max)
+void cbi_boundDumpUnsignedShort(unsigned short min, unsigned short max)
 {
-  fprintf(reportFile, "%hu\t%hu\n", min, max);
+  fprintf(cbi_reportFile, "%hu\t%hu\n", min, max);
 }
 
 
-void boundDumpSignedInt(signed int min, signed int max)
+void cbi_boundDumpSignedInt(signed int min, signed int max)
 {
-  fprintf(reportFile, "%d\t%d\n", min, max);
+  fprintf(cbi_reportFile, "%d\t%d\n", min, max);
 }
 
 
-void boundDumpUnsignedInt(unsigned int min, unsigned int max)
+void cbi_boundDumpUnsignedInt(unsigned int min, unsigned int max)
 {
-  fprintf(reportFile, "%u\t%u\n", min, max);
+  fprintf(cbi_reportFile, "%u\t%u\n", min, max);
 }
 
 
-void boundDumpSignedLong(signed long min, signed long max)
+void cbi_boundDumpSignedLong(signed long min, signed long max)
 {
-  fprintf(reportFile, "%ld\t%ld\n", min, max);
+  fprintf(cbi_reportFile, "%ld\t%ld\n", min, max);
 }
 
 
-void boundDumpUnsignedLong(unsigned long min, unsigned long max)
+void cbi_boundDumpUnsignedLong(unsigned long min, unsigned long max)
 {
-  fprintf(reportFile, "%lu\t%lu\n", min, max);
+  fprintf(cbi_reportFile, "%lu\t%lu\n", min, max);
 }
 
 
-void boundDumpSignedLongLong(signed long long min, signed long long max)
+void cbi_boundDumpSignedLongLong(signed long long min, signed long long max)
 {
-  fprintf(reportFile, "%Ld\t%Ld\n", min, max);
+  fprintf(cbi_reportFile, "%Ld\t%Ld\n", min, max);
 }
 
 
-void boundDumpUnsignedLongLong(unsigned long long min, unsigned long long max)
+void cbi_boundDumpUnsignedLongLong(unsigned long long min, unsigned long long max)
 {
-  fprintf(reportFile, "%Lu\t%Lu\n", min, max);
+  fprintf(cbi_reportFile, "%Lu\t%Lu\n", min, max);
 }
 
 
-void boundDumpPointer(const void * min, const void * max)
+void cbi_boundDumpPointer(const void * min, const void * max)
 {
-  fprintf(reportFile, "%p\t%p\n", min, max);
+  fprintf(cbi_reportFile, "%p\t%p\n", min, max);
 }

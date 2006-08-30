@@ -6,41 +6,41 @@
 #include "tuple-3.h"
 
 
-#pragma cilnoremove("floatKindsCounters")
-static SamplerTuple9 floatKindsCounters[];
+#pragma cilnoremove("cbi_floatKindsCounters")
+static cbi_Tuple9 cbi_floatKindsCounters[];
 
-#ifdef SAMPLER_TIMESTAMP_FIRST
-#pragma cilnoremove("floatKindsTimestampsFirst");
-static samplerTimestamp floatKindsTimestampsFirst[sizeof(floatKindsCounters) / sizeof(*floatKindsCounters)];
-#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_FIRST
+#pragma cilnoremove("cbi_floatKindsTimestampsFirst");
+static cbi_Timestamp cbi_floatKindsTimestampsFirst[sizeof(cbi_floatKindsCounters) / sizeof(*cbi_floatKindsCounters)];
+#endif /* CBI_TIMESTAMP_FIRST */
 
-#ifdef SAMPLER_TIMESTAMP_LAST
-#pragma cilnoremove("floatKindsTimestampsLast");
-static samplerTimestamp floatKindsTimestampsLast[sizeof(floatKindsCounters) / sizeof(*floatKindsCounters)];
-#endif /* SAMPLER_TIMESTAMP_LAST */
+#ifdef CBI_TIMESTAMP_LAST
+#pragma cilnoremove("cbi_floatKindsTimestampsLast");
+static cbi_Timestamp cbi_floatKindsTimestampsLast[sizeof(cbi_floatKindsCounters) / sizeof(*cbi_floatKindsCounters)];
+#endif /* CBI_TIMESTAMP_LAST */
 
 
-#pragma cilnoremove("floatKindsReporter")
-#pragma sampler_exclude_function("floatKindsReporter")
-static void floatKindsReporter() __attribute__((unused))
+#pragma cilnoremove("cbi_floatKindsReporter")
+#pragma sampler_exclude_function("cbi_floatKindsReporter")
+static void cbi_floatKindsReporter() __attribute__((unused))
 {
-  floatKindsReport(samplerUnitSignature,
-		    sizeof(floatKindsCounters) / sizeof(*floatKindsCounters),
-		    floatKindsCounters);
-#ifdef SAMPLER_TIMESTAMP_FIRST
-  timestampsReport(samplerUnitSignature, "float-kinds", "first",
-		   sizeof(floatKindsTimestampsFirst) / sizeof(*floatKindsTimestampsFirst),
-		   floatKindsTimestampsFirst);
-#endif /* SAMPLER_TIMESTAMP_FIRST */
-#ifdef SAMPLER_TIMESTAMP_LAST
-  timestampsReport(samplerUnitSignature, "float-kinds", "last",
-		   sizeof(floatKindsTimestampsLast) / sizeof(*floatKindsTimestampsLast),
-		   floatKindsTimestampsLast);
-#endif /* SAMPLER_TIMESTAMP_LAST */
+  cbi_floatKindsReport(cbi_unitSignature,
+		       sizeof(cbi_floatKindsCounters) / sizeof(*cbi_floatKindsCounters),
+		       cbi_floatKindsCounters);
+#ifdef CBI_TIMESTAMP_FIRST
+  cbi_timestampsReport(cbi_unitSignature, "float-kinds", "first",
+		       sizeof(cbi_floatKindsTimestampsFirst) / sizeof(*cbi_floatKindsTimestampsFirst),
+		       cbi_floatKindsTimestampsFirst);
+#endif /* CBI_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_LAST
+  cbi_timestampsReport(cbi_unitSignature, "float-kinds", "last",
+		       sizeof(cbi_floatKindsTimestampsLast) / sizeof(*cbi_floatKindsTimestampsLast),
+		       cbi_floatKindsTimestampsLast);
+#endif /* CBI_TIMESTAMP_LAST */
 }
 
 
-#pragma cilnoremove("floatKindsClassify")
+#pragma cilnoremove("cbi_floatKindsClassify")
 
 
 #endif /* !INCLUDE_sampler_float_kinds_unit_h */

@@ -6,23 +6,23 @@
 
 
 #ifdef CIL
-#pragma cilnoremove("getNextEventCountdown")
-#pragma sampler_exclude_function("getNextEventCountdown")
+#pragma cilnoremove("cbi_getNextEventCountdown")
+#pragma sampler_exclude_function("cbi_getNextEventCountdown")
 #endif
 
 
-#define SAMPLER_FEATURE_RANDOM samplerFeatureRandomOffline
+#define CBI_FEATURE_RANDOM cbi_featureRandomOffline
 
 
-static inline int getNextEventCountdown()
+static inline int cbi_getNextEventCountdown()
 {
-  extern const int *nextEventPrecomputed;
-  extern SAMPLER_THREAD_LOCAL unsigned nextEventSlot;
+  extern const int *cbi_nextEventPrecomputed;
+  extern CBI_THREAD_LOCAL unsigned cbi_nextEventSlot;
 
-  unsigned slot = nextEventSlot;
-  const int result = nextEventPrecomputed[slot];
-  slot = (slot + 1) % PRECOMPUTE_COUNT;
-  nextEventSlot = slot;
+  unsigned slot = cbi_nextEventSlot;
+  const int result = cbi_nextEventPrecomputed[slot];
+  slot = (slot + 1) % CBI_PRECOMPUTE_COUNT;
+  cbi_nextEventSlot = slot;
   return result;
 }
 

@@ -4,11 +4,11 @@
 #include "local.h"
 
 
-extern SAMPLER_THREAD_LOCAL int nextEventCountdown;
+extern CBI_THREAD_LOCAL int cbi_nextEventCountdown;
 
 
 #ifdef CIL
-#pragma cilnoremove("nextEventCountdown")
+#pragma cilnoremove("cbi_nextEventCountdown")
 #endif
 
 

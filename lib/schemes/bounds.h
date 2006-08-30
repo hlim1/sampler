@@ -4,34 +4,34 @@
 #include "../signature.h"
 
 
-void boundsReportBegin(const SamplerUnitSignature);
-void boundsReportEnd();
+void cbi_boundsReportBegin(const cbi_UnitSignature);
+void cbi_boundsReportEnd();
 
-void boundDumpSignedChar(signed char, signed char);
-void boundDumpUnsignedChar(unsigned char, unsigned char);
-void boundDumpSignedShort(signed short, signed short);
-void boundDumpUnsignedShort(unsigned short, unsigned short);
-void boundDumpSignedInt(signed int, signed int);
-void boundDumpUnsignedInt(unsigned int, unsigned int);
-void boundDumpSignedLong(signed long, signed long);
-void boundDumpUnsignedLong(unsigned long, unsigned long);
-void boundDumpSignedLongLong(signed long long, signed long long);
-void boundDumpUnsignedLongLong(unsigned long long, unsigned long long);
-void boundDumpPointer(const void *, const void *);
+void cbi_boundDumpSignedChar(signed char, signed char);
+void cbi_boundDumpUnsignedChar(unsigned char, unsigned char);
+void cbi_boundDumpSignedShort(signed short, signed short);
+void cbi_boundDumpUnsignedShort(unsigned short, unsigned short);
+void cbi_boundDumpSignedInt(signed int, signed int);
+void cbi_boundDumpUnsignedInt(unsigned int, unsigned int);
+void cbi_boundDumpSignedLong(signed long, signed long);
+void cbi_boundDumpUnsignedLong(unsigned long, unsigned long);
+void cbi_boundDumpSignedLongLong(signed long long, signed long long);
+void cbi_boundDumpUnsignedLongLong(unsigned long long, unsigned long long);
+void cbi_boundDumpPointer(const void *, const void *);
 
 
 #ifdef CIL
-#pragma cilnoremove("boundDumpSignedChar")
-#pragma cilnoremove("boundDumpUnsignedChar")
-#pragma cilnoremove("boundDumpSignedShort")
-#pragma cilnoremove("boundDumpUnsignedShort")
-#pragma cilnoremove("boundDumpSignedInt")
-#pragma cilnoremove("boundDumpUnsignedInt")
-#pragma cilnoremove("boundDumpSignedLong")
-#pragma cilnoremove("boundDumpUnsignedLong")
-#pragma cilnoremove("boundDumpSignedLongLong")
-#pragma cilnoremove("boundDumpUnsignedLongLong")
-#pragma cilnoremove("boundDumpPointer")
+#pragma cilnoremove("cbi_boundDumpSignedChar")
+#pragma cilnoremove("cbi_boundDumpUnsignedChar")
+#pragma cilnoremove("cbi_boundDumpSignedShort")
+#pragma cilnoremove("cbi_boundDumpUnsignedShort")
+#pragma cilnoremove("cbi_boundDumpSignedInt")
+#pragma cilnoremove("cbi_boundDumpUnsignedInt")
+#pragma cilnoremove("cbi_boundDumpSignedLong")
+#pragma cilnoremove("cbi_boundDumpUnsignedLong")
+#pragma cilnoremove("cbi_boundDumpSignedLongLong")
+#pragma cilnoremove("cbi_boundDumpUnsignedLongLong")
+#pragma cilnoremove("cbi_boundDumpPointer")
 #endif /* CIL */
 
 

@@ -2,7 +2,7 @@
 #define INCLUDE_libcountdown_lifetime_h
 
 
-void initialize_thread();
+void cbi_initialize_thread();
 
 
 #endif /* !INCLUDE_libcountdown_lifetime_h */

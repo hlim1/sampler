@@ -2,11 +2,11 @@
 #include "verbose.h"
 
 
-int samplerVerbose;
+int cbi_verbose;
 
 
 void
-samplerInitializeVerbose()
+cbi_initializeVerbose()
 {
-  samplerVerbose = !!getenv("SAMPLER_VERBOSE");
+  cbi_verbose = !!getenv("SAMPLER_VERBOSE");
 }

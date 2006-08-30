@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include "../report.h"
+#include "../signature.h"
 #include "../timestamps.h"
 
 
-void timestampsReport(const SamplerUnitSignature signature,
-		      const char scheme[], const char when[],
-		      unsigned count, const samplerTimestamp times[])
+void cbi_timestampsReport(const cbi_UnitSignature signature,
+			  const char scheme[], const char when[],
+			  unsigned count, const cbi_Timestamp times[])
 {
   unsigned scan;
 
-  fprintf(reportFile,
+  fprintf(cbi_reportFile,
 	  "<timestamps unit=\""
 	  "%02x%02x%02x%02x%02x%02x%02x%02x"
 	  "%02x%02x%02x%02x%02x%02x%02x%02x"
@@ -21,7 +22,7 @@ void timestampsReport(const SamplerUnitSignature signature,
 	  scheme, when);
 
   for (scan = 0; scan < count; ++scan)
-    fprintf(reportFile, "%Lu\n", times[scan]);
+    fprintf(cbi_reportFile, "%Lu\n", times[scan]);
 
-  fputs("</timestamps>\n", reportFile);
+  fputs("</timestamps>\n", cbi_reportFile);
 }

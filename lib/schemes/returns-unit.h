@@ -6,37 +6,37 @@
 #include "tuple-3.h"
 
 
-#pragma cilnoremove("returnsCounters")
-static SamplerTuple3 returnsCounters[];
+#pragma cilnoremove("cbi_returnsCounters")
+static cbi_Tuple3 cbi_returnsCounters[];
 
-#ifdef SAMPLER_TIMESTAMP_FIRST
-#pragma cilnoremove("returnsTimestampsFirst");
-static samplerTimestamp returnsTimestampsFirst[sizeof(returnsCounters) / sizeof(*returnsCounters)];
-#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_FIRST
+#pragma cilnoremove("cbi_returnsTimestampsFirst");
+static cbi_Timestamp cbi_returnsTimestampsFirst[sizeof(cbi_returnsCounters) / sizeof(*cbi_returnsCounters)];
+#endif /* CBI_TIMESTAMP_FIRST */
 
-#ifdef SAMPLER_TIMESTAMP_LAST
-#pragma cilnoremove("returnsTimestampsLast");
-static samplerTimestamp returnsTimestampsLast[sizeof(returnsCounters) / sizeof(*returnsCounters)];
-#endif /* SAMPLER_TIMESTAMP_LAST */
+#ifdef CBI_TIMESTAMP_LAST
+#pragma cilnoremove("cbi_returnsTimestampsLast");
+static cbi_Timestamp cbi_returnsTimestampsLast[sizeof(cbi_returnsCounters) / sizeof(*cbi_returnsCounters)];
+#endif /* CBI_TIMESTAMP_LAST */
 
 
-#pragma cilnoremove("returnsReporter")
-#pragma sampler_exclude_function("returnsReporter")
-static void returnsReporter() __attribute__((unused))
+#pragma cilnoremove("cbi_returnsReporter")
+#pragma sampler_exclude_function("cbi_returnsReporter")
+static void cbi_returnsReporter() __attribute__((unused))
 {
-  returnsReport(samplerUnitSignature,
-		sizeof(returnsCounters) / sizeof(*returnsCounters),
-		returnsCounters);
-#ifdef SAMPLER_TIMESTAMP_FIRST
-  timestampsReport(samplerUnitSignature, "returns", "first",
-		   sizeof(returnsTimestampsFirst) / sizeof(*returnsTimestampsFirst),
-		   returnsTimestampsFirst);
-#endif /* SAMPLER_TIMESTAMP_FIRST */
-#ifdef SAMPLER_TIMESTAMP_LAST
-  timestampsReport(samplerUnitSignature, "returns", "last",
-		   sizeof(returnsTimestampsLast) / sizeof(*returnsTimestampsLast),
-		   returnsTimestampsLast);
-#endif /* SAMPLER_TIMESTAMP_LAST */
+  cbi_returnsReport(cbi_unitSignature,
+		    sizeof(cbi_returnsCounters) / sizeof(*cbi_returnsCounters),
+		    cbi_returnsCounters);
+#ifdef CBI_TIMESTAMP_FIRST
+  cbi_timestampsReport(cbi_unitSignature, "returns", "first",
+		       sizeof(cbi_returnsTimestampsFirst) / sizeof(*cbi_returnsTimestampsFirst),
+		       cbi_returnsTimestampsFirst);
+#endif /* CBI_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_LAST
+  cbi_timestampsReport(cbi_unitSignature, "returns", "last",
+		       sizeof(cbi_returnsTimestampsLast) / sizeof(*cbi_returnsTimestampsLast),
+		       cbi_returnsTimestampsLast);
+#endif /* CBI_TIMESTAMP_LAST */
 }
 
 

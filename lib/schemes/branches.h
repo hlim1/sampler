@@ -5,7 +5,7 @@
 #include "tuple-2.h"
 
 
-void branchesReport(const SamplerUnitSignature, unsigned, const SamplerTuple2 []);
+void cbi_branchesReport(const cbi_UnitSignature, unsigned, const cbi_Tuple2 []);
 
 
 #endif /* !INCLUDE_sampler_branch_report_h */

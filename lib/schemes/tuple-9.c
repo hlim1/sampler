@@ -3,12 +3,12 @@
 #include "tuple-9.h"
 
 
-void samplesDump9(unsigned count, const SamplerTuple9 tuples[])
+void cbi_samplesDump9(unsigned count, const cbi_Tuple9 tuples[])
 {
   unsigned scan;
 
   for (scan = 0; scan < count; ++scan)
-    fprintf(reportFile,
+    fprintf(cbi_reportFile,
 	    "%u\t%u\t%u\t"
 	    "%u\t%u\t%u\t"
 	    "%u\t%u\t%u\n",

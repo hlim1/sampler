@@ -6,13 +6,13 @@
 #include <unistd.h>
 
 
-void samplerInitializeVerbose(void);
+void cbi_initializeVerbose(void);
 
 #define VERBOSE(format, ...)						\
   do									\
     {									\
-      extern int samplerVerbose;					\
-      if (__builtin_expect(samplerVerbose != 0, 0))			\
+      extern int cbi_verbose;						\
+      if (__builtin_expect(cbi_verbose != 0, 0))			\
 	fprintf(stderr, "CBI: pid %d: " format, getpid(), ## __VA_ARGS__); \
     }									\
   while (0)

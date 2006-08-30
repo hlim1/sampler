@@ -24,10 +24,10 @@ let cacheCountdown =
     ~default:true
 
 
-let findGlobal = FindGlobal.find "nextEventCountdown"
+let findGlobal = FindGlobal.find "cbi_nextEventCountdown"
 
 
-let findReset file = Lval (var (FindFunction.find "getNextEventCountdown" file))
+let findReset file = Lval (var (FindFunction.find "cbi_getNextEventCountdown" file))
 
 
 let find file = (findGlobal file, findReset file)

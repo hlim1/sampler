@@ -2,10 +2,10 @@
 #include "scalar-pairs.h"
 
 
-void scalarPairsReport(const SamplerUnitSignature signature,
-		       unsigned count, const SamplerTuple3 tuples[])
+void cbi_scalarPairsReport(const cbi_UnitSignature signature,
+			   unsigned count, const cbi_Tuple3 tuples[])
 {
-  samplesBegin(signature, "scalar-pairs");
-  samplesDump3(count, tuples);
-  samplesEnd();
+  cbi_samplesBegin(signature, "scalar-pairs");
+  cbi_samplesDump3(count, tuples);
+  cbi_samplesEnd();
 }

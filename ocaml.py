@@ -11,7 +11,7 @@ from SCons.Scanner import Scanner
 from utils import read_pipe
 
 
-__pychecker__ = 'no-argsused'
+#__pychecker__ = 'no-argsused'
 
 
 ########################################################################
@@ -31,6 +31,7 @@ def warn(message):
 
 
 def ocaml_path_function(env, node):
+    __pychecker__ = 'no-argsused'
     stdlib = env['OCAML_STDLIB']
     if stdlib is None:
         ocamlc = env['OCAMLC']
@@ -57,6 +58,7 @@ def obj_emitter(target, source, env):
 
 
 def ocamldep(node, env, path):
+    __pychecker__ = 'no-argsused'
     suffix = node.get_suffix()
     if not suffix in source_to_object[env['OCAML_NATIVE']]:
         warn('%s does not have a suitable suffix' % node)
@@ -88,7 +90,7 @@ def ocamldep(node, env, path):
     deps = ( fields[1:] for fields in deps if fields[0] == target )
     deps = chain(*deps)
     deps = imap(env.File, deps)
-    return files
+    return deps
 
 
 ocamldep_scanner = Scanner(function=ocamldep, name='ocamldep',
@@ -166,6 +168,7 @@ def link_depends(node, env):
         return cmos
 
 def link_scanner(node, env, path):
+    __pychecker__ = 'no-argsused'
     return list(link_depends(node, env))
 
 exe_scanner = Scanner(function=link_scanner, name='exe_scanner',
@@ -184,6 +187,7 @@ def __find_libs(libs, env, path):
 
 
 def __exe_target_scanner(node, env, path):
+    __pychecker__ = 'no-argsused'
     suffix = { False: '.cma', True: '.cmxa' }[env['OCAML_NATIVE']]
     libs = ( lib + suffix for lib in env['OCAML_LIBS'] )
     libs = __find_libs(libs, env, path)
@@ -211,6 +215,7 @@ def link_order_expand(cmo, env, seen):
     return order
 
 def __var_ocaml_link_order(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
     order = link_order_expand(source[0], env, set([]))
     assert len(order) == len(set(order)), 'for target %s: duplicates in link order: %s' % (target[0], strs(order))
     return order
@@ -241,31 +246,38 @@ exe_builder = { False: exe_builder_bytecode,
 
 
 def __var_ocamlc(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
     if env['OCAML_NATIVE']:
         return env['OCAMLOPT']
     else:
         return env['OCAMLC']
 
 def __var_ocaml_cma(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
     return { False: '.cma', True: '.cmxa' }[env['OCAML_NATIVE']]
 
 def __var_ocaml_debug(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
     if env['OCAML_DEBUG']:
         return '-g'
 
 def __var_ocaml_dtypes(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
     if env['OCAML_DTYPES']:
         return ['$(', '-dtypes', '$)']
 
 def __var_ocaml_pp(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
     if env['OCAML_PP']:
         return ['-pp', env['OCAML_PP']]
 
 def __var_ocaml_warn(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
     if env['OCAML_WARN']:
         return ['$(', '-w', env['OCAML_WARN'], '$)']
 
 def __var_ocaml_warn_error(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
     if env['OCAML_WARN_ERROR']:
         return ['$(', '-warn-error', env['OCAML_WARN_ERROR'], '$)']
 

@@ -2,7 +2,7 @@
 #define INCLUDE_sampler_lib_threads_random_h
 
 
-void samplerInitializeRandom(void);
+void cbi_initializeRandom(void);
 
 
 #endif /* !INCLUDE_sampler_lib_threads_random_h */

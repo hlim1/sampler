@@ -6,15 +6,15 @@
 %{fsampler-dataflow:-fsave-dataflow %g.dataflow}
 
 *cpp_threads_yes:
--D SAMPLER_THREADS
+-D CBI_THREADS
 
 *cpp_threads:
 %{fthreads:%(cpp_threads_yes)} \
 %{!fthreads:%{!fno-threads:%{pthread:%(cpp_threads_yes)}}}
 
 *cpp_timestamps:
-%{ftimestamp-first:-D SAMPLER_TIMESTAMP_FIRST} \
-%{ftimestamp-last:-D SAMPLER_TIMESTAMP_LAST} \
+%{ftimestamp-first:-D CBI_TIMESTAMP_FIRST} \
+%{ftimestamp-last:-D CBI_TIMESTAMP_LAST} \
 %{ftimestamp-*:-include sampler/timestamps.h%s}
 
 *cpp_random:
@@ -86,7 +86,7 @@ sampler/threads/no/liblate.a%s
 %rename libgcc old_libgcc
 
 *libgcc:
---undefined=samplerInitialize \
+--undefined=cbi_initialize \
 sampler/schemes/libschemes.a%s \
 %(lib_threads) \
 %(lib_scheme) \

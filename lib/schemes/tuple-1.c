@@ -3,10 +3,10 @@
 #include "tuple-1.h"
 
 
-void samplesDump1(unsigned count, const SamplerTuple1 tuples[])
+void cbi_samplesDump1(unsigned count, const cbi_Tuple1 tuples[])
 {
   unsigned scan;
 
   for (scan = 0; scan < count; ++scan)
-    fprintf(reportFile, "%u\n", tuples[scan]);
+    fprintf(cbi_reportFile, "%u\n", tuples[scan]);
 }

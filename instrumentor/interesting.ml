@@ -36,19 +36,18 @@ let isFloatType typ =
 
 
 let isInterestingGlobalName =
-  let uninteresting = [
-    "sys_nerr";
-    "gdk_debug_level"; "gdk_show_events"; "gdk_stack_trace";
-    "nextEventCountdown";
-    "boundsCounters";
-    "branchesCounters";
-    "floatKindsCounters";
-    "functionEntriesCounters";
-    "gObjectUnrefCounters";
-    "returnsCounters";
-    "scalarPairsCounters";
-  ] in
-  (fun name -> not (List.mem name uninteresting))
+  let regexp =
+    let pattern =
+      let names = [
+	"gdk_debug_level"; "gdk_show_events"; "gdk_stack_trace";
+	"sys_nerr"
+      ] in
+      let prefixed = "^cbi_" in
+      "^\\(" ^ (String.concat "\\|" names) ^ "\\)$\\|" ^ prefixed
+    in
+    Str.regexp pattern
+  in
+  (fun name -> not (Str.string_match regexp name 0))
 
 
 let isInterestingLocalName =

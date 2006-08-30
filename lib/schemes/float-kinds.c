@@ -5,12 +5,13 @@
 #include "float-kinds.h"
 
 
-void floatKindsReport(const SamplerUnitSignature signature,
-		      unsigned count, const SamplerTuple9 tuples[])
+void
+cbi_floatKindsReport(const cbi_UnitSignature signature,
+		     unsigned count, const cbi_Tuple9 tuples[])
 {
-  samplesBegin(signature, "float-kinds");
-  samplesDump9(count, tuples);
-  samplesEnd();
+  cbi_samplesBegin(signature, "float-kinds");
+  cbi_samplesDump9(count, tuples);
+  cbi_samplesEnd();
 }
 
 
@@ -26,7 +27,7 @@ enum Classification { NegativeInfinite,
 
 
 unsigned
-floatKindsClassify(long double value)
+cbi_floatKindsClassify(long double value)
 {
   switch (fpclassify(value))
     {

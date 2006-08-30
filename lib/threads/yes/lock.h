@@ -6,7 +6,7 @@
 #include <string.h>
 
 
-#define CRITICAL_REGION(mutex, block)							\
+#define CBI_CRITICAL_REGION(mutex, block)							\
 do {											\
   int lockError;									\
   pthread_cleanup_push((void (*)(void *)) pthread_mutex_unlock, (void *) &mutex);	\

@@ -6,55 +6,55 @@
 #include "../report.h"
 
 
-struct SamplerUnit samplerUnitAnchor = { &samplerUnitAnchor,
-					 &samplerUnitAnchor,
-					 0 };
+struct cbi_Unit cbi_unitAnchor = { &cbi_unitAnchor,
+				   &cbi_unitAnchor,
+				   0 };
 
-unsigned samplerUnitCount;
+unsigned cbi_unitCount;
 
-pthread_mutex_t samplerUnitLock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+pthread_mutex_t cbi_unitLock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
 
-void samplerRegisterUnit(struct SamplerUnit *unit)
+void cbi_registerUnit(struct cbi_Unit *unit)
 {
-  CRITICAL_REGION(samplerUnitLock, {
+  CBI_CRITICAL_REGION(cbi_unitLock, {
     if (!unit->next && !unit->prev)
       {
-	++samplerUnitCount;
-	unit->prev = &samplerUnitAnchor;
-	unit->next = samplerUnitAnchor.next;
-	samplerUnitAnchor.next->prev = unit;
-	samplerUnitAnchor.next = unit;
+	++cbi_unitCount;
+	unit->prev = &cbi_unitAnchor;
+	unit->next = cbi_unitAnchor.next;
+	cbi_unitAnchor.next->prev = unit;
+	cbi_unitAnchor.next = unit;
       }
   });
 }
 
 
-void samplerUnregisterUnit(struct SamplerUnit *unit)
+void cbi_unregisterUnit(struct cbi_Unit *unit)
 {
-  CRITICAL_REGION(samplerUnitLock, {
+  CBI_CRITICAL_REGION(cbi_unitLock, {
     if (unit->next && unit->prev)
       {
 	unit->prev->next = unit->next;
 	unit->next->prev = unit->prev;
 	unit->prev = unit->next = 0;
 
-	if (samplerUnitCount)
+	if (cbi_unitCount)
 	  {
-	    if (reportFile)
+	    if (cbi_reportFile)
 	      unit->reporter();
 
-	    --samplerUnitCount;
+	    --cbi_unitCount;
 	  }
       }
   });
 }
 
 
-void samplerUnregisterAllUnits()
+void cbi_unregisterAllUnits()
 {
-  CRITICAL_REGION(samplerUnitLock, {
-    while (samplerUnitAnchor.next != &samplerUnitAnchor)
-      samplerUnregisterUnit(samplerUnitAnchor.next);
+  CBI_CRITICAL_REGION(cbi_unitLock, {
+    while (cbi_unitAnchor.next != &cbi_unitAnchor)
+      cbi_unregisterUnit(cbi_unitAnchor.next);
   });
 }

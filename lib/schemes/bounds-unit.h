@@ -5,40 +5,40 @@
 #include "bounds.h"
 
 
-#ifdef SAMPLER_TIMESTAMP_FIRST
-#pragma cilnoremove("boundsTimestampsFirst");
-static samplerTimestamp boundsTimestampsFirst[];
-#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_FIRST
+#pragma cilnoremove("cbi_boundsTimestampsFirst");
+static cbi_Timestamp cbi_boundsTimestampsFirst[];
+#endif /* CBI_TIMESTAMP_FIRST */
 
-#ifdef SAMPLER_TIMESTAMP_LAST
-#pragma cilnoremove("boundsTimestampsLast");
-static samplerTimestamp boundsTimestampsLast[];
-#endif /* SAMPLER_TIMESTAMP_LAST */
-
-
-#pragma cilnoremove("boundsReportDump")
-#pragma sampler_exclude_function("boundsReportDump")
-static void boundsReportDump();
+#ifdef CBI_TIMESTAMP_LAST
+#pragma cilnoremove("cbi_boundsTimestampsLast");
+static cbi_Timestamp cbi_boundsTimestampsLast[];
+#endif /* CBI_TIMESTAMP_LAST */
 
 
-#pragma cilnoremove("boundsReporter")
-#pragma sampler_exclude_function("boundsReporter")
-static void boundsReporter() __attribute__((unused))
+#pragma cilnoremove("cbi_boundsReportDump")
+#pragma sampler_exclude_function("cbi_boundsReportDump")
+static void cbi_boundsReportDump();
+
+
+#pragma cilnoremove("cbi_boundsReporter")
+#pragma sampler_exclude_function("cbi_boundsReporter")
+static void cbi_boundsReporter() __attribute__((unused))
 {
-  boundsReportBegin(samplerUnitSignature);
-  boundsReportDump();
-  boundsReportEnd();
+  cbi_boundsReportBegin(cbi_unitSignature);
+  cbi_boundsReportDump();
+  cbi_boundsReportEnd();
 
-#ifdef SAMPLER_TIMESTAMP_FIRST
-  timestampsReport(samplerUnitSignature, "bounds", "first",
-		   sizeof(boundsTimestampsFirst) / sizeof(*boundsTimestampsFirst),
-		   boundsTimestampsFirst);
-#endif /* SAMPLER_TIMESTAMP_FIRST */
-#ifdef SAMPLER_TIMESTAMP_LAST
-  timestampsReport(samplerUnitSignature, "bounds", "last",
-		   sizeof(boundsTimestampsLast) / sizeof(*boundsTimestampsLast),
-		   boundsTimestampsLast);
-#endif /* SAMPLER_TIMESTAMP_LAST */
+#ifdef CBI_TIMESTAMP_FIRST
+  cbi_timestampsReport(cbi_unitSignature, "bounds", "first",
+		       sizeof(cbi_boundsTimestampsFirst) / sizeof(*cbi_boundsTimestampsFirst),
+		       cbi_boundsTimestampsFirst);
+#endif /* CBI_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_LAST
+  cbi_timestampsReport(cbi_unitSignature, "bounds", "last",
+		       sizeof(cbi_boundsTimestampsLast) / sizeof(*cbi_boundsTimestampsLast),
+		       cbi_boundsTimestampsLast);
+#endif /* CBI_TIMESTAMP_LAST */
 }
 
 

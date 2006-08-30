@@ -5,34 +5,34 @@
 #include "../timestamps.h"
 
 
-samplerTimestamp samplerClock;
+cbi_Timestamp cbi_clock;
 
-pthread_mutex_t clockLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
+pthread_mutex_t cbi_clockLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
-void timestampsSetFirst(unsigned site, samplerTimestamp first[])
+void cbi_timestampsSetFirst(unsigned site, cbi_Timestamp first[])
 {
-  CRITICAL_REGION(clockLock, {
-    ++samplerClock;
-    if (!first[site]) first[site] = samplerClock;
+  CBI_CRITICAL_REGION(cbi_clockLock, {
+    ++cbi_clock;
+    if (!first[site]) first[site] = cbi_clock;
   });
 }
 
 
-void timestampsSetLast(unsigned site, samplerTimestamp last[])
+void cbi_timestampsSetLast(unsigned site, cbi_Timestamp last[])
 {
-  CRITICAL_REGION(clockLock, {
-    ++samplerClock;
-    last[site] = samplerClock;
+  CBI_CRITICAL_REGION(cbi_clockLock, {
+    ++cbi_clock;
+    last[site] = cbi_clock;
   });
 }
 
 
-void timestampsSetBoth(unsigned site, samplerTimestamp first[], samplerTimestamp last[])
+void cbi_timestampsSetBoth(unsigned site, cbi_Timestamp first[], cbi_Timestamp last[])
 {
-  CRITICAL_REGION(clockLock, {
-    ++samplerClock;
-    if (!first[site]) first[site] = samplerClock;
-    last[site] = samplerClock;
+  CBI_CRITICAL_REGION(cbi_clockLock, {
+    ++cbi_clock;
+    if (!first[site]) first[site] = cbi_clock;
+    last[site] = cbi_clock;
   });
 }

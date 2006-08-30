@@ -11,44 +11,44 @@
 #include "verbose.h"
 
 
-const void * const samplerFeatureRandom;
-const void * const samplerFeatureRandomOnline;
+const void * const cbi_featureRandom;
+const void * const cbi_featureRandomOnline;
 
-double densityScale;
-unsigned short samplerSeed[3];
-FILE *samplerEntropy;
+double cbi_densityScale;
+unsigned short cbi_seed[3];
+FILE *cbi_entropy;
 
-SAMPLER_THREAD_LOCAL int sampling;
-SAMPLER_THREAD_LOCAL struct drand48_data samplerRandomBuffer;
+CBI_THREAD_LOCAL int cbi_sampling;
+CBI_THREAD_LOCAL struct drand48_data cbi_randomBuffer;
 
 
-void initialize_thread()
+void cbi_initialize_thread()
 {
-  if (samplerEntropy)
+  if (cbi_entropy)
     {
       unsigned short seed[3];
-      if (fread(seed, sizeof(seed), 1, samplerEntropy) == 1)
-	sampling = seed48_r(seed, &samplerRandomBuffer) >= 0;
+      if (fread(seed, sizeof(seed), 1, cbi_entropy) == 1)
+	cbi_sampling = seed48_r(seed, &cbi_randomBuffer) >= 0;
     }
   else
-    sampling = seed48_r(samplerSeed, &samplerRandomBuffer) >= 0;
+    cbi_sampling = seed48_r(cbi_seed, &cbi_randomBuffer) >= 0;
 
-  nextEventCountdown = getNextEventCountdown();
-  VERBOSE("initialized thread; next event countdown *%p == %d\n", &nextEventCountdown, nextEventCountdown);
+  cbi_nextEventCountdown = cbi_getNextEventCountdown();
+  VERBOSE("initialized thread; next event countdown *%p == %d\n", &cbi_nextEventCountdown, cbi_nextEventCountdown);
 }
 
 
 static void finalize()
 {
-  if (samplerEntropy)
+  if (cbi_entropy)
     {
-      fclose(samplerEntropy);
-      samplerEntropy = 0;
+      fclose(cbi_entropy);
+      cbi_entropy = 0;
     }
 }
 
 
-void samplerInitializeRandom()
+void cbi_initializeRandom()
 {
   const char * const environ = getenv("SAMPLER_SPARSITY");
   if (environ)
@@ -83,18 +83,18 @@ void samplerInitializeRandom()
 		  exit(2);
 		}
 
-	      samplerSeed[0] = convert.triple[0];
-	      samplerSeed[1] = convert.triple[1];
-	      samplerSeed[2] = convert.triple[2];
+	      cbi_seed[0] = convert.triple[0];
+	      cbi_seed[1] = convert.triple[1];
+	      cbi_seed[2] = convert.triple[2];
 	    }
 	  else
 	    {
 	      atexit(finalize);
-	      samplerEntropy = fopen("/dev/urandom", "r");
+	      cbi_entropy = fopen("/dev/urandom", "r");
 	    }
 
-	  densityScale = 1 / log(1 - 1 / sparsity);
-	  initialize_thread();
+	  cbi_densityScale = 1 / log(1 - 1 / sparsity);
+	  cbi_initialize_thread();
 	}
 
       unsetenv("SAMPLER_SPARSITY");
@@ -107,18 +107,18 @@ void samplerInitializeRandom()
 /**********************************************************************/
 
 
-int getNextEventCountdown()
+int cbi_getNextEventCountdown()
 {
-  if (__builtin_expect(sampling, 1))
+  if (__builtin_expect(cbi_sampling, 1))
     while (1)
       {
 	double real;
-	const int error = drand48_r(&samplerRandomBuffer, &real);
+	const int error = drand48_r(&cbi_randomBuffer, &real);
 	if (__builtin_expect(error < 0, 0))
 	  break;
 	if (__builtin_expect(real != 0., 1))
 	  {
-	    const int next = log(real) * densityScale + 1;
+	    const int next = log(real) * cbi_densityScale + 1;
 	    VERBOSE("got next event countdown == %d\n", next);
 	    return next;
 	  }

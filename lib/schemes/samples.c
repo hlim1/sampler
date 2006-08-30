@@ -3,9 +3,9 @@
 #include "samples.h"
 
 
-void samplesBegin(const SamplerUnitSignature signature, const char scheme[])
+void cbi_samplesBegin(const cbi_UnitSignature signature, const char scheme[])
 {
-  fprintf(reportFile,
+  fprintf(cbi_reportFile,
 	  "<samples unit=\""
 	  "%02x%02x%02x%02x%02x%02x%02x%02x"
 	  "%02x%02x%02x%02x%02x%02x%02x%02x"
@@ -18,7 +18,7 @@ void samplesBegin(const SamplerUnitSignature signature, const char scheme[])
 }
 
 
-void samplesEnd()
+void cbi_samplesEnd()
 {
-  fputs("</samples>\n", reportFile);
+  fputs("</samples>\n", cbi_reportFile);
 }

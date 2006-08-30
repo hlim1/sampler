@@ -5,7 +5,7 @@
 #include "tuple-1.h"
 
 
-void functionEntriesReport(const SamplerUnitSignature, unsigned, const SamplerTuple1 []);
+void cbi_functionEntriesReport(const cbi_UnitSignature, unsigned, const cbi_Tuple1 []);
 
 
 #endif /* !INCLUDE_sampler_function_entries_h */

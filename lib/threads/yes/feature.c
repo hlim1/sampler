@@ -1,2 +1,2 @@
-const void * const samplerFeatureThreads;
-const void * const samplerFeatureThreadsYes;
+const void * const cbi_featureThreads;
+const void * const cbi_featureThreadsYes;

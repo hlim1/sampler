@@ -18,7 +18,7 @@ let saveBlastSpec =
 
 let predicateMarker2 file =
   if !addBlastMarkers then
-    let markerFunc = Lval (var (FindFunction.find "blastMarker" file)) in
+    let markerFunc = Lval (var (FindFunction.find "cbi_blastMarker" file)) in
     let specChannel = open_out !saveBlastSpec in
     fun siteId predExpr location ->
       Printf.fprintf specChannel "global int pred_%d_0 = 0;\n" siteId;
@@ -37,7 +37,7 @@ let predicateMarker2 file =
 
 
 class visitor file =
-  let markerFunc = Lval (var (FindFunction.find "blastTerminationMarker" file)) in
+  let markerFunc = Lval (var (FindFunction.find "cbi_blastTerminationMarker" file)) in
   let markerCall location = mkStmtOneInstr (Call (None, markerFunc, [], location)) in
 
   object (self)

@@ -14,14 +14,14 @@
 #include "random-offline-size.h"
 
 
-#define MAP_SIZE (PRECOMPUTE_COUNT * sizeof(int))
+#define MAP_SIZE (CBI_PRECOMPUTE_COUNT * sizeof(int))
 
 
-const void * const samplerFeatureRandom;
-const void * const samplerFeatureRandomOffline;
+const void * const cbi_featureRandom;
+const void * const cbi_featureRandomOffline;
 
-const int *nextEventPrecomputed = 0;
-SAMPLER_THREAD_LOCAL unsigned nextEventSlot = 0;
+const int *cbi_nextEventPrecomputed = 0;
+CBI_THREAD_LOCAL unsigned cbi_nextEventSlot = 0;
 
 
 static void failed(const char function[])
@@ -59,23 +59,23 @@ static int checkedOpen(const char filename[])
 }
 
 
-void initialize_thread()
+void cbi_initialize_thread()
 {
-  nextEventCountdown = getNextEventCountdown();
+  cbi_nextEventCountdown = cbi_getNextEventCountdown();
 }
 
 
 static void finalize()
 {
-  if (nextEventPrecomputed)
+  if (cbi_nextEventPrecomputed)
     {
-      munmap((void *) nextEventPrecomputed, MAP_SIZE);
-      nextEventPrecomputed = 0;
+      munmap((void *) cbi_nextEventPrecomputed, MAP_SIZE);
+      cbi_nextEventPrecomputed = 0;
     }
 }
 
 
-void samplerInitializeRandom()
+void cbi_initializeRandom()
 {
   const char envar[] = "SAMPLER_EVENT_COUNTDOWNS";
   const char * const environ = getenv(envar);
@@ -100,6 +100,6 @@ void samplerInitializeRandom()
     }
 
   atexit(finalize);
-  nextEventPrecomputed = (const int *) mapping;
-  initialize_thread();
+  cbi_nextEventPrecomputed = (const int *) mapping;
+  cbi_initialize_thread();
 }

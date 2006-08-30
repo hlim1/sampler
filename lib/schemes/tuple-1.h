@@ -2,9 +2,9 @@
 #define INCLUDE_sampelr_tuple_1_h
 
 
-typedef unsigned SamplerTuple1;
+typedef unsigned cbi_Tuple1;
 
-void samplesDump1(unsigned, const SamplerTuple1 []);
+void cbi_samplesDump1(unsigned, const cbi_Tuple1 []);
 
 
 #endif /* !INCLUDE_sampelr_tuple_1_h */

@@ -5,9 +5,9 @@
 #include "tuple-9.h"
 
 
-void floatKindsReport(const SamplerUnitSignature, unsigned, const SamplerTuple9 []);
+void cbi_floatKindsReport(const cbi_UnitSignature, unsigned, const cbi_Tuple9 []);
 
-unsigned floatKindsClassify(long double);
+unsigned cbi_floatKindsClassify(long double);
 
 
 #endif /* !INCLUDE_sampler_float_kinds_h */

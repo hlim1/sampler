@@ -6,37 +6,37 @@
 #include "tuple-3.h"
 
 
-#pragma cilnoremove("scalarPairsCounters")
-static SamplerTuple3 scalarPairsCounters[];
+#pragma cilnoremove("cbi_scalarPairsCounters")
+static cbi_Tuple3 cbi_scalarPairsCounters[];
 
-#ifdef SAMPLER_TIMESTAMP_FIRST
-#pragma cilnoremove("scalarPairsTimestampsFirst");
-static samplerTimestamp scalarPairsTimestampsFirst[sizeof(scalarPairsCounters) / sizeof(*scalarPairsCounters)];
-#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_FIRST
+#pragma cilnoremove("cbi_scalarPairsTimestampsFirst");
+static cbi_Timestamp cbi_scalarPairsTimestampsFirst[sizeof(cbi_scalarPairsCounters) / sizeof(*cbi_scalarPairsCounters)];
+#endif /* CBI_TIMESTAMP_FIRST */
 
-#ifdef SAMPLER_TIMESTAMP_LAST
-#pragma cilnoremove("scalarPairsTimestampsLast");
-static samplerTimestamp scalarPairsTimestampsLast[sizeof(scalarPairsCounters) / sizeof(*scalarPairsCounters)];
-#endif /* SAMPLER_TIMESTAMP_LAST */
+#ifdef CBI_TIMESTAMP_LAST
+#pragma cilnoremove("cbi_scalarPairsTimestampsLast");
+static cbi_Timestamp cbi_scalarPairsTimestampsLast[sizeof(cbi_scalarPairsCounters) / sizeof(*cbi_scalarPairsCounters)];
+#endif /* CBI_TIMESTAMP_LAST */
 
 
-#pragma cilnoremove("scalarPairsReporter")
-#pragma sampler_exclude_function("scalarPairsReporter")
-static void scalarPairsReporter() __attribute__((unused))
+#pragma cilnoremove("cbi_scalarPairsReporter")
+#pragma sampler_exclude_function("cbi_scalarPairsReporter")
+static void cbi_scalarPairsReporter() __attribute__((unused))
 {
-  scalarPairsReport(samplerUnitSignature,
-		    sizeof(scalarPairsCounters) / sizeof(*scalarPairsCounters),
-		    scalarPairsCounters);
-#ifdef SAMPLER_TIMESTAMP_FIRST
-  timestampsReport(samplerUnitSignature, "scalar-pairs", "first",
-		   sizeof(scalarPairsTimestampsFirst) / sizeof(*scalarPairsTimestampsFirst),
-		   scalarPairsTimestampsFirst);
-#endif /* SAMPLER_TIMESTAMP_FIRST */
-#ifdef SAMPLER_TIMESTAMP_LAST
-  timestampsReport(samplerUnitSignature, "scalar-pairs", "last",
-		   sizeof(scalarPairsTimestampsLast) / sizeof(*scalarPairsTimestampsLast),
-		   scalarPairsTimestampsLast);
-#endif /* SAMPLER_TIMESTAMP_LAST */
+  cbi_scalarPairsReport(cbi_unitSignature,
+			sizeof(cbi_scalarPairsCounters) / sizeof(*cbi_scalarPairsCounters),
+			cbi_scalarPairsCounters);
+#ifdef CBI_TIMESTAMP_FIRST
+  cbi_timestampsReport(cbi_unitSignature, "scalar-pairs", "first",
+		       sizeof(cbi_scalarPairsTimestampsFirst) / sizeof(*cbi_scalarPairsTimestampsFirst),
+		       cbi_scalarPairsTimestampsFirst);
+#endif /* CBI_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_LAST
+  cbi_timestampsReport(cbi_unitSignature, "scalar-pairs", "last",
+		       sizeof(cbi_scalarPairsTimestampsLast) / sizeof(*cbi_scalarPairsTimestampsLast),
+		       cbi_scalarPairsTimestampsLast);
+#endif /* CBI_TIMESTAMP_LAST */
 }
 
 

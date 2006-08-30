@@ -6,37 +6,37 @@
 #include "tuple-1.h"
 
 
-#pragma cilnoremove("functionEntriesCounters")
-static SamplerTuple1 functionEntriesCounters[];
+#pragma cilnoremove("cbi_functionEntriesCounters")
+static cbi_Tuple1 cbi_functionEntriesCounters[];
 
-#ifdef SAMPLER_TIMESTAMP_FIRST
-#pragma cilnoremove("functionEntriesTimestampsFirst");
-static samplerTimestamp functionEntriesTimestampsFirst[sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters)];
-#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_FIRST
+#pragma cilnoremove("cbi_functionEntriesTimestampsFirst");
+static cbi_Timestamp cbi_functionEntriesTimestampsFirst[sizeof(cbi_functionEntriesCounters) / sizeof(*cbi_functionEntriesCounters)];
+#endif /* CBI_TIMESTAMP_FIRST */
 
-#ifdef SAMPLER_TIMESTAMP_LAST
-#pragma cilnoremove("functionEntriesTimestampsLast");
-static samplerTimestamp functionEntriesTimestampsLast[sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters)];
-#endif /* SAMPLER_TIMESTAMP_LAST */
+#ifdef CBI_TIMESTAMP_LAST
+#pragma cilnoremove("cbi_functionEntriesTimestampsLast");
+static cbi_Timestamp cbi_functionEntriesTimestampsLast[sizeof(cbi_functionEntriesCounters) / sizeof(*cbi_functionEntriesCounters)];
+#endif /* CBI_TIMESTAMP_LAST */
 
 
-#pragma cilnoremove("functionEntriesReporter")
-#pragma sampler_exclude_function("functionEntriesReporter")
-static void functionEntriesReporter() __attribute__((unused))
+#pragma cilnoremove("cbi_functionEntriesReporter")
+#pragma sampler_exclude_function("cbi_functionEntriesReporter")
+static void cbi_functionEntriesReporter() __attribute__((unused))
 {
-  functionEntriesReport(samplerUnitSignature,
-		 sizeof(functionEntriesCounters) / sizeof(*functionEntriesCounters),
-		 functionEntriesCounters);
-#ifdef SAMPLER_TIMESTAMP_FIRST
-  timestampsReport(samplerUnitSignature, "function-entries", "first",
-		   sizeof(functionEntriesTimestampsFirst) / sizeof(*functionEntriesTimestampsFirst),
-		   functionEntriesTimestampsFirst);
-#endif /* SAMPLER_TIMESTAMP_FIRST */
-#ifdef SAMPLER_TIMESTAMP_LAST
-  timestampsReport(samplerUnitSignature, "function-entries", "last",
-		   sizeof(functionEntriesTimestampsLast) / sizeof(*functionEntriesTimestampsLast),
-		   functionEntriesTimestampsLast);
-#endif /* SAMPLER_TIMESTAMP_LAST */
+  cbi_functionEntriesReport(cbi_unitSignature,
+			    sizeof(cbi_functionEntriesCounters) / sizeof(*cbi_functionEntriesCounters),
+			    cbi_functionEntriesCounters);
+#ifdef CBI_TIMESTAMP_FIRST
+  cbi_timestampsReport(cbi_unitSignature, "function-entries", "first",
+		       sizeof(cbi_functionEntriesTimestampsFirst) / sizeof(*cbi_functionEntriesTimestampsFirst),
+		       cbi_functionEntriesTimestampsFirst);
+#endif /* CBI_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_LAST
+  cbi_timestampsReport(cbi_unitSignature, "function-entries", "last",
+		       sizeof(cbi_functionEntriesTimestampsLast) / sizeof(*cbi_functionEntriesTimestampsLast),
+		       cbi_functionEntriesTimestampsLast);
+#endif /* CBI_TIMESTAMP_LAST */
 }
 
 

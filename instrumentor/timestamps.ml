@@ -22,15 +22,15 @@ let set file scheme =
   let setter, args =
     match !first, !last with
     | false, false -> "", []
-    | true, false -> "timestampsSetFirst", ["First"]
-    | false, true -> "timestampsSetLast", ["Last"]
-    | true, true -> "timestampsSetBoth", ["First"; "Last"]
+    | true, false -> "cbi_timestampsSetFirst", ["First"]
+    | false, true -> "cbi_timestampsSetLast", ["Last"]
+    | true, true -> "cbi_timestampsSetBoth", ["First"; "Last"]
   in
   if args = [] then
     fun _ _ -> []
   else
     let setter = Lval (var (FindFunction.find setter file)) in
-    let mapper suffix = Lval (var (FindGlobal.find (scheme.prefix ^ "Timestamps" ^ suffix) file)) in
+    let mapper suffix = Lval (var (FindGlobal.find ("cbi_" ^ scheme.prefix ^ "Timestamps" ^ suffix) file)) in
     let args = List.map mapper args in
     fun siteNum location ->
       [Call (None, setter, integer siteNum :: args, location)]

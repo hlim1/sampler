@@ -3,15 +3,15 @@
 
 
 #ifdef CIL
-#pragma cilnoremove("getNextEventCountdown")
-#pragma sampler_assume_weightless("getNextEventCountdown")
+#pragma cilnoremove("cbi_getNextEventCountdown")
+#pragma sampler_assume_weightless("cbi_getNextEventCountdown")
 #endif
 
 
-#define SAMPLER_FEATURE_RANDOM samplerFeatureRandomOnline
+#define CBI_FEATURE_RANDOM cbi_featureRandomOnline
 
 
-int getNextEventCountdown(void);
+int cbi_getNextEventCountdown(void);
 
 
 #endif /* !INCLUDE_libcountdown_random_online_h */

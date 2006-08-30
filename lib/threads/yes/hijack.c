@@ -21,7 +21,7 @@ static void *starter(Closure *closure)
   void * const argument = closure->argument;
   free(closure);
 
-  initialize_thread();
+  cbi_initialize_thread();
   return start(argument);
 }
 

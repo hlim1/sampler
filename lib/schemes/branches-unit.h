@@ -6,37 +6,37 @@
 #include "tuple-2.h"
 
 
-#pragma cilnoremove("branchesCounters")
-static SamplerTuple2 branchesCounters[];
+#pragma cilnoremove("cbi_branchesCounters")
+static cbi_Tuple2 cbi_branchesCounters[];
 
-#ifdef SAMPLER_TIMESTAMP_FIRST
-#pragma cilnoremove("branchesTimestampsFirst");
-static samplerTimestamp branchesTimestampsFirst[sizeof(branchesCounters) / sizeof(*branchesCounters)];
-#endif /* SAMPLER_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_FIRST
+#pragma cilnoremove("cbi_branchesTimestampsFirst");
+static cbi_Timestamp cbi_branchesTimestampsFirst[sizeof(cbi_branchesCounters) / sizeof(*cbi_branchesCounters)];
+#endif /* CBI_TIMESTAMP_FIRST */
 
-#ifdef SAMPLER_TIMESTAMP_LAST
-#pragma cilnoremove("branchesTimestampsLast");
-static samplerTimestamp branchesTimestampsLast[sizeof(branchesCounters) / sizeof(*branchesCounters)];
-#endif /* SAMPLER_TIMESTAMP_LAST */
+#ifdef CBI_TIMESTAMP_LAST
+#pragma cilnoremove("cbi_branchesTimestampsLast");
+static cbi_Timestamp cbi_branchesTimestampsLast[sizeof(cbi_branchesCounters) / sizeof(*cbi_branchesCounters)];
+#endif /* CBI_TIMESTAMP_LAST */
 
 
-#pragma cilnoremove("branchesReporter")
-#pragma sampler_exclude_function("branchesReporter")
-static void branchesReporter() __attribute__((unused))
+#pragma cilnoremove("cbi_branchesReporter")
+#pragma sampler_exclude_function("cbi_branchesReporter")
+static void cbi_branchesReporter() __attribute__((unused))
 {
-  branchesReport(samplerUnitSignature,
-		 sizeof(branchesCounters) / sizeof(*branchesCounters),
-		 branchesCounters);
-#ifdef SAMPLER_TIMESTAMP_FIRST
-  timestampsReport(samplerUnitSignature, "branches", "first",
-		   sizeof(branchesTimestampsFirst) / sizeof(*branchesTimestampsFirst),
-		   branchesTimestampsFirst);
-#endif /* SAMPLER_TIMESTAMP_FIRST */
-#ifdef SAMPLER_TIMESTAMP_LAST
-  timestampsReport(samplerUnitSignature, "branches", "last",
-		   sizeof(branchesTimestampsLast) / sizeof(*branchesTimestampsLast),
-		   branchesTimestampsLast);
-#endif /* SAMPLER_TIMESTAMP_LAST */
+  cbi_branchesReport(cbi_unitSignature,
+		     sizeof(cbi_branchesCounters) / sizeof(*cbi_branchesCounters),
+		     cbi_branchesCounters);
+#ifdef CBI_TIMESTAMP_FIRST
+  cbi_timestampsReport(cbi_unitSignature, "branches", "first",
+		       sizeof(cbi_branchesTimestampsFirst) / sizeof(*cbi_branchesTimestampsFirst),
+		       cbi_branchesTimestampsFirst);
+#endif /* CBI_TIMESTAMP_FIRST */
+#ifdef CBI_TIMESTAMP_LAST
+  cbi_timestampsReport(cbi_unitSignature, "branches", "last",
+		       sizeof(cbi_branchesTimestampsLast) / sizeof(*cbi_branchesTimestampsLast),
+		       cbi_branchesTimestampsLast);
+#endif /* CBI_TIMESTAMP_LAST */
 }
 
 

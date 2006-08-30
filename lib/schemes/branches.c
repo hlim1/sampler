@@ -2,10 +2,10 @@
 #include "samples.h"
 
 
-void branchesReport(const SamplerUnitSignature signature,
-		    unsigned count, const SamplerTuple2 sites[])
+void cbi_branchesReport(const cbi_UnitSignature signature,
+			unsigned count, const cbi_Tuple2 sites[])
 {
-  samplesBegin(signature, "branches");
-  samplesDump2(count, sites);
-  samplesEnd();
+  cbi_samplesBegin(signature, "branches");
+  cbi_samplesDump2(count, sites);
+  cbi_samplesEnd();
 }

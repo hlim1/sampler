@@ -7,7 +7,7 @@ let postpatch replacement statement =
 
 
 class visitor file =
-  let classifier = Lval (var (FindFunction.find "gObjectUnrefClassify" file)) in
+  let classifier = Lval (var (FindFunction.find "cbi_gObjectUnrefClassify" file)) in
   fun (tuples : Counters.manager) func ->
     object (self)
       inherit SiteFinder.visitor

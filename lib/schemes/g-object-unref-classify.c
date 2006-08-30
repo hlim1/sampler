@@ -2,7 +2,7 @@
 #include "g-object-unref.h"
 
 
-unsigned gObjectUnrefClassify(gpointer chaff)
+unsigned cbi_gObjectUnrefClassify(gpointer chaff)
 {
   if (G_LIKELY(G_IS_OBJECT(chaff)))
     switch (((GObject *) chaff)->ref_count)

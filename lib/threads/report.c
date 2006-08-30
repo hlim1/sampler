@@ -12,14 +12,14 @@
 #include "lock.h"
 
 
-FILE *reportFile;
+FILE *cbi_reportFile;
 
-pthread_mutex_t reportLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
+pthread_mutex_t cbi_reportLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
 static void closeOnExec(int fd)
 {
-  int flags = fcntl(fileno(reportFile), F_GETFD, 0);
+  int flags = fcntl(fileno(cbi_reportFile), F_GETFD, 0);
 
   if (flags >= 0)
     {
@@ -39,29 +39,29 @@ static void openReportFile()
       const int fd = strtol(envar, &tail, 0);
       if (*tail == '\0')
 	{
-	  reportFile = fdopen(fd, "w");
+	  cbi_reportFile = fdopen(fd, "w");
 	  closeOnExec(fd);
 	}
     }
 
   else if ((envar = getenv("SAMPLER_FILE")))
     {
-      reportFile = fopen(envar, "w");
-      closeOnExec(fileno(reportFile));
+      cbi_reportFile = fopen(envar, "w");
+      closeOnExec(fileno(cbi_reportFile));
     }
 
   unsetenv("SAMPLER_REPORT_FD");
   unsetenv("SAMPLER_FILE");
 
-  if (reportFile)
-    fputs("<report id=\"samples\">\n", reportFile);
+  if (cbi_reportFile)
+    fputs("<report id=\"samples\">\n", cbi_reportFile);
 }
 
 
 static void closeReportFile()
 {
-  fclose(reportFile);
-  reportFile = 0;
+  fclose(cbi_reportFile);
+  cbi_reportFile = 0;
 }
 
 
@@ -70,11 +70,11 @@ static void closeReportFile()
 
 static void reportAllCompilationUnits()
 {
-  if (reportFile)
+  if (cbi_reportFile)
     {
-      samplerUnregisterAllUnits();
-      fputs("</report>\n", reportFile);
-      fflush(reportFile);
+      cbi_unregisterAllUnits();
+      fputs("</report>\n", cbi_reportFile);
+      fflush(cbi_reportFile);
     }
 }
 
@@ -84,19 +84,19 @@ static void reportDebugInfo()
   void *stack[1024];
   const int entries = backtrace(stack, sizeof(stack) / sizeof(*stack));
 
-  fputs("<report id=\"main-backtrace\">\n", reportFile);
-  fflush(reportFile);
-  backtrace_symbols_fd(stack, entries, fileno(reportFile));
-  fputs("</report>\n", reportFile);
+  fputs("<report id=\"main-backtrace\">\n", cbi_reportFile);
+  fflush(cbi_reportFile);
+  backtrace_symbols_fd(stack, entries, fileno(cbi_reportFile));
+  fputs("</report>\n", cbi_reportFile);
 }
 
 
 /**********************************************************************/
 
 
-#define SIGNAL_PRIOR(sig)  struct sigaction samplerPrior_ ## sig = { .sa_handler = SIG_DFL }
-#define SIGNAL_CASE(sig)  case SIG ## sig: prior = &samplerPrior_ ## sig; break
-#define SIGNAL_INST(sig)  do { const struct sigaction action = { .sa_handler = handleSignal }; sigaction(SIG ## sig, &action, &samplerPrior_ ## sig); } while (0)
+#define SIGNAL_PRIOR(sig)  struct sigaction cbi_prior_ ## sig = { .sa_handler = SIG_DFL }
+#define SIGNAL_CASE(sig)  case SIG ## sig: prior = &cbi_prior_ ## sig; break
+#define SIGNAL_INST(sig)  do { const struct sigaction action = { .sa_handler = handleSignal }; sigaction(SIG ## sig, &action, &cbi_prior_ ## sig); } while (0)
 
 
 SIGNAL_PRIOR(ABRT);
@@ -108,8 +108,8 @@ SIGNAL_PRIOR(TRAP);
 
 static void finalize()
 {
-  CRITICAL_REGION(reportLock, {
-    if (reportFile)
+  CBI_CRITICAL_REGION(cbi_reportLock, {
+    if (cbi_reportFile)
       {
 	reportAllCompilationUnits();
 	closeReportFile();
@@ -136,13 +136,12 @@ static void handleSignal(int signum)
 
   sigaction(signum, prior, 0);
 
-  CRITICAL_REGION(reportLock, {
-    if (reportFile)
+  CBI_CRITICAL_REGION(cbi_reportLock, {
+    if (cbi_reportFile)
       {
 	reportAllCompilationUnits();
 	reportDebugInfo();
-	fclose(reportFile);
-	reportFile = 0;
+	closeReportFile();
       }
   });
 
@@ -150,11 +149,11 @@ static void handleSignal(int signum)
 }
 
 
-void samplerInitializeReport()
+void cbi_initializeReport()
 {
-  CRITICAL_REGION(reportLock, {
+  CBI_CRITICAL_REGION(cbi_reportLock, {
       openReportFile();
-      if (reportFile)
+      if (cbi_reportFile)
 	{
 	  atexit(finalize);
 	  SIGNAL_INST(ABRT);

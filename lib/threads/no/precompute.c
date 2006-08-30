@@ -6,11 +6,7 @@
 #include "../random-offline-size.h"
 
 
-int nextEventCountdown;
-
-
-char *envSparsity;
-char *envSeed;
+int cbi_nextEventCountdown;
 
 
 static void writeCountdown(FILE *outfile, int value)
@@ -39,11 +35,11 @@ int main(int argc, char *argv[])
 	}
       else
 	{
-	  int slot = PRECOMPUTE_COUNT;
+	  int slot = CBI_PRECOMPUTE_COUNT;
 	  while (slot--)
 	    {
-	      writeCountdown(outfile, nextEventCountdown);
-	      nextEventCountdown = getNextEventCountdown();
+	      writeCountdown(outfile, cbi_nextEventCountdown);
+	      cbi_nextEventCountdown = cbi_getNextEventCountdown();
 	    }
 
 	  fclose(outfile);

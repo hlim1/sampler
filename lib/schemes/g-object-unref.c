@@ -4,10 +4,10 @@
 #include "tuple-4.h"
 
 
-void gObjectUnrefReport(const SamplerUnitSignature signature,
-			unsigned count, const SamplerTuple4 tuples[])
+void cbi_gObjectUnrefReport(const cbi_UnitSignature signature,
+			unsigned count, const cbi_Tuple4 tuples[])
 {
-  samplesBegin(signature, "g-object-unref");
-  samplesDump4(count, tuples);
-  samplesEnd();
+  cbi_samplesBegin(signature, "g-object-unref");
+  cbi_samplesDump4(count, tuples);
+  cbi_samplesEnd();
 }

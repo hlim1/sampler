@@ -12,7 +12,7 @@ let predictChecks =
 
 
 let isCountdown =
-  let pattern = regexp "^\\(localEventCountdown[1-9][0-9]*\\|nextEventCountdown\\)$" in
+  let pattern = regexp "^\\(localEventCountdown[1-9][0-9]*\\|cbi_nextEventCountdown\\)$" in
   fun candidate ->
     string_match pattern candidate.vname 0
 

@@ -2,4 +2,4 @@
 #include "countdown.h"
 
 
-SAMPLER_THREAD_LOCAL int nextEventCountdown = INT_MAX;
+CBI_THREAD_LOCAL int cbi_nextEventCountdown = INT_MAX;

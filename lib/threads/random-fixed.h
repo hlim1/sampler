@@ -3,18 +3,19 @@
 
 
 #ifdef CIL
-#pragma cilnoremove("getNextEventCountdown")
-#pragma sampler_exclude_function("getNextEventCountdown")
+#pragma cilnoremove("cbi_getNextEventCountdown")
+#pragma sampler_exclude_function("cbi_getNextEventCountdown")
 #endif
 
 
-#define SAMPLER_FEATURE_RANDOM samplerFeatureRandomFixed
+#define CBI_FEATURE_RANDOM cbi_featureRandomFixed
 
 
-static inline int getNextEventCountdown()
+static inline int
+cbi_getNextEventCountdown()
 {
-  extern int randomFixedCountdown;
-  return randomFixedCountdown;
+  extern int cbi_randomFixedCountdown;
+  return cbi_randomFixedCountdown;
 }
 
 

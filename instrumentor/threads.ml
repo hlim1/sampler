@@ -14,7 +14,7 @@ let enabled () = !threads
 
 let bump file =
   if !threads then
-    let helper = Lval (var (FindFunction.find "atomicIncrementCounter" file)) in
+    let helper = Lval (var (FindFunction.find "cbi_atomicIncrementCounter" file)) in
     fun lval location ->
       Call (None, helper, [mkAddrOrStartOf lval], location)
   else

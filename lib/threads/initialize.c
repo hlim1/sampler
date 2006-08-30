@@ -4,21 +4,21 @@
 #include "verbose.h"
 
 
-sampler_once_t samplerInitializeOnce = SAMPLER_ONCE_INIT;
+cbi_once_t cbi_initializeOnce = CBI_ONCE_INIT;
 
 
 static void
 initializeOnce()
 {
-  samplerInitializeVerbose();
+  cbi_initializeVerbose();
 
-  samplerInitializeRandom();
-  samplerInitializeReport();
+  cbi_initializeRandom();
+  cbi_initializeReport();
 }
 
 
 __attribute__((constructor)) void
-samplerInitialize()
+cbi_initialize()
 {
-  sampler_once(&samplerInitializeOnce, initializeOnce);
+  cbi_once(&cbi_initializeOnce, initializeOnce);
 }

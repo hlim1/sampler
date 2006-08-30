@@ -4,12 +4,13 @@
 #include <pthread.h>
 
 
-typedef int sampler_once_t;
+typedef int cbi_once_t;
 
-#define SAMPLER_ONCE_INIT 0
+#define CBI_ONCE_INIT 0
 
 
-static inline void sampler_once(sampler_once_t *control, void (*routine)())
+static inline void
+cbi_once(cbi_once_t *control, void (*routine)())
 {
   if (!*control)
     {

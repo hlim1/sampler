@@ -4,7 +4,7 @@
 #include "signature.h"
 
 
-static const SamplerUnitSignature samplerUnitSignature;
+static const cbi_UnitSignature cbi_unitSignature;
 
 
 #endif /* !INCLUDE_sampler_unit_signature_h */

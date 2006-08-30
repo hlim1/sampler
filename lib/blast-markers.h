@@ -2,18 +2,18 @@
 #define INCLUDE_sampler_blast_markers_h
 
 
-#pragma cilnoremove("blastMarker")
-#pragma sampler_exclude_function("blastMarker")
+#pragma cilnoremove("cbi_blastMarker")
+#pragma sampler_exclude_function("cbi_blastMarker")
 static inline
-void blastMarker(int siteId, int condition)
+void cbi_blastMarker(int siteId, int condition)
 {
 }
 
 
-#pragma cilnoremove("blastTerminationMarker")
-#pragma sampler_exclude_function("blastTerminationMarker")
+#pragma cilnoremove("cbi_blastTerminationMarker")
+#pragma sampler_exclude_function("cbi_blastTerminationMarker")
 static inline
-void blastTerminationMarker()
+void cbi_blastTerminationMarker()
 {
 }
 

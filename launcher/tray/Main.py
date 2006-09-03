@@ -4,6 +4,7 @@ pygtk.require('2.0')
 import bonobo
 import gconf
 import gnome
+import gnome.ui
 
 from Factory import Factory
 from GConfDir import GConfDir

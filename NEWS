@@ -3,6 +3,7 @@
 * sampler-1.4.4
 
 ** Avoid clashing with application symbols.
+** Restore missing "About" menu icon in tray popup.
 
 * sampler-1.4.3
 

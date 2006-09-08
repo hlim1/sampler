@@ -1,4 +1,7 @@
-AC_INIT([sampler],[1.4.3],[liblit@cs.wisc.edu])
+m4_define(SAM_VERSION, m4_translit(m4_include([version]), [
+]))
+
+AC_INIT([sampler], SAM_VERSION, [liblit@cs.wisc.edu])
 AC_CONFIG_AUX_DIR(config-aux)
 AM_INIT_AUTOMAKE
 

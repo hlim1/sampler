@@ -5,5 +5,11 @@ EXTRA_DIST =					\
 	freshen-runs				\
 	sync-from-www
 
-all-local: insert-builds.pl
-all-local: integrityChecks.py insertRuns.py
+noinst_PYTHON =					\
+	common.py				\
+	insertBuilds.py				\
+	insertRuns.py				\
+	integrityChecks.py
+
+TESTS = $(noinst_PYTHON)
+TESTS_ENVIRONMENT = pychecker --quiet --stdlib

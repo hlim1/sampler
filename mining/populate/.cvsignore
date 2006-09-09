@@ -3,7 +3,7 @@
 Makefile
 Makefile.in
 Site.pm
-insert-builds.pl
+insertBuilds.py
 insertRuns.py
 integrityChecks.py
 sampler-uploads

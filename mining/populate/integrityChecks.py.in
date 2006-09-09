@@ -10,8 +10,12 @@ from common import connect, results
 
 
 def checkResult(cursor, condition):
+    first = True
     for result in results(cursor):
         for value in result.values():
+            if first:
+                print condition
+                first = False
             print >>sys.stderr, '\t%s' % value
 
 

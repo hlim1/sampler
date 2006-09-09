@@ -169,20 +169,21 @@ def main():
     db.autocommit = False
 
     db.cursor().execute("""
-    CREATE TEMPORARY TABLE upload_run (
-        run_id VARCHAR(24) PRIMARY KEY NOT NULL,
-        application_name VARCHAR(50) NOT NULL,
-        application_version VARCHAR(50) NOT NULL,
-        application_release VARCHAR(50) NOT NULL,
-        build_distribution VARCHAR(50) NOT NULL,
-        version VARCHAR(255) NOT NULL,
-        sparsity INTEGER NOT NULL CHECK (sparsity > 0),
-        exit_signal SMALLINT NOT NULL CHECK (exit_signal >= 0),
-        exit_status SMALLINT NOT NULL CHECK (exit_status >= 0),
-        CHECK (exit_status = 0 OR exit_signal = 0),
-        date TIMESTAMP NOT NULL,
-        server_name VARCHAR(50) NOT NULL
-    )""")
+      CREATE TEMPORARY TABLE upload_run (
+          run_id VARCHAR(24) PRIMARY KEY NOT NULL,
+          application_name VARCHAR(50) NOT NULL,
+          application_version VARCHAR(50) NOT NULL,
+          application_release VARCHAR(50) NOT NULL,
+          build_distribution VARCHAR(50) NOT NULL,
+          version VARCHAR(255) NOT NULL,
+          sparsity INTEGER NOT NULL CHECK (sparsity > 0),
+          exit_signal SMALLINT NOT NULL CHECK (exit_signal >= 0),
+          exit_status SMALLINT NOT NULL CHECK (exit_status >= 0),
+          CHECK (exit_status = 0 OR exit_signal = 0),
+          date TIMESTAMP NOT NULL,
+          server_name VARCHAR(50) NOT NULL
+      )
+      """)
 
     if args:
         subdirs = args
@@ -196,17 +197,17 @@ def main():
 
     # merge new runs into main table
     db.cursor().execute("""
-    INSERT INTO run SELECT
-        run_id,
-        build_id,
-        version,
-        sparsity,
-        exit_signal,
-        exit_status,
-        date,
-        server_name
-    FROM upload_run
-    NATURAL LEFT JOIN build
+      INSERT INTO run SELECT
+          run_id,
+          build_id,
+          version,
+          sparsity,
+          exit_signal,
+          exit_status,
+          date,
+          server_name
+      FROM upload_run
+      NATURAL LEFT JOIN build
     """)
 
     # finish up with database
@@ -223,7 +224,6 @@ def main():
         year = run.date.split('-')[0]
         destination = '%s/%s/%s' % (archive, year, run.run_id)
         if not options.dry_run:
-            print 'archive: %s --> %s' % (run.subdir, destination)
             rename(run.subdir, destination)
 
 

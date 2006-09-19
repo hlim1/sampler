@@ -31,3 +31,5 @@ def main():
         app.unref()
         del app
         client.new_instance([])
+        import gtk.gdk
+        gtk.gdk.notify_startup_complete()

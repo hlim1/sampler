@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.4.5
+
+** Startup notification for the preferences dialog.
+
 * sampler-1.4.4
 
 ** Avoid clashing with application symbols.

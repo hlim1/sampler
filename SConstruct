@@ -9,8 +9,7 @@ from SCons.Errors import UserError
 #  version numbering
 #
 
-version = File('version').get_contents()
-Export('version')
+version = File('version').get_contents().rstrip()
 
 
 ########################################################################
@@ -38,11 +37,12 @@ opts.AddOptions(
 #
 
 env = Environment(
-    tools=['default', 'ocaml', 'test'], toolpath=['.'],
+    tools=['default', 'ocaml', 'template', 'test'], toolpath=['.'],
     CCFLAGS=['-W', '-Wall', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
     options=opts,
     prefix='/usr',
+    version=version,
     )
 
 # needed for some pychecker tests

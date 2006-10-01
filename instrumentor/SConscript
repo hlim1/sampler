@@ -16,8 +16,7 @@ env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
 #
 
 
-Import('version')
-version_ml = literal(env, 'version.ml', 'let version = "%s"' % version)
+version_ml = env.Template('version.ml.template')
 
 
 ########################################################################

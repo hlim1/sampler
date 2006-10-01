@@ -9,7 +9,7 @@ def TestBuilder(command, **kwargs):
     return Builder(action=[command, Touch('$TARGET')], suffix=test_suffix, **kwargs)
 
 test_desktop_builder = TestBuilder(['desktop-file-validate', '$SOURCE'], single_source=True)
-test_python_builder = TestBuilder(['pychecker', '--stdlib', '--quiet', '$SOURCE'], single_source=True)
+test_python_builder = TestBuilder(['pychecker', '--stdlib', '--quiet', '$SOURCES'])
 test_xml_builder = TestBuilder(['xmllint', '--valid', '--noout', '$SOURCE'])
 
 

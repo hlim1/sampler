@@ -1,4 +1,6 @@
-from glob import glob
+Import('env', 'testPythons')
 
-Import('env')
-Alias('test', env.TestPython(glob('*.py')))
+Default(env.Template('Paths.py.template'))
+pythons = ['Activation.py', 'AppConfig.py', 'Launcher.py', 'Main2.py', 'Main.py', 'Outcome.py', 'Paths.py', 'RedirectHandler.py', 'ReportsReader.py', 'SampledLauncher.py', 'ServerMessage.py', 'UnsampledLauncher.py', 'Uploader.py', 'Upload.py', 'UserConfig.py']
+
+testPythons(env, pythons)

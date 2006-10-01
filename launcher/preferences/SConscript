@@ -1,5 +1,7 @@
-from glob import glob
+Import('env', 'testPythons')
 
-Import('env')
-Alias('test', env.TestPython(glob('*.py')))
+Default(env.Template('Paths.py.template'))
+pythons = ['AppFinder.py', 'Application.py', 'AppModel.py', 'Main.py', 'Paths.py', 'PreferencesDialog.py']
+
+testPythons(env, pythons)
 Alias('test', env.TestDesktop('sampler-preferences.desktop'))

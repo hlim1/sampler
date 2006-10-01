@@ -1,4 +1,6 @@
-from glob import glob
+Import('env', 'testPythons')
 
-Import('env')
-Alias('test', env.TestPython(glob('*.py')))
+Default(env.Template('Paths.py.template'))
+pythons = ['FirstTime.py', 'Main.py', 'Paths.py']
+
+testPythons(env, pythons)

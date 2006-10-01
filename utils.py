@@ -26,12 +26,12 @@ def instantiate(source, sink, **kwargs):
         sink.write(Template(line).substitute(kwargs))
 
 
-def literal_action(target, source, env):
+def __literal_action(target, source, env):
     __pychecker__ = 'no-argsused'
     target = file(str(target[0]), 'w')
-    target.write(source[0].get_contents())
+    print >>target, source[0].get_contents()
     target.close()
 
 
 def literal(env, target, value):
-    return env.Command(target, env.Value(value), literal_action)
+    return env.Command(target, env.Value(value), __literal_action)

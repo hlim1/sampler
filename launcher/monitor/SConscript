@@ -10,7 +10,7 @@ wenv = env.Copy()
 wenv.AppendUnique(CCFLAGS=['-Wno-missing-field-initializers'])
 
 defs = env.Command('monitor.defs', 'monitor.h', 'python /usr/share/pygtk/2.0/codegen/h2def.py $SOURCES >$TARGET')
-wrap = env.Command('monitor-wrap.c', ['monitor.override', defs], 'pygtk-codegen-2.0 --prefix monitor --override $SOURCES >$TARGET')
+wrap = env.Command('monitor-wrap.c', ['monitor.override', defs], "pygtk-codegen-2.0 --prefix monitor --override $SOURCES | sed 's/^const \\(PyMethodDef monitor_functions\\[\\]\\)/\\1/' >$TARGET")
 mod = env.SharedObject('monitor-module.c')
 lib = wenv.SharedLibrary('monitor', ['monitor.c', wrap, mod], SHLIBPREFIX='')
 Default(lib)

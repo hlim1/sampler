@@ -1,0 +1,3 @@
+home = '$prefix/share/sampler/traydir'
+bin = '$prefix/bin'
+glade = home + '/tray.glade'

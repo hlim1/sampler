@@ -1,0 +1,4 @@
+common = '$prefix/share/sampler/common'
+first_time = '$prefix/share/sampler/first-time'
+home = '$prefix/share/sampler/wrapper'
+glade = home + '/wrapper.glade'

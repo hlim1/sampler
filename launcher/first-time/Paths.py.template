@@ -1,0 +1,2 @@
+home = '$prefix/share/sampler/first-time'
+glade = home + '/first-time.glade'

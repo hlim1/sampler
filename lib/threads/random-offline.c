@@ -1,3 +1,5 @@
+#define _GNU_SOURCE 		/* for mremap */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>

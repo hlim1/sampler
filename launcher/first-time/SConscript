@@ -1,6 +1,6 @@
 Import('env', 'testPythons')
 
-Default(env.Template('Paths.py.template'))
+Default(env.Template('Paths.py.in', varlist=['first_timedir']))
 pythons = ['FirstTime.py', 'Main.py', 'Paths.py']
 
 testPythons(env, pythons)

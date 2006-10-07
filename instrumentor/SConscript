@@ -16,7 +16,7 @@ env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
 #
 
 
-version_ml = env.Template('version.ml.template')
+version_ml = env.Template('version.ml.in', varlist=['VERSION'])
 
 
 ########################################################################
@@ -44,11 +44,12 @@ def libfuncs(target, source, env):
     symbols = ('"%s"' % symbol for symbol in symbols )
     symbols = ';\n'.join(symbols)
 
-    instantiate(str(env.File(source[0])), str(target[0]),
-                function_list=symbols, function_count=len(symbols))
+    instantiate(str(source[0]), str(target[0]),
+                LIBRARY_FUNCTIONS=symbols,
+                LIBRARY_COUNT=len(symbols))
 
 
-libraries_ml = env.Command('libraries.ml', ['libraries.ml.template',
+libraries_ml = env.Command('libraries.ml', ['libraries.ml.in',
                                             '/usr/lib/libc_nonshared.a',
                                             '/lib/libc.so.6',
                                             '/lib/libm.so.6'],

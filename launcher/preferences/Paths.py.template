@@ -1,2 +1,0 @@
-home = '$prefix/share/sampler/preferences'
-glade = home + '/preferences.glade'

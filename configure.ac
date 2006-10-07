@@ -433,6 +433,7 @@ instrumentor/nothing/Makefile
 instrumentor/returns/Makefile
 instrumentor/scalar-pairs/Makefile
 instrumentor/timestamps/Makefile
+instrumentor/version.ml
 launcher/Makefile
 launcher/common/Makefile
 launcher/first-time/Makefile

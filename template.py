@@ -1,28 +1,26 @@
+from string import Template
+
 from SCons.Action import Action
 from SCons.Builder import Builder
+from SCons.Util import scons_subst
 
-
-def __instantiate_old(target, source, env):
-    source = file(str(source[0]))
-    target = file(str(target[0]), 'w')
-
-    for line in source:
-        print >>target, env.subst(line)
+from utils import instantiate
 
 
 def __instantiate(target, source, env):
-    source = source[0].get_contents()
-    target = file(str(target[0]), 'w')
-    instance = env.subst(source)
-    print >>target, instance
+    varlist = env['varlist']
+    keywords = dict((key, env[key]) for key in varlist)
+    instantiate(str(source[0]), str(target[0]), **keywords)
 
 
-__instantiate_action = Action(__instantiate, varlist=['prefix', 'version'])
+def __generator(source, target, env, for_signature):
+    varlist = env['varlist']
+    return Action(__instantiate, varlist=varlist)
 
 
 __template_builder = Builder(
-    action=__instantiate_action,
-    src_suffix=['.template'],
+    generator=__generator,
+    src_suffix=['.in'],
     single_source=True,
     )
 

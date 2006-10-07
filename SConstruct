@@ -42,8 +42,20 @@ env = Environment(
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
     options=opts,
     prefix='/usr',
+    VERSION=version,
     version=version,
     )
+
+# various derived paths
+env.AppendUnique(bindir=env.subst('$prefix/bin'))
+env.AppendUnique(datadir=env.subst('$prefix/share'))
+env.AppendUnique(pkgdatadir=env.subst('$datadir/sampler'))
+env.AppendUnique(commondir=env.subst('$pkgdatadir/common'))
+env.AppendUnique(first_timedir=env.subst('$pkgdatadir/first-time'))
+env.AppendUnique(pixmapsdir=env.subst('$pkgdatadir/pixmaps'))
+env.AppendUnique(preferencesdir=env.subst('$pkgdatadir/preferences'))
+env.AppendUnique(traydir=env.subst('$pkgdatadir/tray'))
+env.AppendUnique(wrapperdir=env.subst('$pkgdatadir/wrapper'))
 
 # needed for some pychecker tests
 if 'DISPLAY' in os.environ:

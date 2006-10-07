@@ -6,6 +6,28 @@ import sys
 sys.path[1:1] = ['/usr/lib/scons']
 
 
+class AtTemplate(Template):
+
+    delimiter = '@'
+
+    pattern = r"""
+    (?:
+    (?P<escaped>@@) |
+    (?P<named>(?!)) |
+    @(?P<braced>%(id)s)@ |
+    (?P<invalid>(?!))
+    )
+    """ % {'id': Template.idpattern}
+
+
+def instantiate(source, sink, **kwargs):
+    source = file(source)
+    sink = file(sink, 'w')
+
+    for line in source:
+        sink.write(AtTemplate(line).substitute(kwargs))
+
+
 def read_pipe(action, env):
 
     def spawn(shell, escape, cmd, args, env):
@@ -16,14 +38,6 @@ def read_pipe(action, env):
 
     env = env.Copy(SPAWN=spawn)
     return env.Execute(action)
-
-
-def instantiate(source, sink, **kwargs):
-    source = file(source)
-    sink = file(sink, 'w')
-
-    for line in source:
-        sink.write(Template(line).substitute(kwargs))
 
 
 def __literal_action(target, source, env):

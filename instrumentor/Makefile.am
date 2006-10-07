@@ -27,10 +27,6 @@ MOSTLYCLEANFILES += libraries.ml
 libraries.ml: %: build-libraries %.in
 	./$^ >$@
 
-MOSTLYCLEANFILES += $(srcdir)/version.ml
-$(srcdir)/version.ml: $(top_srcdir)/configure.ac
-	echo 'let version = "$(VERSION)"' >$@
-
 $(dir $(libcommon))%.cmi: $(libcommon); @:
 $(dir $(libcommon))%.cmx: $(libcommon); @:
 $(libcommon): $(force); $(recurse)

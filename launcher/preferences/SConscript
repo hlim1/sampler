@@ -1,6 +1,6 @@
 Import('env', 'testPythons')
 
-Default(env.Template('Paths.py.template'))
+Default(env.Template('Paths.py.in', varlist=['preferencesdir']))
 pythons = ['AppFinder.py', 'Application.py', 'AppModel.py', 'Main.py', 'Paths.py', 'PreferencesDialog.py']
 
 testPythons(env, pythons)

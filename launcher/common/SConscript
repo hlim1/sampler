@@ -2,7 +2,7 @@ from utils import instantiate
 
 Import('env', 'testPythons')
 
-Default(env.Template('SamplerConfig.py.template'))
+Default(env.Template('SamplerConfig.py.in', varlist=['VERSION', 'pixmapsdir']))
 pythons = ['BlipIcons.py', 'GConfDir.py', 'GConfNotifier.py', 'Keys.py', 'LazyIcon.py', 'MasterNotifier.py', 'SamplerConfig.py', 'Signals.py', 'StatusIcon.py', 'WindowIcon.py']
 
 testPythons(env, pythons)

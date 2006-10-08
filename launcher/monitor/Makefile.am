@@ -38,8 +38,8 @@ libmonitor_a_SOURCES =				\
 	monitor-wrap.c
 
 monitor-wrap.c: %-wrap.c: %.override %.defs
-	pygtk-codegen-2.0 --prefix $* --override $< $*.defs |		\
-	sed 's/^const \\(PyMethodDef $*_functions\\[\\]\\)/\\1/'	\
+	pygtk-codegen-2.0 --prefix $* --override $< $*.defs |	\
+	sed 's/^const \(PyMethodDef $*_functions\[\]\)/\1/'	\
 	>$@
 
 monitor.defs: monitor.h

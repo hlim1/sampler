@@ -73,4 +73,12 @@ env.OcamlProgram('loopless.ml')
 
 Default('main')
 
+
+#########################################################################
+#
+#  regression test subdirs
+#
+
+#SConscript(dirs=['branches'])
+
 # todo: various regression test subdirs

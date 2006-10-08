@@ -1,4 +1,6 @@
 Import('env', 'testPythons')
+env = env.Copy(bindir=env.subst('$bindir'),
+               traydir=env.subst('$traydir'))
 
 server = env.Template('Sampler_Monitor.server.in', varlist=['traydir'])
 Default([server, env.Template('Paths.py.in', varlist=['bindir', 'traydir'])])

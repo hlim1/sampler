@@ -91,7 +91,7 @@ def __obj_emitter(target, source, env):
             if env['OCAML_DTYPES']:
                 target.append(cmo.target_from_source('', '.annot'))
             if env['OCAML_NATIVE']:
-                target.append(node.target_from_source('', '.o'))
+                target.append(cmo.target_from_source('', '.o'))
     return target, source
 
 
@@ -152,8 +152,8 @@ def __lib_builder(native):
 
 
 def __exe_depends(node, env):
-    if node.get_suffix() == '.o': return []
     obj_suffix = node.get_suffix()
+    if not obj_suffix in __object_to_source: return []
     src_suffix = __object_to_source[obj_suffix]
     source = node.target_from_source('', src_suffix)
     cmis = ( cmi for cmi in node.children() if cmi != source )

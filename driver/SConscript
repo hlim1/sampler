@@ -1,0 +1,51 @@
+from os import symlink, unlink
+from os.path import lexists
+
+from utils import read_pipe
+
+Import('env')
+
+
+def __progName(context, name):
+    context.Message('checking for %s: ' % name)
+    action = context.env.Action([['$CC', '-print-prog-name=%s' % name, '>', '$TARGET']], varlist=['CC'])
+    result = context.TryAction(action)
+    if result[0]:
+        result = result[1].rstrip()
+        result = context.env.WhereIs(result)
+        if not result: result = ''
+        context.Result(result)
+        return result
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+conf = Configure(env, custom_tests={'CheckProgName': __progName})
+cpp0 = conf.CheckProgName('cpp0')
+cc1 = conf.CheckProgName('cc1')
+as = conf.CheckProgName('as')
+
+env = env.Copy(
+    PACKAGE='sampler',
+    gcc=env.WhereIs('gcc'),
+    cpp0=cpp0, cc1=cc1, as=as,
+    )
+
+Default(env.Template('as.in', varlist=['as', 'objcopy']))
+Default(env.Template('cc1.in', varlist=['cpp0', 'cc1']))
+Default(env.Template('sampler-cc-here.in', varlist=['gcc']))
+Default(env.Template('sampler-cc', varlist=['PACKAGE', 'prefix', 'exec_prefix', 'libdir', 'pkglibdir', 'driverdir', 'gcc']))
+
+
+########################################################################
+
+
+def relink(target, source):
+    if lexists(target): unlink(target)
+    symlink(source, target)
+
+def makeLinks(target, source, env):
+    relink('driver/main', '../instrumentor/main')
+    relink('driver/sampler', '../lib')
+
+Default(env.Command('stamp-links', [], [makeLinks, Touch('$TARGET')]))

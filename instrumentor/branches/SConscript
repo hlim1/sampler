@@ -1,0 +1,16 @@
+from os import chdir
+Import('env')
+
+def pushd(target, source, env):
+    chdir(str(target[0].get_dir()))
+
+def popd(target, source, env):
+    chdir(str(Dir('#')))
+
+__tester = Action([pushd,
+                   ['../../driver/sampler-cc-here', '--relative-paths', '--sampler-scheme=branches', '-save-temps', '-o', '$TARGET.filebase', '$SOURCE.file'],
+                   popd])
+
+passed = env.Command('simple.passed', ['simple.c', '#instrumentor/main', '#driver', '#lib'], action=__tester)
+
+Alias('test', passed)

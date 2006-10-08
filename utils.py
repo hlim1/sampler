@@ -23,9 +23,9 @@ class AtTemplate(Template):
 def instantiate(source, sink, **kwargs):
     source = file(source)
     sink = file(sink, 'w')
-
     for line in source:
         sink.write(AtTemplate(line).substitute(kwargs))
+    sink.close()
 
 
 def read_pipe(action, env):

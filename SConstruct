@@ -28,6 +28,7 @@ opts.AddOptions(
     BoolOption('OCAML_NATIVE', 'compile OCaml to native code', False),
     PathOption('prefix', 'install in the given directory', '/usr/local'),
     ('cil_path', 'look for CIL in the given directory', '../cil/obj/x86_LINUX', validate_cil_path),
+    PathOption('objcopy', 'use the given objcopy executable', WhereIs('objcopy')),
     )
 
 
@@ -41,21 +42,25 @@ env = Environment(
     CCFLAGS=['-W', '-Wall', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
     options=opts,
-    prefix='/usr',
     VERSION=version,
     version=version,
-    )
+    prefix='/usr',
 
-# various derived paths
-env.AppendUnique(bindir=env.subst('$prefix/bin'))
-env.AppendUnique(datadir=env.subst('$prefix/share'))
-env.AppendUnique(pkgdatadir=env.subst('$datadir/sampler'))
-env.AppendUnique(commondir=env.subst('$pkgdatadir/common'))
-env.AppendUnique(first_timedir=env.subst('$pkgdatadir/first-time'))
-env.AppendUnique(pixmapsdir=env.subst('$pkgdatadir/pixmaps'))
-env.AppendUnique(preferencesdir=env.subst('$pkgdatadir/preferences'))
-env.AppendUnique(traydir=env.subst('$pkgdatadir/tray'))
-env.AppendUnique(wrapperdir=env.subst('$pkgdatadir/wrapper'))
+    # various derived paths
+    bindir='$prefix/bin',
+    commondir='$pkgdatadir/common',
+    datadir='$prefix/share',
+    driverdir='$pkglibdir/driver',
+    exec_prefix='$prefix',
+    first_timedir='$pkgdatadir/first-time',
+    libdir='$prefix/lib',
+    pixmapsdir='$pkgdatadir/pixmaps',
+    pkgdatadir='$datadir/sampler',
+    pkglibdir='$libdir/sampler',
+    preferencesdir='$pkgdatadir/preferences',
+    traydir='$pkgdatadir/tray',
+    wrapperdir='$pkgdatadir/wrapper',
+    )
 
 # needed for some pychecker tests
 if 'DISPLAY' in os.environ:
@@ -87,6 +92,7 @@ SetOption('max_drift', 1)
 
 SConscript(dirs=[
     'doc',
+    'driver',
     'fuzz',
     'instrumentor',
     'launcher',

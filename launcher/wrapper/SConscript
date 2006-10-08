@@ -1,4 +1,7 @@
 Import('env', 'testPythons')
+env = env.Copy(commondir=env.subst('$commondir'),
+               first_timedir=env.subst('$first_timedir'),
+               wrapperdir=env.subst('$wrapperdir'))
 
 Default(env.Template('Paths.py.in', varlist=['commondir', 'first_timedir', 'wrapperdir']))
 pythons = ['Activation.py', 'AppConfig.py', 'Launcher.py', 'Main2.py', 'Main.py', 'Outcome.py', 'Paths.py', 'RedirectHandler.py', 'ReportsReader.py', 'SampledLauncher.py', 'ServerMessage.py', 'UnsampledLauncher.py', 'Uploader.py', 'Upload.py', 'UserConfig.py']

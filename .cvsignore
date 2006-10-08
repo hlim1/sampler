@@ -1,4 +1,5 @@
 *.pyc
+.sconf_temp
 .scons-cache
 .sconsign.dblite
 Makefile

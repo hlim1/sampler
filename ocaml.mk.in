@@ -1,4 +1,4 @@
-ocamlflags = -w -Ale -warn-error A $(ocamlflags_profile) $(ocamlflags_native)
+ocamlflags = -w Ale -warn-error A $(ocamlflags_profile) $(ocamlflags_native)
 
 OCAMLOPT = @OCAMLOPT@
 OCAMLC = @OCAMLC@

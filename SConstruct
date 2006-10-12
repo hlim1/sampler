@@ -39,7 +39,7 @@ opts.AddOptions(
 
 env = Environment(
     tools=['default', 'ocaml', 'template', 'test'], toolpath=['.'],
-    CCFLAGS=['-W', '-Wall', '-Werror', '-Wformat=2'],
+    CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
     options=opts,
     VERSION=version,

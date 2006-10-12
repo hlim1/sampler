@@ -158,7 +158,7 @@ def __exe_depends(node, env):
     source = node.target_from_source('', src_suffix)
     cmis = ( cmi for cmi in node.children() if cmi != source )
     cmos = ( cmi.target_from_source('', obj_suffix) for cmi in cmis )
-    cmos = ( env.FindFile(cmo, '#.') for cmo in cmos )
+    cmos = ( env.FindFile(str(cmo), '#.') for cmo in cmos )
     cmos = filter(None, cmos)
     if env['OCAML_NATIVE']:
         deps = ( (cmo, cmo.target_from_source('', '.o')) for cmo in cmos )
@@ -198,7 +198,7 @@ def __exe_target_scan(node, env, path):
     return libs
 
 
-def __exe_path_function(env, node):
+def __exe_path_function(env, directory, target, source):
     __pychecker__ = 'no-argsused'
     stdlib = env['OCAML_STDLIB']
     if stdlib is None:

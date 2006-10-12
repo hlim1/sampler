@@ -20,10 +20,12 @@ def __progName(context, name):
         context.Result(False)
         context.env.Exit(1)
 
-conf = Configure(env, custom_tests={'CheckProgName': __progName})
+conf = env.Configure(custom_tests={'CheckProgName': __progName})
 cpp0 = conf.CheckProgName('cpp0')
 cc1 = conf.CheckProgName('cc1')
 as = conf.CheckProgName('as')
+conf.Finish()
+del conf
 
 env = env.Copy(
     PACKAGE='sampler',

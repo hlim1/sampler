@@ -1,5 +1,6 @@
 import os
 from os.path import exists
+from socket import getfqdn
 
 from SCons.Errors import UserError
 
@@ -31,17 +32,22 @@ opts.AddOptions(
     PathOption('objcopy', 'use the given objcopy executable', WhereIs('objcopy')),
     )
 
+env = Environment(options=opts)
+domainname = getfqdn().split('.', 1)[1]
+if domainname == 'cs.wisc.edu':
+    print 'adding special tweaks for', domainname
+    env.AppendENVPath('PATH', '/unsup/ocaml/bin')
+
 
 ########################################################################
 #
 #  shared build environment
 #
 
-env = Environment(
+env = env.Copy(
     tools=['default', 'ocaml', 'template', 'test'], toolpath=['.'],
     CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
-    options=opts,
     VERSION=version,
     version=version,
     prefix='/usr',

@@ -9,13 +9,16 @@ Import('env')
 def __progName(context, name):
     context.Message('checking for %s: ' % name)
     action = context.env.Action([['$CC', '-print-prog-name=%s' % name, '>', '$TARGET']], varlist=['CC'])
-    result = context.TryAction(action)
-    if result[0]:
-        result = result[1].rstrip()
-        result = context.env.WhereIs(result)
-        if not result: result = ''
-        context.Result(result)
-        return result
+    (status, command) = context.TryAction(action)
+    if status:
+        command = command.rstrip()
+        command = context.env.WhereIs(command)
+        if command:
+            context.Result(command)
+            return command
+        else:
+            context.Result('(not found)')
+            return ''
     else:
         context.Result(False)
         context.env.Exit(1)

@@ -5,7 +5,6 @@ from string import Template
 from SCons.Action import Action
 from SCons.Builder import Builder
 from SCons.Defaults import Chmod
-from SCons.Util import scons_subst
 
 from utils import instantiate
 

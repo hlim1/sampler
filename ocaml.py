@@ -198,7 +198,7 @@ def __exe_target_scan(node, env, path):
     return libs
 
 
-def __exe_path_function(env, directory, target, source):
+def __exe_path_function(env, directory, target=None, source=None):
     __pychecker__ = 'no-argsused'
     stdlib = env['OCAML_STDLIB']
     if stdlib is None:

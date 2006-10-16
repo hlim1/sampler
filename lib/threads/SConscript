@@ -1,4 +1,4 @@
-# HAVE_THREAD_STORAGE
+# todo: HAVE_THREAD_STORAGE
 
 def parentSource(env, name):
     return env.StaticObject(name, '../%s.c' % name)

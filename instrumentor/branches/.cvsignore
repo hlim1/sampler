@@ -1,6 +1,14 @@
+*.os
+*.passed
+*.reports
+*.resolved
+atconfig
 Makefile
 Makefile.in
-atconfig
+modular
+sharing
+simple
 testsuite
 testsuite.dir
 testsuite.log
+threads

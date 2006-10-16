@@ -6,7 +6,8 @@ from utils import instantiate, literal, read_pipe
 
 
 Import('env')
-env = env.Copy(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael')
+env = env.Copy(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
+               tools=['test'], toolpath=['.'])
 env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
 
 
@@ -79,6 +80,6 @@ Default('main')
 #  regression test subdirs
 #
 
-#SConscript(dirs=['branches'])
+SConscript(dirs=['branches', 'nothing'], exports='env')
 
 # todo: various regression test subdirs

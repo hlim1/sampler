@@ -1,6 +1,7 @@
 Makefile
 Makefile.in
 atconfig
+pipes
 testsuite
 testsuite.dir
 testsuite.log

@@ -1,16 +1,22 @@
-from os import chdir
 Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['--sampler-scheme=branches'])
 
-def pushd(target, source, env):
-    chdir(str(target[0].get_dir()))
+modular = env.CBIProgram(target='modular', source=['modular-a.c', 'modular-b.c'])
 
-def popd(target, source, env):
-    chdir(str(Dir('#')))
+tenv = env.Copy()
+tenv.AppendUnique(CCFLAGS=['-pthread'], LINKFLAGS=['-pthread'])
 
-__tester = Action([pushd,
-                   ['../../driver/sampler-cc-here', '--relative-paths', '--sampler-scheme=branches', '-save-temps', '-o', '$TARGET.filebase', '$SOURCE.file'],
-                   popd])
+plugin = env.CBISharedLibrary(target='plugin.so', source='plugin.c')
+library = env.CBISharedLibrary(target='library.so', source='library.c')
+program = env.Copy(LIBS='dl').CBIProgram(source=['sharing.c', library])
+sharing = env.CBIReports([program, library, plugin])
 
-passed = env.Command('simple.passed', ['simple.c', '#instrumentor/main', '#driver', '#lib'], action=__tester)
+Alias('test:branches', env.Expect([
+    env.CBIResolved('simple.c'),
+    env.CBIResolved(modular),
+    env.CBIResolved(sharing),
+    tenv.CBIResolved('threads.c'),
+    ]))
 
-Alias('test', passed)
+Alias('test', 'test:branches')

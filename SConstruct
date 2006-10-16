@@ -29,7 +29,6 @@ opts.AddOptions(
     BoolOption('OCAML_NATIVE', 'compile OCaml to native code', False),
     PathOption('prefix', 'install in the given directory', '/usr/local'),
     ('cil_path', 'look for CIL in the given directory', '../cil/obj/x86_LINUX', validate_cil_path),
-    PathOption('objcopy', 'use the given objcopy executable', WhereIs('objcopy')),
     )
 
 env = Environment(options=opts)

@@ -17,7 +17,7 @@ set -e
 cp $abs_srcdir/extern-callee.c .
 cp $abs_srcdir/extern-caller.c .
 cp $abs_srcdir/extern.expected expout
-$abs_top_builddir/driver/sampler-cc-here --relative-paths --sampler-scheme=returns -save-temps -o extern *.c
+$abs_top_builddir/driver/sampler-cc-here --relative-paths --sampler-scheme=returns -o extern *.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./extern
 $abs_top_srcdir/tools/resolve-samples extern <trace | cut -f1,3- | sort -t '	'
 ], 0, expout)

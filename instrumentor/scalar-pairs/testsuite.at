@@ -5,7 +5,7 @@ AT_CHECK([
 set -e
 cp $abs_srcdir/late-global.c .
 cp $abs_srcdir/late-global.expected expout
-$abs_top_builddir/driver/sampler-cc-here --relative-paths --sampler-scheme=scalar-pairs -o late-global late-global.c -save-temps
+$abs_top_builddir/driver/sampler-cc-here --relative-paths --sampler-scheme=scalar-pairs -o late-global late-global.c
 SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./late-global
 $abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples late-global | cut -f1,3- | sort -t '	'
 ], 0, expout)

@@ -14,14 +14,16 @@ static struct cbi_Unit cbi_unit = { 0, 0, cbi_reporter };
 
 
 #pragma sampler_exclude_function("cbi_constructor")
-static void cbi_constructor() __attribute__((constructor))
+static void cbi_constructor() __attribute__((constructor));
+static void cbi_constructor()
 {
   cbi_registerUnit(&cbi_unit);
 }
 
 
 #pragma sampler_exclude_function("cbi_destructor")
-static void cbi_destructor() __attribute__((destructor))
+static void cbi_destructor() __attribute__((destructor));
+static void cbi_destructor()
 {
   cbi_unregisterUnit(&cbi_unit);
 }

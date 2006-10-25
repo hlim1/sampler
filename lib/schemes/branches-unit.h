@@ -7,7 +7,7 @@
 
 
 #pragma cilnoremove("cbi_branchesCounters")
-static cbi_Tuple2 cbi_branchesCounters[];
+static cbi_Tuple2 cbi_branchesCounters[0];
 
 #ifdef CBI_TIMESTAMP_FIRST
 #pragma cilnoremove("cbi_branchesTimestampsFirst");
@@ -22,7 +22,8 @@ static cbi_Timestamp cbi_branchesTimestampsLast[sizeof(cbi_branchesCounters) / s
 
 #pragma cilnoremove("cbi_branchesReporter")
 #pragma sampler_exclude_function("cbi_branchesReporter")
-static void cbi_branchesReporter() __attribute__((unused))
+static void cbi_branchesReporter() __attribute__((unused));
+static void cbi_branchesReporter()
 {
   cbi_branchesReport(cbi_unitSignature,
 		     sizeof(cbi_branchesCounters) / sizeof(*cbi_branchesCounters),

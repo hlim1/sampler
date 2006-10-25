@@ -7,7 +7,7 @@
 
 
 #pragma cilnoremove("cbi_floatKindsCounters")
-static cbi_Tuple9 cbi_floatKindsCounters[];
+static cbi_Tuple9 cbi_floatKindsCounters[0];
 
 #ifdef CBI_TIMESTAMP_FIRST
 #pragma cilnoremove("cbi_floatKindsTimestampsFirst");
@@ -22,7 +22,8 @@ static cbi_Timestamp cbi_floatKindsTimestampsLast[sizeof(cbi_floatKindsCounters)
 
 #pragma cilnoremove("cbi_floatKindsReporter")
 #pragma sampler_exclude_function("cbi_floatKindsReporter")
-static void cbi_floatKindsReporter() __attribute__((unused))
+static void cbi_floatKindsReporter() __attribute__((unused));
+static void cbi_floatKindsReporter()
 {
   cbi_floatKindsReport(cbi_unitSignature,
 		       sizeof(cbi_floatKindsCounters) / sizeof(*cbi_floatKindsCounters),

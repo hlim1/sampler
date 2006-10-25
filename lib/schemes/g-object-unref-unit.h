@@ -7,7 +7,7 @@
 
 
 #pragma cilnoremove("cbi_gObjectUnrefCounters")
-static cbi_Tuple4 cbi_gObjectUnrefCounters[];
+static cbi_Tuple4 cbi_gObjectUnrefCounters[0];
 
 #ifdef CBI_TIMESTAMP_FIRST
 #pragma cilnoremove("cbi_gObjectUnrefTimestampsFirst");
@@ -22,7 +22,8 @@ static cbi_Timestamp cbi_gObjectUnrefTimestampsLast[sizeof(cbi_gObjectUnrefCount
 
 #pragma cilnoremove("cbi_gObjectUnrefReporter")
 #pragma sampler_exclude_function("cbi_gObjectUnrefReporter")
-static void cbi_gObjectUnrefReporter() __attribute__((unused))
+static void cbi_gObjectUnrefReporter() __attribute__((unused));
+static void cbi_gObjectUnrefReporter()
 {
   cbi_gObjectUnrefReport(cbi_unitSignature,
 			 sizeof(cbi_gObjectUnrefCounters) / sizeof(*cbi_gObjectUnrefCounters),

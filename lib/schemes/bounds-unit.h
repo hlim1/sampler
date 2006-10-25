@@ -23,7 +23,8 @@ static void cbi_boundsReportDump();
 
 #pragma cilnoremove("cbi_boundsReporter")
 #pragma sampler_exclude_function("cbi_boundsReporter")
-static void cbi_boundsReporter() __attribute__((unused))
+static void cbi_boundsReporter() __attribute__((unused));
+static void cbi_boundsReporter()
 {
   cbi_boundsReportBegin(cbi_unitSignature);
   cbi_boundsReportDump();

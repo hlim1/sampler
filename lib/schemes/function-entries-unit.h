@@ -7,7 +7,7 @@
 
 
 #pragma cilnoremove("cbi_functionEntriesCounters")
-static cbi_Tuple1 cbi_functionEntriesCounters[];
+static cbi_Tuple1 cbi_functionEntriesCounters[0];
 
 #ifdef CBI_TIMESTAMP_FIRST
 #pragma cilnoremove("cbi_functionEntriesTimestampsFirst");
@@ -22,7 +22,8 @@ static cbi_Timestamp cbi_functionEntriesTimestampsLast[sizeof(cbi_functionEntrie
 
 #pragma cilnoremove("cbi_functionEntriesReporter")
 #pragma sampler_exclude_function("cbi_functionEntriesReporter")
-static void cbi_functionEntriesReporter() __attribute__((unused))
+static void cbi_functionEntriesReporter() __attribute__((unused));
+static void cbi_functionEntriesReporter()
 {
   cbi_functionEntriesReport(cbi_unitSignature,
 			    sizeof(cbi_functionEntriesCounters) / sizeof(*cbi_functionEntriesCounters),

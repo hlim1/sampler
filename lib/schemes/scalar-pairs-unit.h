@@ -7,7 +7,7 @@
 
 
 #pragma cilnoremove("cbi_scalarPairsCounters")
-static cbi_Tuple3 cbi_scalarPairsCounters[];
+static cbi_Tuple3 cbi_scalarPairsCounters[0];
 
 #ifdef CBI_TIMESTAMP_FIRST
 #pragma cilnoremove("cbi_scalarPairsTimestampsFirst");
@@ -22,7 +22,8 @@ static cbi_Timestamp cbi_scalarPairsTimestampsLast[sizeof(cbi_scalarPairsCounter
 
 #pragma cilnoremove("cbi_scalarPairsReporter")
 #pragma sampler_exclude_function("cbi_scalarPairsReporter")
-static void cbi_scalarPairsReporter() __attribute__((unused))
+static void cbi_scalarPairsReporter() __attribute__((unused));
+static void cbi_scalarPairsReporter()
 {
   cbi_scalarPairsReport(cbi_unitSignature,
 			sizeof(cbi_scalarPairsCounters) / sizeof(*cbi_scalarPairsCounters),

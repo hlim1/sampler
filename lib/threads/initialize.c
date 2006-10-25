@@ -17,8 +17,8 @@ initializeOnce()
 }
 
 
-__attribute__((constructor)) void
-cbi_initialize()
+void cbi_initialize() __attribute__((constructor));
+void cbi_initialize()
 {
   cbi_once(&cbi_initializeOnce, initializeOnce);
 }

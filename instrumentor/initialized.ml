@@ -81,7 +81,7 @@ module Transfer =
       | Call (None, _, _, _) ->
 	  Default
       | Asm (_, _, outputs, _, _, _) ->
-	  let folder vars (_, _, lval) =
+	  let folder vars (_, lval) =
 	    noteAssignment vars lval
 	  in
 	  let filtered = List.fold_left folder uninits outputs in

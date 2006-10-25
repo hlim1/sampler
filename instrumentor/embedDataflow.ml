@@ -282,7 +282,7 @@ class visitor file digest channel =
 		[chr '!']
 	      else
 		List.fold_left
-		  (fun receivers (_, _, receiver) ->
+		  (fun receivers (_, receiver) ->
 		    collectLval receivers receiver)
 		  [] receivers
 	    in

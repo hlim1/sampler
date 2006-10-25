@@ -15,7 +15,7 @@ class virtual visitor =
     method vblock _ = SkipChildren
     method vfunc _ = SkipChildren
     method vglob _ = SkipChildren
-    method vinit _ _ _ = SkipChildren
+    method vinit _ = SkipChildren
     method vtype _ = SkipChildren
     method vattr _ = SkipChildren
   end

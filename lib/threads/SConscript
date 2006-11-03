@@ -21,4 +21,5 @@ def threadLibs(env):
     randomLibrary(env, 'online')
 
 
-SConscript(dirs=['no', 'yes'], exports='threadLibs')
+Import('env')
+SConscript(dirs=['no', 'yes'], exports=['env', 'threadLibs'])

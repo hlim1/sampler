@@ -1,6 +1,8 @@
 AUTOMAKE_OPTIONS = foreign 1.6
 ACLOCAL_AMFLAGS = -I /usr/share/aclocal
 
+am__tar = ${AMTAR} cof - "$$tardir"
+
 if WITH_GNOME
 launcher = launcher
 endif
@@ -54,3 +56,6 @@ debs: dist
 	cp $(distdir).tar.gz debuild
 	cd debuild && tar xzf $(distdir).tar.gz
 	cd debuild/$(distdir) && debuild
+
+dist-hook:
+	rm -rf $(distdir)/cil/.svn $(distdir)/deployments/.svn

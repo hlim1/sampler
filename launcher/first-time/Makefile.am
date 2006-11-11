@@ -21,7 +21,7 @@ BUILT_SOURCES =					\
 	Paths.py				\
 	first-time
 
-MOSTLYCLEANFILES = *.pyc *.pyo $(link_python) $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
 TESTS = $(all_python)
 TESTS_ENVIRONMENT = ../test-by-extension
@@ -32,18 +32,16 @@ install-data-hook:
 	rm -f $(all_python:%.py=$(DESTDIR)$(first_timedir)/%.pyc)
 
 
+dist-hook:
+	cp -pd $(link_python) $(distdir)
+
+
 $(BUILT_SOURCES): %: %.in Makefile
 	sed							\
 		-e 's!@''first_timedir@!$(first_timedir)!'	\
 		-e 's!@''commondir@!$(commondir)!'		\
 		<$< >$@
 	chmod a+x $@
-
-
-check-am: $(link_python)
-
-$(link_python): %: ../common/%
-	$(LN_S) $< $@
 
 
 .DELETE_ON_ERROR:

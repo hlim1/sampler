@@ -15,7 +15,16 @@ tray_PYTHON =					\
 	UploaderTrayIcon.py
 
 all_python = $(nodist_tray_PYTHON) $(tray_PYTHON)
-link_python = BlipIcons.py GConfDir.py GConfNotifier.py Keys.py MasterNotifier.py SamplerConfig.py Signals.py StatusIcon.py
+
+link_python =					\
+	BlipIcons.py				\
+	GConfDir.py				\
+	GConfNotifier.py			\
+	Keys.py					\
+	MasterNotifier.py			\
+	SamplerConfig.py			\
+	Signals.py				\
+	StatusIcon.py
 
 tray_SCRIPTS = tray
 
@@ -34,7 +43,7 @@ BUILT_SOURCES =					\
 	Sampler_Monitor.server			\
 	tray
 
-MOSTLYCLEANFILES = *.pyc *.pyo $(link_python) $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
 TESTS = $(all_python) $(servers_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
@@ -43,6 +52,10 @@ TESTS_ENVIRONMENT = ../test-by-extension
 install-data-hook:
 	rm -f $(all_python:%.py=$(DESTDIR)$(traydir)/%.py)
 	rm -f $(all_python:%.py=$(DESTDIR)$(traydir)/%.pyc)
+
+
+dist-hook:
+	cp -pd $(link_python) $(distdir)
 
 
 $(BUILT_SOURCES): %: %.in Makefile
@@ -54,12 +67,6 @@ $(BUILT_SOURCES): %: %.in Makefile
 		-e 's!@''traylibdir@!$(traylibdir)!'		\
 		<$< >$@
 	if [ -x $< ]; then chmod +x $@; fi
-
-
-check-am: $(link_python)
-
-$(link_python): %: ../common/%
-	$(LN_S) $< $@
 
 
 .DELETE_ON_ERROR:

@@ -29,7 +29,7 @@ BUILT_SOURCES =					\
 	Paths.py				\
 	sampler-preferences
 
-MOSTLYCLEANFILES = *.pyc *.pyo $(link_python) $(BUILT_SOURCES)
+MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
 TESTS = $(all_python) $(applications_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
@@ -38,6 +38,10 @@ TESTS_ENVIRONMENT = ../test-by-extension
 install-data-hook:
 	rm -f $(all_python:%.py=$(DESTDIR)$(preferencesdir)/%.py)
 	rm -f $(all_python:%.py=$(DESTDIR)$(preferencesdir)/%.pyc)
+
+
+dist-hook:
+	cp -pd $(link_python) $(distdir)
 
 
 Paths.py: %: %.in Makefile
@@ -54,12 +58,6 @@ sampler-preferences: %: %.in Makefile
 		-e 's!@''preferencesdir@!$(preferencesdir)!'	\
 		<$< >$@
 	chmod a+x $@
-
-
-check-am: $(link_python)
-
-$(link_python): %: ../common/%
-	$(LN_S) $< $@
 
 
 .DELETE_ON_ERROR:

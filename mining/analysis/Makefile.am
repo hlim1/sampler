@@ -1,7 +1,7 @@
 AM_CPPFLAGS = -W -Wall -Werror
 
 noinst_PROGRAMS = modernize
-modernize_SOURCES = modernize.ll
+modernize_SOURCES = modernize.l
 
 EXTRA_DIST = stamps.pl
 

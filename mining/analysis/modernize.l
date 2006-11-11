@@ -1,6 +1,6 @@
-%{ // -*- c++ -*-
-#include <cerrno>
-#include <cstring>
+%{ // -*- c -*-
+#include <errno.h>
+#include <string.h>
 
 const char *scheme;
 const char *tag;
@@ -67,7 +67,7 @@ const char *tag;
 %%
 
 
-#include <cstdio>
+#include <stdio.h>
 
 
 int main(int argc, char *argv[])

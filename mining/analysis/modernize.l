@@ -1,6 +1,7 @@
 %{ // -*- c -*-
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
 
 const char *scheme;
 const char *tag;

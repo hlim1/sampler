@@ -1,17 +1,17 @@
 #!/usr/bin/python
 
-import os.path
+from os.path import dirname, realpath
 import sys
 
-home = os.path.realpath(os.path.dirname(sys.argv[0]))
+home = realpath(dirname(sys.argv[0]))
 sys.path.append(home)
 import Paths
 Paths.home = home
-Paths.glade = os.path.join(home, 'first-time.glade')
+Paths.glade = home + '/first-time.glade'
 
-sys.path.append(os.path.realpath(os.path.join(Paths.home, '..', 'common')))
-import Config
-Config.pixmapsdir = os.path.realpath(os.path.join(home, '..', 'pixmaps'))
+sys.path.append(realpath(home + '../common'))
+import SamplerConfig
+SamplerConfig.pixmapsdir = realpath(home + '../pixmaps')
 
 
 import Main

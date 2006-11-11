@@ -42,10 +42,11 @@ install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)/sites
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)/wrapped
 
-rpms: dist
+rpms: $(PACKAGE).spec dist
 	rm -rf redhat
 	mkdir -p redhat/BUILD redhat/RPMS/$(DISTRO_ARCH) redhat/SOURCES redhat/SPECS redhat/SRPMS
-	rpmbuild --define '_topdir $(shell pwd)/redhat' -ta $(distdir).tar.gz
+	$(LN_S) ../../$(distdir).tar.gz redhat/SOURCES
+	rpmbuild --define '_topdir $(shell pwd)/redhat' -ba $<
 
 debs: dist
 	rm -rf debuild

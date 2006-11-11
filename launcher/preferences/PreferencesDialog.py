@@ -90,6 +90,8 @@ class PreferencesDialog(object):
             dialog.hide()
             dialog.emit_stop_by_name('response')
             return True
+        else:
+            return False
 
     def present(self):
         return self.__dialog.present()

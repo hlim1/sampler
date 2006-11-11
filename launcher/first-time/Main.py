@@ -21,7 +21,7 @@ def main():
     signature = app.create_serverinfo(('DISPLAY',))
     client = app.register_unique(signature)
 
-    if client is None:
+    if client == None:
         from FirstTime import FirstTime        
         dialog = FirstTime()
         app.connect("new-instance", new_instance, dialog)

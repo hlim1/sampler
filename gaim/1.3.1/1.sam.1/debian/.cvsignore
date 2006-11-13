@@ -1,0 +1,12 @@
+*-stamp
+*.debhelper
+*.substvars
+Makefile
+Makefile.in
+files
+sampler
+sampler-dev
+sampler-doc
+sampler-server
+stamp-*
+tmp

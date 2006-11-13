@@ -1,0 +1,24 @@
+AT_INIT(returns)
+
+AT_SETUP(test)
+AT_CHECK(
+set -e
+cp $abs_srcdir/test.c .
+cp $abs_srcdir/test.expected expout
+$abs_top_builddir/instrumentor/driver/sampler-cc-here returns -o test test.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./test
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples test | cut -f2- | sort
+, 0, expout)
+AT_CLEANUP
+
+AT_SETUP(extern)
+AT_CHECK(
+set -e
+cp $abs_srcdir/extern-callee.c .
+cp $abs_srcdir/extern-caller.c .
+cp $abs_srcdir/extern.expected expout
+$abs_top_builddir/instrumentor/driver/sampler-cc-here returns -save-temps -o extern *.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./extern
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples extern | cut -f2- | sort
+, 0, expout)
+AT_CLEANUP

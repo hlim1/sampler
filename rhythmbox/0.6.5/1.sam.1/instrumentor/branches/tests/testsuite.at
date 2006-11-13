@@ -1,0 +1,55 @@
+AT_INIT(branches)
+
+AT_SETUP(simple)
+AT_CHECK(
+set -e
+cp $abs_srcdir/simple.c .
+cp $abs_srcdir/simple.expected expout
+$abs_top_builddir/instrumentor/driver/sampler-cc-here branches -save-temps -o simple simple.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./simple
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples simple | cut -f2- | sort
+, 0, expout)
+AT_CLEANUP
+
+AT_SETUP(modular)
+AT_CHECK(
+set -e
+cp $abs_srcdir/modular-a.c .
+cp $abs_srcdir/modular-b.c .
+cp $abs_srcdir/modular.expected expout
+$abs_top_builddir/instrumentor/driver/sampler-cc-here branches -save-temps -o modular *.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./modular
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples modular | cut -f2- | sort
+, 0, expout)
+AT_CLEANUP
+
+AT_SETUP(sharing)
+AT_CHECK([
+set -e
+cp $abs_srcdir/plugin.c .
+cp $abs_srcdir/library.c .
+cp $abs_srcdir/library.h .
+cp $abs_srcdir/sharing.c .
+cp $abs_srcdir/sharing.expected expout
+cc="$abs_top_builddir/instrumentor/driver/sampler-cc-here branches -save-temps"
+$cc -shared -o plugin.so plugin.c
+$cc -shared -o library.so library.c
+$cc -c sharing.c
+$cc -Wl,-rpath,. -o sharing sharing.o library.so -ldl
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./sharing
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples sharing library.so plugin.so | cut -f2- | sort
+], 0, expout)
+AT_CLEANUP
+
+AT_SETUP(threads)
+m4_include(config.m4)
+AT_CHECK(
+set -e
+cp $abs_srcdir/threads.c .
+cp $abs_srcdir/threads.expected expout
+if test 'HAVE_THREAD_STORAGE' != 1; then exit 77; fi
+$abs_top_builddir/instrumentor/driver/sampler-cc-here branches -save-temps -pthread -o threads threads.c
+SAMPLER_FILE=trace SAMPLER_SPARSITY=1 ./threads >/dev/null
+$abs_top_srcdir/tools/extract-report samples <trace | $abs_top_srcdir/tools/resolve-samples threads | cut -f2- | sort
+, 0, expout)
+AT_CLEANUP

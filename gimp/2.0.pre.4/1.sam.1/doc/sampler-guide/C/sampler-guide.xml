@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+                         "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd"
+                         [<!ENTITY % config SYSTEM "../../config.xml"> %config;]>
+<article>
+  <articleinfo>
+    <title>Guide to the Bug Isolation Sampler</title>
+    <author>
+      <firstname>Ben</firstname>
+      <surname>Liblit</surname>
+    </author>
+  </articleinfo>
+
+  <section id="installing">
+    <title>Getting and Installing the Sampler</title>
+
+    <remark>Not yet written.</remark>
+  </section>
+    
+  <section id="compiling">
+    <title>Compiling Instrumented Executables</title>
+
+    <para>The instrumentor provides a driver script that acts as a
+    transparent wrapper around <application>GCC</application>.  It is
+    run as follows:</para>
+
+    <cmdsynopsis>
+      <command>sampler-cc</command>
+      <group choice="req" rep="repeat">
+	<arg choice="plain"><replaceable>C source file</replaceable></arg>
+	<arg choice="plain"><replaceable>GCC compiler flag</replaceable></arg>
+	<arg choice="plain"><replaceable>instrumentor flag</replaceable></arg>
+      </group>
+    </cmdsynopsis>
+
+    <para>Recognized instrumentor flags are as follows:</para>
+
+    <variablelist>
+      <title>Instrumentor flags</title>
+
+      <varlistentry>
+	<term><option>--sampler-scheme=<replaceable>scheme</replaceable></option></term>
+	<listitem>
+	  <para>Activate the named instrumentation scheme.  The
+	  following instrumentation schemes are currently
+	  available:</para>
+
+	  <variablelist>
+	    <title>Instrumentation schemes</title>
+
+	    <varlistentry>
+	      <term><option>bounds</option></term>
+	      <listitem>
+		<para>At each assignment of a scalar value, record the
+		minimum and maximum values ever assigned.  Each
+		assignment induces one instrumentation point with one
+		global min/max pair.</para>
+
+		<para>The minimum component is initialized to the
+		maximum representable value for the assigned type,
+		whereas the maximum component is initialized to the
+		minimum representable value for the assigned type.  A
+		site which has never been sampled, then, will have a
+		minimum which is greater than the corresponding
+		maximum.</para>
+
+		<para>See also the <link
+		linkend="assign-across-pointer"><option>--assign-across-pointer</option></link>,
+		<link
+		linkend="assign-into-field"><option>--assign-into-field</option></link>,
+		and <link
+		linkend="assign-into-index"><option>--assign-into-index</option></link>
+		flags for ways to customize which kinds of assignments
+		are instrumented.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><option>branches</option></term>
+	      <listitem>
+		<para>For each conditional (branch), count how many
+		times the branch predicate is false or true.  This
+		includes <literal>if</literal> statements as well as
+		branches that are implicit in looping control
+		structures and certain operators
+		(<literal>&amp;&amp;</literal>, <literal>||</literal>,
+		<literal>?:</literal>).  Each branch induces one
+		instrumentation point with a pair of counters.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><option>function-entries</option></term>
+	      <listitem>
+		<para>Count how many times each function is called.
+		Each function body induces one instrumentation point
+		with one counter.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><option>returns</option></term>
+	      <listitem>
+		<para>At each scalar-returning call site, count how
+		many times the called function returned a negative,
+		zero, or positive value.  Each such call induces one
+		instrumentation point with a triple of counters.  This
+		is the scheme used for the
+		<application>ccrypt</application> experiment in our
+		PLDI paper.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
+	      <term><option>scalar-pairs</option></term>
+	      <listitem>
+		<para>At each assignment of a scalar value, count how
+		many times the assigned value is less than, equal to,
+		or greater than each other same-typed in-scope
+		variable. Each such comparable variable at each such
+		assignment induces one instrumentation point with a
+		triple of counters.  This is the scheme used for the
+		<application>bc</application> experiment in our PLDI
+		paper.</para>
+
+		<para>This scheme can also optionally compare each
+		assigned value to each constant-valued integer
+		expression seen in the program.  This can be useful to
+		trap problems relating to fixed-size buffers,
+		structure sizes, or other <quote>magic</quote> values.
+		To turn on constant expression comparisons, add <link
+		linkend="compare-constants"><option>--compare-constants</option></link>
+		to the compiler command line.</para>
+
+		<para>See also the <link
+		linkend="assign-across-pointer"><option>--assign-across-pointer</option></link>,
+		<link
+		linkend="assign-into-field"><option>--assign-into-field</option></link>,
+		and <link
+		linkend="assign-into-index"><option>--assign-into-index</option></link>
+		flags for ways to customize which kinds of assignments
+		are instrumented.</para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
+
+	  <para>This flag may be used multiple times to activate
+          multiple schemes.  However, the order in which active
+          schemes are applied is fixed and does not depend on the
+          order in which they are named on the command line.</para>
+
+	  <para>If this flag never appears on the command line, then
+          no instrumentation scheme is activated and no
+          instrumentation is added to the compiled code.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--sample</option></term>
+	<term><option>--no-sample</option></term>
+	<listitem>
+	  <para>Enable or disable sampling of instrumentation
+	  points.  If sampling is disabled, instrumentation points
+	  are run unconditionally.  Default is to sample.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--include-function=<function><replaceable>function</replaceable></function></option></term>
+	<term><option>--include-function=<literal>*</literal></option></term>
+	<term><option>--exclude-function=<function><replaceable>function</replaceable></function></option></term>
+	<term><option>--exclude-function=<literal>*</literal></option></term>
+	<listitem>
+	  <para>Function filtering.  Each of these flags takes one
+	  mandatory argument which can be the name of a function or
+	  the special wildcard <literal>*</literal> which names
+	  every function.  These flags can be given multiple times,
+	  creating an ordered include/exclude list.  Each function
+	  that might be instrumented is checked against this list.
+	  The first match determines whether that function should be
+	  included or excluded from instrumentation.</para>
+
+	  <para>These flags are useful for filtering out boring
+	  functions:</para>
+
+	  <informalexample>
+	    <para><userinput>&hellip; <option>--exclude-function=<function>boringFunction</function></option>
+	    &hellip;</userinput></para>
+	  </informalexample>
+
+	  <para>They can also be used to create executables with
+	  just a few selected functions instrumented:</para>
+
+	  <informalexample>
+	    <para><userinput>&hellip;
+	    <option>--include-function=<function>interestingFunction</function></option>
+	    <option>--exclude-function=<literal>*</literal></option>
+	    &hellip;</userinput></para>
+	  </informalexample>
+
+	  <para>Default is to include all functions, as though
+	  <option>--include-function <literal>*</literal></option>
+	  were implicitly the last flag given.</para>
+
+	  <important>
+	    <para>If you use the wildcard, remember to protect it
+	    from expansion by the shell such as by quoting it as
+	    <userinput>'*'</userinput> or
+	    <userinput>"*"</userinput>.</para>
+	  </important>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--include-file=<filename><replaceable>filename</replaceable></filename></option></term>
+	<term><option>--include-file=<literal>*</literal></option></term>
+	<term><option>--exclude-file=<filename><replaceable>filename</replaceable></filename></option></term>
+	<term><option>--exclude-file=<literal>*</literal></option></term>
+	<listitem>
+	  <para>File filtering.  Each of these flags takes one
+	  mandatory argument which can be the name of a source file
+	  or the special wildcard <literal>*</literal> which names
+	  every file.  These flags can be given multiple times,
+	  creating an ordered include/exclude list.  Each potential
+	  instrumentation point is checked against this list, using
+	  the name of the source file containing that point.  The
+	  first match determines whether that instrumentation point
+	  should be retained or discarded.</para>
+
+	  <para>Included and excluded file names are checked against
+	  names as seen by the compiler.  These will tend to be
+	  simple file names for source files given on the command
+	  line, but may be relative or absolute path names for
+	  header files pulled in by the preprocessor.  File names
+	  must match exactly to be considered.  In some cases it may
+	  be necessary to examine the preprocessor output to learn
+	  what file name the compiler is seeing for a given fragment
+	  of code.</para>
+
+	  <para>Note that checks are done using the name of the file
+	  actually containing the potential instrumentation point.
+	  If source file <filename>code.c</filename> brings in
+	  header file <filename
+	  class="headerfile">header.h</filename>, and that header
+	  contains a complete function definition, then
+	  instrumentation points in that function body will be
+	  included or excluded based on <filename
+	  class="headerfile">header.h</filename> as their file name,
+	  not <filename>code.c</filename>.</para>
+
+	  <para>Also note that this check is performed at each
+	  individual instrumentation point.  If a single function
+	  contains code from multiple source files, this filter can
+	  include some instrumentation points while excluding
+	  others.  This can happen, for example, in
+	  <application>Bison</application> parsers and
+	  <application>Flex</application> lexers which mix
+	  user-specified actions with fixed boilerplate.  One can
+	  instrument the actions while excluding the
+	  boilerplate:</para>
+
+	  <informalexample>
+	    <para><userinput>&hellip; <option>--exclude-file=<filename>/usr/gnu/share/bison.simple</filename></option>
+	    <option>--exclude-file=<filename>lex.yy.c</filename></option>
+	    &hellip;</userinput></para>
+	  </informalexample>
+
+	  <para>Default is to include instrumentation points from all
+	  files, as though
+	  <option>--include-file=<literal>*</literal></option> were
+	  implicitly the last flag given.</para>
+
+	  <important>
+	    <para>If you use the wildcard, remember to protect it
+	    from expansion by the shell such as by quoting it as
+	    <userinput>'*'</userinput> or
+	    <userinput>"*"</userinput>.</para>
+	  </important>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--acyclic</option></term>
+	<term><option>--cyclic</option></term>
+	<listitem>
+	  <para>Countdown management.  The acyclic countdown style
+	  generates countdowns as needed at runtime within the
+	  program itself.  The cyclic style uses a pre-generated
+	  bank of &cycliccount; countdowns which much be generated
+	  and stored before the instrumented program is launched.
+	  See <xref linkend="envars" /> for how this choice affects
+	  which environment variables should be set at run time.
+	  Default is acyclic.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--show-stats</option></term>
+	<term><option>--no-show-stats</option></term>
+	<listitem>
+	  <para>Static metrics.  Used for data collection when
+	  writing papers.  Default is silent operation.  Safe to
+	  ignore.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--specialize-empty-regions</option></term>
+	<term><option>--no-specialize-empty-regions</option></term>
+	<term><option>--specialize-singleton-regions</option></term>
+	<term><option>--no-specialize-singleton-regions</option></term>
+	<listitem>
+	  <para>Region specialization optimizations.  Default is to
+	  perform all specializations.  Safe to ignore.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--use-points-to</option></term>
+	<term><option>--no-use-points-to</option></term>
+	<listitem>
+	  <para>Experimental optimizations for indirect function
+	  calls.  Defaults to disabled.  Not yet trusted as correct,
+	  and should not be used.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry id="compare-constants">
+	<term><option>--compare-constants</option></term>
+	<term><option>--no-compare-constants</option></term>
+	<listitem>
+	  <para>When using the <option>scalar-pairs</option>
+	  instrumentation scheme, compare each assigned value to
+	  each constant-valued integer expression seen anywhere in
+	  the program.  This can be useful to trap problems relating
+	  to fixed-size buffers, structure sizes, or other
+	  <quote>magic</quote> values, but may substantially
+	  increase the amount of instrumentation in the code.
+	  Defaults to not comparing with constant
+	  expressions.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry id="assign-across-pointer">
+	<term><option>--assign-across-pointer</option></term>
+	<term><option>--no-assign-across-pointer</option></term>
+	<listitem>
+	  <para>When using the <option>scalar-pairs</option>
+	  instrumentation scheme, instrument an assignment whose
+	  left-hand side crosses a pointer.  Defaults to not
+	  instrumenting pointer-crossing assignments.</para>
+
+	  <remark>Clarification is needed here about treatment of
+	  complex lvalues with a mix of pointer, field, and array
+	  accesses.</remark>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry id="assign-into-field">
+	<term><option>--assign-into-field</option></term>
+	<term><option>--no-assign-into-field</option></term>
+	<listitem>
+	  <para>When using the <option>scalar-pairs</option>
+	  instrumentation scheme, instrument an assignment whose
+	  left-hand side is a structure field access.  Defaults to not
+	  instrumenting structure field assignments.</para>
+
+	  <remark>Clarification is needed here about treatment of
+	  complex lvalues with a mix of pointer, field, and array
+	  accesses.</remark>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry id="assign-into-index">
+	<term><option>--assign-into-index</option></term>
+	<term><option>--no-assign-into-index</option></term>
+	<listitem>
+	  <para>When using the <option>scalar-pairs</option>
+	  instrumentation scheme, instrument an assignment whose
+	  left-hand side is an array index access.  Defaults to not
+	  instrumenting indexed array assignments.</para>
+
+	  <remark>Clarification is needed here about treatment of
+	  complex lvalues with a mix of pointer, field, and array
+	  accesses.</remark>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--threads</option></term>
+	<term><option>--no-threads</option></term>
+	<listitem>
+	  <para>Generate code suitable for multi-threaded execution.
+	  Defaults to generating single-threaded code.  Multi-threaded
+	  code is also generated if the standard
+	  <application>GCC</application> <option>-pthread</option>
+	  flag is observed on the command line.</para>
+
+	  <para>If both <option>--no-threads</option> and
+	  <option>-pthread</option> are given, then the former
+	  overrides the later regardless of the order in which they
+	  appear.  This can be useful to override automatically
+	  generated <application>GCC</application> command lines which
+	  use <option>-pthread</option> but which do not actually need
+	  thread support.</para>
+
+	  <para>Multithreaded code requires a native C compiler with
+	  support for thread-local storage:
+	  <application>GCC</application> 3.2 at a minimum, 3.3
+	  preferred.  Linux distributions with support for the
+	  Native POSIX Threads Library (<acronym>NPTL</acronym>)
+	  will offer the best performance.  Even so, there will be
+	  some additional overhead beyond that of single-threaded
+	  code, so do not enable multithreaded code generation
+	  unless your application is really multithreaded.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry>
+	<term><option>--rename-locals</option></term>
+	<term><option>--no-rename-locals</option></term>
+	<listitem>
+	  <para>Uniquely rename all local variables and formal
+	  parameters.  This can be useful to avoid confusing multiple
+	  same-named variables when examining instrumentation site
+	  information.  A variable
+	  <varname><replaceable>var</replaceable></varname> within a
+	  function
+	  <function><replaceable>func</replaceable></function> is
+	  renamed as
+	  <varname><replaceable>func</replaceable>$<replaceable>var</replaceable></varname>.
+	  Defaults to no renaming.</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+
+  <section id="running">
+    <title>Running Instrumented Programs</title>
+    <section id="launchers">
+      <title>High-Level Control Via Launchers</title>
+
+      <remark>We have created wrapper tools which launch instrumented
+      applications, collect sample reports, and upload them to a
+      central collection sever based on some simple configuration
+      files.  Documentation for these tools is not yet available, but
+      should be coming along soon.  Most readers should wait for that
+      documentation rather than fretting over the environment
+      variables described in <link linkend="envars">the next
+      section</link>.</remark>
+
+      <remark>The launchers currently assume that the program was
+      compiled using <option>--acyclic</option>.  We should either
+      remove that restriction or document it clearly here.</remark>
+    </section>
+
+    <section id="envars">
+      <title>Low-Level Control Via Environment Variables</title>
+
+      <para>The instrumented executable uses a set of environment
+      variables to control sampling and post-execution reporting.
+      Most applications should not need to deal with these directly,
+      and can instead use a launcher as described in <link
+      linkend="launchers">the previous section</link>.</para>
+
+      <para>The following environment variables influence the behavior
+      of an instrumented executable:</para>
+
+      <variablelist>
+	<varlistentry>
+	  <term><envar>$SAMPLER_EVENT_COUNTDOWNS</envar></term>
+	  <listitem>
+	    <para>Used when the executable was built with
+	    <option>--cyclic</option>.  Set this to the name of a file
+	    containing pre-generated random countdowns.  See <xref
+	    linkend="precompute" /> for information on a tool for
+	    building these countdown files.</para>
+
+	    <para>Not used when either <option>--acyclic</option> or
+	    <option>--no-sample</option> was given at compile
+	    time.</para>
+
+	    <para>If not set, countdowns are always initialized to
+	    <symbol>UINT_MAX</symbol>, effectively disabling
+	    sampling.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><envar>$SAMPLER_SPARSITY</envar></term>
+	  <listitem>
+	    <para>Used when the executable was built with
+	    <option>--acyclic</option>.  Set this to an integer which
+	    will be used as the sampling sparsity.  A sparsity of
+	    <userinput>1000</userinput>, for example, will sample
+	    approximately one in instrumentation point per thousand
+	    opportunities.</para>
+
+	    <para>Not used when either <option>--cyclic</option> or
+	    <option>--no-sample</option> was given at compile
+	    time.</para>
+
+	    <para>If not set, countdowns are always initialized to
+	    <symbol>UINT_MAX</symbol>, effectively disabling
+	    sampling.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><envar>$SAMPLER_SEED</envar></term>
+	  <listitem>
+	    <para>Used when the executable was built with
+	    <option>--acyclic</option>.  Seeds the random number
+	    generator.  In multithreaded code, each new thread seeds
+	    its own generator using this same value.</para>
+
+	    <para>Not used when either <option>--cyclic</option> or
+	    <option>--no-sample</option> was given at compile
+	    time.</para>
+
+	    <para>If not set, the seed is selected at runtime using
+	    some system entropy source
+	    (e.g. <filename>/dev/urandom</filename>).  In
+	    multithreaded code, each new thread seeds its own
+	    generator using a new seed drawn from this system entropy
+	    source.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><envar>$SAMPLER_REPORT_FD</envar></term>
+	  <term><envar>$SAMPLER_FILE</envar></term>
+	  <listitem>
+	    <para>If <envar>$SAMPLER_REPORT_FD</envar> is set, then it
+	    gives the number of a file descriptor into which the
+	    sampler report will be written at program exit time.  This
+	    file descriptor must already be open, and will be closed
+	    once the report is complete.</para>
+
+	    <para> <envar>$SAMPLER_FILE</envar> is set, then names a
+	    file which is to receive the report.  The named file will
+	    be created if it does not already exist.  If the file does
+	    already exist, any existing contents will be
+	    overwritten.</para>
+
+	    <para>If neither of these environment variables is set,
+	    then no post-execution report will be produced.  This does
+	    not disable sampling while the program runs, but it does
+	    mean that the results of the sampling will not be recorded
+	    anywhere once the program exits.</para>
+
+	    <para>If both of these environment variables are set, then
+	    <envar>$SAMPLER_REPORT_FD</envar> is used and
+	    <envar>$SAMPLER_FILE</envar> is disregarded.</para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term><envar>$SAMPLER_DEBUGGER</envar></term>
+	  <listitem>
+	    <para>If set, names a program which will be run to print
+	    out additional debugging information when the instrumented
+	    program fails due to a fatal signal.  The debugger program
+	    will receive the instrumented program's process ID as its
+	    only argument, and should print its information to
+	    standard out, where it will be collected and appended to
+	    <envar>$SAMPLER_FILE</envar>.</para>
+
+	    <para>On Linux workstations equipped with
+	    <application>GDB</application>, a suitable value for this
+	    environment variable is
+	    <filename>&prefix;/share/samper/print-debug-info</filename>.</para>
+
+	    <para>If not set, no additional debug report will be
+	    appended to <envar>$SAMPLER_FILE</envar>.</para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </section>
+
+    <section id="tools">
+      <title>Supporting Tools</title>
+      <section id="precompute">
+	<title><command>precompute</command></title>
+
+	<para><filename>&prefix;/lib/sampler/tools/precompute</filename>
+	is a tool for producing pre-generated countdowns.  This should
+	be used in conjunction with the <option>--cyclic</option> flag
+	and the <envar>$SAMPLER_EVENT_COUNTDOWNS</envar> environment
+	variable.  Before starting the instrumented program:</para>
+
+	<procedure>
+	  <step>
+	    <para>Set <envar>SAMPLER_SEED</envar> to some random seed
+	    integer.</para>
+	  </step>
+
+	  <step>
+	    <para>Run <userinput>precompute
+	    <filename><replaceable>outfile</replaceable></filename></userinput>
+	    to generate and store &cycliccount; random countdowns in
+	    <filename><replaceable>outfile</replaceable></filename>.</para>
+	  </step>
+
+	  <step>
+	    <para>Set <envar>$SAMPLER_EVENT_COUNTDOWNS</envar> to name
+	    this same file when running the instrumented
+	    program.</para>
+	  </step>
+	</procedure>
+      </section>
+    </section>
+  </section>
+
+  <section id="server">
+    <title>Managing a Report Collection Server</title>
+
+    <remark>Not yet written.  Will eventually document setting up the
+    report collection script as a CGI service running under the
+    <application>Apache</application> web server.</remark>
+  </section>
+</article>

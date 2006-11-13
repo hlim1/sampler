@@ -1,0 +1,54 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Basename;
+use File::Copy;
+use File::Path;
+
+
+sub check_system (@) {
+    system(@_) == 0 or die "$_[0] failed: $!\n";
+}
+
+sub check_copy ($$) {
+    copy(@_) or die "copy failed: $!\n";
+}
+
+
+my $ccrypt = shift or die "Usage: $0 <ccrypt>";
+
+my $home = dirname $0;
+my $pristine = "$home/pristine";
+my $cleartext = "$home/cleartext";
+my $cyphertext = "$home/cyphertext";
+my @files = ();
+
+rmtree [$pristine, $cyphertext];
+foreach ($pristine, $cyphertext) {
+    mkdir $_ or die "mkdir failed: $!\n";
+}
+
+foreach (glob "$cleartext/*") {
+    next unless -f;
+    push @files, basename $_;
+}
+
+foreach (@files) {
+    check_copy "$cleartext/$_", "$cyphertext/$_";
+}
+
+print "  encrypting cyphertext\n";
+check_system $ccrypt, '-r', '-e', '-K', 'good', $cyphertext;
+
+print "  populating pristine with cleartext\n";
+foreach (@files[0 .. $#files * 4 / 5]) {
+    check_copy "$cleartext/$_", $pristine;
+}
+
+print "  populating pristine with cyphertext\n";
+foreach (@files[$#files / 5 .. $#files]) {
+    check_copy "$cyphertext/$_.cpt", $pristine;
+}
+
+print "  removing cyphertext\n";
+rmtree $cyphertext;

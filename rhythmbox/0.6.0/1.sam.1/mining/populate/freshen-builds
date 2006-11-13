@@ -1,0 +1,9 @@
+#!/bin/sh -ex
+
+cd "`dirname $0`"
+
+find $HOME/public_html/sampler/downloads/rpm -type f -name '*-samplerinfo-*.rpm' -print0 | xargs -r -0 ./insert-builds.pl
+find $HOME/public_html/sampler/downloads/rpm -type f -name '*-samplerinfo-*.rpm' -print0 | xargs -r -0 ./insert-build-modules.pl
+find $HOME/public_html/sampler/downloads/rpm -type f -name '*-samplerinfo-*.rpm' -print0 | xargs -r -0 ./insert-build-sites.pl
+
+touch sync-stamp

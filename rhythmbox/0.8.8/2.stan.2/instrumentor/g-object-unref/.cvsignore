@@ -1,0 +1,7 @@
+Makefile
+Makefile.in
+atconfig
+atlocal
+testsuite
+testsuite.dir
+testsuite.log

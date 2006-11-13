@@ -1,0 +1,68 @@
+-*- outline -*-
+
+* tsp
+** distance() is uniquely costly
+*** loopless
+*** one function call, to sqrt()
+**** could be made faster if sqrt() we known to be loopless
+**** sqrt() is inline when compiling with "-O1" or greater
+**** but tsp has its own declaration, and never sees inline version :-(
+** conquer() is weird
+*** sampling here only is significantly *faster* then no checks at all!
+
+* em3d
+** compute_nodes() is most costly
+*** nested pair of loops
+**** inner loop
+***** iterations bounded at head, but could be tricky to prove
+***** numerous pointer operations
+***** no function calls
+**** one pointer operation in outer loop
+***** iterations not bounded at head (linked list traversal)
+***** one pointer operation
+***** no function calls
+** make_neighbors_sfs() is costly as well
+*** nested quintuple of loops
+**** iterations bounded at head for all but outermost
+**** moderate number of pointer operations throughout
+**** one function call in outermost
+
+* bh
+** gravsub() is costly
+*** almost loopless, but not quite
+**** nested pair of compile-time bounded loops across a 3-element vectors
+*** many pointer checks due to 3-element vector manipulations
+**** acyclic region weights: 15, 42, 3, 24, 24
+**** no function calls
+** treescan() also costly, but less so
+*** one top-level loop, walking complex data structure
+**** loop body has three nested conditionals
+*** just four null checks; no other sample sites
+*** three calls, each of which could be handled better
+**** subdivp: see below
+**** node2cell
+***** loopless, and in fact weightless
+***** but trusted, and body not given here :-(
+**** gravsub: see above
+** subdivp() also costly, but less so still
+*** loopless
+*** straight-line code
+*** no calls
+*** one acyclic region (weight 16)
+*** how can we possibly expect to do any better?
+**** check assembly: is localCountdown managed efficiently?
+
+* perimeter
+** gtequal_adj_neighbor() is costly
+** child() also costly, but less so (and cheaper then standard CCured)
+** perimeter() also costly, but less so still (and cheaper then standard CCured)
+
+* health
+** check_patients_waiting() is costly
+** addlist() also costly, but less so (and cheaper then standard CCured)
+** sim() also costly, but less so still (and cheaper then standard CCured)
+** any other function is *cheaper* then no checks at all!
+
+* all benchmarks
+** any "basis" form has roughly half as many major faults as any "only" form
+*** extra shared libraries from GSL?

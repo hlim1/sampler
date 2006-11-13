@@ -1,0 +1,29 @@
+ENABLE_PROFILING = @ENABLE_PROFILING@
+ENABLE_NATIVE = @ENABLE_NATIVE@
+
+OCAMLOPT = @OCAMLOPT@
+OCAMLC = @OCAMLC@
+
+DTYPES = @DTYPES@
+
+cil_libdir = @cil_libdir@
+
+
+########################################################################
+
+
+ifdef ENABLE_PROFILING
+ENABLE_NATIVE := 1
+ocamlflags += -p
+endif
+
+ifdef ENABLE_NATIVE
+ocamlc := $(OCAMLOPT)
+cma := cmxa
+cmo := cmx
+else
+ocamlflags += -g $(DTYPES)
+ocamlc := $(OCAMLC)
+cma := cma
+cmo := cmo
+endif

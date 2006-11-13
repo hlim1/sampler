@@ -1,0 +1,37 @@
+-*- outline -*-
+
+* sampler-0.5.5
+
+** Minor ident string improvements.
+
+* sampler-0.5.4
+
+** Correct a typo in the first-time opt-in dialog.
+
+* sampler-0.5.3
+
+** Add instrumentor driver support for GCC "-gLEVEL" debug flags.
+
+* sampler-0.5.1, sampler-0.5.2
+
+** Internal updates only.  No significant user-visible changes.
+
+* sampler-0.5
+
+** Split preferences out into stand-alone control panel applet (capplet).
+
+** Faster application startup.  Activate the notification area monitor
+   only *after* the instrumented application has been launched.
+
+* sampler-0.4.4, sampler-0.4.5
+
+** Assorted bug fixes
+
+* sampler-0.4.3
+
+** Fix several bugs in server reply handling (rarely used).
+
+* sampler-0.4.2
+
+** Add missing file required for first-time dialog.  (All sampling is
+   disabled as a failsafe until first time dialog has been run.)

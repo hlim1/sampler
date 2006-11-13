@@ -1,0 +1,12 @@
+*.c
+*.exe
+*.ident
+*.times
+.libs
+Makefile
+Makefile.in
+basis-cured.i
+functions-list
+functions.mk
+loopless
+stats

@@ -1,0 +1,14 @@
+#!/bin/sh -e
+
+cd "`dirname $0`"
+
+./sync-from-www
+
+backup=$HOME/research/forensics
+mv $backup/sampler-uploads.tar.gpg $backup/sampler-uploads-old.tar.gpg
+tar cf - sampler-uploads | gpg --encrypt --recipient=liblit >$backup/sampler-uploads.tar.gpg
+
+./insert-runs.pl sampler-uploads/*
+./insert-run-samples.pl sampler-uploads/*
+
+touch sync-stamp

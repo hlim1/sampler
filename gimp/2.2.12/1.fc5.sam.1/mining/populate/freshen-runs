@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+cd "`dirname $0`"
+
+test -x ./insert-runs.pl
+
+./sync-from-www
+
+find $(cat uploads) -name environment | ./insert-runs.pl
+
+touch sync-stamp

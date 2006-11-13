@@ -1,0 +1,80 @@
+*embedding:
+-fsave-cfg %g.cfg \
+-fsave-site-info %g.sites
+
+*cpp_threads_yes:
+-D SAMPLER_THREADS
+
+*cpp_threads:
+%{fthreads:%(cpp_threads_yes)} \
+%{!fthreads:%{!fno-threads:%{pthread:%(cpp_threads_yes)}}}
+
+*cpp_timestamps:
+%{ftimestamp-first:-D SAMPLER_TIMESTAMP_FIRST} \
+%{ftimestamp-last:-D SAMPLER_TIMESTAMP_LAST} \
+%{ftimestamp-*:-include sampler/timestamps.h%s}
+
+*cpp_random:
+%{fsampler-random=fixed:-include sampler/threads/random-fixed.h%s} \
+%{fsampler-random=online:-include sampler/threads/random-online.h%s} \
+%{fsampler-random=offline:-include sampler/threads/random-offline.h%s} \
+%{!fsampler-random=*:-include sampler/threads/random-online.h%s}
+
+*cpp_schemes:
+%{fsampler-scheme=bounds:-include sampler/schemes/bounds-unit.h%s} \
+%{fsampler-scheme=branches:-include sampler/schemes/branches-unit.h%s} \
+%{fsampler-scheme=function-entries:-include sampler/schemes/function-entries-unit.h%s} \
+%{fsampler-scheme=g-object-unref:-include sampler/schemes/g-object-unref-unit.h%s} \
+%{fsampler-scheme=returns:-include sampler/schemes/returns-unit.h%s} \
+%{fsampler-scheme=scalar-pairs:-include sampler/schemes/scalar-pairs-unit.h%s} \
+%{fsampler-scheme=*:-include sampler/unit.h%s}
+
+*cpp:
++ -DCIL \
+%(cpp_threads) \
+%(cpp_timestamps) \
+-include sampler/threads/countdown.h%s \
+%(cpp_random) \
+%(cpp_schemes)
+
+*cc1:
++ %{v} \
+%{!fno-threads:%{!fthreads:%{pthread:-fthreads}}} \
+-finstrumentor-input %u.i \
+-finstrumentor-output %u.inst.i \
+%(embedding)
+
+*asm_final:
++ %{v:--verbose} \
+%(embedding)
+
+%rename lib old_lib
+
+*lib_threads_yes:
+sampler/threads/yes/libearly.a%s \
+%{fsampler-random=fixed:sampler/threads/yes/librandom-fixed.a%s} \
+%{fsampler-random=online:sampler/threads/yes/librandom-online.a%s} \
+%{fsampler-random=offline:sampler/threads/yes/librandom-offline.a%s} \
+%{!fsampler-random=*:sampler/threads/yes/librandom-online.a%s} \
+sampler/threads/yes/liblate.a%s \
+-lpthread
+
+*lib_threads_no:
+sampler/threads/no/libearly.a%s \
+%{fsampler-random=fixed:sampler/threads/no/librandom-fixed.a%s} \
+%{fsampler-random=online:sampler/threads/no/librandom-online.a%s} \
+%{fsampler-random=offline:sampler/threads/no/librandom-offline.a%s} \
+%{!fsampler-random=*:sampler/threads/no/librandom-online.a%s} \
+sampler/threads/no/liblate.a%s
+
+*lib_threads:
+--wrap pthread_create \
+%{fthreads:%(lib_threads_yes)} \
+%{fno-threads:%(lib_threads_no)} \
+%{!fthreads:%{!fno-threads:%{pthread:%(lib_threads_yes)}}} \
+%{!fthreads:%{!fno-threads:%{!pthread:%(lib_threads_no)}}}
+
+*lib:
+sampler/schemes/libschemes.a%s \
+%(lib_threads) \
+%(old_lib)

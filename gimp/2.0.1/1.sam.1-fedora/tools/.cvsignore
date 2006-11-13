@@ -1,0 +1,8 @@
+.deps
+Makefile
+Makefile.in
+debuild
+decimate-samples
+decimate-samples.c
+find-driver.pl
+rpmbuild

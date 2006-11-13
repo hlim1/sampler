@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+set -x
+
+dropdb $USER
+createdb $USER
+psql -f `dirname $0`/build-tables.sql

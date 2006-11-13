@@ -1,0 +1,6 @@
+import os.path
+
+home = '@traydir@'
+glade = os.path.join(home, 'tray.glade')
+
+first_timedir = '@first_timedir@'

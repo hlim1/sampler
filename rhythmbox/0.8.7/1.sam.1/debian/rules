@@ -1,0 +1,64 @@
+#!/usr/bin/make -f
+
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+
+CFLAGS = -W -Wall -Werror -g
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+	configflags = --disable-native
+else
+	CFLAGS += -O2
+	configflags = --enable-native
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+all: config.status
+
+clean:
+	dh_testdir
+	dh_testroot
+	-$(MAKE) distclean
+	rm -f debian/build-stamp debian/install-stamp
+	dh_clean
+
+config.status: configure
+	dh_testdir
+	CFLAGS="$(CFLAGS)" ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr $(configflags)
+
+build: debian/build-stamp
+debian/build-stamp: config.status
+	dh_testdir
+	$(MAKE)
+	touch $@
+
+install: debian/install-stamp
+debian/install-stamp: debian/build-stamp
+	dh_testdir
+	dh_testroot
+	dh_clean
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	touch $@
+
+binary: build install
+	dh_testdir
+	dh_testroot
+	dh_install --list-missing --sourcedir=$(CURDIR)/debian/tmp
+	dh_installchangelogs
+	dh_installdocs
+	dh_scrollkeeper
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+.PHONY: clean build install binary

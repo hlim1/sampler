@@ -1,0 +1,63 @@
+*embedding:
+-fsave-cfg %g.cfg \
+-fsave-site-info %g.sites
+
+*cpp_threads:
+%{fthreads:-D SAMPLER_THREADS} \
+%{!fthreads:%{!fno-threads:%{pthread:-D SAMPLER_THREADS}}}
+
+*cpp_random:
+%{!fsampler-random:-include sampler/random-online.h} \
+%{fsampler-random=online:-include sampler/random-online.h} \
+%{fsampler-random=offline:-include sampler/random-offline.h} \
+%{fsampler-random=fixed:-include sampler/random-fixed.h}
+
+*cpp_timestamps:
+%{ftimestamp-first:-D SAMPLER_TIMESTAMP_FIRST} \
+%{ftimestamp-last:-D SAMPLER_TIMESTAMP_LAST} \
+%{ftimestamp-*:-include sampler/timestamps.h}
+
+*cpp:
++ -DCIL \
+%(cpp_threads) \
+%(cpp_timestamps) \
+-include sampler/countdown.h \
+%(cpp_random) \
+%{fsampler-scheme=bounds:-include sampler/bounds-unit.h} \
+%{fsampler-scheme=branches:-include sampler/branches-unit.h} \
+%{fsampler-scheme=function-entries:-include sampler/function-entries-unit.h} \
+%{fsampler-scheme=g-object-unref:-include sampler/g-object-unref-unit.h} \
+%{fsampler-scheme=returns:-include sampler/returns-unit.h} \
+%{fsampler-scheme=scalar-pairs:-include sampler/scalar-pairs-unit.h} \
+%{fsampler-scheme=*:-include sampler/unit.h}
+
+*cc1:
++ %{v} \
+%{!fno-threads:%{!fthreads:%{pthread:-fthreads}}} \
+-finstrumentor-input %u.i \
+-finstrumentor-output %u.inst.i \
+%(embedding)
+
+*asm_final:
++ %{v:--verbose} \
+%(embedding)
+
+%rename lib old_lib
+
+*lib_threads_with:
+libsampler-threads.a%s -lpthread
+
+*lib_threads_without:
+libsampler-no-threads.a%s
+
+*lib_threads:
+--wrap pthread_create \
+%{fthreads:%(lib_threads_with)} \
+%{fno-threads:%(lib_threads_without)} \
+%{!fthreads:%{!fno-threads:%{pthread:%(lib_threads_with)}}} \
+%{!fthreads:%{!fno-threads:%{!pthread:%(lib_threads_without)}}}
+
+*lib:
+libsampler.a%s \
+%(lib_threads) \
+%(old_lib)

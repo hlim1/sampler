@@ -1,0 +1,57 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $application = 'bc';
+my $command = '../../../apps/bc-1.06/loads/bc/bc';
+my $megs = 10;
+my $sparsity = 4000;
+
+my $fuzz = '../../fuzz/fuzz';
+my $runner = './runner';
+my $populate = '../populate/populate';
+my $time = '/usr/bin/time';
+
+
+########################################################################
+
+
+sub check_system (@) {
+    print "@_\n";
+    my $error = system @_;
+
+    if ($error == -1) {
+	exit 2;
+    } elsif ($error) {
+	my $result = $error >> 8 || $error & 127 || -1;
+	exit $result;
+    }
+}
+
+
+########################################################################
+
+
+my ($first, $last) = @ARGV or die "usage: $0 <first> <last>\n";
+
+
+foreach my $seed ($first .. $last) {
+    my $noise = "$seed.noise";
+    my $trace = "$seed.trace";
+    my $signal = "$seed.signal";
+    
+    check_system $time, $fuzz, $seed, $megs, $noise;
+    [ -r $noise ] or die "cannot read $noise\n";
+    print "\n";
+
+    check_system $time, $runner, $trace, $noise, $signal, $seed, $sparsity, $command;
+    [ -r $trace ] or die "cannot read $trace\n";
+    [ -r $signal ] or die "cannot read $signal\n";
+    unlink $noise;
+    print "\n";
+
+    check_system "$time $populate $application $sparsity $seed $megs `cat $signal` <$trace";
+    unlink $trace;
+    unlink $signal;
+    print "\n";
+}

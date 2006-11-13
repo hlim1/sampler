@@ -1,0 +1,9 @@
+import os.path
+
+appdirs = ['/usr/local/lib/sampler/applications',
+           '/usr/lib/sampler/applications']
+
+home = '@traydir@'
+glade = os.path.join(home, 'tray.glade')
+
+first_timedir = '@first_timedir@'

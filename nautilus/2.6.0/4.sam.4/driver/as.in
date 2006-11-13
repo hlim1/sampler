@@ -1,0 +1,60 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+
+########################################################################
+
+
+my @as = ('@as@');
+my @objcopy;
+
+my $verbose;
+my $outfile;
+
+my $saved_cfg;
+my $saved_site_info;
+
+
+my %flag_specs =
+    (
+     # Sampler Options
+     '-fsave-cfg' => sub { $saved_cfg = shift @ARGV },
+     '-fsave-site-info' => sub { $saved_site_info = shift @ARGV },
+
+     # Overall Options
+     '-o' => sub { $outfile = shift @ARGV; push @as, $_, $outfile },
+     '--verbose' => sub { $verbose = 1 },
+     );
+
+
+while (@ARGV) {
+    local $_ = shift;
+
+    if (exists $flag_specs{$_}) {
+	my $handler = $flag_specs{$_};
+	$handler->($_);
+    } else {
+	push @as, $_;
+    }
+}
+
+
+########################################################################
+
+
+sub run_stage (@) {
+    warn "  @_\n" if $verbose;
+    system {$_[0]} @_;
+    exit ($? >> 8 || $? & 127 || 1) if $?;
+}
+
+
+run_stage @as;
+
+push @objcopy, '--add-section', ".debug_sampler_cfg=$saved_cfg" unless -z $saved_cfg;
+push @objcopy, '--add-section', ".debug_site_info=$saved_site_info" unless -z $saved_site_info;
+run_stage 'objcopy', @objcopy, $outfile if @objcopy && defined $outfile;
+
+
+exit 0;

@@ -1,0 +1,8 @@
+*.pyc
+*.pyo
+*.server
+Makefile
+Makefile.in
+Paths.py
+first-time
+first-time.glade

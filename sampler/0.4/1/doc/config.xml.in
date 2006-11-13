@@ -1,0 +1,2 @@
+<!ENTITY prefix "@prefix@">
+<!ENTITY cycliccount "@PRECOMPUTE_COUNT@">

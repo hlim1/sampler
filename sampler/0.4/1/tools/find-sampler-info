@@ -1,0 +1,17 @@
+#!/bin/sh -e
+
+ROOT=$1
+test -n "$ROOT"
+
+extract=`dirname $0`/extract-site-info
+
+# Extract site information from ELF binaries
+( cd $ROOT && find . -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) -exec file {} \; ) |
+sed -n 's/^\(.*\):[ 	]*ELF.*, not stripped/\1/p' |
+while read filename; do
+    input=$ROOT/$filename
+    output=$ROOT/usr/lib/sampler/sites/$filename.sites
+    echo "extracting sampler site info from $input"
+    mkdir -p `dirname $output`
+    $extract $input >$output
+done

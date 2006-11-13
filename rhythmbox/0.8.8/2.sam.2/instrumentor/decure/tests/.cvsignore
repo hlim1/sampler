@@ -1,0 +1,7 @@
+*.browser
+Makefile
+Makefile.in
+atconfig
+testsuite
+testsuite.dir
+testsuite.log

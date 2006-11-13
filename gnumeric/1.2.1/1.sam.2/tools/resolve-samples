@@ -1,0 +1,157 @@
+#!/usr/bin/perl -w
+
+use strict;
+use 5.008;			# for safe pipe opens using list form of open
+
+use Fcntl qw(SEEK_SET);
+use FileHandle;
+use FindBin;
+
+
+########################################################################
+
+
+my $problem = 0;
+
+
+sub error ($) {
+    warn shift;
+    $problem = 1;
+}
+
+
+sub check_signature ($$$) {
+    my ($filename, $lineno, $signature) = @_;
+    die "$filename:$lineno: malformed signature: $signature\n"
+	unless $signature =~ /^[0-9A-Fa-f]{32}\z/;
+}
+
+
+sub compare_units ($$) {
+    my ($a, $b) = @_;
+
+    my $siteCounts = @{$a->{sites}} <=> @{$b->{sites}};
+    return $siteCounts if $siteCounts;
+
+    foreach (0 .. $#{$a->{sites}}) {
+	my $descriptions = $a->{sites}->[$_]->{description} cmp $b->{sites}->[$_]->{description};
+	return $descriptions if $descriptions;
+    }
+
+    return 0;
+}
+
+
+my %compilationUnit;
+
+
+foreach my $objectName (@ARGV) {
+    my $handle;
+
+    if ($objectName =~ /\.sites$/) {
+	$handle = new FileHandle $objectName, 'r';
+	unless ($handle) {
+	    error "warning: cannot read $objectName: $!\n";
+	    next;
+	}
+
+    } elsif (-d $objectName) {
+	next;
+
+    } else {
+	$handle = new FileHandle;
+	my $extractor = "$FindBin::Bin/extract-section";
+	if (! open $handle, '-|', $extractor, '.debug_site_info', $objectName) {
+	    error "warning: cannot run $extractor for $objectName: $!\n";
+	    next;
+	}
+    }
+
+    while (my $signature = <$handle>) {
+	chomp $signature;
+	check_signature $objectName, $handle->input_line_number, $signature;
+	my $unit = { sites => [], name => $objectName };
+
+	while (my $description = <$handle>) {
+	    chomp $description;
+	    last unless $description;
+	    my $site = { description => $description };
+	    push @{$unit->{sites}}, $site;
+	}
+
+	if (exists $compilationUnit{$signature}) {
+	    if (compare_units($compilationUnit{$signature}, $unit)) {
+		error "error: duplicate signature: $signature\n";
+		error "        first defined in \"$compilationUnit{$signature}{name}\"\n";
+		error "        inconsistently redefined in \"$objectName\"\n";
+	    }
+	} else {
+	    $compilationUnit{$signature} = $unit;
+	}
+    }
+    unless ($handle->close){
+	error "site info error for $objectName: exit status $?\n";
+    }
+}
+
+
+########################################################################
+
+
+sub miscount ($$) {
+    my ($direction, $signature) = @_;
+    die "error: too $direction sites in report for $signature\n";
+}
+
+
+sub skip () {
+    while (<STDIN>) {
+	chomp;
+	last if $_ eq '';
+    }
+}
+
+
+while (my $signature = <STDIN>) {
+    chomp $signature;
+    check_signature 'standard input', $., $signature;
+
+    my $unit = $compilationUnit{$signature};
+    if ($unit) {
+	my @sites = @{$unit->{sites}};
+
+	while (my $tuple = <STDIN>) {
+	    chomp $tuple;
+	    last if $tuple eq '';
+	    if (@sites) {
+		my $site = shift @sites;
+		my @tuple = split /\t/, $tuple;
+		foreach my $slot (0 .. $#tuple) {
+		    $site->{counters}->[$slot] += $tuple[$slot];
+		}
+	    } else {
+		miscount 'many', $signature;
+		skip;
+		last;
+	    }
+	}
+
+	miscount 'few', $signature if @sites;
+    } else {
+	error "warning: unrecognized signature in report: $signature\n";
+	skip;
+    }
+}
+
+
+local ($,, $\) = ("\t", "\n");
+
+foreach my $signature (sort keys %compilationUnit) {
+    my $unit = $compilationUnit{$signature};
+    foreach my $site (@{$unit->{sites}}) {
+	print $signature, $unit->{name}, $site->{description}, @{$site->{counters}} if exists $site->{counters};
+    }
+}
+
+
+exit $problem;

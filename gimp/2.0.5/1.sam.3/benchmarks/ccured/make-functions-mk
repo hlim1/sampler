@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo -n 'functions := '
+tr '\n' ' '
+echo

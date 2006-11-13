@@ -1,0 +1,166 @@
+########################################################################
+#
+#  General configuration
+#
+
+%if %(test ! \( "`lsb_release -si`" = FedoraCore -a "`lsb_release -sr`" -ge 4 \) ; echo $?)
+%define gnome_python2_libegg gnome-python2-libegg
+%endif
+
+Name: @PACKAGE_NAME@
+Version: @PACKAGE_VERSION@
+Release: 1@deployment_release_suffix@
+License: BSD
+Group: Applications/System
+Packager: Ben Liblit <@PACKAGE_BUGREPORT@>
+Vendor: UC Berkeley
+Distribution: Cooperative Bug Isolation Project
+URL: http://www.cs.wisc.edu/cbi/
+Source: %{name}-%{version}.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
+BuildRequires: binutils
+BuildRequires: %_bindir/camlp4
+BuildRequires: cil-devel >= 1.2.6
+BuildRequires: gcc
+Buildrequires: gsl-devel
+BuildRequires: gtk2-devel
+BuildRequires: libbonobo-devel
+BuildRequires: lsb
+BuildRequires: ocaml
+BuildRequires: perl
+BuildRequires: pygtk2-devel
+BuildRequires: python-devel
+BuildRequires: scrollkeeper
+%{?gnome_python2_libegg:BuildRequires: %gnome_python2_libegg}
+
+
+########################################################################
+#
+#  Package sampler
+#
+
+Summary: Support for applications with sampled instrumentation
+Requires: python >= 2.4
+Requires: gnome-python2
+Requires: gnome-python2-gconf
+Requires: gnome-python2-gtkhtml2
+Requires: pygtk2 >= 1.99.14
+Requires: pygtk2-libglade
+%{?gnome_python2_libegg:Requires: %gnome_python2_libegg}
+Obsoletes: sampler-gnome < 0.5
+
+%description
+This package supports instrumented applications at run time.  It
+includes tools for launching instrumented applications, collecting
+sample and crash reports, and uploading those reports to the central
+bug isolation server.
+
+%post
+GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/%{name}.schemas >/dev/null
+
+%files
+%defattr(-,root,root,-)
+%doc AUTHORS COPYING NEWS
+%{_bindir}/sampler-preferences
+%{_sysconfdir}/gconf/schemas/*
+%dir %{_libdir}/%{name}
+%{_libdir}/%{name}/sites
+%{_libdir}/%{name}/wrapped
+%{_libdir}/%{name}/tray
+%{_libdir}/bonobo/servers/*
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/common
+%{_datadir}/%{name}/first-time
+%{_datadir}/%{name}/pixmaps
+%{_datadir}/%{name}/preferences
+%{_datadir}/%{name}/tray
+%{_datadir}/%{name}/wrapper
+%{_datadir}/applications/*
+%{_datadir}/icons/hicolor/*/apps/*
+
+
+########################################################################
+#
+#  Package sampler-devel
+#
+
+%package devel
+Group: Development/Tools
+Summary: Tools for building applications with sampled instrumentation
+Requires: %(which %__as)
+Requires: %(%__cc -print-prog-name=cc1)
+Requires: %(which %__cc)
+Requires: %(which %__objcopy)
+Requires: binutils
+Requires: perl >= 5.8
+Requires: scrollkeeper
+
+%description devel
+This package provides tools for building applications with sampled
+instrumentation.  It includes an instrumenting C compiler and utility
+tools for collecting and decoding sampled instrumentation reports.
+
+%files devel
+%defattr(-,root,root,-)
+%doc AUTHORS COPYING NEWS
+%{_bindir}/sampler-cc
+%dir %{_datadir}/%{name}
+%{_datadir}/%{name}/doc
+%{_datadir}/omf/*
+%dir %{_libdir}/%{name}
+%{_libdir}/%{name}/driver
+%{_libdir}/%{name}/tools
+
+%post devel
+scrollkeeper-update -q -o %{_datadir}/omf/sampler
+
+%postun devel
+scrollkeeper-update -q
+
+
+########################################################################
+#
+#  Package sampler-server
+#
+
+%package server
+Group: System Environment/Daemons
+Summary: CGI script to receive uploaded instrumentation reports
+Requires: webserver
+Requires: mod_cgi.so
+Requires: mod_unique_id.so
+
+%description server
+This package provides a CGI script that manages the server end of
+sampled instrumentation reporting.  It can be added to any standard
+Apache web server installation that supports CGI scripts and the
+$UNIQUE_ID environment variable.
+
+%files server
+%defattr(-,root,root,-)
+%doc AUTHORS COPYING NEWS
+%{_localstatedir}/www/cgi-bin/*
+%attr(750,apache,apache) %dir %{_localstatedir}/www/sampler-uploads
+
+
+########################################################################
+#
+#  General scripts
+#
+
+%prep
+%setup -q
+
+%build
+%configure --without-cil-sibling --enable-deployment=@enable_deployment@
+make %{?_smp_mflags}
+%{?do_check:make check}
+
+%install
+rm -rf $RPM_BUILD_ROOT
+export GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+%makeinstall
+rm -rf $RPM_BUILD_ROOT/var/scrollkeeper
+
+%clean
+rm -rf $RPM_BUILD_ROOT

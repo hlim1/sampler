@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?> <!-- -*- xml -*- -->
+<!DOCTYPE oaf_info SYSTEM "oaf.dtd">
+
+<oaf_info>
+
+  <oaf_server iid="OAFIID:SamplerMonitor_Factory:0.1"
+    type="exe"
+    location="@traydir@/tray">
+
+    <oaf_attribute name="repo_ids" type="stringv">
+      <item value="IDL:Bonobo/GenericFactory:1.0"/>
+      <item value="IDL:Bonobo/Unknown:1.0"/>
+    </oaf_attribute>
+
+    <oaf_attribute name="name" type="string" value="Sampler Monitor Factory"/>
+  </oaf_server>
+
+  <oaf_server iid="OAFIID:SamplerMonitor:0.1"
+    type="factory"
+    location="OAFIID:SamplerMonitor_Factory:0.1">
+
+    <oaf_attribute name="repo_ids" type="stringv">
+      <item value="IDL:Bonobo/Unknown:1.0"/>
+    </oaf_attribute>
+
+    <oaf_attribute name="name" type="string" value="Sampler Monitor"/>
+  </oaf_server>
+
+</oaf_info>

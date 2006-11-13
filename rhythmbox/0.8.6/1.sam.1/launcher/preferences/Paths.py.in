@@ -1,0 +1,9 @@
+import os.path
+
+appdirs = ['/usr/local/share/sampler/applications',
+           '/usr/local/lib/sampler/applications',
+           '/usr/share/sampler/applications',
+           '/usr/lib/sampler/applications']
+
+home = '@preferencesdir@'
+glade = os.path.join(home, 'preferences.glade')

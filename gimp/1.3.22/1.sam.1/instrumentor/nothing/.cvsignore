@@ -1,0 +1,11 @@
+*.annot
+*.cmi
+*.cmo
+*.cmx
+*.di
+*.dl
+*.do
+.libs
+Makefile
+Makefile.in
+main

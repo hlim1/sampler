@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec rsync -rlto -v sampler.cs.berkeley.edu:/var/www/sampler-uploads/ /afs/cs.wisc.edu/p/cbi/uploads/reports

@@ -1,0 +1,14 @@
+usr/share/sampler/applications
+usr/share/sampler/gdb-commands
+usr/share/sampler/print-debug-info
+usr/share/sampler/launcher/AppConfig.py[co]
+usr/share/sampler/launcher/BaseMain.py[co]
+usr/share/sampler/launcher/BaseUserConfig.py[co]
+usr/share/sampler/launcher/Launcher.py[co]
+usr/share/sampler/launcher/Main.py[co]
+usr/share/sampler/launcher/Outcome.py[co]
+usr/share/sampler/launcher/RedirectHandler.py[co]
+usr/share/sampler/launcher/ReportsReader.py[co]
+usr/share/sampler/launcher/Upload.py[co]
+usr/share/sampler/launcher/Uploader.py[co]
+usr/share/sampler/launcher/UserConfig.py[co]

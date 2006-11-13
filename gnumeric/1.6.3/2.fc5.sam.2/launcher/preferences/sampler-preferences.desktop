@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Bug Isolation
+Comment=Change feedback settings for the Bug Isolation Project
+Icon=sampler
+Exec=sampler-preferences
+Terminal=false
+Type=Application
+Categories=GTK;Gnome;Settings;

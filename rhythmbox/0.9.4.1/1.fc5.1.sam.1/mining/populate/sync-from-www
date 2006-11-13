@@ -1,0 +1,6 @@
+#!/bin/sh
+
+rsync -rlto -v --compare-dest=/afs/cs.wisc.edu/p/cbi/uploads/archive "$@" sampler.cs.berkeley.edu:/var/www/sampler-uploads/ /afs/cs.wisc.edu/p/cbi/uploads/reports
+
+find /afs/cs.wisc.edu/p/cbi/uploads/reports -type d -empty |
+xargs rmdir

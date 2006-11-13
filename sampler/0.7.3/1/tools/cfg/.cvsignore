@@ -1,0 +1,13 @@
+*.annot
+*.cfg
+*.cmi
+*.cmo
+*.cmx
+*.di
+*.dl
+*.do
+*.dot
+Makefile
+Makefile.in
+order-sites
+resolve-cfg

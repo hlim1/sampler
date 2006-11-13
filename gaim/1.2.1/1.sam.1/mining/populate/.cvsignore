@@ -1,0 +1,8 @@
+Makefile
+Makefile.in
+Site.pm
+insert-builds.pl
+insert-runs.pl
+integrity-checks.pl
+sampler-uploads
+sync-stamp

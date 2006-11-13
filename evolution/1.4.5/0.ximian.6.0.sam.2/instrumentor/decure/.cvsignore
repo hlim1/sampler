@@ -1,0 +1,14 @@
+*.annot
+*.cma
+*.cmi
+*.cmo
+*.cmx
+*.di
+*.dl
+*.do
+*.o
+Makefile
+Makefile.in
+filterComplete
+listCandidates
+main

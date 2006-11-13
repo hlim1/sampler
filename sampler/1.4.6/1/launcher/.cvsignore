@@ -1,0 +1,4 @@
+*.passed
+Makefile
+Makefile.in
+test-by-extension

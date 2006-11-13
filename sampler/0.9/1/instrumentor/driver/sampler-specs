@@ -1,0 +1,46 @@
+*embedding:
+-fsave-cfg=%g.cfg \
+-fsave-site-info=%g.sites
+
+*cpp_threads:
+%{fno-threads:-include sampler/no-threads.h} \
+%{fthreads:-include sampler/threads.h} \
+%{!fno-threads:%{!fthreads:%{!pthread:-include sampler/no-threads.h} %{pthread:-include sampler/threads.h}}}
+
+*cpp_cyclic:
+%{!fcyclic:-include sampler/acyclic.h} %{fcyclic:-include sampler/acyclic.h}
+
+*cpp:
++ -DCIL \
+%(cpp_threads) \
+-include sampler/countdown.h \
+%(cpp_cyclic) \
+%{fsampler-scheme=bounds:-include sampler/bounds-unit.h} \
+%{fsampler-scheme=branches:-include sampler/branches-unit.h} \
+%{fsampler-scheme=function-entries:-include sampler/function-entries-unit.h} \
+%{fsampler-scheme=g-object-unref:-include sampler/g-object-unref-unit.h} \
+%{fsampler-scheme=returns:-include sampler/returns-unit.h} \
+%{fsampler-scheme=scalar-pairs:-include sampler/scalar-pairs-unit.h} \
+%{fsampler-scheme=*:-include sampler/unit.h}
+
+*cc1:
++ %{save-temps} %{v} \
+%{!fno-threads:%{!fthreads:%{pthread:-fthreads}}} \
+%(embedding)
+
+*asm_final:
++ %{save-temps} %{v:--verbose} \
+%(embedding)
+
+%rename lib old_lib
+
+*wrap:
+--wrap pthread_create
+
+*lib_threads:
+%{fthreads:%(wrap)}%{!fthreads:%{!fno-threads:%{pthread:%(wrap)}}} -lsampler%{fthreads:_r -lpthread}%{!fthreads:%{!fno-threads:%{pthread:_r}}}
+
+*lib:
+%{fsampler-scheme=*:-lschemes} \
+%(lib_threads) \
+%(old_lib)

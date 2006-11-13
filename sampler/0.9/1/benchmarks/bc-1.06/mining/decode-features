@@ -1,0 +1,41 @@
+#!/usr/bin/perl -w
+
+use strict;
+use FileHandle;
+
+
+my @operators = ('<', '=', '>');
+
+
+warn "loading trace...\n";
+my $trace = new FileHandle '2.trace', 'r' or die;
+my @lines = <$trace>;
+my $rank = 0;
+warn "done\n";
+
+
+warn "loading features...\n";
+my @features;
+while (<STDIN>) {
+    next if /^\#/;
+    next if /^$/;
+    my (undef, undef, $index, $order) = split;
+    unshift @features, [$index, $order];
+}
+warn "done\n";
+
+
+$" = "\t";
+
+foreach my $feature (0 .. $#features) {
+    my ($index, $order) = @{$features[$feature]};
+    my $rank = $feature + 1;
+    
+    my $line = $lines[$index - 1];
+    chomp $line;
+    my @fields = split /\t/, $line;
+
+    my $op = $operators[$order];
+    
+    print "$fields[0]:$fields[1]: #$rank: $fields[2]() / $index @ $fields[5]: $fields[3] $op $fields[4]\n";
+}

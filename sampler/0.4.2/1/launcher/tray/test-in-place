@@ -1,0 +1,19 @@
+#!/usr/bin/python
+
+import os.path
+import sys
+
+home = os.path.realpath(os.path.dirname(sys.argv[0]))
+sys.path.append(home)
+import Paths
+Paths.home = home
+Paths.glade = os.path.join(home, 'tray.glade')
+
+for subdir in ['common', 'monitor', 'trayicon']:
+    sys.path.append(os.path.realpath(os.path.join(Paths.home, '..', subdir)))
+
+import Config
+Config.pixmapsdir = os.path.realpath(os.path.join(home, '..', 'pixmaps'))
+
+
+import Main

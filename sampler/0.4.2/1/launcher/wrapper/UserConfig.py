@@ -1,0 +1,50 @@
+import os
+import sys
+
+import gconf
+
+import Keys
+
+
+class UserConfig:
+    '''User preferences for an instrumened application.'''
+
+    def __init__(self, dir, app):
+        '''Look for preferences under GConf area for the given application.'''
+        self.__client = gconf.client_get_default()
+        self.__app = app
+        self.__namespace = app.get('application', 'gconf-root')
+
+    def __key(self, extension):
+        return self.__namespace + '/' + extension
+
+    def enabled(self):
+        '''Check whether sampling is enabled for this application.'''
+
+        if not self.__client.get_bool(Keys.asked):
+            return 0
+
+        if not self.__client.get_bool(Keys.master):
+            return 0
+
+        return self.__client.get_bool(self.__key('enabled'))
+
+    def sparsity(self):
+        '''Sparsity of sampled data, or 0 if sampling is disabled.'''
+
+        if self.enabled():
+            return self.__client.get_int(self.__key('sparsity'))
+        else:
+            return 0
+
+    def change_sparsity(self, sparsity):
+        '''Record a new sampling sparsity for future runs.'''
+        self.__client.set_int(self.__key('compression-level'), sparsity)
+
+    def reporting_url(self):
+        '''Destination address for uploaded reports.'''
+        return self.__client.get_string(self.__key('reporting-url'))
+
+    def change_reporting_url(self, url):
+        '''Record a new address for future uploads.'''
+        self.__client.set_string(self.__key('reporting-url'), url)

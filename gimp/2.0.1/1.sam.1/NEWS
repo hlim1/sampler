@@ -1,0 +1,92 @@
+-*- outline -*-
+
+* sampler-0.9
+
+** New "g-object-unref" instrumentation scheme tracks state of GLib
+   Object System instances that are about to be unreferenced.
+
+* sampler-0.8
+
+** Important atomicity bug fix for multithreaded applications.
+
+** Minor bug fixes to developer tools.
+
+** Improved support for multiple schemes in developer tools.
+
+* sampler-0.7.3
+
+** Minor bug fixes in feedback analysis tools.
+
+** Extend copyright notices into 2004.
+
+* sampler-0.7.2
+
+** Merge Fedora Core 1 port branch back onto trunk
+
+** Various and sundry bug fixes.
+
+* sampler-0.7.1
+
+** Back-port the instrumentor to OCaml-3.06.
+
+** Omit GNOME-based client tools if "pkg-config" is missing.
+
+* sampler-0.7
+
+** Support multiple active schemes within a single binary.
+
+* sampler-0.6.1
+
+** Don't upload empty report if instrumented app died suddenly.
+   This should fix the "Malformed multipart POST" error reported by
+   some users.
+
+** Embed instrumentor version number in instrumented object files.
+
+* sampler-0.6
+
+** Internal bug fixes to report reader/writer pipe management.
+
+** Extract global control flow / call graphs from instrumented code.
+   Supports certain experimental analyses which are still under
+   development.
+
+* sampler-0.5.6
+
+** Driver bug fixes when running out of build tree.
+
+* sampler-0.5.5
+
+** Minor ident string improvements.
+
+* sampler-0.5.4
+
+** Correct a typo in the first-time opt-in dialog.
+
+* sampler-0.5.3
+
+** Add instrumentor driver support for GCC "-gLEVEL" debug flags.
+
+* sampler-0.5.1, sampler-0.5.2
+
+** Internal updates only.  No significant user-visible changes.
+
+* sampler-0.5
+
+** Split preferences out into stand-alone control panel applet (capplet).
+
+** Faster application startup.  Activate the notification area monitor
+   only *after* the instrumented application has been launched.
+
+* sampler-0.4.4, sampler-0.4.5
+
+** Assorted bug fixes
+
+* sampler-0.4.3
+
+** Fix several bugs in server reply handling (rarely used).
+
+* sampler-0.4.2
+
+** Add missing file required for first-time dialog.  (All sampling is
+   disabled as a failsafe until first time dialog has been run.)

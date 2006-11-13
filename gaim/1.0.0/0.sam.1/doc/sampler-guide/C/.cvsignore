@@ -1,0 +1,6 @@
+*.omf.out
+Makefile
+Makefile.in
+ar??s??.html
+index.html
+omf_timestamp

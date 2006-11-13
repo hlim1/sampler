@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+cd "`dirname $0`"
+
+./sync-from-www
+
+./insert-runs.pl sampler-uploads/*
+./insert-run-samples.pl sampler-uploads/*

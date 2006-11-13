@@ -1,0 +1,10 @@
+#!/usr/bin/python -O
+
+import sys
+sys.path.append('../common')
+
+import Paths
+Paths.glade = 'wrapper.glade'
+
+import Main
+Main.main('/usr/lib/sampler/applications/gaim')

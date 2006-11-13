@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+trial=1
+
+while cat ../trials/$trial.result 2>/dev/null; do
+  : $((++trial))
+done

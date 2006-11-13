@@ -1,0 +1,4 @@
+#!/bin/sh -x
+
+unset DISPLAY
+exec matlab -nojvm -r dai_convert_many </dev/null

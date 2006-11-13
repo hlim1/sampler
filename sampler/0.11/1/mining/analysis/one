@@ -1,0 +1,87 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use DBI;
+use File::Basename;
+use File::Path;
+
+use lib '../populate';
+use Common;
+use Site;
+
+use lib '.';
+use Utils;
+
+
+########################################################################
+#
+#  parse and validate command line
+#
+
+sub usage () {
+    die "Usage: $0 <samplerinfo-rpm-file> <results-directory>\n";
+}
+
+usage unless @ARGV == 2;
+my ($rpm, $outdir) = @ARGV;
+die "$!: $rpm\n" unless -r $rpm;
+
+$ENV{rpm} = $rpm;
+my $target = `rpm -qp --queryformat '%{name}\t%{version}\t%{release}' \$rpm`;
+die "rpm error\n" if $?;
+
+my @target = split /\t/, $target;
+die "malformed rpm output: $target\n" unless @target == 3;
+
+my ($name, $version, $release) = @target;
+die "not a samplerinfo rpm\n" unless $name =~ s/-samplerinfo$//;
+
+my $build = "$name-$version-$release";
+die if $build =~ /\//;
+
+my $distro = basename dirname $outdir;
+
+rmtree $outdir;
+Utils::try_mkdir $outdir;
+
+
+########################################################################
+#
+#  identify the report IDs for this build
+#
+
+warn "Counting reports for $build on $distro ...\n";
+
+my $dbh = Common::connect;
+my @runs =
+    @{$dbh->selectcol_arrayref(q{
+	SELECT run_id
+	    FROM run NATURAL JOIN build
+	    WHERE application_name = ?
+	    AND application_version = ?
+	    AND application_release = ?
+	    AND build_distribution = ?
+	    AND run_suppress IS NULL
+	    AND run_id != 'itPCJH8AAAEAACvQfX8AAAAE'
+	},
+			       undef, $name, $version, $release, $distro)};
+
+$dbh->disconnect;
+
+unless (@runs) {
+    warn "no reports for $build on $distro\n";
+    exit 0;
+}
+
+
+########################################################################
+#
+#  convert and analyze these reports
+#
+
+my $scheme = Utils::guess_scheme $name;
+my @sites = Utils::unpack_sites $outdir, $scheme, $rpm;
+Utils::convert_reports $outdir, $scheme, @runs;
+Utils::analyze_reports $outdir, @runs, @sites;
+Utils::clean $outdir;

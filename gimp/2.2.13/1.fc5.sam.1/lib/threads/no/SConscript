@@ -1,0 +1,10 @@
+Import('env', 'threadLibs')
+
+env = env.Copy()
+threadLibs(env)
+
+precompute = env.Program(source=['precompute.c', 'librandom-online.a', 'liblate.a'])
+Default(precompute)
+
+env.Append(ENV={'SAMPLER_SPARSITY': '1'})
+env.Command('countdown-1-1', precompute, [['$SOURCES', '$TARGET']])

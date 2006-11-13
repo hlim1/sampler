@@ -1,0 +1,23 @@
+-*- outline -*-
+
+* glib2-devel
+* pygtk2-devel
+** required at build time for libegg wrapper
+
+* python-glade2
+* python-gnome2
+
+* libxmls-utils
+** for xmllint
+** used at instrumentor "make check"
+** recommended, but not strictly needed
+
+* ocaml
+** used at instrumentor build time only
+
+* ocaml-native-compilers
+** used at instrumentor build time only
+** recommended, but not strictly needed
+
+* mod_ssl
+** recommended but not required by sampler-server

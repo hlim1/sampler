@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+cd "`dirname $0`"
+
+test -x ./insertRuns.py
+
+./sync-from-www
+
+find $(cat uploads) -name environment | ./insertRuns.py
+
+touch sync-stamp

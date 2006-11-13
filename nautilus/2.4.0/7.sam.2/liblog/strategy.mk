@@ -1,0 +1,2 @@
+#strategy := stdio
+strategy := syscall

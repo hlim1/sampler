@@ -1,0 +1,11 @@
+*.cma
+*.cmi
+*.cmo
+*.cmx
+*.di
+*.dl
+*.do
+.deps
+Makefile
+Makefile.in
+main

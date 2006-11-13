@@ -1,0 +1,4 @@
+import os.path
+
+home = '@first_timedir@'
+glade = os.path.join(home, 'first-time.glade')

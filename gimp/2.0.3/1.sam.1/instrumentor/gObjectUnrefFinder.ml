@@ -1,0 +1,32 @@
+open Cil
+
+
+let postpatch replacement statement =
+  statement.skind <- replacement;
+  statement
+
+
+class visitor file =
+  let classifier = Lval (var (FindFunction.find "gObjectUnrefClassify" file)) in
+  fun (tuples : Counters.manager) func ->
+    object (self)
+      inherit SiteFinder.visitor
+
+      method vstmt stmt =
+	match stmt.skind with
+	| Instr [Call (_, Lval (Var {vname = "g_object_unref"}, NoOffset), [chaff], location)]
+	  when self#includedStatement stmt ->
+	    let slot = var (makeTempVar func uintType) in
+	    let classify = Call (Some slot, classifier, [chaff], location) in
+	    let selector = Index (Lval slot, NoOffset) in
+	    let bump = tuples#addSite func selector (d_exp () chaff) location in
+	    let replacement = Block (mkBlock [mkStmtOneInstr classify;
+					      bump;
+					      mkStmt stmt.skind])
+	    in
+	    stmt.skind <- replacement;
+	    SkipChildren
+
+	| _ ->
+	    DoChildren
+    end

@@ -1,0 +1,17 @@
+*.decode
+*.i
+*.inst.c
+*.s
+*.trace
+.libs
+array
+bumpy
+conditional
+deep-pointers
+funcall
+loop
+multiple
+return
+sizeof
+structures
+tiny

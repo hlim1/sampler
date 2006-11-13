@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec `dirname $0`/../../instrumentor/returns/driver/main --show-stats "$@"

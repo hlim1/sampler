@@ -1,0 +1,7 @@
+Import('env', 'testPythons')
+env = env.Copy(first_timedir=env.subst('$first_timedir'))
+
+Default(env.Template('Paths.py.in', varlist=['first_timedir']))
+pythons = ['FirstTime.py', 'Main.py', 'Paths.py']
+
+testPythons(env, pythons)

@@ -1,0 +1,28 @@
+# todo: include g-object-unref scheme only if WITH_GNOME
+
+Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['-fpic'])
+
+genv = env.Copy()
+genv.ParseConfig('pkg-config --cflags --libs glib-2.0')
+gobjs = genv.StaticObject(source=['g-object-unref.c', 'g-object-unref-classify.c'])
+
+lib = env.Library('libschemes.a', [
+    gobjs,
+    'bounds.c',
+    'branches.c',
+    'float-kinds.c',
+    'function-entries.c',
+    'returns.c',
+    'samples.c',
+    'scalar-pairs.c',
+    'timestamps.c',
+    'tuple-1.c',
+    'tuple-2.c',
+    'tuple-3.c',
+    'tuple-4.c',
+    'tuple-9.c',
+    ])
+
+Default(lib)

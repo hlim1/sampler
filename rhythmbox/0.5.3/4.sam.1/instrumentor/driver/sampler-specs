@@ -1,0 +1,22 @@
+*cpp_threads:
+%{fno-threads:-include sampler/no-threads.h} %{fthreads:-include sampler/threads.h} %{!fno-threads:%{!fthreads:%{!pthread:-include sampler/no-threads.h} %{pthread:-include sampler/threads.h}}} 
+
+*cpp_cyclic:
+%{!fcyclic:-include sampler/acyclic.h} %{fcyclic:-include sampler/acyclic.h}
+
+*cpp:
++ -DCIL %(cpp_threads) -include sampler/countdown.h %(cpp_cyclic) -include sampler/embedded-cfg.h
+
+*cc1:
++ %{save-temps} %{v}
+
+%rename lib old_lib
+
+*wrap:
+--wrap pthread_create
+
+*lib_threads:
+%{fthreads:%(wrap)}%{!fthreads:%{!fno-threads:%{pthread:%(wrap)}}} -lsampler%{fthreads:_r -lpthread}%{!fthreads:%{!fno-threads:%{pthread:_r}}}
+
+*lib:
+%(lib_threads) %(old_lib)

@@ -1,0 +1,9 @@
+from utils import instantiate
+
+Import('env', 'testPythons')
+env = env.Copy(pixmapsdir=env.subst('$pixmapsdir'))
+
+Default(env.Template('SamplerConfig.py.in', varlist=['VERSION', 'pixmapsdir']))
+pythons = ['BlipIcons.py', 'GConfDir.py', 'GConfNotifier.py', 'Keys.py', 'LazyIcon.py', 'MasterNotifier.py', 'SamplerConfig.py', 'Signals.py', 'StatusIcon.py', 'WindowIcon.py']
+
+testPythons(env, pythons)

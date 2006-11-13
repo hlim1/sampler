@@ -1,0 +1,22 @@
+Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['--sampler-scheme=branches'])
+
+modular = env.CBIProgram(target='modular', source=['modular-a.c', 'modular-b.c'])
+
+tenv = env.Copy()
+tenv.AppendUnique(CCFLAGS=['-pthread'], LINKFLAGS=['-pthread'])
+
+plugin = env.CBISharedLibrary(target='plugin.so', source='plugin.c')
+library = env.CBISharedLibrary(target='library.so', source='library.c')
+program = env.Copy(LIBS='dl').CBIProgram(source=['sharing.c', library])
+sharing = env.CBIReports([program, library, plugin])
+
+Alias('test:branches', env.Expect([
+    env.CBIResolved('simple.c'),
+    env.CBIResolved(modular),
+    env.CBIResolved(sharing),
+    tenv.CBIResolved('threads.c'),
+    ]))
+
+Alias('test', 'test:branches')

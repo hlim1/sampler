@@ -1,0 +1,56 @@
+-*- outline -*-
+
+* tray
+
+Use ORBit_small_{,un}listen_for_broken() to clean up after dead
+clients.
+
+libegg code is licensed under LGPL, while we use BSD.  Figure out the
+right thing to do about this.
+
+* wrapper
+
+The last client to call monitor.unref() sometimes gets a
+CORBA.COMM_FAILURE exception.  Not sure why.  We work around it by
+catching and discarding the exception, but that's not a real fix.
+
+Server reply dialog has bad tab navigation.  If focus is on a
+hyperlink in the HTML area, you cannot tab out to the "OK" button.
+
+How does wrapper propagate SIGINT (^C) down to child?
+
+Add some sort of upper bound on upload lengths to prevent things from
+getting completely out of hand if the instrumented application gets
+into a bad loop.
+
+For long-lived processes, perhaps we need to send periodic interim
+reports (e.g. daily) instead of waiting for termination.  This will
+require support from the client application too, though.
+
+* packaging
+
+Check copyright notice in configure scripts that use SAMPLER_INIT.
+Check both script text as well as "configure --version" output.
+
+Consider adding some sort of "README.sampler" to the documentation for
+each sampled application RPM.
+
+* instrumentor
+
+** general
+
+Document --{no-,}assume-weightless-{libraries,externs} and hook them
+up in the Perl driver.
+
+PairClassifier.visitor does a lot of redundant work to re-scan for
+globals from the start of the file for each new instance.  We should
+be able to accumulate this incrementally as we go along.
+
+Remember which functions are loopless.  Use this to optimize treatment
+of calls to known loopless functions.
+
+instrumentor/logging/loads/tests/multiple is incorrectly printing a
+single value multiple times
+
+assume that anything declared in /usr/include/... or
+/usr/lib/gcc-lib/... or perhaps a few other places is library code

@@ -1,0 +1,6 @@
+from utils import literal
+
+Import('env')
+Default(literal(env, 'config.xml', '<!ENTITY prefix "%s">' % env['prefix']))
+
+SConscript(dirs=['sampler-guide/C'])

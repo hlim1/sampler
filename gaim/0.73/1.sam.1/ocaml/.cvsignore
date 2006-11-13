@@ -1,0 +1,12 @@
+*.annot
+*.cma
+*.cmi
+*.cmo
+*.cmx
+*.cmxa
+*.di
+*.dl
+*.do
+Makefile
+Makefile.in
+config.mk

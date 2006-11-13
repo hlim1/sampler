@@ -1,0 +1,12 @@
+*.annot
+*.cmi
+*.cmo
+*.cmx
+*.di
+*.dl
+*.do
+.deps
+Makefile
+Makefile.in
+dumpConstants
+main

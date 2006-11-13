@@ -1,0 +1,9 @@
+let functions =
+  let collection = new StringSet.container in
+
+  let functions = [
+    (* @LIBRARY_FUNCTIONS@ *)
+  ] in
+
+  List.iter collection#add functions;
+  collection

@@ -1,0 +1,3 @@
+[application]
+name=Nautilus
+gconf-root=/apps/sampler/applications/nautilus

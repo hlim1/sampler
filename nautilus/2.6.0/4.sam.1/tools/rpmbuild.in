@@ -1,0 +1,101 @@
+#!/usr/bin/perl -w
+# -*- cperl -*-
+
+use strict;
+use FindBin;
+
+
+########################################################################
+
+
+@find_driver_fragment@
+
+
+########################################################################
+
+
+my %macros = (
+	      _sampler_datadir => '%{?sampler_datadir}%{!?sampler_datadir:%{_datadir}/sampler}',
+	      _sampler_libdir => '%{?sampler_libdir}%{!?sampler_libdir:%{_libdir}/sampler}',
+	      sampler_tooldir => "$FindBin::Bin",
+
+	      sampler_cc => $driver,
+	      sampler_cc_flags => '%{nil}',
+	      sampler_cc_version => '%(rpm -q --qf "%%{version}" sampler-devel)',
+
+	      _sampler_source => '%{?sampler_source}%{!?sampler_source:1}',
+	      'sampler_tags(s:)' => <<'EOF',
+Requires: sampler >= 0.12.1
+BuildRequires: sampler-devel >= 0.12.1
+Source%{_sampler_source}: %{name}-sampler.tar.gz
+%{nil}
+EOF
+
+	      sampler_description => 'This package has been built with sampled bug feedback instrumentation.',
+
+	      sampler_package => <<'EOF',
+%package samplerinfo
+Summary: Sampler information for package %{name}
+Group: Development/Debug
+AutoReqProv: 0
+%description samplerinfo
+This package provides sampler information for package %{name}.  You do
+not need this to use %{name}.  Most users have no need to install this
+package.
+%files samplerinfo
+%defattr(-,root,root)
+%{_sampler_libdir}/sites/*
+%{nil}
+EOF
+
+	      sampler_prep => 'tar xzf %{S:%{_sampler_source}}',
+
+	      _sampler_sparsity => '%{?sampler_sparsity}%{!?sampler_sparsity:100}',
+	      _sampler_reporting_host => '%{?sampler_reporting_host}%{!?sampler_reporting_host:www.example.org}',
+	      _sampler_reporting_url => '%{?sampler_reporting_url}%{!?sampler_reporting_url:https://%{_sampler_reporting_host}/cgi-bin/sampler-upload}',
+	      _sampler_build_distribution => '%{?sampler_build_distribution}%{!?sampler_build_distribution:@DISTRO@}',
+
+	      _sampler_name => '%{?sampler_name}%{!?sampler_name:%{name}}',
+
+	      sampler_prebuild => <<'EOF',
+export CC='%{sampler_cc} %{sampler_cc_flags}'
+sed -e 's/@name@/%{name}/g' -e 's/@sparsity@/%{_sampler_sparsity}/g' -e 's!@reporting_url@!%{_sampler_reporting_url}!g' <sampler/application.schemas.in >sampler/sampler-%{name}.schemas
+%{nil}
+EOF
+
+	      'sampler_install()' => <<'EOF',
+for path in %*; do
+  install -d $RPM_BUILD_ROOT%{_sampler_libdir}/wrapped`dirname $path`
+  mv $RPM_BUILD_ROOT$path $RPM_BUILD_ROOT%{_sampler_libdir}/wrapped$path
+  sed -e 's!@sampler_datadir@!%{_sampler_datadir}!g' -e 's!@sampler_libdir@!%{_sampler_libdir}!g' -e 's/@name@/%{name}/g' -e "s!@path@!$path!g" <sampler/wrapper.in >$RPM_BUILD_ROOT$path
+  chmod --reference=$RPM_BUILD_ROOT%{_sampler_libdir}/wrapped$path $RPM_BUILD_ROOT$path
+done
+install -d $RPM_BUILD_ROOT%{_sampler_datadir}/applications/%{name}
+sed -e 's/@sampler_name@/%{_sampler_name}/g' -e 's/@sampler_cc_version@/%{sampler_cc_version}/g' -e 's/@name@/%{name}/g' -e 's/@version@/%{version}/g' -e 's/@release@/%{release}/g' -e 's/@build_distribution@/%{_sampler_build_distribution}/g' -e 's!@sampler_datadir@!%{_sampler_datadir}!g' <sampler/config.in >$RPM_BUILD_ROOT%{_sampler_datadir}/applications/%{name}/config
+%{sampler_tooldir}/find-sampler-info $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/gconf/schemas
+install -m 644 sampler/sampler-%{name}.schemas $RPM_BUILD_ROOT%{_sysconfdir}/gconf/schemas
+%{nil}
+EOF
+
+	      sampler_files => <<'EOF',
+%attr(-, root, root) %{_sampler_libdir}/wrapped/*
+%attr(-, root, root) %{_sampler_datadir}/applications/%{name}
+EOF
+
+	      sampler_files_gconf => '%attr(-, root, root) %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas',
+
+	      sampler_post => 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/sampler-%{name}.schemas >/dev/null'
+);
+
+
+########################################################################
+
+
+while (my ($name, $value) = each %macros) {
+    $value =~ s/\n(?=.)/\\\n/g;
+    unshift @ARGV, '--define', "$name $value";
+}
+
+exec 'rpmbuild', @ARGV;
+die "cannot exec rpmbuild: $!\n";

@@ -1,0 +1,69 @@
+SUBDIRS =					\
+	driver					\
+	balance					\
+	bounds					\
+	branches				\
+	function-entries			\
+	g-object-unref				\
+	nothing					\
+	returns					\
+	scalar-pairs				\
+	timestamps
+
+nodist_ml = libraries.ml version.ml
+EXTRA_DIST = build-libraries libraries.ml.in
+
+targets = harness.$(cma)
+extra_impls = libraries version
+
+include $(top_srcdir)/ocaml.mk.in
+
+libdirs += $(top_builddir)/ocaml
+syslibs = str.$(cma) unix.$(cma)
+
+instrumentor_SCRIPTS = main
+
+
+MOSTLYCLEANFILES += libraries.ml
+libraries.ml: %: build-libraries %.in
+	./$^ >$@
+
+$(dir $(libcommon))%.cmi: $(libcommon); @:
+$(dir $(libcommon))%.cmx: $(libcommon); @:
+$(libcommon): $(force); $(recurse)
+
+MOSTLYCLEANFILES += main
+main: $(libcil) $(libcommon) $(main)
+	$(link)
+
+MOSTLYCLEANFILES += cfgTest
+cfgTest: $(libcil) $(cfgTest)
+	$(link)
+
+MOSTLYCLEANFILES += cfg-to-dot
+cfg-to-dot: $(libcil) $(cfg-to-dot)
+	$(link)
+
+MOSTLYCLEANFILES += checker
+checker: $(libcil) $(checker)
+	$(link)
+
+MOSTLYCLEANFILES += dump
+dump: $(libcil) $(dump)
+	$(link)
+
+MOSTLYCLEANFILES += removeDeadCode
+removeDeadCode: $(libcil) $(removeDeadCode)
+	$(link)
+
+MOSTLYCLEANFILES += simplify
+simplify: $(libcil) $(simplify)
+	$(link)
+
+MOSTLYCLEANFILES += loopless
+loopless: $(libcil) $(loopless)
+	$(link)
+
+check-local: main
+
+.DELETE_ON_ERROR:

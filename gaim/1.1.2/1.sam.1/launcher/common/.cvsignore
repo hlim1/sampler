@@ -1,0 +1,5 @@
+*.pyc
+*.pyo
+Config.py
+Makefile
+Makefile.in

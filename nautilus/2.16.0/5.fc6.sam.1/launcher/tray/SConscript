@@ -1,0 +1,10 @@
+Import('env', 'testPythons')
+env = env.Copy(bindir=env.subst('$bindir'),
+               traydir=env.subst('$traydir'))
+
+server = env.Template('Sampler_Monitor.server.in', varlist=['traydir'])
+Default([server, env.Template('Paths.py.in', varlist=['bindir', 'traydir'])])
+pythons = ['AboutDialog.py', 'BusyCursor.py', 'Factory.py', 'LazyDialog.py', 'LazyWidget.py', 'Main.py', 'Paths.py', 'PopupMenu.py', 'PreferencesDialog.py', 'UploaderTrayIcon.py']
+
+testPythons(env, pythons)
+Alias('test', env.TestXML([server, 'oaf.dtd']))

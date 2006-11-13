@@ -1,0 +1,4 @@
+modular	modular-a.c	11	main	argc > 1	1	0
+modular	modular-a.c	11	main	argc > 2	0	0
+modular	modular-a.c	6	main	(*((*(argv + 0)) + 0))	0	1
+modular	modular-b.c	6	component	value	1	0

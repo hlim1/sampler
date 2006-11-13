@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?> <!-- -*- xml -*- -->
+<!DOCTYPE oaf_info SYSTEM "oaf.dtd">
+
+<oaf_info>
+
+  <oaf_server iid="OAFIID:SamplerFirstTime_Factory:0.1"
+    type="exe"
+    location="@first_timedir@/first-time">
+
+    <oaf_attribute name="repo_ids" type="stringv">
+      <item value="IDL:Bonobo/GenericFactory:1.0"/>
+      <item value="IDL:Bonobo/Unknown:1.0"/>
+    </oaf_attribute>
+
+    <oaf_attribute name="name" type="string" value="Sampler FirstTime Factory"/>
+  </oaf_server>
+
+  <oaf_server iid="OAFIID:SamplerFirstTime:0.1"
+    type="factory"
+    location="OAFIID:SamplerFirstTime_Factory:0.1">
+
+    <oaf_attribute name="repo_ids" type="stringv">
+      <item value="IDL:Bonobo/Unknown:1.0"/>
+    </oaf_attribute>
+
+    <oaf_attribute name="name" type="string" value="Sampler FirstTime"/>
+  </oaf_server>
+
+</oaf_info>

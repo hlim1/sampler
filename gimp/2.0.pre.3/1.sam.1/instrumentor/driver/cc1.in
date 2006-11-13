@@ -1,0 +1,216 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Basename;
+use File::Temp;
+use FileHandle;
+use FindBin;
+
+
+########################################################################
+
+
+my $countdowns = 'acyclic';
+my $verbose;
+my $save_temps;
+my $preprocessed;
+my $preprocessing;
+
+my @inputs;
+my $input;
+
+my @cpp0 = "@cpp0@" ? ("@cpp0@") : ("@cc1@", '-E', '-quiet');
+my $cpp0_output_slot;
+
+my @cc1 = ("@cc1@", '-fpreprocessed');
+my $cc1_input_slot;
+
+my @inst;
+
+
+sub slurp_0 (@) {
+    push @cpp0, @_;
+    push @cc1, @_;
+}
+
+
+sub slurp_1 ($) {
+    slurp_0 @_, shift @ARGV;
+}
+
+
+sub verbose ($) {
+    slurp_0 @_;
+    push @inst, '--show-phase-times';
+    $verbose = 1;
+}
+
+
+sub dumpbase ($) {
+    my $value = shift @ARGV;
+    push @cc1, @_, $value;
+    push @inst, '--dumpbase', $value;
+}
+
+
+sub inst_toggle ($) {
+    $_[0] =~ /\A-f([-a-z]+)\Z/
+	or die "internal error: malformed instrumentor flag @_\n";
+    push @inst, "--$1";
+}
+
+
+my %flag_specs =
+    (
+     # Sampler Options
+     '-fthreads' => sub { },
+     '-fno-threads' => sub { },
+     '-fsample' => \&inst_toggle,
+     '-fno-sample' => \&inst_toggle,
+     '-frename-locals' => \&inst_toggle,
+     '-fno-rename-locals' => \&inst_toggle,
+     '-fassign-across-pointer' => \&inst_toggle,
+     '-fno-assign-across-pointer' => \&inst_toggle,
+     '-fassign-into-field' => \&inst_toggle,
+     '-fno-assign-into-field' => \&inst_toggle,
+     '-fassign-into-index' => \&inst_toggle,
+     '-fno-assign-into-index' => \&inst_toggle,
+     '-fcompare-constants' => \&inst_toggle,
+     '-fno-compare-constants' => \&inst_toggle,
+
+     # Overall Options
+     '-E' => sub { $preprocessing = 1; },
+     '-o' => sub { slurp_1 $_; $cpp0_output_slot = \$cpp0[@cpp0 - 1]; },
+     '-v' => \&verbose,
+
+     # C Language Options
+     '-aux-info' => sub { push @cc1, $_ },
+
+     # Debugging Options
+     '-save-temps' => sub { $save_temps = 1 },
+
+     # Optimization Options
+     '--param' => sub { push @cc1, $_, shift @ARGV },
+
+     # Preprocessor Options
+     '-A' => \&slurp_1,
+     '-D' => \&slurp_1,
+     '-MT' => \&slurp_1,
+     '-MQ' => \&slurp_1,
+     '-MF' => sub { push @cpp0, $_, shift @ARGV },
+     '-MD' => sub { push @cpp0, $_ },
+     '-MMD' => sub { push @cpp0, $_ },
+     '-idirafter' => \&slurp_1,
+     '-include' => \&slurp_1,
+     '-imacros' => \&slurp_1,
+     '-iprefix' => \&slurp_1,
+     '-iwithprefix' => \&slurp_1,
+     '-iwithprefixbefore' => \&slurp_1,
+     '-isystem' => \&slurp_1,
+     '-fpreprocessed' => sub { $preprocessed = 1 },
+     '-U' => \&slurp_1,
+
+     # Undocumented Options
+     '-auxbase' => \&slurp_1,
+     '-dumpbase' => \&dumpbase,
+     '-quiet' => sub { push @cc1, $_ }
+     );
+
+
+while (@ARGV) {
+    local $_ = shift;
+
+    if (/^-/) {
+	if (exists $flag_specs{$_}) {
+	    my $handler = $flag_specs{$_};
+	    $handler->($_);
+	} elsif (/^-O\d*$/) {
+	    push @cc1, $_;
+	} elsif (/^-g\d*$/) {
+	    push @cc1, $_;
+	} elsif (/^-m(arch|cpu)=/) {
+	    push @cc1, $_;
+	} elsif (/^-fsampler-scheme=(.*)/) {
+	    push @inst, "--scheme-$1";
+	} elsif (/^-fsampler-scales=(.*)/) {
+	    push @inst, '--load-scales', $1;
+	} elsif (/^-f((in|ex)clude-(file|function))=(.*)/) {
+	    push @inst, "--$1", $4;
+	} elsif (/^-fsave-cfg=(.+)/) {
+	    push @inst, '--save-cfg', $1;
+	} elsif (/^-fsave-site-info=(.+)/) {
+	    push @inst, '--save-site-info', $1;
+	} elsif (/^-f/) {
+	    push @cc1, $_
+	} else {
+	    slurp_0 $_;
+	}
+    } elsif (/\.[ci]$/) {
+	push @inputs, $_;
+	slurp_0 $_;
+	$cc1_input_slot = \$cc1[@cc1 - 1];
+    } else {
+	warn "warning: unhandled option: $_\n";
+	push @cpp0, $_;
+	push @cc1, $_;
+    }
+}
+
+
+########################################################################
+
+
+sub run_stage (@) {
+    warn "  @_\n" if $verbose;
+    system {$_[0]} @_;
+    exit ($? >> 8 || $? & 127 || 1) if $?;
+}
+
+	
+if ($preprocessing) {
+    run_stage @cpp0;
+    exit 0;
+} elsif (@inputs == 1) {
+    $input = shift @inputs;
+} else {
+    warn "expected one input file, but got: @inputs\n";
+    die "  cc1 command line was probably parsed incorrectly\n";
+}
+
+
+########################################################################
+
+
+sub tempfile ($$) {
+    my ($basis, $suffix) = @_;
+    if ($save_temps) {
+	my ($basename, undef, undef) = fileparse $basis, qr{\..*};
+	my $filename = $basename . $suffix;
+	return (new FileHandle($filename, 'w'), $filename)
+    } else {
+	return File::Temp::tempfile(SUFFIX => $suffix, UNLINK => 1);
+    }
+}
+
+
+my $instrumentor_input;
+
+if ($preprocessed) {
+    $instrumentor_input = $input;
+} else {
+    $instrumentor_input = (tempfile $input, '.i')[1];
+    $$cpp0_output_slot = $instrumentor_input;
+    run_stage @cpp0;
+}
+
+my @instrumentor_output = tempfile $input, '.inst.i';
+
+open OLDOUT, '>&', \*STDOUT;
+open STDOUT, '>&', $instrumentor_output[0];
+run_stage "$FindBin::Bin/../main", @inst, $instrumentor_input;
+open STDOUT, '>&', \*OLDOUT;
+
+$$cc1_input_slot = $instrumentor_output[1];
+run_stage @cc1;
+
+exit 0;

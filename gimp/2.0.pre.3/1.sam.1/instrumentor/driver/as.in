@@ -1,0 +1,65 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+
+########################################################################
+
+
+my @as = ("@as@");
+my @objcopy;
+
+my $verbose;
+my $outfile;
+my $save_temps;
+
+my $saved_cfg;
+my $saved_site_info;
+
+
+while (@ARGV) {
+    local $_ = shift;
+
+    if ($_ eq '-o') {
+	$outfile = shift;
+	push @as, $_, $outfile;
+    } elsif ($_ eq '-save-temps') {
+	$save_temps = 1;
+    } elsif ($_ eq '--verbose') {
+	$verbose = 1;
+    } elsif (/^-fsave-cfg=(.+)/) {
+	$saved_cfg = $1;
+    } elsif (/^-fsave-site-info=(.+)/) {
+	$saved_site_info = $1;
+    } else {
+	push @as, $_;
+    }
+}
+
+
+########################################################################
+
+
+sub run_stage (@) {
+    warn "  @_\n" if $verbose;
+    system {$_[0]} @_;
+    exit ($? >> 8 || $? & 127 || 1) if $?;
+}
+
+
+run_stage @as;
+
+push @objcopy, '--add-section', ".debug_sampler_cfg=$saved_cfg" unless -z $saved_cfg;
+push @objcopy, '--add-section', ".debug_site_info=$saved_site_info" unless -z $saved_site_info;
+run_stage 'objcopy', @objcopy, $outfile if @objcopy && defined $outfile;
+
+
+exit 0;
+
+
+END {
+    unless ($save_temps) {
+	unlink $saved_cfg if defined $saved_cfg;
+	unlink $saved_site_info if defined $saved_site_info;
+    }
+}

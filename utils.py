@@ -2,6 +2,8 @@ from itertools import imap
 from string import Template
 from subprocess import PIPE, Popen
 
+from SCons.Action import Action
+
 import sys
 sys.path[1:1] = ['/usr/lib/scons']
 
@@ -40,11 +42,16 @@ def read_pipe(action, env):
     return env.Execute(action)
 
 
-def __literal_action(target, source, env):
+def __literal_exec(target, source, env):
     __pychecker__ = 'no-argsused'
     target = file(str(target[0]), 'w')
     print >>target, source[0].get_contents()
     target.close()
+
+def __literal_show(target, source, env):
+    return 'create "%s" containing %s' % (target[0], source[0])
+
+__literal_action = Action(__literal_exec, __literal_show)
 
 
 def literal(env, target, value):

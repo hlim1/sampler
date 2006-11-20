@@ -19,16 +19,31 @@ version = File('version').get_contents().rstrip()
 #
 
 def validate_cil_path(key, value, env):
+
     suffix = {True:'.cmxa', False:'.cma'}[env['OCAML_NATIVE']]
-    library = '%s/cil%s' % (value, suffix)
-    if not exists(library):
-        raise UserError('%s does not exist for option %s: %s' % (library, key, value))
+
+    def libcil(path):
+        return '%s/cil%s' % (path, suffix)
+
+    if value:
+        library = libcil(path)
+        if exists(library):
+            return
+        else:
+            raise UserError('bad option %s: %s does not exist' % (key, library))
+    else:
+        for path in ['../cil/obj/x86_LINUX', '/usr/local/lib/cil', '/usr/lib/cil']:
+            library = libcil(path)
+            if exists(library):
+                env[key] = path
+                return
+        raise UserError('cannot find CIL libraries; use cil_lib option')
 
 opts = Options(None, ARGUMENTS)
 opts.AddOptions(
     BoolOption('OCAML_NATIVE', 'compile OCaml to native code', False),
     PathOption('prefix', 'install in the given directory', '/usr/local'),
-    ('cil_path', 'look for CIL in the given directory', '../cil/obj/x86_LINUX', validate_cil_path),
+    ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
     )
 
 env = Environment(options=opts)

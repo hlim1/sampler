@@ -2,13 +2,14 @@ from glob import glob
 from itertools import chain, ifilter, imap
 import re
 
-from utils import instantiate, literal, read_pipe
+from utils import extra_build_dirs, instantiate, literal, read_pipe
 
 
 Import('env')
 env = env.Copy(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
-               tools=['test'], toolpath=['.'])
-env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
+               tools=['test'], toolpath=[str(Dir('#instrumentor'))])
+
+env.AppendUnique(OCAML_PATH=extra_build_dirs(env, ['instrumentor', 'ocaml',]) + ['$cil_path'])
 
 
 ########################################################################
@@ -63,7 +64,11 @@ libraries_ml = env.Command('libraries.ml', ['libraries.ml.in',
 #
 
 
-env.OcamlObject([version_ml, libraries_ml] + glob('*.ml') + glob('*.mli'))
+sourcedir = Dir('.').srcnode().abspath
+sources = glob(sourcedir + '/*.ml') + glob(sourcedir + '/*.mli')
+from os import getcwd
+print 'sources:', sources, 'in', getcwd(), 
+env.OcamlObject(sources)
 
 env.OcamlProgram('main.ml')
 env.OcamlProgram('cfgTest.ml')

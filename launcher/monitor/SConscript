@@ -3,7 +3,7 @@ import sys
 Import('env')
 env = env.Copy()
 
-env.AppendUnique(CPPPATH=['%s/include/python%s' % (sys.prefix, sys.version[:3])])
+env.AppendUnique(CPPPATH=[Dir('.').srcnode(), '%s/include/python%s' % (sys.prefix, sys.version[:3])])
 env.ParseConfig('pkg-config --cflags --libs --silence-errors libbonobo-2.0 pygobject-2.0 || pkg-config --cflags --libs libbonobo-2.0 pygtk-2.0')
 
 

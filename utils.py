@@ -1,4 +1,6 @@
 from itertools import imap
+from os import mkdir
+from os.path import exists
 from string import Template
 from subprocess import PIPE, Popen
 
@@ -56,3 +58,15 @@ __literal_action = Action(__literal_exec, __literal_show)
 
 def literal(env, target, value):
     return env.Command(target, env.Value(value), __literal_action)
+
+def extra_build_dirs(env, paths):
+    def generate():
+        for path in paths:
+            buildpath = env.Dir('#build/' + path).abspath
+            if not exists(buildpath):
+                from SCons.Defaults import Mkdir
+                env.Execute(Mkdir(buildpath))
+            yield buildpath
+            yield path
+
+    return list(generate())

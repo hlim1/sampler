@@ -1,9 +1,13 @@
-from glob import glob
-
+from utils import extra_build_dirs
 Import('env')
-env = env.Copy(OCAML_LIBS=['unix'])
-env.AppendUnique(OCAML_PATH=['ocaml', 'tools/cfg/graphlib'])
 
-sources = glob('*.ml') + glob('*.mli')
-sources.remove('callReturn.mli')
-env.OcamlObject(sources)
+env = env.Copy(OCAML_LIBS=['unix'])
+env.AppendUnique(OCAML_PATH=extra_build_dirs(env, ['ocaml', 'tools/cfg/graphlib']))
+
+env.OcamlObject([
+    'graph.ml',
+    'graph.mli',
+    'task.mli',
+    'transitive.ml',
+    'transitive.mli',
+    ])

@@ -1,19 +1,48 @@
-from glob import glob
-
-SConscript(dirs='cfg')
-
+from utils import extra_build_dirs
 Import('env')
+
 env = env.Copy(LEXFLAGS=['-f', '-p'], LIBS='fl', OCAML_LIBS=['unix', 'str'])
-env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
+env.AppendUnique(OCAML_PATH=extra_build_dirs(env, ['tools', 'ocaml']))
 
 wenv = env.Copy()
 wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare'])
 wenv.ParseConfig('gsl-config --cflags --libs')
 Default(wenv.Program('decimate-samples.l'))
 
-env.OcamlObject(glob('*.ml') + glob('*.mli'))
+env.OcamlObject([
+    'attributes.ml',
+    'attributes.mli',
+    'lineStream.ml',
+    'lineStream.mli',
+    'resolve.ml',
+    'resolve.mli',
+    'resolve-samples.ml',
+    'resolve-samples.mli',
+    'resolve-timestamps.ml',
+    'resolve-timestamps.mli',
+    'samplesResolver.ml',
+    'samplesResolver.mli',
+    'sectionCollector.ml',
+    'sectionCollector.mli',
+    'sectionLoader.mli',
+    'sectionResolver.ml',
+    'sectionResolver.mli',
+    'sectionStream.ml',
+    'sectionStream.mli',
+    'siteLoader.ml',
+    'siteLoader.mli',
+    'siteRegistry.ml',
+    'siteRegistry.mli',
+    'taggedLoader.ml',
+    'taggedLoader.mli',
+    'timestampsResolver.ml',
+    'timestampsResolver.mli',
+    ])
+
 Default(env.OcamlProgram('resolve-samples.ml'),
         env.OcamlProgram('resolve-timestamps.ml'))
+
+SConscript(dirs='cfg')
 
 # wrapper.in
 # sampler.mk

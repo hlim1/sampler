@@ -1,7 +1,18 @@
-from glob import glob
-
+from utils import extra_build_dirs
 Import('env')
-env = env.Copy()
-env.AppendUnique(OCAML_PATH=['ocaml'])
 
-env.OcamlObject(glob('*.ml') + glob('*.mli'))
+env = env.Copy()
+env.AppendUnique(OCAML_PATH=extra_build_dirs(env, ['ocaml']))
+
+env.OcamlObject([
+    'fixpoint.ml',
+    'fixpoint.mli',
+    'hashClass.ml',
+    'hashClass.mli',
+    'queueClass.ml',
+    'queueClass.mli',
+    'stackClass.ml',
+    'stackClass.mli',
+    'stringHash.ml',
+    'stringHash.mli',
+    ])

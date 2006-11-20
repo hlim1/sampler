@@ -1,19 +1,43 @@
-from glob import glob
-
-SConscript(dirs='graphlib')
-
+from utils import extra_build_dirs
 Import('env')
-env = env.Copy(OCAML_LIBS=['unix'], OCAML_PP='camlp4o.opt')
-env.AppendUnique(OCAML_PATH=['ocaml', 'tools/cfg', 'tools/cfg/graphlib'])
 
-sources = glob('*.ml') + glob('*.mli')
-sources.remove('basics.ml')
-sources.remove('dotty.ml')
-sources.remove('dotty.mli')
+env = env.Copy(OCAML_LIBS=['unix'], OCAML_PP='camlp4o.opt')
+env.AppendUnique(OCAML_PATH=extra_build_dirs(env, ['ocaml', 'tools/cfg', 'tools/cfg/graphlib']))
+
 
 wenv = env.Copy(OCAML_WARN='Ae')
 basics = wenv.OcamlObject('basics.ml')
 
-env.OcamlObject(sources)
+env.OcamlObject([
+    'args.ml',
+    'args.mli',
+    'basics.mli',
+    'compilation.ml',
+    'compilation.mli',
+    'flowGraph.mli',
+    'function.ml',
+    'function.mli',
+    'known.mli',
+    'location.ml',
+    'location.mli',
+    'memoize.ml',
+    'memoize.mli',
+    'object.ml',
+    'object.mli',
+    'order-sites.ml',
+    'order-sites.mli',
+    'phase.ml',
+    'phase.mli',
+    'resolve-cfg.ml',
+    'resolve-cfg.mli',
+    'statement.ml',
+    'statement.mli',
+    'symtab.ml',
+    'symtab.mli',
+    'types.mli',
+    ])
+
 Default(env.OcamlProgram('order-sites.ml'),
         env.OcamlProgram('resolve-cfg.ml'))
+
+SConscript(dirs='graphlib')

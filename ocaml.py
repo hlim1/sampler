@@ -43,7 +43,9 @@ def __ocamldep_scan(node, env, path):
         return
 
     if not node.exists():
-        __warn('%s does not exist' % node)
+        node = node.srcnode()
+        if not node.exists():
+            __warn('%s does not exist' % node)
 
     stdout = read_pipe([['$OCAMLDEP', '$_OCAML_PATH', '$_OCAML_PP', str(node)]], env)
     if stdout == 0:
@@ -68,7 +70,7 @@ def __ocamldep_scan(node, env, path):
     deps = imap(str.split, deps)
     deps = ( fields[1:] for fields in deps if fields[0] == target )
     deps = chain(*deps)
-    deps = imap(env.File, deps)
+    deps = ( env.File(dep).srcnode().alter_targets()[0][0] for dep in deps )
     return deps
 
 

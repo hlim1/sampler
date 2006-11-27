@@ -1,0 +1,9 @@
+from glob import glob
+
+Import('env')
+env = env.Copy(OCAML_LIBS=['unix'])
+env.AppendUnique(OCAML_PATH=['ocaml', 'tools/cfg/graphlib'])
+
+sources = glob('*.ml') + glob('*.mli')
+sources.remove('callReturn.mli')
+env.OcamlObject(sources)

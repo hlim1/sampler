@@ -1,0 +1,7 @@
+*.passed
+*.pyc
+*.pyo
+Makefile
+Makefile.in
+Paths.py
+wrapper

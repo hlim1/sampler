@@ -1,0 +1,13 @@
+Import('env')
+
+penv = env.Copy()
+penv.AppendUnique(CCFLAGS=['-pipe'])
+
+Alias('test:nothing', [
+    penv.CBICFGInfo('pipes.c'),
+    env.CBIStaticObject('last-switch.c'),
+    # sharing,
+    # cfg,
+    ])
+
+Alias('test', 'test:nothing')

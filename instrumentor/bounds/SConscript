@@ -1,0 +1,9 @@
+Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['--sampler-scheme=bounds', '--assign-across-pointer'])
+
+Alias('test:bounds', env.Expect([
+    env.CBIResolved('enum.c'),
+    ]))
+
+Alias('test', 'test:bounds')

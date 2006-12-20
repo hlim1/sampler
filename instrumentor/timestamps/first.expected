@@ -1,2 +1,2 @@
-2	simple	function-entries	first	simple.c	1	callee	0
-1	simple	function-entries	first	simple.c	6	main	0
+2	function-entries	first	simple.c	1	callee	0
+1	function-entries	first	simple.c	6	main	0

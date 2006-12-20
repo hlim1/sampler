@@ -1,0 +1,52 @@
+__timestamps_action = Action([[
+    '$RESOLVE_TIMESTAMPS', '${SOURCE.children()}', '<$SOURCE', '|',
+    'cut', '-f1,4-', '|',
+    'sed', 's:$SOURCE.dir/::g', '|',
+    'sort', '-t', '\t', '-k3', '-o', '$TARGET',
+    ]])
+
+
+def __timestamps_scan(node, env, path):
+    return [env.subst('#$RESOLVE_TIMESTAMPS')]
+
+
+__timestamps_scanner = Scanner(function=__timestamps_scan)
+
+
+__timestamps_builder = Builder(
+    action=__timestamps_action,
+    suffix='.timestamps',
+    src_suffix='.reports',
+    src_builder='CBIReports',
+    target_scanner=__timestamps_scanner,
+    )
+
+
+########################################################################
+
+
+Import('env')
+env = env.Copy()
+env.AppendUnique(
+    CCFLAGS=['--sampler-scheme=function-entries'],
+    BUILDERS={'CBITimestamps': __timestamps_builder},
+    RESOLVE_TIMESTAMPS=env.File('#tools/resolve-timestamps'),
+    )
+
+fenv = env.Copy()
+fenv.AppendUnique(CCFLAGS=['--timestamp-first'])
+
+lenv = env.Copy()
+lenv.AppendUnique(CCFLAGS=['--timestamp-last'])
+
+benv = env.Copy()
+benv.AppendUnique(CCFLAGS=['--timestamp-first', '--timestamp-last'])
+benv.Command('both.expected', ['first.expected', 'last.expected'], [['cat', '$SOURCES', '>$TARGET']])
+
+Alias('test:returns', env.Expect([
+    fenv.CBITimestamps(fenv.CBIStaticObject('first.o', 'simple.c')),
+    lenv.CBITimestamps(lenv.CBIStaticObject('last.o', 'simple.c')),
+    benv.CBITimestamps(benv.CBIStaticObject('both.o', 'simple.c')),
+    ]))
+
+Alias('test', 'test:returns')

@@ -1,0 +1,15 @@
+Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['--sampler-scheme=scalar-pairs'])
+
+#extern = env.CBIProgram(target='extern', source=['extern-callee.c', 'extern-caller.c'])
+
+args = ['once', 'upon', 'a', 'time']
+
+Alias('test:scalar-pairs', env.Expect([
+    env.CBIResolved('late-global.c'),
+    env.CBIResolved('upcase-good.c', TEST_ARGS=args),
+    env.CBIResolved('upcase-bad.c', TEST_ARGS=args, TEST_PREFIX='!', TEST_STDERR='/dev/null'),
+    ]))
+
+Alias('test', 'test:scalar-pairs')

@@ -1,0 +1,10 @@
+Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['--sampler-scheme=g-object-unref'])
+env.ParseConfig('pkg-config --cflags --libs gobject-2.0')
+
+Alias('test:g-object-unref', env.Expect([
+    env.CBIResolved('test.c', TEST_STDERR='/dev/null'),
+    ]))
+
+Alias('test', 'test:g-object-unref')

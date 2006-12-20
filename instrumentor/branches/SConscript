@@ -16,7 +16,7 @@ Alias('test:branches', env.Expect([
     env.CBIResolved('simple.c'),
     env.CBIResolved(modular),
     env.CBIResolved(sharing),
-    tenv.CBIResolved('threads.c'),
+    tenv.CBIResolved('threads.c', TEST_STDOUT='/dev/null'),
     ]))
 
 Alias('test', 'test:branches')

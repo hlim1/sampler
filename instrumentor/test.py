@@ -1,5 +1,8 @@
 import sys
 sys.path[1:1] = ['/usr/lib/scons']
+
+from SCons.Action import Action
+from SCons.Builder import Builder
 from SCons.Scanner import Scanner
 
 
@@ -82,7 +85,7 @@ def __extract_scan(node, env, path):
 __extract_scanner = Scanner(function=__extract_scan)
 
 
-__sites_info_action = [['$EXTRACT_SECTION', '.debug_site_info', '$SOURCES', '>$TARGET']]
+__sites_info_action = Action([['$EXTRACT_SECTION', '.debug_site_info', '$SOURCES', '>$TARGET']])
 
 
 __sites_info_builder = Builder(
@@ -94,7 +97,7 @@ __sites_info_builder = Builder(
     )
 
 
-__cfg_info_action = [['$EXTRACT_SECTION', '.debug_sampler_cfg', '$SOURCES', '>$TARGET']]
+__cfg_info_action = Action([['$EXTRACT_SECTION', '.debug_sampler_cfg', '$SOURCES', '>$TARGET']])
 
 
 __cfg_info_builder = Builder(
@@ -112,7 +115,23 @@ __cfg_info_builder = Builder(
 #
 
 
-__reports_action = [['env', 'SAMPLER_SPARSITY=1', 'SAMPLER_FILE=$TARGET', '$SOURCE', '>/dev/null']]
+def __var_test_stdout(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
+    if env['TEST_STDOUT']:
+        return '>$TEST_STDOUT'
+    else:
+        return []
+
+
+def __var_test_stderr(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
+    if env['TEST_STDERR']:
+        return '2>$TEST_STDERR'
+    else:
+        return []
+
+
+__reports_action = Action([['{', '$TEST_PREFIX', 'env', 'SAMPLER_SPARSITY=1', 'SAMPLER_FILE=$TARGET', '$SOURCE', '$TEST_ARGS', ';', '}', '$_TEST_STDOUT', '$_TEST_STDERR']])
 
 
 __reports_builder = Builder(
@@ -123,12 +142,12 @@ __reports_builder = Builder(
     )
 
 
-__resolved_action = [[
+__resolved_action = Action([[
     '$RESOLVE_SAMPLES', '${SOURCE.children()}', '<$SOURCE', '|',
     'cut', '-f1,3-', '|',
     'sed', 's:$SOURCE.dir/::g', '|',
     'sort', '-t', '\t', '-o', '$TARGET',
-    ]]
+    ]])
 
 
 def __resolved_scan(node, env, path):
@@ -169,7 +188,6 @@ __expect_scanner = Scanner(function=__expect_scan)
 __expect_builder = Builder(
     action=__expect_action,
     suffix='.passed',
-    src_suffix='.reports',
     target_scanner=__expect_scanner,
     single_source=True,
     )
@@ -197,6 +215,12 @@ def generate(env):
         'CBIResolved': __resolved_builder,
         'Expect': __expect_builder,
         },
+
+        TEST_PREFIX=[],
+        TEST_STDOUT=[],
+        TEST_STDERR=[],
+        _TEST_STDOUT='${_concat(">", TEST_STDOUT, "", __env__)}',
+        _TEST_STDERR='${_concat("2>", TEST_STDERR, "", __env__)}',
         )
 
 

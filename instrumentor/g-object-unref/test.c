@@ -64,7 +64,7 @@ test_get_type()
 
 
 int
-main (int argc, char *argv[])
+main (int argc __attribute((unused)), char *argv[] __attribute((unused)))
 {
   Test *object;
   

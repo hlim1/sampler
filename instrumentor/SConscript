@@ -80,6 +80,15 @@ Default('main')
 #  regression test subdirs
 #
 
-SConscript(dirs=['branches', 'nothing'], exports='env')
-
-# todo: various regression test subdirs
+SConscript(dirs=[
+    'balance',
+    'bounds',
+    'branches',
+    'function-entries',
+    'g-object-unref',
+    'nothing',
+    'returns',
+    'scalar-pairs',
+    'timestamps',
+    ],
+           exports='env')

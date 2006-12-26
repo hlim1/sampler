@@ -42,17 +42,3 @@ Default(env.Template('as.in', varlist=['as', 'objcopy']))
 Default(env.Template('cc1.in', varlist=['cpp0', 'cc1']))
 Default(env.Template('sampler-cc-here.in', varlist=['gcc']))
 Default(env.Template('sampler-cc', varlist=['PACKAGE', 'prefix', 'exec_prefix', 'libdir', 'pkglibdir', 'driverdir', 'gcc']))
-
-
-########################################################################
-
-
-def relink(target, source):
-    if lexists(target): unlink(target)
-    symlink(source, target)
-
-def makeLinks(target, source, env):
-    relink('driver/main', '../instrumentor/main')
-    relink('driver/sampler', '../lib')
-
-Default(env.Command('stamp-links', [], [makeLinks, Touch('$TARGET')]))

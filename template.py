@@ -15,9 +15,9 @@ def __instantiate_exec(target, source, env):
     instantiate(str(source[0]), str(target[0]), **keywords)
 
 def __instantiate_show(target, source, env):
-    return 'instantiate "%s" from "%s"' % (target[0], source[0])
+    return 'instantiate "%s" as "%s"' % (source[0], target[0])
 
-__instantiate = Action(__instantiate_exec, strfunction=__instantiate_show)
+__instantiate = Action(__instantiate_exec, __instantiate_show)
 
 
 def __chmod_copy_exec(target, source, env):
@@ -26,9 +26,9 @@ def __chmod_copy_exec(target, source, env):
     env.Execute(Chmod(target, mode))
 
 def __chmod_copy_show(target, source, env):
-    return 'copy file mode to "%s" from "%s"' % (target[0], source[0])
+    return 'copy file mode from "%s" to "%s"' % (source[0], target[0])
 
-__chmod_copy = Action(__chmod_copy_exec, strfunction=__chmod_copy_show)
+__chmod_copy = Action(__chmod_copy_exec, __chmod_copy_show)
 
 
 def __generator(source, target, env, for_signature):

@@ -31,24 +31,14 @@ $(libcommon) $(libgraph): $(force)
 cfg := /usr/lib/sampler/sites/usr/lib/sampler/wrapped/usr/bin/evolution.cfg
 sites := evolution-sites.txt
 
-#cfg := tiny.cfg
-#sites := sites-list.txt
-
 sampler_cc := $(top_builddir)/instrumentor/driver/sampler-cc-here
-nothing := $(top_builddir)/instrumentor/nothing/main
 
 test: order-sites $(cfg)
 	./$^ <$(sites)
 
 MOSTLYCLEANFILES += *.cfg
 
-tiny.cfg: tiny.o
-	$(top_srcdir)/tools/extract-section .debug_sampler_cfg $< >$@
-
-tiny.o: tiny.c $(sampler_cc) $(nothing)
-	$(sampler_cc) nothing -c $<
-
-$(sampler_cc) $(nothing): force
+$(sampler_cc): force
 	$(MAKE) -C $(@D) $(@F)
 
 .DELETE_ON_ERROR:

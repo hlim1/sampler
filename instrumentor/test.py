@@ -3,7 +3,13 @@ sys.path[1:1] = ['/usr/lib/scons']
 
 from SCons.Action import Action
 from SCons.Builder import Builder
+from SCons.Defaults import CScan
 from SCons.Scanner import Scanner
+
+from filecmp import cmp
+from itertools import chain, ifilter, imap
+
+import re
 
 
 ########################################################################
@@ -12,19 +18,36 @@ from SCons.Scanner import Scanner
 #
 
 
+__scheme_flag = re.compile('^--sampler-scheme=([-a-z]+)$')
+__random_flag = re.compile('^--sampler-random=([a-z]+)$')
+
+
+__driver_deps = ['#driver/sampler-cc-here', '#driver/as', '#driver/cc1', '#driver/sampler-specs', '#instrumentor/main']
+
+
 def __sampler_cc_scan(node, env, path):
-    return [
-        env['CC'],
-        env.File('#instrumentor/main'),
-        ]
+    # todo: dependencies on headers under '#lib'
+    return map(env.File, __driver_deps)
+
+
+def __sampler_ld_scan(node, env, path):
+    tdir = {True: 'yes', False: 'no'}['-pthread' in env['LINKFLAGS']]
+    libs = ['early', 'late', 'random-online']
+    libs = ( 'threads/%s/lib%s' % (tdir, lib) for lib in libs )
+    libs = chain(['schemes/libschemes'], libs)
+    libs = ( '#lib/%s.a' % lib for lib in libs )
+
+    deps = chain(__driver_deps, libs)
+    return map(env.File, deps)
 
 
 __sampler_cc_scanner = Scanner(function=__sampler_cc_scan)
+__sampler_ld_scanner = Scanner(function=__sampler_ld_scan)
 
 
 ########################################################################
 #
-#  static binaries
+#  static objects and programs
 #
 
 
@@ -43,13 +66,13 @@ __program_builder = Builder(
     suffix='$PROGSUFFIX',
     src_suffix='$OBJSUFFIX',
     src_builder='CBIStaticObject',
-    target_scanner=__sampler_cc_scanner,
+    target_scanner=__sampler_ld_scanner,
     )
 
 
 ########################################################################
 #
-#  shared binaries
+#  shared objects and libraries
 #
 
 
@@ -68,7 +91,7 @@ __shared_library_builder = Builder(
     suffix='$SHLIBSUFFIX',
     src_suffix='$SHOBJSUFFIX',
     src_builder='CBISharedObject',
-    target_scanner=__sampler_cc_scanner,
+    target_scanner=__sampler_ld_scanner,
     )
 
 
@@ -85,24 +108,12 @@ def __extract_scan(node, env, path):
 __extract_scanner = Scanner(function=__extract_scan)
 
 
-__sites_info_action = Action([['$EXTRACT_SECTION', '.debug_site_info', '$SOURCES', '>$TARGET']])
+__sites_action = Action([['$EXTRACT_SECTION', '.debug_site_info', '$SOURCES', '>$TARGET']])
 
 
-__sites_info_builder = Builder(
-    action=__sites_info_action,
+__sites_builder = Builder(
+    action=__sites_action,
     suffix='.sites',
-    src_suffix='$PROGSUFFIX',
-    src_builder='CBIProgram',
-    target_scanner=__extract_scanner,
-    )
-
-
-__cfg_info_action = Action([['$EXTRACT_SECTION', '.debug_sampler_cfg', '$SOURCES', '>$TARGET']])
-
-
-__cfg_info_builder = Builder(
-    action=__cfg_info_action,
-    suffix='.cfg',
     src_suffix='$PROGSUFFIX',
     src_builder='CBIProgram',
     target_scanner=__extract_scanner,
@@ -111,7 +122,7 @@ __cfg_info_builder = Builder(
 
 ########################################################################
 #
-#  feedback report creation and checking
+#  feedback report creation
 #
 
 
@@ -142,7 +153,13 @@ __reports_builder = Builder(
     )
 
 
-__resolved_action = Action([[
+########################################################################
+#
+#  samples resolving
+#
+
+
+__resolved_samples_action = Action([[
     '$RESOLVE_SAMPLES', '${SOURCE.children()}', '<$SOURCE', '|',
     'cut', '-f1,3-', '|',
     'sed', 's:$SOURCE.dir/::g', '|',
@@ -150,19 +167,77 @@ __resolved_action = Action([[
     ]])
 
 
-def __resolved_scan(node, env, path):
+def __resolved_samples_scan(node, env, path):
     return [env.subst('#$RESOLVE_SAMPLES')]
 
 
-__resolved_scanner = Scanner(function=__resolved_scan)
+__resolved_samples_scanner = Scanner(function=__resolved_samples_scan)
 
 
-__resolved_builder = Builder(
-    action=__resolved_action,
+__resolved_samples_builder = Builder(
+    action=__resolved_samples_action,
     suffix='.resolved',
     src_suffix='.reports',
     src_builder='CBIReports',
-    target_scanner=__resolved_scanner,
+    target_scanner=__resolved_samples_scanner,
+    )
+
+
+########################################################################
+#
+#  timestamps resolving
+#
+
+
+__resolved_timestamps_action = Action([[
+    '$RESOLVE_TIMESTAMPS', '${SOURCE.children()}', '<$SOURCE', '|',
+    'cut', '-f1,4-', '|',
+    'sed', 's:$SOURCE.dir/::g', '|',
+    'sort', '-t', '\t', '-k3', '-o', '$TARGET',
+    ]])
+
+
+def __resolved_timestamps_scan(node, env, path):
+    return [env.subst('#$RESOLVE_TIMESTAMPS')]
+
+
+__resolved_timestamps_scanner = Scanner(function=__resolved_timestamps_scan)
+
+
+__resolved_timestamps_builder = Builder(
+    action=__resolved_timestamps_action,
+    suffix='.timestamps',
+    src_suffix='.reports',
+    src_builder='CBIReports',
+    target_scanner=__resolved_timestamps_scanner,
+    )
+
+
+########################################################################
+#
+#  control flow graph resolving
+#
+
+
+__resolved_cfg_action = Action([[
+    '$RESOLVE_CFG', '$SOURCE', '|',
+    'sed', 's:$SOURCE.dir/::g', '>$TARGET',
+    ]])
+
+
+def __resolved_cfg_scan(node, env, path):
+    return [env.subst('#$RESOLVE_CFG')]
+
+
+__resolved_cfg_scanner = Scanner(function=__resolved_cfg_scan)
+
+
+__resolved_cfg_builder = Builder(
+    action=__resolved_cfg_action,
+    suffix='.cfg',
+    src_suffix=['$OBJSUFFIX', '$SHOBJSUFFIX', '$LIBSUFFIX', '$SHLIBSUFFIX', '$PROGSUFFIX'],
+    src_builder='CBIStaticObject',
+    target_scanner=__resolved_cfg_scanner,
     )
 
 
@@ -172,10 +247,22 @@ __resolved_builder = Builder(
 #
 
 
-__expect_action = [
-    ['diff', '-u', '${SOURCE.base}.expected', '$SOURCE'],
-    Touch('$TARGET'),
-    ]
+def __compare_action_exec(target, source, env):
+    [source] = source
+    expected = source.target_from_source('', '.expected')
+    return not cmp(str(source), str(expected), False)
+
+
+def __compare_action_show(target, source, env):
+    [source] = source
+    expected = source.target_from_source('', '.expected')
+    return 'compare "%s" and "%s"' % (source, expected)
+
+
+__compare_action = Action(__compare_action_exec, __compare_action_show)
+
+
+__expect_action = [__compare_action, Touch('$TARGET')]
 
 
 def __expect_scan(node, env, path):
@@ -201,18 +288,21 @@ def generate(env):
 
     env.AppendUnique(
         CCFLAGS=['--relative-paths'],
-        RESOLVE_SAMPLES=env.File('#tools/resolve-samples'),
         EXTRACT_SECTION=env.File('#tools/extract-section'),
+        RESOLVE_CFG=env.File('#tools/resolve-cfg'),
+        RESOLVE_SAMPLES=env.File('#tools/resolve-samples'),
+        RESOLVE_TIMESTAMPS=env.File('#tools/resolve-timestamps'),
 
         BUILDERS={
-        'CBIStaticObject': __static_object_builder,
-        'CBISharedObject': __shared_object_builder,
         'CBIProgram': __program_builder,
-        'CBISharedLibrary': __shared_library_builder,
-        'CBISitesInfo': __sites_info_builder,
-        'CBICFGInfo': __cfg_info_builder,
         'CBIReports': __reports_builder,
-        'CBIResolved': __resolved_builder,
+        'CBIResolvedCFG': __resolved_cfg_builder,
+        'CBIResolvedSamples': __resolved_samples_builder,
+        'CBIResolvedTimestamps': __resolved_timestamps_builder,
+        'CBISharedLibrary': __shared_library_builder,
+        'CBISharedObject': __shared_object_builder,
+        'CBISites': __sites_builder,
+        'CBIStaticObject': __static_object_builder,
         'Expect': __expect_builder,
         },
 
@@ -226,6 +316,3 @@ def generate(env):
 
 def exists(env):
     return True
-
-
-# todo: tests should also depend on various additional files under '#driver', '#lib', ...

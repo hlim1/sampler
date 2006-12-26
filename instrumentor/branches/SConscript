@@ -9,14 +9,14 @@ tenv.AppendUnique(CCFLAGS=['-pthread'], LINKFLAGS=['-pthread'])
 
 plugin = env.CBISharedLibrary(target='plugin.so', source='plugin.c')
 library = env.CBISharedLibrary(target='library.so', source='library.c')
-program = env.Copy(LIBS='dl').CBIProgram(source=['sharing.c', library])
+program = env.CBIProgram(source=['sharing.c', library], LIBS='dl')
 sharing = env.CBIReports([program, library, plugin])
 
 Alias('test:branches', env.Expect([
-    env.CBIResolved('simple.c'),
-    env.CBIResolved(modular),
-    env.CBIResolved(sharing),
-    tenv.CBIResolved('threads.c', TEST_STDOUT='/dev/null'),
+    env.CBIResolvedSamples('simple.c'),
+    env.CBIResolvedSamples(modular),
+    env.CBIResolvedSamples(sharing),
+    tenv.CBIResolvedSamples('threads.c', TEST_STDOUT='/dev/null'),
     ]))
 
 Alias('test', 'test:branches')

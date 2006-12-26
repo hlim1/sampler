@@ -11,8 +11,7 @@ sources.remove('basics.ml')
 sources.remove('dotty.ml')
 sources.remove('dotty.mli')
 
-wenv = env.Copy(OCAML_WARN='Ae')
-basics = wenv.OcamlObject('basics.ml')
+basics = env.OcamlObject('basics.ml', OCAML_WARN='Ae')
 
 env.OcamlObject(sources)
 Default(env.OcamlProgram('order-sites.ml'),

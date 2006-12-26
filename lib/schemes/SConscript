@@ -1,5 +1,3 @@
-# todo: include g-object-unref scheme only if WITH_GNOME
-
 Import('env')
 env = env.Copy()
 env.AppendUnique(CCFLAGS=['-fpic'])

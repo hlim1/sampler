@@ -1,7 +1,0 @@
-*.passed
-*.passed
-*.pyc
-*.pyo
-Makefile
-Makefile.in
-SamplerConfig.py

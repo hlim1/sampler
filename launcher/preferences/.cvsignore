@@ -1,9 +1,0 @@
-*.passed
-*.pyc
-*.pyo
-*.server
-Makefile
-Makefile.in
-Paths.py
-preferences
-sampler-preferences

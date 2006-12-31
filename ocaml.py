@@ -108,8 +108,8 @@ __obj_builder = Builder(
     source_scanner=__ocamldep_scanner,
     emitter=__obj_emitter,
     action=__obj_action,
-    suffix=__obj_suffix,
     src_suffix=['.mli', '.ml'],
+    suffix=__obj_suffix,
     single_source=True,
     )
 
@@ -138,14 +138,13 @@ def __lib_emitter(target, source, env):
 __lib_action = Action([['$_OCAMLC', '-a', '$_OCAML_WARN', '$_OCAML_WARN_ERROR', '-o', '$TARGET', '$SOURCES']])
 
 
-def __lib_builder(native):
-    return Builder(
-        emitter=__lib_emitter,
-        action=__lib_action,
-        src_builder=__obj_builder,
-        src_suffix=__source_to_object[native]['.ml'],
-        suffix=__lib_suffix[native]
-        )
+__lib_builder = Builder(
+    emitter=__lib_emitter,
+    action=__lib_action,
+    src_builder=__obj_builder,
+    src_suffix='$_OCAML_CMO',
+    suffix='$_OCAML_CMA',
+    )
 
 
 ########################################################################
@@ -159,7 +158,7 @@ def __exe_depends(node, env):
     cmis = ( cmi for cmi in node.children() if cmi != source )
     cmos = ( cmi.target_from_source('', obj_suffix) for cmi in cmis )
     cmos = ( env.FindFile(str(cmo), '#.') for cmo in cmos )
-    cmos = filter(None, cmos)
+    cmos = ifilter(None, cmos)
     if env['OCAML_NATIVE']:
         deps = ( (cmo, cmo.target_from_source('', '.o')) for cmo in cmos )
         return chain(*deps)
@@ -200,14 +199,8 @@ def __exe_target_scan(node, env, path):
 
 def __exe_path_function(env, directory, target=None, source=None):
     __pychecker__ = 'no-argsused'
-    stdlib = env['OCAML_STDLIB']
-    if stdlib is None:
-        ocamlc = env['OCAMLC']
-        ocamlc = env.WhereIs(ocamlc)
-        prefix = dirname(dirname(ocamlc))
-        stdlib = '%s/lib/ocaml' % prefix
-
-    return tuple(env['OCAML_PATH'] + [stdlib])
+    [paths] = env.subst_list(['$OCAML_PATH', '$OCAML_STDLIB'])
+    return tuple(paths)
 
 
 __exe_target_scanner = Scanner(
@@ -221,14 +214,14 @@ __exe_target_scanner = Scanner(
 __exe_action = Action([['$_OCAMLC', '$_OCAML_PATH', '-o', '$TARGET', '$_OCAML_LIBS', '$_OCAML_LINK_ORDER']])
 
 
-def __exe_builder(native):
-    return Builder(
-        target_scanner=__exe_target_scanner,
-        source_scanner=__exe_scanner,
-        action=__exe_action,
-        src_suffix=__source_to_object[native]['.ml'],
-        src_builder=__obj_builder,
-        )
+__exe_builder = Builder(
+    target_scanner=__exe_target_scanner,
+    source_scanner=__exe_scanner,
+    action=__exe_action,
+    src_builder=__obj_builder,
+    src_suffix='$_OCAML_CMO',
+    suffix='$PROGSUFFIX',
+    )
 
 
 ########################################################################
@@ -236,14 +229,20 @@ def __exe_builder(native):
 
 def __var_ocamlc(target, source, env, for_signature):
     __pychecker__ = 'no-argsused'
-    slots = {False: 'OCAMLC', True: 'OCAMLOPT'}
-    slot = slots[env['OCAML_NATIVE']]
-    return env[slot]
+    compilers = {False: '$OCAMLC', True: '$OCAMLOPT'}
+    return compilers[env['OCAML_NATIVE']]
 
 
 def __var_ocaml_cma(target, source, env, for_signature):
     __pychecker__ = 'no-argsused'
-    return __lib_suffix[env['OCAML_NATIVE']]
+    native = env['OCAML_NATIVE']
+    return __lib_suffix[native]
+
+
+def __var_ocaml_cmo(target, source, env, for_signature):
+    __pychecker__ = 'no-argsused'
+    native = env['OCAML_NATIVE']
+    return __source_to_object[native]['.ml']
 
 
 def __var_ocaml_debug(target, source, env, for_signature):
@@ -255,7 +254,7 @@ def __var_ocaml_debug(target, source, env, for_signature):
 def __var_ocaml_dtypes(target, source, env, for_signature):
     __pychecker__ = 'no-argsused'
     if env['OCAML_DTYPES']:
-        return ['$(', '-dtypes', '$)']
+        return '-dtypes'
 
 
 def __var_ocaml_link_order(target, source, env, for_signature):
@@ -279,22 +278,12 @@ def __var_ocaml_link_order(target, source, env, for_signature):
     return __link_order_expand(source, env, set([]))
 
 
-def __var_ocaml_pp(target, source, env, for_signature):
-    __pychecker__ = 'no-argsused'
-    if env['OCAML_PP']:
-        return ['-pp', env['OCAML_PP']]
-
-
-def __var_ocaml_warn(target, source, env, for_signature):
-    __pychecker__ = 'no-argsused'
-    if env['OCAML_WARN']:
-        return ['$(', '-w', env['OCAML_WARN'], '$)']
-
-
-def __var_ocaml_warn_error(target, source, env, for_signature):
-    __pychecker__ = 'no-argsused'
-    if env['OCAML_WARN_ERROR']:
-        return ['$(', '-warn-error', env['OCAML_WARN_ERROR'], '$)']
+def __var_ocaml_stdlib(target, source, env, for_signature):
+    ocamlc = env['OCAMLC']
+    ocamlc = env.WhereIs(ocamlc)
+    prefix = dirname(dirname(ocamlc))
+    stdlib = '%s/lib/ocaml' % prefix
+    return stdlib
 
 
 def generate(env):
@@ -308,26 +297,27 @@ def generate(env):
         OCAML_NATIVE=False,
         OCAML_PATH=[],
         OCAML_PP='',
-        OCAML_STDLIB=None,
+        OCAML_STDLIB=__var_ocaml_stdlib,
         OCAML_WARN='',
         OCAML_WARN_ERROR='',
         _OCAMLC=__var_ocamlc,
         _OCAML_CMA=__var_ocaml_cma,
+        _OCAML_CMO=__var_ocaml_cmo,
         _OCAML_DEBUG=__var_ocaml_debug,
         _OCAML_DTYPES=__var_ocaml_dtypes,
         _OCAML_LIBS='${_concat("", OCAML_LIBS, _OCAML_CMA, __env__)}',
         _OCAML_LINK_ORDER=__var_ocaml_link_order,
         _OCAML_PATH='${_concat("-I ", OCAML_PATH, "", __env__)}',
-        _OCAML_PP=__var_ocaml_pp,
-        _OCAML_WARN=__var_ocaml_warn,
-        _OCAML_WARN_ERROR=__var_ocaml_warn_error,
+        _OCAML_PP='${_concat("-pp ", OCAML_PP, "", __env__)}',
+        _OCAML_WARN='${_concat("-w ", OCAML_WARN, "", __env__)}',
+        _OCAML_WARN_ERROR='${_concat("-warn-error ", OCAML_WARN_ERROR, "", __env__)}',
 
         SCANNERS=[__ocamldep_scanner],
 
         BUILDERS={
         'OcamlObject': __obj_builder,
-        'OcamlLibrary': __lib_builder(env['OCAML_NATIVE']),
-        'OcamlProgram': __exe_builder(env['OCAML_NATIVE']),
+        'OcamlLibrary': __lib_builder,
+        'OcamlProgram': __exe_builder,
         },
         )
 

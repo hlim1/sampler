@@ -1,6 +1,9 @@
 import os
+import stat
+
 from os.path import exists
 from socket import getfqdn
+from shutil import copy2
 
 from SCons.Errors import UserError
 
@@ -41,8 +44,10 @@ def validate_cil_path(key, value, env):
 
 opts = Options(None, ARGUMENTS)
 opts.AddOptions(
+    BoolOption('GCONF_SCHEMAS_INSTALL', 'install GConf schemas', True),
     BoolOption('OCAML_NATIVE', 'compile OCaml to native code', False),
     PathOption('prefix', 'install in the given directory', '/usr/local'),
+    PathOption('DESTDIR', 'extra installation directory prefix', '/'),
     ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
     )
 
@@ -62,24 +67,41 @@ env = env.Copy(
     tools=['default', 'ocaml', 'template', 'test'], toolpath=['.'],
     CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
+    PERL=env.WhereIs('perl'),
+
+    PACKAGE='sampler',
+    PACKAGE_VERSION=version,
     VERSION=version,
     version=version,
-    prefix='/usr',
+    deployment_learn_more_url='http://www.cs.wisc.edu/cbi/learn-more/',
 
     # various derived paths
+    applicationsdir='$datadir/applications',
     bindir='$prefix/bin',
     commondir='$pkgdatadir/common',
     datadir='$prefix/share',
+    docdir='$datadir/sampler/doc',
     driverdir='$pkglibdir/driver',
     exec_prefix='$prefix',
     first_timedir='$pkgdatadir/first-time',
     libdir='$prefix/lib',
+    localstatedir='$prefix/var',
+    omfdir='$datadir/omf/sampler',
     pixmapsdir='$pkgdatadir/pixmaps',
     pkgdatadir='$datadir/sampler',
     pkglibdir='$libdir/sampler',
     preferencesdir='$pkgdatadir/preferences',
+    samplerdir='$driverdir/sampler',
+    schemadir='$sysconfdir/gconf/schemas',
+    schemesdir='$samplerdir/schemes',
+    serversdir='$libdir/bonobo/servers',
+    sysconfdir='$prefix/etc',
+    threadsdir='$samplerdir/threads',
+    toolsdir='$pkglibdir/tools',
     traydir='$pkgdatadir/tray',
+    traylibdir='$pkglibdir/tray',
     wrapperdir='$pkgdatadir/wrapper',
+    wwwdir='$localstatedir/www',
     )
 
 # needed for some pychecker tests
@@ -107,6 +129,29 @@ SetOption('max_drift', 1)
 
 ########################################################################
 #
+#  installation
+#
+
+
+def install(dest, source, env):
+    copy2(source, dest)
+    mode = stat.S_IWUSR | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
+    if os.stat(source).st_mode & stat.S_IXUSR:
+        mode |= stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
+    os.chmod(dest, mode)
+    # todo: parent directories have wrong permissions
+
+env['INSTALL'] = install
+
+
+for dir in ['sites', 'wrapped']:
+    target = env.Dir('$DESTDIR$pkglibdir/' + dir)
+    env.Command(target, None, Mkdir('$TARGET'))
+    Alias('install', target)
+
+
+########################################################################
+#
 #  subsidiary scons scripts
 #
 
@@ -119,4 +164,5 @@ SConscript(dirs=[
     'lib',
     'ocaml',
     'tools',
+    'www',
     ])

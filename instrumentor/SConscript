@@ -2,7 +2,7 @@ from glob import glob
 from itertools import chain, ifilter, imap
 import re
 
-from utils import instantiate, literal, read_pipe
+from utils import instantiate, read_pipe
 
 
 Import('env')
@@ -65,14 +65,16 @@ libraries_ml = env.Command('libraries.ml', ['libraries.ml.in',
 
 env.OcamlObject([version_ml, libraries_ml] + glob('*.ml') + glob('*.mli'))
 
-env.OcamlProgram('main.ml')
+main = env.OcamlProgram('main.ml')
 env.OcamlProgram('cfgTest.ml')
 env.OcamlProgram('cfg-to-dot.ml')
 env.OcamlProgram('checker.ml')
 env.OcamlProgram('dump.ml')
 env.OcamlProgram('loopless.ml')
 
-Default('main')
+Default(main)
+
+Alias('install', env.Install('$DESTDIR$driverdir', main))
 
 
 #########################################################################

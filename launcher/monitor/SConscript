@@ -38,3 +38,5 @@ wrap = env.Command('monitor-wrap.c', ['monitor.override', defs], "pygtk-codegen-
 mod = env.SharedObject('monitor-module.c')
 lib = wenv.SharedLibrary('monitor', ['monitor.c', wrap, mod], SHLIBPREFIX='')
 Default(lib)
+
+Alias('install', env.Install('$DESTDIR$traylibdir', lib))

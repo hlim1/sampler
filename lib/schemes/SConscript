@@ -24,3 +24,26 @@ lib = env.Library('libschemes.a', [
     ])
 
 Default(lib)
+
+Alias('install', env.Install('$DESTDIR$schemesdir', [
+    lib,
+    'bounds-unit.h',
+    'bounds.h',
+    'branches-unit.h',
+    'branches.h',
+    'float-kinds-unit.h',
+    'float-kinds.h',
+    'function-entries-unit.h',
+    'function-entries.h',
+    'g-object-unref-unit.h',
+    'g-object-unref.h',
+    'returns-unit.h',
+    'returns.h',
+    'scalar-pairs-unit.h',
+    'scalar-pairs.h',
+    'tuple-1.h',
+    'tuple-2.h',
+    'tuple-3.h',
+    'tuple-4.h',
+    'tuple-9.h',
+    ]))

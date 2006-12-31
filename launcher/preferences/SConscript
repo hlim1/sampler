@@ -3,6 +3,21 @@ env = env.Copy(preferencesdir=env.subst('$preferencesdir'))
 
 Default(env.Template('Paths.py.in', varlist=['preferencesdir']))
 pythons = ['AppFinder.py', 'Application.py', 'AppModel.py', 'Main.py', 'Paths.py', 'PreferencesDialog.py']
+compiled = env.PythonBytecodeOpt(pythons)
+
+prefs = env.Template('sampler-preferences.in', varlist=['preferencesdir', 'commondir'])
+Default(prefs)
+
+desktop = env.File('sampler-preferences.desktop')
 
 testPythons(env, pythons)
-Alias('test', env.TestDesktop('sampler-preferences.desktop'))
+Alias('test', [
+    env.TestDesktop(desktop),
+    env.TestXML('preferences.glade'),
+    ])
+
+Alias('install', [
+    env.Install('$DESTDIR$applicationsdir', desktop),
+    env.Install('$DESTDIR$bindir', prefs),
+    env.Install('$DESTDIR$preferencesdir', [compiled, 'preferences.glade']),
+    ])

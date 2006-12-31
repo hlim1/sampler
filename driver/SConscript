@@ -27,7 +27,7 @@ conf = env.Configure(custom_tests={'CheckProgName': checkProgName})
 cpp0 = conf.CheckProgName('cpp0')
 cc1 = conf.CheckProgName('cc1')
 as = conf.CheckProgName('as')
-objcopy = env.WhereIs('objcopy'),
+objcopy = env.WhereIs('objcopy')
 conf.Finish()
 del conf
 
@@ -38,7 +38,14 @@ env = env.Copy(
     objcopy=objcopy,
     )
 
-Default(env.Template('as.in', varlist=['as', 'objcopy']))
-Default(env.Template('cc1.in', varlist=['cpp0', 'cc1']))
-Default(env.Template('sampler-cc-here.in', varlist=['gcc']))
-Default(env.Template('sampler-cc', varlist=['PACKAGE', 'prefix', 'exec_prefix', 'libdir', 'pkglibdir', 'driverdir', 'gcc']))
+as = env.Template('as.in', varlist=['as', 'objcopy'])
+cc1 = env.Template('cc1.in', varlist=['cpp0', 'cc1'])
+cc = env.Template('sampler-cc', varlist=['PACKAGE', 'prefix', 'exec_prefix', 'libdir', 'pkglibdir', 'driverdir', 'gcc'])
+here = env.Template('sampler-cc-here.in', varlist=['gcc'])
+
+Default([as, cc1, cc, here])
+
+Alias('install', [
+    env.Install('$DESTDIR$bindir', cc),
+    env.Install('$DESTDIR$driverdir', [as, cc1, 'sampler-specs']),
+    ])

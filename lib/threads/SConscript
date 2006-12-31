@@ -1,25 +1,44 @@
-def parentSource(env, name):
-    return env.StaticObject(name, '../%s.c' % name)
-
-def randomLibrary(env, generator):
-    name = 'random-' + generator
-    obj = parentSource(env, name)
-    lib = env.Library(name, obj)
-    env.Default(lib)
-
-def threadLibs(env):
+def threadLibs(env, subdir):
     env.AppendUnique(CPPPATH=['.'])
     env.AppendUnique(CCFLAGS=['-ffast-math', '-fpic'])
 
-    parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose']
-    lateObjs = [ parentSource(env, part) for part in parts ]
-    env.Default(env.Library('late', lateObjs))
-    env.Default(env.Library('early', 'hijack.c'))
+    def parentSource(name):
+        return env.StaticObject(name, '../%s.c' % name)
 
-    randomLibrary(env, 'fixed')
-    randomLibrary(env, 'offline')
-    randomLibrary(env, 'online')
+    def inst(target):
+        instdir = '$DESTDIR$threadsdir/%s' % subdir
+        Alias('install', env.Install(instdir, target))
+
+    def lib(target, sources):
+        target = env.Library(target, sources)
+        Default(target)
+        inst(target)
+
+    parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose']
+    lateObjs = map(parentSource, parts)
+    lib('late', lateObjs)
+    lib('early', 'hijack.c')
+
+    for when in ['fixed', 'offline', 'online']:
+        name = 'random-' + when
+        obj = parentSource(name)
+        lib(name, obj)
+
+    inst('lock.h')
+    inst('once.h')
+
+    
 
 
 Import('env')
+
+Alias('install', env.Install('$DESTDIR$threadsdir', [
+    'countdown.h',
+    'local.h',
+    'random-fixed.h',
+    'random-offline.h',
+    'random-offline-size.h',
+    'random-online.h',
+    ]))
+
 SConscript(dirs=['no', 'yes'], exports=['env', 'threadLibs'])

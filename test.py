@@ -1,3 +1,5 @@
+import sys
+sys.path[1:1] = ['/usr/lib/scons']
 from SCons.Builder import Builder
 from SCons.Defaults import Touch
 

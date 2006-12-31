@@ -3,13 +3,12 @@ sys.path[1:1] = ['/usr/lib/scons']
 
 from SCons.Action import Action
 from SCons.Builder import Builder
-from SCons.Defaults import CScan
+from SCons.Defaults import CScan, Touch
 from SCons.Scanner import Scanner
 
-from filecmp import cmp
 from itertools import chain, ifilter, imap
 
-import re
+import filecmp
 
 
 ########################################################################
@@ -18,19 +17,17 @@ import re
 #
 
 
-__scheme_flag = re.compile('^--sampler-scheme=([-a-z]+)$')
-__random_flag = re.compile('^--sampler-random=([a-z]+)$')
-
-
 __driver_deps = ['#driver/sampler-cc-here', '#driver/as', '#driver/cc1', '#driver/sampler-specs', '#instrumentor/main']
 
 
 def __sampler_cc_scan(node, env, path):
+    __pychecker__ = 'no-argsused'
     # todo: dependencies on headers under '#lib'
     return map(env.File, __driver_deps)
 
 
 def __sampler_ld_scan(node, env, path):
+    __pychecker__ = 'no-argsused'
     tdir = {True: 'yes', False: 'no'}['-pthread' in env['LINKFLAGS']]
     libs = ['early', 'late', 'random-online']
     libs = ( 'threads/%s/lib%s' % (tdir, lib) for lib in libs )
@@ -102,6 +99,7 @@ __shared_library_builder = Builder(
 
 
 def __extract_scan(node, env, path):
+    __pychecker__ = 'no-argsused'
     return [env.File('#$EXTRACT_SECTION')]
 
 
@@ -130,16 +128,12 @@ def __var_test_stdout(target, source, env, for_signature):
     __pychecker__ = 'no-argsused'
     if env['TEST_STDOUT']:
         return '>$TEST_STDOUT'
-    else:
-        return []
 
 
 def __var_test_stderr(target, source, env, for_signature):
     __pychecker__ = 'no-argsused'
     if env['TEST_STDERR']:
         return '2>$TEST_STDERR'
-    else:
-        return []
 
 
 __reports_action = Action([['{', '$TEST_PREFIX', 'env', 'SAMPLER_SPARSITY=1', 'SAMPLER_FILE=$TARGET', '$SOURCE', '$TEST_ARGS', ';', '}', '$_TEST_STDOUT', '$_TEST_STDERR']])
@@ -168,6 +162,7 @@ __resolved_samples_action = Action([[
 
 
 def __resolved_samples_scan(node, env, path):
+    __pychecker__ = 'no-argsused'
     return [env.subst('#$RESOLVE_SAMPLES')]
 
 
@@ -198,6 +193,7 @@ __resolved_timestamps_action = Action([[
 
 
 def __resolved_timestamps_scan(node, env, path):
+    __pychecker__ = 'no-argsused'
     return [env.subst('#$RESOLVE_TIMESTAMPS')]
 
 
@@ -226,6 +222,7 @@ __resolved_cfg_action = Action([[
 
 
 def __resolved_cfg_scan(node, env, path):
+    __pychecker__ = 'no-argsused'
     return [env.subst('#$RESOLVE_CFG')]
 
 
@@ -248,12 +245,14 @@ __resolved_cfg_builder = Builder(
 
 
 def __compare_action_exec(target, source, env):
+    __pychecker__ = 'no-argsused'
     [source] = source
     expected = source.target_from_source('', '.expected')
-    return not cmp(str(source), str(expected), False)
+    return not filecmp.cmp(str(source), str(expected), False)
 
 
 def __compare_action_show(target, source, env):
+    __pychecker__ = 'no-argsused'
     [source] = source
     expected = source.target_from_source('', '.expected')
     return 'compare "%s" and "%s"' % (source, expected)
@@ -266,6 +265,7 @@ __expect_action = [__compare_action, Touch('$TARGET')]
 
 
 def __expect_scan(node, env, path):
+    __pychecker__ = 'no-argsused'
     return [node.target_from_source('', '.expected')]
 
 

@@ -84,7 +84,7 @@
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="copyright" translatable="yes">Copyright © 2003‒2004 The Regents of the University of California
-Copyright © 2005‒2006 Benjamin R. Liblit</property>
+Copyright © 2005‒2007 Benjamin R. Liblit</property>
   <property name="comments" translatable="yes">View and set bug isolation preferences</property>
   <property name="authors">Ben Liblit &lt;liblit@cs.wisc.edu&gt;</property>
   <signal name="response" handler="on_dialog_response" last_modification_time="Wed, 03 Sep 2003 06:38:42 GMT"/>

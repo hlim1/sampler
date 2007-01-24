@@ -1,0 +1,15 @@
+#!/usr/bin/python -O
+
+import sys
+sys.path.append('../common')
+
+import Paths
+Paths.home = '.'
+Paths.glade = './preferences.glade'
+
+import os.path
+import Config
+Config.pixmapsdir = os.path.join(os.path.dirname(os.path.realpath(sys.argv[0])), '..', 'pixmaps')
+
+import Main
+Main.main(1)

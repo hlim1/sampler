@@ -8,7 +8,7 @@ query_sql :=					\
 	recent-crashes.sql			\
 	reports-per-day-app.sql			\
 	reports-per-day.sql			\
-	reports-per-month.sql		\
+	reports-per-month.sql			\
 	reports-per-month-app.sql		\
 	reports-per-week-app.sql		\
 	reports-per-week.sql

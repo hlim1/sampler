@@ -56,6 +56,7 @@ domainname = getfqdn().split('.', 1)[1]
 if domainname == 'cs.wisc.edu':
     print 'adding special tweaks for', domainname
     env.AppendENVPath('PATH', '/unsup/ocaml/bin')
+    env['PKG_CONFIG_PATH'] = '/usr/lib/pkgconfig'
 
 
 ########################################################################
@@ -74,6 +75,8 @@ env = env.Copy(
     VERSION=version,
     version=version,
     deployment_learn_more_url='http://www.cs.wisc.edu/cbi/learn-more/',
+
+    pkg_config='PKG_CONFIG_PATH=$PKG_CONFIG_PATH pkg-config',
 
     # various derived paths
     applicationsdir='$datadir/applications',

@@ -2,7 +2,7 @@
 
 SELECT
     *,
-    round(crash / good::float * 1000) / 10 as crash_rate
+    CASE WHEN good > 0 THEN round(crash / good::float * 1000) / 10 ELSE NULL END AS crash_rate
 FROM (
     SELECT
 	application_name,

@@ -11,7 +11,7 @@ def distroName(context):
     (status, name) = context.TryAction(action)
     if status:
         name = name.rstrip()
-        name = {'FedoraCore': 'fedora'}[name]
+        name = {'FedoraCore': 'fedora', 'CentOS': 'centos'}[name]
         context.env['DISTRO_NAME'] = name
         context.Result(name)
     else:

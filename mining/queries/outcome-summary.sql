@@ -2,7 +2,7 @@
 
 SELECT
     *,
-    crash / good::float as crash_rate
+    crash / count::float as crash_rate
 FROM (
     SELECT
 	application_name,

@@ -10,3 +10,7 @@ env.Append(ENV={'SAMPLER_SPARSITY': '1'})
 env.Command('countdown-1-1', precompute, [['$SOURCES', '$TARGET']])
 
 Alias('install', env.Install('$DESTDIR$toolsdir', precompute))
+
+
+Import('dist')
+dist('precompute.c')

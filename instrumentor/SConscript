@@ -17,7 +17,7 @@ env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
 #
 
 
-version_ml = env.Template('version.ml.in', varlist=['VERSION'])
+[version_ml] = env.Template('version.ml.in', varlist=['VERSION'])
 
 
 ########################################################################
@@ -50,11 +50,11 @@ def libfuncs(target, source, env):
                 LIBRARY_COUNT=len(symbols))
 
 
-libraries_ml = env.Command('libraries.ml', ['libraries.ml.in',
-                                            '/usr/lib/libc_nonshared.a',
-                                            '/lib/libc.so.6',
-                                            '/lib/libm.so.6'],
-                           libfuncs)
+[libraries_ml] = env.Command('libraries.ml', ['libraries.ml.in',
+                                              '/usr/lib/libc_nonshared.a',
+                                              '/lib/libc.so.6',
+                                              '/lib/libm.so.6'],
+                             libfuncs)
 
 
 ########################################################################
@@ -63,7 +63,8 @@ libraries_ml = env.Command('libraries.ml', ['libraries.ml.in',
 #
 
 
-env.OcamlObject([version_ml, libraries_ml] + glob('*.ml') + glob('*.mli'))
+sources = [version_ml, libraries_ml] + glob('*.ml') + glob('*.mli')
+env.OcamlObject(sources)
 
 main = env.OcamlProgram('main.ml')
 env.OcamlProgram('cfgTest.ml')
@@ -75,6 +76,24 @@ env.OcamlProgram('loopless.ml')
 Default(main)
 
 Alias('install', env.Install('$DESTDIR$driverdir', main))
+
+
+########################################################################
+#
+#  source distribution
+#
+
+
+Import('dist')
+
+sources = set(sources)
+for generated in ['libraries.ml', 'version.ml']:
+    sources.discard(generated)
+    sources.add(generated + '.in')
+
+dist(list(sources))
+dist('SConscript')
+
 
 
 #########################################################################

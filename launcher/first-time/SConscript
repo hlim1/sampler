@@ -2,7 +2,12 @@ Import('env', 'testPythons')
 env = env.Copy(first_timedir=env.subst('$first_timedir'))
 
 Default(env.Template('Paths.py.in', varlist=['first_timedir']))
-pythons = ['FirstTime.py', 'Main.py', 'Paths.py']
+pythons = ['FirstTime.py', 'Main.py']
+
+Import('dist')
+dist(['SConscript', pythons, 'Paths.py.in'])
+
+pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
 
 glade = env.Template('first-time.glade.in', varlist=['deployment_learn_more_url'])

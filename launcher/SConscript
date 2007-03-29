@@ -1,4 +1,5 @@
 Import('env')
+
 env = env.Copy(tools=['python'], toolpath=['.'])
 
 common = env.Dir('#launcher/common')
@@ -31,10 +32,16 @@ conf = env.Configure(custom_tests={'GConfSource': gconfSource})
 conf.GConfSource()
 conf.Finish()
 
+
 installed = env.Install('$DESTDIR$schemadir', 'sampler.schemas')
 Alias('install', installed)
 if env['GCONF_SCHEMAS_INSTALL']:
     env.AddPostAction(installed, [['env', 'GCONF_CONFIG_SOURCE=$GCONF_SCHEMA_CONFIG_SOURCE', 'gconftool-2', '--makefile-install-rule', installed, '>/dev/null']])
+
+
+Import('dist')
+dist('SConscript')
+
 
 SConscript(dirs=[
     'common',

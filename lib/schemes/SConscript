@@ -4,10 +4,10 @@ env.AppendUnique(CCFLAGS=['-fpic'])
 
 genv = env.Copy()
 genv.ParseConfig('$pkg_config --cflags --libs glib-2.0')
-gobjs = genv.StaticObject(source=['g-object-unref.c', 'g-object-unref-classify.c'])
+gsources = ['g-object-unref.c', 'g-object-unref-classify.c']
+gobjs = genv.StaticObject(gsources)
 
-lib = env.Library('libschemes.a', [
-    gobjs,
+sources = [
     'bounds.c',
     'branches.c',
     'float-kinds.c',
@@ -21,12 +21,12 @@ lib = env.Library('libschemes.a', [
     'tuple-3.c',
     'tuple-4.c',
     'tuple-9.c',
-    ])
+]
 
+lib = env.Library('libschemes.a', [gobjs, sources])
 Default(lib)
 
-Alias('install', env.Install('$DESTDIR$schemesdir', [
-    lib,
+headers = [
     'bounds-unit.h',
     'bounds.h',
     'branches-unit.h',
@@ -46,4 +46,10 @@ Alias('install', env.Install('$DESTDIR$schemesdir', [
     'tuple-3.h',
     'tuple-4.h',
     'tuple-9.h',
-    ]))
+]
+
+Alias('install', env.Install('$DESTDIR$schemesdir', [lib, headers]))
+
+
+Import('dist')
+dist(['SConscript', sources, headers])

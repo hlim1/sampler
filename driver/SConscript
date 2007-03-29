@@ -1,8 +1,3 @@
-from os import symlink, unlink
-from os.path import lexists
-
-from utils import read_pipe
-
 Import('env')
 
 
@@ -45,7 +40,12 @@ here = env.Template('sampler-cc-here.in', varlist=['gcc'])
 
 Default([as, cc1, cc, here])
 
+
 Alias('install', [
     env.Install('$DESTDIR$bindir', cc),
     env.Install('$DESTDIR$driverdir', [as, cc1, 'sampler-specs']),
     ])
+
+
+Import('dist')
+dist(['as.in', 'cc1.in', 'sampler-cc-here.in', 'sampler-cc.in', 'sampler-specs', 'SConscript'])

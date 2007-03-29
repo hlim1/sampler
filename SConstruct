@@ -29,7 +29,7 @@ def validate_cil_path(key, value, env):
         return '%s/cil%s' % (path, suffix)
 
     if value:
-        library = libcil(path)
+        library = libcil(value)
         if exists(library):
             return
         else:
@@ -40,7 +40,7 @@ def validate_cil_path(key, value, env):
             if exists(library):
                 env[key] = path
                 return
-        raise UserError('cannot find CIL libraries; use cil_lib option')
+        raise UserError('cannot find CIL libraries; use cil_path option')
 
 opts = Options(None, ARGUMENTS)
 opts.AddOptions(
@@ -65,7 +65,7 @@ if domainname == 'cs.wisc.edu':
 #
 
 env = env.Copy(
-    tools=['default', 'ocaml', 'template', 'test'], toolpath=['.'],
+    tools=['default', 'dist', 'ocaml', 'template', 'test'], toolpath=['.'],
     CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
     PERL=env.WhereIs('perl'),
@@ -74,6 +74,7 @@ env = env.Copy(
     PACKAGE_VERSION=version,
     VERSION=version,
     version=version,
+    dist='#/$PACKAGE-${PACKAGE_VERSION}.tar.gz',
     deployment_learn_more_url='http://www.cs.wisc.edu/cbi/learn-more/',
 
     pkg_config='PKG_CONFIG_PATH=$PKG_CONFIG_PATH pkg-config',
@@ -151,6 +152,19 @@ for dir in ['sites', 'wrapped']:
     target = env.Dir('$DESTDIR$pkglibdir/' + dir)
     env.Command(target, None, Mkdir('$TARGET'))
     Alias('install', target)
+
+
+########################################################################
+#
+#  source distribution
+#
+
+def dist(sources):
+    env.Dist('$dist', sources)
+
+Export('dist')
+
+dist('SConstruct')
 
 
 ########################################################################

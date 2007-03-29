@@ -75,7 +75,8 @@ wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare'])
 wenv.ParseConfig('gsl-config --cflags --libs')
 Default(wenv.Program('decimate-samples.l'))
 
-env.OcamlObject(glob('*.ml') + glob('*.mli'))
+sources = glob('*.ml') + glob('*.mli')
+env.OcamlObject(sources)
 Default(env.OcamlProgram('resolve-samples.ml'),
         env.OcamlProgram('resolve-timestamps.ml'))
 
@@ -140,6 +141,10 @@ Alias('install', env.Install('$DESTDIR$toolsdir', [
     'rpmbuild',
     'wrapper.in',
     ]))
+
+
+Import('dist')
+dist(['SConscript', sources, glob('*.in')])
 
 
 SConscript(dirs='cfg')

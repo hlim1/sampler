@@ -15,10 +15,15 @@ Alias('test', map(env.TestXML, [
     'sampler-guide-C.omf.out',
     ]))
 
-Alias('install', [
-    env.Install('$DESTDIR$docdir/sampler-guide/C', [
+guide = [
     'sampler-guide.css',
     'sampler-guide.xml',
     'sampler-guide.xsl',
-    ]),
+    ]
+
+Alias('install', [
+    env.Install('$DESTDIR$docdir/sampler-guide/C', guide),
     env.InstallAs('$DESTDIR$omfdir/sampler-guide-C.omf', omf)])
+
+Import('dist')
+dist([guide, 'sampler-guide-C.omf', 'SConscript'])

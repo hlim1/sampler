@@ -56,6 +56,7 @@ domainname = getfqdn().split('.', 1)[1]
 if domainname == 'cs.wisc.edu':
     print 'adding special tweaks for', domainname
     env.AppendENVPath('PATH', '/unsup/ocaml/bin')
+    env.AppendENVPath('PATH', '/unsup/pychecker/bin')
     env['PKG_CONFIG_PATH'] = '/usr/lib/pkgconfig'
 
 

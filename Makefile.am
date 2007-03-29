@@ -24,7 +24,7 @@ SUBDIRS =					\
 	tools					\
 	www
 
-EXTRA_DIST = $(PACKAGE).spec cil deployments
+EXTRA_DIST = $(PACKAGE).spec deployments
 
 
 all-local: $(srcdir)/package.m4
@@ -58,4 +58,4 @@ debs: dist
 	cd debuild/$(distdir) && debuild
 
 dist-hook:
-	rm -rf $(distdir)/cil/.svn $(distdir)/deployments/.svn
+	rm -rf $(distdir)/deployments/.svn

@@ -26,4 +26,4 @@ let rename =
 let makeTempVar func ?(name = "__cil_tmp") =
   let scope = if !renameLocals then func.svar.vname ^ "$" else "" in
   let basis = scope ^ name in
-  Cil.makeTempVar func ~name:basis
+  fun typ -> Cil.makeTempVar func ~name:basis typ

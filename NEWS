@@ -1,9 +1,12 @@
 -*- outline -*-
 
+* sampler-1.4.8
+
+** Updates for non-backward-compatible API changes in cil-1.3.6.
+
 * sampler-1.4.7
 
 ** Small build infrastructure tweaks.
-** Updates for non-backward-compatible API changes in cil-1.3.6.
 
 * sampler-1.4.7
 

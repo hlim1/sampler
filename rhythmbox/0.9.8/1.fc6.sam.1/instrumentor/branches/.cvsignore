@@ -1,0 +1,14 @@
+*.os
+*.passed
+*.reports
+*.resolved
+atconfig
+Makefile
+Makefile.in
+modular
+sharing
+simple
+testsuite
+testsuite.dir
+testsuite.log
+threads

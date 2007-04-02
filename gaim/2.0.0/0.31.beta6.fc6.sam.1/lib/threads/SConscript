@@ -1,0 +1,25 @@
+def parentSource(env, name):
+    return env.StaticObject(name, '../%s.c' % name)
+
+def randomLibrary(env, generator):
+    name = 'random-' + generator
+    obj = parentSource(env, name)
+    lib = env.Library(name, obj)
+    env.Default(lib)
+
+def threadLibs(env):
+    env.AppendUnique(CPPPATH=['.'])
+    env.AppendUnique(CCFLAGS=['-ffast-math', '-fpic'])
+
+    parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose']
+    lateObjs = [ parentSource(env, part) for part in parts ]
+    env.Default(env.Library('late', lateObjs))
+    env.Default(env.Library('early', 'hijack.c'))
+
+    randomLibrary(env, 'fixed')
+    randomLibrary(env, 'offline')
+    randomLibrary(env, 'online')
+
+
+Import('env')
+SConscript(dirs=['no', 'yes'], exports=['env', 'threadLibs'])

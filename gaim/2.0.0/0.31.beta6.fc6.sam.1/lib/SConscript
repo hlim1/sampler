@@ -1,0 +1,6 @@
+Import('env')
+
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['-O'])
+
+SConscript(dirs=['schemes', 'threads'], exports=['env'])

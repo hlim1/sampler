@@ -1,0 +1,5 @@
+from glob import glob
+
+Import('env')
+Alias('test', env.TestPython(glob('*.py')))
+Alias('test', env.TestDesktop('sampler-preferences.desktop'))

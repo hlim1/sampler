@@ -1,0 +1,55 @@
+Import('env')
+
+env = env.Copy(tools=['python'], toolpath=['.'])
+
+common = env.Dir('#launcher/common')
+config = common.File('SamplerConfig.py')
+
+def testPythons(env, pythons):
+    env = env.Copy()
+    env.AppendUnique(ENV={'PYTHONPATH': common.abspath})
+    sources = pythons + [config]
+    target = 'pychecker.passed'
+    test = env.TestPython(target=target, source=sources)
+    Alias('test', test)
+
+Alias('test', env.TestXML(['sampler.schemas', 'gconf-1.0.dtd']))
+
+
+def gconfSource(context):
+    context.Message('checking for default GConf configuration source: ')
+    action = [['gconftool-2', '--get-default-source', '>', '$TARGET']]
+    (status, source) = context.TryAction(action)
+    if status:
+        source = source.rstrip()
+        context.env['GCONF_SCHEMA_CONFIG_SOURCE'] = source
+        context.Result(source)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+conf = env.Configure(custom_tests={'GConfSource': gconfSource})
+conf.GConfSource()
+conf.Finish()
+
+
+installed = env.Install('$DESTDIR$schemadir', 'sampler.schemas')
+Alias('install', installed)
+if env['GCONF_SCHEMAS_INSTALL']:
+    env.AddPostAction(installed, [['env', 'GCONF_CONFIG_SOURCE=$GCONF_SCHEMA_CONFIG_SOURCE', 'gconftool-2', '--makefile-install-rule', installed, '>/dev/null']])
+
+
+Import('dist')
+dist('SConscript')
+
+
+SConscript(dirs=[
+    'common',
+    'first-time',
+    'monitor',
+    'pixmaps',
+    'preferences',
+    'tray',
+    'wrapper',
+    ],
+           exports=['env', 'testPythons'])

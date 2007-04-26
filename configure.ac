@@ -329,9 +329,9 @@ AC_MSG_RESULT($cc1)
 AC_MAKE_ABSOLUTE(cc1)
 
 AC_MSG_CHECKING(for as)
-AC_SUBST(as, `$CC -print-prog-name=as`)
-AC_MSG_RESULT($as)
-AC_MAKE_ABSOLUTE(as)
+AC_SUBST(asm, `$CC -print-prog-name=as`)
+AC_MSG_RESULT($asm)
+AC_MAKE_ABSOLUTE(asm)
 
 AC_MSG_CHECKING(for objcopy)
 AC_ARG_WITH(objcopy, AC_HELP_STRING([--with-objcopy=EXE], [use EXE as objcopy (default: search in $PATH)]), ,

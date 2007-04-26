@@ -13,6 +13,7 @@ my $exec_prefix = "@exec_prefix@";
 my $bindir = "@bindir@";
 my $PACKAGE = '@PACKAGE@';
 my $libdir = "@libdir@";
+my $datarootdir = "@datarootdir@";
 my $datadir = "@datadir@";
 my $pkglibdir = "@pkglibdir@";
 my $pkgdatadir = "@pkgdatadir@";

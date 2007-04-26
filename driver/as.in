@@ -6,7 +6,7 @@ use strict;
 ########################################################################
 
 
-my @as = ('@as@');
+my @asm = ('@asm@');
 my $objcopy = '@objcopy@';
 
 my $verbose;
@@ -28,7 +28,7 @@ my %flag_specs =
      '-fsave-implications' => sub { $saved_implications = shift @ARGV },
 
      # Overall Options
-     '-o' => sub { $outfile = shift @ARGV; push @as, $_, $outfile },
+     '-o' => sub { $outfile = shift @ARGV; push @asm, $_, $outfile },
      '--verbose' => sub { $verbose = 1 },
      );
 
@@ -40,7 +40,7 @@ while (@ARGV) {
 	my $handler = $flag_specs{$_};
 	$handler->($_);
     } else {
-	push @as, $_;
+	push @asm, $_;
     }
 }
 
@@ -55,7 +55,7 @@ sub run_stage (@) {
 }
 
 
-run_stage @as;
+run_stage @asm;
 
 my @objcopy;
 push @objcopy, '--add-section', ".debug_sampler_cfg=$saved_cfg" unless -z $saved_cfg;

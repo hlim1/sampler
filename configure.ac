@@ -64,7 +64,7 @@ case "$DISTRO_NAME" in
     DISTRO_NAME=fedora
     DISTRO_BASIS=rpm
     ;;
-  (redhat|tao|centos)
+  (redhat|tao|centos|fedora)
     DISTRO_BASIS=rpm
     ;;
   (ubuntu)

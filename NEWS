@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.4.9
+
+** Updates for Fedora 7 and GNOME 2.18.
+
 * sampler-1.4.8
 
 ** Updates for non-backward-compatible API changes in cil-1.3.6.

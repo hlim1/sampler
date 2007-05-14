@@ -15,10 +15,10 @@ link_python = Keys.py
 bin_SCRIPTS = sampler-preferences
 
 applicationsdir = ${datadir}/applications
-applications_DATA = sampler-preferences.desktop
+desktops = sampler-preferences.desktop
 
 EXTRA_DIST =					\
-	$(applications_DATA)			\
+	$(desktops)			\
 	$(preferences_DATA)			\
 	$(preferences_PYTHON)			\
 	Paths.py.in				\
@@ -31,14 +31,17 @@ BUILT_SOURCES =					\
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
-TESTS = $(all_python) $(applications_DATA)
+TESTS = $(all_python) $(desktops)
 TESTS_ENVIRONMENT = ../test-by-extension
 
 
 install-data-hook:
+	desktop-file-install --vendor=sampler --dir=$(applicationsdir) $(desktops)
 	rm -f $(all_python:%.py=$(DESTDIR)$(preferencesdir)/%.py)
 	rm -f $(all_python:%.py=$(DESTDIR)$(preferencesdir)/%.pyc)
 
+uninstall-hook:
+	rm -f $(desktops:%=$(applicationsdir)/%)
 
 dist-hook:
 	cp -pd $(link_python) $(distdir)

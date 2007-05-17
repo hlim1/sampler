@@ -1,0 +1,73 @@
+Import('dist')
+
+
+def threadLibs(env, subdir):
+    env.AppendUnique(CPPPATH=['.'])
+    env.AppendUnique(CCFLAGS=['-ffast-math', '-fpic'])
+
+    def parentSource(name):
+        return env.StaticObject(name, '../%s.c' % name)
+
+    def inst(target):
+        instdir = '$DESTDIR$threadsdir/%s' % subdir
+        Alias('install', env.Install(instdir, target))
+
+    def lib(target, sources):
+        target = env.Library(target, sources)
+        Default(target)
+        inst(target)
+
+    parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose']
+    lateObjs = map(parentSource, parts)
+    lib('late', lateObjs)
+    lib('early', 'hijack.c')
+
+    for when in ['fixed', 'offline', 'online']:
+        name = 'random-' + when
+        obj = parentSource(name)
+        lib(name, obj)
+
+    inst('lock.h')
+    inst('once.h')
+
+    dist(['lock.h', 'once.h', 'hijack.c', 'SConscript'])
+
+
+Import('env')
+
+headers = [
+    'countdown.h',
+    'local.h',
+    'random-fixed.h',
+    'random-offline.h',
+    'random-offline-size.h',
+    'random-online.h',
+    ]
+
+Alias('install', env.Install('$DESTDIR$threadsdir', headers))
+
+
+Import('dist')
+
+dist(headers)
+
+dist([
+    'SConscript',
+    'countdown.c',
+    'initialize.c',
+    'lifetime.h',
+    'random.h',
+    'random-fixed.c',
+    'random-offline.c',
+    'random-online.c',
+    'registry.c',
+    'report.c',
+    'report.h',
+    'timestamps-set.c',
+    'verbose.c',
+    'verbose.h',
+    ])
+
+
+
+SConscript(dirs=['no', 'yes'], exports=['env', 'threadLibs'])

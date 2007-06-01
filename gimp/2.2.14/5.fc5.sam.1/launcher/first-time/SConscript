@@ -1,0 +1,4 @@
+from glob import glob
+
+Import('env')
+Alias('test', env.TestPython(glob('*.py')))

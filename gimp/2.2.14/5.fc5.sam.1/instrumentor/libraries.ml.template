@@ -1,0 +1,9 @@
+let functions =
+  let functions = [
+    $function_list
+  ] in
+
+  let collection = new StringHash.c $function_count in
+
+  List.iter (fun func -> collection#add func ()) functions;
+  collection

@@ -10,7 +10,7 @@ MOSTLYCLEANFILES += $(tools_SCRIPTS)
 
 libgraph = graphlib/graphlib.$(cma)
 
-includes += -pp camlp4o
+includes += -pp $(CAMLP4O)
 libdirs += $(dir $(libcommon) $(libgraph))
 syslibs = unix.$(cma)
 

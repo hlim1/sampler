@@ -14,7 +14,7 @@
 
 FILE *cbi_reportFile;
 
-static pthread_mutex_t reportLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
+static pthread_mutex_t reportLock __attribute__((unused)) = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
 static void closeOnExec(int fd)

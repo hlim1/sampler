@@ -7,7 +7,7 @@
 
 static cbi_Timestamp nextTimestamp;
 
-static pthread_mutex_t clockLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
+static pthread_mutex_t clockLock __attribute__((unused)) = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
 void cbi_timestampsSetFirst(unsigned site, cbi_Timestamp first[])

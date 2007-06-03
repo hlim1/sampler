@@ -12,7 +12,7 @@ struct cbi_Unit cbi_unitAnchor = { &cbi_unitAnchor,
 
 static unsigned unitCount;
 
-static pthread_mutex_t unitLock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+static pthread_mutex_t unitLock __attribute__((unused)) = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
 
 void cbi_registerUnit(struct cbi_Unit *unit)

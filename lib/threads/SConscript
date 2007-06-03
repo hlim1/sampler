@@ -1,3 +1,5 @@
+from os.path import basename
+
 Import('dist')
 
 
@@ -5,30 +7,27 @@ def threadLibs(env, subdir):
     env.AppendUnique(CPPPATH=['.'])
     env.AppendUnique(CCFLAGS=['-ffast-math', '-fpic'])
 
-    def parentSource(name):
-        return env.StaticObject(name, '../%s.c' % name)
+    def inst(targets):
+        instdir = '$DESTDIR/usr/lib'
+        Alias('install', env.Install(instdir, targets))
 
-    def inst(target):
-        instdir = '$DESTDIR$threadsdir/%s' % subdir
-        Alias('install', env.Install(instdir, target))
-
-    def lib(target, sources):
-        target = env.Library(target, sources)
-        Default(target)
-        inst(target)
+    def libs(target, sources):
+        target += '${REENTRANT}'
+        shared = env.SharedLibrary(target, [env.SharedObject(basename(source) + '${SHOBJSUFFIX}', source + '.c') for source in sources])
+        static = env.StaticLibrary(target, [env.StaticObject(basename(source) + '${OBJSUFFIX}',   source + '.c') for source in sources])
+        targets = [shared, static]
+        Default(targets)
+        Alias('install', env.Install('$DESTDIR/usr/lib', targets))
 
     parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose']
-    lateObjs = map(parentSource, parts)
-    lib('late', lateObjs)
-    lib('early', 'hijack.c')
+    sources = ['hijack'] + ['../%s' % part for part in parts]
+    libs('sampler', sources)
 
     for when in ['fixed', 'offline', 'online']:
-        name = 'random-' + when
-        obj = parentSource(name)
-        lib(name, obj)
+        src = '../random-%s' % when
+        libs('sampler-%s' % when, [src])
 
-    inst('lock.h')
-    inst('once.h')
+    Alias('install', env.Install('$DESTDIR$threadsdir/%s' % subdir, ['lock.h', 'once.h']))
 
     dist(['lock.h', 'once.h', 'hijack.c', 'SConscript'])
 

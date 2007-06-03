@@ -3,7 +3,7 @@ Import('env', 'threadLibs')
 env = env.Copy()
 threadLibs(env, 'no')
 
-precompute = env.Program(source=['precompute.c', 'librandom-online.a', 'liblate.a'])
+precompute = env.Program(['precompute.c', '${LIBPREFIX}sampler-online${LIBSUFFIX}', '${LIBPREFIX}sampler${LIBSUFFIX}'])
 Default(precompute)
 
 env.Append(ENV={'SAMPLER_SPARSITY': '1'})

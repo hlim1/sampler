@@ -1,20 +1,21 @@
 Import('env')
 env = env.Copy()
-env.AppendUnique(CCFLAGS=['-fpic'])
+env.AppendUnique(CCFLAGS=['-fpic'], LIBS=['sampler-schemes'], LIBPATH=['.'])
+
+libs = []
+
+def twolibs(env, base, sources, **kwargs):
+    global libs
+    libs += env.SharedLibrary('sampler-' + base, sources)
+    libs += env.StaticLibrary('sampler-' + base, sources)
 
 genv = env.Copy()
-genv.ParseConfig('$pkg_config --cflags --libs glib-2.0')
+genv.ParseConfig('$pkg_config --cflags --libs gobject-2.0')
 gsources = ['g-object-unref.c', 'g-object-unref-classify.c']
-gobjs = genv.StaticObject(gsources)
+twolibs(genv, 'g-object-unref', gsources)
 
 sources = [
-    'bounds.c',
-    'branches.c',
-    'float-kinds.c',
-    'function-entries.c',
-    'returns.c',
     'samples.c',
-    'scalar-pairs.c',
     'timestamps.c',
     'tuple-1.c',
     'tuple-2.c',
@@ -23,8 +24,16 @@ sources = [
     'tuple-9.c',
 ]
 
-lib = env.Library('libschemes.a', [gobjs, sources])
-Default(lib)
+twolibs(env, 'schemes', sources)
+
+for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pairs']:
+    twolibs(env, scheme, scheme + '.c')
+
+fenv = env.Copy()
+fenv.AppendUnique(LIBS=['m'])
+twolibs(fenv, 'float-kinds', 'float-kinds.c')
+
+Default(libs)
 
 headers = [
     'bounds-unit.h',
@@ -48,8 +57,8 @@ headers = [
     'tuple-9.h',
 ]
 
-Alias('install', env.Install('$DESTDIR$schemesdir', [lib, headers]))
-
+Alias('install', env.Install('$DESTDIR$schemesdir', headers))
+Alias('install', env.Install('$DESTDIR/usr/lib', libs))
 
 Import('dist')
 dist(['SConscript', sources, headers])

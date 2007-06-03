@@ -32,14 +32,14 @@ schemes_HEADERS =				\
 	tuple-9.h
 
 lib_LTLIBRARIES =				\
+	libsampler-schemes.la			\
 	$(gnome_libraries)			\
-	libsampler-bounds.la		\
-	libsampler-branches.la		\
-	libsampler-float-kinds.la	\
-	libsampler-function-entries.la	\
-	libsampler-returns.la		\
-	libsampler-scalar-pairs.la	\
-	libsampler-schemes.la
+	libsampler-bounds.la			\
+	libsampler-branches.la			\
+	libsampler-float-kinds.la		\
+	libsampler-function-entries.la		\
+	libsampler-returns.la			\
+	libsampler-scalar-pairs.la
 
 if WITH_GNOME
 libsampler_g_object_unref_la_SOURCES = g-object-unref.c g-object-unref-classify.c

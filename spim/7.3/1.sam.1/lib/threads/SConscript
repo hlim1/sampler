@@ -1,0 +1,72 @@
+from os.path import basename
+
+Import('dist')
+
+
+def threadLibs(env, subdir):
+    env.AppendUnique(CPPPATH=['.'])
+    env.AppendUnique(CCFLAGS=['-ffast-math', '-fpic'])
+
+    def inst(targets):
+        instdir = '$DESTDIR/usr/lib'
+        Alias('install', env.Install(instdir, targets))
+
+    def libs(target, sources):
+        target += '${REENTRANT}'
+        shared = env.SharedLibrary(target, [env.SharedObject(basename(source) + '${SHOBJSUFFIX}', source + '.c') for source in sources])
+        static = env.StaticLibrary(target, [env.StaticObject(basename(source) + '${OBJSUFFIX}',   source + '.c') for source in sources])
+        targets = [shared, static]
+        Default(targets)
+        Alias('install', env.Install('$DESTDIR/usr/lib', targets))
+
+    parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose']
+    sources = ['hijack'] + ['../%s' % part for part in parts]
+    libs('sampler', sources)
+
+    for when in ['fixed', 'offline', 'online']:
+        src = '../random-%s' % when
+        libs('sampler-%s' % when, [src])
+
+    Alias('install', env.Install('$DESTDIR$threadsdir/%s' % subdir, ['lock.h', 'once.h']))
+
+    dist(['lock.h', 'once.h', 'hijack.c', 'SConscript'])
+
+
+Import('env')
+
+headers = [
+    'countdown.h',
+    'local.h',
+    'random-fixed.h',
+    'random-offline.h',
+    'random-offline-size.h',
+    'random-online.h',
+    ]
+
+Alias('install', env.Install('$DESTDIR$threadsdir', headers))
+
+
+Import('dist')
+
+dist(headers)
+
+dist([
+    'SConscript',
+    'countdown.c',
+    'initialize.c',
+    'lifetime.h',
+    'random.h',
+    'random-fixed.c',
+    'random-offline.c',
+    'random-online.c',
+    'registry.c',
+    'report.c',
+    'report.h',
+    'timestamps-set.c',
+    'verbose.c',
+    'verbose.h',
+    ])
+
+
+
+SConscript(dirs=['no', 'yes'], exports=['env', 'threadLibs'])

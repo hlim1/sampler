@@ -1,0 +1,12 @@
+Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['--sampler-scheme=scalar-pairs'])
+uenv = env.Copy(TEST_ARGS=['once', 'upon', 'a', 'time'])
+
+Alias('test:scalar-pairs', env.Expect([
+    env.CBIResolvedSamples('late-global.c'),
+    uenv.CBIResolvedSamples('upcase-good.c', TEST_STDOUT='/dev/null'),
+    uenv.CBIResolvedSamples('upcase-bad.c', TEST_PREFIX='!', TEST_STDERR='/dev/null'),
+    ]))
+
+Alias('test', 'test:scalar-pairs')

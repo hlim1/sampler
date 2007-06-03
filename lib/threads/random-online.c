@@ -11,27 +11,24 @@
 #include "verbose.h"
 
 
-const void * const cbi_featureRandom;
-const void * const cbi_featureRandomOnline;
+static double densityScale;
+static unsigned short seed[3];
+static FILE *entropy;
 
-double cbi_densityScale;
-unsigned short cbi_seed[3];
-FILE *cbi_entropy;
-
-CBI_THREAD_LOCAL int cbi_sampling;
-CBI_THREAD_LOCAL struct drand48_data cbi_randomBuffer;
+static CBI_THREAD_LOCAL int sampling;
+static CBI_THREAD_LOCAL struct drand48_data randomBuffer;
 
 
 void cbi_initialize_thread()
 {
-  if (cbi_entropy)
+  if (entropy)
     {
       unsigned short seed[3];
-      if (fread(seed, sizeof(seed), 1, cbi_entropy) == 1)
-	cbi_sampling = seed48_r(seed, &cbi_randomBuffer) >= 0;
+      if (fread(seed, sizeof(seed), 1, entropy) == 1)
+	sampling = seed48_r(seed, &randomBuffer) >= 0;
     }
   else
-    cbi_sampling = seed48_r(cbi_seed, &cbi_randomBuffer) >= 0;
+    sampling = seed48_r(seed, &randomBuffer) >= 0;
 
   cbi_nextEventCountdown = cbi_getNextEventCountdown();
   VERBOSE("initialized thread; next event countdown *%p == %d\n", &cbi_nextEventCountdown, cbi_nextEventCountdown);
@@ -40,10 +37,10 @@ void cbi_initialize_thread()
 
 static void finalize()
 {
-  if (cbi_entropy)
+  if (entropy)
     {
-      fclose(cbi_entropy);
-      cbi_entropy = 0;
+      fclose(entropy);
+      entropy = 0;
     }
 }
 
@@ -83,17 +80,17 @@ void cbi_initializeRandom()
 		  exit(2);
 		}
 
-	      cbi_seed[0] = convert.triple[0];
-	      cbi_seed[1] = convert.triple[1];
-	      cbi_seed[2] = convert.triple[2];
+	      seed[0] = convert.triple[0];
+	      seed[1] = convert.triple[1];
+	      seed[2] = convert.triple[2];
 	    }
 	  else
 	    {
 	      atexit(finalize);
-	      cbi_entropy = fopen("/dev/urandom", "r");
+	      entropy = fopen("/dev/urandom", "r");
 	    }
 
-	  cbi_densityScale = 1 / log(1 - 1 / sparsity);
+	  densityScale = 1 / log(1 - 1 / sparsity);
 	  cbi_initialize_thread();
 	}
 
@@ -109,16 +106,16 @@ void cbi_initializeRandom()
 
 int cbi_getNextEventCountdown()
 {
-  if (__builtin_expect(cbi_sampling, 1))
+  if (__builtin_expect(sampling, 1))
     while (1)
       {
 	double real;
-	const int error = drand48_r(&cbi_randomBuffer, &real);
+	const int error = drand48_r(&randomBuffer, &real);
 	if (__builtin_expect(error < 0, 0))
 	  break;
 	if (__builtin_expect(real != 0., 1))
 	  {
-	    const int next = log(real) * cbi_densityScale + 1;
+	    const int next = log(real) * densityScale + 1;
 	    VERBOSE("got next event countdown == %d\n", next);
 	    return next;
 	  }

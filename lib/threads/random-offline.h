@@ -11,9 +11,6 @@
 #endif
 
 
-#define CBI_FEATURE_RANDOM cbi_featureRandomOffline
-
-
 static inline int cbi_getNextEventCountdown()
 {
   extern const int *cbi_nextEventPrecomputed;

@@ -8,9 +8,6 @@
 #endif
 
 
-#define CBI_FEATURE_RANDOM cbi_featureRandomFixed
-
-
 static inline int
 cbi_getNextEventCountdown()
 {

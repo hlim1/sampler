@@ -5,34 +5,34 @@
 #include "../timestamps.h"
 
 
-cbi_Timestamp cbi_clock;
+static cbi_Timestamp nextTimestamp;
 
-pthread_mutex_t cbi_clockLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
+static pthread_mutex_t clockLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
 void cbi_timestampsSetFirst(unsigned site, cbi_Timestamp first[])
 {
-  CBI_CRITICAL_REGION(cbi_clockLock, {
-    ++cbi_clock;
-    if (!first[site]) first[site] = cbi_clock;
+  CBI_CRITICAL_REGION(clockLock, {
+    ++nextTimestamp;
+    if (!first[site]) first[site] = nextTimestamp;
   });
 }
 
 
 void cbi_timestampsSetLast(unsigned site, cbi_Timestamp last[])
 {
-  CBI_CRITICAL_REGION(cbi_clockLock, {
-    ++cbi_clock;
-    last[site] = cbi_clock;
+  CBI_CRITICAL_REGION(clockLock, {
+    ++nextTimestamp;
+    last[site] = nextTimestamp;
   });
 }
 
 
 void cbi_timestampsSetBoth(unsigned site, cbi_Timestamp first[], cbi_Timestamp last[])
 {
-  CBI_CRITICAL_REGION(cbi_clockLock, {
-    ++cbi_clock;
-    if (!first[site]) first[site] = cbi_clock;
-    last[site] = cbi_clock;
+  CBI_CRITICAL_REGION(clockLock, {
+    ++nextTimestamp;
+    if (!first[site]) first[site] = nextTimestamp;
+    last[site] = nextTimestamp;
   });
 }

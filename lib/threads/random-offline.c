@@ -19,9 +19,6 @@
 #define MAP_SIZE (CBI_PRECOMPUTE_COUNT * sizeof(int))
 
 
-const void * const cbi_featureRandom;
-const void * const cbi_featureRandomOffline;
-
 const int *cbi_nextEventPrecomputed = 0;
 CBI_THREAD_LOCAL unsigned cbi_nextEventSlot = 0;
 

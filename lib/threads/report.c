@@ -14,7 +14,7 @@
 
 FILE *cbi_reportFile;
 
-pthread_mutex_t cbi_reportLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
+static pthread_mutex_t reportLock = PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP;
 
 
 static void closeOnExec(int fd)
@@ -108,7 +108,7 @@ SIGNAL_PRIOR(TRAP);
 
 static void finalize()
 {
-  CBI_CRITICAL_REGION(cbi_reportLock, {
+  CBI_CRITICAL_REGION(reportLock, {
     if (cbi_reportFile)
       {
 	reportAllCompilationUnits();
@@ -136,7 +136,7 @@ static void handleSignal(int signum)
 
   sigaction(signum, prior, 0);
 
-  CBI_CRITICAL_REGION(cbi_reportLock, {
+  CBI_CRITICAL_REGION(reportLock, {
     if (cbi_reportFile)
       {
 	reportAllCompilationUnits();
@@ -151,7 +151,7 @@ static void handleSignal(int signum)
 
 void cbi_initializeReport()
 {
-  CBI_CRITICAL_REGION(cbi_reportLock, {
+  CBI_CRITICAL_REGION(reportLock, {
       openReportFile();
       if (cbi_reportFile)
 	{

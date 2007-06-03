@@ -7,9 +7,6 @@
 #include "random-fixed.h"
 
 
-const void * const cbi_featureRandom;
-const void * const cbi_featureRandomFixed;
-
 int cbi_randomFixedCountdown;
 
 

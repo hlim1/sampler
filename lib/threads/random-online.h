@@ -8,9 +8,6 @@
 #endif
 
 
-#define CBI_FEATURE_RANDOM cbi_featureRandomOnline
-
-
 int cbi_getNextEventCountdown(void);
 
 

@@ -4,7 +4,7 @@
 #include "verbose.h"
 
 
-cbi_once_t cbi_initializeOnce = CBI_ONCE_INIT;
+static cbi_once_t once = CBI_ONCE_INIT;
 
 
 static void
@@ -20,5 +20,5 @@ initializeOnce()
 void cbi_initialize() __attribute__((constructor));
 void cbi_initialize()
 {
-  cbi_once(&cbi_initializeOnce, initializeOnce);
+  cbi_once(&once, initializeOnce);
 }

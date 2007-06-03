@@ -36,7 +36,7 @@ conf.Finish()
 installed = env.Install('$DESTDIR$schemadir', 'sampler.schemas')
 Alias('install', installed)
 if env['GCONF_SCHEMAS_INSTALL']:
-    env.AddPostAction(installed, [['env', 'GCONF_CONFIG_SOURCE=$GCONF_SCHEMA_CONFIG_SOURCE', 'gconftool-2', '--makefile-install-rule', installed, '>/dev/null']])
+    env.AddPostAction(installed, ['env', 'GCONF_CONFIG_SOURCE=$GCONF_SCHEMA_CONFIG_SOURCE', 'gconftool-2', '--makefile-install-rule', installed, '>/dev/null'])
 
 
 Import('dist')

@@ -102,8 +102,8 @@ AC_MSG_RESULT($DISTRO_NAME-$DISTRO_VERSION-$DISTRO_ARCH ($DISTRO_BASIS-based))
 #
 
 AC_PROG_CC
-AC_PROG_RANLIB
 AM_PROG_LEX
+AC_PROG_LIBTOOL
 AC_PROG_LN_S
 
 
@@ -473,6 +473,7 @@ www/cgi-bin/Makefile
 
 AC_CONFIG_FILES([driver/sampler-cc], [chmod +x $ac_file])
 AC_CONFIG_FILES([driver/sampler-cc-here], [chmod +x $ac_file])
+AC_CONFIG_FILES([driver/sampler-ld-here], [chmod +x $ac_file])
 AC_CONFIG_FILES([driver/as], [chmod +x $ac_file])
 AC_CONFIG_FILES([driver/cc1], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/build-libraries], [chmod +x $ac_file])

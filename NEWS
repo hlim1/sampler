@@ -1,8 +1,9 @@
 -*- outline -*-
 
-* sampler-1.4.9
+* sampler-1.5
 
 ** Updates for Fedora 7 and GNOME 2.18.
+** Switch to shared libraries for CBI runtime support.
 
 * sampler-1.4.8
 

@@ -7,9 +7,7 @@ gnome_headers =					\
 	g-object-unref.h			\
 	g-object-unref-unit.h
 
-gnome_sources =					\
-	g-object-unref.c			\
-	g-object-unref-classify.c
+gnome_libraries = libsampler-g-object-unref.la
 endif
 
 
@@ -33,25 +31,38 @@ schemes_HEADERS =				\
 	tuple-4.h				\
 	tuple-9.h
 
+lib_LTLIBRARIES =				\
+	$(gnome_libraries)			\
+	libsampler-bounds.la		\
+	libsampler-branches.la		\
+	libsampler-float-kinds.la	\
+	libsampler-function-entries.la	\
+	libsampler-returns.la		\
+	libsampler-scalar-pairs.la	\
+	libsampler-schemes.la
 
-schemes_LIBRARIES = libschemes.a
+if WITH_GNOME
+libsampler_g_object_unref_la_SOURCES = g-object-unref.c g-object-unref-classify.c
+libsampler_g_object_unref_la_LIBADD = libsampler-schemes.la $(GLIB_LIBS)
+endif
 
-libschemes_a_SOURCES =				\
-	$(gnome_sources)			\
-	bounds.c				\
-	bounds.h				\
-	branches.c				\
-	branches.h				\
-	float-kinds.c				\
-	float-kinds.h				\
-	function-entries.c			\
-	function-entries.h			\
-	returns.c				\
-	returns.h				\
+libsampler_bounds_la_SOURCES = bounds.c bounds.h
+libsampler_branches_la_SOURCES = branches.c branches.h
+libsampler_float_kinds_la_SOURCES = float-kinds.c float-kinds.h
+libsampler_function_entries_la_SOURCES = function-entries.c function-entries.h
+libsampler_returns_la_SOURCES = returns.c returns.h
+libsampler_scalar_pairs_la_SOURCES = scalar-pairs.c scalar-pairs.h
+
+libsampler_bounds_la_LIBADD = libsampler-schemes.la
+libsampler_branches_la_LIBADD = libsampler-schemes.la
+libsampler_float_kinds_la_LIBADD = libsampler-schemes.la -lm
+libsampler_function_entries_la_LIBADD = libsampler-schemes.la
+libsampler_returns_la_LIBADD = libsampler-schemes.la
+libsampler_scalar_pairs_la_LIBADD = libsampler-schemes.la
+
+libsampler_schemes_la_SOURCES =			\
 	samples.c				\
 	samples.h				\
-	scalar-pairs.c				\
-	scalar-pairs.h				\
 	timestamps.c				\
 	tuple-1.c				\
 	tuple-1.h				\

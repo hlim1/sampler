@@ -85,6 +85,7 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor
 %doc AUTHORS COPYING NEWS
 %{_bindir}/sampler-preferences
 %{_sysconfdir}/gconf/schemas/*
+%{_libdir}/*.so.*
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/sites
 %{_libdir}/%{name}/wrapped
@@ -129,6 +130,9 @@ tools for collecting and decoding sampled instrumentation reports.
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/doc
 %{_datadir}/omf/*
+%{_libdir}/*.a
+%{_libdir}/*.la
+%{_libdir}/*.so
 %dir %{_libdir}/%{name}
 %{_libdir}/%{name}/driver
 %{_libdir}/%{name}/tools

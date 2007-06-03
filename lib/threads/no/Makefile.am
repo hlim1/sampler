@@ -1,9 +1,18 @@
 AM_CFLAGS = -ffast-math -fpic
+AM_LDFLAGS = -Wl,--unresolved-symbols=ignore-in-shared-libs
 
 include ../threads.mk
 
-threads_no_LIBRARIES = $(libraries)
 threads_no_HEADERS = $(headers)
+
+lib_LTLIBRARIES =				\
+	libsampler-fixed.la			\
+	libsampler-offline.la			\
+	libsampler-online.la
+
+libsampler_fixed_la_SOURCES = ../random-fixed.c $(common)
+libsampler_offline_la_SOURCES = ../random-offline.c $(common)
+libsampler_online_la_SOURCES = ../random-online.c $(common)
 
 
 ########################################################################
@@ -11,7 +20,7 @@ threads_no_HEADERS = $(headers)
 
 tools_PROGRAMS = precompute
 precompute_SOURCES = precompute.c
-precompute_LDADD = librandom-online.a liblate.a $(LIBM)
+precompute_LDADD = libsampler-online.la $(LIBM)
 
 force:
 .PHONY: force

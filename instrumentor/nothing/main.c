@@ -21,7 +21,7 @@ static void dlcheck()
 int main(int argc __attribute__((unused)), char *argv[])
 {
   char path[PATH_MAX];
-  snprintf(path, sizeof(path), "%s/plugin.so", dirname(argv[0]));
+  snprintf(path, sizeof(path), "%s/libplugin.so", dirname(argv[0]));
   void * const plugin = dlopen(path, RTLD_LAZY);
   dlcheck();
 

@@ -1,0 +1,9 @@
+Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['--sampler-scheme=function-entries'])
+
+Alias('test:function-entries', env.Expect([
+    env.CBIResolvedSamples('test.c'),
+    ]))
+
+Alias('test', 'test:function-entries')

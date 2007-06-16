@@ -1,0 +1,12 @@
+Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['--sampler-scheme=returns'])
+
+extern = env.CBIProgram(target='extern', source=['extern-callee.c', 'extern-caller.c'])
+
+Alias('test:returns', env.Expect([
+    env.CBIResolvedSamples('test.c'),
+    env.CBIResolvedSamples(extern),
+    ]))
+
+Alias('test', 'test:returns')

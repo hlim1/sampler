@@ -1,0 +1,18 @@
+Import('env')
+
+penv = env.Copy()
+penv.AppendUnique(CCFLAGS=['-pipe'])
+
+senv = env.Copy(SHLIBPREFIX='')
+plugin = senv.CBISharedLibrary('plugin.c')
+library = senv.CBISharedLibrary('library.c')
+main = senv.CBIProgram(['main.c', library], LIBS='dl')
+
+Alias('test:nothing', [
+    penv.CBIResolvedCFG('pipes.c'),
+    env.CBIStaticObject('last-switch.c'),
+    env.Expect(env.CBIResolvedCFG('cfg.c')),
+    senv.CBIReports([main, plugin]),
+    ])
+
+Alias('test', 'test:nothing')

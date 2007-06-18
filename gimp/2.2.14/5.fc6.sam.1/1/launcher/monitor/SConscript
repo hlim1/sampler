@@ -1,0 +1,42 @@
+import sys
+
+Import('env')
+env = env.Copy()
+
+env.AppendUnique(CPPPATH=['%s/include/python%s' % (sys.prefix, sys.version[:3])])
+env.ParseConfig('$pkg_config --cflags --libs --silence-errors libbonobo-2.0 pygobject-2.0 || $pkg_config --cflags --libs libbonobo-2.0 pygtk-2.0')
+
+
+########################################################################
+#
+#  GCC version-specific warning flags
+#
+
+def addWarningFlag(context):
+    context.Message('checking for field initialization warning suppression flag: ')
+    env = context.env
+    old = env['CCFLAGS']
+    flag = '-Wno-missing-field-initializers'
+    env.AppendUnique(CCFLAGS=[flag])
+    if not context.TryCompile('', '.c'):
+        flag = '-Wno-extra'
+        env['CCFLAGS'] = old
+        env.AppendUnique(CCFLAGS=[flag])
+    context.Result(flag)
+
+wenv = env.Copy()
+conf = wenv.Configure(custom_tests={'AddWarningFlag': addWarningFlag})
+conf.AddWarningFlag()
+conf.Finish()
+
+
+########################################################################
+
+
+defs = env.Command('monitor.defs', 'monitor.h', 'python /usr/share/pygtk/2.0/codegen/h2def.py $SOURCES >$TARGET')
+wrap = env.Command('monitor-wrap.c', ['monitor.override', defs], "pygtk-codegen-2.0 --prefix monitor --override $SOURCES | sed 's/^const \\(PyMethodDef monitor_functions\\[\\]\\)/\\1/' >$TARGET")
+mod = env.SharedObject('monitor-module.c')
+lib = wenv.SharedLibrary('monitor', ['monitor.c', wrap, mod], SHLIBPREFIX='')
+Default(lib)
+
+Alias('install', env.Install('$DESTDIR$traylibdir', lib))

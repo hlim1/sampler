@@ -34,10 +34,13 @@ def main(name, wrapped, upload_headers, **extras):
         from subprocess import Popen
         Popen([Paths.first_time + '/first-time'])
 
-    from bonobo.activation import activate
-    try:
-        monitor = activate("iid == 'OAFIID:SamplerMonitor:0.1'")
-    except RuntimeError:
+    if user.show_tray_icon():
+        from bonobo.activation import activate
+        try:
+            monitor = activate("iid == 'OAFIID:SamplerMonitor:0.1'")
+        except RuntimeError:
+            monitor = None
+    else:
         monitor = None
 
     try:

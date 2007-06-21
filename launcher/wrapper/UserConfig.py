@@ -31,6 +31,10 @@ class UserConfig(object):
 
         return self.__client.get_bool(self.__key('enabled'))
 
+    def show_tray_icon(self):
+        '''Check whether a tray icon should be displayed whenever instrumented apps are running.'''
+        return self.__client.get_bool(Keys.show_tray_icon)
+
     def sparsity(self):
         '''Sparsity of sampled data, or 0 if sampling is disabled.'''
 

@@ -2,16 +2,24 @@ import os
 
 from stat import S_IMODE
 from string import Template
+from sys import stderr
 
 from SCons.Action import Action
 from SCons.Builder import Builder
 from SCons.Defaults import Chmod
+from SCons.Script import Exit
 
 from utils import instantiate
 
 
 def __instantiate_exec(target, source, env):
     varlist = env['varlist']
+
+    missing = [key for key in varlist if not env.has_key(key)]
+    if missing:
+        print >>stderr, 'error: missing variables for template instantiation:', ', '.join(missing)
+        Exit(1)
+
     keywords = dict((key, env.subst('$' + key)) for key in varlist)
     instantiate(str(source[0]), str(target[0]), **keywords)
 

@@ -18,8 +18,7 @@ noinst_SCRIPTS = test-by-extension
 EXTRA_DIST =					\
 	$(pkgdata_DATA)				\
 	$(pkgdata_SCRIPTS)			\
-	$(schema_DATA)				\
-	gconf-1.0.dtd
+	$(schema_DATA)
 
 TESTS = $(schema_DATA)
 TESTS_ENVIRONMENT = ./test-by-extension

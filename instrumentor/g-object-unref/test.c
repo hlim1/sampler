@@ -67,7 +67,7 @@ int
 main (int argc __attribute((unused)), char *argv[] __attribute((unused)))
 {
   Test *object;
-  
+
   g_type_init ();
 
   object = g_object_new (test_get_type (), 0);

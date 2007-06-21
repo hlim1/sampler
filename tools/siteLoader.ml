@@ -2,7 +2,7 @@ open Filename
 open Unix
 
 
-let extractor = (dirname Sys.executable_name) ^ "/extract-section .debug_site_info $filename"
+let extractor = (dirname Sys.executable_name) ^ "/extract-section --require .debug_site_info $filename"
 
 
 class loader registry filename =

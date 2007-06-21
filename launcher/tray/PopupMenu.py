@@ -4,27 +4,31 @@ from LazyWidget import LazyWidget
 ########################################################################
 
 
-class PopupMenu(LazyWidget):
+class PopupMenu(object):
 
-    __slots__ = ['__about', '__client', '__master', '__notifier', '__tray']
+    __slots__ = ['__about', '__client', '__master', '__notifier', '__tray', '__widget']
 
     def __init__(self, client, tray):
         from AboutDialog import AboutDialog
-        LazyWidget.__init__(self, 'popup')
+        from MasterNotifier import MasterNotifier
+        import Paths
+        import Signals
+        import gtk.glade
+
+        xml = gtk.glade.XML(Paths.glade, 'popup')
+        Signals.autoconnect(self, xml)
+
         self.__about = AboutDialog(client)
         self.__client = client
-        self.__tray = tray
-
-    def populate(self, xml, widget):
-        __pychecker__ = 'no-argsused'
-        from MasterNotifier import MasterNotifier
         self.__master = xml.get_widget('menu-master')
         self.__notifier = MasterNotifier(self.__client, self.__master.set_active)
+        self.__tray = tray
+        self.__widget = xml.get_widget('popup')
 
     def popup(self, event):
         import gtk.gdk
         assert event.type == gtk.gdk.BUTTON_PRESS
-        self.widget().popup(None, None, self.position, event.button, event.time)
+        self.__widget.popup(None, None, self.position, event.button, event.time)
 
     def position(self, menu):
         tray = self.__tray

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.5.1
+
+** Add undocumented GConf key to turn off tray icon.
+
 * sampler-1.5
 
 ** Updates for Fedora 7 and GNOME 2.18.

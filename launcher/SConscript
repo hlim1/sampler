@@ -13,7 +13,7 @@ def testPythons(env, pythons):
     test = env.TestPython(target=target, source=sources)
     Alias('test', test)
 
-Alias('test', env.TestXML(['sampler.schemas', 'gconf-1.0.dtd']))
+Alias('test', env.TestXML('sampler.schemas'))
 
 
 def gconfSource(context):

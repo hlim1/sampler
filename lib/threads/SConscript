@@ -13,10 +13,12 @@ def threadLibs(env, subdir):
 
     def libs(target, sources):
         target += '${REENTRANT}'
-        shared = env.SharedLibrary(target, [env.SharedObject(basename(source) + '${SHOBJSUFFIX}', source + '.c') for source in sources])
-        static = env.StaticLibrary(target, [env.StaticObject(basename(source) + '${OBJSUFFIX}',   source + '.c') for source in sources])
+        sharedSources = [env.SharedObject(basename(source), source + '.c') for source in sources]
+        staticSources = [env.StaticObject(basename(source), source + '.c') for source in sources]
+        shared = env.SharedLibrary(target, sharedSources)
+        static = env.StaticLibrary(target, staticSources)
         targets = [shared, static]
-        Default(targets)
+        #Default(targets)
         Alias('install', env.Install('$DESTDIR/usr/lib', targets))
 
     parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose']

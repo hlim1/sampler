@@ -1,12 +1,14 @@
 Import('env')
 env = env.Copy()
-env.AppendUnique(CCFLAGS=['--sampler-scheme=returns'])
+env.AppendUnique(CC=['--sampler-scheme=returns'])
 
 extern = env.CBIProgram(target='extern', source=['extern-callee.c', 'extern-caller.c'])
+test = env.CBIProgram('test.c')
 
-Alias('test:returns', env.Expect([
-    env.CBIResolvedSamples('test.c'),
-    env.CBIResolvedSamples(extern),
-    ]))
+for executable in [extern, test]:
+    reports = env.CBIReports(executable)
+    resolved = env.CBIResolvedSamples(reports, objects=executable)
+    expect = env.Expect(resolved)
+    Alias('test:returns', expect)
 
 Alias('test', 'test:returns')

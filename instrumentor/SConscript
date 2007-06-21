@@ -33,7 +33,7 @@ def findSymbols(library):
     command = ['nm', '--defined-only', '-g', '-p', str(library)]
     if library.get_suffix() != '.a':
         command.append('-D')
-    nm = read_pipe([command], env)
+    nm = read_pipe(command, env)
     matches = imap(symbolPattern.match, nm)
     matches = ifilter(None, matches)
     return ( match.group(1) for match in matches )

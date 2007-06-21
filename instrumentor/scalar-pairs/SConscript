@@ -1,12 +1,16 @@
 Import('env')
 env = env.Copy()
-env.AppendUnique(CCFLAGS=['--sampler-scheme=scalar-pairs'])
+env.AppendUnique(CC=['--sampler-scheme=scalar-pairs'])
 uenv = env.Copy(TEST_ARGS=['once', 'upon', 'a', 'time'])
 
-Alias('test:scalar-pairs', env.Expect([
-    env.CBIResolvedSamples('late-global.c'),
-    uenv.CBIResolvedSamples('upcase-good.c', TEST_STDOUT='/dev/null'),
-    uenv.CBIResolvedSamples('upcase-bad.c', TEST_PREFIX='!', TEST_STDERR='/dev/null'),
-    ]))
+late_global = env.CBIProgram('late-global.c')
+late_global = env.CBIResolvedSamples(env.CBIReports(late_global), objects=late_global)
 
+upcase_good = uenv.CBIProgram('upcase-good.c')
+upcase_good = uenv.CBIResolvedSamples(uenv.CBIReports(upcase_good, TEST_STDOUT='/dev/null'), objects=upcase_good)
+
+upcase_bad = uenv.CBIProgram('upcase-bad.c')
+upcase_bad = uenv.CBIResolvedSamples(uenv.CBIReports(upcase_bad, TEST_STDERR='/dev/null', TEST_PREFIX='!'), objects=upcase_bad)
+
+Alias('test:scalar-pairs', env.Expect([late_global, upcase_good, upcase_bad]))
 Alias('test', 'test:scalar-pairs')

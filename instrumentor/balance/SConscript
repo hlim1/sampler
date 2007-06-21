@@ -1,6 +1,6 @@
 Import('env')
 env = env.Copy()
-env.AppendUnique(CCFLAGS=['--balance-paths', '--sampler-scheme=returns'])
+env.AppendUnique(CC=['--sampler-scheme=returns'], CCFLAGS=['--balance-paths'])
 
 Alias('test:balance', map(env.CBIStaticObject, [
     'default.c',

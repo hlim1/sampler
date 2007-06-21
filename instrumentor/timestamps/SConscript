@@ -3,7 +3,7 @@
 
 Import('env')
 env = env.Copy()
-env.AppendUnique(CCFLAGS=['--sampler-scheme=function-entries'])
+env.AppendUnique(CC=['--sampler-scheme=function-entries'])
 
 fenv = env.Copy()
 fenv.AppendUnique(CCFLAGS=['--timestamp-first'])
@@ -16,7 +16,7 @@ benv.AppendUnique(CCFLAGS=['--timestamp-first', '--timestamp-last'])
 benv.Command('both.expected', ['first.expected', 'last.expected'], [['cat', '$SOURCES', '>$TARGET']])
 
 tests = [(fenv, 'first'), (lenv, 'last'), (benv, 'both')]
-tests = [ env.CBIResolvedTimestamps(env.CBIStaticObject('%s.o' % base, 'simple.c')) for env, base in tests ]
+tests = [ env.CBIResolvedTimestamps(env.CBIStaticObject('%s.o' % base, 'simple.c'), objects=base) for env, base in tests ]
 
 Alias('test:returns', env.Expect(tests))
 Alias('test', 'test:returns')

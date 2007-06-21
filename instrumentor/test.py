@@ -5,10 +5,13 @@ from SCons.Action import Action
 from SCons.Builder import Builder
 from SCons.Defaults import CScan, Touch
 from SCons.Scanner import Scanner
+from SCons.Script import Flatten
 
 from itertools import chain, ifilter, imap
 
 import filecmp
+
+from utils import read_pipe
 
 
 ########################################################################
@@ -154,7 +157,7 @@ __reports_builder = Builder(
 
 
 __resolved_samples_action = Action([[
-    '$RESOLVE_SAMPLES', '${SOURCE.children()}', '<$SOURCE', '|',
+    '$RESOLVE_SAMPLES', '$objects', '<$SOURCE', '|',
     'cut', '-f1,3-', '|',
     'sed', 's:$SOURCE.dir/::g', '|',
     'sort', '-t', '\t', '-o', '$TARGET',
@@ -163,7 +166,7 @@ __resolved_samples_action = Action([[
 
 def __resolved_samples_scan(node, env, path):
     __pychecker__ = 'no-argsused'
-    return [env.subst('#$RESOLVE_SAMPLES')]
+    return Flatten([env.subst('#$RESOLVE_SAMPLES'), env['objects']])
 
 
 __resolved_samples_scanner = Scanner(function=__resolved_samples_scan)

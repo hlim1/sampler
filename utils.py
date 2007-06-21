@@ -30,16 +30,18 @@ def instantiate(source, sink, **kwargs):
     sink.close()
 
 
-def read_pipe(action, env):
+def read_pipe(command, env):
+    [command] = env.subst_list(command)
+    command = map(str, command)
+    print ' '.join(command)
+    process = Popen(command, env=env['ENV'], stdout=PIPE)
 
-    def spawn(shell, escape, cmd, args, env):
-        __pychecker__ = 'no-argsused'
-        command = ' '.join(args)
-        process = Popen(command, shell=True, executable=shell, env=env, stdout=PIPE)
-        return process.stdout
+    for line in process.stdout:
+        yield line
 
-    env = env.Copy(SPAWN=spawn)
-    return env.Execute(action)
+    status = process.wait()
+    if status != 0:
+        env.Exit(status)
 
 
 def __literal_exec(target, source, env):

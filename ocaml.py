@@ -45,12 +45,6 @@ def __ocamldep_scan(node, env, path):
     if not node.exists():
         __warn('%s does not exist' % node)
 
-    stdout = read_pipe([['$OCAMLDEP', '$_OCAML_PATH', '$_OCAML_PP', str(node)]], env)
-    if stdout == 0:
-        return
-    elif isinstance(stdout, int):
-        env.Exit(stdout)
-
     target = node.target_from_source('', __source_to_object[env['OCAML_NATIVE']][suffix])
     target = str(target) + ':'
 
@@ -64,7 +58,8 @@ def __ocamldep_scan(node, env, path):
                 yield accum + line
                 accum = ''
 
-    deps = joinLines(stdout)
+    deps = read_pipe(['$OCAMLDEP', '$_OCAML_PATH', '$_OCAML_PP', str(node)], env)
+    deps = joinLines(deps)
     deps = imap(str.split, deps)
     deps = ( fields[1:] for fields in deps if fields[0] == target )
     deps = chain(*deps)
@@ -92,6 +87,7 @@ def __obj_emitter(target, source, env):
                 target.append(cmo.target_from_source('', '.annot'))
             if env['OCAML_NATIVE']:
                 target.append(cmo.target_from_source('', '.o'))
+    target = [ node.disambiguate() for node in target ]
     return target, source
 
 

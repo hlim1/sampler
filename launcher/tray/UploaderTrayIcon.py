@@ -22,7 +22,7 @@ class UploaderTrayIcon(TrayIcon):
         import Paths
         from PopupMenu import PopupMenu
         import Signals
-        from StatusIcon import StatusIcon 
+        from StatusIcon import StatusIcon
 
         TrayIcon.__init__(self, 'sampler')
         BusyCursor.top = self

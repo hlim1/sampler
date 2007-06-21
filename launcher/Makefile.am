@@ -22,7 +22,7 @@ EXTRA_DIST =					\
 	gconf-1.0.dtd
 
 TESTS = $(schema_DATA)
-TESTS_ENVIRONMENT = $(XMLLINT) --valid --noout
+TESTS_ENVIRONMENT = ./test-by-extension
 
 install-data-hook:
 if GCONF_SCHEMAS_INSTALL

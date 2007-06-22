@@ -10,6 +10,7 @@
 #include "../registry.h"
 #include "../report.h"
 #include "lock.h"
+#include "verbose.h"
 
 
 FILE *cbi_reportFile;

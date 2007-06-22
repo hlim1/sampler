@@ -35,6 +35,7 @@ static void openReportFile()
 
   if ((envar = getenv("SAMPLER_REPORT_FD")))
     {
+      VERBOSE("%s(): $SAMPLER_REPOT_FD = \"%s\"\n", __FUNCTION__, envar);
       char *tail;
       const int fd = strtol(envar, &tail, 0);
       if (*tail == '\0')
@@ -46,15 +47,24 @@ static void openReportFile()
 
   else if ((envar = getenv("SAMPLER_FILE")))
     {
+      VERBOSE("%s(): $SAMPLER_REPOT_FILE = \"%s\"\n", __FUNCTION__, envar);
       cbi_reportFile = fopen(envar, "w");
       closeOnExec(fileno(cbi_reportFile));
     }
+
+  else
+    VERBOSE("%s(): no reporting destination set\n", __FUNCTION__);
 
   unsetenv("SAMPLER_REPORT_FD");
   unsetenv("SAMPLER_FILE");
 
   if (cbi_reportFile)
-    fputs("<report id=\"samples\">\n", cbi_reportFile);
+    {
+      VERBOSE("%s(): starting report to FILE 0x%p\n", __FUNCTION__, cbi_reportFile);
+      fputs("<report id=\"samples\">\n", cbi_reportFile);
+    }
+  else
+    VERBOSE("%s(): not reporting\n", __FUNCTION__);
 }
 
 
@@ -151,6 +161,8 @@ static void handleSignal(int signum)
 
 void cbi_initializeReport()
 {
+  VERBOSE("%s(): begin\n", __FUNCTION__);
+
   CBI_CRITICAL_REGION(reportLock, {
       openReportFile();
       if (cbi_reportFile)
@@ -163,4 +175,6 @@ void cbi_initializeReport()
 	  SIGNAL_INST(TRAP);
 	}
     });
+
+  VERBOSE("%s(): end\n", __FUNCTION__);
 }

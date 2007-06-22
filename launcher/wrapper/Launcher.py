@@ -12,7 +12,7 @@ class Launcher(object):
     def __init__(self, app):
         self.app = app
 
-    def __spawn(self, env):
+    def spawnEnv(self, env):
         import sys
         self.__child = Popen(sys.argv, executable=self.app.executable, env=env)
 

@@ -30,7 +30,7 @@ class SampledLauncher(Launcher):
         environ['SAMPLER_REAL_EXECUTABLE'] = self.app.executable
 
         # away we go!
-        self.__spawn(environ)
+        self.spawnEnv(environ)
 
         # tidy up pipe ends
         os.close(self.__pipe[1])

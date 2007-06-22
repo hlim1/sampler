@@ -1,4 +1,4 @@
-import os
+from subprocess import Popen
 
 
 ########################################################################
@@ -7,14 +7,17 @@ import os
 class Launcher(object):
     '''Manage launching and waiting for an application.'''
 
-    __slots__ = ['__pid', 'app']
+    __slots__ = ['__child', 'app']
 
     def __init__(self, app):
         self.app = app
 
-    def spawn(self):
+    def __spawn(self, env):
         import sys
-        self.__pid = os.spawnv(os.P_NOWAIT, self.app.executable, sys.argv)
+        self.__child = Popen(sys.argv, executable=self.app.executable, env=env)
+
+    def spawn(self):
+        raise NotImplementedError
 
     def prep_outcome(self, outcome):
         pass
@@ -24,16 +27,13 @@ class Launcher(object):
         outcome = Outcome.Outcome()
         self.prep_outcome(outcome)
         
-        [pid, exit_codes] = os.waitpid(self.__pid, 0)
+        returncode = self.__child.wait()
 
-        if os.WIFEXITED(exit_codes):
-            outcome.status = os.WEXITSTATUS(exit_codes)
+        if returncode >= 0:
+            outcome.status = returncode
+            outcome.signal = 0
         else:
             outcome.status = 0
-
-        if os.WIFSIGNALED(exit_codes):
-            outcome.signal = os.WTERMSIG(exit_codes)
-        else:
-            outcome.signal = 0
+            outcome.signal = -returncode
 
         return outcome

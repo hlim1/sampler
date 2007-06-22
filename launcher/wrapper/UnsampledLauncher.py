@@ -17,4 +17,4 @@ class UnsampledLauncher(Launcher):
             del os.environ['SAMPLER_SPARSITY']
 
         # away we go!
-        return Launcher.spawn(self)
+        return self.__spawn(os.environ)

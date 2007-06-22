@@ -16,18 +16,21 @@ class SampledLauncher(Launcher):
         self.__sparsity = sparsity
 
     def spawn(self):
+        # modified environment for instrumented child process
+        environ = os.environ.copy()
+
         # set up random number generator
-        os.environ['SAMPLER_SPARSITY'] = str(self.__sparsity)
+        environ['SAMPLER_SPARSITY'] = str(self.__sparsity)
 
         # set up reporting
         self.__pipe = os.pipe()
-        os.environ['SAMPLER_FILE'] = '/dev/fd/%d' % self.__pipe[1]
-        os.environ['SAMPLER_REPORT_FD'] = '%d' % self.__pipe[1]
-        os.environ['GNOME_DISABLE_CRASH_DIALOG'] = '1'
-        os.environ['SAMPLER_REAL_EXECUTABLE'] = self.app.executable
+        environ['SAMPLER_FILE'] = '/dev/fd/%d' % self.__pipe[1]
+        environ['SAMPLER_REPORT_FD'] = '%d' % self.__pipe[1]
+        environ['GNOME_DISABLE_CRASH_DIALOG'] = '1'
+        environ['SAMPLER_REAL_EXECUTABLE'] = self.app.executable
 
         # away we go!
-        Launcher.spawn(self)
+        self.__spawn(environ)
 
         # tidy up pipe ends
         os.close(self.__pipe[1])

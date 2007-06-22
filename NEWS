@@ -3,6 +3,7 @@
 * sampler-1.5.1
 
 ** Add undocumented GConf key to turn off tray icon.
+** Assorted environment variable management bug fixes.
 
 * sampler-1.5
 

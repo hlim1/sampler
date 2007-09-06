@@ -1,5 +1,2 @@
 Import('env')
 Alias('install', env.Install('$DESTDIR$wwwdir/cgi-bin', 'sampler-upload'))
-
-Import('dist')
-dist('sampler-upload')

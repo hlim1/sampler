@@ -26,6 +26,7 @@ objcopy = env.WhereIs('objcopy')
 conf.Finish()
 del conf
 
+
 env = env.Copy(
     PACKAGE='sampler',
     gcc=env.WhereIs('gcc'),
@@ -45,7 +46,3 @@ Alias('install', [
     env.Install('$DESTDIR$bindir', cc),
     env.Install('$DESTDIR$driverdir', [asm, cc1, 'sampler-specs']),
     ])
-
-
-Import('dist')
-dist(['as.in', 'cc1.in', 'sampler-cc-here.in', 'sampler-cc.in', 'sampler-specs', 'SConscript'])

@@ -6,9 +6,6 @@ env = env.Copy(commondir=env.subst('$commondir'),
 Default(env.Template('Paths.py.in', varlist=['commondir', 'first_timedir', 'wrapperdir']))
 pythons = ['AppConfig.py', 'Launcher.py', 'Main2.py', 'Main.py', 'Outcome.py', 'RedirectHandler.py', 'ReportsReader.py', 'SampledLauncher.py', 'ServerMessage.py', 'UnsampledLauncher.py', 'Uploader.py', 'Upload.py', 'UserConfig.py']
 
-Import('dist')
-dist(['SConscript', pythons, 'Paths.py.in'])
-
 pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
 

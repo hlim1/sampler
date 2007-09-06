@@ -7,9 +7,6 @@ Default([server, env.Template('Paths.py.in', varlist=['bindir', 'traydir'])])
 
 pythons = ['AboutDialog.py', 'BusyCursor.py', 'Factory.py', 'LazyDialog.py', 'LazyWidget.py', 'Main.py', 'PopupMenu.py', 'PreferencesDialog.py', 'UploaderTrayIcon.py']
 
-Import('dist')
-dist(['SConscript', pythons])
-
 pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
 

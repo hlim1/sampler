@@ -84,16 +84,10 @@ Alias('install', env.Install('$DESTDIR$driverdir', main))
 #
 
 
-Import('dist')
-
 sources = set(sources)
 for generated in ['libraries.ml', 'version.ml']:
     sources.discard(generated)
     sources.add(generated + '.in')
-
-dist(list(sources))
-dist('SConscript')
-
 
 
 #########################################################################

@@ -24,6 +24,3 @@ guide = [
 Alias('install', [
     env.Install('$DESTDIR$docdir/sampler-guide/C', guide),
     env.InstallAs('$DESTDIR$omfdir/sampler-guide-C.omf', omf)])
-
-Import('dist')
-dist([guide, 'sampler-guide-C.omf', 'SConscript'])

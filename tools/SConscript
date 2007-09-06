@@ -146,8 +146,4 @@ Alias('install', env.Install('$DESTDIR$toolsdir', [
     ]))
 
 
-Import('dist')
-dist(['SConscript', sources, glob('*.in')])
-
-
 SConscript(dirs='cfg')

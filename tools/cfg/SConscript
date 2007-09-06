@@ -17,6 +17,3 @@ basics = env.OcamlObject('basics.ml', OCAML_WARN='Ae')
 env.OcamlObject(sources)
 Default(env.OcamlProgram('order-sites.ml'),
         env.OcamlProgram('resolve-cfg.ml'))
-
-Import('dist')
-dist(['SConscript', sources])

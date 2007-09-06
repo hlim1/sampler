@@ -1,7 +1,5 @@
 from os.path import basename
 
-Import('dist')
-
 
 def threadLibs(env, subdir):
     env.AppendUnique(CPPPATH=['.'])
@@ -31,8 +29,6 @@ def threadLibs(env, subdir):
 
     Alias('install', env.Install('$DESTDIR$threadsdir/%s' % subdir, ['lock.h', 'once.h']))
 
-    dist(['lock.h', 'once.h', 'hijack.c', 'SConscript'])
-
 
 Import('env')
 
@@ -46,29 +42,6 @@ headers = [
     ]
 
 Alias('install', env.Install('$DESTDIR$threadsdir', headers))
-
-
-Import('dist')
-
-dist(headers)
-
-dist([
-    'SConscript',
-    'countdown.c',
-    'initialize.c',
-    'lifetime.h',
-    'random.h',
-    'random-fixed.c',
-    'random-offline.c',
-    'random-online.c',
-    'registry.c',
-    'report.c',
-    'report.h',
-    'timestamps-set.c',
-    'verbose.c',
-    'verbose.h',
-    ])
-
 
 
 SConscript(dirs=['no', 'yes'], exports=['env', 'threadLibs'])

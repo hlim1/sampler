@@ -10,6 +10,3 @@ Alias('test:g-object-unref', env.Expect([
     ]))
 
 Alias('test', 'test:g-object-unref')
-
-Import('dist')
-dist(['test.c', 'test.expected', 'SConscript'])

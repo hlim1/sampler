@@ -59,6 +59,3 @@ headers = [
 
 Alias('install', env.Install('$DESTDIR$schemesdir', headers))
 Alias('install', env.Install('$DESTDIR/usr/lib', libs))
-
-Import('dist')
-dist(['SConscript', sources, headers])

@@ -164,7 +164,7 @@ def __exe_depends(node, env):
 
 def __exe_scan(node, env, path):
     __pychecker__ = 'no-argsused'
-    return __exe_depends(node, env)
+    return list(__exe_depends(node, env))
 
 
 __exe_scanner = Scanner(
@@ -190,6 +190,7 @@ def __exe_target_scan(node, env, path):
     suffix = __lib_suffix[env['OCAML_NATIVE']]
     libs = ( lib + suffix for lib in env['OCAML_LIBS'] )
     libs = __find_libs(libs, env, path)
+    libs = list(libs)
     return libs
 
 
@@ -308,7 +309,7 @@ def generate(env):
         _OCAML_WARN='${_concat("-w ", OCAML_WARN, "", __env__)}',
         _OCAML_WARN_ERROR='${_concat("-warn-error ", OCAML_WARN_ERROR, "", __env__)}',
 
-        SCANNERS=[__ocamldep_scanner],
+        #SCANNERS=[__ocamldep_scanner],
 
         BUILDERS={
         'OcamlObject': __obj_builder,

@@ -72,11 +72,15 @@ env = env.Copy(
     PERL=env.WhereIs('perl'),
 
     PACKAGE='sampler',
+    PACKAGE_NAME='$PACKAGE',
     PACKAGE_VERSION=version,
+    PACKAGE_BUGREPORT='liblit@cs.wisc.edu',
+    NAME='$PACKAGE_NAME',
     VERSION=version,
     version=version,
-    dist='#/$PACKAGE-${PACKAGE_VERSION}.tar.gz',
     deployment_learn_more_url='http://www.cs.wisc.edu/cbi/learn-more/',
+    deployment_release_suffix='',
+    dist='#/$PACKAGE-${PACKAGE_VERSION}.tar.gz',
 
     pkg_config='PKG_CONFIG_PATH=$PKG_CONFIG_PATH pkg-config',
 
@@ -138,7 +142,6 @@ SetOption('max_drift', 1)
 #  installation
 #
 
-
 def install(dest, source, env):
     copy2(source, dest)
     mode = stat.S_IWUSR | stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH
@@ -158,15 +161,15 @@ for dir in ['sites', 'wrapped']:
 
 ########################################################################
 #
-#  source distribution
+#  regular build targets in this directory
 #
 
-def dist(sources):
-    env.Dist('$dist', sources)
-
-Export('dist')
-
-dist('SConstruct')
+Default(env.Template('sampler.spec.in', varlist=[
+	'PACKAGE_NAME',
+	'PACKAGE_VERSION',
+	'PACKAGE_BUGREPORT',
+	'deployment_release_suffix',
+]))
 
 
 ########################################################################
@@ -185,3 +188,11 @@ SConscript(dirs=[
     'tools',
     'www',
     ])
+
+
+########################################################################
+
+
+#env.Tool('packaging')
+#package = env.Package(NAME='${NAME}', VERSION='${VERSION}', PACKAGETYPE='src_targz')
+#Default(package)

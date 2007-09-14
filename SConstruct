@@ -80,6 +80,7 @@ env = env.Copy(
     version=version,
     deployment_learn_more_url='http://www.cs.wisc.edu/cbi/learn-more/',
     deployment_release_suffix='',
+    enable_deployment='default',
     dist='#/$PACKAGE-${PACKAGE_VERSION}.tar.gz',
 
     pkg_config='PKG_CONFIG_PATH=$PKG_CONFIG_PATH pkg-config',
@@ -169,6 +170,7 @@ Default(env.Template('sampler.spec.in', varlist=[
 	'PACKAGE_VERSION',
 	'PACKAGE_BUGREPORT',
 	'deployment_release_suffix',
+	'enable_deployment',
 ]))
 
 

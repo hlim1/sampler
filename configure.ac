@@ -283,10 +283,9 @@ if test -z "$OCAMLC"; then
   AC_MSG_ERROR(cannot find OCaml bytecode compiler; please set \$OCAMLC)
 fi
 
-AC_CHECK_PROGS(CAMLP4O, camlp4o.opt camlp4o)
-if test -z "$CAMLP4O"; then
-  AC_MSG_ERROR(cannot find OCaml pre-processor pretty-printer; plase set \$CAMLP4O)
-fi
+AC_MSG_CHECKING(for camlp4o)
+AC_SUBST(CAMLP4O, camlp4o.opt)
+AC_MSG_RESULT($CAMLP4O)
 
 
 AC_MSG_CHECKING(whether $OCAMLC supports -dtypes)

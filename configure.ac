@@ -284,7 +284,7 @@ if test -z "$OCAMLC"; then
 fi
 
 AC_CHECK_PROGS(CAMLP4O, camlp4o.opt camlp4o)
-if test -z "$OCAMLC"; then
+if test -z "$CAMLP4O"; then
   AC_MSG_ERROR(cannot find OCaml pre-processor pretty-printer; plase set \$CAMLP4O)
 fi
 

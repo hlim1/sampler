@@ -36,7 +36,7 @@ TESTS_ENVIRONMENT = ../test-by-extension
 
 
 install-data-hook:
-	desktop-file-install --vendor=sampler --dir=$(applicationsdir) $(desktops)
+	desktop-file-install --vendor=sampler --dir=$(DESTDIR)$(applicationsdir) $(desktops)
 	rm -f $(all_python:%.py=$(DESTDIR)$(preferencesdir)/%.py)
 	rm -f $(all_python:%.py=$(DESTDIR)$(preferencesdir)/%.pyc)
 

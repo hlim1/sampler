@@ -1,4 +1,4 @@
-servers_DATA = Sampler_Monitor.server
+services_DATA = edu.wisc.cs.cbi.Monitor.service
 
 tray_DATA = tray.glade
 
@@ -6,12 +6,12 @@ nodist_tray_PYTHON = Paths.py
 tray_PYTHON =					\
 	AboutDialog.py				\
 	BusyCursor.py				\
-	Factory.py				\
 	LazyDialog.py				\
 	LazyWidget.py				\
 	Main.py					\
 	PopupMenu.py				\
 	PreferencesDialog.py			\
+	Service.py				\
 	UploaderTrayIcon.py
 
 all_python = $(nodist_tray_PYTHON) $(tray_PYTHON)
@@ -29,7 +29,7 @@ link_python =					\
 tray_SCRIPTS = tray
 
 EXTRA_DIST =					\
-	$(servers_DATA:=.in)			\
+	$(services_DATA:=.in)			\
 	$(tray_DATA)				\
 	$(tray_PYTHON)				\
 	Paths.py.in				\
@@ -40,7 +40,7 @@ EXTRA_DIST =					\
 
 BUILT_SOURCES =					\
 	Paths.py				\
-	Sampler_Monitor.server			\
+	edu.wisc.cs.cbi.Monitor.service		\
 	tray
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)

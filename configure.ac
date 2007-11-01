@@ -166,6 +166,10 @@ AC_MSG_CHECKING(for GNOME support)
 AM_CONDITIONAL(WITH_GNOME, test "$with_gnome" = yes)
 AC_MSG_RESULT($with_gnome)
 
+AC_MSG_CHECKING(for DBUS session services subdirectory)
+AC_SUBST(servicesdir, `$PKG_CONFIG --variable=session_bus_services_dir dbus-1`)
+AC_MSG_RESULT($servicesdir)
+
 
 ########################################################################
 #
@@ -193,7 +197,6 @@ fi
 
 
 AC_SUBST(schemadir, '${GCONF_SCHEMA_FILE_DIR}')
-AC_SUBST(serversdir, '${libdir}/bonobo/servers')
 
 AC_SUBST(pkglibdir, '${libdir}/${PACKAGE}')
 AC_SUBST(driverdir, '${pkglibdir}/driver')

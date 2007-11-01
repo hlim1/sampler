@@ -1,17 +1,19 @@
 import pygtk
 pygtk.require('2.0')
 
-import bonobo
+import dbus.glib
 import gconf
 import gnome
-import gnome.ui
+import gtk
 
-from Factory import Factory
 from GConfDir import GConfDir
 from UploaderTrayIcon import UploaderTrayIcon
 
 import Keys
 import SamplerConfig
+import Service
+
+__pychecker__ = 'no-import'
 
 
 ########################################################################
@@ -19,13 +21,14 @@ import SamplerConfig
 
 def main():
     gnome.program_init('tray', SamplerConfig.version)
+    unique = Service.unique()
+    if not unique: return
+
     client = gconf.client_get_default()
     gconf_dir = GConfDir(client, Keys.root, gconf.CLIENT_PRELOAD_ONELEVEL)
 
-    factory = Factory()
     tray = UploaderTrayIcon(client)
     tray.show_all()
-    bonobo.main()
+    gtk.main()
 
-    del factory
     del gconf_dir

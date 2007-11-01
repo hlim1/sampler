@@ -21,11 +21,11 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: /usr/bin/camlp4o.opt
 BuildRequires: binutils
 BuildRequires: cil-devel >= 1.3.6
+BuildRequires: dbus-devel
 BuildRequires: flex
 BuildRequires: gcc
 Buildrequires: gsl-devel
 BuildRequires: gtk2-devel
-BuildRequires: libbonobo-devel
 BuildRequires: lsb
 BuildRequires: ocaml
 BuildRequires: perl
@@ -43,6 +43,7 @@ BuildRequires: scrollkeeper
 
 Summary: Support for applications with sampled instrumentation
 Requires: python >= 2.4
+Requires: dbus-python
 Requires: gnome-python2
 Requires: gnome-python2-gconf
 Requires: gnome-python2-gtkhtml2
@@ -92,7 +93,6 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor
 %{_libdir}/%{name}/sites
 %{_libdir}/%{name}/wrapped
 %{_libdir}/%{name}/tray
-%{_libdir}/bonobo/servers/*
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}/common
 %{_datadir}/%{name}/first-time
@@ -101,6 +101,7 @@ gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor
 %{_datadir}/%{name}/tray
 %{_datadir}/%{name}/wrapper
 %{_datadir}/applications/*
+%{_datadir}/dbus-1/services/*
 %{_datadir}/icons/hicolor/*/apps/*
 
 

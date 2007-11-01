@@ -5,9 +5,6 @@ sys.path.append(Paths.common)
 import pygtk
 pygtk.require('2.0')
 
-import ORBit
-ORBit.load_typelib('Everything')
-
 
 ########################################################################
 
@@ -35,23 +32,11 @@ def main(name, wrapped, upload_headers, **extras):
         Popen([Paths.first_time + '/first-time'])
 
     if user.show_tray_icon():
-        from bonobo.activation import activate
-        try:
-            monitor = activate("iid == 'OAFIID:SamplerMonitor:0.1'")
-        except RuntimeError:
-            monitor = None
-    else:
-        monitor = None
+        import dbus
+        bus = dbus.SessionBus()
+        remote = bus.get_object('edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor')
+        iface = dbus.Interface(remote, 'edu.wisc.cs.cbi.Monitor')
+        iface.activate()
 
-    try:
-        outcome = launcher.wait()
-
-    finally:
-        if monitor != None:
-            import CORBA
-            try:
-                monitor.unref()
-            except CORBA.COMM_FAILURE:
-                pass
-
+    outcome = launcher.wait()
     outcome.exit()

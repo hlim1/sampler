@@ -1,8 +1,9 @@
 -*- outline -*-
 
-* sampler-1.5.2
+* sampler-1.6
 
 ** Small build infrastructure tweaks for Fedora 8.
+** Manage tray monitor using DBUS instead of Bonobo.
 
 * sampler-1.5.1
 

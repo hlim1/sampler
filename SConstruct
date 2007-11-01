@@ -105,7 +105,6 @@ env = env.Copy(
     samplerdir='$driverdir/sampler',
     schemadir='$sysconfdir/gconf/schemas',
     schemesdir='$samplerdir/schemes',
-    serversdir='$libdir/bonobo/servers',
     sysconfdir='$prefix/etc',
     threadsdir='$samplerdir/threads',
     toolsdir='$pkglibdir/tools',

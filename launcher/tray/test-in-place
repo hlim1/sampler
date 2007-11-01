@@ -13,7 +13,7 @@ for subdir in ['common', 'monitor', 'trayicon']:
     sys.path.append(realpath(home + '/../' + subdir))
 
 import SamplerConfig
-SamplerConfig.pixmapsdir = realpath(home + '../pixmaps')
+SamplerConfig.pixmapsdir = realpath(home + '/../pixmaps')
 
 import Main
 Main.main()

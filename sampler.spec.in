@@ -191,7 +191,7 @@ make %{?_smp_mflags}
 rm -rf $RPM_BUILD_ROOT
 #%scons DESTDIR=$RPM_BUILD_ROOT install
 export GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
-%makeinstall
+make DESTDIR=%buildroot install
 rm -rf $RPM_BUILD_ROOT/var/scrollkeeper
 
 %clean

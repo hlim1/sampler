@@ -31,11 +31,3 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-Notwithstanding the above notices and terms, the source files
-distributed as "launcher/trayicon/libegg/tray/eggtrayicon.c" and
-"launcher/trayicon/libegg/tray/eggtrayicon.h" are Copyright (c) 2002
-Anders Carlsson <andersca@gnu.org> and are governed by the terms of
-the GNU Lesser General Public License.  See each file for
-corresponding additional details.

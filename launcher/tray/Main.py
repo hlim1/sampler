@@ -1,7 +1,6 @@
 import pygtk
 pygtk.require('2.0')
 
-import dbus.glib
 import gconf
 import gnome
 import gtk

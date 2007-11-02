@@ -1,3 +1,5 @@
+from dbus.mainloop.glib import DBusGMainLoop
+
 import dbus.service
 import gtk
 
@@ -27,6 +29,7 @@ class Server(dbus.service.Object):
 
 
 def unique():
+    DBusGMainLoop(set_as_default=True)
     bus = dbus.SessionBus()
 
     try:

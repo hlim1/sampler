@@ -6,7 +6,7 @@ import gnome
 import gtk
 
 from GConfDir import GConfDir
-from UploaderTrayIcon import UploaderTrayIcon
+from TrayIcon import TrayIcon
 
 import Keys
 import SamplerConfig
@@ -19,6 +19,8 @@ __pychecker__ = 'no-import'
 
 
 def main():
+    __pychecker__ = 'unusednames=tray'
+
     gnome.program_init('tray', SamplerConfig.version)
     unique = Service.unique()
     if not unique: return
@@ -26,8 +28,7 @@ def main():
     client = gconf.client_get_default()
     gconf_dir = GConfDir(client, Keys.root, gconf.CLIENT_PRELOAD_ONELEVEL)
 
-    tray = UploaderTrayIcon(client)
-    tray.show_all()
+    tray = TrayIcon(client)
     gtk.main()
 
     del gconf_dir

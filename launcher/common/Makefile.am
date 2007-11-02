@@ -4,10 +4,8 @@ common_PYTHON =					\
 	GConfDir.py				\
 	GConfNotifier.py			\
 	Keys.py					\
-	LazyIcon.py				\
 	MasterNotifier.py			\
 	Signals.py				\
-	StatusIcon.py				\
 	WindowIcon.py
 
 all_python = $(nodist_common_PYTHON) $(common_PYTHON)

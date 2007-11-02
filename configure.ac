@@ -124,10 +124,6 @@ PKG_CHECK_MODULES(MONITOR, libbonobo-2.0 pygobject-2.0, ,
 AC_SUBST(MONITOR_CFLAGS)
 AC_SUBST(MONITOR_LIBS)
 
-PKG_CHECK_MODULES(EGG_TRAY, gtk+-2.0, , gnome_ok=no)
-AC_SUBST(EGG_TRAY_CFLAGS)
-AC_SUBST(EGG_TRAY_LIBS)
-
 AM_PATH_GLIB_2_0(, , gnome_ok=no, gobject)
 
 AM_PATH_PYTHON
@@ -207,7 +203,6 @@ AC_SUBST(threads_yesdir, '${threadsdir}/yes')
 AC_SUBST(threads_nodir, '${threadsdir}/no')
 AC_SUBST(toolsdir, '${pkglibdir}/tools')
 AC_SUBST(traylibdir, '${pkglibdir}/tray')
-AC_SUBST(egglibdir, '${traylibdir}/egg')
 
 AC_SUBST(pkgdatadir, '${datadir}/${PACKAGE}')
 AC_SUBST(commondir, '${pkgdatadir}/common')
@@ -451,9 +446,6 @@ launcher/monitor/Makefile
 launcher/pixmaps/Makefile
 launcher/preferences/Makefile
 launcher/tray/Makefile
-launcher/trayicon/Makefile
-launcher/trayicon/libegg/Makefile
-launcher/trayicon/libegg/tray/Makefile
 launcher/wrapper/Makefile
 lib/Makefile
 lib/schemes/Makefile

@@ -3,7 +3,8 @@ first_time_DATA = first-time.glade
 nodist_first_time_PYTHON = Paths.py
 first_time_PYTHON =				\
 	FirstTime.py				\
-	Main.py
+	Main.py					\
+	StatusIcon.py
 
 all_python = $(nodist_first_time_PYTHON) $(first_time_PYTHON)
 link_python = GConfDir.py Keys.py SamplerConfig.py

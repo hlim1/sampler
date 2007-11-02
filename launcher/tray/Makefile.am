@@ -5,14 +5,11 @@ tray_DATA = tray.glade
 nodist_tray_PYTHON = Paths.py
 tray_PYTHON =					\
 	AboutDialog.py				\
-	BusyCursor.py				\
-	LazyDialog.py				\
-	LazyWidget.py				\
 	Main.py					\
 	PopupMenu.py				\
 	PreferencesDialog.py			\
 	Service.py				\
-	UploaderTrayIcon.py
+	TrayIcon.py
 
 all_python = $(nodist_tray_PYTHON) $(tray_PYTHON)
 
@@ -24,7 +21,7 @@ link_python =					\
 	MasterNotifier.py			\
 	SamplerConfig.py			\
 	Signals.py				\
-	StatusIcon.py
+	WindowIcon.py
 
 tray_SCRIPTS = tray
 

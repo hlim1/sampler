@@ -5,7 +5,7 @@ env = env.Copy(bindir=env.subst('$bindir'),
 service = env.Template('edu.wisc.cs.cbi.Monitor.service.in', varlist=['traydir'])
 Default([service, env.Template('Paths.py.in', varlist=['bindir', 'traydir'])])
 
-pythons = ['AboutDialog.py', 'BusyCursor.py', 'LazyDialog.py', 'LazyWidget.py', 'Main.py', 'PopupMenu.py', 'PreferencesDialog.py', 'Service.py', 'UploaderTrayIcon.py']
+pythons = ['AboutDialog.py', 'Main.py', 'PopupMenu.py', 'PreferencesDialog.py', 'Service.py', 'TrayIcon.py']
 
 pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)

@@ -7,10 +7,6 @@ SUBDIRS =					\
 	tray					\
 	wrapper
 
-if !HAVE_PYTHON_TRAYICON
-SUBDIRS += trayicon
-endif !HAVE_PYTHON_TRAYICON
-
 schema_DATA = sampler.schemas
 
 noinst_SCRIPTS = test-by-extension

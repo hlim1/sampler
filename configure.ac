@@ -113,55 +113,15 @@ AC_PROG_LN_S
 #
 
 
-gnome_ok=yes
-
-PKG_CHECK_MODULES(TRAY_ICON, gtk+-2.0 pygtk-2.0, , gnome_ok=no)
-AC_SUBST(TRAY_ICON_CFLAGS)
-AC_SUBST(TRAY_ICON_LIBS)
-
-PKG_CHECK_MODULES(MONITOR, libbonobo-2.0 pygobject-2.0, ,
-  [PKG_CHECK_MODULES(MONITOR, libbonobo-2.0 pygtk-2.0, , gnome_ok=no)])
-AC_SUBST(MONITOR_CFLAGS)
-AC_SUBST(MONITOR_LIBS)
-
-AM_PATH_GLIB_2_0(, , gnome_ok=no, gobject)
-
 AM_PATH_PYTHON
-AC_MSG_CHECKING(for python prefix)
-AC_SUBST(PYTHON_PREFIX, "`$PYTHON -c 'import sys; print sys.prefix'`")
-AC_MSG_RESULT($PYTHON_PREFIX)
-AC_SUBST(PYTHON_CFLAGS, '-I${PYTHON_PREFIX}/include/python${PYTHON_VERSION}')
 
-old_LDFLAGS=$LDFLAGS
-old_LIBS=$LIBS
-PYTHON_LDFLAGS="-L${PYTHON_PREFIX}/lib"
-PYTHON_LIBS='-lpython${PYTHON_VERSION}'
-LDFLAGS="$LDFLAGS $PYTHON_LDFLAGS"
-AC_CHECK_LIB(python${PYTHON_VERSION}, Py_BuildValue, , PYTHON_LDFLAGS="$PYTHON_LDFLAGS/python${PYTHON_VERSION}/config" PYTHON_LIBS="$PYTHON_LIBS -lutil")
-AC_SUBST(PYTHON_LDFLAGS)
-AC_SUBST(PYTHON_LIBS)
-LDFLAGS=$old_LDFLAGS
-LIBS=$old_LIBS
-
-AC_MSG_CHECKING(for python tray icon support)
-if $PYTHON launcher/trayicon/is-installed; then
-  AC_MSG_RESULT(yes)
-  have_python_tray=yes
-else
-  AC_MSG_RESULT([no, using our own])
-  have_python_tray=no
-fi
-
-AM_CONDITIONAL(HAVE_PYTHON_TRAYICON, test "$have_python_tray" = yes)
+AC_ARG_WITH(gnome, AC_HELP_STRING([--without-gnome], [do not build GNOME-based GUI tools]), , with_gnome=yes)
+AM_PATH_GLIB_2_0(, , with_gnome=no)
+AM_CONDITIONAL(WITH_GNOME, test "$with_gnome" = yes)
 
 AM_GCONF_SOURCE_2
 
-AC_ARG_WITH(gnome, AC_HELP_STRING([--without-gnome], [do not build GNOME-based GUI tools]), , with_gnome=yes)
-if test "$gnome_ok" = no; then with_gnome=no; fi
-AC_MSG_CHECKING(for GNOME support)
-AM_CONDITIONAL(WITH_GNOME, test "$with_gnome" = yes)
-AC_MSG_RESULT($with_gnome)
-
+PKG_PROG_PKG_CONFIG
 AC_MSG_CHECKING(for DBUS session services subdirectory)
 AC_SUBST(servicesdir, `$PKG_CONFIG --variable=session_bus_services_dir dbus-1`)
 AC_MSG_RESULT($servicesdir)
@@ -442,7 +402,6 @@ launcher/Makefile
 launcher/common/Makefile
 launcher/first-time/Makefile
 launcher/first-time/first-time.glade
-launcher/monitor/Makefile
 launcher/pixmaps/Makefile
 launcher/preferences/Makefile
 launcher/tray/Makefile

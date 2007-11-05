@@ -9,9 +9,13 @@ compiled = env.PythonBytecodeOpt(pythons)
 
 glade = env.Template('first-time.glade.in', varlist=['deployment_learn_more_url'])
 script = env.Template('first-time.in', varlist=['commondir', 'first_timedir'])
-Default([glade, script])
+service = env.Template('edu.wisc.cs.cbi.FirstTime.service.in', varlist=['first_timedir'])
+Default([glade, script, service])
 
 testPythons(env, pythons)
 Alias('test', env.TestXML(glade))
 
-Alias('install', env.Install('$DESTDIR$first_timedir', [compiled, glade, script]))
+Alias('install', [
+    env.Install('$DESTDIR$first_timedir', [compiled, glade, script]),
+    env.Install('$DESTDIR$servicesdir', service),
+    ])

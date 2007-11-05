@@ -9,9 +9,9 @@ import Paths
 Paths.home = home
 Paths.glade = home + '/first-time.glade'
 
-sys.path.append(realpath(home + '../common'))
+sys.path.append(realpath(home + '/../common'))
 import SamplerConfig
-SamplerConfig.pixmapsdir = realpath(home + '../pixmaps')
-
+SamplerConfig.pixmapsdir = realpath(home + '/../pixmaps')
 
 import Main
+Main.main()

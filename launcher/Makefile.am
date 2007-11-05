@@ -1,7 +1,6 @@
 SUBDIRS =					\
 	common					\
 	first-time				\
-	monitor					\
 	pixmaps					\
 	preferences				\
 	tray					\

@@ -1,35 +1,27 @@
 import pygtk
 pygtk.require('2.0')
 
+import gnome
+
+import SamplerConfig
+import Service
+
 
 ########################################################################
 
 
-def new_instance(app, argc, argv, dialog):
-    __pychecker__ = 'no-argsused'
-    dialog.present()
-    return 0
-
-
 def main():
-    import gnome
-    import SamplerConfig
     gnome.program_init('preferences', SamplerConfig.version)
+    unique = Service.unique()
 
-    import bonobo
-    app = bonobo.Application('Sampler Preferences')
-    signature = app.create_serverinfo(('DISPLAY',))
-    client = app.register_unique(signature)
-
-    if client == None:
-        from PreferencesDialog import PreferencesDialog
-        dialog = PreferencesDialog()
-        app.connect("new-instance", new_instance, dialog)
-        dialog.run()
+    if unique:
+        unique.dialog.run()
 
     else:
-        app.unref()
-        del app
-        client.new_instance([])
+        import dbus
         import gtk.gdk
+        bus = dbus.SessionBus()
+        remote = bus.get_object('edu.wisc.cs.cbi.Preferences', '/edu/wisc/cs/cbi/Preferences')
+        iface = dbus.Interface(remote, 'edu.wisc.cs.cbi.Preferences')
+        iface.present()
         gtk.gdk.notify_startup_complete()

@@ -6,7 +6,8 @@ preferences_PYTHON =				\
 	Application.py				\
 	AppModel.py				\
 	Main.py					\
-	PreferencesDialog.py
+	PreferencesDialog.py			\
+	Service.py
 
 all_python = $(nodist_preferences_PYTHON) $(preferences_PYTHON)
 link_python = Keys.py
@@ -18,9 +19,10 @@ applicationsdir = ${datadir}/applications
 desktops = sampler-preferences.desktop
 
 EXTRA_DIST =					\
-	$(desktops)			\
+	$(desktops)				\
 	$(preferences_DATA)			\
 	$(preferences_PYTHON)			\
+	$(services_DATA:=.in)			\
 	Paths.py.in				\
 	preferences.gladep			\
 	sampler-preferences.in

@@ -3,10 +3,6 @@ ACLOCAL_AMFLAGS = -I /usr/share/aclocal
 
 am__tar = ${AMTAR} cof - "$$tardir"
 
-if WITH_GNOME
-launcher = launcher
-endif
-
 if DISTRO_BASIS_DEBIAN
 debian = debian
 endif
@@ -17,7 +13,7 @@ SUBDIRS =					\
 	driver					\
 	fuzz					\
 	instrumentor				\
-	$(launcher)				\
+	launcher				\
 	lib					\
 	mining					\
 	ocaml					\

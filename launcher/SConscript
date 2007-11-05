@@ -28,8 +28,24 @@ def gconfSource(context):
         context.Result(False)
         context.env.Exit(1)
 
-conf = env.Configure(custom_tests={'GConfSource': gconfSource})
+def servicesDir(context):
+    context.Message('checking for DBUS session services subdirectory: ')
+    ok, value = context.TryAction([['$pkg_config', '--variable=session_bus_services_dir', 'dbus-1', '>$TARGET']])
+    if ok:
+        value = value.rstrip()
+        context.env['servicesdir'] = value
+        context.Result(value)
+        return value
+    else:
+        context.Result('unknown')
+        context.env.Exit(1)
+
+conf = env.Configure(custom_tests={
+        'GConfSource': gconfSource,
+        'ServicesDir': servicesDir,
+        })
 conf.GConfSource()
+conf.ServicesDir()
 conf.Finish()
 
 

@@ -38,4 +38,3 @@ def unique():
         return None
 
     return Server(bus_name)
-

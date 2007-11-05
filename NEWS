@@ -3,7 +3,7 @@
 * sampler-1.6
 
 ** Small build infrastructure tweaks for Fedora 8.
-** Manage tray monitor using DBUS instead of Bonobo.
+** Use D-Bus instead of Bonobo for single-instance apps.
 ** Use standard GTK StatusIcon instead of our own.
 
 * sampler-1.5.1

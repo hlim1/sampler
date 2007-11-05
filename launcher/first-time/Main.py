@@ -1,33 +1,25 @@
 import pygtk
 pygtk.require('2.0')
 
+import gnome
+
+import SamplerConfig
+import Service
+
 
 ########################################################################
 
 
-def new_instance(app, argc, argv, dialog):
-    __pychecker__ = 'no-argsused'
-    dialog.present()
-    return 0
-
-
 def main():
-    import gnome
-    import SamplerConfig
-    gnome.program_init('first-time', SamplerConfig.version)
+    gnome.program_init('tray', SamplerConfig.version)
+    unique = Service.unique()
 
-    import bonobo
-    app = bonobo.Application('Sampler First Time')
-    signature = app.create_serverinfo(('DISPLAY',))
-    client = app.register_unique(signature)
-
-    if client == None:
-        from FirstTime import FirstTime        
-        dialog = FirstTime()
-        app.connect("new-instance", new_instance, dialog)
-        dialog.run()
+    if unique:
+        unique.dialog.run()
 
     else:
-        app.unref()
-        del app
-        client.new_instance([])
+        import dbus
+        bus = dbus.SessionBus()
+        remote = bus.get_object('edu.wisc.cs.cbi.FirstTime', '/edu/wisc/cs/cbi/FirstTime')
+        iface = dbus.Interface(remote, 'edu.wisc.cs.cbi.FirstTime')
+        iface.present()

@@ -16,20 +16,6 @@ Alias('test', [
     env.TestXML('tray.glade'),
     ])
 
-def check_services_dir(context):
-    context.Message('checking for DBUS session services subdirectory: ')
-    ok, value = context.TryAction([['$pkg_config', '--variable=session_bus_services_dir', 'dbus-1', '>$TARGET']])
-    if ok:
-        value = value.rstrip()
-        context.env['servicesdir'] = value
-        context.Result(value)
-        return value
-
-config = env.Configure(custom_tests={'CheckServicesDir': check_services_dir})
-servicesdir = config.CheckServicesDir()
-if not servicesdir: Exit(1)
-config.Finish()
-
 Alias('install', [
     env.Install('$DESTDIR$servicesdir', service),
     env.Install('$DESTDIR$traydir', [compiled, 'tray.glade']),

@@ -3,12 +3,12 @@
 
 from itertools import imap
 from optparse import OptionParser
-from os import rename, stat
-from os.path import basename, dirname
+from os import makedirs, rename, stat
+from os.path import basename, dirname, exists
 from time import gmtime, strftime
 import sys
 
-from common import Upload, connect
+from common import Upload, connect, results
 
 
 columns = {
@@ -168,6 +168,13 @@ def main():
     db = connect()
     db.autocommit = False
 
+    #cursor = db.cursor()
+    #cursor.execute('SELECT run_id FROM run_suppress UNION SELECT run_id FROM run')
+    #known = frozenset(row[0] for row in results(cursor))
+    #print 'known:', len(known)
+    #del cursor
+    #return 13
+
     db.cursor().execute("""
       CREATE TEMPORARY TABLE upload_run (
           run_id VARCHAR(24) PRIMARY KEY NOT NULL,
@@ -195,6 +202,17 @@ def main():
     subdirs = imap(dirname, subdirs)
     runs = uploadRuns(db, subdirs)
 
+    # remove anything we already knew about
+    print 'discard already-known runs'
+    cursor = db.cursor()
+    cursor.execute("""
+      DELETE FROM upload_run
+        USING run
+        WHERE upload_run.run_id = run.run_id
+    """)
+    print '\t%d discarded' % cursor.rowcount
+    del cursor
+
     # merge new runs into main table
     db.cursor().execute("""
       INSERT INTO run SELECT
@@ -221,9 +239,13 @@ def main():
     # archive new runs
     for run in runs:
         archive = archives[run.server_name]
-        year = run.date.split('-')[0]
-        destination = '%s/%s/%s' % (archive, year, run.run_id)
+        year, month = run.date.split('-')[0:2]
+        destdir = '%s/%s/%s' % (archive, year, month)
+        destination = '%s/%s' % (destdir, run.run_id)
+        print 'archive: %s -> %s' % (run.subdir, destdir)
         if not options.dry_run:
+            if not exists(destdir):
+                makedirs(destdir)
             rename(run.subdir, destination)
 
 

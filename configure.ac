@@ -116,7 +116,7 @@ AC_PROG_LN_S
 AM_PATH_PYTHON
 
 AC_ARG_WITH(gnome, AC_HELP_STRING([--without-gnome], [do not build GNOME-based GUI tools]), , with_gnome=yes)
-AM_PATH_GLIB_2_0(, , with_gnome=no)
+AM_PATH_GLIB_2_0(, , with_gnome=no, gobject)
 AM_CONDITIONAL(WITH_GNOME, test "$with_gnome" = yes)
 
 AM_GCONF_SOURCE_2

@@ -1,0 +1,61 @@
+Import('env')
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['-fpic'], LIBS=['sampler-schemes'], LIBPATH=['.'])
+
+libs = []
+
+def twolibs(env, base, sources, **kwargs):
+    global libs
+    libs += env.SharedLibrary('sampler-' + base, sources)
+    libs += env.StaticLibrary('sampler-' + base, sources)
+
+genv = env.Copy()
+genv.ParseConfig('$pkg_config --cflags --libs gobject-2.0')
+gsources = ['g-object-unref.c', 'g-object-unref-classify.c']
+twolibs(genv, 'g-object-unref', gsources)
+
+sources = [
+    'samples.c',
+    'timestamps.c',
+    'tuple-1.c',
+    'tuple-2.c',
+    'tuple-3.c',
+    'tuple-4.c',
+    'tuple-9.c',
+]
+
+twolibs(env, 'schemes', sources)
+
+for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pairs']:
+    twolibs(env, scheme, scheme + '.c')
+
+fenv = env.Copy()
+fenv.AppendUnique(LIBS=['m'])
+twolibs(fenv, 'float-kinds', 'float-kinds.c')
+
+Default(libs)
+
+headers = [
+    'bounds-unit.h',
+    'bounds.h',
+    'branches-unit.h',
+    'branches.h',
+    'float-kinds-unit.h',
+    'float-kinds.h',
+    'function-entries-unit.h',
+    'function-entries.h',
+    'g-object-unref-unit.h',
+    'g-object-unref.h',
+    'returns-unit.h',
+    'returns.h',
+    'scalar-pairs-unit.h',
+    'scalar-pairs.h',
+    'tuple-1.h',
+    'tuple-2.h',
+    'tuple-3.h',
+    'tuple-4.h',
+    'tuple-9.h',
+]
+
+Alias('install', env.Install('$DESTDIR$schemesdir', headers))
+Alias('install', env.Install('$DESTDIR/usr/lib', libs))

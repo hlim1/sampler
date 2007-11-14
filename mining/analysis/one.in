@@ -22,7 +22,7 @@ use Utils;
 #
 
 sub usage () {
-    die "Usage: $0 <samplerinfo-rpm-file> <results-directory>\n";
+    die "Usage: $0 <samplerinfo-rpm-file> <analysis-output-directory>\n";
 }
 
 usage unless @ARGV == 2;

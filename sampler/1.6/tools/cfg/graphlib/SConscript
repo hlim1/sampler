@@ -1,8 +1,0 @@
-from glob import glob
-
-Import('env')
-
-sources = glob('*.ml') + glob('*.mli')
-sources.remove('callReturn.mli')
-
-env.OcamlObject(sources, OCAML_LIBS=['unix'], OCAML_PATH=['ocaml', 'tools/cfg/graphlib'])

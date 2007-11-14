@@ -1,9 +1,0 @@
-from utils import literal
-
-Import('env')
-config = literal(env, 'config.xml', '<!ENTITY prefix "%s">' % env['prefix'])
-Default(config)
-
-Alias('install', env.Install('$DESTDIR$docdir', config))
-
-SConscript(dirs=['sampler-guide/C'])

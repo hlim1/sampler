@@ -21,10 +21,13 @@ my $RunsPerSubdirectory = 10000;
 #
 #  sanity check for dangerous characters
 #
+#	Example valid directory:
+#		./results/fedora-5-i386/nautilus-2.14.1-1.fc5.1.sam.2/
+#
 
 sub check_outdir ($) {
     my $outdir = shift;
-    die "suspicious outdir: $outdir\n"
+    die "suspicious outdir: $outdir\nExample valid analysis output directory: ./results/fedora-5-i386/nautilus-2.14.1-1.fc5.1.sam.2/"
 	unless $outdir =~ /^results\/\w+-\d+-i386\/[^-\/]+-[^-\/]+-[^-\/]+$/;
 }
 
@@ -187,7 +190,9 @@ sub convert_reports ($\@@) {
     foreach my $run_num (0 .. $#_) {
 	local $_ = $_[$run_num];
 	die "suspicious run id: $_" if /\//;
-	my $old_dir = "/afs/cs.wisc.edu/p/cbi/uploads/reports/$_";
+
+##### This needs to be fixed - cannot take a hard-coded path for the reports directory
+	my $old_dir = "/afs/cs.wisc.edu/p/cbi/uploads/archive/2006/08/$_";
 	my $env_name = "$old_dir/environment";
 	my $environment = new FileHandle $env_name
 	    or die "cannot read $env_name: $!\n";
@@ -281,21 +286,6 @@ sub clean ($) {
 	"$outdir/units.so",
 	"$outdir/GNUmakefile",
 	glob("$outdir/*.tmp.txt");
-
-    if (-z "$outdir/preds.txt") {
-	rmtree "$outdir/debug";
-	unlink
-	    "$outdir/logo.css",
-	    "$outdir/logo.xsl",
-	    "$outdir/preds.txt",
-	    "$outdir/stamp-convert-reports",
-	    "$outdir/summary.css",
-	    "$outdir/summary.dtd",
-	    "$outdir/summary.xsl",
-	    "$outdir/view.css",
-	    "$outdir/view.dtd",
-	    "$outdir/view.xsl";
-	}
 }
 
 

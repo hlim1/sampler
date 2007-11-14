@@ -1,0 +1,7 @@
+from glob import glob
+sources = glob('*.ml') + glob('*.mli')
+
+Import('env')
+env = env.Copy()
+env.AppendUnique(OCAML_PATH=['ocaml'])
+env.OcamlObject(sources)

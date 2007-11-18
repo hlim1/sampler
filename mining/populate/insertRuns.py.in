@@ -27,7 +27,7 @@ columns = {
 
 servers = {
     '/afs/cs.wisc.edu/p/cbi/uploads/reports': 'www.cs.wisc.edu',
-    '/afs/cs.wisc.edu/p/cbi/uploads/archive': 'www.cs.wisc.edu',
+    '/afs/cs.wisc.edu/p/cbi/uploads/cbi.cs.wisc.edu/reports': 'cbi.cs.wisc.edu',
     '/afs/cs.wisc.edu/p/cbi/uploads/berkeley/reports': 'sampler.cs.berkeley.edu',
     '/afs/cs.stanford.edu/group/cbi/www/sampler-uploads': 'www.cs.stanford.edu',
     }
@@ -35,6 +35,7 @@ servers = {
 
 archives = {
     'www.cs.wisc.edu': '/afs/cs.wisc.edu/p/cbi/uploads/archive',
+    'cbi.cs.wisc.edu': '/afs/cs.wisc.edu/p/cbi/uploads/cbi.cs.wisc.edu/archive',
     'sampler.cs.berkeley.edu': '/afs/cs.wisc.edu/p/cbi/uploads/berkeley/archive',
     'www.cs.stanford.edu': '/afs/cs.stanford.edu/group/cbi/www/archive'
     }

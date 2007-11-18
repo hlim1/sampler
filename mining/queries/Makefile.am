@@ -10,6 +10,7 @@ query_sql :=					\
 	reports-per-day.sql			\
 	reports-per-month.sql			\
 	reports-per-month-app.sql		\
+	reports-per-month-distro.sql		\
 	reports-per-week-app.sql		\
 	reports-per-week.sql
 

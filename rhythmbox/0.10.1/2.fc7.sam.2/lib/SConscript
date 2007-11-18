@@ -1,0 +1,15 @@
+Import('env')
+
+env = env.Copy()
+env.AppendUnique(CCFLAGS=['-O'])
+
+Alias('install', env.Install('$DESTDIR$samplerdir', [
+    'registry.h',
+    'report.h',
+    'signature.h',
+    'timestamps.h',
+    'unit-signature.h',
+    'unit.h',
+    ]))
+
+SConscript(dirs=['schemes', 'threads'], exports=['env'])

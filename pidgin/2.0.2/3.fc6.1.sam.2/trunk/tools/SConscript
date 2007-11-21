@@ -1,0 +1,153 @@
+from glob import glob
+
+Import('env')
+env = env.Copy(LEXFLAGS=['-f', '-p'], LIBS='fl', OCAML_LIBS=['unix', 'str'])
+env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
+
+
+def distroName(context):
+    context.Message('checking for distribution name: ')
+    action = [['lsb_release', '-is', '>', '$TARGET']]
+    (status, name) = context.TryAction(action)
+    if status:
+        name = name.rstrip()
+        name = {'FedoraCore': 'fedora', 'Fedora': 'fedora', 'CentOS': 'centos'}[name]
+        context.env['DISTRO_NAME'] = name
+        context.Result(name)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+def distroBasis(context):
+    context.Message('checking for distribution basis: ')
+    basis = {
+        'fedora': 'rpm',
+        'redhat': 'rpm',
+        'tao': 'rpm',
+        'centos': 'rpm',
+        'ubuntu': 'debian',
+        }[context.env['DISTRO_NAME']]
+    context.env['DISTRO_BASIS'] = basis
+    context.Result(basis)
+    return basis
+
+def distroVersion(context):
+    context.Message('checking for distribution version: ')
+    action = [['lsb_release', '-rs', '>', '$TARGET']]
+    (status, version) = context.TryAction(action)
+    if status:
+        version = version.rstrip()
+        context.env['DISTRO_VERSION'] = version
+        context.Result(version)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+def distroArch(context):
+    context.Message('checking for distribution arch: ')
+    action = {
+        'rpm': [['rpm', '--eval', '%_build_arch', '>', '$TARGET']],
+        'debian': [['dpkg-architecture', '-s', '-qDEB_BUILD_ARCH', '>', '$TARGET']],
+        }[env['DISTRO_BASIS']]
+    (status, arch) = context.TryAction(action)
+    if status:
+        arch = arch.rstrip()
+        context.env['DISTRO_ARCH'] = arch
+        context.Result(arch)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+conf = env.Configure(custom_tests={
+    'DistroName': distroName,
+    'DistroBasis': distroBasis,
+    'DistroVersion': distroVersion,
+    'DistroArch': distroArch,
+    })
+conf.DistroName()
+conf.DistroBasis()
+conf.DistroVersion()
+conf.DistroArch()
+conf.Finish()
+
+wenv = env.Copy()
+wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare'])
+wenv.ParseConfig('gsl-config --cflags --libs')
+Default(wenv.Program('decimate-samples.l'))
+
+sources = glob('*.ml') + glob('*.mli')
+env.OcamlObject(sources)
+Default(env.OcamlProgram('resolve-samples.ml'),
+        env.OcamlProgram('resolve-timestamps.ml'))
+
+Alias('test', env.TestXML('application.schemas.in'))
+
+Default(env.Template('find-sampler-info.in', varlist=['PERL']))
+Default(env.Template('install-gconf.in', varlist=['PERL']))
+
+Default(env.Template('rpmbuild.in', varlist=[
+    'PACKAGE',
+    'PERL',
+    'bindir',
+    'datadir',
+    'datarootdir',
+    'exec_prefix',
+    'libdir',
+    'pkgdatadir',
+    'pkglibdir',
+    'prefix',
+    ]))
+
+Default(env.Template('install-wrappers.in', varlist=[
+    'PACKAGE',
+    'PERL',
+    'exec_prefix',
+    'libdir',
+    'pkglibdir',
+    'prefix',
+    ]))
+
+wenv = env.Copy(name='@name@', path='@path@', version='@version@', release='@release@')
+Default(wenv.Template('wrapper.in.in', varlist=[
+    'DISTRO_ARCH',
+    'DISTRO_NAME',
+    'DISTRO_VERSION',
+    'PACKAGE_VERSION',
+    'name',
+    'path',
+    'pkgdatadir',
+    'pkglibdir',
+    'release',
+    'version',
+    ]))
+
+# todo: sampler.mk
+
+Alias('install', env.Install('$DESTDIR$toolsdir', [
+    'Embedded.pm',
+    'Function.pm',
+    'Node.pm',
+    'Object.pm',
+    'SymbolTable.pm',
+    'Unit.pm',
+    'application.schemas.in',
+    'decimate-samples',
+    'extract-report',
+    'extract-section',
+    'find-sampler-info',
+    'install-gconf',
+    'install-wrappers',
+    'resolve-backtrace',
+    'resolve-cfg',
+    'resolve-samples',
+    'resolve-timestamps',
+    'rpmbuild',
+    'wrapper.in',
+    ]))
+
+
+Import('dist')
+dist(['SConscript', sources, glob('*.in')])
+
+
+SConscript(dirs='cfg')

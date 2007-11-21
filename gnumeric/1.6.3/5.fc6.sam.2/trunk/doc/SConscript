@@ -1,0 +1,12 @@
+from utils import literal
+
+Import('env')
+config = literal(env, 'config.xml', '<!ENTITY prefix "%s">' % env['prefix'])
+Default(config)
+
+Alias('install', env.Install('$DESTDIR$docdir', config))
+
+Import('dist')
+dist(['config.xml.in', 'SConscript'])
+
+SConscript(dirs=['sampler-guide/C'])

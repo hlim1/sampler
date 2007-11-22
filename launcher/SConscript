@@ -58,7 +58,6 @@ if env['GCONF_SCHEMAS_INSTALL']:
 SConscript(dirs=[
     'common',
     'first-time',
-    'monitor',
     'pixmaps',
     'preferences',
     'tray',

@@ -43,7 +43,7 @@ class visitor pairs =
 let duplicateBody fundec =
   match fundec.smaxstmtid with
   | None ->
-      failwith "no maximum statement id; call Cfg.enumerate before duplicating"
+      failwith "no maximum statement id; call CfgUtils.enumerate before duplicating"
   | Some max ->
       let pairs = Array.make max (dummyStmt, dummyStmt) in
       let visitor = new visitor pairs in

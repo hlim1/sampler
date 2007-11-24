@@ -18,7 +18,7 @@ class visitor =
       begin
 	match stmt.skind with
 	| Switch (expr, block, cases, location) ->
-	    if not (Cfg.hasDefault cases) then
+	    if not (CfgUtils.hasDefault cases) then
 	      let default = mkEmptyStmt () in
 	      default.labels <- [Default location];
 	      let break = mkStmt (Break location) in
@@ -31,7 +31,7 @@ class visitor =
       DoChildren
 
     method vfunc func =
-      Cfg.build func;
+      CfgUtils.build func;
       DoChildren
   end
 
@@ -88,7 +88,7 @@ let prepatchSplits func =
 	ignore (bug "%s: unexpected kind of multi-successor statement" (Utils.stmt_describe stmt.skind));
 	failwith "internal error"
   in
-  Cfg.build func;
+  CfgUtils.build func;
   List.filter isSplit func.sallstmts
 
 

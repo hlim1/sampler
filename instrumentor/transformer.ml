@@ -28,7 +28,7 @@ let visit file isWeightyCallee countdown =
 	  if !BalancePaths.balancePaths then
 	    begin
 	      Balance.patch func splits weights;
-	      Cfg.build func;
+	      CfgUtils.build func;
 	      let sites = Sites.registry#findAll func in
 	      let weights = WeighPaths.weigh func sites headers true in
 	      sites, weights

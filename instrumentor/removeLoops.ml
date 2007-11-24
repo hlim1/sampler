@@ -31,7 +31,7 @@ class visitor =
       DoChildren
 
     method vfunc func =
-      Cfg.build func;
+      CfgUtils.build func;
       DoChildren
   end
 

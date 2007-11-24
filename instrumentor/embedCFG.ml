@@ -52,7 +52,7 @@ class visitor file digest channel =
 	fundec.svar.vname;
       self#addLocation fundec.svar.vdecl;
 
-      Cfg.build fundec;
+      CfgUtils.build fundec;
       expectedSid := 0;
 
       ChangeDoChildrenPost (fundec, self#postNewline)

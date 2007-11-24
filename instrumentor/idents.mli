@@ -1,3 +1,3 @@
 val register : string * (unit -> string) -> unit
 
-val phase : TestHarness.phase
+val phase : Phase.phase

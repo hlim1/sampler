@@ -11,9 +11,6 @@ let showPhaseTimes =
     ~default:false
 
 
-type phase = string * (file -> unit)
-
-
 let depth = ref 0
 
 let time =

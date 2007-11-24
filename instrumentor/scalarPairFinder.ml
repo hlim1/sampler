@@ -31,7 +31,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	begin
 	  if not !compareUninitialized then
 	    begin
-	      Cfg.build func;
+	      CfgUtils.build func;
 	      Initialized.analyze func locals
 	    end;
 	  DoChildren

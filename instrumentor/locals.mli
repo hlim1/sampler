@@ -1,6 +1,6 @@
 open Cil
 
 
-val rename : TestHarness.phase
+val rename : Phase.phase
 
 val makeTempVar : fundec -> ?name:string -> typ -> varinfo

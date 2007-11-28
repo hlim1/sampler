@@ -29,6 +29,9 @@ usage unless @ARGV == 2;
 my ($rpm_samplerinfo, $outdir) = @ARGV;
 die "$!: $rpm_samplerinfo\n" unless -r $rpm_samplerinfo;
 
+print "rpm_samplerinfo: $rpm_samplerinfo\n";
+print "outdir: $outdir\n";
+
 my $rpm_debuginfo = $rpm_samplerinfo;
 $rpm_debuginfo =~ s/-samplerinfo-/-debuginfo-/;
 unless (-r $rpm_debuginfo) {
@@ -42,6 +45,7 @@ unless (-r $rpm_debuginfo) {
 }
 
 $ENV{rpm} = $rpm_samplerinfo;
+print "rpm contains: $ENV{rpm}\n";
 my $target = `rpm -qp --queryformat '%{name}\t%{version}\t%{release}' \$rpm`;
 die "rpm error\n" if $?;
 
@@ -73,15 +77,13 @@ sub stamp() {
 
 warn "Counting reports for $build on $distro ...\n";
 
-# Suppress run_id "itPCJH8AAAEAACvQfX8AAAAE" because it picked up an
-# instrumented compilation unit from some other package.  Probably a
-# shared library provided by Rhythmbox as a Nautilus plugin.  Simpler
-# to ignore it for now.
+# Get report ID's from the database - we want the ones that match this release,
+# but that are not supposed to be repressed
 
 my $dbh = Common::connect;
 my @runs =
-    @{$dbh->selectcol_arrayref(q{
-	SELECT run_id
+    @{$dbh->selectall_arrayref(q{
+	SELECT run_id, extract(year from date)::int as year, extract(month from date)::int as month
 	    FROM run NATURAL JOIN build NATURAL LEFT JOIN run_suppress
 	    WHERE application_name = ?
 	    AND application_version = ?
@@ -90,7 +92,26 @@ my @runs =
 	    AND reason IS NULL
 	    AND run_id != 'itPCJH8AAAEAACvQfX8AAAAE'
 	},
-			       undef, $name, $version, $release, $distro)};
+			       { Slice => {} }, $name, $version, $release, $distro)};
+#	EXCEPT
+#		SELECT run_id
+#		FROM run_suppress
+
+# Suppress run_id "itPCJH8AAAEAACvQfX8AAAAE" because it picked up an
+# instrumented compilation unit from some other package.  Probably a
+# shared library provided by Rhythmbox as a Nautilus plugin.  Simpler
+# to ignore it for now.
+
+#	SELECT run_id
+#	    FROM run NATURAL JOIN build NATURAL LEFT JOIN run_suppress
+#	    WHERE application_name = ?
+#	    AND application_version = ?
+#	    AND application_release = ?
+#	    AND build_distribution = ?
+#	    AND reason IS NULL
+#	    AND run_id != 'itPCJH8AAAEAACvQfX8AAAAE'
+#	},
+#			       undef, $name, $version, $release, $distro)};
 
 $dbh->disconnect;
 

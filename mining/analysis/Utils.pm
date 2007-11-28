@@ -178,60 +178,79 @@ sub unpack_debuginfo ($$) {
 
 
 sub convert_reports ($\@@) {
-    my $outdir = shift;
-    my $schemes = shift;
-    check_outdir $outdir;
-    warn 'Unpacking ', scalar @_, " reports for build ...\n";
+  my $outdir = shift;
+  my $schemes = shift;
+  check_outdir $outdir;
+  warn 'Unpacking ', scalar @_, " reports for build ...\n";
 
-    my $dir = "$outdir/data";
-    rmtree $dir;
-    try_mkdir $dir;
+  my $dir = "$outdir/data";
+  rmtree $dir;
+  try_mkdir $dir;
 
-    foreach my $run_num (0 .. $#_) {
-	local $_ = $_[$run_num];
-	die "suspicious run id: $_" if /\//;
+  my $run_num = -1;
+  foreach my $run (@_) {
+	 print "processing run $run->{run_id}\n";
+	 $run_num = $run_num + 1;
+	 #my @run = @_[$run_num];
+	 my $runid = $run->{run_id};
+	 my $year = $run->{year};
+	 my $month = $run->{month};
+	 die "suspicious run id: $runid" if $runid =~ /\//;
 
-##### This needs to be fixed - cannot take a hard-coded path for the reports directory
-	my $old_dir = "/afs/cs.wisc.edu/p/cbi/uploads/archive/2006/08/$_";
-	my $env_name = "$old_dir/environment";
-	my $environment = new FileHandle $env_name
-	    or die "cannot read $env_name: $!\n";
+	 ## The reports live under one of three servers: www.cs.wisc.edu, cbi.cs.wisc.edu, or sampler.cs.berkeley.edu
+	 ## ...we're assuming here that a single build will always send to the same server
+	 my $old_dir = sprintf('/afs/cs.wisc.edu/p/cbi/uploads/www.cs.wisc.edu/archive/%d/%02d/%s', $year, $month, $runid);
+	 if (! -e($old_dir) ) {
+		$old_dir = sprintf('/afs/cs.wisc.edu/p/cbi/uploads/cbi.cs.wisc.edu/archive/%d/%02d/%s', $year, $month, $runid);
+		if (! -e($old_dir) ) {
+		  $old_dir = sprintf('/afs/cs.wisc.edu/p/cbi/uploads/sampler.cs.berkeley.edu/archive/%d/%02d/%s', $year, $month, $runid);
+		}
+	 }
+	 my $subdir = int($run_num / $RunsPerSubdirectory);
+	 my $new_dir = "$dir/$subdir";
+	 mkdir $new_dir;
+	 $new_dir .= "/$run_num";
+	 try_mkdir $new_dir;
+	
+	 symlink File::Spec->rel2abs($old_dir), "$new_dir/original"
+		or die "cannot create link $new_dir/original: $!\n";
 
-	my $subdir = int($run_num / $RunsPerSubdirectory);
-	my $new_dir = "$dir/$subdir";
-	mkdir $new_dir;
-	$new_dir .= "/$run_num";
-	try_mkdir $new_dir;
+	 my $scheme = $schemes->[0];
+	 $ENV{in} = "$old_dir/samples.gz";
+	 $ENV{out} = "$new_dir/reports";
+	 $ENV{scheme} = $scheme;
 
-	symlink File::Spec->rel2abs($old_dir), "$new_dir/original"
-	    or die "cannot create link $new_dir/original: $!\n";
+	 my $command = 'gunzip <$in';
+	 $command .= ' | ./modernize $scheme samples' if $need_modernize;
+	 $command .= ' >$out';
+	 my $unpacked = (system($command) == 0);
 
-	while (<$environment>) {
-	    chomp;
-	    my ($name, $value) = split /\t/;
-	    next unless $name eq 'HTTP_SAMPLER_EXIT_SIGNAL';
-	    my $label = ($value == 0) ? 'success' : 'failure';
-	    my $label_name = "$new_dir/label";
-	    my $label_file = new FileHandle $label_name, 'w'
+	 my $label;
+
+	 if ($unpacked) {
+		my $env_name = "$old_dir/environment";
+		my $environment = new FileHandle $env_name
+		  or die "cannot read $env_name: $!\n";
+
+		while (<$environment>) {
+		  chomp;
+		  my ($name, $value) = split /\t/;
+		  next unless $name eq 'HTTP_SAMPLER_EXIT_SIGNAL';
+		  $label = ($value == 0) ? 'success' : 'failure';
+		}
+	 } else {
+		warn "gunzip or modernizer failed: $?\n";
+		warn "  while processing $ENV{in}\n";
+		$label = 'ignore';
+	 }
+
+	 my $label_name = "$new_dir/label";
+	 my $label_file = new FileHandle $label_name, 'w'
 		or die "cannot write $label_name: $!\n";
-	    $label_file->print("$label\n");
-	}
+	 $label_file->print("$label\n");
+  }
 
-	my $scheme = $schemes->[0];
-	$ENV{in} = "$old_dir/samples.gz";
-	$ENV{out} = "$new_dir/reports";
-	$ENV{scheme} = $scheme;
-
-	my $command = 'gunzip <$in';
-	$command .= ' | ./modernize $scheme samples' if $need_modernize;
-	$command .= ' >$out';
-	unless (system($command) == 0) {
-	    warn "gunzip or modernizer failed: $?\n";
-	    die "  while processing $ENV{in}\n";
-	}
-    }
-
-    return undef;
+  return undef;
 }
 
 

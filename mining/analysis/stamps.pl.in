@@ -44,24 +44,62 @@ print "stamps :=\n";
 
 
 sub wanted {
-  return unless /^(.*)-samplerinfo-(.*)\.[^.]+\.rpm$/;
-  my $build = "$1-$2";
+#  return unless /^(.*)-samplerinfo-(.*)\.[^.]+\.rpm$/;
+#  my $build = "$1-$2";
 
-  my $distro = basename dirname $File::Find::dir;
-  die unless $distro =~ /^\w+-\d+-i386$/;
-  my $stamp = "results/$distro/$build/stamp";
-  if ($suppressed{$distro}{$build}) {
-    print "\n# suppressed build: $stamp\n";
-  } else {
-    print <<"EOT";
+#  my $distro = basename dirname $File::Find::dir;
 
+  my $dbh = Common::connect;
+
+##### Selects all builds that have at least two failed runs
+  my $sth = $dbh->prepare(q{
+		SELECT application_name, application_version, application_release, build_distribution, COUNT(*) AS "Failed Runs"
+    	FROM run
+    	NATURAL JOIN build
+    	WHERE exit_signal <> 0 
+		GROUP BY application_name, application_version, application_release, build_distribution
+		HAVING COUNT(*) > 1
+	});
+  $sth->execute;
+
+  # Bind resulting columns to variables - $num_fails not used for anything, just a dummy to make bind_columns happy
+  my ($name, $version, $release, $distro, $num_fails);
+  $sth->bind_columns(\$name, \$version, \$release, \$distro, \$num_fails);
+  while ($sth->fetch) {
+    my $build = "$version-$release";
+    die unless $distro =~ /^\w+-\d+-i386$/;
+    my $stamp = "results/$distro/$name-$build/stamp";
+    if ($suppressed{$distro}{$build}) {
+      print "\n# suppressed build: $stamp\n";
+    } else {
+	  my $rpmname = "/afs/cs.wisc.edu/p/cbi/public/html/downloads/rpm/$distro/RPMS.apps/$name-samplerinfo-$build.i386.rpm";
+	  if (! -e($rpmname)) {
+		$rpmname = "/afs/cs.wisc.edu/p/cbi/archives/rpm/$distro/RPMS.apps/$name-samplerinfo-$build.i386.rpm"; 
+	  }
+      print <<"EOT";
 stamps += $stamp
-$stamp: $File::Find::name modernize one
+$stamp: $rpmname modernize one
 	./one \$< \$(\@D)
 EOT
   }
-}
 
+  $dbh->disconnect;
 
-my $rpmdir = "/afs/cs.wisc.edu/p/cbi/public/html/downloads/rpm";
-find \&wanted, $rpmdir if -d $rpmdir;
+#  die unless $distro =~ /^\w+-\d+-i386$/;
+#  my $stamp = "results/$distro/$build/stamp";
+#  if ($suppressed{$distro}{$build}) {
+#    print "\n# suppressed build: $stamp\n";
+#  } else {
+#    print <<"EOT";
+
+#stamps += $stamp
+#$stamp: $File::Find::name modernize one
+#	./one \$< \$(\@D)
+#EOT
+#  }
+  }  #while
+}  #sub
+
+wanted();
+#my $rpmdir = "/afs/cs.wisc.edu/p/cbi/public/html/downloads/rpm";
+#find \&wanted, $rpmdir if -d $rpmdir;

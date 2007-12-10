@@ -1,4 +1,4 @@
-include ../../../local.mk
+-include ../../../local.mk
 
 root ?= /afs/cs.wisc.edu/p/cbi/public/build/cbiexp
 datadir ?= data

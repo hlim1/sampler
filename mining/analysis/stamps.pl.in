@@ -1,6 +1,6 @@
 #!@PERL@ -w
 # -*- cperl -*-
-#line 4 stamps.pl
+#line 4 stamps.pl.in
 
 use strict;
 
@@ -16,89 +16,38 @@ use Site;
 ########################################################################
 
 
-my %suppressed;
-{
-  my $dbh = Common::connect;
-
-  my $sth = $dbh->prepare(q{
-	SELECT application_name, application_version, application_release, build_distribution
-	    FROM build
-	    NATURAL JOIN build_suppress
-	});
-  $sth->execute;
-
-  my ($name, $version, $release, $distro);
-  $sth->bind_columns(\$name, \$version, \$release, \$distro);
-  while ($sth->fetch) {
-    $suppressed{$distro}{"$name-$version-$release"} = 1;
-  }
-
-  $dbh->disconnect;
-}
-
-
-########################################################################
-
-
 print "stamps :=\n";
 
 
-sub wanted {
-#  return unless /^(.*)-samplerinfo-(.*)\.[^.]+\.rpm$/;
-#  my $build = "$1-$2";
-
-#  my $distro = basename dirname $File::Find::dir;
-
-  my $dbh = Common::connect;
+my $dbh = Common::connect;
 
 ##### Selects all builds that have at least two failed runs
-  my $sth = $dbh->prepare(q{
-		SELECT application_name, application_version, application_release, build_distribution
-    	FROM run
-    	NATURAL JOIN build
-    	WHERE exit_signal <> 0 
-		GROUP BY application_name, application_version, application_release, build_distribution
-		HAVING COUNT(*) > 1
+my $sth = $dbh->prepare(q{
+	SELECT application_name, application_version, application_release, build_distribution
+	FROM run
+	NATURAL JOIN build
+	NATURAL LEFT JOIN build_suppress
+	WHERE exit_signal <> 0
+	GROUP BY application_name, application_version, application_release, build_distribution, reason
+	HAVING COUNT(*) > 1
 	});
-  $sth->execute;
+$sth->execute;
 
-  my ($name, $version, $release, $distro);
-  $sth->bind_columns(\$name, \$version, \$release, \$distro);
-  while ($sth->fetch) {
-    my $build = "$version-$release";
-    die unless $distro =~ /^\w+-\d+-i386$/;
-    my $stamp = "results/$distro/$name-$build/stamp";
-    if ($suppressed{$distro}{$build}) {
-      print "\n# suppressed build: $stamp\n";
-    } else {
-	  my $rpmname = "/afs/cs.wisc.edu/p/cbi/public/html/downloads/rpm/$distro/RPMS.apps/$name-samplerinfo-$build.i386.rpm";
-	  if (! -e($rpmname)) {
-		$rpmname = "/afs/cs.wisc.edu/p/cbi/archives/rpm/$distro/RPMS.apps/$name-samplerinfo-$build.i386.rpm"; 
-	  }
-      print <<"EOT";
+my ($name, $version, $release, $distro);
+$sth->bind_columns(\$name, \$version, \$release, \$distro);
+while ($sth->fetch) {
+  my $build = "$version-$release";
+  die unless $distro =~ /^\w+-\d+-i386$/;
+  my $stamp = "results/$distro/$name-$build/stamp";
+  my $rpmname = "/afs/cs.wisc.edu/p/cbi/public/html/downloads/rpm/$distro/RPMS.apps/$name-samplerinfo-$build.i386.rpm";
+  if (! -e $rpmname) {
+    $rpmname = "/afs/cs.wisc.edu/p/cbi/archives/rpm/$distro/RPMS.apps/$name-samplerinfo-$build.i386.rpm";
+  }
+  print <<"EOT";
 stamps += $stamp
 $stamp: $rpmname modernize one
 	./one \$< \$(\@D)
 EOT
-  }
+}
 
-  $dbh->disconnect;
-
-#  die unless $distro =~ /^\w+-\d+-i386$/;
-#  my $stamp = "results/$distro/$build/stamp";
-#  if ($suppressed{$distro}{$build}) {
-#    print "\n# suppressed build: $stamp\n";
-#  } else {
-#    print <<"EOT";
-
-#stamps += $stamp
-#$stamp: $File::Find::name modernize one
-#	./one \$< \$(\@D)
-#EOT
-#  }
-  }  #while
-}  #sub
-
-wanted();
-#my $rpmdir = "/afs/cs.wisc.edu/p/cbi/public/html/downloads/rpm";
-#find \&wanted, $rpmdir if -d $rpmdir;
+$dbh->disconnect;

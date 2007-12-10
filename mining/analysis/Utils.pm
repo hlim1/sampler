@@ -27,8 +27,8 @@ my $RunsPerSubdirectory = 10000;
 
 sub check_outdir ($) {
     my $outdir = shift;
-    die "suspicious outdir: $outdir\nExample valid analysis output directory: ./results/fedora-5-i386/nautilus-2.14.1-1.fc5.1.sam.2/"
-	unless $outdir =~ /^results\/\w+-\d+-i386\/[^-\/]+-[^-\/]+-[^-\/]+$/;
+    die "suspicious outdir: $outdir\nExample valid analysis output directory: results/fedora-5-i386/nautilus-2.14.1-1.fc5.1.sam.2"
+	unless $outdir =~ /^results\/\w+-\d+-i386\/[^\/]+-[^-\/]+-[^-\/]+$/;
 }
 
 
@@ -191,7 +191,7 @@ sub convert_reports ($\@@) {
 
   my $run_num = -1;
   foreach my $run (@_) {
-	 print "processing run $run->{run_id}\n";
+	 #print "processing run $run->{run_id}\n";
 	 $run_num = $run_num + 1;
 	 #my @run = @_[$run_num];
 	 my $runid = $run->{run_id};

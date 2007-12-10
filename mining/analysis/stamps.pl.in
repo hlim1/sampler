@@ -53,7 +53,7 @@ sub wanted {
 
 ##### Selects all builds that have at least two failed runs
   my $sth = $dbh->prepare(q{
-		SELECT application_name, application_version, application_release, build_distribution, COUNT(*) AS "Failed Runs"
+		SELECT application_name, application_version, application_release, build_distribution
     	FROM run
     	NATURAL JOIN build
     	WHERE exit_signal <> 0 
@@ -62,9 +62,8 @@ sub wanted {
 	});
   $sth->execute;
 
-  # Bind resulting columns to variables - $num_fails not used for anything, just a dummy to make bind_columns happy
-  my ($name, $version, $release, $distro, $num_fails);
-  $sth->bind_columns(\$name, \$version, \$release, \$distro, \$num_fails);
+  my ($name, $version, $release, $distro);
+  $sth->bind_columns(\$name, \$version, \$release, \$distro);
   while ($sth->fetch) {
     my $build = "$version-$release";
     die unless $distro =~ /^\w+-\d+-i386$/;

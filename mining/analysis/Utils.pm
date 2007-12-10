@@ -292,19 +292,19 @@ sub clean ($) {
     my ($outdir) = @_;
     check_outdir $outdir;
 
-    rmtree ["$outdir/data",
-	    "$outdir/debug",
-	    "$outdir/sites"];
+    #rmtree ["$outdir/data",
+	#    "$outdir/debug",
+	#    "$outdir/sites"];
 
-    unlink
-	"$outdir/f.runs",
-	"$outdir/s.runs",
-	"$outdir/sites.cc",
-	"$outdir/sites.so",
-	"$outdir/units.cc",
-	"$outdir/units.so",
-	"$outdir/GNUmakefile",
-	glob("$outdir/*.tmp.txt");
+    #unlink
+	#"$outdir/f.runs",
+	#"$outdir/s.runs",
+	#"$outdir/sites.cc",
+	#"$outdir/sites.so",
+	#"$outdir/units.cc",
+	#"$outdir/units.so",
+	#"$outdir/GNUmakefile",
+	#glob("$outdir/*.tmp.txt");
 }
 
 

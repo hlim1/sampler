@@ -1,4 +1,5 @@
-root := /afs/cs.wisc.edu/p/cbi/public/build/cbiexp
+#root := /afs/cs.wisc.edu/p/cbi/public/build/cbiexp
+root := /u/f/l/fletchal/CBI/cbiexp/trunk
 datadir := data
 srcdir := debug/usr/src/debug
 

@@ -126,7 +126,7 @@ AC_MSG_CHECKING(for D-Bus session services subdirectory)
 AC_SUBST(servicesdir, `$PKG_CONFIG --variable=session_bus_services_dir dbus-1`)
 AC_MSG_RESULT($servicesdir)
 if test -z "$servicesdir"; then
-  AC_MSG_ERROR(cannot find D-Bus session services subdirectory)
+  AC_MSG_WARN(cannot find D-Bus session services subdirectory)
 fi
 
 

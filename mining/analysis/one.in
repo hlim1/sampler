@@ -90,28 +90,8 @@ my @runs =
 	    AND application_release = ?
 	    AND build_distribution = ?
 	    AND reason IS NULL
-	    AND run_id != 'itPCJH8AAAEAACvQfX8AAAAE'
 	},
 			       { Slice => {} }, $name, $version, $release, $distro)};
-#	EXCEPT
-#		SELECT run_id
-#		FROM run_suppress
-
-# Suppress run_id "itPCJH8AAAEAACvQfX8AAAAE" because it picked up an
-# instrumented compilation unit from some other package.  Probably a
-# shared library provided by Rhythmbox as a Nautilus plugin.  Simpler
-# to ignore it for now.
-
-#	SELECT run_id
-#	    FROM run NATURAL JOIN build NATURAL LEFT JOIN run_suppress
-#	    WHERE application_name = ?
-#	    AND application_version = ?
-#	    AND application_release = ?
-#	    AND build_distribution = ?
-#	    AND reason IS NULL
-#	    AND run_id != 'itPCJH8AAAEAACvQfX8AAAAE'
-#	},
-#			       undef, $name, $version, $release, $distro)};
 
 $dbh->disconnect;
 

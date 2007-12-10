@@ -33,7 +33,7 @@ BUILT_SOURCES =					\
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
-TESTS = $(all_python) $(desktops)
+TESTS = $(all_python) $(desktops) $(preferences_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
 
 

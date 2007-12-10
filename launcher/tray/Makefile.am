@@ -31,7 +31,6 @@ EXTRA_DIST =					\
 	$(tray_PYTHON)				\
 	Paths.py.in				\
 	activate				\
-	oaf.dtd					\
 	tray.gladep				\
 	tray.in
 
@@ -42,7 +41,7 @@ BUILT_SOURCES =					\
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
-TESTS = $(all_python) $(servers_DATA)
+TESTS = $(all_python) $(servers_DATA) $(tray_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
 
 

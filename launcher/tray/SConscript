@@ -12,7 +12,6 @@ compiled = env.PythonBytecodeOpt(pythons)
 
 testPythons(env, pythons)
 Alias('test', [
-    env.TestXML('oaf.dtd'),
     env.TestXML('tray.glade'),
     ])
 

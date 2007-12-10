@@ -29,7 +29,7 @@ BUILT_SOURCES =					\
 
 MOSTLYCLEANFILES = *.pyc *.pyo $(BUILT_SOURCES)
 
-TESTS = $(all_python)
+TESTS = $(all_python) $(first_time_DATA)
 TESTS_ENVIRONMENT = ../test-by-extension
 
 

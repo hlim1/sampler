@@ -62,8 +62,10 @@ sub guess_schemes ($) {
 	('evolution' => ['returns'],
 	 'gaim' => ['scalar-pairs'],
 	 'gimp' => ['branches'],
+	 'gnome-panel' => ['branches', 'g-object-unref', 'returns'],
 	 'gnumeric' => ['returns'],
 	 'nautilus' => ['branches'],
+	 'pidgin' => ['branches', 'g-object-unref', 'returns', 'scalar-pairs'],
 	 'rhythmbox' => ['scalar-pairs'],
 	 'spim' => ['branches', 'returns']);
     return @{$guess{$name}};

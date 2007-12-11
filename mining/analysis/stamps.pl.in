@@ -7,6 +7,7 @@ use strict;
 use DBI;
 use File::Basename;
 use File::Find;
+use FileHandle;
 
 use lib '../populate';
 use Common;
@@ -22,16 +23,8 @@ print "stamps :=\n";
 my $dbh = Common::connect;
 
 ##### Selects all builds that have at least two failed runs
-my $sth = $dbh->prepare(q{
-	SELECT application_name, application_version, application_release, build_distribution
-	FROM run
-	NATURAL JOIN build
-	LEFT JOIN run_suppress USING (run_id)
-	LEFT JOIN build_suppress USING (build_id)
-	WHERE exit_signal <> 0 AND run_suppress.reason IS NULL AND build_suppress.reason IS NULL
-	GROUP BY application_name, application_version, application_release, build_distribution
-	HAVING COUNT(*) > 1
-	});
+my $query = join('', (new FileHandle('stamps.sql'))->getlines);
+my $sth = $dbh->prepare($query);
 $sth->execute;
 
 my ($name, $version, $release, $distro);

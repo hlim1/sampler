@@ -14,7 +14,7 @@ overview.xml: $(stamps)
 stamps: $(stamps)
 .PHONY: stamps
 
-stamps.mk: stamps.pl $(top_builddir)/config.status
+stamps.mk: stamps.pl stamps.sql $(top_builddir)/config.status
 if ENABLE_MINING
 	./$< >$@
 else

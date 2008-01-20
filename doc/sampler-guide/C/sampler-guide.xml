@@ -799,7 +799,7 @@
 
 	<procedure>
 	  <step>
-	    <para>Set <envar>SAMPLER_SEED</envar> to some random seed
+	    <para>Set <envar>$SAMPLER_SEED</envar> to some random seed
 	    integer.</para>
 	  </step>
 

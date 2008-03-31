@@ -1,0 +1,13 @@
+Import('env', 'threadLibs')
+
+env = env.Copy()
+threadLibs(env, 'no')
+
+sources = map(env.File, ['precompute.c', '${LIBPREFIX}sampler-online${LIBSUFFIX}', '${LIBPREFIX}sampler${LIBSUFFIX}'])
+precompute = env.Program(sources)
+Default(precompute)
+
+env.Append(ENV={'SAMPLER_SPARSITY': '1'})
+env.Command('countdown-1-1', precompute, [['$SOURCES', '$TARGET']])
+
+Alias('install', env.Install('$DESTDIR$toolsdir', precompute))

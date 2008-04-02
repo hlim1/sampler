@@ -11,5 +11,7 @@ noinst_PYTHON =					\
 	insertRuns.py				\
 	integrityChecks.py
 
+if ENABLE_MINING
 TESTS = $(noinst_PYTHON)
 TESTS_ENVIRONMENT = pychecker --quiet --stdlib
+endif

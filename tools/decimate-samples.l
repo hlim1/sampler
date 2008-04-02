@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define YY_NO_INPUT
+
 static gsl_rng *generator;
 static double probability;
 

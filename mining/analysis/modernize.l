@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#define YY_NO_INPUT
+
 const char *scheme;
 const char *tag;
 %}

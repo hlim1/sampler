@@ -209,10 +209,10 @@ if test "$with_cil_sibling" = yes; then
   cil_libdir=$cil_absolute/obj/x86_LINUX
 
 elif test -z "$cil_libdir"; then
-  for cil_prefix in /usr/local /usr; do
+  for cil_prefix in /usr/local/lib/ocaml /usr/local/lib /usr/lib/ocaml /usr/lib; do
     AC_MSG_CHECKING(for CIL in $cil_prefix)
-    if test -d $cil_prefix/lib/cil; then
-      cil_libdir=$cil_prefix/lib/cil
+    if test -d $cil_prefix/cil; then
+      cil_libdir=$cil_prefix/cil
       AC_MSG_RESULT(yes)
       break
     else

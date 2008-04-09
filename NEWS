@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.6.1
+
+** Small build infrastructure tweaks for Fedora 9 beta.
+
 * sampler-1.6
 
 ** Small build infrastructure tweaks for Fedora 8.

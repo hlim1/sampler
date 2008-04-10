@@ -1,6 +1,6 @@
 Import('env')
 
-env = env.Copy()
+env = env.Clone()
 env.AppendUnique(CCFLAGS=['-O'])
 
 Alias('install', env.Install('$DESTDIR$samplerdir', [

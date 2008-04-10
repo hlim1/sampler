@@ -1,5 +1,5 @@
 Import('env')
-env = env.Copy()
+env = env.Clone()
 env.AppendUnique(CC=['--sampler-scheme=branches'])
 
 modular = env.CBIProgram(target='modular', source=['modular-a.c', 'modular-b.c'])
@@ -11,7 +11,7 @@ sharing = env.CBIReports([program, library, plugin])
 
 simple = env.CBIProgram('simple.c')
 
-tenv = env.Copy()
+tenv = env.Clone()
 tenv.AppendUnique(CC=['-pthread'])
 threads = tenv.CBIProgram('threads.c')
 

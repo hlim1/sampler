@@ -1,7 +1,7 @@
 from glob import glob
 
 Import('env')
-env = env.Copy(LEXFLAGS=['-f', '-p'], LIBS='fl', OCAML_LIBS=['unix', 'str'])
+env = env.Clone(LEXFLAGS=['-f', '-p'], LIBS='fl', OCAML_LIBS=['unix', 'str'])
 env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
 
 
@@ -70,7 +70,7 @@ conf.DistroVersion()
 conf.DistroArch()
 conf.Finish()
 
-wenv = env.Copy()
+wenv = env.Clone()
 wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare'])
 wenv.ParseConfig('gsl-config --cflags --libs')
 Default(wenv.Program('decimate-samples.l'))
@@ -107,7 +107,7 @@ Default(env.Template('install-wrappers.in', varlist=[
     'prefix',
     ]))
 
-wenv = env.Copy(name='@name@', path='@path@', version='@version@', release='@release@')
+wenv = env.Clone(name='@name@', path='@path@', version='@version@', release='@release@')
 Default(wenv.Template('wrapper.in.in', varlist=[
     'DISTRO_ARCH',
     'DISTRO_NAME',

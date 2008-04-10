@@ -2,16 +2,16 @@
 
 
 Import('env')
-env = env.Copy()
+env = env.Clone()
 env.AppendUnique(CC=['--sampler-scheme=function-entries'])
 
-fenv = env.Copy()
+fenv = env.Clone()
 fenv.AppendUnique(CCFLAGS=['--timestamp-first'])
 
-lenv = env.Copy()
+lenv = env.Clone()
 lenv.AppendUnique(CCFLAGS=['--timestamp-last'])
 
-benv = env.Copy()
+benv = env.Clone()
 benv.AppendUnique(CCFLAGS=['--timestamp-first', '--timestamp-last'])
 benv.Command('both.expected', ['first.expected', 'last.expected'], [['cat', '$SOURCES', '>$TARGET']])
 

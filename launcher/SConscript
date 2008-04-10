@@ -1,12 +1,12 @@
 Import('env')
 
-env = env.Copy(tools=['python'], toolpath=['.'])
+env = env.Clone(tools=['python'], toolpath=['.'])
 
 common = env.Dir('#launcher/common')
 config = common.File('SamplerConfig.py')
 
 def testPythons(env, pythons):
-    env = env.Copy()
+    env = env.Clone()
     env.AppendUnique(ENV={'PYTHONPATH': common.abspath})
     sources = pythons + [config]
     target = 'pychecker.passed'

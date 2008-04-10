@@ -1,15 +1,15 @@
 Import('env')
-env = env.Copy()
+env = env.Clone()
 env.AppendUnique(CCFLAGS=['-fpic'], LIBS=['sampler-schemes'], LIBPATH=['.'])
 
 libs = []
 
 def twolibs(env, base, sources, **kwargs):
     global libs
-    libs += env.SharedLibrary('sampler-' + base, sources)
-    libs += env.StaticLibrary('sampler-' + base, sources)
+    libs += env.SharedLibrary('sampler-' + base, sources, **kwargs)
+    libs += env.StaticLibrary('sampler-' + base, sources, **kwargs)
 
-genv = env.Copy()
+genv = env.Clone()
 genv.ParseConfig('$pkg_config --cflags --libs gobject-2.0')
 gsources = ['g-object-unref.c', 'g-object-unref-classify.c']
 twolibs(genv, 'g-object-unref', gsources)
@@ -24,12 +24,12 @@ sources = [
     'tuple-9.c',
 ]
 
-twolibs(env, 'schemes', sources)
+twolibs(env, 'schemes', sources, LIBS=[])
 
 for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pairs']:
     twolibs(env, scheme, scheme + '.c')
 
-fenv = env.Copy()
+fenv = env.Clone()
 fenv.AppendUnique(LIBS=['m'])
 twolibs(fenv, 'float-kinds', 'float-kinds.c')
 

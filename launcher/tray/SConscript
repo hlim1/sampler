@@ -1,5 +1,5 @@
 Import('env', 'testPythons')
-env = env.Copy(bindir=env.subst('$bindir'),
+env = env.Clone(bindir=env.subst('$bindir'),
                traydir=env.subst('$traydir'))
 
 service = env.Template('edu.wisc.cs.cbi.Monitor.service.in', varlist=['traydir'])

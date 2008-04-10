@@ -35,7 +35,7 @@ def validate_cil_path(key, value, env):
         else:
             raise UserError('bad option %s: %s does not exist' % (key, library))
     else:
-        for path in ['../cil/obj/x86_LINUX', '/usr/local/lib/cil', '/usr/lib/cil']:
+        for path in ['../cil/obj/x86_LINUX', '/usr/local/lib/ocaml/cil', '/usr/local/lib/cil', '/usr/lib/ocaml/cil', '/usr/lib/cil']:
             library = libcil(path)
             if exists(library):
                 env[key] = path
@@ -65,7 +65,7 @@ if domainname == 'cs.wisc.edu':
 #  shared build environment
 #
 
-env = env.Copy(
+env = env.Clone(
     tools=['default', 'dist', 'ocaml', 'template', 'test'], toolpath=['.'],
     CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',

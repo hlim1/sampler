@@ -1,6 +1,6 @@
 Import('env', 'threadLibs')
 
-env = env.Copy()
+env = env.Clone()
 threadLibs(env, 'no')
 
 sources = map(env.File, ['precompute.c', '${LIBPREFIX}sampler-online${LIBSUFFIX}', '${LIBPREFIX}sampler${LIBSUFFIX}'])

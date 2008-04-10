@@ -3,7 +3,7 @@ from glob import glob
 SConscript(dirs='graphlib')
 
 Import('env')
-env = env.Copy(OCAML_LIBS=['unix'], OCAML_PP='camlp4o.opt')
+env = env.Clone(OCAML_LIBS=['unix'], OCAML_PP='camlp4o.opt')
 env.AppendUnique(OCAML_PATH=['ocaml', 'tools/cfg', 'tools/cfg/graphlib'])
 
 sources = glob('*.ml') + glob('*.mli')

@@ -1,9 +1,9 @@
 Import('env')
 
-penv = env.Copy()
+penv = env.Clone()
 penv.AppendUnique(CC=['-pipe'])
 
-senv = env.Copy(SHLIBPREFIX='')
+senv = env.Clone(SHLIBPREFIX='')
 plugin = senv.CBISharedLibrary('libplugin.so', 'plugin.c')
 library = senv.CBISharedLibrary('library.c')
 main = senv.CBIProgram(['main.c', library], LIBS='dl')

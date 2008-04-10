@@ -6,8 +6,8 @@ from utils import instantiate, read_pipe
 
 
 Import('env')
-env = env.Copy(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
-               tools=['test'], toolpath=['.'])
+env = env.Clone(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
+                tools=['test'], toolpath=['.'])
 env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
 
 

@@ -1,5 +1,5 @@
 Import('env', 'testPythons')
-env = env.Copy(commondir=env.subst('$commondir'),
+env = env.Clone(commondir=env.subst('$commondir'),
                first_timedir=env.subst('$first_timedir'),
                wrapperdir=env.subst('$wrapperdir'))
 

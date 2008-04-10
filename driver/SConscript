@@ -27,7 +27,7 @@ conf.Finish()
 del conf
 
 
-env = env.Copy(
+env = env.Clone(
     PACKAGE='sampler',
     gcc=env.WhereIs('gcc'),
     cpp0=cpp0, cc1=cc1, asm=asm,

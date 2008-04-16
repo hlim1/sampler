@@ -1,12 +1,12 @@
 import os
 
+from shutil import copymode
 from stat import S_IMODE
 from string import Template
 from sys import stderr
 
 from SCons.Action import Action
 from SCons.Builder import Builder
-from SCons.Defaults import Chmod
 from SCons.Script import Exit
 
 from utils import instantiate
@@ -31,9 +31,9 @@ __instantiate = Action(__instantiate_exec, __instantiate_show)
 
 
 def __chmod_copy_exec(target, source, env):
-    mode = os.stat(str(source[0])).st_mode
-    mode = S_IMODE(mode)
-    env.Execute(Chmod(target, mode))
+    [target] = target
+    [source] = source
+    copymode(str(source), str(target))
 
 def __chmod_copy_show(target, source, env):
     __pychecker__ = 'no-argsused'

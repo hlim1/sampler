@@ -11,7 +11,12 @@ def distroName(context):
     (status, name) = context.TryAction(action)
     if status:
         name = name.rstrip()
-        name = {'FedoraCore': 'fedora', 'Fedora': 'fedora', 'CentOS': 'centos'}[name]
+        name = {
+            'FedoraCore': 'fedora',
+            'Fedora': 'fedora',
+            'CentOS': 'centos',
+            'RedHatEnterpriseServer': 'rhel',
+            }[name]
         context.env['DISTRO_NAME'] = name
         context.Result(name)
     else:
@@ -26,6 +31,7 @@ def distroBasis(context):
         'tao': 'rpm',
         'centos': 'rpm',
         'ubuntu': 'debian',
+	'rhel': 'rpm',
         }[context.env['DISTRO_NAME']]
     context.env['DISTRO_BASIS'] = basis
     context.Result(basis)

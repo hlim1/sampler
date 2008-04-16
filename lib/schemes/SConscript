@@ -10,7 +10,7 @@ def twolibs(env, base, sources, **kwargs):
     libs += env.StaticLibrary('sampler-' + base, sources, **kwargs)
 
 genv = env.Clone()
-genv.ParseConfig('$pkg_config --cflags --libs gobject-2.0')
+genv.ParseConfig(['$pkg_config', '--cflags', '--libs', 'gobject-2.0'])
 gsources = ['g-object-unref.c', 'g-object-unref-classify.c']
 twolibs(genv, 'g-object-unref', gsources)
 

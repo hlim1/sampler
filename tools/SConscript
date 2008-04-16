@@ -72,7 +72,7 @@ conf.Finish()
 
 wenv = env.Clone()
 wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare'])
-wenv.ParseConfig('gsl-config --cflags --libs')
+wenv.ParseConfig(['gsl-config', '--cflags', '--libs'])
 Default(wenv.Program('decimate-samples.l'))
 
 sources = glob('*.ml') + glob('*.mli')

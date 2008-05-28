@@ -76,6 +76,7 @@
 
 *libgcc:
 --undefined=cbi_initialize \
+%{fsampler-lib-dir=*:-L%* -rpath %*} \
 %{fsampler-scheme=*:-lsampler-%*} \
 %(lib_threads) \
 %(old_libgcc)

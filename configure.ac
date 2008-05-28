@@ -434,7 +434,6 @@ www/cgi-bin/Makefile
 
 AC_CONFIG_FILES([driver/sampler-cc], [chmod +x $ac_file])
 AC_CONFIG_FILES([driver/sampler-cc-here], [chmod +x $ac_file])
-AC_CONFIG_FILES([driver/sampler-ld-here], [chmod +x $ac_file])
 AC_CONFIG_FILES([driver/as], [chmod +x $ac_file])
 AC_CONFIG_FILES([driver/cc1], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/build-libraries], [chmod +x $ac_file])

@@ -3,7 +3,7 @@ import sys
 
 
 def connect():
-    return PgSQL.connect(host='postgresql.cs.wisc.edu', port=49173, database='cbi')
+    return PgSQL.connect(host='postgresql.cs.wisc.edu', database='cbi')
 
 
 def results(cursor):

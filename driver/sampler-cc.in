@@ -8,4 +8,4 @@ libdir="@libdir@"
 pkglibdir="@pkglibdir@"
 driverdir="@driverdir@"
 
-exec '@gcc@' -B "$driverdir" -specs=sampler-specs "$@"
+exec '@gcc@' -B "$driverdir" -fsampler-lib-dir="$driverdir/lib" -specs=sampler-specs "$@"

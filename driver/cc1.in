@@ -187,6 +187,8 @@ while (@ARGV) {
 	    push @inst, "--$1", $4;
 	} elsif (/^-fsampler-random=/) {
 	    ;
+	} elsif (/^-fsampler-lib-dir=/) {
+	    ;
 	} elsif (/^-f/) {
 	    push @cc1, $_
 	} else {

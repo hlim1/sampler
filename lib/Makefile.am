@@ -4,7 +4,7 @@ SUBDIRS = schemes threads
 ########################################################################
 
 
-sampler_HEADERS =				\
+driverinclude_HEADERS =				\
 	registry.h				\
 	report.h				\
 	signature.h				\

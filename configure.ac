@@ -163,11 +163,12 @@ AC_SUBST(schemadir, '${GCONF_SCHEMA_FILE_DIR}')
 
 AC_SUBST(pkglibdir, '${libdir}/${PACKAGE}')
 AC_SUBST(driverdir, '${pkglibdir}/driver')
-AC_SUBST(samplerdir, '${driverdir}/sampler')
-AC_SUBST(schemesdir, '${samplerdir}/schemes')
-AC_SUBST(threadsdir, '${samplerdir}/threads')
+AC_SUBST(driverincludedir, '${driverdir}/include')
+AC_SUBST(schemesdir, '${driverincludedir}/schemes')
+AC_SUBST(threadsdir, '${driverincludedir}/threads')
 AC_SUBST(threads_yesdir, '${threadsdir}/yes')
 AC_SUBST(threads_nodir, '${threadsdir}/no')
+AC_SUBST(driverlibdir, '${driverdir}/lib')
 AC_SUBST(toolsdir, '${pkglibdir}/tools')
 AC_SUBST(traylibdir, '${pkglibdir}/tray')
 
@@ -434,7 +435,6 @@ www/cgi-bin/Makefile
 
 AC_CONFIG_FILES([driver/sampler-cc], [chmod +x $ac_file])
 AC_CONFIG_FILES([driver/sampler-cc-here], [chmod +x $ac_file])
-AC_CONFIG_FILES([driver/sampler-ld-here], [chmod +x $ac_file])
 AC_CONFIG_FILES([driver/as], [chmod +x $ac_file])
 AC_CONFIG_FILES([driver/cc1], [chmod +x $ac_file])
 AC_CONFIG_FILES([instrumentor/build-libraries], [chmod +x $ac_file])

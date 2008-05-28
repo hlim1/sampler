@@ -31,7 +31,7 @@ schemes_HEADERS =				\
 	tuple-4.h				\
 	tuple-9.h
 
-lib_LTLIBRARIES =				\
+driverlib_LTLIBRARIES =				\
 	libsampler-schemes.la			\
 	$(gnome_libraries)			\
 	libsampler-bounds.la			\

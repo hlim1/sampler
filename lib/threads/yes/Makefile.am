@@ -6,7 +6,7 @@ include ../threads.mk
 
 threads_yes_HEADERS = $(headers)
 
-lib_LTLIBRARIES =				\
+driverlib_LTLIBRARIES =				\
 	libsampler_r.la				\
 	libsampler-fixed_r.la			\
 	libsampler-offline_r.la			\

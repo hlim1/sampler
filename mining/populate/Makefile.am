@@ -2,8 +2,7 @@ EXTRA_DIST =					\
 	Common.pm				\
 	common.py				\
 	freshen-builds				\
-	freshen-runs				\
-	sync-from-www
+	freshen-runs
 
 noinst_PYTHON =					\
 	common.py				\

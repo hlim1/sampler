@@ -1,9 +1,0 @@
-#!/bin/sh -ex
-
-host=sampler.cs.berkeley.edu
-xfer=/var/www/sampler-transfer
-
-if ssh $host "mv /var/www/sampler-uploads/* $xfer"; then
-  rsync -rlto -v "$@" $host:$xfer/ /afs/cs.wisc.edu/p/cbi/uploads/berkeley/reports
-  ssh $host "rm -r $xfer/*"
-fi

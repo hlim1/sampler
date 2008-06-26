@@ -1,0 +1,109 @@
+from glob import glob
+from itertools import chain, ifilter, imap
+import re
+
+from utils import instantiate, read_pipe
+
+
+Import('env')
+env = env.Clone(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
+                tools=['test'], toolpath=['.'])
+env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
+
+
+########################################################################
+#
+#  create OCaml source defining sampler version number
+#
+
+
+[version_ml] = env.Template('version.ml.in', varlist=['VERSION'])
+
+
+########################################################################
+#
+#  create OCaml source listing standard library functions
+#
+
+
+symbolPattern = re.compile('^[0-9a-f]{8} [TW] ([$\\w]+)')
+
+
+def findSymbols(library):
+    command = ['nm', '--defined-only', '-g', '-p', str(library)]
+    if library.get_suffix() != '.a':
+        command.append('-D')
+    nm = read_pipe(command, env)
+    matches = imap(symbolPattern.match, nm)
+    matches = ifilter(None, matches)
+    return ( match.group(1) for match in matches )
+
+
+def libfuncs(target, source, env):
+    libraries = source[1:]
+    symbols = chain(*imap(findSymbols, libraries))
+    symbols = ('"%s"' % symbol for symbol in symbols )
+    symbols = ';\n'.join(symbols)
+
+    instantiate(str(source[0]), str(target[0]),
+                LIBRARY_FUNCTIONS=symbols,
+                LIBRARY_COUNT=len(symbols))
+
+
+[libraries_ml] = env.Command('libraries.ml', ['libraries.ml.in',
+                                              '/usr/lib/libc_nonshared.a',
+                                              '/lib/libc.so.6',
+                                              '/lib/libm.so.6'],
+                             libfuncs)
+
+
+########################################################################
+#
+#  main build targets
+#
+
+
+sources = [version_ml, libraries_ml] + glob('*.ml') + glob('*.mli')
+env.OcamlObject(sources)
+
+main = env.OcamlProgram('main.ml')
+env.OcamlProgram('cfgTest.ml')
+env.OcamlProgram('cfg-to-dot.ml')
+env.OcamlProgram('checker.ml')
+env.OcamlProgram('dump.ml')
+env.OcamlProgram('loopless.ml')
+
+Default(main)
+
+Alias('install', env.Install('$DESTDIR$driverdir', main))
+
+
+########################################################################
+#
+#  source distribution
+#
+
+
+sources = set(sources)
+for generated in ['libraries.ml', 'version.ml']:
+    sources.discard(generated)
+    sources.add(generated + '.in')
+
+
+#########################################################################
+#
+#  regression test subdirs
+#
+
+SConscript(dirs=[
+    'balance',
+    'bounds',
+    'branches',
+    'function-entries',
+    'g-object-unref',
+    'nothing',
+    'returns',
+    'scalar-pairs',
+    'timestamps',
+    ],
+           exports='env')

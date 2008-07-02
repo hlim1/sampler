@@ -194,6 +194,12 @@ SConscript(dirs=[
 ########################################################################
 
 
-#env.Tool('packaging')
-#package = env.Package(NAME='${NAME}', VERSION='${VERSION}', PACKAGETYPE='src_targz')
+env.Tool('packaging')
+package = env.Package(
+    NAME='${NAME}',
+    VERSION='${VERSION}',
+    PACKAGETYPE='src_targz',
+    )
+
+print 'package:', map(str, package)
 #Default(package)

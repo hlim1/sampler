@@ -65,6 +65,9 @@
 %{fsampler-random=*:-lsampler-%*} \
 %{!fsampler-random=*:-lsampler-online}
 
+*link:
++ --wrap fork
+
 *lib_threads:
 --wrap pthread_create \
 %{fthreads:%(lib_threads_yes)} \

@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,5 +37,9 @@ void cbi_initializeRandom()
 
       cbi_initialize_thread();
       unsetenv("SAMPLER_SPARSITY");
+    }
+  else
+    {
+      cbi_randomFixedCountdown = INT_MAX;
     }
 }

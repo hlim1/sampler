@@ -9,4 +9,5 @@ common =					\
 	../registry.c				\
 	../report.c				\
 	../timestamps-set.c			\
-	../verbose.c
+	../verbose.c				\
+	../wrap_fork.c

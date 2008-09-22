@@ -98,6 +98,10 @@ void cbi_initializeRandom()
       unsetenv("SAMPLER_SEED");
       VERBOSE("initialized online random countdown generator\n");
     }
+  else
+    {
+      sampling = 0;
+    }
 }
 
 

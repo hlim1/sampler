@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -DCBI_THREADS
 AM_CFLAGS = -ffast-math -fpic -pthread
-AM_LDFLAGS = -Wl,--wrap,pthread_create
+AM_LDFLAGS = -Wl,--wrap,pthread_create -Wl,--wrap,fork
 
 include ../threads.mk
 

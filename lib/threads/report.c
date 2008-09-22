@@ -63,6 +63,7 @@ static void openReportFile()
     {
       VERBOSE("%s(): starting report to FILE 0x%p\n", __FUNCTION__, cbi_reportFile);
       fputs("<report id=\"samples\">\n", cbi_reportFile);
+      fflush(cbi_reportFile);
     }
   else
     VERBOSE("%s(): not reporting\n", __FUNCTION__);
@@ -178,4 +179,11 @@ void cbi_initializeReport()
     });
 
   VERBOSE("%s(): end\n", __FUNCTION__);
+}
+
+void cbi_uninitializeReport()
+{
+  CBI_CRITICAL_REGION(reportLock, {
+      closeReportFile();
+  });
 }

@@ -184,6 +184,7 @@ void cbi_initializeReport()
 void cbi_uninitializeReport()
 {
   CBI_CRITICAL_REGION(reportLock, {
-      closeReportFile();
+      if (cbi_reportFile)
+        closeReportFile();
   });
 }

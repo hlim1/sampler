@@ -1,0 +1,67 @@
+Import('env')
+
+env = env.Clone(tools=['python'], toolpath=['.'])
+
+common = env.Dir('#launcher/common')
+config = common.File('SamplerConfig.py')
+
+def testPythons(env, pythons):
+    env = env.Clone()
+    env.AppendUnique(ENV={'PYTHONPATH': common.abspath})
+    sources = pythons + [config]
+    target = 'pychecker.passed'
+    test = env.TestPython(target=target, source=sources)
+    Alias('test', test)
+
+Alias('test', env.TestXML('sampler.schemas'))
+
+
+def gconfSource(context):
+    context.Message('checking for default GConf configuration source: ')
+    action = [['gconftool-2', '--get-default-source', '>', '$TARGET']]
+    (status, source) = context.TryAction(action)
+    if status:
+        source = source.rstrip()
+        context.env['GCONF_SCHEMA_CONFIG_SOURCE'] = source
+        context.Result(source)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+def servicesDir(context):
+    context.Message('checking for DBUS session services subdirectory: ')
+    ok, value = context.TryAction([['$pkg_config', '--variable=session_bus_services_dir', 'dbus-1', '>$TARGET']])
+    if ok:
+        value = value.rstrip()
+        context.env['servicesdir'] = value
+        context.Result(value)
+        return value
+    else:
+        context.Result('unknown')
+        context.env.Exit(1)
+
+conf = env.Configure(custom_tests={
+        'GConfSource': gconfSource,
+        'ServicesDir': servicesDir,
+        })
+conf.GConfSource()
+conf.ServicesDir()
+conf.Finish()
+
+
+[installed] = env.Install('$DESTDIR$schemadir', 'sampler.schemas')
+Alias('install', installed)
+if env['GCONF_SCHEMAS_INSTALL']:
+    postAction = 'env GCONF_CONFIG_SOURCE=$GCONF_SCHEMA_CONFIG_SOURCE gconftool-2 --makefile-install-rule ' + str(installed) + ' >/dev/null'
+    env.AddPostAction(installed, postAction)
+
+
+SConscript(dirs=[
+    'common',
+    'first-time',
+    'pixmaps',
+    'preferences',
+    'tray',
+    'wrapper',
+    ],
+           exports=['env', 'testPythons'])

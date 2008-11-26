@@ -3,6 +3,7 @@
 * sampler-1.6.2
 
 ** Small build infrastructure tweaks for Fedora 10 beta.
+** Package shared libraries separately from client GUI tools.
 
 * sampler-1.6.1
 

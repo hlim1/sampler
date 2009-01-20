@@ -1,5 +1,5 @@
 AM_CFLAGS = -ffast-math -fpic
-AM_LDFLAGS = -Wl,-wrap,fork
+AM_LDFLAGS = -Wl,--wrap,fork
 
 include ../threads.mk
 

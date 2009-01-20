@@ -223,21 +223,6 @@ package = env.Package(
     source=sources,
     )
 
-buildroot = Dir('buildroot')
-buildsubdir = buildroot.Dir(env.subst('$NAME-$VERSION'))
-
-subcons = ['scons', '--directory', buildsubdir, 'cil_path=${cil_path.abspath}']
-if env.GetOption('keep_going'):
-    subcons.append('--keep-going')
-
-env.Command('package-test', package[0], [
-        Delete(buildroot),
-        Mkdir(buildroot),
-        ['$TAR', '--extract', '--file', '$SOURCE', '--directory', buildroot],
-        subcons + ['test'],
-        subcons,
-        ])
-
 subdirs = [
     'BUILD',
     'RPMS/i386',

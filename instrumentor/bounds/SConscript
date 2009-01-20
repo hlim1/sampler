@@ -9,3 +9,5 @@ Alias('test:bounds', env.Expect([
     ]))
 
 Alias('test', 'test:bounds')
+
+File(Glob('*.expected'))

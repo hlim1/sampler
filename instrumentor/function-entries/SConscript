@@ -9,3 +9,5 @@ Alias('test:function-entries', env.Expect([
     ]))
 
 Alias('test', 'test:function-entries')
+
+File(Glob('*.expected'))

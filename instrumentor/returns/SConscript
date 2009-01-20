@@ -12,3 +12,5 @@ for executable in [extern, test]:
     Alias('test:returns', expect)
 
 Alias('test', 'test:returns')
+
+File(Glob('*.expected'))

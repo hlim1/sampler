@@ -2,7 +2,7 @@ Import('env', 'testPythons')
 env = env.Clone(first_timedir=env.subst('$first_timedir'))
 
 Default(env.Template('Paths.py.in', varlist=['first_timedir']))
-pythons = ['FirstTime.py', 'Main.py', 'StatusIcon.py']
+pythons = ['FirstTime.py', 'Main.py', 'Service.py', 'StatusIcon.py']
 
 pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)

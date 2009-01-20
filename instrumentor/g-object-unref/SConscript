@@ -10,3 +10,5 @@ Alias('test:g-object-unref', env.Expect([
     ]))
 
 Alias('test', 'test:g-object-unref')
+
+File(Glob('*.expected'))

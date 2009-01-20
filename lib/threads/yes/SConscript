@@ -1,5 +1,10 @@
 Import('env', 'threadLibs')
 
 env = env.Clone()
-env.AppendUnique(CPPDEFINES=['CBI_THREADS'], CCFLAGS=['-pthread'], REENTRANT='_r')
+env.AppendUnique(
+    CPPDEFINES='CBI_THREADS',
+    CCFLAGS=['-pthread', '-Wno-empty-body'],
+    LINKFLAGS=['-Wl,--wrap,pthread_create'],
+    REENTRANT='_r',
+    )
 threadLibs(env, 'yes')

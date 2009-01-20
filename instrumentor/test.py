@@ -1,11 +1,7 @@
 import sys
 sys.path[1:1] = ['/usr/lib/scons']
 
-from SCons.Action import Action
-from SCons.Builder import Builder
-from SCons.Defaults import CScan, Touch
-from SCons.Scanner import Scanner
-from SCons.Script import Flatten
+from SCons.Script import *
 
 from itertools import chain, ifilter, imap
 
@@ -20,25 +16,35 @@ from utils import read_pipe
 #
 
 
-__driver_deps = ['#driver/sampler-cc-here', '#driver/as', '#driver/cc1', '#driver/sampler-specs', '#instrumentor/main']
+__driver_deps = map(File, [
+        '#driver/as',
+        '#driver/cc1',
+        '#driver/main',
+        '#driver/sampler-cc-here',
+        '#driver/sampler-specs',
+        ])
 
 
 def __sampler_cc_scan(node, env, path):
     __pychecker__ = 'no-argsused'
-    # todo: dependencies on headers under '#lib'
-    return map(env.File, __driver_deps)
+    deps = chain(
+        __driver_deps,
+        Glob('#driver/sampler/*.h'),
+        Glob('#driver/sampler/schemes/*.h'),
+        Glob('#driver/sampler/threads/*.h'),
+        Glob('#driver/sampler/threads/no/*.h'),
+        Glob('#driver/sampler/threads/yes/*.h'),
+        )
+    return list(deps)
 
 
 def __sampler_ld_scan(node, env, path):
     __pychecker__ = 'no-argsused'
-    tdir = {True: 'yes', False: 'no'}['-pthread' in env['LINKFLAGS']]
-    libs = ['early', 'late', 'random-online']
-    libs = ( 'threads/%s/lib%s' % (tdir, lib) for lib in libs )
-    libs = chain(['schemes/libschemes'], libs)
-    libs = ( '#lib/%s.a' % lib for lib in libs )
-
-    deps = chain(__driver_deps, libs)
-    return map(env.File, deps)
+    deps = chain(
+        __driver_deps,
+        env.Glob('#driver/lib/$SHLIBPREFIX*$SHLIBSUFFIX'),
+        )
+    return list(deps)
 
 
 __sampler_cc_scanner = Scanner(function=__sampler_cc_scan)

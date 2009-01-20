@@ -20,3 +20,5 @@ tests = [ env.CBIResolvedTimestamps(env.CBIStaticObject('%s.o' % base, 'simple.c
 
 Alias('test:returns', env.Expect(tests))
 Alias('test', 'test:returns')
+
+File(Glob('*.expected'))

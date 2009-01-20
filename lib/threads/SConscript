@@ -2,8 +2,11 @@ from os.path import basename
 
 
 def threadLibs(env, subdir):
-    env.AppendUnique(CPPPATH=['.'])
-    env.AppendUnique(CCFLAGS=['-ffast-math', '-fpic'])
+    env.AppendUnique(
+        CPPPATH='.',
+        CCFLAGS=['-ffast-math', '-fpic'],
+        LINKFLAGS='-Wl,--wrap,fork',
+        )
 
     def inst(targets):
         instdir = '$DESTDIR/usr/lib'
@@ -16,7 +19,7 @@ def threadLibs(env, subdir):
         shared = env.SharedLibrary(target, sharedSources)
         static = env.StaticLibrary(target, staticSources)
         targets = [shared, static]
-        #Default(targets)
+        Install('#driver/lib', targets)
         Alias('install', env.Install('$DESTDIR/usr/lib', targets))
 
     parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose']
@@ -41,7 +44,15 @@ headers = [
     'random-online.h',
     ]
 
+Install('#driver/sampler/threads', headers)
 Alias('install', env.Install('$DESTDIR$threadsdir', headers))
+
+File([
+        'lifetime.h',
+        'random.h',
+        'report.h',
+        'verbose.h',
+        ])
 
 
 SConscript(dirs=['no', 'yes'], exports=['env', 'threadLibs'])

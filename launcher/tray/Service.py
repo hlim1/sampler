@@ -1,3 +1,6 @@
+import os
+os.environ['DBUS_PYTHON_NO_DEPRECATED'] = '1'
+
 from dbus.mainloop.glib import DBusGMainLoop
 
 import dbus.service

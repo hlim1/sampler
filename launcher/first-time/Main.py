@@ -18,7 +18,10 @@ def main():
         unique.dialog.run()
 
     else:
+        import os
+        os.environ['DBUS_PYTHON_NO_DEPRECATED'] = '1'
         import dbus
+
         bus = dbus.SessionBus()
         remote = bus.get_object('edu.wisc.cs.cbi.FirstTime', '/edu/wisc/cs/cbi/FirstTime')
         iface = dbus.Interface(remote, 'edu.wisc.cs.cbi.FirstTime')

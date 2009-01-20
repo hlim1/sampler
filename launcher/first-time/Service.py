@@ -1,3 +1,6 @@
+import os
+os.environ['DBUS_PYTHON_NO_DEPRECATED'] = '1'
+
 import dbus.service
 
 

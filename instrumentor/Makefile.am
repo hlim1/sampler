@@ -35,6 +35,11 @@ MOSTLYCLEANFILES += main
 main: $(libcil) $(libcommon) $(main)
 	$(link)
 
+MOSTLYCLEANFILES += $(top_builddir)/driver/main
+all-local: $(top_builddir)/driver/main
+$(top_builddir)/driver/main: main
+	cp -p $< $@
+
 MOSTLYCLEANFILES += cfgTest
 cfgTest: $(libcil) $(cfgTest)
 	$(link)

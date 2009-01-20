@@ -10,6 +10,8 @@ env = env.Clone(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
                 tools=['test'], toolpath=['.'])
 env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
 
+env.File('test.py')
+
 
 ########################################################################
 #
@@ -73,7 +75,7 @@ env.OcamlProgram('checker.ml')
 env.OcamlProgram('dump.ml')
 env.OcamlProgram('loopless.ml')
 
-Default(main)
+Default(Install('#driver', main))
 
 Alias('install', env.Install('$DESTDIR$driverdir', main))
 

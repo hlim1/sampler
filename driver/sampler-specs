@@ -59,11 +59,13 @@
 *lib_threads_yes:
 %{fsampler-random=*:-lsampler-%*_r} \
 %{!fsampler-random=*:-lsampler-online_r} \
+-lsampler_r \
 -lpthread
 
 *lib_threads_no:
 %{fsampler-random=*:-lsampler-%*} \
-%{!fsampler-random=*:-lsampler-online}
+%{!fsampler-random=*:-lsampler-online} \
+-lsampler
 
 *link:
 + --wrap fork
@@ -75,11 +77,8 @@
 %{!fthreads:%{!fno-threads:%{pthread:%(lib_threads_yes)}}} \
 %{!fthreads:%{!fno-threads:%{!pthread:%(lib_threads_no)}}}
 
-%rename libgcc old_libgcc
-
-*libgcc:
---undefined=cbi_initialize \
+*lib:
++ --undefined=cbi_initialize \
 %{fsampler-lib-dir=*:-L%* -rpath %*} \
 %{fsampler-scheme=*:-lsampler-%*} \
-%(lib_threads) \
-%(old_libgcc)
+%(lib_threads)

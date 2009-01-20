@@ -203,7 +203,6 @@ mkdir $RPM_BUILD_ROOT
 env
 echo cd `pwd`
 echo /usr/lib/rpm/find-debuginfo.sh --strict-build-id /home/liblit/research/sampler/redhat/BUILD/sampler-1.6.2
-sleep 9999
 
 %clean
 rm -rf $RPM_BUILD_ROOT

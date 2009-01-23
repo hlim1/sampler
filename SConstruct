@@ -186,6 +186,9 @@ Default(env.Template('sampler.spec.in', varlist=[
 #  subsidiary scons scripts
 #
 
+excludedSources = set(['config.log'])
+Export('excludedSources')
+
 SConscript(dirs=[
     'debian',
     'doc',
@@ -211,9 +214,9 @@ env.File([
         'NEWS',
         ])
 
-sources = env.FindSourceFiles()
+excludedSources = set(map(env.File, excludedSources))
+sources = set(env.FindSourceFiles()) - excludedSources
 sources = sorted(sources, key=lambda node: node.path)
-sources.remove(File('config.log'))
 
 env.Tool('packaging')
 package = env.Package(

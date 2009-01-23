@@ -6,6 +6,7 @@ pythons = ['AppFinder.py', 'Application.py', 'AppModel.py', 'Main.py', 'Preferen
 
 pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
+Default(compiled)
 
 prefs = env.Template('sampler-preferences.in', varlist=['preferencesdir', 'commondir'])
 Default(prefs)

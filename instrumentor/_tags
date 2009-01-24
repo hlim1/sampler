@@ -2,4 +2,4 @@
 <*.ml> or <*.mli>: use_cil
 
 # linking
-<main.byte> or <main.native>: use_str, use_unix, use_cil
+<main.{byte,native}>: use_str, use_unix, use_cil

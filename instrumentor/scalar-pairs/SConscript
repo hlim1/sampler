@@ -14,3 +14,5 @@ upcase_bad = uenv.CBIResolvedSamples(uenv.CBIReports(upcase_bad, TEST_STDERR='/d
 
 Alias('test:scalar-pairs', env.Expect([late_global, upcase_good, upcase_bad]))
 Alias('test', 'test:scalar-pairs')
+
+File(Glob('*.expected'))

@@ -3,6 +3,9 @@ Import('env')
 penv = env.Clone()
 penv.AppendUnique(CC=['-pipe'])
 
+File('library.h')
+File(Glob('*.expected'))
+
 senv = env.Clone(SHLIBPREFIX='')
 plugin = senv.CBISharedLibrary('libplugin.so', 'plugin.c')
 library = senv.CBISharedLibrary('library.c')

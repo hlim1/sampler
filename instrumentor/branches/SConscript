@@ -2,6 +2,8 @@ Import('env')
 env = env.Clone()
 env.AppendUnique(CC=['--sampler-scheme=branches'])
 
+File('library.h')
+
 modular = env.CBIProgram(target='modular', source=['modular-a.c', 'modular-b.c'])
 
 plugin = env.CBISharedLibrary(target='plugin.so', source='plugin.c')
@@ -23,3 +25,5 @@ Alias('test:branches', env.Expect([
     ]))
 
 Alias('test', 'test:branches')
+
+File(Glob('*.expected'))

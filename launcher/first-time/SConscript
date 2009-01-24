@@ -2,10 +2,11 @@ Import('env', 'testPythons')
 env = env.Clone(first_timedir=env.subst('$first_timedir'))
 
 Default(env.Template('Paths.py.in', varlist=['first_timedir']))
-pythons = ['FirstTime.py', 'Main.py', 'StatusIcon.py']
+pythons = ['FirstTime.py', 'Main.py', 'Service.py', 'StatusIcon.py']
 
 pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
+Default(compiled)
 
 glade = env.Template('first-time.glade.in', varlist=['deployment_learn_more_url'])
 script = env.Template('first-time.in', varlist=['commondir', 'first_timedir'])

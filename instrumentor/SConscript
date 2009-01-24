@@ -5,7 +5,7 @@ import re
 from utils import instantiate, read_pipe
 
 
-Import('env')
+Import('env', 'excludedSources')
 env = env.Clone(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
                 tools=['test'], toolpath=['.'])
 env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
@@ -52,11 +52,9 @@ def libfuncs(target, source, env):
                 LIBRARY_COUNT=len(symbols))
 
 
-[libraries_ml] = env.Command('libraries.ml', ['libraries.ml.in',
-                                              '/usr/lib/libc_nonshared.a',
-                                              '/lib/libc.so.6',
-                                              '/lib/libm.so.6'],
-                             libfuncs)
+syslibs = ['/usr/lib/libc_nonshared.a', '/lib/libc.so.6', '/lib/libm.so.6']
+excludedSources |= set(syslibs)
+[libraries_ml] = env.Command('libraries.ml', ['libraries.ml.in', syslibs], libfuncs)
 
 
 ########################################################################
@@ -69,11 +67,16 @@ sources = [version_ml, libraries_ml] + glob('*.ml') + glob('*.mli')
 env.OcamlObject(sources)
 
 main = env.OcamlProgram('main.ml')
-env.OcamlProgram('cfgTest.ml')
-env.OcamlProgram('cfg-to-dot.ml')
-env.OcamlProgram('checker.ml')
-env.OcamlProgram('dump.ml')
-env.OcamlProgram('loopless.ml')
+misc = map(env.OcamlProgram, [
+    'cfgTest.ml',
+    'cfg-to-dot.ml',
+    'checker.ml',
+    'dotify.ml',
+    'dump.ml',
+    'dumpConstants.ml',
+    'loopless.ml',
+])
+Default(misc)
 
 Default(Install('#driver', main))
 

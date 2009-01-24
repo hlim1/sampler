@@ -1,13 +1,25 @@
 Import('env')
 env = env.Clone()
-env.AppendUnique(CCFLAGS=['-fpic'], LIBS=['sampler-schemes'], LIBPATH=['.'])
+env.AppendUnique(
+    CCFLAGS=['-fpic'],
+    LIBS=['sampler-schemes'],
+    LIBPATH=['.'],
+    )
 
 libs = []
 
 def twolibs(env, base, sources, **kwargs):
     global libs
-    libs += env.SharedLibrary('sampler-' + base, sources, **kwargs)
-    libs += env.StaticLibrary('sampler-' + base, sources, **kwargs)
+    [shared] = env.SharedLibrary('sampler-' + base, sources, **kwargs)
+    [static] = env.StaticLibrary('sampler-' + base, sources, **kwargs)
+    two = [shared, static]
+    libs += two
+    Install('#driver/lib', libs)
+    Alias('install', env.Install('$DESTDIR$libdir', static))
+    [verslib] = env.InstallAs('$DESTDIR$libdir/%s.0.0.0' % shared, shared)
+    Alias('install', verslib)
+    Alias('install', env.Command('$DESTDIR$libdir/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]))
+    Alias('install', env.Command('$DESTDIR$libdir/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]))
 
 genv = env.Clone()
 genv.ParseConfig(['$pkg_config', '--cflags', '--libs', 'gobject-2.0'])
@@ -25,6 +37,7 @@ sources = [
 ]
 
 twolibs(env, 'schemes', sources, LIBS=[])
+env.File('samples.h')
 
 for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pairs']:
     twolibs(env, scheme, scheme + '.c')
@@ -32,8 +45,6 @@ for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pair
 fenv = env.Clone()
 fenv.AppendUnique(LIBS=['m'])
 twolibs(fenv, 'float-kinds', 'float-kinds.c')
-
-Default(libs)
 
 headers = [
     'bounds-unit.h',
@@ -57,5 +68,5 @@ headers = [
     'tuple-9.h',
 ]
 
+Install('#driver/sampler/schemes', headers)
 Alias('install', env.Install('$DESTDIR$schemesdir', headers))
-Alias('install', env.Install('$DESTDIR/usr/lib', libs))

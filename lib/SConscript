@@ -3,13 +3,16 @@ Import('env')
 env = env.Clone()
 env.AppendUnique(CCFLAGS=['-O'])
 
-Alias('install', env.Install('$DESTDIR$samplerdir', [
+headers = [
     'registry.h',
     'report.h',
     'signature.h',
     'timestamps.h',
     'unit-signature.h',
     'unit.h',
-    ]))
+    ]
+
+Install('#driver/sampler', headers)
+Alias('install', env.Install('$DESTDIR$samplerdir', headers))
 
 SConscript(dirs=['schemes', 'threads'], exports=['env'])

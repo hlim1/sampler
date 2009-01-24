@@ -17,18 +17,6 @@ def testPythons(env, pythons):
 Alias('test', env.TestXML('sampler.schemas'))
 
 
-def gconfSource(context):
-    context.Message('checking for default GConf configuration source: ')
-    action = [['gconftool-2', '--get-default-source', '>', '$TARGET']]
-    (status, source) = context.TryAction(action)
-    if status:
-        source = source.rstrip()
-        context.env['GCONF_SCHEMA_CONFIG_SOURCE'] = source
-        context.Result(source)
-    else:
-        context.Result(False)
-        context.env.Exit(1)
-
 def servicesDir(context):
     context.Message('checking for DBUS session services subdirectory: ')
     ok, value = context.TryAction([['$pkg_config', '--variable=session_bus_services_dir', 'dbus-1', '>$TARGET']])
@@ -41,13 +29,7 @@ def servicesDir(context):
         context.Result('unknown')
         context.env.Exit(1)
 
-conf = env.Configure(
-    help=False,
-    custom_tests={
-        'GConfSource': gconfSource,
-        'ServicesDir': servicesDir,
-        })
-conf.GConfSource()
+conf = env.Configure(help=False, custom_tests={'ServicesDir': servicesDir})
 conf.ServicesDir()
 conf.Finish()
 
@@ -55,7 +37,7 @@ conf.Finish()
 [installed] = env.Install('$DESTDIR$schemadir', 'sampler.schemas')
 Alias('install', installed)
 if env['GCONF_SCHEMAS_INSTALL']:
-    postAction = 'env GCONF_CONFIG_SOURCE=$GCONF_SCHEMA_CONFIG_SOURCE gconftool-2 --makefile-install-rule ' + str(installed) + ' >/dev/null'
+    postAction = 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %s >/dev/null' % str(installed)
     env.AddPostAction(installed, postAction)
 
 

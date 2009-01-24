@@ -10,12 +10,13 @@ env.AppendUnique(
     REENTRANT='_r',
     )
 
-config = env.Configure()
-ok = bool(config.TryCompile('', '.c'))
-print 'checking for "%s" C compiler flag: %s' % (emptyBody, ('no', 'yes')[ok])
-config.Finish()
+if not env.GetOption('help'):
+    config = env.Configure()
+    ok = bool(config.TryCompile('', '.c'))
+    print 'checking for "%s" C compiler flag: %s' % (emptyBody, ('no', 'yes')[ok])
+    config.Finish()
 
-if not ok:
-    env['CCFLAGS'].remove(emptyBody)
+    if not ok:
+        env['CCFLAGS'].remove(emptyBody)
 
 threadLibs(env, 'yes')

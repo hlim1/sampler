@@ -16,11 +16,14 @@ def threadLibs(env, subdir):
         target += '${REENTRANT}'
         sharedSources = [env.SharedObject(basename(source), source + '.c') for source in sources]
         staticSources = [env.StaticObject(basename(source), source + '.c') for source in sources]
-        shared = env.SharedLibrary(target, sharedSources)
-        static = env.StaticLibrary(target, staticSources)
-        targets = [shared, static]
-        Install('#driver/lib', targets)
-        Alias('install', env.Install('$DESTDIR/usr/lib', targets))
+        [shared] = env.SharedLibrary(target, sharedSources)
+        [static] = env.StaticLibrary(target, staticSources)
+        Install('#driver/lib', [shared, static])
+        Alias('install', env.Install('$DESTDIR$libdir', static))
+        [verslib] = env.InstallAs('$DESTDIR$libdir/%s.0.0.0' % shared, shared)
+        Alias('install', verslib)
+        Alias('install', env.Command('$DESTDIR$libdir/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]))
+        Alias('install', env.Command('$DESTDIR$libdir/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]))
 
     parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose']
     sources = ['hijack'] + ['../%s' % part for part in parts]

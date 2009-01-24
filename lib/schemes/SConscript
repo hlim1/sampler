@@ -16,8 +16,9 @@ def twolibs(env, base, sources, **kwargs):
     libs += two
     Install('#driver/lib', libs)
     Alias('install', env.Install('$DESTDIR$libdir', static))
-    [verslib] = env.InstallAs('$DESTDIR$libdir/%s.0' % shared, shared)
+    [verslib] = env.InstallAs('$DESTDIR$libdir/%s.0.0.0' % shared, shared)
     Alias('install', verslib)
+    Alias('install', env.Command('$DESTDIR$libdir/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]))
     Alias('install', env.Command('$DESTDIR$libdir/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]))
 
 genv = env.Clone()

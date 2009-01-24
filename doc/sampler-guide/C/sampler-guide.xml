@@ -343,8 +343,8 @@
 	  functions:
 
 	    <informalexample>
-	      <para><userinput>&hellip; <option>--exclude-function=<function>boringFunction</function></option>
-	      &hellip;</userinput></para>
+	      <para><userinput>… <option>--exclude-function=<function>boringFunction</function></option>
+	      …</userinput></para>
 	    </informalexample>
 	  </para>
 
@@ -352,10 +352,10 @@
 	  just a few selected functions instrumented:
 
 	    <informalexample>
-	      <para><userinput>&hellip;
+	      <para><userinput>…
 	      <option>--include-function=<function>interestingFunction</function></option>
 	      <option>--exclude-function=<literal>*</literal></option>
-	      &hellip;</userinput></para>
+	      …</userinput></para>
 	    </informalexample>
 	  </para>
 
@@ -421,9 +421,9 @@
 	  boilerplate:
 
 	    <informalexample>
-	      <para><userinput>&hellip; <option>--exclude-file=<filename>/usr/gnu/share/bison.simple</filename></option>
+	      <para><userinput>… <option>--exclude-file=<filename>/usr/gnu/share/bison.simple</filename></option>
 	      <option>--exclude-file=<filename>lex.yy.c</filename></option>
-	      &hellip;</userinput></para>
+	      …</userinput></para>
 	    </informalexample>
 	  </para>
 
@@ -926,14 +926,14 @@
 	  <sgmltag class="element">sites</sgmltag> tags:
 
 	    <screen>&lt;<sgmltag class="element">sites</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
-&hellip;
+…
 <sgmltag class="endtag">sites</sgmltag>
 &lt;<sgmltag class="element">sites</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
-&hellip;
+…
 <sgmltag class="endtag">sites</sgmltag>
-&vellip;
+⋮
 &lt;<sgmltag class="element">sites</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
-&hellip;
+…
 <sgmltag class="endtag">sites</sgmltag>
 </screen>
 	  </para>
@@ -948,7 +948,7 @@
 	  </note>
 
 	  <para>A single <sgmltag class="starttag">sites</sgmltag>
-	  &hellip; <sgmltag class="endtag">sites</sgmltag> section
+	  … <sgmltag class="endtag">sites</sgmltag> section
 	  describes the instrumentation sites for one compilation unit
 	  with one instrumentation scheme.  Each <sgmltag
 	  class="element">sites</sgmltag> start tag carries two
@@ -1317,14 +1317,14 @@
       class="element">report</sgmltag> tags:
 
         <screen>&lt;<sgmltag class="element">report</sgmltag> <sgmltag class="attribute">id</sgmltag>="<sgmltag class="attvalue"><replaceable>subreport name</replaceable></sgmltag>"&gt;
-&hellip;
+…
 <sgmltag class="endtag">report</sgmltag>
 &lt;<sgmltag class="element">report</sgmltag> <sgmltag class="attribute">id</sgmltag>="<sgmltag class="attvalue"><replaceable>subreport name</replaceable></sgmltag>"&gt;
-&hellip;
+…
 <sgmltag class="endtag">report</sgmltag>
-&vellip;
+⋮
 &lt;<sgmltag class="element">report</sgmltag> <sgmltag class="attribute">id</sgmltag>="<sgmltag class="attvalue"><replaceable>subreport name</replaceable></sgmltag>"&gt;
-&hellip;
+…
 <sgmltag class="endtag">report</sgmltag>
 </screen>
       </para>
@@ -1364,14 +1364,14 @@
 	<sgmltag class="element">samples</sgmltag> tags:
 
 	  <screen>&lt;<sgmltag class="element">samples</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
-&hellip;
+…
 <sgmltag class="endtag">samples</sgmltag>
 &lt;<sgmltag class="element">samples</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
-&hellip;
+…
 <sgmltag class="endtag">samples</sgmltag>
-&vellip;
+⋮
 &lt;<sgmltag class="element">samples</sgmltag> <sgmltag class="attribute">unit</sgmltag>="<sgmltag class="attvalue"><replaceable>unit signature</replaceable></sgmltag>" <sgmltag class="attribute">scheme</sgmltag>="<sgmltag class="attvalue"><replaceable>scheme name</replaceable></sgmltag>"&gt;
-&hellip;
+…
 <sgmltag class="endtag">samples</sgmltag>
 </screen>
 	</para>

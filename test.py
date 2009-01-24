@@ -12,7 +12,7 @@ def TestBuilder(command, **kwargs):
 
 test_desktop_builder = TestBuilder(['desktop-file-validate', '$SOURCE'], single_source=True)
 test_python_builder = TestBuilder(['pychecker', '--stdlib', '--quiet', '$SOURCES'])
-test_xml_builder = TestBuilder(['xmllint', '--valid', '--noout', '--nonet', '--path', '/usr/share/sgml/gconf', '$SOURCE'])
+test_xml_builder = TestBuilder(['xmllint', '--valid', '--noout', '--nonet', '$SOURCE'])
 
 
 def generate(env):

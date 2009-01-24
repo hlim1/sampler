@@ -18,13 +18,16 @@ def checkProgName(context, name):
         context.Result(False)
         context.env.Exit(1)
 
-conf = env.Configure(custom_tests={'CheckProgName': checkProgName})
+conf = env.Configure(
+    clean=False, help=False,
+    custom_tests={'CheckProgName': checkProgName})
+
 cpp0 = conf.CheckProgName('cpp0')
 cc1 = conf.CheckProgName('cc1')
 asm = conf.CheckProgName('as')
 objcopy = env.WhereIs('objcopy')
+
 conf.Finish()
-del conf
 
 
 env = env.Clone(

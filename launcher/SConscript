@@ -41,7 +41,9 @@ def servicesDir(context):
         context.Result('unknown')
         context.env.Exit(1)
 
-conf = env.Configure(custom_tests={
+conf = env.Configure(
+    help=False,
+    custom_tests={
         'GConfSource': gconfSource,
         'ServicesDir': servicesDir,
         })

@@ -1,10 +1,21 @@
 Import('env', 'threadLibs')
 
+emptyBody = '-Wno-empty-body'
+
 env = env.Clone()
 env.AppendUnique(
     CPPDEFINES='CBI_THREADS',
-    CCFLAGS=['-pthread', '-Wno-empty-body'],
+    CCFLAGS=['-pthread', emptyBody],
     LINKFLAGS=['-Wl,--wrap,pthread_create'],
     REENTRANT='_r',
     )
+
+config = env.Configure()
+ok = bool(config.TryCompile('', '.c'))
+print 'checking for "%s" C compiler flag: %s' % (emptyBody, ('no', 'yes')[ok])
+config.Finish()
+
+if not ok:
+    env['CCFLAGS'].remove(emptyBody)
+
 threadLibs(env, 'yes')

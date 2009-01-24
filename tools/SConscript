@@ -7,7 +7,7 @@ env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
 
 def distroName(context):
     context.Message('checking for distribution name: ')
-    action = [['lsb_release', '-is', '>', '$TARGET']]
+    action = [['/usr/bin/lsb_release', '-is', '>', '$TARGET']]
     (status, name) = context.TryAction(action)
     if status:
         name = name.rstrip()
@@ -64,12 +64,14 @@ def distroArch(context):
         context.Result(False)
         context.env.Exit(1)
 
-conf = env.Configure(custom_tests={
-    'DistroName': distroName,
-    'DistroBasis': distroBasis,
-    'DistroVersion': distroVersion,
-    'DistroArch': distroArch,
-    })
+conf = env.Configure(
+    clean=False, help=False,
+    custom_tests={
+        'DistroName': distroName,
+        'DistroBasis': distroBasis,
+        'DistroVersion': distroVersion,
+        'DistroArch': distroArch,
+        })
 conf.DistroName()
 conf.DistroBasis()
 conf.DistroVersion()

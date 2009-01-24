@@ -1,3 +1,10 @@
+open Ocamlbuild_plugin
+
 ;;
 
-Ocamlbuild_plugin.ocaml_lib ~extern:true ~dir:"/usr/lib/ocaml/cil" "cil"
+dispatch begin function
+  | After_rules ->
+      ocaml_lib ~extern:true ~dir:"+cil" "cil"
+  | _ ->
+      ()
+end

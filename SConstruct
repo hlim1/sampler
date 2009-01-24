@@ -113,7 +113,6 @@ env = env.Clone(
     threadsdir='$samplerdir/threads',
     toolsdir='$pkglibdir/tools',
     traydir='$pkgdatadir/tray',
-    traylibdir='$pkglibdir/tray',
     wrapperdir='$pkgdatadir/wrapper',
     wwwdir='$localstatedir/www',
     )

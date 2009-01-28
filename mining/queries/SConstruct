@@ -1,0 +1,31 @@
+from os import environ
+
+env = Environment()
+env['ENV']['KRB5CCNAME'] = environ['KRB5CCNAME']
+
+
+queries = [
+    'nautilus',
+    'outcome-summary',
+    'outcome-summary-per-version',
+    'popular-apps',
+    'popular-builds',
+    'popular-crashing-builds',
+    'recent-crashes',
+    'reports-per-day-app',
+    'reports-per-day',
+    'reports-per-month-app',
+    'reports-per-month-distro',
+    'reports-per-month',
+    'reports-per-month-server',
+    'reports-per-week-app',
+    'reports-per-week',
+    ]
+
+stamp = '../populate/sync-stamp'
+
+for query in queries:
+    sql = '%s.sql' % query
+    out = '%s.out' % query
+    env.Command(out, [sql, stamp],
+                [['./run-query', '$SOURCE', '>$TARGET']])

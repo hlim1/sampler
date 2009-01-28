@@ -6,4 +6,4 @@
 	echo "\i $sql"
     done
 } |
-psql
+/s/postgresql/bin/psql --host=postgresql.cs.wisc.edu cbi

@@ -1,9 +1,0 @@
-#!/bin/sh -e
-
-{
-    echo '\set ON_ERROR_STOP 1'
-    for sql in "$@"; do
-	echo "\i $sql"
-    done
-} |
-/s/postgresql/bin/psql --host=postgresql.cs.wisc.edu cbi

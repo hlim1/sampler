@@ -1,7 +1,0 @@
-<!-- overview of results from several experiments -->
-<!ELEMENT overview (result+)>
-
-<!-- a single interesting experiment -->
-<!ELEMENT result EMPTY>
-<!ATTLIST result distribution NMTOKEN #REQUIRED>
-<!ATTLIST result application NMTOKEN #REQUIRED>

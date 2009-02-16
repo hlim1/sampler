@@ -1,5 +1,6 @@
 import os
 import stat
+import sys
 
 from itertools import chain
 from socket import getfqdn
@@ -48,6 +49,7 @@ opts.AddOptions(
     BoolOption('OCAML_NATIVE', 'compile OCaml to native code', False),
     PathOption('prefix', 'install in the given directory', '/usr/local'),
     PathOption('DESTDIR', 'extra installation directory prefix', '/'),
+    BoolOption('launcher', 'build client application launcher and related tools', True),
     ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
     ('extra_cflags', 'extra C compiler flags'),
     )
@@ -58,8 +60,9 @@ domainname = getfqdn().split('.', 1)[1]
 if domainname == 'cs.wisc.edu':
     print 'adding special tweaks for', domainname
     env.AppendENVPath('PATH', '/unsup/ocaml/bin')
-    env.AppendENVPath('PATH', '/unsup/pychecker/bin')
+    env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.4/site-packages/pychecker/checker.py']
     env['PKG_CONFIG_PATH'] = '/usr/lib/pkgconfig'
+    env['launcher'] = False
 
 env['cil_path'] = env.Dir('$cil_path')
 
@@ -194,12 +197,14 @@ SConscript(dirs=[
     'driver',
     'fuzz',
     'instrumentor',
-    'launcher',
     'lib',
     'ocaml',
     'tools',
     'www',
     ])
+
+if env['launcher']:
+    SConscript(dirs=['launcher'])
 
 
 ########################################################################

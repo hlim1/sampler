@@ -1,7 +1,10 @@
 Import('env')
 
 env = env.Clone()
-env.AppendUnique(CCFLAGS=['-O'])
+env.AppendUnique(
+    CCFLAGS=['-O'],
+    SHLINKFLAGS=['-Wl,-soname,${TARGET.file}.0'],
+    )
 
 headers = [
     'registry.h',

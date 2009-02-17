@@ -55,12 +55,12 @@ void cbi_initializeRandom()
       if (*end != '\0')
 	{
 	  fprintf(stderr, "trailing garbage in $SAMPLER_SPARSITY: %s\n", end);
-	  exit(2);
+	  sampling = 0;
 	}
       else if (sparsity < 1)
 	{
 	  fputs("$SAMPLER_SPARSITY must be at least 1\n", stderr);
-	  exit(2);
+	  sampling = 0;
 	}
       else
 	{
@@ -77,12 +77,14 @@ void cbi_initializeRandom()
 	      if (*end != '\0')
 		{
 		  fprintf(stderr, "trailing garbage in $SAMPLER_SEED: %s\n", end);
-		  exit(2);
+		  sampling = 0;
 		}
-
-	      seed[0] = convert.triple[0];
-	      seed[1] = convert.triple[1];
-	      seed[2] = convert.triple[2];
+	      else
+		{
+		  seed[0] = convert.triple[0];
+		  seed[1] = convert.triple[1];
+		  seed[2] = convert.triple[2];
+		}
 	    }
 	  else
 	    {

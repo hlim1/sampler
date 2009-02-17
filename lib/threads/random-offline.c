@@ -26,7 +26,6 @@ CBI_THREAD_LOCAL unsigned cbi_nextEventSlot = 0;
 static void failed(const char function[])
 {
   fprintf(stderr, "%s failed: %s\n", function, strerror(errno));
-  exit(2);
 }
 
 
@@ -35,10 +34,16 @@ static void *checkedMmap(int prot, int fd)
   void * const mapping = mmap(0, MAP_SIZE, prot, MAP_PRIVATE, fd, 0);
 
   if (mapping == (void *) -1)
-    failed("mmap");
+    {
+      failed("mmap");
+      return 0;
+    }
 
   if (close(fd))
-    failed("close");
+    {
+      failed("close");
+      return 0;
+    }
 
   return mapping;
 }
@@ -51,7 +56,7 @@ static int checkedOpen(const char filename[])
   if (fd == -1)
     {
       fprintf(stderr, "open of %s failed: %s\n", filename, strerror(errno));
-      exit(2);
+      return -1;
     }
 
   return fd;
@@ -78,24 +83,31 @@ void cbi_initializeRandom()
 {
   const char envar[] = "SAMPLER_EVENT_COUNTDOWNS";
   const char * const environ = getenv(envar);
-  void *mapping;
+  void *mapping = 0;
   
   if (environ)
     {
       const int fd = checkedOpen(environ);
-      mapping = checkedMmap(PROT_READ, fd);
+      if (fd != -1)
+	mapping = checkedMmap(PROT_READ, fd);
       unsetenv(envar);
     }
   else
     {
       int fd;
       fprintf(stderr, "%s: no countdowns file named in $%s; using extreme sparsity\n",  __FUNCTION__, envar);
+
       fd = checkedOpen("/dev/zero");
-      mapping = checkedMmap(PROT_READ | PROT_WRITE, fd);
-      memset(mapping, -1, MAP_SIZE);
-      mapping = mremap(mapping, MAP_SIZE, MAP_SIZE, PROT_READ);
-      if (mapping == (void *) -1)
-	failed("mremap");
+      if (fd != -1)
+	mapping = checkedMmap(PROT_READ | PROT_WRITE, fd);
+
+      if (mapping)
+	{
+	  memset(mapping, -1, MAP_SIZE);
+	  mapping = mremap(mapping, MAP_SIZE, MAP_SIZE, PROT_READ);
+	  if (mapping == (void *) -1)
+	    failed("mremap");
+	}
     }
 
   atexit(finalize);

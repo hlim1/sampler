@@ -27,12 +27,12 @@ void cbi_initializeRandom()
       if (*end != '\0')
 	{
 	  fprintf(stderr, "trailing garbage in $SAMPLER_SPARSITY: %s\n", end);
-	  exit(2);
+	  cbi_randomFixedCountdown = INT_MAX;
 	}
       else if (cbi_randomFixedCountdown < 1)
 	{
 	  fputs("$SAMPLER_SPARSITY must be at least 1\n", stderr);
-	  exit(2);
+	  cbi_randomFixedCountdown = INT_MAX;
 	}
 
       cbi_initialize_thread();

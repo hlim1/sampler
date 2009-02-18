@@ -6,14 +6,10 @@ env.AppendUnique(
     LIBPATH=['.'],
     )
 
-libs = []
-
 def twolibs(env, base, sources, **kwargs):
-    global libs
     [shared] = env.SharedLibrary('sampler-' + base, sources, **kwargs)
     [static] = env.StaticLibrary('sampler-' + base, sources, **kwargs)
     two = [shared, static]
-    libs += two
     [verslib] = env.InstallAs('$DESTDIR$libdir/%s.0.0.0' % shared, shared)
     Alias('install', [
             env.Install('$DESTDIR$libdir', static),

@@ -45,8 +45,10 @@ __chmod_copy = Action(__chmod_copy_exec, __chmod_copy_show)
 def __generator(source, target, env, for_signature):
     __pychecker__ = 'no-argsused'
     varlist = env['varlist']
-    return [Action(__instantiate, varlist=varlist),
-            __chmod_copy]
+    actions = [Action(__instantiate, varlist=varlist)]
+    if env['template_copy_mode']:
+        actions.append(__chmod_copy)
+    return actions
 
 
 __template_builder = Builder(
@@ -57,9 +59,8 @@ __template_builder = Builder(
 
 
 def generate(env):
-    env.AppendUnique(BUILDERS={
-        'Template': __template_builder,
-        })
+    env.AppendUnique(BUILDERS={'Template': __template_builder})
+    env.SetDefault(template_copy_mode=True)
 
 def exists(env):
     return True

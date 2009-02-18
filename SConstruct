@@ -174,13 +174,16 @@ for dir in ['sites', 'wrapped']:
 #  regular build targets in this directory
 #
 
-Default(env.Template('sampler.spec.in', varlist=[
-	'PACKAGE_NAME',
-	'PACKAGE_VERSION',
-	'PACKAGE_BUGREPORT',
-	'deployment_release_suffix',
-	'enable_deployment',
-]))
+spec = env.Template('sampler.spec.in', varlist=[
+        'PACKAGE_NAME',
+        'PACKAGE_VERSION',
+        'PACKAGE_BUGREPORT',
+        'deployment_release_suffix',
+        'enable_deployment',
+        ], template_copy_mode=False)
+
+AddPostAction(spec, [Chmod('$TARGET', 0644)])
+Default(spec)
 
 
 ########################################################################
@@ -228,7 +231,9 @@ package = env.Package(
     VERSION='${VERSION}',
     PACKAGETYPE='src_targz',
     source=sources,
-    )
+    )[0]
+
+AddPostAction(package, [Chmod('$TARGET', 0644)])
 
 subdirs = [
     'BUILD',
@@ -252,9 +257,9 @@ def rpm_action():
     yield Delete('redhat')
     for subdir in subdirs:
         yield Mkdir(redhat.Dir(subdir))
-    yield Copy(redhat.Dir('SOURCES'), package[0])
+    yield Copy(redhat.Dir('SOURCES'), package)
     yield ['rpmbuild', '--define', '_topdir %s' % redhat.abspath, '-ba', '$SOURCE']
 
 
-Command(rpms, ['sampler.spec', package[0]], list(rpm_action()))
+Command(rpms, ['sampler.spec', package], list(rpm_action()))
 Alias('rpms', rpms)

@@ -62,8 +62,6 @@ static void openReportFile()
   if (cbi_reportFile)
     {
       VERBOSE("%s(): starting report to FILE 0x%p\n", __FUNCTION__, cbi_reportFile);
-      fputs("<report id=\"samples\">\n", cbi_reportFile);
-      fflush(cbi_reportFile);
     }
   else
     VERBOSE("%s(): not reporting\n", __FUNCTION__);
@@ -83,11 +81,7 @@ static void closeReportFile()
 static void reportAllCompilationUnits()
 {
   if (cbi_reportFile)
-    {
       cbi_unregisterAllUnits();
-      fputs("</report>\n", cbi_reportFile);
-      fflush(cbi_reportFile);
-    }
 }
 
 

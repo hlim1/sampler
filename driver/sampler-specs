@@ -24,6 +24,7 @@
 %{!fsampler-random=*:-include sampler/threads/random-online.h%s}
 
 *cpp_schemes:
+%{fsampler-scheme=atoms:-include sampler/schemes/atoms-unit.h%s} \
 %{fsampler-scheme=bounds:-include sampler/schemes/bounds-unit.h%s} \
 %{fsampler-scheme=branches:-include sampler/schemes/branches-unit.h%s} \
 %{fsampler-scheme=float-kinds:-include sampler/schemes/float-kinds-unit.h%s} \
@@ -31,6 +32,7 @@
 %{fsampler-scheme=g-object-unref:-include sampler/schemes/g-object-unref-unit.h%s} \
 %{fsampler-scheme=returns:-include sampler/schemes/returns-unit.h%s} \
 %{fsampler-scheme=scalar-pairs:-include sampler/schemes/scalar-pairs-unit.h%s} \
+%{fsampler-scheme=yields:-include sampler/schemes/yields-unit.h%s} \
 %{fsampler-scheme=*:-include sampler/unit.h%s}
 
 *cpp_blast:

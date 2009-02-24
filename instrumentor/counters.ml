@@ -17,6 +17,32 @@ class manager name file =
     method addSiteExpr siteInfo selector =
       self#addSiteOffset siteInfo (Index (selector, NoOffset))
 
+   (*cci : add expression, but don't add it to the sites*)
+   method addExpr selector = 
+     self#addOffset (Index (selector, NoOffset))
+
+   (*cci*)
+   (* siteInfo: site information *)
+   (* set of instructions which are to be sampled*)
+    method addSiteInstrs siteInfo instructions =
+      let func = siteInfo#fundec in
+      let implementation = siteInfo#implementation in
+      implementation.skind <- IsolateInstructions.isolate instructions;
+      Sites.registry#add func (Site.build implementation);
+      siteInfos#push siteInfo;
+      implementation
+
+    (* cci: increment the count, but don't add it to the sites*)
+    (* this means it won't be sampled*)
+    method addOffset selector =
+      let thisId = nextId in
+      let site = (Var counters, Index (integer thisId, NoOffset)) in
+      let counter = addOffsetLval selector site in
+      let bump =  (self#bump counter locUnknown) in
+      nextId <- nextId+1;
+      bump, nextId
+
+
     method addSiteOffset siteInfo selector =
       let thisId = nextId in
       let site = (Var counters, Index (integer thisId, NoOffset)) in

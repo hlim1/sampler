@@ -1,0 +1,6 @@
+Import('env')
+
+for size in [48, 96]:
+    Alias('install', env.InstallAs('$DESTDIR$datadir/icons/hicolor/%dx%d/apps/sampler.png' % (size, size), 'enabled-%d.png' % size))
+    for state in ['disabled', 'enabled']:
+        Alias('install', env.Install('$DESTDIR$pixmapsdir', '%s-%d.png' % (state, size)))

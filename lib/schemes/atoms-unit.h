@@ -30,6 +30,35 @@ static cbi_Timestamp cbi_atomsTimestampsLast[sizeof(cbi_atomsCounters) / sizeof(
 #pragma sampler_exclude_function("cbi_thread_self")
 #pragma sampler_assume_weightless("cbi_thread_self")
 
+
+#pragma cilnoremove("cbi_atoms_lock")
+#pragma sampler_exclude_function("cbi_atoms_lock")
+#pragma sampler_assume_weightless("cbi_atoms_lock")
+
+
+#pragma cilnoremove("cbi_atoms_unlock")
+#pragma sampler_exclude_function("cbi_atoms_unlock")
+#pragma sampler_assume_weightless("cbi_atoms_unlock")
+
+
+#pragma cilnoremove("cbi_dict_lookup")
+#pragma sampler_exclude_function("cbi_dict_lookup")
+#pragma sampler_assume_weightless("cbi_dict_lookup")
+
+
+#pragma cilnoremove("cbi_dict_insert")
+#pragma sampler_exclude_function("cbi_dict_insert")
+#pragma sampler_assume_weightless("cbi_dict_insert")
+
+
+
+#pragma cilnoremove("cbi_dict_clear")
+#pragma sampler_exclude_function("cbi_dict_clear")
+#pragma sampler_assume_weightless("cbi_dict_clear")
+
+
+
+
 #pragma cilnoremove("cbi_atomsReporter")
 #pragma sampler_exclude_function("cbi_atomsReporter")
 static void cbi_atomsReporter() __attribute__((unused));

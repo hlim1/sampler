@@ -12,6 +12,24 @@ int cbi_thread_self();
 
 void cbi_atomsReport(const cbi_UnitSignature, unsigned, const cbi_Tuple2 []);
 
+void cbi_atoms_lock();
+
+void cbi_atoms_unlock();
+
+//////////TODO: shouldn't be here
+
+
+
+//insert (key,val) unsigned into the dictionary
+unsigned int cbi_dict_insert(unsigned int key, unsigned int val);
+
+// lookup the key in the dictionary
+// if found, return 1 and update val
+// else return 0
+unsigned int cbi_dict_lookup(unsigned int key, unsigned int *val);
+
+// clear the dictionary
+void cbi_dict_clear();
 
 
 

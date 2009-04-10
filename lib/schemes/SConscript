@@ -40,12 +40,23 @@ sources = [
 twolibs(env, 'schemes', sources, LIBS=[])
 env.File('samples.h')
 
-for scheme in ['atoms', 'bounds', 'branches', 'function-entries', 'returns', 'scalar-pairs', 'yields']:
+for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pairs']:
     twolibs(env, scheme, scheme + '.c')
 
 fenv = env.Clone()
 fenv.AppendUnique(LIBS=['m'])
 twolibs(fenv, 'float-kinds', 'float-kinds.c')
+
+
+yenv = env.Clone()
+yenv.AppendUnique(LIBS=['pthread'])
+twolibs(yenv, 'yields', 'yields.c')
+
+
+aenv = env.Clone()
+aenv.AppendUnique(LIBS=['pthread'])
+twolibs(aenv, 'atoms', 'atoms.c')
+
 
 headers = [
     'atoms-unit.h',
@@ -70,7 +81,7 @@ headers = [
     'tuple-4.h',
     'tuple-9.h',
     'yields-unit.h',
-    'yields.h'
+    'yields.h',
 ]
 
 Install('#driver/sampler/schemes', headers)

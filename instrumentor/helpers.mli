@@ -1,8 +1,16 @@
 open Cil
 (* cci helper functions*)
 
+(*returns true if the lval is a bitfield*)
+val is_bitfield :lval -> bool
+
 (* gets filename before . *)
 val scrub_filename : string -> string
+
+
+(*generates prefix from file *)
+val get_prefix_file: file -> string
+
 
 (*generates prefix from func and file *)
 val get_prefix: fundec -> file -> string

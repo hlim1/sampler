@@ -2,7 +2,7 @@ from os.path import basename
 
 
 def threadLibs(env, subdir):
-    env.AppendUnique(
+    env.AppendUnique( 
         CPPPATH='.',
         CCFLAGS=['-ffast-math', '-fpic'],
         LINKFLAGS='-Wl,--wrap,fork',
@@ -30,7 +30,8 @@ def threadLibs(env, subdir):
         Command('#driver/lib/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']])
         Command('#driver/lib/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']])
 
-    parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose', 'wrap_fork']
+    parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose', 'wrap_fork' ]
+
     sources = ['hijack'] + ['../%s' % part for part in parts]
     libs('sampler', sources)
 

@@ -7,6 +7,9 @@
 
 void cbi_floatKindsReport(const cbi_UnitSignature, unsigned, const cbi_Tuple9 []);
 
+#ifdef CIL
+#pragma sampler_assume_weightless("cbi_floatKindsClassify")
+#endif /* CIL */
 unsigned cbi_floatKindsClassify(long double);
 
 

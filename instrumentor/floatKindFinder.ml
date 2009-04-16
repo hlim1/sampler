@@ -20,6 +20,15 @@ let classifier file =
 
 class visitor (classifier : classifier) (tuples : Counters.manager) func =
   let classifier = classifier func in
+
+  let classifyAndBump location left right =
+    let (classification, classify) = classifier right location in
+    let siteInfo = new FloatKindSiteInfo.c func location left in
+    let bump, _ = tuples#addSiteExpr siteInfo classification in
+    bump.skind <- Block (mkBlock [classify; mkStmt bump.skind]);
+    bump
+  in
+
   object (self)
     inherit SiteFinder.visitor
 
@@ -30,10 +39,8 @@ class visitor (classifier : classifier) (tuples : Counters.manager) func =
 	    if isInterestingVar isFloatType formal then
 	      let location = formal.vdecl in
 	      let lval = var formal in
-	      let (classification, classify) = classifier (Lval lval) location in
-	      let siteInfo = new FloatKindSiteInfo.c func location (lval, "local", "direct") in
-	      let bump, _ = tuples#addSiteExpr siteInfo classification in
-	      classify :: bump :: body
+	      let bump = classifyAndBump location (lval, "local", "direct") (Lval lval) in
+	      bump :: body
 	    else
 	      body
 	  in
@@ -52,11 +59,8 @@ class visitor (classifier : classifier) (tuples : Counters.manager) func =
 	let first = mkStmtOneInstr (first newLeft) in
 	let last = mkStmt (Instr [Set (left, newLeftVal, location)]) in
 
-	let (classification, classify) = classifier newLeftVal location in
-	let siteInfo = new FloatKindSiteInfo.c func location (left, host, off) in
-	let bump, _ = tuples#addSiteExpr siteInfo classification in
-	
-	Block (mkBlock [first; classify; bump; last])
+	let bump = classifyAndBump location (left, host, off) newLeftVal in
+	Block (mkBlock [first; bump; last])
       in
 
       match IsolateInstructions.isolated stmt with

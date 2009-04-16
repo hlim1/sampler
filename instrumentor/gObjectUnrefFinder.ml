@@ -1,11 +1,6 @@
 open Cil
 
 
-let postpatch replacement statement =
-  statement.skind <- replacement;
-  statement
-
-
 class visitor file =
   let classifier = Lval (var (FindFunction.find "cbi_gObjectUnrefClassify" file)) in
   fun (tuples : Counters.manager) func ->
@@ -21,10 +16,8 @@ class visitor file =
 	    let selector = Lval slot in
 	    let siteInfo = new ExprSiteInfo.c func location chaff in
 	    let bump, _ = tuples#addSiteExpr siteInfo selector in
-	    let replacement = Block (mkBlock [mkStmtOneInstr classify;
-					      bump;
-					      mkStmt stmt.skind])
-	    in
+	    bump.skind <- Block (mkBlock [mkStmtOneInstr classify; mkStmt bump.skind]);
+	    let replacement = Block (mkBlock [bump; mkStmt stmt.skind]) in
 	    stmt.skind <- replacement;
 	    SkipChildren
 

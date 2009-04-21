@@ -31,6 +31,10 @@ unsigned int cbi_dict_lookup(unsigned int key, unsigned int *val);
 // clear the dictionary
 void cbi_dict_clear();
 
+void cbi_dict_test_and_set(unsigned int key, 
+			   unsigned int expectedVal, 
+			   unsigned int *isDifferent,
+			   unsigned int *isStale);
 
 
 #endif /* !INCLUDE_sampler_atoms_h */

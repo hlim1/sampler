@@ -18,25 +18,43 @@ class visitor file =
 	    let slist = List.map (fun i -> mkStmtOneInstr i ) instructions in
 	    (mkBlock slist) in
 
+	  let make_stmt instructions =
+	    mkStmt (Block(make_block instructions))
+	  in
+
+	  let skip_lval lv =
+	    if (is_bitfield lv) 
+	    then true
+	    else ( let lh,_ = lv in
+	      match lh with Var(vi) ->  (not(vi.vglob)) (* Don't skip globals *)
+	      |_ -> false ) 
+	  in
+	      
+
 	  (* given an expression, returns all non-bitfield lvals *)
 	  (* ommitting bitfields because we can't take address of bitfields*)
 	  let rec get_lvals expr =
 	    match expr with 
-	      Lval(lv) -> if (is_bitfield lv) then [] else [lv]
+	      Lval(lv) -> if (skip_lval lv) then [] else [lv]
 	    | UnOp(_, e, _) -> (get_lvals e)
 	    | BinOp(_, e1 ,e2, _) -> (get_lvals e1)@(get_lvals e2)
 	    | AlignOfE(e) -> (get_lvals e)
 	    | CastE(_,e) -> (get_lvals e)
-	    | AddrOf(lv) ->  if (is_bitfield lv) then [] else [lv]
-	    | StartOf(lv) ->  if (is_bitfield lv) then [] else [lv] 
+	    | AddrOf(lv) ->  if (skip_lval lv) then [] else [lv]
+	    | StartOf(lv) ->  if (skip_lval lv) then [] else [lv] 
 	    | _ -> [] in
 
-	  let rec gen_call_lookup location cur_tid_Lval lvals calls selector i =
+	  let rec list_get_lvals exprlist lvals = 
+	    match exprlist with []  -> lvals
+	    | expr::tail -> let lvs = get_lvals expr in
+	      (list_get_lvals tail lvals@lvs) in
+
+	  let rec gen_call_lookup location cur_tid_Lval lvals calls selector =
 	    match lvals with [] -> (calls, selector)
 	    | lv::tail ->
-		let prev_tid = var (findOrCreate_local func ("cbi_prev_tid"^(string_of_int i) )) in
+		let prev_tid = var (Locals.makeTempVar func intType) in 
 		let prev_tid_Lval = Lval prev_tid in
-		let valid_lookup = var (findOrCreate_local func ("cbi_valid_lookup"^(string_of_int i) )) in
+		let valid_lookup = var  (Locals.makeTempVar func intType) in 
 		let valid_lookup_Lval = Lval valid_lookup in
 		let lookup_func = Lval (var (FindFunction.find "cbi_dict_lookup" file)) in
 		let init_prev_tid = Call( Some(valid_lookup), lookup_func, [ (mkAddrOrStartOf lv); (mkAddrOrStartOf prev_tid)], location) in
@@ -45,7 +63,7 @@ class visitor file =
 				     BinOp(LAnd,
 					   BinOp (Ne, cur_tid_Lval, prev_tid_Lval, intType),
 					   BinOp(Eq, valid_lookup_Lval, one, intType), intType ), intType) in
-		gen_call_lookup location cur_tid_Lval tail (init_prev_tid::calls) selector (i+1) in
+		gen_call_lookup location cur_tid_Lval tail (init_prev_tid::calls) selector in
 
 	  let rec gen_call_insert location cur_tid_Lval lvals (calls: instr list) =
 	    match lvals with [] -> calls
@@ -54,234 +72,234 @@ class visitor file =
 		let set_prev_tid = Call (None, insert_func, [ (mkAddrOrStartOf lv); ( cur_tid_Lval )], location) in
 		gen_call_insert location cur_tid_Lval tail (set_prev_tid::calls) in
 
+	  let rec convert_args location args stmts temps =
+	    match args with [] -> (stmts, temps)
+	    | exp::tail ->
+		let tmp = var (Locals.makeTempVar func (typeOf exp)) in
+		let tmpLval = Lval tmp in
+		let stmt =  mkStmtOneInstr ( Set(tmp, exp, location)) in
+		convert_args location tail (stmts@[stmt]) (temps@[tmpLval]) 
+	  in
 
+
+	  let rec __get_argument_stmts location args stmts arg_tmps i =
+	    match args with [] -> (stmts, arg_tmps) 
+	    | exp:: tail ->
+		let arg_tmp = var  (findOrCreate_local func ("cbi_argTmp_"^( string_of_int i) )) in
+		let stmt = mkStmtOneInstr ( Set(arg_tmp, exp, location)) in
+		let tmpLval = Lval arg_tmp in
+		__get_argument_stmts location tail (stmts@[stmt]) (arg_tmps@[tmpLval]) (i+1) 
+	  in
+
+	  let get_argument_stmt location args =
+	    let stmts, arg_tmps = __get_argument_stmts location args [mkEmptyStmt()] [] 0 in
+	    (mkStmt (Block(mkBlock (stmts))), arg_tmps)
+	  in
+	    
+
+(* 	  let is_varargs_call exp = *)
+(* 	    match exp with *)
+(* 	      Lval(Var(vi),_) -> (vi.vname = "__builtin_va_start") || (vi.vname = "__builtin_va_arg") *)
+(* 	    | _-> false in *)
+
+	  let get_gsample_lval () =
+	    var (findOrCreate_global file ((get_prefix_file file)^"_gsample") ) 
+	  in
+
+	  let get_iset_lval () =
+	    var (findOrCreate_local func ("cbi_iSet"))
+	  in
+
+
+	  let get_ctid_lval () =
+	    var (findOrCreate_local func "cbi_tid_temp") 
+	  in
+
+	  let get_init_ctid_instr location =
+	    let cur_tid = get_ctid_lval() in
+	    let tid_func = Lval (var (FindFunction.find "cbi_thread_self" file)) in
+	    (Call (Some(cur_tid), tid_func, [], location))
+	  in
+
+
+	  let rec __get_selectors location lvals stmts cur_selector stale_selector i =
+	    match lvals with [] -> (stmts, cur_selector, stale_selector) 
+	    | lv::tail -> 
+		let cur_tid = get_ctid_lval() in 
+		let isDifferent = var (findOrCreate_local func ("cbi_isDifferent_"^( string_of_int i) )) in
+		let isStale =  var (findOrCreate_local func ("cbi_isStale_"^( string_of_int i) )) in
+		let test_set_func = Lval (var (FindFunction.find "cbi_dict_test_and_set" file)) in
+		let call = mkStmtOneInstr (Call( None, test_set_func, 
+				 [(mkAddrOrStartOf lv); (Lval cur_tid); (mkAddrOrStartOf isDifferent); (mkAddrOrStartOf isStale) ], location)) in
+		let cur_selector = BinOp(LOr,
+				     cur_selector,
+				     BinOp(LAnd,
+					   Lval isDifferent,
+					   UnOp(LNot, (Lval isStale), intType),
+					   intType),
+				     intType) in
+		let stale_selector = BinOp(LOr,
+				     stale_selector,
+				     BinOp(LAnd,
+					   Lval isDifferent, Lval isStale, intType),
+				     intType) in
+
+		__get_selectors location tail (stmts@[call]) cur_selector stale_selector (i+1) 
+	  in
+
+	  let get_selectors location lvals =
+	    let init_ctid_instr = mkStmtOneInstr(get_init_ctid_instr location) in 
+	    let stmts, cur_selector, stale_selector = __get_selectors location lvals [mkEmptyStmt()] zero zero 0 in
+	    (mkStmt (Block(mkBlock (init_ctid_instr::stmts))), cur_selector, stale_selector)
+	  in
+
+
+	  let get_set_sampling_instrs location =
+	    let iset = get_iset_lval() in
+	    let gsample = get_gsample_lval() in
+	    [Set(gsample, one, location); Set(iset, one, location)] 
+	  in
+
+	  let get_dummy_instr location =
+	    let tmp = var (findOrCreate_local func ("cbi_dummy")) in
+	    Set(tmp, zero, location)
+	  in
+						      
+
+	  let get_sampled_set_stmt location orig_instr = 
+	      let set_instrs = (get_set_sampling_instrs location) in
+	      let siteInfo = new InstrSiteInfo.c func location orig_instr in
+	      (tuples#addSiteInstrs siteInfo (set_instrs)) 
+	  in
+
+	  let get_reset_sampling_stmt location =
+	    let clear_func = Lval (var (FindFunction.find "cbi_dict_clear" file)) in
+	    let clear_dict = Call (None, clear_func,[], location) in
+	    let iset = get_iset_lval() in
+	    let reset_gsample = Set(get_gsample_lval() , zero, location) in
+	    let reset_iset = Set(iset, zero, location) in
+	    let reset_blk = make_block [reset_gsample; reset_iset; clear_dict] in
+	    let empty_blk = mkBlock[ mkEmptyStmt() ] in
+	    let reset_cond = (BinOp(Eq, (Lval iset), one, intType)) in
+	    mkStmt ( If(reset_cond,reset_blk, empty_blk, location )) 
+	    in
+
+	  let get_off_blk location orig_instr execute_stmt =
+	      let sampled_stmt = get_sampled_set_stmt location orig_instr in 
+	      let off_blk = mkBlock[ execute_stmt; sampled_stmt ] in
+	      off_blk
+	  in
+
+	  let get_on_blk location lvals orig_instr execute_stmt =
+	      let selector_stmt, cur_selector, stale_selector = get_selectors location lvals in
+	      let bump_instrs,_ = tuples#addExpr2 cur_selector stale_selector in
+	      (**** ***)
+	      let siteInfo = new InstrSiteInfo.c func location orig_instr in
+	      let dummy_sample = (tuples#addSiteInstrs siteInfo [get_dummy_instr location] ) in 
+
+	      let bump_stmt = make_stmt (bump_instrs) in
+	      let reset_stmt = get_reset_sampling_stmt location in
+	      let lock_func = Lval (var (FindFunction.find "cbi_atoms_lock" file)) in
+	      let lock_call = mkStmtOneInstr(Call (None, lock_func,[], location)) in
+	      
+	      let unlock_func = Lval (var (FindFunction.find "cbi_atoms_unlock" file)) in
+	      let unlock_call = mkStmtOneInstr(Call (None, unlock_func,[], location)) in
+
+	      let on_blk = mkBlock[ selector_stmt; lock_call; bump_stmt; execute_stmt; unlock_call; reset_stmt; dummy_sample ] in
+	      (on_blk)
+	      in
+	    
+
+	  let get_if_sampling_blk  location on_blk off_blk default_stmt=
+	      let gsample = get_gsample_lval() in
+	      let gsample_Lval = Lval gsample in
+	      let is_sampling_on =  BinOp (Eq, gsample_Lval, one, intType) in (* is sampling enabled?*) 
+	      let if_gsample_stmt = mkStmt( If (is_sampling_on, on_blk , off_blk , location)) in
+	      mkBlock [if_gsample_stmt; default_stmt] (*everyone is in here*)
+	  in
+
+	  let get_instrumentation location lvals execute_stmt1  orig_instr execute_stmt2 default_stmt =
+	    match lvals with [] -> mkBlock[execute_stmt2; default_stmt] 
+	    |_ -> 
+		let on_blk =  get_on_blk location lvals orig_instr execute_stmt1 in 
+		let off_blk = get_off_blk location orig_instr execute_stmt2 in 
+		let if_gsample_blk = (get_if_sampling_blk location on_blk off_blk default_stmt) in
+		if_gsample_blk 
+	  in
 
 	match stmt.skind with
-(*         TODO: instrument functions too... *)
-	|  Instr [(Set (left, expr, location)) ]
+	| Instr[Set(left, expr, location) ] 
 	    when self#includedStatement stmt ->
-	      if (not (is_bitfield left))  (* skip bitfields *)
-		  then
-	      begin
-		let gsample = var (findOrCreate_global file ((get_prefix_file file)^"_gsample") ) in
-		let gsample_Lval = Lval gsample in
+	      (*** used for instrumentation when sampling is ON ***)
+	      let lvals = if (skip_lval left) then (get_lvals expr) else left::(get_lvals expr) in
+	      let execute_stmt1 =  mkStmtOneInstr (Set(left,expr,location)) in
 
-		let iset = var (findOrCreate_local func ("cbi_iSet")) in
-		let iset_Lval = Lval iset in
+	      (*** used for instrumentation when sampling is OFF ***)
+	      let orig_instr = (Set(left,expr,location)) in 
+	      let execute_stmt2 = mkStmtOneInstr (Set(left,expr,location)) in
 
+	      (***statement to be executed after the if block *)
+	      let default_stmt = mkEmptyStmt() in
 
-		    (*bump + orig*)
-		    let orig  = Set(left, expr, location) in
-		    let cur_tid = var (findOrCreate_local func "cbi_tid_temp") in
-		    (*let bump_selector = BinOp(Eq, iset_Lval, one, intType) in*)  (* decides whether the bump should be executed *)
-		    let cur_tid_Lval = Lval cur_tid in
-		    let tid_func = Lval (var (FindFunction.find "cbi_thread_self" file)) in
-		    let init_cur_tid = Call (Some(cur_tid), tid_func, [], location) in (* TODO only call once at start of function*)
-(* 		    let prev_tid = var (findOrCreate_global file ( (get_prefix func file)^"_prev_tid") ) in *)
-		    (* let prev_tid_Lval = Lval prev_tid  in *)
-(* 		    let selector = BinOp (Ne, cur_tid_Lval, prev_tid_Lval, intType) in *)
-		    let prev_tid = var (findOrCreate_local func "cbi_prev_tid") in		    
-		    let prev_tid_Lval = Lval prev_tid in
-		    let valid_lookup = var (findOrCreate_local func "cbi_valid_lookup") in
-		    let valid_lookup_Lval = Lval valid_lookup in
-		    let lookup_func = Lval (var (FindFunction.find "cbi_dict_lookup" file)) in
-		    let init_prev_tid = Call( Some(valid_lookup), lookup_func, [ (mkAddrOrStartOf left); (mkAddrOrStartOf prev_tid)], location) in
-		    let selector = BinOp(LAnd, BinOp (Ne, cur_tid_Lval, prev_tid_Lval, intType), BinOp(Eq, valid_lookup_Lval, one, intType), intType ) in
+	      let if_gsample_blk = get_instrumentation location lvals execute_stmt1 orig_instr execute_stmt2 default_stmt in
 
- 		let rhs_lvals = get_lvals expr in 
- 		let (rhs_lookups, selector) = (gen_call_lookup location cur_tid_Lval rhs_lvals [] selector 0) in 
-		let rhs_inserts = (gen_call_insert location cur_tid_Lval rhs_lvals []) in
-
-(* 		    let set_prev_tid =  (Set (prev_tid, cur_tid_Lval, location)) in *)
-		    let insert_func = Lval (var (FindFunction.find "cbi_dict_insert" file)) in
-		    let set_prev_tid = Call (None, insert_func, [ (mkAddrOrStartOf left); ( cur_tid_Lval )], location) in
-		    let siteInfo = new InstrSiteInfo.c func location orig in
-		    let bump,_ = tuples#addExpr selector in
-
-		    (*let bump_blk = make_block ( [ init_cur_tid; init_prev_tid]@rhs_lookups@[bump]) in
-		    let set_blk = make_block ([ init_cur_tid; set_prev_tid]@rhs_inserts) in
-
-		    let if_iset_skind = If( bump_selector, bump_blk, set_blk, location) in
-		    let if_iset_stmt = mkStmt (if_iset_skind) in*)
-
-		    (* bump and set independent of iSet *)
-		    let bump_set_blk = make_block (( [ init_cur_tid; init_prev_tid]@rhs_lookups@[bump])@([set_prev_tid]@rhs_inserts)) in
-		    let if_iset_stmt = mkStmt( Block(bump_set_blk)) in
-		    let orig_stmt = mkStmtOneInstr orig in
- 		    (* let bump_orig_blk = make_block [init_cur_tid; bump; set_prev_tid; orig ] in  *)
-		    let bump_orig_blk = mkBlock [ if_iset_stmt; orig_stmt] in
-
-		    let orig_blk = make_block [orig] in
- 		    let enabled = BinOp (Eq, gsample_Lval, one, intType) in (* is sampling enabled?*) 
-		    let if_gsample_skind = If (enabled, bump_orig_blk, orig_blk, location) in
-
-		    let if_gsample_stmt = mkStmt ( if_gsample_skind) in
-		    let if_gsample_blk = mkBlock [if_gsample_stmt] in (*everyone is in here*)
-
-                      (*resetting sample + local site id *)
-		    let reset_gsample = Set(gsample, zero, location) in
-		    let reset_iset = Set(iset, zero, location) in
-		    let reset_blk = make_block [reset_gsample; reset_iset] in
-		    let empty_blk = mkBlock[ mkEmptyStmt() ] in
-                      
-(*                       let temp_expr_1 = BinOp(Eq, gsample_Lval, one, intType) in *)
-(*                       let temp_var_1 =  var(findOrCreate_local func "g_sampled_temp_var_1") in *)
-(*                       let set_cond_1 = mkStmtOneInstr(Set(temp_var_1, temp_expr_1, location)) in *)
-
-(*                       let temp_expr_2 = BinOp(Eq, iset_Lval, one, intType) in *)
-(*                       let temp_var_2 = var(findOrCreate_local func "g_sampled_temp_var_2") in *)
-(*                       let set_cond_2 = mkStmtOneInstr( Set(temp_var_2, temp_expr_2, location)) in *)
-(* 		    (\*TODO: we need a lock around the reset code as well *\) *)
-
-(* 		    let reset_cond = BinOp(LAnd, Lval(temp_var_1),  Lval(temp_var_2), intType ) in *)
-		    let reset_cond = BinOp(LAnd, BinOp(Eq, iset_Lval, one, intType), BinOp(Eq, gsample_Lval, one, intType) , intType) in
-		    let if_reset_stmt = mkStmt ( If(reset_cond,reset_blk, empty_blk, location )) in
-		    
-
-		    (* setting sample flag + local site id*)
-(* 		    let yield_func = Lval (var (FindFunction.find "cbi_atoms_yield" file)) in *)
-(* 		    let yield_call = Call(None, yield_func, [], location) in (\* yield here, so we don't have to use the yields scheme*\) *)
-
-		    let set_gsample = ( Set(gsample, one, location)) in
-		    let set_iset =  (Set(iset, one, location)) in
-		    let clear_func = Lval (var (FindFunction.find "cbi_dict_clear" file)) in
-		    let clear_dict = Call (None, clear_func,[], location) in
-(* 		    let init_prev_tid = Call (Some(prev_tid), tid_func, [], location) in (\* TODO only call once at start of function*\) *)
-		    (*have to do this again *)
-		    let init_cur_tid = Call (Some(cur_tid), tid_func, [], location) in (* TODO only call once at start of function*)
-		    let set_prev_tid = Call (None, insert_func, [ (mkAddrOrStartOf left); ( cur_tid_Lval )], location) in
-		    let rhs_inserts = (gen_call_insert location cur_tid_Lval rhs_lvals []) in
-		    let thump = tuples#addSiteInstrs siteInfo ([set_gsample; set_iset; clear_dict; init_cur_tid; set_prev_tid]@rhs_inserts)   (*; yield_call *) in 
-		    let set_blk = mkBlock [thump] in
-		    let empty_blk = mkBlock[ mkEmptyStmt() ] in
- 		    let set_gsample_stmt = mkStmt(If( (BinOp(Ne, gsample_Lval, one, intType ) ), set_blk, empty_blk, location))  in 
-
-		    let lock_func = Lval (var (FindFunction.find "cbi_atoms_lock" file)) in
-		    let lock_call = mkStmtOneInstr(Call (None, lock_func,[], location)) in
-
-		    let unlock_func = Lval (var (FindFunction.find "cbi_atoms_unlock" file)) in
-		    let unlock_call = mkStmtOneInstr(Call (None, unlock_func,[], location)) in
-
-		    (*let big_blk = mkBlock[ mkStmt(Block(if_gsample_blk)); set_cond_1;  set_cond_2; if_reset_stmt; set_gsample_stmt] in*)
-		    let big_blk = mkBlock[ lock_call; mkStmt(Block(if_gsample_blk)); if_reset_stmt; set_gsample_stmt; unlock_call] in
-		    stmt.skind <- Block(big_blk);
-
-
-	      end;
+	      stmt.skind <- Block(if_gsample_blk);
 	      SkipChildren
+
+	| If(predicate, thenClause, elseClause, location)
+	    when self#includedStatement stmt ->
+	    let predTemp = var (Locals.makeTempVar func (typeOf predicate)) in
+	    let predLval = Lval predTemp in
+
+	    (*** used for instrumentation when sampling is ON ***)
+	    let lvals = get_lvals predicate in
+	    let execute_stmt1  = mkStmtOneInstr(Set (predTemp, predicate, location)) in
+
+	    (*** used for instrumentation when sampling is OFF ***)
+	    let orig_instr  = Set (predTemp, predicate, location) in
+	    let execute_stmt2  = mkStmtOneInstr(Set (predTemp, predicate, location)) in
+
+	    (***statement to be executed after the if block *)
+	    let default_stmt = mkStmt (If (predLval, thenClause, elseClause, location)) in (*the actual branch instruction *)
+
+	    let if_gsample_blk = get_instrumentation location lvals execute_stmt1 orig_instr execute_stmt2 default_stmt in
+	    let replacement = Block (if_gsample_blk) in
+	    ChangeDoChildrenPost (stmt, postpatch replacement)
+
+	| Instr( [Call(lhs, c, args, location)] )
+	  when self#includedStatement stmt ->
+
+	    (*** used for instrumentation when sampling is ON ***)
+	    let lvs = 
+	      (match lhs with None-> []
+	      | Some(left) -> if (skip_lval left) then []  else [left])
+	    in
+	    let lvals = list_get_lvals args lvs in
+	    let (execute_stmt1,_)  = get_argument_stmt location args in
+
+	    (*** used for instrumentation when sampling is OFF ***)
+	    let orig_instr = Call(lhs,c, args, location) in
+	    let (execute_stmt2,_)  = get_argument_stmt location args in
+
+	    (***statement to be executed after the if block *)
+	    let (_, arg_tmps) = get_argument_stmt location args in
+	    let  default_stmt = mkStmtOneInstr(Call(lhs, c, arg_tmps, location)) in
+
+	    let if_gsample_blk = get_instrumentation location lvals execute_stmt1 orig_instr execute_stmt2 default_stmt in
+	    stmt.skind <- Block( if_gsample_blk );
+	    SkipChildren
 
 
 	| Return(exp,location)
 	   when self#includedStatement stmt  ->
 	     begin 
-	       let gsample = var (findOrCreate_global file ( (get_prefix_file file)^"_gsample")) in
-	       let iset = var (findOrCreate_local func ("cbi_iSet")) in
-	       let iset_Lval = Lval iset in
-	    
-	       let empty_blk = mkBlock[ mkEmptyStmt() ] in
-	       let reset_gsample_blk =  make_block [(Set(gsample, zero, location))] in
-	       let cond = BinOp(Eq, iset_Lval, one, intType) in
-	       let if_blk = mkStmt(If(cond, reset_gsample_blk, empty_blk, location)) in
+	       let reset_stmt = get_reset_sampling_stmt location in 
 	       let orig_stmt = mkStmt(Return(exp, location)) in
-	       stmt.skind <- Block( mkBlock [if_blk; orig_stmt ] );
+	       stmt.skind <- Block( mkBlock [reset_stmt; orig_stmt ] );
 	     end;
 	    SkipChildren
 
 
-(* 	| Instr [(Set (left, expr, location)) ] *)
-(* 	    when self#includedStatement stmt -> *)
-(* 	      begin  *)
-(* 		if (isInterestingLval  file left || isInterestingExp  file expr)  *)
-(* 		then  *)
-(* 		  begin *)
-
-(* 		    let gsample = var (findOrCreate_global file ( (get_prefix func file)^"_gsample")) in *)
-(* 		    let gsample_Lval = Lval gsample in *)
-
-(* 		    let iset = var (findOrCreate_local func ("cbi_iSet")) in *)
-(* 		    let iset_Lval = Lval iset in *)
-		    
-(* 		    (\*bump + orig*\) *)
-(* 		    let orig  = Set(left, expr, location) in *)
-(* 		    let cur_tid = var (findOrCreate_local func "cbi_tid_temp") in *)
-(* 		    let bump_selector = BinOp(Eq, iset_Lval, one, intType) in  *)
-(* 		    let cur_tid_Lval = Lval cur_tid in *)
-(* 		    let tid_func = Lval (var (FindFunction.find "cbi_thread_self" file)) in *)
-(* 		    let init_cur_tid = Call (Some(cur_tid), tid_func, [], location) in (\* TODO only call once at start of function*\) *)
-(* 		    let prev_tid = var (findOrCreate_global file ( (get_prefix func file)^"_prev_tid") ) in *)
-(* 		    let prev_tid_Lval = Lval prev_tid  in *)
-(* 		    let selector = BinOp (Ne, cur_tid_Lval, prev_tid_Lval, intType) in *)
-(* 		    let set_prev_tid =  (Set (prev_tid, cur_tid_Lval, location)) in *)
-(* 		    let siteInfo = new InstrSiteInfo.c func location orig in *)
-(* 		    let bump,_ = tuples#addExpr selector in *)
-
-(* 		    let bump_blk = make_block[ init_cur_tid; bump] in *)
-(* 		    let set_blk = make_block [ set_prev_tid] in *)
-(* 		    let if_iset_skind = If( bump_selector, bump_blk, set_blk, location) in *)
-(* 		    let if_iset_stmt = mkStmt (if_iset_skind) in *)
-(* 		    let orig_stmt = mkStmtOneInstr orig in *)
-(*  		    (\* let bump_orig_blk = make_block [init_cur_tid; bump; set_prev_tid; orig ] in  *\) *)
-(* 		    let bump_orig_blk = mkBlock [ if_iset_stmt; orig_stmt] in *)
-
-(* 		    let orig_blk = make_block [orig] in *)
-(*  		    let enabled = BinOp (Eq, gsample_Lval, one, intType) in (\* is sampling enabled?*\)  *)
-(* 		    let if_gsample_skind = If (enabled, bump_orig_blk, orig_blk, location) in *)
-(* 		    let if_gsample_stmt = mkStmt ( if_gsample_skind) in *)
-(* 		    let if_gsample_blk = mkBlock [if_gsample_stmt] in (\*everyone is in here*\) *)
-
-(*                       (\*resetting sample + local site id *\) *)
-(* 		    let reset_gsample = Set(gsample, zero, location) in *)
-(* 		    let reset_iset = Set(iset, zero, location) in *)
-(* 		    let reset_blk = make_block [reset_gsample; reset_iset] in *)
-(* 		    let empty_blk = mkBlock[ mkEmptyStmt() ] in *)
-                      
-(*                       let temp_expr_1 = BinOp(Eq, gsample_Lval, one, intType) in *)
-(*                       let temp_var_1 =  var(findOrCreate_local func "g_sampled_temp_var_1") in *)
-(*                       let set_cond_1 = mkStmtOneInstr(Set(temp_var_1, temp_expr_1, location)) in *)
-
-(*                       let temp_expr_2 = BinOp(Eq, iset_Lval, one, intType) in *)
-(*                       let temp_var_2 = var(findOrCreate_local func "g_sampled_temp_var_2") in *)
-(*                       let set_cond_2 = mkStmtOneInstr( Set(temp_var_2, temp_expr_2, location)) in *)
-(* 		    (\*TODO: we need a lock around the reset code as well *\) *)
-
-(* 		    let reset_cond = BinOp(LAnd, Lval(temp_var_1),  Lval(temp_var_2), intType ) in *)
-(* 		    let if_reset_stmt = mkStmt ( If(reset_cond,reset_blk, empty_blk, location )) in *)
-		    
-
-(* 		    (\* setting sample flag + local site id*\) *)
-(* 		    let yield_func = Lval (var (FindFunction.find "cbi_atoms_yield" file)) in *)
-(* 		    let yield_call = Call(None, yield_func, [], location) in (\* yield here, so we don't have to use the yields scheme*\) *)
-
-(* 		    let set_gsample = ( Set(gsample, one, location)) in *)
-(* 		    let set_iset =  (Set(iset, one, location)) in *)
-(* 		    let init_prev_tid = Call (Some(prev_tid), tid_func, [], location) in (\* TODO only call once at start of function*\) *)
-(* 		    let thump = tuples#addSiteInstrs siteInfo [set_gsample; set_iset; init_prev_tid; yield_call] in  *)
-(* 		    let set_blk = mkBlock [thump] in *)
-(* 		    let empty_blk = mkBlock[ mkEmptyStmt() ] in *)
-(*  		    let set_gsample_stmt = mkStmt(If( (BinOp(Ne, gsample_Lval, one, intType ) ), set_blk, empty_blk, location))  in  *)
-
-(* 		    let big_blk = mkBlock[ mkStmt(Block(if_gsample_blk)); set_cond_1;  set_cond_2; if_reset_stmt; set_gsample_stmt] in *)
-(* 		    stmt.skind <- Block(big_blk); *)
-
-(* 		  end; *)
-(* 	      end; *)
-(* 	      SkipChildren *)
-
-(* 	| Return(exp,location) *)
-(* 	   when self#includedStatement stmt  -> *)
-(* 	     begin  *)
-(* 	       let gsample = var (findOrCreate_global file ( (get_prefix func file)^"_gsample")) in *)
-(* 	       let iset = var (findOrCreate_local func ("cbi_iSet")) in *)
-(* 	       let iset_Lval = Lval iset in *)
-	    
-(* 	       let empty_blk = mkBlock[ mkEmptyStmt() ] in *)
-(* 	       let reset_gsample_blk =  make_block [(Set(gsample, zero, location))] in *)
-(* 	       let cond = BinOp(Eq, iset_Lval, one, intType) in *)
-(* 	       let if_blk = mkStmt(If(cond, reset_gsample_blk, empty_blk, location)) in *)
-(* 	       let orig_stmt = mkStmt(Return(exp, location)) in *)
-(* 	       stmt.skind <- Block( mkBlock [if_blk; orig_stmt ] ); *)
-(* 	     end; *)
-(* 	    SkipChildren *)
 
 	| _ ->
 	    DoChildren

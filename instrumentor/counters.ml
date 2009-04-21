@@ -21,9 +21,19 @@ class manager name file =
    method addExpr selector = 
      self#addOffset (Index (selector, NoOffset))
 
+   (*cci : add expression, but don't add it to the sites*)
+   method addExpr2 selector0 selector1 = 
+     self#addOffset2 (Index (selector0, NoOffset)) (Index (selector1, NoOffset))
+
+
+    (* you are given the siteid here *)       
+    method addExprId selector id =
+      self#addOffsetId (Index (selector, NoOffset)) id
+
    (*cci*)
    (* siteInfo: site information *)
    (* set of instructions which are to be sampled*)
+
     method addSiteInstrs siteInfo instructions =
       let func = siteInfo#fundec in
       let implementation = siteInfo#implementation in
@@ -40,6 +50,32 @@ class manager name file =
       let counter = addOffsetLval selector site in
       let bump =  (self#bump counter locUnknown) in
       nextId <- nextId+1;
+      bump, nextId
+
+    (* cci: increment the count, but don't add it to the sites*)
+    (* this means it won't be sampled*)
+    method addOffset2 selector0 selector1 =
+      let thisId = nextId in
+      let site = (Var counters, Index (integer thisId, NoOffset)) in
+      let counter = addOffsetLval selector0 site in
+      let bump0 =  (self#bump counter locUnknown) in
+      nextId <- nextId+1;
+      let thisId = nextId in
+      let site = (Var counters, Index (integer thisId, NoOffset)) in
+      let counter = addOffsetLval selector1 site in
+      let bump1 =  (self#bump counter locUnknown) in
+      nextId <- nextId+1;
+      [bump0; bump1], nextId
+
+
+    (* cci: increment the count, but don't add it to the sites*)
+    (* this means it won't be sampled*)
+    (* you are given the siteid here *)
+    method addOffsetId selector id =
+      let thisId = id in
+      let site = (Var counters, Index (integer thisId, NoOffset)) in
+      let counter = addOffsetLval selector site in
+      let bump =  (self#bump counter locUnknown) in
       bump, nextId
 
 

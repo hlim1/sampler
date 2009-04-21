@@ -56,6 +56,9 @@ static cbi_Timestamp cbi_atomsTimestampsLast[sizeof(cbi_atomsCounters) / sizeof(
 #pragma sampler_exclude_function("cbi_dict_clear")
 #pragma sampler_assume_weightless("cbi_dict_clear")
 
+#pragma cilnoremove("cbi_dict_test_and_set")
+#pragma sampler_exclude_function("cbi_dict_test_and_set")
+#pragma sampler_assume_weightless("cbi_dict_test_and_set")
 
 
 

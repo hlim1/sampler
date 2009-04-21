@@ -48,6 +48,7 @@ void cbi_atoms_unlock()
 
 #define N 10
 
+#define NUM_RETRY 20
 
 #define DICT_FOUND 1
 #define DICT_NOT_FOUND 0
@@ -64,6 +65,7 @@ static pthread_mutex_t tableLock __attribute__((unused)) = PTHREAD_MUTEX_INITIAL
 struct cbi_DictNode dict[hashsize(N)];
 
 unsigned int curGeneration = 3;
+unsigned int isInitialized = 0;
 
 void cbi_dict_clear()
 {
@@ -107,7 +109,11 @@ unsigned int hash32( unsigned int a)
 
 //macro to determine if the current node is deleted
 #define valid(n) (dict[n].generation == curGeneration)
+#define isCurrentGen(n) (dict[n].generation == curGeneration)
+#define INVALID_KEY (0)
+#define isEmpty(n) (dict[n].key == INVALID_KEY)
 
+#define USE_LOCK 1
 //open addressing with linear chaining
 unsigned int cbi_dict_insert(unsigned int key, unsigned int val)
 {
@@ -117,8 +123,10 @@ unsigned int cbi_dict_insert(unsigned int key, unsigned int val)
   unsigned int i = hash32(key);
   last = (i+hashsize(N)-1 ) & hashmask(N);
   //assert( last < hashsize(N) );
-  //TODO: lock
+  //lock
+#ifdef USE_LOCK
   pthread_mutex_lock(&tableLock);
+#endif
   while( i != last && valid(i) && dict[i].key != key)
     i = (i+1) & hashmask(N);
   if( !valid(i) || dict[i].key == key )
@@ -126,14 +134,18 @@ unsigned int cbi_dict_insert(unsigned int key, unsigned int val)
       dict[i].key = key;
       dict[i].value = val;
       dict[i].generation = curGeneration;
+#ifdef USE_LOCK
   pthread_mutex_unlock(&tableLock);
+#endif
       //unlock
       return 1;
     }
   else
     {
       //unlock
+#ifdef USE_LOCK
       pthread_mutex_unlock(&tableLock);
+#endif
       // Didn't find a slot; ignore error
       return 0;
     }
@@ -149,20 +161,103 @@ unsigned int cbi_dict_lookup(unsigned int key, unsigned int *val)
   last = (i+hashsize(N)-1 ) & hashmask(N);
   //assert( last < hashsize(N) );
 
-  //TODO: lock
+#ifdef USE_LOCK
   pthread_mutex_lock(&tableLock);
+#endif
   while( i!=last && valid(i) && dict[i].key!=key)
     i=(i+1) & hashmask(N);
   if(valid(i))
     {
       *val = dict[i].value;
-  pthread_mutex_unlock(&tableLock);
-      //unlock
+#ifdef USE_LOCK
+      pthread_mutex_unlock(&tableLock);
+#endif
       return DICT_FOUND;
     }
-  //unlock
+#ifdef USE_LOCK
   pthread_mutex_unlock(&tableLock);
+#endif
   // Didn't find a slot; ignore error
   return DICT_NOT_FOUND;
 }
+
+
  
+/* arguments:
+   key: the key to perform the lookup
+   expected: the expected value to compare with and value used to set
+   isDifferent: is set to 1 if the value found in the hashtable differs from the expected value passed, 0 otherwise
+   isStale: if 1 if the current value refers to a previous generation, 0 otherwise
+ */
+void cbi_dict_test_and_set(unsigned int key, 
+			   unsigned int expectedVal, 
+			   unsigned int *isDifferent,
+			   unsigned int *isStale)
+{
+  unsigned int i=0;
+  unsigned int last=0;
+  unsigned int deletedIndex=0;
+  unsigned int foundDeleted =0;
+  unsigned int count =0;
+  if(!isInitialized)
+    {
+#ifdef USE_LOCK
+      pthread_mutex_lock(&tableLock);
+#endif
+      for(i=0;i<hashsize(N); i++)
+	dict[i].key = INVALID_KEY;
+      isInitialized =1;
+#ifdef USE_LOCK
+      pthread_mutex_unlock(&tableLock);
+#endif
+    }
+  i = hash32(key);
+  last = (i+hashsize(N)-1 ) & hashmask(N);
+#ifdef USE_LOCK
+  pthread_mutex_lock(&tableLock);
+#endif
+  foundDeleted =0;
+  count =0;
+  while( count!=NUM_RETRY && i!=last && !isEmpty(i) && dict[i].key!=key) /* skip over entries marked deleted i.e. from a previous generation */
+    {
+      /* keep track of the first entry marked deleted i.e. not the current generation */
+      if(!isCurrentGen(i) && !foundDeleted ) { foundDeleted =1; deletedIndex = i; }
+      i=(i+1) & hashmask(N);
+      count++;
+    }
+  if(dict[i].key==key) /*found key; replace with current value */
+    {
+      *isDifferent = (dict[i].value != expectedVal);
+      *isStale = !isCurrentGen(i);
+      dict[i].key = key;
+      dict[i].value = expectedVal;
+      dict[i].generation = curGeneration;
+
+    }
+  else if(isEmpty(i)) /* first time entry */
+    {
+      *isDifferent =0;
+      *isStale = 0;
+      dict[i].key = key;
+      dict[i].value = expectedVal;
+      dict[i].generation = curGeneration;
+	  
+    }
+  else if(i==last || count==NUM_RETRY) /*not found; replace the first entry marked deleted */
+    {
+      *isDifferent = 0;
+      *isStale = 0;
+      if(foundDeleted)
+	{
+	  dict[deletedIndex].key = key;
+	  dict[deletedIndex].value = expectedVal;
+	  dict[deletedIndex].generation = curGeneration;
+	}
+    }
+
+#ifdef USE_LOCK
+  pthread_mutex_unlock(&tableLock);
+#endif
+  return;
+
+}

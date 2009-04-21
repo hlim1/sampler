@@ -63,6 +63,30 @@
 	    <title>Instrumentation schemes</title>
 
 	    <varlistentry>
+	      <term><option>atoms</option></term>
+	      <listitem>
+		<para>For each statement which accesses a potentially 
+		shared memory location, count how many
+		times the last access to the same location was from the
+		same thread or from a different thread.
+		Each statement induces one
+		instrumentation point with a pair of counters:
+
+		  <orderedlist>
+		    <listitem>
+		      <para>last access from same thread</para>
+		    </listitem>
+
+		    <listitem>
+		      <para>last access from different thread</para>
+		    </listitem>
+		  </orderedlist>
+		</para>
+	      </listitem>
+	    </varlistentry>
+
+
+	    <varlistentry>
 	      <term><option>bounds</option></term>
 	      <listitem>
 		<para>At each assignment of a scalar value, record the

@@ -1,0 +1,26 @@
+Import('env')
+
+preinstall = [['scrollkeeper-preinstall', '$prefix/share/sampler/doc/sampler-guide/C/sampler-guide.xml', '$SOURCE', '$TARGET']]
+omf = env.Command('sampler-guide-C.omf.out', 'sampler-guide-C.omf', preinstall)
+Default(omf)
+
+sections = [ 'ar01s0%d.html' % secnum for secnum in xrange(2, 6) ]
+html = env.Command(['index.html'] + sections, 'sampler-guide.xml',
+                   [['xsltproc', '--stringparam', 'base.dir', '$TARGET.dir/', '$SOURCE']])
+Alias('html', html)
+
+Alias('test', map(env.TestXML, [
+    ['sampler-guide.xml', '#doc/config.xml'],
+    'sampler-guide-C.omf',
+    'sampler-guide-C.omf.out',
+    ]))
+
+guide = [
+    'sampler-guide.css',
+    'sampler-guide.xml',
+    'sampler-guide.xsl',
+    ]
+
+Alias('install', [
+    env.Install('$DESTDIR$docdir/sampler-guide/C', guide),
+    env.InstallAs('$DESTDIR$omfdir/sampler-guide-C.omf', omf)])

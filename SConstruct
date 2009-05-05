@@ -208,6 +208,10 @@ SConscript(dirs=[
 
 if env['launcher']:
     SConscript(dirs=['launcher'])
+else:
+    config = 'launcher/common/SamplerConfig.py'
+    env.Command(config, [], [Touch('$TARGET')])
+    Default(config)
 
 
 ########################################################################

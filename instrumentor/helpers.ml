@@ -10,7 +10,11 @@ let is_bitfield lval =
     Field(finfo,_) -> (finfo.fname = Cil.missingFieldName) || (match finfo.fbitfield with Some(_) -> true | _-> false)
   
   | _-> false 
-  
+
+let is_register lval =
+  let (lh,_) = lval in
+  match lh with Var vi -> vi.vstorage == Register
+  |_-> false 
 
 let scrub_filename str =
   let new_str = ref "" in
@@ -34,6 +38,13 @@ let findOrCreate_local func vname =
   List.find ( fun vi -> vi.vname = vname) func.slocals 
   with Not_found -> 
     makeLocalVar func vname intType
+
+let findOrCreate_local_type func vname typ = 
+  try 
+  List.find ( fun vi -> vi.vname = vname) func.slocals 
+  with Not_found -> 
+    makeLocalVar func vname typ
+
 
 let create_global file vname =
     let b_varinfo = makeGlobalVar vname intType in

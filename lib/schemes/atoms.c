@@ -218,12 +218,12 @@ void cbi_dict_test_and_set(unsigned int key,
 #endif
   foundDeleted =0;
   count =0;
-  while( count!=NUM_RETRY && i!=last && !isEmpty(i) && dict[i].key!=key) /* skip over entries marked deleted i.e. from a previous generation */
+  while( /* count!=NUM_RETRY && */ i!=last && !isEmpty(i) && dict[i].key!=key) /* skip over entries marked deleted i.e. from a previous generation */
     {
       /* keep track of the first entry marked deleted i.e. not the current generation */
       if(!isCurrentGen(i) && !foundDeleted ) { foundDeleted =1; deletedIndex = i; }
       i=(i+1) & hashmask(N);
-      count++;
+      //count++;
     }
   if(dict[i].key==key) /*found key; replace with current value */
     {
@@ -237,7 +237,7 @@ void cbi_dict_test_and_set(unsigned int key,
   else if(isEmpty(i)) /* first time entry */
     {
       *isDifferent =0;
-      *isStale = 0;
+      *isStale = 1;
       dict[i].key = key;
       dict[i].value = expectedVal;
       dict[i].generation = curGeneration;
@@ -246,7 +246,7 @@ void cbi_dict_test_and_set(unsigned int key,
   else if(i==last || count==NUM_RETRY) /*not found; replace the first entry marked deleted */
     {
       *isDifferent = 0;
-      *isStale = 0;
+      *isStale = 1;
       if(foundDeleted)
 	{
 	  dict[deletedIndex].key = key;

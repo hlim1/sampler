@@ -23,7 +23,7 @@ class visitor file =
 	  in
 
 	  let skip_lval lv =
-	    if (is_bitfield lv) 
+	    if ((is_bitfield lv) || (is_register lv))
 	    then true
 	    else ( let lh,_ = lv in
 	      match lh with Var(vi) ->  (not(vi.vglob)) (* Don't skip globals *)
@@ -82,25 +82,27 @@ class visitor file =
 	  in
 
 
-	  let rec __get_argument_stmts location args stmts arg_tmps i =
+	  let rec __get_argument_stmts location fname args stmts arg_tmps i =
 	    match args with [] -> (stmts, arg_tmps) 
 	    | exp:: tail ->
-		let arg_tmp = var  (findOrCreate_local func ("cbi_argTmp_"^( string_of_int i) )) in
+		let arg_tmp = var  (findOrCreate_local_type func ("cbi_argTmp_"^fname^( string_of_int i) ) (typeOf exp) ) in
 		let stmt = mkStmtOneInstr ( Set(arg_tmp, exp, location)) in
 		let tmpLval = Lval arg_tmp in
-		__get_argument_stmts location tail (stmts@[stmt]) (arg_tmps@[tmpLval]) (i+1) 
+		__get_argument_stmts location fname tail (stmts@[stmt]) (arg_tmps@[tmpLval]) (i+1) 
 	  in
 
 	  let get_argument_stmt location args =
-	    let stmts, arg_tmps = __get_argument_stmts location args [mkEmptyStmt()] [] 0 in
+	    let fname = ((string_of_int location.line)^"_") in
+	    let stmts, arg_tmps = __get_argument_stmts location fname args [mkEmptyStmt()] [] 0 in
 	    (mkStmt (Block(mkBlock (stmts))), arg_tmps)
 	  in
 	    
 
-(* 	  let is_varargs_call exp = *)
-(* 	    match exp with *)
-(* 	      Lval(Var(vi),_) -> (vi.vname = "__builtin_va_start") || (vi.vname = "__builtin_va_arg") *)
-(* 	    | _-> false in *)
+	  let is_varargs_call lv =
+	    let (lh,_) = lv in
+	    match lh 
+	    with Var(vi) -> ( match vi.vtype with TFun(_,_,true,_) -> true | _->false )
+	    |_-> false in
 
 	  let get_gsample_lval () =
 	    var (findOrCreate_global file ((get_prefix_file file)^"_gsample") ) 
@@ -178,7 +180,7 @@ class visitor file =
 	    let iset = get_iset_lval() in
 	    let reset_gsample = Set(get_gsample_lval() , zero, location) in
 	    let reset_iset = Set(iset, zero, location) in
-	    let reset_blk = make_block [reset_gsample; reset_iset; clear_dict] in
+	    let reset_blk = make_block [reset_gsample; reset_iset; clear_dict ] in
 	    let empty_blk = mkBlock[ mkEmptyStmt() ] in
 	    let reset_cond = (BinOp(Eq, (Lval iset), one, intType)) in
 	    mkStmt ( If(reset_cond,reset_blk, empty_blk, location )) 
@@ -266,9 +268,10 @@ class visitor file =
 	    let replacement = Block (if_gsample_blk) in
 	    ChangeDoChildrenPost (stmt, postpatch replacement)
 
-	| Instr( [Call(lhs, c, args, location)] )
+	| Instr( [Call(lhs, Lval callee , args, location)] ) 
 	  when self#includedStatement stmt ->
-
+	    if (is_varargs_call callee) then (* Don't instrument variable argument calls *)
+	      begin
 	    (*** used for instrumentation when sampling is ON ***)
 	    let lvs = 
 	      (match lhs with None-> []
@@ -278,15 +281,16 @@ class visitor file =
 	    let (execute_stmt1,_)  = get_argument_stmt location args in
 
 	    (*** used for instrumentation when sampling is OFF ***)
-	    let orig_instr = Call(lhs,c, args, location) in
+	    let orig_instr = Call(lhs, Lval callee, args, location) in
 	    let (execute_stmt2,_)  = get_argument_stmt location args in
 
 	    (***statement to be executed after the if block *)
 	    let (_, arg_tmps) = get_argument_stmt location args in
-	    let  default_stmt = mkStmtOneInstr(Call(lhs, c, arg_tmps, location)) in
+	    let  default_stmt = mkStmtOneInstr(Call(lhs, Lval callee, arg_tmps, location)) in
 
 	    let if_gsample_blk = get_instrumentation location lvals execute_stmt1 orig_instr execute_stmt2 default_stmt in
 	    stmt.skind <- Block( if_gsample_blk );
+	    end;
 	    SkipChildren
 
 

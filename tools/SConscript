@@ -85,8 +85,8 @@ Default(wenv.Program('decimate-samples.l'))
 
 sources = glob('*.ml') + glob('*.mli')
 env.OcamlObject(sources)
-Default(env.OcamlProgram('resolve-samples.ml'),
-        env.OcamlProgram('resolve-timestamps.ml'))
+Default(env.OcamlProgram('resolveSamples.ml'),
+        env.OcamlProgram('resolveTimestamps.ml'))
 
 Alias('test', env.TestXML('application.schemas.in'))
 
@@ -147,8 +147,8 @@ Alias('install', env.Install('$DESTDIR$toolsdir', [
     'install-wrappers',
     'resolve-backtrace',
     'resolve-cfg',
-    'resolve-samples',
-    'resolve-timestamps',
+    'resolveSamples',
+    'resolveTimestamps',
     'rpmbuild',
     'wrapper.in',
     ]))

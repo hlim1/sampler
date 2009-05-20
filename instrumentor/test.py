@@ -299,8 +299,8 @@ def generate(env):
         CCFLAGS=['--relative-paths'],
         EXTRACT_SECTION=env.File('#tools/extract-section'),
         RESOLVE_CFG=env.File('#tools/resolve-cfg'),
-        RESOLVE_SAMPLES=env.File('#tools/resolve-samples'),
-        RESOLVE_TIMESTAMPS=env.File('#tools/resolve-timestamps'),
+        RESOLVE_SAMPLES=env.File('#tools/resolveSamples'),
+        RESOLVE_TIMESTAMPS=env.File('#tools/resolveTimestamps'),
 
         BUILDERS={
         'CBIProgram': __program_builder,

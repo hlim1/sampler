@@ -69,7 +69,7 @@ env.OcamlObject(sources)
 main = env.OcamlProgram('main.ml')
 misc = map(env.OcamlProgram, [
     'cfgTest.ml',
-    'cfg-to-dot.ml',
+    'cfgToDot.ml',
     'checker.ml',
     'dotify.ml',
     'dump.ml',

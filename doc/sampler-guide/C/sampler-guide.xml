@@ -1453,15 +1453,15 @@
 	take the minimum of all corresponding minima and the maximum
 	of all corresponding maxima.</para>
 
-	<para id="resolve-samples">Aligning and merging multiple
+	<para id="resolveSamples">Aligning and merging multiple
 	<sgmltag class="element">samples</sgmltag> and <sgmltag
 	class="element">sites</sgmltag> sections can be tedious.  The
-	<filename>&prefix;/lib/sampler/tools/resolve-samples</filename>
+	<filename>&prefix;/lib/sampler/tools/resolveSamples</filename>
 	tool provides simple merging to support basic data analysis.
 	It is run as follows:
 
 	  <cmdsynopsis>
-	    <command>resolve-samples</command>
+	    <command>resolveSamples</command>
 	    <arg choice="req"><replaceable>section-name</replaceable></arg>
 	    <group choice="req" rep="repeat">
 	      <arg choice="plain"><replaceable>executable</replaceable></arg>
@@ -1472,7 +1472,7 @@
 	  </cmdsynopsis>
 	</para>
 
-	<para>Standard input to <command>resolve-samples</command>
+	<para>Standard input to <command>resolveSamples</command>
 	should be a <computeroutput>samples</computeroutput>
 	subreport, starting with the first <sgmltag
 	class="starttag">samples</sgmltag> start tag and ending after
@@ -1487,7 +1487,7 @@
 
 	  <orderedlist>
 	    <listitem>
-	      <para>file name from <command>resolve-samples</command>
+	      <para>file name from <command>resolveSamples</command>
 	      in which this site was found</para>
 	    </listitem>
 	    <listitem>
@@ -1524,7 +1524,7 @@
 	appear in the <computeroutput>samples</computeroutput>
 	subreport when site time stamping is enabled at
 	instrumentation time.  Also document the
-	<filename>&prefix;/lib/sampler/tools/resolve-timestamps</filename>
+	<filename>&prefix;/lib/sampler/tools/resolveTimestamps</filename>
 	tool.</remark>
       </section>
 
@@ -1632,8 +1632,8 @@ ccrypt[0x8049171]
 
 	<para>It is often useful to extract a single subreport from a
 	dynamic feedback report.  For example, <link
-	linkend="resolve-samples">the
-	<command>resolve-samples</command> tool</link> expects to see
+	linkend="resolveSamples">the
+	<command>resolveSamples</command> tool</link> expects to see
 	just a <computeroutput>samples</computeroutput> subreport, not
 	an entire feedback report.  The
 	<filename>&prefix;/lib/sampler/tools/extract-section</filename>
@@ -1654,7 +1654,7 @@ ccrypt[0x8049171]
 
 	  <informalexample>
 	    <para><userinput><command>extract-report</command> samples
-	    &lt;<filename>raw-report.log</filename> | <command>resolve-samples</command>
+	    &lt;<filename>raw-report.log</filename> | <command>resolveSamples</command>
 	    <filename>myapp</filename> <filename>myplugin.so</filename>
 	    <filename>libmylib.so</filename></userinput></para>
 	  </informalexample>

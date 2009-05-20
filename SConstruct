@@ -136,6 +136,65 @@ Help(opts.GenerateHelpText(env))
 Export('env')
 
 
+def distroName(context):
+    context.Message('checking for distribution name: ')
+    action = [['/usr/bin/lsb_release', '-is', '>', '$TARGET']]
+    (status, name) = context.TryAction(action)
+    if status:
+        name = name.rstrip()
+        name = {
+            'FedoraCore': 'fedora',
+            'Fedora': 'fedora',
+            'CentOS': 'centos',
+            'RedHatEnterpriseServer': 'rhel',
+            }[name]
+        context.env['DISTRO_NAME'] = name
+        context.Result(name)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+def distroBasis(context):
+    context.Message('checking for distribution basis: ')
+    basis = {
+        'fedora': 'rpm',
+        'redhat': 'rpm',
+        'tao': 'rpm',
+        'centos': 'rpm',
+        'ubuntu': 'debian',
+	'rhel': 'rpm',
+        }[context.env['DISTRO_NAME']]
+    context.env['DISTRO_BASIS'] = basis
+    context.Result(basis)
+    return basis
+
+def distroCpu(context):
+    context.Message('checking for distribution cpu: ')
+    action = {
+        'rpm': [['rpm', '--eval', '%_target_cpu', '>', '$TARGET']],
+        'debian': [['dpkg-architecture', '-s', '-qDEB_BUILD_ARCH', '>', '$TARGET']],
+        }[env['DISTRO_BASIS']]
+    (status, cpu) = context.TryAction(action)
+    if status:
+        cpu = cpu.rstrip()
+        context.env['DISTRO_CPU'] = cpu
+        context.Result(cpu)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+conf = env.Configure(
+    clean=False, help=False,
+    custom_tests={
+        'DistroName': distroName,
+        'DistroBasis': distroBasis,
+        'DistroCpu': distroCpu,
+        })
+conf.DistroName()
+conf.DistroBasis()
+conf.DistroCpu()
+conf.Finish()
+
 ########################################################################
 #
 # performance boosters
@@ -241,7 +300,7 @@ AddPostAction(package, [Chmod('$TARGET', 0644)])
 
 subdirs = [
     'BUILD',
-    'RPMS/i386',
+    'RPMS/$DISTRO_CPU',
     'SOURCES',
     'SRPMS',
     ]
@@ -251,16 +310,16 @@ redhat = Dir('redhat')
 subpackages = ['devel', 'libs', 'server']
 def rpm_targets():
     yield 'SRPMS/$NAME-${VERSION}-1${deployment_release_suffix}.src.rpm'
-    yield 'RPMS/i386/$NAME-${VERSION}-1${deployment_release_suffix}.i386.rpm'
+    yield 'RPMS/$DISTRO_CPU/$NAME-${VERSION}-1${deployment_release_suffix}.${DISTRO_CPU}.rpm'
     for subpackage in subpackages:
-        yield 'RPMS/i386/$NAME-%s-${VERSION}-1${deployment_release_suffix}.i386.rpm' % subpackage
+        yield 'RPMS/$DISTRO_CPU/$NAME-%s-${VERSION}-1${deployment_release_suffix}.${DISTRO_CPU}.rpm' % subpackage
 
 rpms = env.File(list(rpm_targets()), redhat)
 
 def rpm_action():
     yield Delete('redhat')
     for subdir in subdirs:
-        yield Mkdir(redhat.Dir(subdir))
+        yield Mkdir(env.Dir(subdir, redhat))
     yield Copy(redhat.Dir('SOURCES'), package)
     yield ['rpmbuild', '--define', '_topdir %s' % redhat.abspath, '-ba', '$SOURCE']
 

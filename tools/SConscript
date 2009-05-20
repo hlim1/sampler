@@ -5,38 +5,6 @@ env = env.Clone(LEXFLAGS=['-f', '-p'], LIBS='fl', OCAML_LIBS=['unix', 'str'])
 env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
 
 
-def distroName(context):
-    context.Message('checking for distribution name: ')
-    action = [['/usr/bin/lsb_release', '-is', '>', '$TARGET']]
-    (status, name) = context.TryAction(action)
-    if status:
-        name = name.rstrip()
-        name = {
-            'FedoraCore': 'fedora',
-            'Fedora': 'fedora',
-            'CentOS': 'centos',
-            'RedHatEnterpriseServer': 'rhel',
-            }[name]
-        context.env['DISTRO_NAME'] = name
-        context.Result(name)
-    else:
-        context.Result(False)
-        context.env.Exit(1)
-
-def distroBasis(context):
-    context.Message('checking for distribution basis: ')
-    basis = {
-        'fedora': 'rpm',
-        'redhat': 'rpm',
-        'tao': 'rpm',
-        'centos': 'rpm',
-        'ubuntu': 'debian',
-	'rhel': 'rpm',
-        }[context.env['DISTRO_NAME']]
-    context.env['DISTRO_BASIS'] = basis
-    context.Result(basis)
-    return basis
-
 def distroVersion(context):
     context.Message('checking for distribution version: ')
     action = [['lsb_release', '-rs', '>', '$TARGET']]
@@ -49,33 +17,12 @@ def distroVersion(context):
         context.Result(False)
         context.env.Exit(1)
 
-def distroArch(context):
-    context.Message('checking for distribution arch: ')
-    action = {
-        'rpm': [['rpm', '--eval', '%_build_arch', '>', '$TARGET']],
-        'debian': [['dpkg-architecture', '-s', '-qDEB_BUILD_ARCH', '>', '$TARGET']],
-        }[env['DISTRO_BASIS']]
-    (status, arch) = context.TryAction(action)
-    if status:
-        arch = arch.rstrip()
-        context.env['DISTRO_ARCH'] = arch
-        context.Result(arch)
-    else:
-        context.Result(False)
-        context.env.Exit(1)
-
 conf = env.Configure(
     clean=False, help=False,
     custom_tests={
-        'DistroName': distroName,
-        'DistroBasis': distroBasis,
         'DistroVersion': distroVersion,
-        'DistroArch': distroArch,
         })
-conf.DistroName()
-conf.DistroBasis()
 conf.DistroVersion()
-conf.DistroArch()
 conf.Finish()
 
 wenv = env.Clone()
@@ -117,7 +64,7 @@ Default(env.Template('install-wrappers.in', varlist=[
 
 wenv = env.Clone(name='@name@', path='@path@', version='@version@', release='@release@')
 Default(wenv.Template('wrapper.in.in', varlist=[
-    'DISTRO_ARCH',
+    'DISTRO_CPU',
     'DISTRO_NAME',
     'DISTRO_VERSION',
     'PACKAGE_VERSION',

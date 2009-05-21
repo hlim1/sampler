@@ -189,8 +189,6 @@ while (@ARGV) {
 	    ;
 	} elsif (/^-fsampler-lib-dir=/) {
 	    ;
-	} elsif (/^-f/) {
-	    push @cc1, $_
 	} else {
 	    slurp_0 $_;
 	}

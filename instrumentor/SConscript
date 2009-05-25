@@ -44,11 +44,10 @@ def findSymbols(library):
 def libfuncs(target, source, env):
     libraries = source[1:]
     symbols = chain(*imap(findSymbols, libraries))
-    symbols = ('"%s"' % symbol for symbol in symbols )
-    symbols = ';\n'.join(symbols)
+    symbols = ['"%s"' % symbol for symbol in symbols ]
 
     instantiate(str(source[0]), str(target[0]),
-                LIBRARY_FUNCTIONS=symbols,
+                LIBRARY_FUNCTIONS=';\n'.join(symbols),
                 LIBRARY_COUNT=len(symbols))
 
 

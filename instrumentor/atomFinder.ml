@@ -18,9 +18,9 @@ class visitor file =
 	    let slist = List.map (fun i -> mkStmtOneInstr i ) instructions in
 	    (mkBlock slist) in
 
-	  let make_stmt instructions =
-	    mkStmt (Block(make_block instructions))
-	  in
+(* 	  let make_stmt instructions = *)
+(* 	    mkStmt (Block(make_block instructions)) *)
+(* 	  in *)
 
 	  let skip_lval lv =
 	    if ((is_bitfield lv) || (is_register lv))
@@ -49,6 +49,8 @@ class visitor file =
 	    | expr::tail -> let lvs = get_lvals expr in
 	      (list_get_lvals tail lvals@lvs) in
 
+		
+
 	  let rec gen_call_lookup location cur_tid_Lval lvals calls selector =
 	    match lvals with [] -> (calls, selector)
 	    | lv::tail ->
@@ -57,7 +59,10 @@ class visitor file =
 		let valid_lookup = var  (Locals.makeTempVar func intType) in 
 		let valid_lookup_Lval = Lval valid_lookup in
 		let lookup_func = Lval (var (FindFunction.find "cbi_dict_lookup" file)) in
-		let init_prev_tid = Call( Some(valid_lookup), lookup_func, [ (mkAddrOrStartOf lv); (mkAddrOrStartOf prev_tid)], location) in
+		let init_prev_tid = Call( Some(valid_lookup), lookup_func, 
+															[ (Cil.mkCast (mkAddrOrStartOf lv) Cil.uintType ); 
+																(mkAddrOrStartOf prev_tid)], 
+															location) in
 		let selector = BinOp(LOr,
 				     selector,
 				     BinOp(LAnd,
@@ -98,11 +103,11 @@ class visitor file =
 	  in
 	    
 
-	  let is_varargs_call lv =
-	    let (lh,_) = lv in
-	    match lh 
-	    with Var(vi) -> ( match vi.vtype with TFun(_,_,true,_) -> true | _->false )
-	    |_-> false in
+(* 	  let is_varargs_call lv = *)
+(* 	    let (lh,_) = lv in *)
+(* 	    match lh  *)
+(* 	    with Var(vi) -> ( match vi.vtype with TFun(_,_,true,_) -> true | _->false ) *)
+(* 	    |_-> false in *)
 
 	  let get_gsample_lval () =
 	    var (findOrCreate_global file ((get_prefix_file file)^"_gsample") ) 
@@ -114,7 +119,7 @@ class visitor file =
 
 
 	  let get_ctid_lval () =
-	    var (findOrCreate_local func "cbi_tid_temp") 
+	    var (findOrCreate_local_type func "cbi_tid_temp" ulongType) 
 	  in
 
 	  let get_init_ctid_instr location =
@@ -124,35 +129,42 @@ class visitor file =
 	  in
 
 
-	  let rec __get_selectors location lvals stmts cur_selector stale_selector i =
-	    match lvals with [] -> (stmts, cur_selector, stale_selector) 
+	  let rec __get_selectors location lvals stmts cur_selector stale_selector isAnyCur isAnyStale i =
+	    match lvals with [] -> (stmts, cur_selector, stale_selector, isAnyCur, isAnyStale) 
 	    | lv::tail -> 
 		let cur_tid = get_ctid_lval() in 
-		let isDifferent = var (findOrCreate_local func ("cbi_isDifferent_"^( string_of_int i) )) in
-		let isStale =  var (findOrCreate_local func ("cbi_isStale_"^( string_of_int i) )) in
-		let test_set_func = Lval (var (FindFunction.find "cbi_dict_test_and_set" file)) in
-		let call = mkStmtOneInstr (Call( None, test_set_func, 
-				 [(mkAddrOrStartOf lv); (Lval cur_tid); (mkAddrOrStartOf isDifferent); (mkAddrOrStartOf isStale) ], location)) in
-		let cur_selector = BinOp(LOr,
-				     cur_selector,
-				     BinOp(LAnd,
-					   Lval isDifferent,
-					   UnOp(LNot, (Lval isStale), intType),
-					   intType),
-				     intType) in
+		let isDifferent = var (findOrCreate_local_type func ("cbi_isDifferent_"^( string_of_int i) ) ulongType) in
+		let isStale =  var (findOrCreate_local_type func ("cbi_isStale_"^( string_of_int i) ) ulongType) in
+		let isFound =  var (findOrCreate_local_type func ("cbi_isFound_"^( string_of_int i) ) ulongType) in
+		let test_set_func = Lval (var (FindFunction.find "cbi_dict_test_and_insert" file)) in
+		let call = mkStmtOneInstr (Call( Some( isFound), test_set_func, 
+				 [(Cil.mkCast (mkAddrOrStartOf lv) Cil.uintType); (Lval cur_tid); (mkAddrOrStartOf isDifferent); (mkAddrOrStartOf isStale) ], location)) in
+		let cur_selector =  BinOp(LOr,
+					  cur_selector,
+					  BinOp(LAnd,
+						Lval isFound,
+						BinOp(LAnd,
+						      Lval isDifferent,
+						      UnOp(LNot, (Lval isStale), intType),
+						      intType), intType), intType)in
 		let stale_selector = BinOp(LOr,
-				     stale_selector,
-				     BinOp(LAnd,
-					   Lval isDifferent, Lval isStale, intType),
-				     intType) in
-
-		__get_selectors location tail (stmts@[call]) cur_selector stale_selector (i+1) 
+					   stale_selector,
+					   BinOp(LAnd,
+						 Lval isFound,
+						 BinOp(LAnd,
+						       Lval isDifferent, Lval isStale, intType),
+						 intType), intType) in
+		let isAnyCur = BinOp(LOr, 
+				     UnOp(LNot, (Lval isStale), intType),
+				     isAnyCur, intType) in
+		let isAnyStale = BinOp(LOr, Lval isStale, isAnyStale, intType) in
+		__get_selectors location tail (stmts@[call]) cur_selector stale_selector isAnyCur isAnyStale (i+1) 
 	  in
 
 	  let get_selectors location lvals =
 	    let init_ctid_instr = mkStmtOneInstr(get_init_ctid_instr location) in 
-	    let stmts, cur_selector, stale_selector = __get_selectors location lvals [mkEmptyStmt()] zero zero 0 in
-	    (mkStmt (Block(mkBlock (init_ctid_instr::stmts))), cur_selector, stale_selector)
+	    let stmts, cur_selector, stale_selector, isAnyCur, isAnyStale = (__get_selectors location lvals [mkEmptyStmt()] zero zero zero zero 0) in
+	    (mkStmt (Block(mkBlock (init_ctid_instr::stmts))), cur_selector, stale_selector, isAnyCur, isAnyStale)
 	  in
 
 
@@ -193,21 +205,34 @@ class visitor file =
 	  in
 
 	  let get_on_blk location lvals orig_instr execute_stmt =
-	      let selector_stmt, cur_selector, stale_selector = get_selectors location lvals in
-	      let bump_instrs,_ = tuples#addExpr2 cur_selector stale_selector in
-	      (**** ***)
-	      let siteInfo = new InstrSiteInfo.c func location orig_instr in
-	      let dummy_sample = (tuples#addSiteInstrs siteInfo [get_dummy_instr location] ) in 
+	    let selector_stmt, cur_selector, stale_selector, isAnyCur, _ = get_selectors location lvals in
+(* 	      let bump_instrs,_ = tuples#addExpr2 cur_selector stale_selector in *)
+	      let bump_instr1,_ = tuples#addExpr cur_selector in
+	      let bump_instr2,_ = tuples#addExpr stale_selector in
+	      let bump_stale = mkBlock[ (mkStmtOneInstr bump_instr2)] in
 
-	      let bump_stmt = make_stmt (bump_instrs) in
+	      let bump_cur = mkBlock[mkStmtOneInstr (bump_instr1)] in
+	      let bump_cur = mkStmt( If(isAnyCur, bump_cur, bump_stale, location)) in
+
+(* 	      let bump_stale = mkStmt( If(isAnyStale, bump_stale, mkBlock[mkEmptyStmt()], location)) in *)
+
+	      (**** ***)
+	      (* this is only needed because the number of bumps should equal the number of sampled blocks *)
+	      let siteInfo = new InstrSiteInfo.c func location orig_instr in
+	      let dummy_sample = (tuples#addSiteInstrs siteInfo [get_dummy_instr location] ) in
+
+(* 	      let bump_stmt = make_stmt (bump_instrs) in *)
+
 	      let reset_stmt = get_reset_sampling_stmt location in
+
 	      let lock_func = Lval (var (FindFunction.find "cbi_atoms_lock" file)) in
 	      let lock_call = mkStmtOneInstr(Call (None, lock_func,[], location)) in
-	      
 	      let unlock_func = Lval (var (FindFunction.find "cbi_atoms_unlock" file)) in
 	      let unlock_call = mkStmtOneInstr(Call (None, unlock_func,[], location)) in
+	      let on_blk = mkBlock[ lock_call; selector_stmt; bump_cur; execute_stmt; unlock_call; reset_stmt; dummy_sample ] in
+(* 	      let on_blk = mkBlock[  selector_stmt; bump_cur; execute_stmt; reset_stmt; dummy_sample ] in *)
 
-	      let on_blk = mkBlock[ selector_stmt; lock_call; bump_stmt; execute_stmt; unlock_call; reset_stmt; dummy_sample ] in
+(* 	      let on_blk = mkBlock[ selector_stmt;  bump_stmt; execute_stmt;  reset_stmt; dummy_sample ] in *)
 	      (on_blk)
 	      in
 	    
@@ -270,7 +295,7 @@ class visitor file =
 
 	| Instr( [Call(lhs, Lval callee , args, location)] ) 
 	  when self#includedStatement stmt ->
-	    if (is_varargs_call callee) then (* Don't instrument variable argument calls *)
+(* 	    if (is_varargs_call callee) then (\* Don't instrument variable argument calls *\) *)
 	      begin
 	    (*** used for instrumentation when sampling is ON ***)
 	    let lvs = 

@@ -8,6 +8,13 @@ val is_bitfield :lval -> bool
 val is_register :lval -> bool
 
 
+(* returns true if the lval is a global variable*)
+val glob_var :lval -> bool
+
+(* returns true if the lval is an indirect access (not a variable)*)
+val indirect_access :lval -> bool
+
+
 (* gets filename before . *)
 val scrub_filename : string -> string
 

@@ -78,6 +78,7 @@ void cbi_unregisterUnit(struct cbi_Unit *unit)
 	    if (cbi_reportFile)
 	      {
 		lockReportFile(); /*cci*/
+		fflush(cbi_reportFile);
 		fseek(cbi_reportFile, 0, SEEK_END);
 		fputs( "<report id=\"samples\">\n", cbi_reportFile);
 		unit->reporter();

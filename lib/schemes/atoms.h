@@ -20,21 +20,26 @@ void cbi_atoms_unlock();
 
 
 
-//insert (key,val) unsigned into the dictionary
-unsigned int cbi_dict_insert(unsigned int key, unsigned int val);
+/* //insert (key,val) unsigned into the dictionary */
+/* unsigned int cbi_dict_insert(unsigned int key, unsigned int val); */
 
-// lookup the key in the dictionary
-// if found, return 1 and update val
-// else return 0
-unsigned int cbi_dict_lookup(unsigned int key, unsigned int *val);
+/* // lookup the key in the dictionary */
+/* // if found, return 1 and update val */
+/* // else return 0 */
+/* unsigned int cbi_dict_lookup(unsigned int key, unsigned int *val); */
 
 // clear the dictionary
 void cbi_dict_clear();
 
-void cbi_dict_test_and_set(unsigned int key, 
-			   unsigned int expectedVal, 
-			   unsigned int *isDifferent,
-			   unsigned int *isStale);
+unsigned long int cbi_dict_test_and_insert(unsigned long int key,
+				   unsigned long int expectedVal,
+				   unsigned long int *isDifferent,
+				   unsigned long int *isStale);
+
+/* void cbi_dict_test_and_set(unsigned int key,  */
+/* 				   unsigned int expectedVal,  */
+/* 				   unsigned int *isDifferent, */
+/* 				   unsigned int *isStale); */
 
 
 #endif /* !INCLUDE_sampler_atoms_h */

@@ -16,38 +16,37 @@ static unsigned unitCount;
 
 static pthread_mutex_t unitLock __attribute__((unused)) = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
+
+/* cci */
+static void changeLockReportFile(short lockType, const char gerund[])
+{
+  if (cbi_reportFile)
+    {
+      const struct flock flock = {
+	.l_type   = lockType,
+	.l_whence = SEEK_SET,
+	.l_start  = 0,
+	.l_len    = 0,
+      };
+      if (fcntl(fileno(cbi_reportFile), F_SETLKW, &flock) == -1)
+	VERBOSE("%s(): Error %s the file\n", __FUNCTION__, gerund);
+    }
+}
+
+
 /* cci */
 static void lockReportFile()
 {
-  if(cbi_reportFile)
-    {
-      struct flock fl;
-      fl.l_type   = F_WRLCK;
-      fl.l_whence = SEEK_SET;
-      fl.l_start  = 0;
-      fl.l_len    = 0;
-      fl.l_pid    = getpid();
-      if(fcntl(fileno(cbi_reportFile), F_SETLKW, &fl) ==-1)
-	VERBOSE("%s(): Error locking the file\n", __FUNCTION__);
-    }
+  changeLockReportFile(F_WRLCK, "locking");
 }
 
- /* cci */
+
+/* cci */
 static void unlockReportFile()
 {
-  if(cbi_reportFile)
-    {
-      struct flock fl;
-      fl.l_type   = F_UNLCK;
-      fl.l_whence = SEEK_SET;
-      fl.l_start  = 0;
-      fl.l_len    = 0;
-      fl.l_pid    = getpid();
-      if(fcntl(fileno(cbi_reportFile), F_SETLKW, &fl) ==-1)
-	VERBOSE("%s(): Error unlocking the file\n", __FUNCTION__);
-
-    }
+  changeLockReportFile(F_UNLCK, "unlocking");
 }
+
 
 void cbi_registerUnit(struct cbi_Unit *unit)
 {

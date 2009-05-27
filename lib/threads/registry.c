@@ -1,11 +1,11 @@
 #define _GNU_SOURCE		/* for PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP */
 
+#include <fcntl.h>
 #include <pthread.h>
-#include "lock.h"
 #include "../registry.h"
 #include "../report.h"
+#include "lock.h"
 #include "verbose.h"
-#include<fcntl.h>
 
 
 struct cbi_Unit cbi_unitAnchor = { &cbi_unitAnchor,

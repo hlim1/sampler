@@ -19,13 +19,13 @@ static pthread_mutex_t unitLock __attribute__((unused)) = PTHREAD_RECURSIVE_MUTE
 /* cci */
 static void lockReportFile()
 {
-  if(cbi_reportFile) 
+  if(cbi_reportFile)
     {
-      struct flock fl; 
-      fl.l_type   = F_WRLCK; 
+      struct flock fl;
+      fl.l_type   = F_WRLCK;
       fl.l_whence = SEEK_SET;
-      fl.l_start  = 0;       
-      fl.l_len    = 0;       
+      fl.l_start  = 0;
+      fl.l_len    = 0;
       fl.l_pid    = getpid();
       if(fcntl(fileno(cbi_reportFile), F_SETLKW, &fl) ==-1)
 	VERBOSE("%s(): Error locking the file\n", __FUNCTION__);
@@ -38,10 +38,10 @@ static void unlockReportFile()
   if(cbi_reportFile)
     {
       struct flock fl;
-      fl.l_type   = F_UNLCK;  
+      fl.l_type   = F_UNLCK;
       fl.l_whence = SEEK_SET;
-      fl.l_start  = 0;       
-      fl.l_len    = 0;       
+      fl.l_start  = 0;
+      fl.l_len    = 0;
       fl.l_pid    = getpid();
       if(fcntl(fileno(cbi_reportFile), F_SETLKW, &fl) ==-1)
 	VERBOSE("%s(): Error unlocking the file\n", __FUNCTION__);
@@ -82,7 +82,7 @@ void cbi_unregisterUnit(struct cbi_Unit *unit)
 		fseek(cbi_reportFile, 0, SEEK_END);
 		fputs( "<report id=\"samples\">\n", cbi_reportFile);
 		unit->reporter();
-		fputs("</report> \n", cbi_reportFile); 
+		fputs("</report> \n", cbi_reportFile);
 		fflush(cbi_reportFile);
 		unlockReportFile(); /*cci*/
 	      }

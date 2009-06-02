@@ -2,8 +2,8 @@ from os.path import basename
 
 
 def threadLibs(env, subdir):
-    env.AppendUnique( 
-        CPPPATH='.',
+    env.AppendUnique(
+        CPPPATH=['.', '../..'],
         CCFLAGS=['-ffast-math', '-fpic'],
         LINKFLAGS='-Wl,--wrap,fork',
         )
@@ -12,31 +12,17 @@ def threadLibs(env, subdir):
         instdir = '$DESTDIR/usr/lib'
         Alias('install', env.Install(instdir, targets))
 
-    def libs(target, sources):
+    def libs(target, parts):
+        sources = [part + '.c' for part in parts]
         target += '${REENTRANT}'
-        sharedSources = [env.SharedObject(basename(source), source + '.c') for source in sources]
-        staticSources = [env.StaticObject(basename(source), source + '.c') for source in sources]
-        [shared] = env.SharedLibrary(target, sharedSources)
-        [static] = env.StaticLibrary(target, staticSources)
-        [verslib] = env.InstallAs('$DESTDIR$libdir/%s.0.0.0' % shared, shared)
-        Alias('install', [
-                env.Install('$DESTDIR$libdir', static),
-                verslib,
-                env.Command('$DESTDIR$libdir/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]),
-                env.Command('$DESTDIR$libdir/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]),
-                ])
-        Install('#driver/lib', static)
-        InstallAs('#driver/lib/%s' % verslib.name, shared)
-        Command('#driver/lib/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']])
-        Command('#driver/lib/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']])
+        env.TwoLibraries(target, sources)
 
-    parts = ['countdown', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose', 'wrap_fork' ]
-
-    sources = ['hijack'] + ['../%s' % part for part in parts]
-    libs('sampler', sources)
+    env.VariantDir('.', '..', duplicate=False)
+    parts = ['countdown', 'hijack', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose', 'wrap_fork' ]
+    libs('sampler', parts)
 
     for when in ['fixed', 'offline', 'online']:
-        src = '../random-%s' % when
+        src = 'random-%s' % when
         libs('sampler-%s' % when, [src])
 
     Alias('install', env.Install('$DESTDIR$threadsdir/%s' % subdir, ['lock.h', 'once.h']))

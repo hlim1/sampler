@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include "../registry.h"
-#include "../report.h"
+#include "registry.h"
+#include "report.h"
 #include "lock.h"
 #include "verbose.h"
 

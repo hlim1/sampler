@@ -1,31 +1,8 @@
 Import('env')
 env = env.Clone()
 env.AppendUnique(
-    CCFLAGS=['-fpic'],
-    LIBS=['sampler-schemes'],
-    LIBPATH=['.'],
+    LIBPREFIX='${LIBPREFIX}sampler-',
     )
-
-def twolibs(env, base, sources, **kwargs):
-    [shared] = env.SharedLibrary('sampler-' + base, sources, **kwargs)
-    [static] = env.StaticLibrary('sampler-' + base, sources, **kwargs)
-    two = [shared, static]
-    [verslib] = env.InstallAs('$DESTDIR$libdir/%s.0.0.0' % shared, shared)
-    Alias('install', [
-            env.Install('$DESTDIR$libdir', static),
-            verslib,
-            env.Command('$DESTDIR$libdir/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]),
-            env.Command('$DESTDIR$libdir/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]),
-            ])
-    env.Install('#driver/lib', static)
-    env.InstallAs('#driver/lib/%s' % verslib.name, shared)
-    env.Command('#driver/lib/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']])
-    env.Command('#driver/lib/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']])
-
-genv = env.Clone()
-genv.ParseConfig(['$pkg_config', '--cflags', '--libs', 'gobject-2.0'])
-gsources = ['g-object-unref.c', 'g-object-unref-classify.c']
-twolibs(genv, 'g-object-unref', gsources)
 
 sources = [
     'samples.c',
@@ -37,25 +14,26 @@ sources = [
     'tuple-9.c',
 ]
 
-twolibs(env, 'schemes', sources, LIBS=[])
+libschemes = env.TwoLibraries('schemes', sources)
 env.File('samples.h')
 
+senv = env.Clone()
+senv.AppendUnique(LIBS=libschemes)
+
 for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pairs']:
-    twolibs(env, scheme, scheme + '.c')
+    senv.TwoLibraries(scheme, [scheme + '.c'])
 
-fenv = env.Clone()
-fenv.AppendUnique(LIBS=['m'])
-twolibs(fenv, 'float-kinds', 'float-kinds.c')
+senv.TwoLibraries('float-kinds', ['float-kinds.c'], LIBS=['$LIBS', 'm'])
 
+genv = senv.Clone()
+genv.ParseConfig(['$pkg_config', '--cflags', '--libs', 'gobject-2.0'])
+gsources = ['g-object-unref.c', 'g-object-unref-classify.c']
+genv.TwoLibraries('g-object-unref', gsources)
 
-yenv = env.Clone()
-yenv.AppendUnique(LIBS=['pthread'])
-twolibs(yenv, 'yields', 'yields.c')
-
-
-aenv = env.Clone()
-aenv.AppendUnique(LIBS=['pthread'])
-twolibs(aenv, 'atoms', 'atoms.c')
+tenv = senv.Clone()
+tenv.AppendUnique(LIBS=['pthread'])
+tenv.TwoLibraries('yields', ['yields.c'])
+tenv.TwoLibraries('atoms', ['atoms.c'])
 
 
 headers = [

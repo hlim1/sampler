@@ -1,7 +1,8 @@
-from utils import literal
-
 Import('env')
-config = literal(env, 'config.xml', '<!ENTITY prefix "%s">' % env['prefix'])
+env.Tool('literal')
+
+entity = '<!ENTITY prefix "$prefix">'
+config = env.Literal('config.xml', entity)
 Default(config)
 
 Alias('install', env.Install('$DESTDIR$docdir', config))

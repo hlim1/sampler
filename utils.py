@@ -42,19 +42,3 @@ def read_pipe(command, env):
     status = process.wait()
     if status != 0:
         env.Exit(status)
-
-
-def __literal_exec(target, source, env):
-    __pychecker__ = 'no-argsused'
-    target = file(str(target[0]), 'w')
-    print >>target, source[0].get_contents()
-    target.close()
-
-def __literal_show(target, source, env):
-    return 'create "%s" containing %s' % (target[0], source[0])
-
-__literal_action = Action(__literal_exec, __literal_show)
-
-
-def literal(env, target, value):
-    return env.Command(target, env.Value(value), __literal_action)

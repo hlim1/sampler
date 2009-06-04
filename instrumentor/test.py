@@ -7,8 +7,6 @@ from itertools import chain, ifilter, imap
 
 import filecmp
 
-from utils import read_pipe
-
 
 ########################################################################
 #

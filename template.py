@@ -27,8 +27,6 @@ def __instantiate_show(target, source, env):
     __pychecker__ = 'no-argsused'
     return 'instantiate "%s" as "%s"' % (source[0], target[0])
 
-__instantiate = Action(__instantiate_exec, __instantiate_show)
-
 
 def __chmod_copy_exec(target, source, env):
     [target] = target
@@ -45,7 +43,7 @@ __chmod_copy = Action(__chmod_copy_exec, __chmod_copy_show)
 def __generator(source, target, env, for_signature):
     __pychecker__ = 'no-argsused'
     varlist = env['varlist']
-    actions = [Action(__instantiate, varlist=varlist)]
+    actions = [Action(__instantiate_exec, __instantiate_show, varlist=varlist)]
     if env['template_copy_mode']:
         actions.append(__chmod_copy)
     return actions

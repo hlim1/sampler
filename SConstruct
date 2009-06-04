@@ -22,6 +22,14 @@ version = File('version').get_contents().rstrip()
 #  configurable options
 #
 
+
+def validate_gcc_path(key, value, env):
+    if not value:
+        value = env['gcc'] = env.WhereIs('gcc')
+
+    PathVariable.PathIsFile(key, value, env)
+
+
 def validate_cil_path(key, value, env):
 
     suffix = {True:'.cmxa', False:'.cma'}[env['OCAML_NATIVE']]
@@ -43,12 +51,14 @@ def validate_cil_path(key, value, env):
                 return
         raise UserError('cannot find CIL libraries; use cil_path option')
 
+
 opts = Variables(None, ARGUMENTS)
 opts.AddVariables(
     BoolVariable('GCONF_SCHEMAS_INSTALL', 'install GConf schemas', True),
     BoolVariable('OCAML_NATIVE', 'compile OCaml to native code', False),
     PathVariable('prefix', 'install in the given directory', '/usr/local'),
     PathVariable('DESTDIR', 'extra installation directory prefix', '/'),
+    PathVariable('gcc', 'path to native GCC C compiler', WhereIs('gcc'), validate_gcc_path),
     BoolVariable('launcher', 'build client application launcher and related tools', True),
     ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
     ('extra_cflags', 'extra C compiler flags'),

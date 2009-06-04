@@ -2,7 +2,7 @@ from glob import glob
 from itertools import chain, ifilter, imap
 import re
 
-from utils import instantiate, read_pipe
+from utils import instantiate
 
 
 Import('env', 'excludedSources')
@@ -35,7 +35,8 @@ def findSymbols(library):
     command = ['nm', '--defined-only', '-g', '-p', str(library)]
     if library.get_suffix() != '.a':
         command.append('-D')
-    nm = read_pipe(command, env)
+
+    nm = env.ReadPipe(command)
     matches = imap(symbolPattern.match, nm)
     matches = ifilter(None, matches)
     return ( match.group(1) for match in matches )

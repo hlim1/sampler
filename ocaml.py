@@ -8,8 +8,6 @@ from SCons.Builder import Builder
 from SCons.Node.FS import File
 from SCons.Scanner import Scanner
 
-from utils import read_pipe
-
 
 ########################################################################
 
@@ -58,7 +56,9 @@ def __ocamldep_scan(node, env, path):
                 yield accum + line
                 accum = ''
 
-    deps = read_pipe(['$OCAMLDEP', '$_OCAML_PATH', '$_OCAML_PP', str(node)], env)
+    command = ['$OCAMLDEP', '$_OCAML_PATH', '$_OCAML_PP', str(node)]
+    [command] = env.subst_list(command)
+    deps = env.ReadPipe(command)
     deps = joinLines(deps)
     deps = imap(str.split, deps)
     deps = ( fields[1:] for fields in deps if fields[0] == target )
@@ -284,6 +284,8 @@ def __var_ocaml_stdlib(target, source, env, for_signature):
 
 
 def generate(env):
+    env.Tool('pipe', toolpath='#')
+
     env.AppendUnique(
         OCAMLC=env.Detect(['ocamlc.opt', 'ocamlc']),
         OCAMLDEP=env.Detect(['ocamldep.opt', 'ocamldep']),

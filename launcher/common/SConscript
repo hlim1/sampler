@@ -1,5 +1,3 @@
-from utils import instantiate
-
 Import('env', 'testPythons')
 env = env.Clone(pixmapsdir=env.subst('$pixmapsdir'))
 

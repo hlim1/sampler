@@ -2,8 +2,6 @@ from glob import glob
 from itertools import chain, ifilter, imap
 import re
 
-from utils import instantiate
-
 
 Import('env', 'excludedSources')
 env = env.Clone(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
@@ -47,9 +45,11 @@ def libfuncs(target, source, env):
     symbols = chain(*imap(findSymbols, libraries))
     symbols = ['"%s"' % symbol for symbol in symbols ]
 
-    instantiate(str(source[0]), str(target[0]),
-                LIBRARY_FUNCTIONS=';\n'.join(symbols),
-                LIBRARY_COUNT=len(symbols))
+    env.Instantiate(
+        source[0], target[0],
+        LIBRARY_FUNCTIONS=';\n'.join(symbols),
+        LIBRARY_COUNT=len(symbols),
+        )
 
 
 syslibs = ['/usr/lib/libc_nonshared.a', '/lib/libc.so.6', '/lib/libm.so.6']

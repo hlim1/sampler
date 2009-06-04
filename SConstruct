@@ -58,7 +58,7 @@ opts.AddVariables(
     BoolVariable('OCAML_NATIVE', 'compile OCaml to native code', False),
     PathVariable('prefix', 'install in the given directory', '/usr/local'),
     PathVariable('DESTDIR', 'extra installation directory prefix', '/'),
-    PathVariable('gcc', 'path to native GCC C compiler', WhereIs('gcc'), validate_gcc_path),
+    PathVariable('gcc', 'path to native GCC C compiler', None, validate_gcc_path),
     BoolVariable('launcher', 'build client application launcher and related tools', True),
     ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
     ('extra_cflags', 'extra C compiler flags'),
@@ -75,6 +75,7 @@ if domainname == 'cs.wisc.edu':
     env['launcher'] = False
 
 env['cil_path'] = env.Dir('$cil_path')
+env.SetDefault(gcc=env.WhereIs('gcc'))
 
 
 ########################################################################
@@ -132,7 +133,7 @@ env = env.Clone(
 
 env.MergeFlags(env.get('extra_cflags'))
 
-env.File(['ocaml.py', 'template.py', 'test.py', 'utils.py'])
+env.File(['ocaml.py', 'pipe.py', 'template.py', 'test.py'])
 
 # needed for some pychecker tests
 if 'DISPLAY' in os.environ:

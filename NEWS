@@ -3,7 +3,7 @@
 * sampler-1.7
 
 ** Small build infrastructure tweaks for Fedora 11 beta.
-** New instrumentation schemes for diagnosing concurrency bugs/
+** New instrumentation schemes for diagnosing concurrency bugs.
 ** Bug fix for passing C compiler flags to preprocessor.
 
 * sampler-1.6.2

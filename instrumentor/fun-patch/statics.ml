@@ -21,5 +21,5 @@ class visitor fundec =
 
 let collect fundec =
   let visitor = new visitor fundec in
-  ignore (visitCilFunction (visitor :> cilVisitor) fundec);
+  ignore (visitCilFunction visitor fundec);
   visitor#result

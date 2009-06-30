@@ -325,6 +325,6 @@ let visit file digest =
 	output_char channel '\n';
 
 	let visitor = new visitor file digest channel in
-	visitCilFileSameGlobals (visitor :> cilVisitor) file;
+	visitCilFileSameGlobals visitor file;
 	output_char channel '\n';
 	close_out channel)

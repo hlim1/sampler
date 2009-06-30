@@ -17,7 +17,7 @@ let main () =
 	    begin
 	      IsolateInstructions.visit func;
 	      let collector = new Collector.visitor func in
-	      ignore (visitCilFunction (collector :> cilVisitor) func);
+	      ignore (visitCilFunction collector func);
 	      if collector#sites != [] then
 		print_endline func.svar.vname
 	    end

@@ -16,7 +16,7 @@ class c file : Scheme.c =
     method private findAllSites =
       Scanners.iterFuncs file
 	(fun func ->
-	  ignore (Cil.visitCilFunction (finder :> Cil.cilVisitor) func));
+	  ignore (Cil.visitCilFunction finder func));
       counters#patch
 
     method saveSiteInfo = counters#saveSiteInfo

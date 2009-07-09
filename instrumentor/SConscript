@@ -5,7 +5,7 @@ import re
 
 Import('env', 'excludedSources')
 env = env.Clone(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
-                tools=['test'], toolpath=['.'])
+                tools=['expect', 'test'], toolpath=['.'])
 env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
 
 env.File('test.py')

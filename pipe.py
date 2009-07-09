@@ -1,5 +1,5 @@
 from SCons.Script import *
-from subprocess import CalledProcessError, PIPE, Popen
+from subprocess import PIPE, Popen
 
 
 def ReadPipe(self, command):
@@ -13,7 +13,12 @@ def ReadPipe(self, command):
 
     status = process.wait()
     if status != 0:
-        raise CalledProcessError(status, command[0])
+        raise BuildError(
+            errstr='pipe failed',
+            status=status,
+            exitstatus=status,
+            command=command,
+            )
 
 
 def generate(env):

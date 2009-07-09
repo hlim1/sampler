@@ -1,10 +1,10 @@
-from __future__ import with_statement
 from SCons.Script import *
 
 
 def __literal_exec(target, source, env):
-    with open(str(target[0]), 'w') as sink:
-        print >>sink, source[0].get_contents()
+    sink = open(str(target[0]), 'w')
+    print >>sink, source[0].get_contents()
+    sink.close()
 
 
 def __literal_show(target, source, env):

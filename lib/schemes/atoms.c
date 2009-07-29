@@ -171,6 +171,7 @@ inline struct cbi_DictNode *newNode(ulint key, ulint value)
   head->key = key;
   head->value = value;
   head->generation = curGeneration;
+  head->next = NULL;
   return head;
 }
 

@@ -49,60 +49,6 @@ class visitor file =
 	    | expr::tail -> let lvs = get_lvals expr in
 	      (list_get_lvals tail lvals@lvs) in
 
-		
-
-	  let rec gen_call_lookup location cur_tid_Lval lvals calls selector =
-	    match lvals with [] -> (calls, selector)
-	    | lv::tail ->
-		let prev_tid = var (Locals.makeTempVar func intType) in 
-		let prev_tid_Lval = Lval prev_tid in
-		let valid_lookup = var  (Locals.makeTempVar func intType) in 
-		let valid_lookup_Lval = Lval valid_lookup in
-		let lookup_func = Lval (var (FindFunction.find "cbi_dict_lookup" file)) in
-		let init_prev_tid = Call( Some(valid_lookup), lookup_func, 
-															[ (Cil.mkCast (mkAddrOrStartOf lv) Cil.uintType ); 
-																(mkAddrOrStartOf prev_tid)], 
-															location) in
-		let selector = BinOp(LOr,
-				     selector,
-				     BinOp(LAnd,
-					   BinOp (Ne, cur_tid_Lval, prev_tid_Lval, intType),
-					   BinOp(Eq, valid_lookup_Lval, one, intType), intType ), intType) in
-		gen_call_lookup location cur_tid_Lval tail (init_prev_tid::calls) selector in
-
-	  let rec gen_call_insert location cur_tid_Lval lvals (calls: instr list) =
-	    match lvals with [] -> calls
-	    | lv::tail ->
-		let insert_func = Lval (var (FindFunction.find "cbi_dict_insert" file)) in
-		let set_prev_tid = Call (None, insert_func, [ (mkAddrOrStartOf lv); ( cur_tid_Lval )], location) in
-		gen_call_insert location cur_tid_Lval tail (set_prev_tid::calls) in
-
-	  let rec convert_args location args stmts temps =
-	    match args with [] -> (stmts, temps)
-	    | exp::tail ->
-		let tmp = var (Locals.makeTempVar func (typeOf exp)) in
-		let tmpLval = Lval tmp in
-		let stmt =  mkStmtOneInstr ( Set(tmp, exp, location)) in
-		convert_args location tail (stmts@[stmt]) (temps@[tmpLval]) 
-	  in
-
-
-	  let rec __get_argument_stmts location fname args stmts arg_tmps i =
-	    match args with [] -> (stmts, arg_tmps) 
-	    | exp:: tail ->
-		let arg_tmp = var  (findOrCreate_local_type func ("cbi_argTmp_"^fname^( string_of_int i) ) (typeOf exp) ) in
-		let stmt = mkStmtOneInstr ( Set(arg_tmp, exp, location)) in
-		let tmpLval = Lval arg_tmp in
-		__get_argument_stmts location fname tail (stmts@[stmt]) (arg_tmps@[tmpLval]) (i+1) 
-	  in
-
-	  let get_argument_stmt location args =
-	    let fname = ((string_of_int location.line)^"_") in
-	    let stmts, arg_tmps = __get_argument_stmts location fname args [mkEmptyStmt()] [] 0 in
-	    (mkStmt (Block(mkBlock (stmts))), arg_tmps)
-	  in
-	    
-
 (* 	  let is_varargs_call lv = *)
 (* 	    let (lh,_) = lv in *)
 (* 	    match lh  *)
@@ -296,26 +242,39 @@ class visitor file =
 	| Instr( [Call(lhs, Lval callee , args, location)] ) 
 	  when self#includedStatement stmt ->
 (* 	    if (is_varargs_call callee) then (\* Don't instrument variable argument calls *\) *)
-	      begin
 	    (*** used for instrumentation when sampling is ON ***)
 	    let lvs = 
 	      (match lhs with None-> []
 	      | Some(left) -> if (skip_lval left) then []  else [left])
 	    in
 	    let lvals = list_get_lvals args lvs in
-	    let (execute_stmt1,_)  = get_argument_stmt location args in
+
+	    (* evaluate each actual argument and store it in a temporary variable *)
+	    let argTemps, argTempSets =
+	      let argTemp actualExpr =
+		let tempVar = var (makeTempVar func (typeOf actualExpr)) in
+		Lval tempVar, Set (tempVar, actualExpr, location)
+	      in
+	      let variables, assignments = List.split (List.map argTemp args) in
+	      variables, assignments
+	    in
+	    let argTempSetsClone () =
+	      mkStmt (IsolateInstructions.isolate argTempSets)
+	    in
 
 	    (*** used for instrumentation when sampling is OFF ***)
 	    let orig_instr = Call(lhs, Lval callee, args, location) in
-	    let (execute_stmt2,_)  = get_argument_stmt location args in
 
 	    (***statement to be executed after the if block *)
-	    let (_, arg_tmps) = get_argument_stmt location args in
-	    let  default_stmt = mkStmtOneInstr(Call(lhs, Lval callee, arg_tmps, location)) in
+	    let  default_stmt = mkStmtOneInstr(Call(lhs, Lval callee, argTemps, location)) in
 
-	    let if_gsample_blk = get_instrumentation location lvals execute_stmt1 orig_instr execute_stmt2 default_stmt in
+	    let if_gsample_blk =
+	      get_instrumentation
+		location lvals
+		(argTempSetsClone ()) orig_instr
+		(argTempSetsClone ()) default_stmt
+	    in
 	    stmt.skind <- Block( if_gsample_blk );
-	    end;
 	    SkipChildren
 
 

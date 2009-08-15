@@ -13,9 +13,6 @@ class c file : Scheme.c =
   object
     val tuples = new Counters.manager name file 
 
-
-
-
     method private findAllSites =
       let finder = new AtomFinder.visitor file tuples (* b_varinfo *) in
       Scanners.iterFuncs file
@@ -23,7 +20,7 @@ class c file : Scheme.c =
 	  let finder = finder func in
 	  ignore (Cil.visitCilFunction finder func  ));
 
-        tuples#patch  
+      tuples#patch  
 
     method saveSiteInfo = tuples#saveSiteInfo 
   end

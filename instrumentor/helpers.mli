@@ -7,21 +7,11 @@ val is_bitfield :lval -> bool
 (*returns true if the lval has register storage*)
 val is_register :lval -> bool
 
-
-(* returns true if the lval is a global variable*)
-val glob_var :lval -> bool
-
-(* returns true if the lval is an indirect access (not a variable)*)
-val indirect_access :lval -> bool
-
-
 (* gets filename before . *)
 val scrub_filename : string -> string
 
-
 (*generates prefix from file *)
 val get_prefix_file: file -> string
-
 
 (*generates prefix from func and file *)
 val get_prefix: fundec -> file -> string
@@ -35,7 +25,6 @@ val findOrCreate_local:  fundec -> string -> varinfo
 (*create one if it doesn't exist*)
 val findOrCreate_local_type:  fundec -> string -> typ -> varinfo 
 
-
 (*return the global var with given name*)
 (*create one if it doesn't exist*)
 (*by default, an integer variable is created*)
@@ -46,9 +35,3 @@ val isInterestingLval : file -> lval -> bool
 
 (*return true if the expr contains a global*)
 val isInterestingExp : file -> exp -> bool 
-      
-(* return true if the lval is a global*)
-val isGlobalLval:  file -> lval -> bool 
-
-(*return true if the expr contains a global*)
-val hasGlobal: file -> exp -> bool 

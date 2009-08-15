@@ -17,17 +17,6 @@ let is_register lval =
   |_-> false 
 
 
-let glob_var lval =
-  let (lh,_) = lval in
-  match lh with Var vi -> vi.vglob
-  |_-> false
-
-let indirect_access lval =
-  let (lh,_) = lval in
-  match lh with Var _ -> false
-  |_-> true
-
-
 let scrub_filename str =
   let new_str = ref "" in
   String.iter 

@@ -19,14 +19,11 @@ class c file : Scheme.c =
     method findAllSites =
       TestHarness.time ("finding " ^ name.flag ^ " sites")
 	(fun () ->
-	  let scanner = function
-	    | GFun (func, _) ->
-		let finder = new FloatKindFinder.visitor classifier tuples func in
-		ignore (Cil.visitCilFunction finder func)
-	    | _ ->
-		()
+	  let scanner func =
+	    let finder = new FloatKindFinder.visitor classifier tuples func in
+	    ignore (Cil.visitCilFunction finder func)
 	  in
-	  iterGlobals file scanner);
+	  Scanners.iterFuncs file scanner);
       tuples#patch
 
     method saveSiteInfo = tuples#saveSiteInfo

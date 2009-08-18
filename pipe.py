@@ -13,7 +13,7 @@ def ReadPipe(self, command):
 
     status = process.wait()
     if status != 0:
-        raise BuildError(
+        raise OSError(
             errstr='pipe failed',
             status=status,
             exitstatus=status,

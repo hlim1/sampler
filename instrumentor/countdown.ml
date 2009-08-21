@@ -36,6 +36,13 @@ let find file = (findGlobal file, findReset file)
 class countdown file =
   let global = findGlobal file in
   let globalType = global.vtype in
+  let globalIntKind =
+    match globalType with
+    | TInt (ikind, _) -> ikind
+    | _ ->
+	ignore (bug "%s has non-integer type %a" global.vname d_type globalType);
+	failwith "internal error"
+  in
   let global = var global in
   let reset = findReset file in
   fun fundec ->
@@ -81,7 +88,7 @@ class countdown file =
 	    gotoInstrumented
 	| _ ->
 	    incr otherRegionCount;
-	    let within = kinteger IUInt weight.threshold in
+	    let within = kinteger globalIntKind weight.threshold in
 	    let predicate = BinOp (Gt, Lval local, within, intType) in
 	    let choice = If (predicate,
 			     mkBlock [mkStmt gotoOriginal],

@@ -30,7 +30,7 @@ class printer =
 	  super#pGlobal () other
 
     method pStmtKind next () = function
-      |	If (BinOp (Gt, Lval (Var local, NoOffset), Const (CInt64 (_, IUInt, None)), _) as predicate,
+      |	If (BinOp (Gt, Lval (Var local, NoOffset), Const (CInt64 (_, _, None)), _) as predicate,
 	    ({ battrs = []; bstmts = [{ skind = Goto _ }] } as original),
 	    ({ battrs = []; bstmts = [{ skind = Goto _ }] } as instrumented),
 	    location)

@@ -34,12 +34,14 @@ let find file = (findGlobal file, findReset file)
 
 
 class countdown file =
-  let global = var (findGlobal file) in
+  let global = findGlobal file in
+  let globalType = global.vtype in
+  let global = var global in
   let reset = findReset file in
   fun fundec ->
     let local =
       if !cacheCountdown then
-	var (Locals.makeTempVar fundec ~name:"localEventCountdown" uintType)
+	var (Locals.makeTempVar fundec ~name:"localEventCountdown" globalType)
       else
 	global
     in

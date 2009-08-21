@@ -8,6 +8,7 @@ env = env.Clone(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
                 tools=['expect', 'test'], toolpath=['.'])
 env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
 
+env.File('expect.py')
 env.File('test.py')
 
 

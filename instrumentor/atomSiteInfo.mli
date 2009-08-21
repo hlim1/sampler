@@ -1,4 +1,6 @@
 open Cil
 
 
-class c : fundec -> location -> instr -> SiteInfo.c
+type access = Read | Write
+
+class c : fundec -> location -> lval -> access -> SiteInfo.c

@@ -30,11 +30,22 @@ class visitor file =
 	in
 
 	match stmt.skind with
-	| Instr [Set _ as instr]
+	| Instr [Set (left, _, _) as instr]
 	  when self#includedStatement stmt ->
 	    begin
 	      match SharedAccesses.isolated instr with
 	      | Some lval when not (is_bitfield lval) ->
+		  let siteInfo =
+		    let accessType =
+		      if left == lval then
+			AtomSiteInfo.Write
+		      else
+			AtomSiteInfo.Read
+		    in
+		    fun () ->
+		      new AtomSiteInfo.c func !currentLoc lval accessType
+		  in
+
 		  let on_blk =
 		    let thread_id_call, thread_id_expr = get_init_ctid_instr () in
 		    let isDifferent = var (findOrCreate_local_type func "cbi_isDifferent" intType) in
@@ -52,12 +63,11 @@ class visitor file =
 
 		    (**** ***)
 		    (* this is only needed because the number of bumps should equal the number of sampled blocks *)
-		    let siteInfo = new AtomSiteInfo.c func !currentLoc instr in
 		    let dummy_instr =
 		      let tmp = var (findOrCreate_local func "cbi_dummy") in
 		      Set (tmp, zero, !currentLoc)
 		    in
-		    let dummy_sample = tuples#addSiteInstrs siteInfo [dummy_instr] in
+		    let dummy_sample = tuples#addSiteInstrs (siteInfo ()) [dummy_instr] in
 
 		    (* let bump_stmt = make_stmt (bump_instrs) in *)
 
@@ -77,8 +87,7 @@ class visitor file =
 		  let off_blk =
 		    let sampled_stmt =
 		      let set_instrs = [Call (None, sampling_on_func, [], !currentLoc)] in
-		      let siteInfo = new AtomSiteInfo.c func !currentLoc instr in
-		      tuples#addSiteInstrs siteInfo set_instrs
+		      tuples#addSiteInstrs (siteInfo ()) set_instrs
 		    in
 		    [mkStmtOneInstr instr; sampled_stmt]
 		  in

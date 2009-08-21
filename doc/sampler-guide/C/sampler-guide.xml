@@ -1062,6 +1062,32 @@
 
 	    <itemizedlist>
 	      <listitem>
+		<para><option>atoms</option></para>
+		<orderedlist continuation="continues">
+		  <listitem>
+		    <para>the lvalue which may access shared, mutable memory</para>
+		  </listitem>
+		  <listitem>
+		    <para>one of:
+		      <variablelist>
+			<varlistentry>
+			  <term><computeroutput>read</computeroutput></term>
+			  <listitem>
+			    <para>access reads from the given location</para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>write</computeroutput></term>
+			  <listitem>
+			    <para>access writes to the given location</para>
+			  </listitem>
+			</varlistentry>
+		      </variablelist>
+		    </para>
+		  </listitem>
+		</orderedlist>
+	      </listitem>
+	      <listitem>
 		<para><option>bounds</option></para>
 		<orderedlist continuation="continues">
 		  <listitem>

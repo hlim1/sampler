@@ -2,14 +2,26 @@ open Cil
 open Pretty
 
 
-class c func inspiration instruction =
+type access = Read | Write
+
+
+let accessName = function
+  | Read -> "read"
+  | Write -> "write"
+
+
+class c func inspiration (lval : lval) access =
   object
-    inherit InstrSiteInfo.c func inspiration instruction as super
+    inherit SiteInfo.c func inspiration as super
 
     method print =
+      let lval_expr = Lval lval in
       let prevStyle = !lineDirectiveStyle in
       lineDirectiveStyle := None;
-      let result = super#print @ [descriptiveCilPrinter#pInstr () instruction] in
+      let result = super#print @
+	[dd_exp () lval_expr;
+	 text (accessName access)]
+      in
       lineDirectiveStyle := prevStyle;
       result
   end

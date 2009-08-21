@@ -59,13 +59,30 @@ class isolator fundec =
 
     (* enqueue evaluation of expression into new tempvar *)
     (* return replacement expression that just uses that tempvar *)
-    method private prefetchIntoTemporary expr =
+    method private createTemporaryFor expr =
       let description = dd_exp () expr in
       let typ = typeOf expr in
       let tempVar = makeTempVar fundec ~name:"cbi_shared_access" ~descr:description typ in
-      let evalAndSave = Set (var tempVar, expr, !currentLoc) in
+      var tempVar
+
+    (* enqueue evaluation of expression into new tempvar *)
+    (* return replacement expression that just uses that tempvar *)
+    method private prefetchIntoTemporary expr =
+      let tempVar = self#createTemporaryFor expr in
+      let evalAndSave = Set (tempVar, expr, !currentLoc) in
       self#queueInstr [evalAndSave];
-      Lval (var tempVar)
+      Lval tempVar
+
+    (* rewrite original call to store result in new tempvar *)
+    (* then assign from tempvar into original result location *)
+    method private postfetchFromTemporary = function
+      | [Call (Some lval, callee, actuals, location)] ->
+	  let tempVar = self#createTemporaryFor (Lval lval) in
+	  [Call (Some tempVar, callee, actuals, location);
+	   Set (lval, Lval tempVar, !currentLoc)]
+      | _ ->
+	  ignore (bug "call instruction turned into instruction(s) of some other kind");
+	  failwith "internal error"
 
     (* rewrite bottom-up to remove shared, mutable accesses *)
     method vexpr = function
@@ -86,7 +103,11 @@ class isolator fundec =
 	    | _ :: _ :: _ ->
 		DoChildren
 	  end
-      | _ ->
+      | Call (Some result, _, _, _) as instr
+	when isSharedAccess result ->
+	  ChangeDoChildrenPost ([instr], self#postfetchFromTemporary)
+      | Call _
+      | Asm _ ->
 	  DoChildren
   end
 

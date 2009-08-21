@@ -28,16 +28,6 @@ let isSharedAccess = function
       not (hasAttribute "const" (typeAttrs (typeOfLval lval)))
 
 
-let isSharedAccess lval =
-  begin
-    match lval with
-    | Var varinfo, _ ->
-	ignore (warn "considering shared access to %s with attributes %a" varinfo.vname d_attrlist varinfo.vattr)
-    | _ -> ()
-  end;
-  isSharedAccess lval
-
-
 (* count shared accesses in an AST tree fragment *)
 class sharedAccessesFinder =
   object

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.7.1
+
+** Further development of concurrency-bug instrumentation schemes.
+
 * sampler-1.7
 
 ** Small build infrastructure tweaks for Fedora 11 beta.

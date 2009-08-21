@@ -1131,7 +1131,7 @@
 		</orderedlist>
 	      </listitem>
 	      <listitem>
-		<para>float-kinds</para>
+		<para><option>float-kinds</option></para>
 		<orderedlist>
 		  <?dbhtml start="5"?>
 		  <listitem>
@@ -1195,7 +1195,7 @@
 		<para><option>function-entries</option>: no additional fields</para>
 	      </listitem>
 	      <listitem>
-		<para>g-object-unref</para>
+		<para><option>g-object-unref</option></para>
 		<orderedlist>
 		  <?dbhtml start="5"?>
 		  <listitem>
@@ -1205,7 +1205,7 @@
 		</orderedlist>
 	      </listitem>
 	      <listitem>
-		<para>returns</para>
+		<para><option>returns</option></para>
 		<orderedlist>
 		  <?dbhtml start="5"?>
 		  <listitem>
@@ -1214,7 +1214,7 @@
 		</orderedlist>
 	      </listitem>
 	      <listitem>
-		<para>scalar-pairs</para>
+		<para><option>scalar-pairs</option></para>
 		<orderedlist>
 		  <?dbhtml start="5"?>
 		  <listitem>

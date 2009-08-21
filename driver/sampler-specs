@@ -50,6 +50,7 @@
 *cc1:
 + %{v} \
 %{!fno-threads:%{!fthreads:%{pthread:-fthreads}}} \
+%{fsampler-scheme=atoms:-fisolate-shared-accesses} \
 -finstrumentor-input %u.i \
 -finstrumentor-output %u.inst.i \
 %(embedding)

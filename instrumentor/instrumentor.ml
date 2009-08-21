@@ -30,6 +30,7 @@ let phase =
   fun file ->
     Dynamic.analyze file;
     FunctionFilter.filter#collectPragmas file;
+    SharedAccesses.isolate file;
     iterFuncs file IsolateInstructions.visit;
     Blast.markTerminations file;
     iterFuncs file ElaborateIfs.visit;

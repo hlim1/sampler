@@ -5,7 +5,10 @@
 #include "atoms.h"
 #include "tuple-2.h"
 
-#pragma cilnoremove("cci_crap")
+
+#pragma cilnoremove("cbi_atomsSampling")
+#pragma cilnoremove("cbi_atomsInitiator")
+
 #pragma cilnoremove("cbi_atomsCounters")
 static cbi_Tuple2 cbi_atomsCounters[0];
 
@@ -22,23 +25,63 @@ static cbi_Timestamp cbi_atomsTimestampsLast[sizeof(cbi_atomsCounters) / sizeof(
 
 
 #pragma cilnoremove("cbi_atoms_yield")
-#pragma sampler_exclude_function("cbi__atoms_yield")
+#pragma sampler_exclude_function("cbi_atoms_yield")
 #pragma sampler_assume_weightless("cbi_atoms_yield")
+static inline void cbi_atoms_yield()
+{
+  sched_yield();
+}
 
 
 #pragma cilnoremove("cbi_thread_self")
 #pragma sampler_exclude_function("cbi_thread_self")
 #pragma sampler_assume_weightless("cbi_thread_self")
+static inline pthread_t cbi_thread_self()
+{
+  return pthread_self();
+}
 
 
 #pragma cilnoremove("cbi_atoms_lock")
 #pragma sampler_exclude_function("cbi_atoms_lock")
 #pragma sampler_assume_weightless("cbi_atoms_lock")
+static inline void cbi_atoms_lock()
+{
+  pthread_mutex_lock(&cbi_atomsLock);
+}
 
 
 #pragma cilnoremove("cbi_atoms_unlock")
 #pragma sampler_exclude_function("cbi_atoms_unlock")
 #pragma sampler_assume_weightless("cbi_atoms_unlock")
+static inline void cbi_atoms_unlock()
+{
+  pthread_mutex_unlock(&cbi_atomsLock);
+}
+
+
+#pragma cilnoremove("cbi_atoms_sampling_on")
+#pragma sampler_exclude_function("cbi_atoms_sampling_on")
+#pragma sampler_assume_weightless("cbi_atoms_sampling_on")
+static inline void cbi_atoms_sampling_on()
+{
+  cbi_atomsSampling = 1;
+  cbi_atomsInitiator = 1;
+}
+
+
+#pragma cilnoremove("cbi_atoms_sampling_off")
+#pragma sampler_exclude_function("cbi_atoms_sampling_off")
+#pragma sampler_assume_weightless("cbi_atoms_sampling_off")
+static inline void cbi_atoms_sampling_off()
+{
+  if (cbi_atomsInitiator)
+    {
+      cbi_atomsSampling = 0;
+      cbi_atomsInitiator = 0;
+      cbi_dict_clear();
+    }
+}
 
 
 #pragma cilnoremove("cbi_dict_lookup")

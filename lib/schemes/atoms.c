@@ -1,9 +1,13 @@
+#include <pthread.h>
 #include "atoms.h"
 #include "samples.h"
 
 /*modelled after function-entries*/
 
-static pthread_mutex_t atomsLock __attribute__((unused)) = PTHREAD_MUTEX_INITIALIZER;
+int cbi_atomsSampling;
+__thread int cbi_atomsInitiator;
+
+pthread_mutex_t cbi_atomsLock = PTHREAD_MUTEX_INITIALIZER;
 
 void cbi_atomsReport(const cbi_UnitSignature signature,
 			unsigned count, const cbi_Tuple2 counts[])
@@ -12,28 +16,6 @@ void cbi_atomsReport(const cbi_UnitSignature signature,
   cbi_samplesDump2(count, counts);
   cbi_samplesEnd();
 
-}
-//cleanup: 
-int cbi_thread_self()
-{
-  int temp = pthread_self();
-  return temp;
-}
-
-void cbi_atoms_yield()
-{
-  sched_yield();
-}
-
-void cbi_atoms_lock()
-{
-  pthread_mutex_lock(&atomsLock);
-}
-
-
-void cbi_atoms_unlock()
-{
-  pthread_mutex_unlock(&atomsLock);
 }
 
 //dynamic dictionary
@@ -211,7 +193,7 @@ void cbi_dict_insert(ulint key, ulint value)
   }
 }
 
-ulint cbi_dict_lookup(ulint key, ulint *value)
+int cbi_dict_lookup(ulint key, ulint *value)
 {
   ulint bucket;
   struct cbi_DictNode *head;
@@ -238,7 +220,7 @@ ulint cbi_dict_lookup(ulint key, ulint *value)
 }
 
 
-ulint cbi_dict_lookup_insert(ulint key, ulint *oldVal, ulint newVal)
+int cbi_dict_lookup_insert(ulint key, ulint *oldVal, ulint newVal)
 {
   ulint bucket;
   struct cbi_DictNode *head;
@@ -280,10 +262,10 @@ ulint cbi_dict_lookup_insert(ulint key, ulint *oldVal, ulint newVal)
 
 
 
-ulint cbi_dict_test_and_insert(ulint key,
-			      ulint expectedVal,
-			      ulint *isDifferent,
-			      ulint *isStale)
+int cbi_dict_test_and_insert(ulint key,
+			     ulint expectedVal,
+			     int *isDifferent,
+			     int *isStale)
 {
   ulint bucket;
   struct cbi_DictNode *head;
@@ -454,7 +436,7 @@ unsigned int cbi_dict_insert(unsigned int key, unsigned int val)
 }
 
 
-unsigned int cbi_dict_lookup(unsigned int key, unsigned int *val)
+int cbi_dict_lookup(unsigned int key, unsigned int *val)
 {
 
   unsigned int i;
@@ -496,8 +478,8 @@ unsigned int cbi_dict_lookup(unsigned int key, unsigned int *val)
 
 void cbi_dict_test_and_set(unsigned int key,
 			   unsigned int expectedVal,
-			   unsigned int *isDifferent,
-			   unsigned int *isStale)
+			   int *isDifferent,
+			   int *isStale)
 {
   unsigned int i=0;
   unsigned int last=0;

@@ -1,0 +1,88 @@
+Import('env')
+env = env.Clone()
+env.AppendUnique(
+    CCFLAGS=['-fpic'],
+    LIBS=['sampler-schemes'],
+    LIBPATH=['.'],
+    )
+
+def twolibs(env, base, sources, **kwargs):
+    [shared] = env.SharedLibrary('sampler-' + base, sources, **kwargs)
+    [static] = env.StaticLibrary('sampler-' + base, sources, **kwargs)
+    two = [shared, static]
+    [verslib] = env.InstallAs('$DESTDIR$libdir/%s.0.0.0' % shared, shared)
+    Alias('install', [
+            env.Install('$DESTDIR$libdir', static),
+            verslib,
+            env.Command('$DESTDIR$libdir/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]),
+            env.Command('$DESTDIR$libdir/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']]),
+            ])
+    env.Install('#driver/lib', static)
+    env.InstallAs('#driver/lib/%s' % verslib.name, shared)
+    env.Command('#driver/lib/%s.0' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']])
+    env.Command('#driver/lib/%s' % shared.name, Value(verslib.name), [['ln', '--symbolic', '--force', '$SOURCE', '$TARGET']])
+
+genv = env.Clone()
+genv.ParseConfig(['$pkg_config', '--cflags', '--libs', 'gobject-2.0'])
+gsources = ['g-object-unref.c', 'g-object-unref-classify.c']
+twolibs(genv, 'g-object-unref', gsources)
+
+sources = [
+    'samples.c',
+    'timestamps.c',
+    'tuple-1.c',
+    'tuple-2.c',
+    'tuple-3.c',
+    'tuple-4.c',
+    'tuple-9.c',
+]
+
+twolibs(env, 'schemes', sources, LIBS=[])
+env.File('samples.h')
+
+for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pairs']:
+    twolibs(env, scheme, scheme + '.c')
+
+fenv = env.Clone()
+fenv.AppendUnique(LIBS=['m'])
+twolibs(fenv, 'float-kinds', 'float-kinds.c')
+
+
+yenv = env.Clone()
+yenv.AppendUnique(LIBS=['pthread'])
+twolibs(yenv, 'yields', 'yields.c')
+
+
+aenv = env.Clone()
+aenv.AppendUnique(LIBS=['pthread'])
+twolibs(aenv, 'atoms', 'atoms.c')
+
+
+headers = [
+    'atoms-unit.h',
+    'atoms.h',
+    'bounds-unit.h',
+    'bounds.h',
+    'branches-unit.h',
+    'branches.h',
+    'float-kinds-unit.h',
+    'float-kinds.h',
+    'function-entries-unit.h',
+    'function-entries.h',
+    'g-object-unref-unit.h',
+    'g-object-unref.h',
+    'returns-unit.h',
+    'returns.h',
+    'scalar-pairs-unit.h',
+    'scalar-pairs.h',
+    'tuple-1.h',
+    'tuple-2.h',
+    'tuple-3.h',
+    'tuple-4.h',
+    'tuple-9.h',
+    'yields-unit.h',
+    'yields.h',
+]
+
+Install('#driver/sampler/schemes', headers)
+Alias('install', env.Install('$DESTDIR$schemesdir', headers))

@@ -60,9 +60,9 @@ class isolator fundec =
     (* enqueue evaluation of expression into new tempvar *)
     (* return replacement expression that just uses that tempvar *)
     method private prefetchIntoTemporary expr =
-      let description = d_exp () expr in
+      let description = dd_exp () expr in
       let typ = typeOf expr in
-      let tempVar = makeTempVar fundec ~descr:description typ in
+      let tempVar = makeTempVar fundec ~name:"cbi_shared_access" ~descr:description typ in
       let evalAndSave = Set (var tempVar, expr, !currentLoc) in
       self#queueInstr [evalAndSave];
       Lval (var tempVar)

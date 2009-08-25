@@ -9,23 +9,34 @@ let enabled =
     ~default:false
 
 
+(* test whether a type is immutable *)
+let isImmutable typ =
+  match unrollType typ with
+  | TFun _ ->
+      true
+  | other ->
+      hasAttribute "const" (typeAttrs other)
+
+
 (* test whether an lvalue might access shared, mutable data *)
-let isSharedAccess = function
-  | Var { vtype = TFun _ }, _ ->
-      (* functions are immutable by nature *)
-      false
-  | Var { vglob = false; vaddrof = false }, _ ->
-      (* locals whose address is never taken are unshared *)
-      false
-  | Var { vglob = true; vattr = vattr }, _
-    when hasAttribute "thread" vattr ->
-      (* thread-local storage is unshared *)
-      false
-  | Var { vglob = true }, _
-  | Var { vaddrof = true }, _
-  | Mem _, _ as lval ->
-      (* shared, but perhaps immutable: check for const *)
-      not (hasAttribute "const" (typeAttrs (typeOfLval lval)))
+let isSharedAccess (lhost, _ as lval) =
+  if isImmutable (typeOfLval lval) then
+    false
+  else
+    (* mutable storage, but is it shared? *)
+    match lhost with
+    | Var { vglob = false; vaddrof = false } ->
+	(* locals whose address is never taken are unshared *)
+	false
+    | Var { vglob = true; vattr = vattr } ->
+	(* global storage is shared, but thread-local storage is unshared *)
+	not (hasAttribute "thread" vattr)
+    | Var { vglob = false; vaddrof = vaddrof } ->
+	(* local is shared iff its address is taken *)
+	vaddrof
+    | Mem _ ->
+	(* pointer assumed to address shared storage *)
+	true
 
 
 (* count shared accesses in an AST tree fragment *)

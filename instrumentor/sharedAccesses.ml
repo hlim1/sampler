@@ -48,6 +48,15 @@ class sharedAccessesFinder =
     val mutable found = []
     method found = found
 
+    method vexpr expr =
+      match expr with
+      | AlignOfE _
+      | SizeOfE _ ->
+	  (* no actual evaluation takes place below this point *)
+	  SkipChildren
+      | _ ->
+	  DoChildren
+
     (* each lvalue counts as 0 or 1 shared access *)
     method vlval lval =
       if isSharedAccess lval then
@@ -99,6 +108,10 @@ class isolator fundec =
     method vexpr = function
       | Lval lval as expr when isSharedAccess lval ->
 	  ChangeDoChildrenPost (expr, self#prefetchIntoTemporary)
+      | AlignOfE _
+      | SizeOfE _ ->
+	  (* no actual evaluation takes place below this point *)
+	  SkipChildren
       | _ ->
 	  DoChildren
 

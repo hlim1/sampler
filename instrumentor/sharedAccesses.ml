@@ -56,13 +56,16 @@ class sharedAccessesFinder =
 	  SkipChildren
       | AddrOf (lhost, offset)
       | StartOf (lhost, offset) ->
+	  (* taking address of a location does not access that location *)
 	  begin
 	    match lhost with
 	    | Var _ ->
 		()
 	    | Mem expr ->
+		(* however, there could be accesses within a pointer expression... *)
 		ignore (visitCilExpr (self :> cilVisitor) expr)
 	  end;
+	  (* ...or in a computed array index *)
 	  ignore (visitCilOffset (self :> cilVisitor) offset);
 	  SkipChildren
       | _ ->

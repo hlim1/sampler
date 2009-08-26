@@ -154,6 +154,11 @@ let isolated instr =
   match find instr with
   | [] -> None
   | [singleton] -> Some singleton
-  | _ :: _ :: _ ->
-      ignore (bug "instr's accesses to multiple shared, mutable locations should have been isolated:@!  @[%a@]@!" d_instr instr);
+  | (_ :: _ :: _) as several ->
+      ignore
+	(bug
+	   "instruction's accesses to multiple shared, mutable locations should have been isolated:@!@!  instruction:@!    @[%a@]@!@!  %d accesses:@!    %a@!"
+	   dn_instr instr
+	   (List.length several)
+	   (Pretty.d_list "\n    " dn_lval) several);
       failwith "internal error"

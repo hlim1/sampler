@@ -41,7 +41,7 @@ let isSharedAccess (lhost, _ as lval) =
 
 (* count shared accesses in an AST tree fragment *)
 class sharedAccessesFinder =
-  object
+  object (self)
     inherit nopCilVisitor
 
     (* shared accesses found so far *)
@@ -53,6 +53,17 @@ class sharedAccessesFinder =
       | AlignOfE _
       | SizeOfE _ ->
 	  (* no actual evaluation takes place below this point *)
+	  SkipChildren
+      | AddrOf (lhost, offset)
+      | StartOf (lhost, offset) ->
+	  begin
+	    match lhost with
+	    | Var _ ->
+		()
+	    | Mem expr ->
+		ignore (visitCilExpr (self :> cilVisitor) expr)
+	  end;
+	  ignore (visitCilOffset (self :> cilVisitor) offset);
 	  SkipChildren
       | _ ->
 	  DoChildren
@@ -154,7 +165,7 @@ let isolated instr =
   match find instr with
   | [] -> None
   | [singleton] -> Some singleton
-  | (_ :: _ :: _) as several ->
+  | _ :: _ :: _ as several ->
       ignore
 	(bug
 	   "instruction's accesses to multiple shared, mutable locations should have been isolated:@!@!  instruction:@!    @[%a@]@!@!  %d accesses:@!    %a@!"

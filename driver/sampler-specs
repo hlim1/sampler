@@ -33,6 +33,9 @@
 %{fsampler-scheme=returns:-include sampler/schemes/returns-unit.h%s} \
 %{fsampler-scheme=scalar-pairs:-include sampler/schemes/scalar-pairs-unit.h%s} \
 %{fsampler-scheme=yields:-include sampler/schemes/yields-unit.h%s} \
+%{fsampler-scheme=fun-reentries:-include sampler/schemes/fun-reentries-unit.h%s} \
+%{fsampler-scheme=compare-swap:-include sampler/schemes/compare-swap-unit.h%s} \
+%{fsampler-scheme=atoms-rw:-include sampler/schemes/atoms-rw-unit.h%s} \
 %{fsampler-scheme=*:-include sampler/unit.h%s}
 
 *cpp_blast:

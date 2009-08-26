@@ -22,6 +22,9 @@ let schemes = [
   ReturnScheme.factory;
   FloatKindScheme.factory;
   GObjectUnrefScheme.factory;
+  FunReentryScheme.factory;
+  CompareSwapScheme.factory;
+  AtomRWScheme.factory;
 ]
 
 

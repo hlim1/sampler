@@ -17,7 +17,7 @@ let scrub_filename str =
   String.iter 
     (fun c -> match c 
     with 
-      '.'| '/' | ':' -> new_str:= !new_str^"_" 
+      '.'| '/' | ':' | '-' -> new_str:= !new_str^"_" 
     | _-> new_str := !new_str^(String.make 1 c) ) str;
   !new_str
   

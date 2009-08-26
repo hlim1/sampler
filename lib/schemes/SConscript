@@ -34,6 +34,9 @@ tenv = senv.Clone()
 tenv.AppendUnique(LIBS=['pthread'])
 tenv.TwoLibraries('yields', ['yields.c'])
 tenv.TwoLibraries('atoms', ['atoms.c'])
+tenv.TwoLibraries('fun-reentries', ['fun-reentries.c'])
+tenv.TwoLibraries('compare-swap', ['compare-swap.c'])
+tenv.TwoLibraries('atoms-rw', ['atoms-rw.c'])
 
 
 headers = [
@@ -60,6 +63,12 @@ headers = [
     'tuple-9.h',
     'yields-unit.h',
     'yields.h',
+    'fun-reentries-unit.h',
+    'fun-reentries.h',
+    'compare-swap-unit.h',
+    'compare-swap.h',
+    'atoms-rw-unit.h',
+    'atoms-rw.h',
 ]
 
 Install('#driver/sampler/schemes', headers)

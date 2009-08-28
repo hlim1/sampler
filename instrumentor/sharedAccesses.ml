@@ -144,9 +144,10 @@ class isolator fundec =
       | Call (Some result, _, _, _) as instr
 	when isSharedAccess result ->
 	  ChangeDoChildrenPost ([instr], self#postfetchFromTemporary)
-      | Call _
-      | Asm _ ->
+      | Call _ ->
 	  DoChildren
+      | Asm _ ->
+	  SkipChildren
   end
 
 

@@ -35,12 +35,12 @@ class visitor file =
 			let siteInfo =
 			  let accessType =
 			    if left == lval then
-			      CompareSwapSiteInfo.Write
+			      AccessSiteInfo.Write
 			    else
-			      CompareSwapSiteInfo.Read
+			      AccessSiteInfo.Read
 			  in
 			  fun () ->
-			    new CompareSwapSiteInfo.c func !currentLoc lval accessType
+			    new AccessSiteInfo.c func !currentLoc lval accessType
 			in
 
 			let on_blk =

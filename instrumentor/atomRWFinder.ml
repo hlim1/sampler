@@ -38,12 +38,12 @@ class visitor file =
 		  let siteInfo =
 		    let accessType =
 		      if left == lval then
-			AtomSiteInfo.Write
+			AccessSiteInfo.Write
 		      else
-			AtomSiteInfo.Read
+			AccessSiteInfo.Read
 		    in
 		    fun () ->
-		      new AtomSiteInfo.c func !currentLoc lval accessType
+		      new AccessSiteInfo.c func !currentLoc lval accessType
 		  in
 
 		  let on_blk =

@@ -76,8 +76,9 @@ class visitor file =
 		     mkStmtOneInstr test_set_call;
 		     mkStmt (If (isCur,
 				 mkBlock [mkStmtOneInstr (fst (tuples#addExpr different_index))],
-				 mkBlock [mkStmtOneInstr (fst (tuples#addExpr different_index))],
+				 mkBlock [mkEmptyStmt()],
 				 !currentLoc));
+                     mkStmtOneInstr (fst (tuples#addExpr different_index));
 		     mkStmtOneInstr instr;
 		     mkStmtOneInstr (Call (None, sampling_off_func, [], !currentLoc));
 		     mkStmtOneInstr (Call (None, unlock_func, [], !currentLoc));

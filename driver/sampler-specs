@@ -54,6 +54,8 @@
 + %{v} \
 %{!fno-threads:%{!fthreads:%{pthread:-fthreads}}} \
 %{fsampler-scheme=atoms:-fisolate-shared-accesses} \
+%{fsampler-scheme=compare-swap:-fisolate-shared-accesses} \
+%{fsampler-scheme=atoms-rw:-fisolate-shared-accesses} \
 -finstrumentor-input %u.i \
 -finstrumentor-output %u.inst.i \
 %(embedding)

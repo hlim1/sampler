@@ -4,8 +4,8 @@ open Cil
 (*cci*)
 let name = {
   flag = "compare-swap";
-  prefix = "compare-swap";
-  ident = "Compare-Swap";
+  prefix = "compareSwap";
+  ident = "CompareSwap";
 }
 
 
@@ -14,13 +14,13 @@ class c file : Scheme.c =
     val tuples = new Counters.manager name file 
 
     method private findAllSites =
-      let finder = new AtomFinder.visitor file tuples (* b_varinfo *) in
+      let finder = new CompareSwapFinder.visitor file tuples in
       Scanners.iterFuncs file
 	(fun func ->
 	  let finder = finder func in
 	  ignore (Cil.visitCilFunction finder func  ));
 
-      tuples#patch  
+        tuples#patch  
 
     method saveSiteInfo = tuples#saveSiteInfo 
   end

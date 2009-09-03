@@ -1,5 +1,5 @@
 #include <pthread.h>
-#include "atoms.h"
+#include "atoms-rw.h"
 #include "samples.h"
 
 /*modelled after function-entries*/

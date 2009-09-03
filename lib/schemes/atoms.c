@@ -5,7 +5,9 @@
 /*modelled after function-entries*/
 
 int cbi_atomsSampling;
+int cbi_atomsGlobalCounter;
 __thread int cbi_atomsInitiator;
+__thread int cbi_atomsThreadCounter;
 
 pthread_mutex_t cbi_atomsLock = PTHREAD_MUTEX_INITIALIZER;
 

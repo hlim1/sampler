@@ -11,27 +11,31 @@
 #include "verbose.h"
 
 
+static int sampling;
 static double densityScale;
 static unsigned short seed[3];
 static FILE *entropy;
 
-static CBI_THREAD_LOCAL int sampling;
+static CBI_THREAD_LOCAL int seeded;
 static CBI_THREAD_LOCAL struct drand48_data randomBuffer;
 
 
 void cbi_initialize_thread()
 {
-  if (entropy)
+  if (__builtin_expect(sampling, 1))
     {
-      unsigned short seed[3];
-      if (fread(seed, sizeof(seed), 1, entropy) == 1)
-	sampling = seed48_r(seed, &randomBuffer) >= 0;
+      if (entropy)
+	{
+	  unsigned short seed[3];
+	  if (fread(seed, sizeof(seed), 1, entropy) == 1)
+	    seeded = seed48_r(seed, &randomBuffer) >= 0;
+	}
+      else
+	seeded = seed48_r(seed, &randomBuffer) >= 0;
     }
-  else
-    sampling = seed48_r(seed, &randomBuffer) >= 0;
 
   cbi_nextEventCountdown = cbi_getNextEventCountdown();
-  VERBOSE("initialized thread; next event countdown *%p == %d\n", &cbi_nextEventCountdown, cbi_nextEventCountdown);
+  VERBOSE("initialized thread; next event countdown *%p == %d", &cbi_nextEventCountdown, cbi_nextEventCountdown);
 }
 
 
@@ -47,21 +51,18 @@ static void finalize()
 
 void cbi_initializeRandom()
 {
+  // failsafe: disable instrumentation if anything goes wrong
+  sampling = 0;
+
   const char * const environ = getenv("SAMPLER_SPARSITY");
   if (environ)
     {
       char *end;
       const double sparsity = strtod(environ, &end);
       if (*end != '\0')
-	{
-	  fprintf(stderr, "trailing garbage in $SAMPLER_SPARSITY: %s\n", end);
-	  sampling = 0;
-	}
+	fprintf(stderr, "trailing garbage in $SAMPLER_SPARSITY: %s\n", end);
       else if (sparsity < 1)
-	{
-	  fputs("$SAMPLER_SPARSITY must be at least 1\n", stderr);
-	  sampling = 0;
-	}
+	fputs("$SAMPLER_SPARSITY must be at least 1\n", stderr);
       else
 	{
 	  const char * const environ = getenv("SAMPLER_SEED");
@@ -75,10 +76,7 @@ void cbi_initializeRandom()
 
 	      convert.all = strtoull(environ, &end, 0);
 	      if (*end != '\0')
-		{
-		  fprintf(stderr, "trailing garbage in $SAMPLER_SEED: %s\n", end);
-		  sampling = 0;
-		}
+		fprintf(stderr, "trailing garbage in $SAMPLER_SEED: %s\n", end);
 	      else
 		{
 		  seed[0] = convert.triple[0];
@@ -93,17 +91,16 @@ void cbi_initializeRandom()
 	    }
 
 	  densityScale = 1 / log(1 - 1 / sparsity);
+	  sampling = 1;
 	  cbi_initialize_thread();
 	}
 
       unsetenv("SAMPLER_SPARSITY");
       unsetenv("SAMPLER_SEED");
-      VERBOSE("initialized online random countdown generator\n");
+      VERBOSE("initialized online random countdown generator");
     }
   else
-    {
-      sampling = 0;
-    }
+    VERBOSE("SAMPLER_SPARSITY is not set; disabling instrumented code");
 }
 
 
@@ -112,7 +109,7 @@ void cbi_initializeRandom()
 
 int cbi_getNextEventCountdown()
 {
-  if (__builtin_expect(sampling, 1))
+  if (__builtin_expect(seeded, 1))
     while (1)
       {
 	double real;
@@ -122,11 +119,11 @@ int cbi_getNextEventCountdown()
 	if (__builtin_expect(real != 0., 1))
 	  {
 	    const int next = log(real) * densityScale + 1;
-	    VERBOSE("got next event countdown == %d\n", next);
+	    VERBOSE("got next event countdown == %d", next);
 	    return next;
 	  }
       }
 
-  VERBOSE("not sampling; next event countdown == INT_MAX\n");
+  VERBOSE("not seeded; next event countdown == INT_MAX");
   return INT_MAX;
 }

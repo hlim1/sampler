@@ -36,7 +36,7 @@ static void openReportFile()
 
   if ((envar = getenv("SAMPLER_REPORT_FD")))
     {
-      VERBOSE("%s(): $SAMPLER_REPOT_FD = \"%s\"\n", __FUNCTION__, envar);
+      VERBOSE("$SAMPLER_REPORT_FD = \"%s\"", envar);
       char *tail;
       const int fd = strtol(envar, &tail, 0);
       if (*tail == '\0')
@@ -48,23 +48,23 @@ static void openReportFile()
 
   else if ((envar = getenv("SAMPLER_FILE")))
     {
-      VERBOSE("%s(): $SAMPLER_REPOT_FILE = \"%s\"\n", __FUNCTION__, envar);
+      VERBOSE("$SAMPLER_FILE = \"%s\"", envar);
       cbi_reportFile = fopen(envar, "w");
       closeOnExec(fileno(cbi_reportFile));
     }
 
   else
-    VERBOSE("%s(): no reporting destination set\n", __FUNCTION__);
+    VERBOSE("no reporting destination set");
 
   unsetenv("SAMPLER_REPORT_FD");
   unsetenv("SAMPLER_FILE");
 
   if (cbi_reportFile)
     {
-      VERBOSE("%s(): starting report to FILE 0x%p\n", __FUNCTION__, cbi_reportFile);
+      VERBOSE("starting report to FILE 0x%p", cbi_reportFile);
     }
   else
-    VERBOSE("%s(): not reporting\n", __FUNCTION__);
+    VERBOSE("not reporting");
 }
 
 
@@ -157,7 +157,7 @@ static void handleSignal(int signum)
 
 void cbi_initializeReport()
 {
-  VERBOSE("%s(): begin\n", __FUNCTION__);
+  VERBOSE("begin");
 
   CBI_CRITICAL_REGION(reportLock, {
       openReportFile();
@@ -172,7 +172,7 @@ void cbi_initializeReport()
 	}
     });
 
-  VERBOSE("%s(): end\n", __FUNCTION__);
+  VERBOSE("end");
 }
 
 void cbi_uninitializeReport()

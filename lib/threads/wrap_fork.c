@@ -12,9 +12,9 @@ typeof(fork) __wrap_fork;
 pid_t __wrap_fork(void)
 {
   pid_t pid = __real_fork();
-  if(pid == 0)
+  if (pid == 0)
     {
-      VERBOSE("%s(): in child\n", __FUNCTION__);
+      VERBOSE("in child");
       cbi_initializeRandom();
     }
   return pid;

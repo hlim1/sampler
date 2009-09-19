@@ -29,7 +29,7 @@ static void changeLockReportFile(short lockType, const char gerund[])
 	.l_len    = 0,
       };
       if (fcntl(fileno(cbi_reportFile), F_SETLKW, &flock) == -1)
-	VERBOSE("%s(): Error %s the file\n", __FUNCTION__, gerund);
+	VERBOSE("Error %s the file", gerund);
     }
 }
 

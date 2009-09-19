@@ -13,7 +13,7 @@ void cbi_initializeVerbose(void);
     {									\
       extern int cbi_verbose;						\
       if (__builtin_expect(cbi_verbose != 0, 0))			\
-	fprintf(stderr, "CBI: pid %d: " format, getpid(), ## __VA_ARGS__); \
+	fprintf(stderr, "CBI: pid %d: %s(): " format "\n", getpid(), __FUNCTION__, ## __VA_ARGS__); \
     }									\
   while (0)
 

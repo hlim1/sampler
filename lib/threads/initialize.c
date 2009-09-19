@@ -10,11 +10,11 @@ static cbi_once_t once = CBI_ONCE_INIT;
 static void
 initializeOnce()
 {
-  VERBOSE("%s(): begin\n", __FUNCTION__);
+  VERBOSE("begin");
   cbi_initializeVerbose();
   cbi_initializeRandom();
   cbi_initializeReport();
-  VERBOSE("%s(): end\n", __FUNCTION__);
+  VERBOSE("end");
 }
 
 

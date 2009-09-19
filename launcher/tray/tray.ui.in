@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
-<!DOCTYPE glade-project SYSTEM "http://glade.gnome.org/glade-project-2.0.dtd">
 <interface>
+  <requires lib="gtk+" version="2.14"/>
+  <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkUIManager" id="ui-manager">
     <child>
       <object class="GtkActionGroup" id="action-group">
@@ -70,8 +71,8 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &#x201C;AS IS&#x201D; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</property>
     <property name="authors">Ben Liblit &lt;liblit@cs.wisc.edu&gt;</property>
     <property name="wrap_license">True</property>
-    <signal handler="on_about_delete" name="delete_event"/>
-    <signal handler="on_about_response" name="response"/>
+    <signal name="response" handler="on_about_response"/>
+    <signal name="delete_event" handler="on_about_delete"/>
     <child internal-child="vbox">
       <object class="GtkVBox" id="vbox">
         <property name="visible">True</property>

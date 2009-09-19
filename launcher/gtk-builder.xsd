@@ -6,7 +6,7 @@
     <xs:complexType name="interface.type">
     	<xs:sequence>
     		<xs:element ref="requires"></xs:element>
-    		<xs:element ref="object"></xs:element>
+    		<xs:element ref="object" maxOccurs="unbounded" minOccurs="1"></xs:element>
     	</xs:sequence>
     </xs:complexType>
 
@@ -15,9 +15,7 @@
     <xs:complexType name="property.type">
     	<xs:simpleContent>
     		<xs:extension base="xs:string">
-    			<xs:attribute name="name" use="required"
-    				type="identifier.type">
-    			</xs:attribute>
+    			<xs:attribute ref="name" use="required"/>
     			<xs:attribute name="translatable">
     				<xs:simpleType>
     					<xs:restriction base="xs:string">
@@ -57,7 +55,11 @@
     		<xs:element ref="child" maxOccurs="unbounded"
     			minOccurs="0">
     		</xs:element>
-    		<xs:element ref="action-widgets" maxOccurs="1" minOccurs="0"></xs:element>
+    		<xs:choice maxOccurs="1" minOccurs="0">
+    			<xs:element ref="action-widgets">
+    			</xs:element>
+    			<xs:element ref="ui"></xs:element>
+    		</xs:choice>
     	</xs:sequence>
     	<xs:attribute name="class" use="required">
     		<xs:simpleType>
@@ -72,13 +74,7 @@
     <xs:element name="signal" type="signal.type"></xs:element>
 
     <xs:complexType name="signal.type">
-    	<xs:attribute name="name" use="required">
-    		<xs:simpleType>
-    			<xs:restriction base="xs:string">
-    				<xs:pattern value="[a-z]+"></xs:pattern>
-    			</xs:restriction>
-    		</xs:simpleType>
-    	</xs:attribute>
+    	<xs:attribute ref="name" use="required"/>
     	<xs:attribute name="handler" type="identifier.type" use="required"></xs:attribute>
     </xs:complexType>
     
@@ -134,4 +130,48 @@
     		</xs:extension>
     	</xs:simpleContent>
     </xs:complexType>
+
+    <xs:element name="ui" type="ui.type"></xs:element>
+
+    <xs:complexType name="ui.type">
+    	<xs:sequence>
+    		<xs:element ref="popup"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="popup" type="popup.type"></xs:element>
+
+    <xs:complexType name="popup.type">
+    	<xs:sequence>
+    		<xs:element ref="menuitem" maxOccurs="unbounded"
+    			minOccurs="1">
+    		</xs:element>
+    		<xs:sequence maxOccurs="unbounded" minOccurs="0">
+    			<xs:element ref="separator"></xs:element>
+    			<xs:element ref="menuitem" maxOccurs="unbounded"
+    				minOccurs="1">
+    			</xs:element>
+    		</xs:sequence>
+    	</xs:sequence>
+    	<xs:attribute ref="name" use="required"></xs:attribute>
+    </xs:complexType>
+
+    <xs:element name="menuitem" type="menuitem.type"></xs:element>
+
+    <xs:complexType name="menuitem.type">
+    	<xs:attribute name="action">
+    		<xs:simpleType>
+    			<xs:restriction base="xs:string">
+    				<xs:pattern value="[a-z]+(-[a-z]+)*"></xs:pattern>
+    			</xs:restriction>
+    		</xs:simpleType>
+    	</xs:attribute>
+    </xs:complexType>
+    
+    <xs:element name="separator" type="separator.type"></xs:element>
+
+    <xs:complexType name="separator.type"></xs:complexType>
+
+    <xs:attribute name="name" type="identifier.type">
+    </xs:attribute>
 </xs:schema>

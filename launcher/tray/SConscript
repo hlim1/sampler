@@ -12,15 +12,15 @@ pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 
-glade = env.Template('tray.glade.in', varlist=['version'])
-Default(glade)
+ui = env.Template('tray.ui.in', varlist=['version'])
+Default(ui)
 
 testPythons(env, pythons)
 Alias('test', [
-        env.TestXML(glade),
+        env.TestXML(ui, schema=File('../gtk-builder.xsd')),
         ])
 
 Alias('install', [
     env.Install('$DESTDIR$servicesdir', service),
-    env.Install('$DESTDIR$traydir', [compiled, 'tray', glade]),
+    env.Install('$DESTDIR$traydir', [compiled, 'tray', ui]),
     ])

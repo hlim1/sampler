@@ -7,7 +7,7 @@ home = realpath(dirname(sys.argv[0]))
 sys.path.append(home)
 import Paths
 Paths.home = home
-Paths.glade = home + '/tray.glade'
+Paths.ui = home + '/tray.ui'
 
 for subdir in ['common', 'monitor', 'trayicon']:
     sys.path.append(realpath(home + '/../' + subdir))

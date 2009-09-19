@@ -1,43 +1,48 @@
 <?xml version="1.0"?>
 <!DOCTYPE glade-project SYSTEM "http://glade.gnome.org/glade-project-2.0.dtd">
-<glade-interface>
-  <!-- interface-requires gtk+ 2.14 -->
-  <!-- interface-naming-policy toplevel-contextual -->
-  <widget class="GtkMenu" id="popup">
+<interface>
+  <object class="GtkUIManager" id="ui-manager">
     <child>
-      <widget class="GtkCheckMenuItem" id="menu-master">
-        <property name="visible">True</property>
-        <property name="label" translatable="yes">Automatic _Reporting</property>
-        <property name="use_underline">True</property>
-        <property name="active">True</property>
-        <signal name="activate" handler="on_master_toggled"/>
-      </widget>
+      <object class="GtkActionGroup" id="action-group">
+        <child>
+          <object class="GtkToggleAction" id="menu-master">
+            <property name="active">True</property>
+            <property name="name">menu-master</property>
+            <property name="label" translatable="yes">Automatic _Reporting</property>
+            <signal handler="on_master_toggled" name="activate"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="menu-preferences">
+            <property name="stock_id">gtk-preferences</property>
+            <property name="name">menu-preferences</property>
+            <signal handler="on_preferences_activate" name="activate"/>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="separator">
+            <property name="name">separator</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkAction" id="menu-about">
+            <property name="stock_id">gtk-about</property>
+            <property name="name">menu-about</property>
+            <signal handler="on_about_activate" name="activate"/>
+          </object>
+        </child>
+      </object>
     </child>
-    <child>
-      <widget class="GtkImageMenuItem" id="menu-preferences">
-        <property name="label">gtk-preferences</property>
-        <property name="visible">True</property>
-        <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
-        <signal name="activate" handler="on_preferences_activate"/>
-      </widget>
-    </child>
-    <child>
-      <widget class="GtkMenuItem" id="separator">
-        <property name="visible">True</property>
-      </widget>
-    </child>
-    <child>
-      <widget class="GtkImageMenuItem" id="menu-about">
-        <property name="label">gtk-about</property>
-        <property name="visible">True</property>
-        <property name="use_underline">True</property>
-        <property name="use_stock">True</property>
-        <signal name="activate" handler="on_about_activate"/>
-      </widget>
-    </child>
-  </widget>
-  <widget class="GtkAboutDialog" id="about">
+    <ui>
+      <popup name="popup">
+        <menuitem action="menu-master"/>
+        <menuitem action="menu-preferences"/>
+        <separator/>
+        <menuitem action="menu-about"/>
+      </popup>
+    </ui>
+  </object>
+  <object class="GtkAboutDialog" id="about">
     <property name="border_width">5</property>
     <property name="title" translatable="yes">About Bug Isolation Monitor</property>
     <property name="resizable">False</property>
@@ -65,25 +70,25 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &#x201C;AS IS&#x201D; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</property>
     <property name="authors">Ben Liblit &lt;liblit@cs.wisc.edu&gt;</property>
     <property name="wrap_license">True</property>
-    <signal name="delete_event" handler="on_about_delete"/>
-    <signal name="response" handler="on_about_response"/>
+    <signal handler="on_about_delete" name="delete_event"/>
+    <signal handler="on_about_response" name="response"/>
     <child internal-child="vbox">
-      <widget class="GtkVBox" id="vbox">
+      <object class="GtkVBox" id="vbox">
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
-          <widget class="GtkHButtonBox" id="action-area">
+          <object class="GtkHButtonBox" id="action-area">
             <property name="visible">True</property>
             <property name="layout_style">end</property>
-          </widget>
+          </object>
           <packing>
             <property name="expand">False</property>
             <property name="pack_type">end</property>
             <property name="position">0</property>
           </packing>
         </child>
-      </widget>
+      </object>
     </child>
-  </widget>
-</glade-interface>
+  </object>
+</interface>

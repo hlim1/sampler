@@ -1,13 +1,10 @@
 import gtk
-import gtk.gdk
-import gtk.glade
 
 import BlipIcons
 from MasterNotifier import MasterNotifier
 import Paths
 from PopupMenu import PopupMenu
 import PreferencesDialog
-import Signals
 
 
 class TrayIcon(gtk.StatusIcon):

@@ -4,8 +4,6 @@ import gtk
 from AboutDialog import AboutDialog
 from MasterNotifier import MasterNotifier
 import Paths
-import Signals
-import gtk.glade
 
 __pychecker__ = 'no-import'
 
@@ -18,15 +16,16 @@ class PopupMenu(object):
     __slots__ = ['__about', '__client', '__master', '__notifier', '__tray', '__widget']
 
     def __init__(self, client, tray):
-        xml = gtk.glade.XML(Paths.glade, 'popup')
-        Signals.autoconnect(self, xml)
+        builder = gtk.Builder()
+        builder.add_from_file(Paths.ui)
+        builder.connect_signals(self)
 
-        self.__about = AboutDialog(client)
+        self.__about = AboutDialog(client, builder)
         self.__client = client
-        self.__master = xml.get_widget('menu-master')
+        self.__master = builder.get_object('menu-master')
         self.__notifier = MasterNotifier(self.__client, self.__master.set_active)
         self.__tray = tray
-        self.__widget = xml.get_widget('popup')
+        self.__widget = builder.get_object('ui-manager').get_widget('/popup')
 
     def popup(self, button, activate_time):
         self.__widget.popup(None, None, gtk.status_icon_position_menu, button, activate_time, self.__tray)
@@ -44,3 +43,9 @@ class PopupMenu(object):
     def on_about_activate(self, item):
         __pychecker__ = 'no-argsused'
         self.__about.present()
+
+    def on_about_delete(self, dialog, event):
+        return self.__about.on_about_delete(dialog, event)
+
+    def on_about_response(self, dialog, response):
+        return self.__about.on_about_response(dialog, response)

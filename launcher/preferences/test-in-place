@@ -5,7 +5,7 @@ sys.path.append('../common')
 
 import Paths
 Paths.home = '.'
-Paths.glade = './preferences.glade'
+Paths.ui = './preferences.ui'
 
 from os.path import dirname, realpath
 import SamplerConfig

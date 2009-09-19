@@ -84,7 +84,7 @@ env.SetDefault(gcc=env.WhereIs('gcc'))
 #
 
 env = env.Clone(
-    tools=['default', 'ocaml', 'template', 'test'], toolpath=['.'],
+    tools=['default', 'ocaml', 'template', 'test', 'xmllint'], toolpath=['.'],
     CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
     OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
     PERL=env.WhereIs('perl'),
@@ -133,7 +133,13 @@ env = env.Clone(
 
 env.MergeFlags(env.get('extra_cflags'))
 
-env.File(['ocaml.py', 'pipe.py', 'template.py', 'test.py'])
+env.File([
+        'ocaml.py',
+        'pipe.py',
+        'template.py',
+        'test.py',
+        'xmllint.py',
+        ])
 
 # needed for some pychecker tests
 if 'DISPLAY' in os.environ:

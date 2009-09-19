@@ -12,7 +12,6 @@ def TestBuilder(command, **kwargs):
 
 test_desktop_builder = TestBuilder(['desktop-file-validate', '$SOURCE'], single_source=True)
 test_python_builder = TestBuilder(['$pychecker', '--stdlib', '--quiet', '$SOURCES'])
-test_xml_builder = TestBuilder(['xmllint', '--valid', '--noout', '--nonet', '$SOURCE'])
 
 
 def generate(env):
@@ -20,16 +19,12 @@ def generate(env):
         BUILDERS={
         'TestDesktop': test_desktop_builder,
         'TestPython': test_python_builder,
-        'TestXML': test_xml_builder,
         },
         )
 
     env.SetDefault(
         pychecker='pychecker',
         )
-
-    catalogs = ['/etc/xml/catalog', env.File('#catalog.xml').abspath]
-    env.AppendENVPath('XML_CATALOG_FILES', catalogs, sep=' ')
 
 
 def exists(env):

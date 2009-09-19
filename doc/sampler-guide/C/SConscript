@@ -11,10 +11,11 @@ Default(html)
 Alias('html', html)
 
 Alias('test', map(env.TestXML, [
-    ['sampler-guide.xml', '#doc/config.xml'],
-    'sampler-guide-C.omf',
-    'sampler-guide-C.omf.out',
-    ]))
+            'sampler-guide.xml',
+            'sampler-guide-C.omf',
+            'sampler-guide-C.omf.out',
+            ]))
+Depends('sampler-guide.xml.passed', '#doc/config.dtd')
 
 guide = [
     'sampler-guide.css',

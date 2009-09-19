@@ -18,19 +18,17 @@ import Keys
 
 class FirstTime(object):
 
-    __slots__ = ['__client', '__dialog', '__dir', '__icon_updater', '__image_updater', '__notifier', '__xml']
+    __slots__ = ['__client', '__builder', '__dialog', '__dir', '__icon_updater', '__image_updater', '__notifier']
 
     def __get_widget(self, name):
-        return self.__xml.get_widget(name)
+        return self.__builder.get_object(name)
 
     def __init__(self):
-        import gtk.glade
         import Paths
-        import Signals
-        root = 'first-time'
-        self.__xml = gtk.glade.XML(Paths.glade, root)
-        self.__dialog = self.__get_widget(root)
-        Signals.autoconnect(self, self.__xml)
+        self.__builder = gtk.Builder()
+        self.__builder.add_from_file(Paths.ui)
+        self.__dialog = self.__get_widget('first-time')
+        self.__builder.connect_signals(self)
 
         # hook up GConf configuration monitoring
         import gconf

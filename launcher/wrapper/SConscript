@@ -11,6 +11,6 @@ compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 
 testPythons(env, pythons)
-Alias('test', env.TestXML('wrapper.glade'))
+Alias('test', env.TestXML('wrapper.ui', schema=File('../gtk-builder.xsd')))
 
-Alias('install', env.Install('$DESTDIR$wrapperdir', [compiled, 'wrapper.glade']))
+Alias('install', env.Install('$DESTDIR$wrapperdir', [compiled, 'wrapper.ui']))

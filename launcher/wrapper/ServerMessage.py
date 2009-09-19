@@ -14,22 +14,21 @@ class ServerMessage(object):
     def __init__(self, base, content_type, body):
         import cgi
         import gnome
-        import gtk.glade
+        import gtk
         import gtkhtml2
         import sys
         import BlipIcons
         import SamplerConfig
         import Paths
-        import Signals
 
         argv = sys.argv
         sys.argv = [sys.argv[0]]
         gnome.program_init('wrapper', SamplerConfig.version)
         sys.argv = argv
 
-        xml = gtk.glade.XML(Paths.glade)
-        Signals.autoconnect(self, xml)
-        self.__dialog = xml.get_widget('server-message')
+        builder = gtk.Builder()
+        builder.add_from_file(Paths.ui)
+        self.__dialog = builder.get_object('server-message')
         pixmap = self.__dialog.render_icon(BlipIcons.stock[True],
                                            BlipIcons.ICON_SIZE_EMBLEM, '')
         self.__dialog.set_icon(pixmap)
@@ -50,7 +49,7 @@ class ServerMessage(object):
 
         view = gtkhtml2.View()
         view.set_document(document)
-        port = xml.get_widget('html-scroll')
+        port = builder.get_object('html-scroll')
         port.add(view)
         view.show()
 

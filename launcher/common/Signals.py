@@ -15,4 +15,5 @@ def __fill_callbacks(handlers, kind, callbacks):
 def autoconnect(handlers, xml):
     callbacks = {}
     __fill_callbacks(handlers, handlers.__class__, callbacks)
+    print 'callbacks:', callbacks
     xml.signal_autoconnect(callbacks)

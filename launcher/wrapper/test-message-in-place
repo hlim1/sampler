@@ -5,9 +5,14 @@ import sys
 sys.path.append('../common')
 
 import Paths
-Paths.glade = 'wrapper.glade'
+Paths.ui = 'wrapper.ui'
+
+from os.path import dirname, realpath
+import SamplerConfig
+SamplerConfig.pixmapsdir = dirname(realpath(sys.argv[0])) + '/../pixmaps'
 
 from ServerMessage import ServerMessage
 
-dialog = ServerMessage('http://www.cs.wisc.edu/', 'text/html', '<html><head></head><body><p>Hello <img src="http://www.cs.wisc.edu/icons/ball.red.gif"/><img src="http://www.cs.wisc.edu/icons/ball.red.gif"/><img src="http://www.cs.wisc.edu/icons/ball.gray.gif"/> world!</p></body></html>')
+page = open('test-message.html').read()
+dialog = ServerMessage('http://www.cs.wisc.edu/', 'text/html', page)
 dialog.run()

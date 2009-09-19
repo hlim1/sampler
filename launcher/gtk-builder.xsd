@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="interface" type="interface.type"></xs:element>
+    
+    <xs:complexType name="interface.type">
+    	<xs:sequence>
+    		<xs:element ref="requires"></xs:element>
+    		<xs:element ref="object"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="property" type="property.type"></xs:element>
+    
+    <xs:complexType name="property.type">
+    	<xs:simpleContent>
+    		<xs:extension base="xs:string">
+    			<xs:attribute name="name" use="required"
+    				type="identifier.type">
+    			</xs:attribute>
+    			<xs:attribute name="translatable">
+    				<xs:simpleType>
+    					<xs:restriction base="xs:string">
+    						<xs:enumeration value="yes"></xs:enumeration>
+    						<xs:enumeration value="no"></xs:enumeration>
+    					</xs:restriction>
+    				</xs:simpleType>
+    			</xs:attribute>
+    		</xs:extension>
+    	</xs:simpleContent>
+    </xs:complexType>
+
+    
+    <xs:element name="requires" type="requires.type"></xs:element>
+
+    <xs:complexType name="requires.type">
+    	<xs:attribute name="lib" type="xs:string" use="required"></xs:attribute>
+    	<xs:attribute name="version" use="required">
+    		<xs:simpleType>
+    			<xs:restriction base="xs:string">
+    				<xs:pattern value="\d+(\.\d+)*"></xs:pattern>
+    			</xs:restriction>
+    		</xs:simpleType>
+    	</xs:attribute>
+    </xs:complexType>
+
+    <xs:element name="object" type="object.type"></xs:element>
+
+    <xs:complexType name="object.type">
+    	<xs:sequence>
+    		<xs:element ref="property" maxOccurs="unbounded"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element ref="signal" maxOccurs="unbounded"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element ref="child" maxOccurs="unbounded"
+    			minOccurs="0">
+    		</xs:element>
+    		<xs:element ref="action-widgets" maxOccurs="1" minOccurs="0"></xs:element>
+    	</xs:sequence>
+    	<xs:attribute name="class" use="required">
+    		<xs:simpleType>
+    			<xs:restriction base="xs:string">
+    				<xs:pattern value="([A-Z][a-z]*)+"></xs:pattern>
+    			</xs:restriction>
+    		</xs:simpleType>
+    	</xs:attribute>
+    	<xs:attribute name="id" type="xs:ID" use="required"></xs:attribute>
+    </xs:complexType>
+
+    <xs:element name="signal" type="signal.type"></xs:element>
+
+    <xs:complexType name="signal.type">
+    	<xs:attribute name="name" use="required">
+    		<xs:simpleType>
+    			<xs:restriction base="xs:string">
+    				<xs:pattern value="[a-z]+"></xs:pattern>
+    			</xs:restriction>
+    		</xs:simpleType>
+    	</xs:attribute>
+    	<xs:attribute name="handler" type="identifier.type" use="required"></xs:attribute>
+    </xs:complexType>
+    
+    <xs:simpleType name="identifier.type">
+    	<xs:restriction base="xs:string">
+    		<xs:pattern value="[a-z]+(_[a-z]+)*"></xs:pattern>
+    	</xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="child" type="child.type"></xs:element>
+
+    <xs:complexType name="child.type">
+        <xs:choice>
+        	<xs:sequence>
+        		<xs:element ref="object"></xs:element>
+        		<xs:element ref="packing" maxOccurs="1" minOccurs="0"></xs:element>
+        	</xs:sequence>
+        	<xs:element ref="placeholder"></xs:element>
+        </xs:choice>
+        <xs:attribute name="internal-child" type="identifier.type"></xs:attribute>
+    </xs:complexType>
+    
+    <xs:simpleType name="translatable.type">
+    	<xs:restriction base="xs:string"></xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="packing" type="packing.type"></xs:element>
+
+    <xs:complexType name="packing.type">
+    	<xs:sequence>
+    		<xs:element ref="property" maxOccurs="unbounded" minOccurs="1"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="placeholder" type="placeholder.type"></xs:element>
+
+    <xs:complexType name="placeholder.type"></xs:complexType>
+
+    <xs:element name="action-widgets" type="action-widgets.type"></xs:element>
+
+    <xs:complexType name="action-widgets.type">
+    	<xs:sequence>
+    		<xs:element ref="action-widget" maxOccurs="unbounded" minOccurs="1"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="action-widget" type="action-widget.type"></xs:element>
+
+    <xs:complexType name="action-widget.type">
+    	<xs:simpleContent>
+    		<xs:extension base="xs:string">
+    			<xs:attribute name="response" type="xs:negativeInteger" use="required"></xs:attribute>
+    		</xs:extension>
+    	</xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

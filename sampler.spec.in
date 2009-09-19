@@ -39,8 +39,7 @@ Requires: dbus-python >= 0.80
 Requires: gnome-python2
 Requires: gnome-python2-gconf
 Requires: gnome-python2-gtkhtml2
-Requires: pygtk2 >= 2.10
-Requires: pygtk2-libglade
+Requires: pygtk2 >= 2.12
 Requires(pre): GConf2
 Requires(post): GConf2
 Requires(preun): GConf2

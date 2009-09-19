@@ -6,12 +6,12 @@ class PreferencesDialog(object):
     __slots__ = ['__apps_group', '__client', '__dialog', '__dir', '__icon', '__master', '__notifier']
 
     def __init__(self):
-        import gtk.glade
+        import gtk
         import Paths
-        import Signals
-        xml = gtk.glade.XML(Paths.glade, 'preferences')
-        Signals.autoconnect(self, xml)
-        self.__dialog = xml.get_widget('preferences')
+        builder = gtk.Builder()
+        builder.add_from_file(Paths.ui)
+        builder.connect_signals(self)
+        self.__dialog = builder.get_object('preferences')
 
         import gconf
         from GConfDir import GConfDir
@@ -28,14 +28,13 @@ class PreferencesDialog(object):
 
         from MasterNotifier import MasterNotifier
         from WindowIcon import WindowIcon
-        self.__master = xml.get_widget('master')
-        self.__apps_group = xml.get_widget('apps-group')
+        self.__master = builder.get_object('master')
+        self.__apps_group = builder.get_object('apps-group')
         self.__notifier = MasterNotifier(self.__client, self.__master_refresh)
         self.__icon = WindowIcon(self.__client, self.__dialog)
 
-        view = xml.get_widget('applications')
+        view = builder.get_object('applications')
 
-        import gtk
         selection = view.get_selection()
         selection.set_mode(gtk.SELECTION_NONE)
 

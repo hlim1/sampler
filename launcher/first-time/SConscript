@@ -8,15 +8,15 @@ pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 
-glade = env.Template('first-time.glade.in', varlist=['deployment_learn_more_url'])
+ui = env.Template('first-time.ui.in', varlist=['deployment_learn_more_url'])
 script = env.Template('first-time.in', varlist=['commondir', 'first_timedir'])
 service = env.Template('edu.wisc.cs.cbi.FirstTime.service.in', varlist=['first_timedir'])
-Default([glade, script, service])
+Default([ui, script, service])
 
 testPythons(env, pythons)
-Alias('test', env.TestXML(glade))
+Alias('test', env.TestXML(ui, schema=File('../gtk-builder.xsd')))
 
 Alias('install', [
-    env.Install('$DESTDIR$first_timedir', [compiled, glade, script]),
+    env.Install('$DESTDIR$first_timedir', [compiled, ui, script]),
     env.Install('$DESTDIR$servicesdir', service),
     ])

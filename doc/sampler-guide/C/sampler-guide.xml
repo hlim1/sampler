@@ -2,7 +2,7 @@
 <?xml-stylesheet type="text/xsl" href="sampler-guide.xsl"?>
 <!DOCTYPE article
   PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
-  [<!ENTITY % config SYSTEM "../../config.xml"> %config;]>
+  [<!ENTITY % config SYSTEM "../../config.dtd"> %config;]>
 
 <article>
   <articleinfo>

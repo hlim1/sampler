@@ -16,11 +16,11 @@ desktop = env.File('sampler-preferences.desktop')
 testPythons(env, pythons)
 Alias('test', [
     env.TestDesktop(desktop),
-    env.TestXML('preferences.glade'),
+    env.TestXML('preferences.ui', schema=File('../gtk-builder.xsd')),
     ])
 
 Alias('install', [
     env.Install('$DESTDIR$applicationsdir', desktop),
     env.Install('$DESTDIR$bindir', prefs),
-    env.Install('$DESTDIR$preferencesdir', [compiled, 'preferences.glade']),
+    env.Install('$DESTDIR$preferencesdir', [compiled, 'preferences.ui']),
     ])

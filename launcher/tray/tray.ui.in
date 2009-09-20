@@ -91,4 +91,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &#x201C;AS I
       </object>
     </child>
   </object>
+  <object class="GtkStatusIcon" id="status-icon">
+    <signal name="activate" handler="on_status_icon_activate"/>
+    <signal name="popup_menu" handler="on_status_icon_popup_menu"/>
+  </object>
 </interface>

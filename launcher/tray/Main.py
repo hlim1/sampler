@@ -2,14 +2,13 @@ import pygtk
 pygtk.require('2.0')
 
 import gconf
-import gnome
 import gtk
 
 from GConfDir import GConfDir
 from TrayIcon import TrayIcon
 
+import CommandLine
 import Keys
-import SamplerConfig
 import Service
 
 __pychecker__ = 'no-import'
@@ -21,7 +20,7 @@ __pychecker__ = 'no-import'
 def main():
     __pychecker__ = 'unusednames=tray'
 
-    gnome.program_init('tray', SamplerConfig.version)
+    CommandLine.parse()
     unique = Service.unique()
     if not unique: return
 

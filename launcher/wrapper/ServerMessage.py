@@ -1,3 +1,4 @@
+import gtk
 import urlparse
 
 
@@ -13,18 +14,9 @@ class ServerMessage(object):
 
     def __init__(self, base, content_type, body):
         import cgi
-        import gnome
-        import gtk
         import gtkhtml2
-        import sys
         import BlipIcons
-        import SamplerConfig
         import Paths
-
-        argv = sys.argv
-        sys.argv = [sys.argv[0]]
-        gnome.program_init('wrapper', SamplerConfig.version)
-        sys.argv = argv
 
         builder = gtk.Builder()
         builder.add_from_file(Paths.ui)
@@ -71,9 +63,10 @@ class ServerMessage(object):
         document.base = urlparse.urljoin(document.base, base)
 
     def on_link_clicked(self, document, link):
-        import gnome
+        screen = self.__dialog.get_screen()
         full = urlparse.urljoin(document.base, link)
-        gnome.url_show(full)
+        timestamp = gtk.get_current_event_time()
+        gtk.show_uri(screen, full, timestamp)
 
     def on_title_changed(self, document, title):
         document.dialog.set_title(title)

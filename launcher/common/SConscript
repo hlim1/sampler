@@ -4,6 +4,7 @@ env = env.Clone(pixmapsdir=env.subst('$pixmapsdir'))
 Default(env.Template('SamplerConfig.py.in', varlist=['VERSION', 'pixmapsdir']))
 pythons = [
     'BlipIcons.py',
+    'CommandLine.py',
     'GConfDir.py',
     'GConfNotifier.py',
     'Keys.py',

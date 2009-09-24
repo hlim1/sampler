@@ -1,9 +1,7 @@
 import pygtk
 pygtk.require('2.0')
 
-import gnome
-
-import SamplerConfig
+import CommandLine
 import Service
 
 
@@ -11,7 +9,7 @@ import Service
 
 
 def main():
-    gnome.program_init('preferences', SamplerConfig.version)
+    CommandLine.parse()
     unique = Service.unique()
 
     if unique:

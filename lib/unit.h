@@ -39,6 +39,11 @@ static inline void cbi_atomicIncrementCounter(unsigned *counter)
        : "+m" (*counter)
        :
        : "cc");
+#elif __x86_64__
+  asm ("lock incl %0"
+      : "=m" (*counter)
+      : "m" (*counter)
+      : "cc");
 #else
 #error "don't know how to atomically increment on this architecture"
 #endif

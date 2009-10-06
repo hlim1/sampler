@@ -110,6 +110,8 @@ SIGNAL_PRIOR(BUS);
 SIGNAL_PRIOR(FPE);
 SIGNAL_PRIOR(SEGV);
 SIGNAL_PRIOR(TRAP);
+SIGNAL_PRIOR(TERM);
+SIGNAL_PRIOR(INT);
 
 
 static void finalize()
@@ -136,6 +138,8 @@ static void handleSignal(int signum)
       SIGNAL_CASE(FPE);
       SIGNAL_CASE(SEGV);
       SIGNAL_CASE(TRAP);
+      SIGNAL_CASE(TERM);
+      SIGNAL_CASE(INT);
     default:
       prior = &defaultAction;
     }
@@ -169,6 +173,8 @@ void cbi_initializeReport()
 	  SIGNAL_INST(FPE);
 	  SIGNAL_INST(SEGV);
 	  SIGNAL_INST(TRAP);
+    SIGNAL_INST(TERM);
+    SIGNAL_INST(INT);
 	}
     });
 

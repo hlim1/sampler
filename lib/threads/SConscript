@@ -21,7 +21,11 @@ def threadLibs(env, subdir):
     parts = ['countdown', 'hijack', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose', 'wrap_fork' ]
     libs('sampler', parts)
 
-    for when in ['fixed', 'offline', 'online']:
+    randomizers = ['fixed', 'offline', 'online']
+    if subdir == 'no':
+        randomizers.append('always')
+
+    for when in randomizers:
         src = 'random-%s' % when
         libs('sampler-%s' % when, [src])
 

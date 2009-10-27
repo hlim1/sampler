@@ -46,7 +46,7 @@
 %(cpp_blast) \
 %(cpp_threads) \
 %(cpp_timestamps) \
--include sampler/threads/countdown.h%s \
+%{!fno-sample:-include sampler/threads/countdown.h%s} \
 %(cpp_random) \
 %(cpp_schemes)
 
@@ -65,14 +65,16 @@
 %(embedding)
 
 *lib_threads_yes:
+%{fno-sample:-lsampler-always} \
 %{fsampler-random=*:-lsampler-%*_r} \
-%{!fsampler-random=*:-lsampler-online_r} \
+%{!fno-sample:%{!fsampler-random=*:-lsampler-online_r}} \
 -lsampler_r \
 -lpthread
 
 *lib_threads_no:
+%{fno-sample:-lsampler-always} \
 %{fsampler-random=*:-lsampler-%*} \
-%{!fsampler-random=*:-lsampler-online} \
+%{!fno-sample:%{!fsampler-random=*:-lsampler-online}} \
 -lsampler
 
 *link:

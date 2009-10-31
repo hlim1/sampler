@@ -1,8 +1,10 @@
 #ifndef INCLUDE_sampelr_tuple_1_h
 #define INCLUDE_sampelr_tuple_1_h
 
+#include "tuple-bits.h"
 
-typedef unsigned cbi_Tuple1;
+
+typedef cbi_TupleCounter cbi_Tuple1;
 
 void cbi_samplesDump1(unsigned, const cbi_Tuple1 []);
 

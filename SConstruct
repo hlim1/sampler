@@ -52,7 +52,7 @@ def validate_cil_path(key, value, env):
         raise UserError('cannot find CIL libraries; use cil_path option')
 
 
-opts = Variables(None, ARGUMENTS)
+opts = Variables('.scons-config', ARGUMENTS)
 opts.AddVariables(
     BoolVariable('GCONF_SCHEMAS_INSTALL', 'install GConf schemas', True),
     BoolVariable('OCAML_NATIVE', 'compile OCaml to native code', False),
@@ -62,9 +62,11 @@ opts.AddVariables(
     BoolVariable('launcher', 'build client application launcher and related tools', True),
     ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
     ('extra_cflags', 'extra C compiler flags'),
+    EnumVariable('tuple_counter_bits', 'in tuple counters, use unsigned integers of the specified bit-width', 'natural', ['32', '64', 'natural']),
     )
 
 env = Environment(options=opts)
+opts.Save('.scons-config', env)
 
 domainname = getfqdn().split('.', 1)[1]
 if domainname == 'cs.wisc.edu':

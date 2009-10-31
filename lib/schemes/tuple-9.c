@@ -9,9 +9,15 @@ void cbi_samplesDump9(unsigned count, const cbi_Tuple9 tuples[])
 
   for (scan = 0; scan < count; ++scan)
     fprintf(cbi_reportFile,
-	    "%u\t%u\t%u\t"
-	    "%u\t%u\t%u\t"
-	    "%u\t%u\t%u\n",
+	    "%" CBI_TUPLE_COUNTER_FORMAT "\t"
+	    "%" CBI_TUPLE_COUNTER_FORMAT "\t"
+	    "%" CBI_TUPLE_COUNTER_FORMAT "\t"
+	    "%" CBI_TUPLE_COUNTER_FORMAT "\t"
+	    "%" CBI_TUPLE_COUNTER_FORMAT "\t"
+	    "%" CBI_TUPLE_COUNTER_FORMAT "\t"
+	    "%" CBI_TUPLE_COUNTER_FORMAT "\t"
+	    "%" CBI_TUPLE_COUNTER_FORMAT "\t"
+	    "%" CBI_TUPLE_COUNTER_FORMAT "\n",
 	    tuples[scan][0], tuples[scan][1], tuples[scan][2],
 	    tuples[scan][3], tuples[scan][4], tuples[scan][5],
 	    tuples[scan][6], tuples[scan][7], tuples[scan][8]);

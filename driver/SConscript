@@ -40,9 +40,10 @@ asm = env.Template('as.in', varlist=['asm', 'objcopy'])
 cc1 = env.Template('cc1.in', varlist=['cpp0', 'cc1'])
 cc = env.Template('sampler-cc.in', varlist=['PACKAGE', 'prefix', 'exec_prefix', 'libdir', 'pkglibdir', 'driverdir', 'gcc'])
 here = env.Template('sampler-cc-here.in', varlist=['gcc'])
+specs = env.Template('sampler-specs.in', varlist=['tuple_counter_bits'])
 
 Dir('lib')
-Default([asm, cc1, cc, here, 'lib', 'sampler'])
+Default([asm, cc1, cc, here, specs, 'lib', 'sampler'])
 
 
 Alias('install', [

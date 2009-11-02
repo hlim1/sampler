@@ -1,0 +1,51 @@
+Import('env')
+
+
+def checkProgName(context, name):
+    context.Message('checking for %s: ' % name)
+    action = context.env.Action([['$CC', '-print-prog-name=%s' % name, '>', '$TARGET']], varlist=['CC'])
+    (status, command) = context.TryAction(action)
+    if status:
+        command = command.rstrip()
+        command = context.env.WhereIs(command)
+        if command:
+            context.Result(command)
+            return command
+        else:
+            context.Result('(not found)')
+            return ''
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+conf = env.Configure(
+    clean=False, help=False,
+    custom_tests={'CheckProgName': checkProgName})
+
+cpp0 = conf.CheckProgName('cpp0')
+cc1 = conf.CheckProgName('cc1')
+asm = conf.CheckProgName('as')
+objcopy = env.WhereIs('objcopy')
+
+conf.Finish()
+
+
+env = env.Clone(
+    PACKAGE='sampler',
+    gcc=env.WhereIs('gcc'),
+    cpp0=cpp0, cc1=cc1, asm=asm,
+    objcopy=objcopy,
+    )
+
+asm = env.Template('as.in', varlist=['asm', 'objcopy'])
+cc1 = env.Template('cc1.in', varlist=['cpp0', 'cc1'])
+cc = env.Template('sampler-cc', varlist=['PACKAGE', 'prefix', 'exec_prefix', 'libdir', 'pkglibdir', 'driverdir', 'gcc'])
+here = env.Template('sampler-cc-here.in', varlist=['gcc'])
+
+Default([asm, cc1, cc, here, 'lib', 'sampler'])
+
+
+Alias('install', [
+    env.Install('$DESTDIR$bindir', cc),
+    env.Install('$DESTDIR$driverdir', [asm, cc1, 'sampler-specs']),
+    ])

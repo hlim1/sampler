@@ -52,23 +52,14 @@ let extremesSigned bits typ =
 let extremes typ =
   let builder = match typ with
   | TInt (ikind, _) ->
-      begin
-	match ikind with
-	| IChar ->
-	    if !char_is_unsigned then
-	      extremesUnsigned
-	    else
-	      extremesSigned 8
-	| ISChar -> extremesSigned 8
-	| IShort -> extremesSigned 16
-	| IInt | ILong -> extremesSigned 32
-	| ILongLong -> extremesSigned 64
-	| IUChar | IUInt | IUShort | IULong | IULongLong -> extremesUnsigned
-      end
+      if isSigned ikind then
+	extremesSigned (bitsSizeOf typ)
+      else
+	extremesUnsigned
+  | TEnum _ ->
+      extremesSigned (bitsSizeOf typ)
   | TPtr _ ->
       extremesUnsigned
-  | TEnum _ ->
-      extremesSigned 32
   | other ->
       ignore (bug "don't know extreme values of type %a\n" d_type other);
       failwith "internal error"

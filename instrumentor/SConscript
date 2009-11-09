@@ -78,8 +78,6 @@ misc = map(env.OcamlProgram, [
     'dump.ml',
     'dumpConstants.ml',
     'loopless.ml',
-    'pointsToTest.ml',
-    'threadEscapeAnalysis.ml',
 ])
 Default(misc)
 

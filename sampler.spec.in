@@ -204,3 +204,6 @@ echo /usr/lib/rpm/find-debuginfo.sh --strict-build-id /home/liblit/research/samp
 
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+
+%changelog

@@ -140,6 +140,7 @@ env.File([
         'pipe.py',
         'template.py',
         'test.py',
+        'utils.py',
         'xmllint.py',
         ])
 

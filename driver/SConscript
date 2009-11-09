@@ -22,7 +22,6 @@ conf = env.Configure(
     clean=False, help=False,
     custom_tests={'CheckProgName': checkProgName})
 
-cpp0 = conf.CheckProgName('cpp0')
 cc1 = conf.CheckProgName('cc1')
 asm = conf.CheckProgName('as')
 objcopy = env.WhereIs('objcopy')
@@ -32,12 +31,12 @@ conf.Finish()
 
 env = env.Clone(
     PACKAGE='sampler',
-    cpp0=cpp0, cc1=cc1, asm=asm,
+    cc1=cc1, asm=asm,
     objcopy=objcopy,
     )
 
 asm = env.Template('as.in', varlist=['asm', 'objcopy'])
-cc1 = env.Template('cc1.in', varlist=['cpp0', 'cc1'])
+cc1 = env.Template('cc1.in', varlist=['cc1'])
 cc = env.Template('sampler-cc.in', varlist=['PACKAGE', 'prefix', 'exec_prefix', 'libdir', 'pkglibdir', 'driverdir', 'gcc'])
 here = env.Template('sampler-cc-here.in', varlist=['gcc'])
 specs = env.Template('sampler-specs.in', varlist=['tuple_counter_bits'])

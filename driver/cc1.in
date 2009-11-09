@@ -18,7 +18,7 @@ my $input;
 my $instrumentor_input;
 my $instrumentor_output;
 
-my @cpp0 = '@cpp0@' ? ('@cpp0@') : ('@cc1@', '-E', '-quiet');
+my @cpp0 = ('@cc1@', '-E', '-quiet');
 my $cpp0_output_slot;
 
 my @cc1 = ('@cc1@', '-fpreprocessed');

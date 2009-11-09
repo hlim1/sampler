@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.7.2
+
+** Minor updates for Fedora 12.
+
 * sampler-1.7.1
 
 ** Further development of concurrency-bug instrumentation schemes.

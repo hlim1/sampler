@@ -2,9 +2,11 @@ from glob import glob
 from itertools import chain, ifilter, imap
 import re
 
+from utils import instantiate
+
 
 Import('env', 'excludedSources')
-env = env.Clone(OCAML_LIBS=['unix', 'str', 'cil'], OCAML_WARN='Ael',
+env = env.Clone(OCAML_LIBS=['nums', 'unix', 'str', 'cil'], OCAML_WARN='Ael',
                 tools=['expect', 'test'], toolpath=['.'])
 env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml', '$cil_path'])
 
@@ -46,8 +48,8 @@ def libfuncs(target, source, env):
     symbols = chain(*imap(findSymbols, libraries))
     symbols = ['"%s"' % symbol for symbol in symbols ]
 
-    env.Instantiate(
-        source[0], target[0],
+    instantiate(
+        str(source[0]), str(target[0]),
         LIBRARY_FUNCTIONS=';\n'.join(symbols),
         LIBRARY_COUNT=len(symbols),
         )
@@ -76,6 +78,8 @@ misc = map(env.OcamlProgram, [
     'dump.ml',
     'dumpConstants.ml',
     'loopless.ml',
+    'pointsToTest.ml',
+    'threadEscapeAnalysis.ml',
 ])
 Default(misc)
 

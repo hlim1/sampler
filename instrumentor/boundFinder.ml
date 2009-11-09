@@ -57,7 +57,7 @@ let extremes typ =
       else
 	extremesUnsigned
   | TEnum _ ->
-      extremesSigned (bitsSizeOf typ)
+      extremesSigned (bitsSizeOf intType)
   | TPtr _ ->
       extremesUnsigned
   | other ->

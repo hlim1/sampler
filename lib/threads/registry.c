@@ -81,7 +81,7 @@ void cbi_unregisterUnit(struct cbi_Unit *unit)
 		fseek(cbi_reportFile, 0, SEEK_END);
 		fputs( "<report id=\"samples\">\n", cbi_reportFile);
 		unit->reporter();
-		fputs("</report> \n", cbi_reportFile);
+		fputs("</report>\n", cbi_reportFile);
 		fflush(cbi_reportFile);
 		unlockReportFile(); /*cci*/
 	      }

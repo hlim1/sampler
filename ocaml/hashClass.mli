@@ -10,6 +10,7 @@ class type ['key, 'value] t =
     method findAll : 'key -> 'value list
     method mem : 'key -> bool
     method empty : bool
+    method length : int
 
     method iter : ('key -> 'value -> unit) -> unit
     method fold : ('key -> 'value -> 'result -> 'result) -> 'result -> 'result

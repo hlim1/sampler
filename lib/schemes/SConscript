@@ -1,9 +1,8 @@
 Import('env')
 env = env.Clone()
-env.AppendUnique(
-    CPPDEFINES={'CBI_TUPLE_COUNTER_BITS': '$tuple_counter_bits'},
-    LIBPREFIX='${LIBPREFIX}sampler-',
-    )
+env.AppendUnique(LIBPREFIX='${LIBPREFIX}sampler-')
+if env['tuple_counter_bits'] != 'natural':
+    env.AppendUnique(CPPDEFINES={'CBI_TUPLE_COUNTER_BITS': '$tuple_counter_bits'})
 
 sources = [
     'samples.c',

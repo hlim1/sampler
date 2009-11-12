@@ -39,7 +39,13 @@ asm = env.Template('as.in', varlist=['asm', 'objcopy'])
 cc1 = env.Template('cc1.in', varlist=['cc1'])
 cc = env.Template('sampler-cc.in', varlist=['PACKAGE', 'prefix', 'exec_prefix', 'libdir', 'pkglibdir', 'driverdir', 'gcc'])
 here = env.Template('sampler-cc-here.in', varlist=['gcc'])
-specs = env.Template('sampler-specs.in', varlist=['tuple_counter_bits'])
+
+key = 'cpp_tuple_counter_bits_default'
+if env['tuple_counter_bits'] == 'natural':
+    env[key] = ''
+else:
+    env[key] = '-DCBI_TUPLE_COUNTER_BITS=$tuple_counter_bits'
+specs = env.Template('sampler-specs.in', varlist=[key])
 
 Dir('lib')
 Default([asm, cc1, cc, here, specs, 'lib', 'sampler'])

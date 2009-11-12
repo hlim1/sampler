@@ -42,7 +42,7 @@
 %{fadd-blast-markers:-include sampler/blast-markers.h%s}
 
 *cpp_tuple_counter_bits:
-%{!DCBI_TUPLE_COUNTER_BITS=*:-DCBI_TUPLE_COUNTER_BITS=@tuple_counter_bits@}
+@cpp_tuple_counter_bits_default@
 
 *cpp:
 + -DCIL \

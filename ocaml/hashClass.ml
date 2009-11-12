@@ -1,14 +1,6 @@
 exception Not_empty
 
 
-let checkEmpty table =
-  try
-    table#iter (fun _ -> raise Not_empty);
-    true
-  with
-    Not_empty -> false
-
-
 class type ['key, 'value] t =
   object ('self)
     method copy : 'self
@@ -21,6 +13,7 @@ class type ['key, 'value] t =
     method findAll : 'key -> 'value list
     method mem : 'key -> bool
     method empty : bool
+    method length : int
 
     method iter : ('key -> 'value -> unit) -> unit
     method fold : ('key -> 'value -> 'result -> 'result) -> 'result -> 'result
@@ -47,7 +40,9 @@ class ['key, 'value] c initial =
 
     method mem = Hashtbl.mem storage
 
-    method empty = checkEmpty self
+    method empty = self#length == 0
+
+    method length = Hashtbl.length storage
 
     method iter visitor = Hashtbl.iter visitor storage
 
@@ -71,7 +66,7 @@ module Make (Key : Hashtbl.HashedType) = struct
   type key = Hash.key
 
   class ['value] c initial =
-    object (self)
+    object
       val storage : 'value Hash.t = Hash.create initial
 
       method copy =
@@ -89,7 +84,9 @@ module Make (Key : Hashtbl.HashedType) = struct
 
       method mem = Hash.mem storage
 
-      method empty = checkEmpty self
+      method empty = Hash.length storage == 0
+
+      method length = Hash.length storage
 
       method iter visitor = Hash.iter visitor storage
 

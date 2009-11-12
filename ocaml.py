@@ -97,7 +97,7 @@ def __obj_suffix(env, sources):
     return result
 
 
-__obj_action = Action([['$_OCAMLC', '$_OCAML_DEBUG', '$_OCAML_DTYPES', '$_OCAML_PATH', '$_OCAML_PP', '$_OCAML_WARN', '$_OCAML_WARN_ERROR', '-o', '$TARGET', '-c', '$SOURCE']])
+__obj_action = Action([['$_OCAMLC', '$_OCAML_DEBUG', '$_OCAML_PATH', '$_OCAML_DTYPES', '$_OCAML_PP', '$_OCAML_WARN', '$_OCAML_WARN_ERROR', '-o', '$TARGET', '-c', '$SOURCE']])
 
 
 __obj_builder = Builder(
@@ -131,7 +131,7 @@ def __lib_emitter(target, source, env):
     return target, source
 
 
-__lib_action = Action([['$_OCAMLC', '-a', '$_OCAML_WARN', '$_OCAML_WARN_ERROR', '-o', '$TARGET', '$SOURCES']])
+__lib_action = Action([['$_OCAMLC', '$_OCAML_DEBUG', '-a', '$_OCAML_WARN', '$_OCAML_WARN_ERROR', '-o', '$TARGET', '$SOURCES']])
 
 
 __lib_builder = Builder(
@@ -208,7 +208,7 @@ __exe_target_scanner = Scanner(
     )
 
 
-__exe_action = Action([['$_OCAMLC', '$_OCAML_PATH', '-o', '$TARGET', '$_OCAML_LIBS', '$_OCAML_LINK_ORDER']])
+__exe_action = Action([['$_OCAMLC', '$_OCAML_DEBUG', '$_OCAML_PATH', '-o', '$TARGET', '$_OCAML_LIBS', '$_OCAML_LINK_ORDER']])
 
 
 __exe_builder = Builder(

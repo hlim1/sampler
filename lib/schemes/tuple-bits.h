@@ -3,25 +3,25 @@
 
 
 #ifndef CBI_TUPLE_COUNTER_BITS
-#define CBI_TUPLE_COUNTER_BITS natural
-#endif
-
-#if CBI_TUPLE_COUNTER_BITS == natural
 typedef unsigned cbi_TupleCounter;
 #define CBI_TUPLE_COUNTER_FORMAT "u"
-#endif // CBI_TUPLE_COUNTER_BITS == natural
+#define CBI_TUPLE_COUNTER_X86_INC_OPERAND_SUFFIX "l"
 
-#if CBI_TUPLE_COUNTER_BITS == 32
+#elif CBI_TUPLE_COUNTER_BITS == 32
 #include <inttypes.h>
 typedef uint32_t cbi_TupleCounter;
 #define CBI_TUPLE_COUNTER_FORMAT PRIu32
-#endif // CBI_TUPLE_COUNTER_BITS == 32
+#define CBI_TUPLE_COUNTER_X86_INC_OPERAND_SUFFIX "l"
 
-#if CBI_TUPLE_COUNTER_BITS == 64
+#elif CBI_TUPLE_COUNTER_BITS == 64
 #include <inttypes.h>
 typedef uint64_t cbi_TupleCounter;
 #define CBI_TUPLE_COUNTER_FORMAT PRIu64
-#endif // CBI_TUPLE_COUNTER_BITS == 64
+#define CBI_TUPLE_COUNTER_X86_INC_OPERAND_SUFFIX "q"
+
+#else
+#error "unexpected value for CBI_TUPLE_COUNTER_BITS; should defined as 32 or 64 or left undefined"
+#endif
 
 
 #endif /* !INCLUDE_sampler_tuple_bits_h */

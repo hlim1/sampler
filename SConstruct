@@ -56,6 +56,7 @@ opts = Variables('.scons-config', ARGUMENTS)
 opts.AddVariables(
     BoolVariable('GCONF_SCHEMAS_INSTALL', 'install GConf schemas', True),
     BoolVariable('OCAML_NATIVE', 'compile OCaml to native code', False),
+    BoolVariable('debug', 'compile for debugging', False),
     PathVariable('prefix', 'install in the given directory', '/usr/local'),
     PathVariable('DESTDIR', 'extra installation directory prefix', '/'),
     PathVariable('gcc', 'path to native GCC C compiler', None, validate_gcc_path),
@@ -88,7 +89,10 @@ env.SetDefault(gcc=env.WhereIs('gcc'))
 env = env.Clone(
     tools=['default', 'ocaml', 'template', 'test', 'xmllint'], toolpath=['.'],
     CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
-    OCAML_DTYPES=True, OCAML_WARN='A', OCAML_WARN_ERROR='A',
+    OCAML_DEBUG=env['debug'],
+    OCAML_DTYPES=True,
+    OCAML_WARN='A',
+    OCAML_WARN_ERROR='A',
     PERL=env.WhereIs('perl'),
 
     PACKAGE='sampler',

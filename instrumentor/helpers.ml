@@ -3,14 +3,16 @@ open Ptranal
 open Dynamic
 (* cci *)
 
-
 let is_bitfield lval =
   let (_, offset) = lval in
-  match offset with
-    Field(finfo,_) -> (finfo.fname = Cil.missingFieldName) || (match finfo.fbitfield with Some(_) -> true | _-> false)
-  
-  | _-> false 
-
+  let rec is_bitfield_offset_check offset=
+    match offset with
+      Field(finfo,offsetn) -> (finfo.fname = Cil.missingFieldName) ||
+                              (match finfo.fbitfield with Some(_) -> true | _-> false) ||
+                              is_bitfield_offset_check offsetn
+      | _-> false
+    in
+  is_bitfield_offset_check offset
 
 let scrub_filename str =
   let new_str = ref "" in

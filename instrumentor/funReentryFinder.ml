@@ -12,18 +12,16 @@ class visitor file =
 
       method vfunc func =
         if self#includedFunction func && self#includedFile func.svar.vdecl.file then
-          begin
-            let body = func.sbody in
-            let cci_inc_counter_func = Lval (var (FindFunction.find "cci_atomicIncrementCounter" file)) in
-            let predTemp = var (findOrCreate_global file ((func.svar.vname)^"_entry_counter_"^(get_prefix_file file))) in
-            let cci_inc_counter_call = mkStmtOneInstr(Call (None, cci_inc_counter_func,[mkAddrOrStartOf predTemp], func.svar.vdecl)) in
-            let predLval = Lval predTemp in
-            let selector = BinOp (Ne, predLval, one, intType) in
-	    let siteInfo = new FuncSiteInfo.c func func.svar.vdecl in
-	    let bump, _ = tuples#addSiteExpr siteInfo selector in
-            body.bstmts <- cci_inc_counter_call :: bump :: body.bstmts;
-            DoChildren
-	  end
+          let body = func.sbody in
+          let cci_inc_counter_func = Lval (var (FindFunction.find "cci_atomicIncrementCounter" file)) in
+          let predTemp = var (findOrCreate_global file ((func.svar.vname)^"_entry_counter_"^(get_prefix_file file))) in
+          let cci_inc_counter_call = mkStmtOneInstr(Call (None, cci_inc_counter_func,[mkAddrOrStartOf predTemp], func.svar.vdecl)) in
+          let predLval = Lval predTemp in
+          let selector = BinOp (Ne, predLval, one, intType) in
+	  let siteInfo = new FuncSiteInfo.c func func.svar.vdecl in
+	  let bump, _ = tuples#addSiteExpr siteInfo selector in
+          body.bstmts <- cci_inc_counter_call :: bump :: body.bstmts;
+          DoChildren
         else
 	  SkipChildren
 

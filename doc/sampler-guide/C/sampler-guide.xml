@@ -1063,7 +1063,8 @@
 	    <itemizedlist>
 	      <listitem>
 		<para><option>atoms</option></para>
-		<orderedlist continuation="continues">
+		<orderedlist>
+		  <?dbhtml start="5"?>
 		  <listitem>
 		    <para>the lvalue which may access shared, mutable memory</para>
 		  </listitem>
@@ -1089,7 +1090,8 @@
 	      </listitem>
 	      <listitem>
 		<para><option>bounds</option></para>
-		<orderedlist continuation="continues">
+		<orderedlist>
+		  <?dbhtml start="5"?>
 		  <listitem>
 		    <para>the left hand side of the instrumented assignment</para>
 		  </listitem>

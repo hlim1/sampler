@@ -1,6 +1,0 @@
-importer_type_page_new	15
-import_bonobo_config	570
-e_shortcuts_rename_group	48
-get_skel_small_GNOME_Evolution_WombatInterfaceCheck	299
-e_shell_request_close_view	5
-e_storage_supports_shared_folders	0

@@ -1,2 +1,0 @@
-home = '@preferencesdir@'
-glade = home + '/preferences.glade'

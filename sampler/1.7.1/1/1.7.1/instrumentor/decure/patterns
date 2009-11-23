@@ -1,7 +1,0 @@
--*- outline -*-
-
-* CHECK_RETURNPTR is a macro, not a function
-
-* CHECK_UNREGISTERFRAME is a macro, not a function
-** but apparently not a check in the sense we want
-

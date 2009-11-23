@@ -1,5 +1,0 @@
-*cpp:
-+ -include daikon.h
-
-*lib:
-+ -ldaikon

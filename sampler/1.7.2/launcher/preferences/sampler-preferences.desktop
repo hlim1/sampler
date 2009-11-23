@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=Bug Isolation
-Comment=Change feedback settings for the Bug Isolation Project
-Icon=sampler
-Exec=sampler-preferences
-Terminal=false
-StartupNotify=true
-Type=Application
-Categories=GTK;GNOME;Settings;X-GNOME-SystemSettings;

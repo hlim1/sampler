@@ -7,6 +7,7 @@ class manager : SchemeName.t -> file ->
 
     method addSiteOffset : SiteInfo.c -> offset -> (stmt * int)
     (* cci *)
+    method addSiteStmts : SiteInfo.c -> stmt list-> stmt
     method addSiteInstrs : SiteInfo.c -> instr list-> stmt
     method addExpr : exp -> (instr * int)
     method addExpr2 : exp -> exp -> (instr list * int)

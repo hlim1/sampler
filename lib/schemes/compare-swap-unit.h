@@ -33,7 +33,7 @@ static inline void cbi_compareSwap_yield()
 }
 
 
-
+/*
 #pragma cilnoremove("cbi_compareSwap_sampling_on")
 #pragma sampler_exclude_function("cbi_compareSwap_sampling_on")
 #pragma sampler_assume_weightless("cbi_compareSwap_sampling_on")
@@ -58,7 +58,26 @@ static inline void cbi_compareSwap_sampling_off()
   else
     cbi_compareSwapCounter++;
 }
+*/
 
+#pragma cilnoremove("cbi_compareSwap_sampling_count")
+#pragma sampler_exclude_function("cbi_compareSwap_sampling_count")
+#pragma sampler_assume_weightless("cbi_compareSwap_sampling_count")
+static inline void cbi_compareSwap_sampling_count()
+{
+  if (cbi_compareSwapSampling == 0) {
+    cbi_compareSwapSampling = 1;
+    cbi_compareSwapCounter = 0;
+  }
+  else if (cbi_compareSwapCounter > 99)
+    {
+      cbi_compareSwapSampling = 0;
+      cbi_compareSwapCounter = 0;
+      cbi_dict_clear();
+    }
+  else
+    cbi_compareSwapCounter++;
+}
 
 #pragma cilnoremove("cbi_dict_lookup")
 #pragma sampler_exclude_function("cbi_dict_lookup")

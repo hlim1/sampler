@@ -30,6 +30,19 @@ class manager name file =
     method addExprId selector id =
       self#addOffsetId (Index (selector, NoOffset)) id
 
+   (*cci-cmpwap*)
+   (* siteInfo: site information *)
+   (* set of statements which are to be sampled*)
+
+    method addSiteStmts siteInfo statements =
+      let func = siteInfo#fundec in
+      let implementation = siteInfo#implementation in
+      implementation.skind <- Block (mkBlock (statements));
+      Sites.registry#add func (Site.build implementation);
+      siteInfos#push siteInfo;
+      siteInfos#push siteInfo;
+      implementation
+
    (*cci*)
    (* siteInfo: site information *)
    (* set of instructions which are to be sampled*)

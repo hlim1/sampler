@@ -30,6 +30,12 @@ void cbi_compareSwapReport(const cbi_UnitSignature signature,
 #include<assert.h>
 typedef unsigned long int ulint;
 
+/*typedef union
+{
+  unsigned long int iValue;
+  double fValue;
+} unionValue;*/
+
 
 #define hashsize(n) ((unsigned int)1<<(n))
 #define hashmask(n) (hashsize(n)-1)

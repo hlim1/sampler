@@ -33,6 +33,7 @@ let findReset file = Lval (var (FindFunction.find "cbi_getNextEventCountdown" fi
 let find file = (findGlobal file, findReset file)
 
 
+
 class countdown file =
   let global = findGlobal file in
   let globalType = global.vtype in
@@ -52,6 +53,8 @@ class countdown file =
       else
 	global
     in
+
+    let comparesampling = var (FindGlobal.find "cbi_compareSwapSampling" file) in
 
     object (self)
       val emptyRegionCount = ref 0
@@ -89,7 +92,10 @@ class countdown file =
 	| _ ->
 	    incr otherRegionCount;
 	    let within = kinteger globalIntKind weight.threshold in
-	    let predicate = BinOp (Gt, Lval local, within, intType) in
+	    let predicate = BinOp (LAnd,
+                                   BinOp (Gt, Lval local, within, intType),
+                                   BinOp (Eq, Lval comparesampling, zero, intType),
+                                   intType) in
 	    let choice = If (predicate,
 			     mkBlock [mkStmt gotoOriginal],
 			     mkBlock [mkStmt gotoInstrumented],
@@ -100,7 +106,10 @@ class countdown file =
 	let location = get_stmtLoc skind in
 	let callReset = mkStmtOneInstr (Call (Some local, reset, [], location)) in
 	Block (mkBlock [ mkStmt (self#decrement location scale);
-			 mkStmt (If (BinOp (Le, Lval local, zero, intType),
+			 mkStmt (If (BinOp (LOr,
+                                            BinOp (Le, Lval local, zero, intType),
+                                            BinOp (Eq, Lval comparesampling, one, intType),
+                                            intType),
 				     mkBlock [ mkStmt skind; callReset ],
 				     mkBlock [],
 				     location)) ])

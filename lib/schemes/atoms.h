@@ -8,7 +8,7 @@
 
 extern int cbi_atomsSampling;
 extern int cbi_atomsGlobalCounter;
-extern __thread int cbi_atomsInitiator;
+extern int cbi_atomsInitiatorID;
 extern __thread int cbi_atomsThreadCounter;
 
 extern pthread_mutex_t cbi_atomsLock;

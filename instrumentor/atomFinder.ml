@@ -1,5 +1,6 @@
 open Cil
 open Helpers
+open Interesting
 
 let postpatch replacement statement =
   statement.skind <- replacement;
@@ -34,7 +35,7 @@ class visitor file =
 	  when self#includedStatement stmt ->
 	    begin
 	      match SharedAccesses.isolated instr with
-	      | Some lval when not (is_bitfield lval) ->
+	      | Some lval when ((not (is_bitfield lval)) && (isDiscreteType (typeOfLval lval))) ->
 		  let siteInfo =
 		    let accessType =
 		      if left == lval then
@@ -104,12 +105,12 @@ class visitor file =
 	    end;
 	    SkipChildren
 
-	| Return _
+(*	| Return _
 	  when self#includedStatement stmt  ->
 	    let reset_stmt = Call (None, sampling_off_func, [], !currentLoc) in
 	    self#queueInstr [reset_stmt];
 	    SkipChildren
-
+*)
 	| _ ->
 	    DoChildren
 

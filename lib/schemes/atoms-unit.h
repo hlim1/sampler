@@ -66,7 +66,7 @@ static inline void cbi_atoms_unlock()
 static inline void cbi_atoms_sampling_on()
 {
   cbi_atomsSampling = 1;
-  cbi_atomsInitiator = 1;
+  cbi_atomsInitiatorID = pthread_self();
   cbi_atomsGlobalCounter = 0;
   cbi_atomsThreadCounter = 0;
 }
@@ -77,15 +77,15 @@ static inline void cbi_atoms_sampling_on()
 #pragma sampler_assume_weightless("cbi_atoms_sampling_off")
 static inline void cbi_atoms_sampling_off()
 {
-  if ( (cbi_atomsInitiator && cbi_atomsThreadCounter > 99) || cbi_atomsGlobalCounter > 59999 )
+  if ( (cbi_atomsThreadCounter > 99 && cbi_atomsInitiatorID == pthread_self()) || cbi_atomsGlobalCounter > 59999 )
     {
       cbi_atomsSampling = 0;
-      cbi_atomsInitiator = 0;
+      cbi_atomsInitiatorID = 0;
       cbi_atomsGlobalCounter = 0;
       cbi_atomsThreadCounter = 0;
       cbi_dict_clear();
     }
-  else if (cbi_atomsInitiator)
+  else if (cbi_atomsInitiatorID == pthread_self())
     {
       cbi_atomsThreadCounter++;
     }

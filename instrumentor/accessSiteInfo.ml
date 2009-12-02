@@ -19,7 +19,9 @@ class c func inspiration (lval : lval) access =
       let prevStyle = !lineDirectiveStyle in
       lineDirectiveStyle := None;
       let result = super#print @
-	[dd_exp () lval_expr; text (accessName access)]
+        [dd_exp () lval_expr; text (accessName access)]
+        (*the following make it compatable with the current analysis tool*)
+	(*[concat (concat (dd_exp () lval_expr) (text ":")) (text (accessName access))]*)
       in
       lineDirectiveStyle := prevStyle;
       result

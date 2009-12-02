@@ -6,6 +6,7 @@
 
 int cbi_atomsSampling;
 int cbi_atomsGlobalCounter;
+int cbi_atomsInitiatorID;
 __thread int cbi_atomsInitiator;
 __thread int cbi_atomsThreadCounter;
 

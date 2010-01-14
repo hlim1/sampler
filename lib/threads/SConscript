@@ -35,6 +35,7 @@ def threadLibs(env, subdir):
 Import('env')
 
 headers = [
+    'atomic-increment.h',
     'countdown.h',
     'local.h',
     'random-fixed.h',

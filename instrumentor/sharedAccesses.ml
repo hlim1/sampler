@@ -25,9 +25,6 @@ let isSharedAccess (lhost, _ as lval) =
   else
     (* mutable storage, but is it shared? *)
     match lhost with
-    | Var { vglob = false; vaddrof = false } ->
-	(* locals whose address is never taken are unshared *)
-	false
     | Var { vglob = true; vattr = vattr } ->
 	(* global storage is shared, but thread-local storage is unshared *)
 	not (hasAttribute "thread" vattr)

@@ -5,11 +5,11 @@ class visitor =
   object (self)
     inherit FunctionBodyVisitor.visitor
 
-    method private includedFile =
+    method private includedLocation =
       FileFilter.filter#included
 
     method private includedStatement stmt =
-      self#includedFile (get_stmtLoc stmt.skind).file
+      self#includedLocation (get_stmtLoc stmt.skind)
 
     method private includedFunction func =
       FunctionFilter.filter#included func.svar.vname

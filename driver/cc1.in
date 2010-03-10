@@ -185,7 +185,7 @@ while (@ARGV) {
 	    push @inst, "--scheme-$1";
 	} elsif (/^-fsampler-scales=(.*)/) {
 	    push @inst, '--load-scales', $1;
-	} elsif (/^-f((in|ex)clude-(file|function))=(.*)/) {
+	} elsif (/^-f((in|ex)clude-(file|function|location))=(.*)/) {
 	    push @inst, "--$1", $4;
 	} elsif (/^-fsampler-random=/) {
 	    ;

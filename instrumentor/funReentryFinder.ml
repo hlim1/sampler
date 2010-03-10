@@ -11,7 +11,7 @@ class visitor file =
       inherit SiteFinder.visitor
 
       method vfunc func =
-        if self#includedFunction func && self#includedFile func.svar.vdecl.file then
+        if self#includedFunction func && self#includedLocation func.svar.vdecl then
           let body = func.sbody in
           let cci_inc_counter_func = Lval (var (FindFunction.find "cci_atomicIncrementCounter" file)) in
           let predTemp = var (findOrCreate_global file ((func.svar.vname)^"_entry_counter_"^(get_prefix_file file))) in

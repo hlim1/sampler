@@ -401,26 +401,37 @@
 	<term><option>--include-file=<literal>*</literal></option></term>
 	<term><option>--exclude-file=<filename><replaceable>filename</replaceable></filename></option></term>
 	<term><option>--exclude-file=<literal>*</literal></option></term>
+	<term><option>--include-location=<filename><replaceable>filename</replaceable></filename>:<replaceable>line-number</replaceable></option></term>
+	<term><option>--include-location=<literal>*</literal>:<replaceable>line-number</replaceable></option></term>
+	<term><option>--exclude-location=<filename><replaceable>filename</replaceable></filename>:<replaceable>line-number</replaceable></option></term>
+	<term><option>--exclude-location=<literal>*</literal>:<replaceable>line-number</replaceable></option></term>
 	<listitem>
-	  <para>File filtering.  Each of these flags takes one
-	  mandatory argument which can be the name of a source file
-	  or the special wildcard <literal>*</literal> which names
-	  every file.  These flags can be given multiple times,
-	  creating an ordered include/exclude list.  Each potential
-	  instrumentation point is checked against this list, using
-	  the name of the source file containing that point.  The
-	  first match determines whether that instrumentation point
-	  should be retained or discarded.</para>
+	  <para>File name and line number filtering.  Each of these
+	  flags takes one mandatory argument which can be the name of
+	  a source file or the special wildcard <literal>*</literal>
+	  which names every file.  For the location-based flags, the
+	  filename argument must be followed by a colon
+	  (<literal>:</literal>) and a decimal line number.  Line
+	  numbers may not be given as <literal>*</literal>; to match
+	  all lines in a file, use the file-based flags rather than
+	  the location-based flags.</para>
 
-	  <para>Included and excluded file names are checked against
-	  names as seen by the compiler.  These will tend to be
-	  simple file names for source files given on the command
-	  line, but may be relative or absolute path names for
-	  header files pulled in by the preprocessor.  File names
-	  must match exactly to be considered.  In some cases it may
-	  be necessary to examine the preprocessor output to learn
-	  what file name the compiler is seeing for a given fragment
-	  of code.</para>
+	  <para>These flags can be given multiple times, creating an
+	  ordered include/exclude list.  Each potential
+	  instrumentation point is checked against this list, using
+	  the source location (file name and line number) containing
+	  that point.  The first match determines whether that
+	  instrumentation point should be retained or
+	  discarded.</para>
+
+	  <para>Included and excluded locations are checked against
+	  names as seen by the compiler.  These will tend to be simple
+	  file names for source files given on the command line, but
+	  may be relative or absolute path names for header files
+	  pulled in by the preprocessor.  File names must match
+	  exactly to be considered.  In some cases it may be necessary
+	  to examine the preprocessor output to learn what file name
+	  the compiler is seeing for a given fragment of code.</para>
 
 	  <para>Note that checks are done using the name of the file
 	  actually containing the potential instrumentation point.

@@ -12,8 +12,8 @@ let compareToConstants =
     ~default:false
 
 
-let checkFileFilter {file = file} =
-  if FileFilter.filter#included file then
+let checkFileFilter location =
+  if FileFilter.filter#included location then
     DoChildren
   else
     SkipChildren
@@ -39,7 +39,7 @@ class visitor collection =
 	SkipChildren
 
     method vexpr exp =
-      if FileFilter.filter#included !currentLoc.file then
+      if FileFilter.filter#included !currentLoc then
 	begin
 	  match isInteger (constFold true exp) with
 	  | Some constant ->

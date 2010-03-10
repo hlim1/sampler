@@ -6,7 +6,7 @@ class visitor =
     inherit FunctionBodyVisitor.visitor
 
     method private includedLocation =
-      FileFilter.filter#included
+      LocationFilter.filter#included
 
     method private includedStatement stmt =
       self#includedLocation (get_stmtLoc stmt.skind)

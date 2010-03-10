@@ -12,8 +12,8 @@ let compareToConstants =
     ~default:false
 
 
-let checkFileFilter location =
-  if FileFilter.filter#included location then
+let checkLocationFilter location =
+  if LocationFilter.filter#included location then
     DoChildren
   else
     SkipChildren
@@ -27,10 +27,10 @@ class visitor collection =
       | GEnumTag _ ->
 	  SkipChildren
       | other ->
-	  checkFileFilter (get_globalLoc other)
+	  checkLocationFilter (get_globalLoc other)
 
     method vstmt stmt =
-      checkFileFilter (get_stmtLoc stmt.skind)
+      checkLocationFilter (get_stmtLoc stmt.skind)
 
     method vfunc fundec =
       if FunctionFilter.filter#included fundec.svar.vname then
@@ -39,7 +39,7 @@ class visitor collection =
 	SkipChildren
 
     method vexpr exp =
-      if FileFilter.filter#included !currentLoc then
+      if LocationFilter.filter#included !currentLoc then
 	begin
 	  match isInteger (constFold true exp) with
 	  | Some constant ->

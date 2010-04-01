@@ -1,18 +1,28 @@
-#!/usr/bin/perl -w
+#!/usr/bin/python -O
 
-use strict;
+from sys import argv, stderr, stdin
 
-@ARGV == 1 or die "Usage: $0 <report-id>\n";
-my $target = shift;
-my $found;
 
-while (<STDIN>) {
-    next unless $_ eq "<report id=\"$target\">\n";
-    $found = 1;
-    while (<STDIN>) {
-	last if $_ eq "</report>\n";
-	print $_;
-    }
-}
+def main():
+    if len(argv) != 2:
+        print >>stderr, 'Usage; %s <report-id>' % argv[0]
+        exit(2)
 
-exit !$found;
+    found = False
+    [target] = argv[1:]
+    report_begin = '<report id="%s">\n' % target
+    report_end = '</report>\n'
+
+    for line in stdin:
+        if line == report_begin:
+            found = True
+            for line in stdin:
+                if line == report_end:
+                    break
+                print line,
+
+    exit(not found)
+
+
+if __name__ == '__main__':
+    main()

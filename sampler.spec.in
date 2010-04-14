@@ -17,9 +17,11 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: /usr/bin/camlp4o.opt
 BuildRequires: binutils
 BuildRequires: dbus-devel
+BuildRequires: docbook-style-xsl
 BuildRequires: flex
 BuildRequires: gcc
-Buildrequires: gsl-devel
+BuildRequires: glib2-devel
+BuildRequires: gsl-devel
 BuildRequires: lsb
 BuildRequires: ocaml
 BuildRequires: ocaml-cil-devel >= 1.3.6

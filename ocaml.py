@@ -152,6 +152,8 @@ def __exe_depends(node, env):
     src_suffix = __object_to_source[obj_suffix]
     source = node.target_from_source('', src_suffix)
     cmis = ( cmi for cmi in node.children() if cmi != source )
+    top = env.Dir('#.')
+    cmis = ( cmi for cmi in cmis if cmi.is_under(top) )
     cmos = ( cmi.target_from_source('', obj_suffix) for cmi in cmis )
     cmos = ( env.FindFile(str(cmo), '#.') for cmo in cmos )
     cmos = ifilter(None, cmos)

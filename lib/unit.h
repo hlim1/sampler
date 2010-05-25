@@ -32,6 +32,7 @@ static void cbi_destructor()
 
 #ifdef CBI_THREADS
 #include "threads/atomic-increment.h"
+#pragma sampler_exclude_function("__pthread_cleanup_routine")
 #endif /* CBI_THREADS */
 
 

@@ -1338,6 +1338,22 @@
 			    with a compile-time constant</para>
 			  </listitem>
 			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>local-init</computeroutput></term>
+			  <listitem>
+			    <para>site is comparing the assigned value
+			    with a named local variable whose value is
+			    definitely initialized at that site </para>
+			  </listitem>
+			</varlistentry>
+			<varlistentry>
+			  <term><computeroutput>local-uninit</computeroutput></term>
+			  <listitem>
+			    <para>site is comparing the assigned value
+			    with a named local variable whose value is
+			    possibly uninitialized at that site </para>
+			  </listitem>
+			</varlistentry>
 		      </variablelist>
 		    </para>
 		  </listitem>

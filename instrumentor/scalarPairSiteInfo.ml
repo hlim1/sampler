@@ -3,7 +3,7 @@ open Pretty
 
 
 type left = lval * string * string
-type right = Constant of exp | Variable of varinfo
+type right = Constant of exp | Variable of varinfo * bool
 
 
 class c func inspiration left right =
@@ -20,8 +20,14 @@ class c func inspiration left right =
 	match right with
 	| Constant expr ->
 	    (d_exp () expr, "const")
-	| Variable varinfo ->
-	    let scope = if varinfo.vglob then "global" else "local" in
+	| Variable (varinfo, mustInit) ->
+        let scope = if varinfo.vglob then
+                      "global"
+                    else if mustInit then
+                      "local-init"
+                    else
+                      "local-uninit"
+        in
 	    (text varinfo.vname, scope)
       in
       let rightKind = text rightKind in

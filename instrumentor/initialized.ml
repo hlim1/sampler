@@ -1,5 +1,6 @@
 open Cil
 open Dataflow
+open Reachingdefs
 open Pretty
 
 
@@ -104,6 +105,65 @@ module Transfer =
 (* dataflow analysis for finding uninitialized variables *)
 module DataFlow = ForwardsDataFlow (Transfer)
 
+module VarInitsDFA =
+  struct
+    let whitelist = Inthash.create 32
+    let debug = false (* turn on to print output of Reachingdefs *)
+
+    (* Pretty print the reaching definition data for a function *)
+    let myppFdec () fdec =
+      seq line
+        (fun stm ->
+          let ivih = Inthash.find ReachingDef.stmtStartData stm.sid in
+          Pretty.dprintf "\n============== Statement %d ===============\n%a\n==== Reaching Defs ====\n%a\n"
+                         stm.sid
+                         d_stmt stm
+                         ReachingDef.pretty ivih)
+       fdec.sbody.bstmts
+
+    let analyze func vars =
+      (* extreme pointer conservatism: if address is *ever* taken,
+       * assume var is always initialized *)
+      Inthash.clear whitelist;
+      let iterator var =
+          if var.vaddrof then Inthash.add whitelist var.vid var.vname
+      in
+      List.iter iterator vars;
+
+      Reachingdefs.computeRDs func;
+      if debug then
+        let varRepr _ =
+          text "==== Var IDs ====\n" ++
+          seq line (fun var -> Pretty.dprintf "%d %s" var.vid var.vname) vars
+        in
+        ignore(Pretty.eprintf "%t\n%a\n" varRepr myppFdec func)
+
+    let possiblyInit stmt =
+      (* A variable is possibly initialized if
+          * it's address is taken (i.e. present in waitlist) or
+          * some definiton of that variable reaches this stmt. *)
+      match getRDs stmt.sid with
+      | None -> fun var -> Inthash.mem whitelist var.vid
+      | Some (_, _, iosh) ->
+        fun var ->
+          if Inthash.mem iosh var.vid then
+            (IOS.max_elt (Inthash.find iosh var.vid) != None)
+          else
+            Inthash.mem whitelist var.vid
+
+    let possiblyUnInit stmt =
+      (* A variable is possibly uninitialized if None is in the
+       * reaching definition of that variable *)
+      match getRDs stmt.sid with
+      | None -> fun _ -> true
+      | Some (_, _, iosh) ->
+        fun var ->
+          if Inthash.mem iosh var.vid then
+            (IOS.mem None (Inthash.find iosh var.vid))
+          else
+            false
+
+  end
 
 
 (* perform a new analysis, destroying any previous results in the process *)
@@ -114,9 +174,9 @@ let analyze func vars =
     let folder vars var =
       (* extreme pointer conservatism: if address is *ever* taken, assume var is already initialized *)
       if var.vaddrof then
-	vars
+        vars
       else
-	VariableSet.add var vars
+        VariableSet.add var vars
     in
     List.fold_left folder VariableSet.empty vars
   in
@@ -126,13 +186,48 @@ let analyze func vars =
   let entry = List.hd func.sbody.bstmts in
   Inthash.clear Transfer.stmtStartData;
   Inthash.add Transfer.stmtStartData entry.sid uninitAtEntry;
-  DataFlow.compute [entry]
+  DataFlow.compute [entry];
 
+  VarInitsDFA.analyze func vars
 
 (* probe the most recent analysis results at a statement of interest *)
-let possibly stmt =
+let possiblyInit stmt =
   (* find the set of uninitialized variables at this statement *)
   let uninits = Inthash.find Transfer.stmtStartData stmt.sid in
 
   (* invert "must be uninitialized" to answer "may be initialized" *)
   fun var -> not (VariableSet.mem var uninits)
+
+(* May-must uninitialized analysis on top of Reaching Definition analysis *)
+let possiblyInit1 stmt =
+  VarInitsDFA.possiblyInit stmt
+
+let possiblyUnInit stmt =
+  VarInitsDFA.possiblyUnInit stmt
+
+
+(* Temporary code to test compatibility of the two implementations *)
+exception DFAIncompatibility
+
+let testCompatibility stmt vl1 vl2 =
+  (* print some relevant information and fail *)
+  let fail kind =
+    let d_varlist () (vl, label) =
+      Pretty.dprintf "%s (%d): " label (List.length vl) ++
+      seq (chr ' ') (fun var -> text var.vname) vl
+    in
+    let msg () =
+      Pretty.dprintf "DFAIncompatibiliy: %s in statement\n%a\n" kind d_stmt stmt
+    in
+    ignore(Pretty.eprintf "%t%a\n%a\n"
+                          msg
+                          d_varlist (vl1, "dfa")
+                          d_varlist (vl2, "rd "));
+    raise DFAIncompatibility
+  in
+  let not_equal = fun v1 v2 -> (v1.vid != v2.vid) in
+  if List.length vl1 != List.length vl2 then
+    fail "Lengths not equal"
+  else if List.exists2 not_equal vl1 vl2 then
+    fail "Elements not equal"
+

@@ -32,7 +32,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	  if not !compareUninitialized then
 	    begin
 	      CfgUtils.build func;
-	      Initialized.analyze func locals
+          Initialized.analyze func locals;
 	    end;
 	  DoChildren
 	end
@@ -55,21 +55,32 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	  BinOp (PlusA, compare Gt, compare Ge, intType)
 	in
 
+    let mayUnInitLocals =
+      List.filter (Initialized.possiblyUnInit stmt) locals
+    in
+
 	let compareToVarMaybe right =
 	  if leftTypeSig = typeSig right.vtype then
 	    let selector = selector (Lval (var right)) in
-	    let siteInfo = siteInfo (Variable right) in
+        let mustInit = not (List.mem right mayUnInitLocals) in
+	    let siteInfo = siteInfo (Variable (right, mustInit)) in
 	    let bump, _ = tuples#addSiteExpr siteInfo selector in
-	    statements := bump :: !statements
+        statements := bump :: !statements;
 	in
 
 	let initializedLocals =
 	  let isInitialized =
-	    try Initialized.possibly stmt
+	    try Initialized.possiblyInit stmt
 	    with Not_found -> fun _ -> false
 	  in
 	  List.filter isInitialized locals
 	in
+
+    let initializedLocals1 =
+      List.filter (Initialized.possiblyInit1 stmt) locals
+    in
+
+    Initialized.testCompatibility stmt initializedLocals initializedLocals1;
 
 	List.iter compareToVarMaybe globals;
 	List.iter compareToVarMaybe formals;

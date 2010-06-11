@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -O
 
 from os import stat
 from sys import argv, stderr
@@ -8,6 +8,8 @@ from sys import argv, stderr
 try:
     from subprocess import CalledProcessError, check_call
 except ImportError:
+
+    from subprocess import call
 
     class CalledProcessError(Exception):
         def __init__(self, returncode, cmd):
@@ -29,7 +31,7 @@ def run_stage(command, verbose):
     if verbose:
         print >>stderr, "  %s" % ' '.join(command)
 
-    retcode = call(command)
+    retcode = check_call(command)
     if retcode != 0:
         raise OSError(retcode, command)
 

@@ -25,4 +25,15 @@ val analyze : fundec -> varinfo list -> unit
    results or raise Not_found if the given statement is not from the
    most recently analyzed function, so ... don't do that. *)
 
-val possibly : stmt -> varinfo -> bool
+val possiblyInit : stmt -> varinfo -> bool
+
+(* Version of above query using the CIL Reachingdefs module *)
+val possiblyInit1 : stmt -> varinfo -> bool
+
+(* At a given statement, is the given variable possibly uninitialized?
+   Returns true if there is a path to that statement on which there is
+   no definition of the variable  *)
+
+val possiblyUnInit : stmt -> varinfo -> bool
+
+val testCompatibility : stmt -> varinfo list -> varinfo list -> unit

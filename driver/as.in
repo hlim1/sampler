@@ -1,4 +1,4 @@
-#!/usr/bin/python -O
+#!/s/python-2.5.2/bin/python
 
 from os import stat
 from sys import argv, stderr

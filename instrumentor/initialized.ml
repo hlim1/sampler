@@ -76,6 +76,15 @@ module Transfer =
 
       (* various ways a variable can receive assignments *)
       match instr with
+      | Call (None, Lval(Var vi, NoOffset), [_; SizeOf _; adest], _)
+        (* __builtin_va_arg is special:  in CIL, the left hand side is stored
+           as the last argument. *)
+        when vi.vname = "__builtin_va_arg" ->
+          (
+          match stripCasts adest with
+          | AddrOf lval -> Done(noteAssignment uninits lval)
+          | _ -> Default
+          )
       | Set (lval, _, _)
       | Call (Some lval, _, _, _) ->
 	  Done (noteAssignment uninits lval)
@@ -119,7 +128,7 @@ module VarInitsDFA =
                          stm.sid
                          d_stmt stm
                          ReachingDef.pretty ivih)
-       fdec.sbody.bstmts
+        fdec.sallstmts
 
     let analyze func vars =
       (* extreme pointer conservatism: if address is *ever* taken,

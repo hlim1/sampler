@@ -152,7 +152,7 @@ module VarInitsDFA =
           * it's address is taken (i.e. present in waitlist) or
           * some definiton of that variable reaches this stmt. *)
       match getRDs stmt.sid with
-      | None -> fun var -> Inthash.mem whitelist var.vid
+      | None -> fun _ -> false
       | Some (_, _, iosh) ->
         fun var ->
           if Inthash.mem iosh var.vid then

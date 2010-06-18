@@ -68,19 +68,9 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
         statements := bump :: !statements;
 	in
 
-	let initializedLocals =
-	  let isInitialized =
-	    try Initialized.possiblyInit stmt
-	    with Not_found -> fun _ -> false
-	  in
-	  List.filter isInitialized locals
-	in
-
-    let initializedLocals1 =
-      List.filter (Initialized.possiblyInit1 stmt) locals
+    let initializedLocals =
+      List.filter (Initialized.possiblyInit stmt) locals
     in
-
-    Initialized.testCompatibility stmt initializedLocals initializedLocals1;
 
 	List.iter compareToVarMaybe globals;
 	List.iter compareToVarMaybe formals;

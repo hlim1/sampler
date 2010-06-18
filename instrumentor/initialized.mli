@@ -27,13 +27,8 @@ val analyze : fundec -> varinfo list -> unit
 
 val possiblyInit : stmt -> varinfo -> bool
 
-(* Version of above query using the CIL Reachingdefs module *)
-val possiblyInit1 : stmt -> varinfo -> bool
-
 (* At a given statement, is the given variable possibly uninitialized?
    Returns true if there is a path to that statement on which there is
    no definition of the variable  *)
 
 val possiblyUnInit : stmt -> varinfo -> bool
-
-val testCompatibility : stmt -> varinfo list -> varinfo list -> unit

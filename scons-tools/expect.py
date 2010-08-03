@@ -13,16 +13,14 @@ import filecmp
 
 def __compare_action_exec(target, source, env):
     __pychecker__ = 'no-argsused'
-    [source] = source
-    expected = source.target_from_source('', '.expected')
-    return not filecmp.cmp(str(source), str(expected), False)
+    [actual, expected] = source
+    return not filecmp.cmp(str(actual), str(expected), False)
 
 
 def __compare_action_show(target, source, env):
     __pychecker__ = 'no-argsused'
-    [source] = source
-    expected = source.target_from_source('', '.expected')
-    return 'compare "%s" and "%s"' % (source, expected)
+    [actual, expected] = source
+    return 'compare "%s" and "%s"' % (actual, expected)
 
 
 __compare_action = Action(__compare_action_exec, __compare_action_show)
@@ -31,19 +29,16 @@ __compare_action = Action(__compare_action_exec, __compare_action_show)
 __expect_action = [__compare_action, Touch('$TARGET')]
 
 
-def __expect_scan(node, env, path):
-    __pychecker__ = 'no-argsused'
-    return [node.target_from_source('', '.expected')]
-
-
-__expect_scanner = Scanner(function=__expect_scan)
+def __expect_emitter(target, source, env):
+    [actual] = source
+    expected = actual.target_from_source('', '.expected')
+    return target, [actual, expected]
 
 
 __expect_builder = Builder(
     action=__expect_action,
+    emitter=__expect_emitter,
     suffix='.passed',
-    target_scanner=__expect_scanner,
-    single_source=True,
     )
 
 

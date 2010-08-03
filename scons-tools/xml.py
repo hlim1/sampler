@@ -9,6 +9,8 @@ from os.path import isabs
 from subprocess import PIPE, Popen
 from urlparse import urlsplit
 
+from test import TestBuilder
+
 
 ########################################################################
 
@@ -54,11 +56,55 @@ def load_trace(command, env):
 ########################################################################
 
 
+def xsltproc(args):
+    return ['xsltproc', '$XSLTPROC_FLAGS', '$_xslt_xinclude', '$_xslt_stringparams'] + args + ['$_xslt_stylesheet', '$SOURCE']
+
+
+xslt_action = [xsltproc(['--output', '$TARGET'])]
+
+
+def var_xslt_xinclude(target, source, env, for_signature):
+    return {True: '--xinclude', False: []}[env['xinclude']]
+
+
+def var_xslt_stringparams(target, source, env, for_signature):
+    params = env.get('stringparams', {})
+    expanded = []
+    for key, value in params.iteritems():
+        if value:
+            expanded += ['--stringparam', key, value]
+    return expanded
+
+
+def var_xslt_stylesheet(target, source, env, for_signature):
+    return env.get('stylesheet', '')
+
+
+def xslt_scan(node, env, path):
+    command = xsltproc(['--noout', '--load-trace'])
+    [command] = env.subst_list(command, source=node)
+    return load_trace(command, env)
+
+
+xslt_scanner = Scanner(
+    xslt_scan,
+    skeys='xml',
+    )
+
+
+xslt_builder = Builder(
+    action=xslt_action,
+    suffix='html',
+    src_suffix='xml',
+    source_scanner=xslt_scanner,
+    )
+
+
+########################################################################
+
+
 def xmllint(args):
     return ['xmllint', '$XMLLINT_FLAGS', '--noout', '$_xmllint_validate'] + args + ['$SOURCE']
-
-
-xmllint_action = [xmllint([]), Touch('$TARGET')]
 
 
 def var_xmllint_validate(target, source, env, for_signature):
@@ -94,13 +140,8 @@ xmllint_scanner = Scanner(
     )
 
 
-def xmllint_suffix(env, sources):
-    return sources[0].suffix + '.passed'
-
-
-xmllint_builder = Builder(
-    action=xmllint_action,
-    suffix=xmllint_suffix,
+xmllint_builder = TestBuilder(
+    xmllint([]),
     src_suffix=['html', 'xml'],
     source_scanner=xmllint_scanner,
     single_source=True,
@@ -113,18 +154,20 @@ xmllint_builder = Builder(
 def generate(env):
     env.AppendUnique(
         BUILDERS={
+        'Xslt': xslt_builder,
         'TestXML': xmllint_builder,
         },
         _xmllint_validate = var_xmllint_validate,
+        _xslt_xinclude = var_xslt_xinclude,
+        _xslt_stringparams = var_xslt_stringparams,
+        _xslt_stylesheet = var_xslt_stylesheet,
         )
     env.SetDefault(
         xinclude = False,
         schema = None,
         XMLLINT_FLAGS = [],
+        XSLTPROC_FLAGS = [],
         )
 
-    catalogs = ['/etc/xml/catalog', env.File('#catalog.xml').abspath]
-    env.AppendENVPath('XML_CATALOG_FILES', catalogs, sep=' ')
-
 def exists(env):
-    return env.Detect('xmllint')
+    return env.Detect('xsltproc') and env.Detect('xmllint')

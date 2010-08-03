@@ -1,6 +1,6 @@
 Import('env')
 
-env = env.Clone(tools=['libraries'])
+env = env.Clone(tools=['libraries'], toolpath='.')
 env.AppendUnique(
     CCFLAGS=['-O'],
     )

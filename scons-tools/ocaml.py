@@ -1,5 +1,5 @@
-from os.path import dirname
 from itertools import chain, ifilter, imap
+from os.path import dirname
 
 import sys
 sys.path[1:1] = ['/usr/lib/scons']
@@ -76,6 +76,26 @@ __ocamldep_scanner = Scanner(
 
 
 ########################################################################
+#
+#  Object file builder
+#
+
+
+__lex_action = Action([['$OCAMLLEX', '-o', '$TARGET', '$SOURCE']])
+
+
+__lex_builder = Builder(
+    src_suffix='.mll',
+    single_source=True,
+    action=__lex_action,
+    suffix='.ml',
+    )
+
+
+########################################################################
+#
+#  Object file builder
+#
 
 
 def __obj_emitter(target, source, env):
@@ -97,7 +117,7 @@ def __obj_suffix(env, sources):
     return result
 
 
-__obj_action = Action([['$_OCAMLC', '$_OCAML_DEBUG', '$_OCAML_PATH', '$_OCAML_DTYPES', '$_OCAML_PP', '$_OCAML_WARN', '$_OCAML_WARN_ERROR', '-o', '$TARGET', '-c', '$SOURCE']])
+__obj_action = Action([['$_OCAMLC', '$_OCAML_DEBUG', '$_OCAML_DTYPES', '$_OCAML_PATH', '$_OCAML_PP', '$_OCAML_WARN', '$_OCAML_WARN_ERROR', '-o', '$TARGET', '-c', '$SOURCE']])
 
 
 __obj_builder = Builder(
@@ -112,7 +132,7 @@ __obj_builder = Builder(
 
 ########################################################################
 #
-#  Library builder
+#  Library archive builder
 #
 #  Building a library is fairly straightforward: run a command on a
 #  list of sources to produce the target.  The only subtlety is that
@@ -138,12 +158,15 @@ __lib_builder = Builder(
     emitter=__lib_emitter,
     action=__lib_action,
     src_builder=__obj_builder,
-    src_suffix='$_OCAML_CMO',
-    suffix='$_OCAML_CMA',
+    src_suffix='$OCAML_CMO',
+    suffix='$OCAML_CMA',
     )
 
 
 ########################################################################
+#
+#  Executable builder
+#
 
 
 def __exe_depends(node, env):
@@ -184,7 +207,7 @@ def __find_libs(libs, env, path):
         if found:
             yield found
         else:
-            __warn('no %s in search path [%s]' % (lib, ', '.join(path)))
+            __warn('no %s in search path [%s]' % (lib, ', '.join(imap(str, path))))
 
 
 def __exe_target_scan(node, env, path):
@@ -224,6 +247,9 @@ __exe_builder = Builder(
 
 
 ########################################################################
+#
+#  Construction-variable substitution functions
+#
 
 
 def __var_ocamlc(target, source, env, for_signature):
@@ -285,13 +311,23 @@ def __var_ocaml_stdlib(target, source, env, for_signature):
     return stdlib
 
 
+########################################################################
+#
+#  SCons tool initialization
+#
+
+
 def generate(env):
-    env.Tool('pipe', toolpath='#')
+    tooldir = dirname(__file__)
+    env.Tool('pipe', toolpath=[tooldir])
 
     env.AppendUnique(
         OCAMLC=env.Detect(['ocamlc.opt', 'ocamlc']),
         OCAMLDEP=env.Detect(['ocamldep.opt', 'ocamldep']),
+        OCAMLLEX=env.Detect(['ocamllex.opt', 'ocamllex']),
         OCAMLOPT=env.Detect(['ocamlopt.opt', 'ocamlopt']),
+        OCAML_CMA=__var_ocaml_cma,
+        OCAML_CMO=__var_ocaml_cmo,
         OCAML_DEBUG=False,
         OCAML_DTYPES=False,
         OCAML_LIBS=[],
@@ -302,11 +338,9 @@ def generate(env):
         OCAML_WARN='',
         OCAML_WARN_ERROR='',
         _OCAMLC=__var_ocamlc,
-        _OCAML_CMA=__var_ocaml_cma,
-        _OCAML_CMO=__var_ocaml_cmo,
         _OCAML_DEBUG=__var_ocaml_debug,
         _OCAML_DTYPES=__var_ocaml_dtypes,
-        _OCAML_LIBS='${_concat("", OCAML_LIBS, _OCAML_CMA, __env__)}',
+        _OCAML_LIBS='${_concat("", OCAML_LIBS, OCAML_CMA, __env__)}',
         _OCAML_LINK_ORDER=__var_ocaml_link_order,
         _OCAML_PATH='${_concat("-I ", OCAML_PATH, "", __env__)}',
         _OCAML_PP='${_concat("-pp ", OCAML_PP, "", __env__)}',
@@ -317,6 +351,7 @@ def generate(env):
 
         BUILDERS={
         'OcamlObject': __obj_builder,
+        'OcamlLex': __lex_builder,
         'OcamlLibrary': __lib_builder,
         'OcamlProgram': __exe_builder,
         },
@@ -324,4 +359,8 @@ def generate(env):
 
 
 def exists(env):
-    return env.Detect(['ocamlc', 'ocamlc.opt', 'ocamlopt', 'ocamlopt.opt'])
+    return env.Detect([
+            'ocamlc', 'ocamlc.opt',
+            'ocamlopt', 'ocamlopt.opt',
+            'ocamllex', 'ocamllex.opt',
+            ])

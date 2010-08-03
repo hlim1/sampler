@@ -32,7 +32,7 @@ def threadLibs(env, subdir):
     Alias('install', env.Install('$DESTDIR$threadsdir/%s' % subdir, ['lock.h', 'once.h']))
 
 
-Import('env')
+Import('env', 'excludedSources')
 
 headers = [
     'atomic-increment.h',
@@ -54,5 +54,9 @@ File([
         'verbose.h',
         ])
 
+excludedSources |= set([
+        'lib/threads/hijack.c',
+        'lib/threads/precompute.c',
+        ])
 
 SConscript(dirs=['no', 'yes'], exports=['env', 'threadLibs'])

@@ -87,7 +87,7 @@ env.SetDefault(gcc=env.WhereIs('gcc'))
 #
 
 env = env.Clone(
-    tools=['default', 'ocaml', 'template', 'test', 'xmllint'], toolpath=['.'],
+    tools=['default', 'ocaml', 'template', 'test', 'xml'], toolpath=['scons-tools'],
     CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
     OCAML_DEBUG=env['debug'],
     OCAML_DTYPES=True,
@@ -140,12 +140,12 @@ env = env.Clone(
 env.MergeFlags(env.get('extra_cflags'))
 
 env.File([
-        'ocaml.py',
-        'pipe.py',
-        'template.py',
-        'test.py',
-        'utils.py',
-        'xmllint.py',
+        'scons-tools/ocaml.py',
+        'scons-tools/pipe.py',
+        'scons-tools/template.py',
+        'scons-tools/test.py',
+        'scons-tools/utils.py',
+        'scons-tools/xml.py',
         ])
 
 # needed for some pychecker tests

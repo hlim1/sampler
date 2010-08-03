@@ -1,7 +1,4 @@
-import sys
-sys.path[1:1] = ['/usr/lib/scons']
-from SCons.Builder import Builder
-from SCons.Defaults import Touch
+from SCons.Script import *
 
 
 def test_suffix(env, sources):
@@ -10,8 +7,8 @@ def test_suffix(env, sources):
 def TestBuilder(command, **kwargs):
     return Builder(action=[command, Touch('$TARGET')], suffix=test_suffix, **kwargs)
 
-test_desktop_builder = TestBuilder(['desktop-file-validate', '$SOURCE'], single_source=True)
-test_python_builder = TestBuilder(['$pychecker', '--stdlib', '--quiet', '$SOURCES'])
+test_desktop_builder = TestBuilder('desktop-file-validate $SOURCE', single_source=True)
+test_python_builder = TestBuilder('$pychecker $pychecker_flags $SOURCES')
 
 
 def generate(env):
@@ -24,6 +21,7 @@ def generate(env):
 
     env.SetDefault(
         pychecker='pychecker',
+        pychecker_flags=['--stdlib', '--quiet'],
         )
 
 

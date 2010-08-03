@@ -1,6 +1,6 @@
 Import('env')
-env.Tool('literal')
-File('literal.py')
+env.Tool('literal', toolpath=['#scons-tools'])
+env.File('#scons-tools/literal.py')
 
 entity = '<!ENTITY prefix "$prefix">'
 config = env.Literal('config.dtd', entity)

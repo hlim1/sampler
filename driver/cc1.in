@@ -126,6 +126,7 @@ my %flag_specs =
      '-fsampler-implications' => sub { },
      '-finstrumentor-input' => sub { $instrumentor_input = shift @ARGV },
      '-finstrumentor-output' => sub { $instrumentor_output = shift @ARGV },
+     '-fannotate-sites' => \&inst_toggle,
 
      # Overall Options
      '-E' => sub { $preprocessing = 1; },

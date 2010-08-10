@@ -1,8 +1,15 @@
 open Cil
+open Helpers
 open Pretty
 open Printf
 open SchemeName
 
+let annotate =
+  Options.registerBoolean
+    ~flag:"annotate-sites"
+    ~desc:"annotate sites instead of bumping up counters"
+    ~ident:"Annotate"
+    ~default:false
 
 class manager name file =
   let counters = FindGlobal.find ("cbi_" ^ name.prefix ^ "Counters") file in
@@ -15,7 +22,26 @@ class manager name file =
     method private bump = Threads.bump file
 
     method addSiteExpr siteInfo selector =
-      self#addSiteOffset siteInfo (Index (selector, NoOffset))
+      if !annotate then
+          self#getAnnotation siteInfo selector
+      else
+          self#addSiteOffset siteInfo (Index (selector, NoOffset))
+
+    method private getAnnotation siteInfo selector =
+      let thisId = nextId in
+      let func = siteInfo#fundec in
+      let dummyVar = (findOrCreate_local func ("cbi_" ^ name.prefix ^ "_dummy")) in
+      let location = siteInfo#inspiration in
+      let implementation = siteInfo#implementation in
+      (* let cfgnode = implementation.sid in
+      let selector = BinOp(PlusA, selector, integer cfgnode, intType) in *)
+      let instruction = Set( (Var dummyVar, NoOffset), selector, location) in
+      implementation.skind <- Instr [instruction];
+      Sites.registry#add func (Site.build implementation);
+      siteInfos#push siteInfo;
+      nextId <- nextId + 1;
+      implementation, thisId
+
 
    (*cci : add expression, but don't add it to the sites*)
    method addExpr selector = 

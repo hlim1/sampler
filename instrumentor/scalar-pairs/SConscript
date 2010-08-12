@@ -12,7 +12,7 @@ upcase_good = uenv.CBIResolvedSamples(uenv.CBIReports(upcase_good, TEST_STDOUT='
 upcase_bad = uenv.CBIProgram('upcase-bad.c')
 upcase_bad = uenv.CBIResolvedSamples(uenv.CBIReports(upcase_bad, TEST_STDERR='/dev/null', TEST_PREFIX='!'), objects=upcase_bad)
 
-Alias('test:scalar-pairs', env.Expect([late_global, upcase_good, upcase_bad]))
+Alias('test:scalar-pairs', map(env.Expect, [late_global, upcase_good, upcase_bad]))
 Alias('test', 'test:scalar-pairs')
 
 File(Glob('*.expected'))

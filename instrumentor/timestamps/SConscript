@@ -18,7 +18,7 @@ benv.Command('both.expected', ['first.expected', 'last.expected'], [['cat', '$SO
 tests = [(fenv, 'first'), (lenv, 'last'), (benv, 'both')]
 tests = [ env.CBIResolvedTimestamps(env.CBIStaticObject('%s.o' % base, 'simple.c'), objects=base) for env, base in tests ]
 
-Alias('test:returns', env.Expect(tests))
+Alias('test:returns', map(env.Expect, tests))
 Alias('test', 'test:returns')
 
 File(Glob('*.expected'))

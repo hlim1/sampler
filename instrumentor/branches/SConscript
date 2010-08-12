@@ -17,7 +17,7 @@ tenv = env.Clone()
 tenv.AppendUnique(CC=['-pthread'])
 threads = tenv.CBIProgram('threads.c')
 
-Alias('test:branches', env.Expect([
+Alias('test:branches', map(env.Expect, [
     env.CBIResolvedSamples(env.CBIReports(simple), objects=simple),
     env.CBIResolvedSamples(env.CBIReports(modular), objects=modular),
     env.CBIResolvedSamples(sharing, objects=[program, library, plugin]),

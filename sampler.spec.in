@@ -53,27 +53,26 @@ sample and crash reports, and uploading those reports to the central
 bug isolation server.
 
 %pre
-if [ "$1" -gt 1 ]; then
-   GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-uninstall-rule %_sysconfdir/gconf/schemas/%name.schemas >/dev/null || :
-   killall -HUP --quiet gconfd-2 || :
-fi
+%gconf_schema_prepare %name
 
 %post
 /sbin/ldconfig
-GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %_sysconfdir/gconf/schemas/%name.schemas >/dev/null || :
-killall -HUP --quiet gconfd-2 || :
-touch --no-create %_datadir/icons/hicolor || :
-gtk-update-icon-cache --quiet %_datadir/icons/hicolor || :
+%gconf_schema_upgrade %name
+touch --no-create %_datadir/icons/hicolor &>/dev/null || :
+gtk-update-icon-cache --quiet %_datadir/icons/hicolor &>/dev/null || :
 
 %preun
-if [ "$1" -eq 0 ]; then
-   GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-uninstall-rule %_sysconfdir/gconf/schemas/%name.schemas >/dev/null || :
-   killall -HUP --quiet gconfd-2 || :
-fi
+%gconf_schema_remove %name
 
 %postun
-touch --no-create %_datadir/icons/hicolor
-gtk-update-icon-cache --quiet %_datadir/icons/hicolor
+/sbin/ldconfig
+if [ "$1" -eq 0 ]; then
+  touch --no-create %_datadir/icons/hicolor &>/dev/null
+  gtk-update-icon-cache --quiet %_datadir/icons/hicolor &>/dev/null || :
+fi
+
+%posttrans
+gtk-update-icon-cache --quiet %_datadir/icons/hicolor &>/dev/null || :
 
 %files
 %defattr(-,root,root,-)

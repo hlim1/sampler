@@ -40,17 +40,8 @@ Alias('test', env.TestXML('application.schemas.in'))
 Default(env.Template('find-sampler-info.in', varlist=['PERL']))
 Default(env.Template('install-gconf.in', varlist=['PERL']))
 
-Default(env.Template('rpmbuild.in', varlist=[
-    'PACKAGE',
-    'PERL',
-    'bindir',
-    'datadir',
-    'datarootdir',
-    'exec_prefix',
-    'libdir',
-    'pkgdatadir',
+Default(env.Template('macros.sampler.in', varlist=[
     'pkglibdir',
-    'prefix',
     ]))
 
 Default(env.Template('install-wrappers.in', varlist=[
@@ -76,8 +67,6 @@ Default(wenv.Template('wrapper.in.in', varlist=[
     'version',
     ]))
 
-# todo: sampler.mk
-
 Alias('install', env.Install('$DESTDIR$toolsdir', [
     'Embedded.pm',
     'Function.pm',
@@ -96,9 +85,10 @@ Alias('install', env.Install('$DESTDIR$toolsdir', [
     'resolve-cfg',
     'resolveSamples',
     'resolveTimestamps',
-    'rpmbuild',
     'wrapper.in',
     ]))
+
+Alias('install', env.Install('$DESTDIR$sysconfdir/rpm', 'macros.sampler'))
 
 
 SConscript(dirs='cfg')

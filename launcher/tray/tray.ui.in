@@ -52,13 +52,13 @@
     <property name="program_name">Bug Isolation Monitor</property>
     <property name="version">@version@</property>
     <property name="copyright" translatable="yes">Copyright &#xA9; 2003&#x2012;2004 The Regents of the University of California
-Copyright &#xA9; 2005&#x2012;2009 Benjamin R. Liblit</property>
+Copyright &#xA9; 2005&#x2012;2010 Benjamin R. Liblit</property>
     <property name="comments" translatable="yes">View and set bug isolation preferences</property>
     <property name="website">http://www.cs.wisc.edu/cbi/</property>
     <property name="website_label" translatable="yes">The Cooperative Bug Isolation Project</property>
     <property name="license" translatable="yes">Copyright &#xA9; 2003 &#x2013; 2004, The Regents of the University of California. All rights reserved.
 
-Copyright &#xA9; 2005 &#x2013; 2009, Benjamin R. Liblit. All rights reserved.
+Copyright &#xA9; 2005 &#x2013; 2010, Benjamin R. Liblit. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

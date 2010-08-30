@@ -108,18 +108,11 @@ Requires: binutils
 Requires: gcc
 Requires: perl >= 5.8
 Requires: %name-libs = %version
-Requires: scrollkeeper
 
 %description devel
 This package provides tools for building applications with sampled
 instrumentation.  It includes an instrumenting C compiler and utility
 tools for collecting and decoding sampled instrumentation reports.
-
-%post devel
-scrollkeeper-update -q -o %{_datadir}/omf/sampler
-
-%postun devel
-scrollkeeper-update -q
 
 %files devel
 %defattr(-,root,root,-)

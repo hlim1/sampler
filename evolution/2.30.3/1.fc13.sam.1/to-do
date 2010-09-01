@@ -1,0 +1,53 @@
+-*- outline -*-
+
+* tray
+
+Clean up after dead clients.  Unfortunately I am told that
+ORBit_small_{,un}listen_for_broken() is inapplicable here.  See
+<http://mail.gnome.org/archives/gnome-components-list/2004-July/msg00000.html>
+and subsequent discussion.  It's not clear that there is any standard,
+good practice for doing this.
+
+* wrapper
+
+The last client to call monitor.unref() sometimes gets a
+CORBA.COMM_FAILURE exception.  Not sure why.  We work around it by
+catching and discarding the exception, but that's not a real fix.
+
+Server reply dialog has bad tab navigation.  If focus is on a
+hyperlink in the HTML area, you cannot tab out to the "OK" button.
+
+How does wrapper propagate SIGINT (^C) down to child?  Restore temporary
+passing of SIGINT down, even thought it is less than perfect.
+
+Add some sort of upper bound on upload lengths to prevent things from
+getting completely out of hand if the instrumented application gets
+into a bad loop.
+
+For long-lived processes, perhaps we need to send periodic interim
+reports (e.g. daily) instead of waiting for termination.  This will
+require support from the client application too, though.
+
+* packaging
+
+Consider adding some sort of "README.sampler" to the documentation for
+each sampled application RPM.
+
+* instrumentor
+
+** general
+
+Remember which functions are loopless.  Use this to optimize treatment
+of calls to known loopless functions.
+
+assume that anything declared in /usr/include/... or
+/usr/lib/gcc-lib/... or perhaps a few other places is library code
+
+* documentation
+
+Document --{no-,}assume-weighty-{libraries,externs,interns}.
+
+Document "ccured" scheme once it has been reimplemented.
+
+Document the fact that the "bounds" scheme also looks at function
+return values.

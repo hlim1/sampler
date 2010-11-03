@@ -1,0 +1,94 @@
+from glob import glob
+
+Import('env')
+env = env.Clone(LEXFLAGS=['-f', '-p'], LIBS='fl', OCAML_LIBS=['unix', 'str'])
+env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
+
+
+def distroVersion(context):
+    context.Message('checking for distribution version: ')
+    action = [['lsb_release', '-rs', '>', '$TARGET']]
+    (status, version) = context.TryAction(action)
+    if status:
+        version = version.rstrip()
+        context.env['DISTRO_VERSION'] = version
+        context.Result(version)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+conf = env.Configure(
+    clean=False, help=False,
+    custom_tests={
+        'DistroVersion': distroVersion,
+        })
+conf.DistroVersion()
+conf.Finish()
+
+wenv = env.Clone()
+wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare'])
+wenv.ParseConfig(['gsl-config', '--cflags', '--libs'])
+Default(wenv.Program('decimate-samples.l'))
+
+sources = glob('*.ml') + glob('*.mli')
+env.OcamlObject(sources)
+Default(env.OcamlProgram('resolveSamples.ml'),
+        env.OcamlProgram('resolveTimestamps.ml'))
+
+Alias('test', env.TestXML('application.schemas.in'))
+
+Default(env.Template('find-sampler-info.in', varlist=['PERL']))
+Default(env.Template('install-gconf.in', varlist=['PERL']))
+
+Default(env.Template('macros.sampler.in', varlist=[
+    'pkglibdir',
+    ]))
+
+Default(env.Template('install-wrappers.in', varlist=[
+    'PACKAGE',
+    'PERL',
+    'exec_prefix',
+    'libdir',
+    'pkglibdir',
+    'prefix',
+    ]))
+
+wenv = env.Clone(name='@name@', path='@path@', version='@version@', release='@release@')
+Default(wenv.Template('wrapper.in.in', varlist=[
+    'DISTRO_CPU',
+    'DISTRO_NAME',
+    'DISTRO_VERSION',
+    'PACKAGE_VERSION',
+    'name',
+    'path',
+    'pkgdatadir',
+    'pkglibdir',
+    'release',
+    'version',
+    ]))
+
+Alias('install', env.Install('$DESTDIR$toolsdir', [
+    'Embedded.pm',
+    'Function.pm',
+    'Node.pm',
+    'Object.pm',
+    'SymbolTable.pm',
+    'Unit.pm',
+    'application.schemas.in',
+    'decimate-samples',
+    'extract-report',
+    'extract-section',
+    'find-sampler-info',
+    'install-gconf',
+    'install-wrappers',
+    'resolve-backtrace',
+    'resolve-cfg',
+    'resolveSamples',
+    'resolveTimestamps',
+    'wrapper.in',
+    ]))
+
+Alias('install', env.Install('$DESTDIR$sysconfdir/rpm', 'macros.sampler'))
+
+
+SConscript(dirs='cfg')

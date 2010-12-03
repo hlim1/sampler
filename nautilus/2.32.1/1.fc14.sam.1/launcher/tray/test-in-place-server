@@ -1,0 +1,19 @@
+#!/usr/bin/python
+
+from os.path import dirname, realpath
+import sys
+
+home = realpath(dirname(sys.argv[0]))
+sys.path.append(home)
+import Paths
+Paths.home = home
+Paths.ui = home + '/tray.ui'
+
+for subdir in ['common', 'monitor', 'trayicon']:
+    sys.path.append(realpath(home + '/../' + subdir))
+
+import SamplerConfig
+SamplerConfig.pixmapsdir = realpath(home + '/../pixmaps')
+
+import Main
+Main.main()

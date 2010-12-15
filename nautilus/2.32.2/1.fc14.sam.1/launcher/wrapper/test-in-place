@@ -1,0 +1,10 @@
+#!/usr/bin/python -O
+
+import sys
+sys.path.append('../common')
+
+import Paths
+Paths.ui = 'wrapper.ui'
+
+import Main
+Main.main('/usr/lib/sampler/applications/gaim')

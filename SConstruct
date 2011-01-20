@@ -60,7 +60,6 @@ opts.AddVariables(
     PathVariable('prefix', 'install in the given directory', '/usr/local'),
     PathVariable('DESTDIR', 'extra installation directory prefix', '/'),
     PathVariable('gcc', 'path to native GCC C compiler', None, validate_gcc_path),
-    BoolVariable('launcher', 'build client application launcher and related tools', True),
     ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
     ('extra_cflags', 'extra C compiler flags'),
     EnumVariable('tuple_counter_bits', 'in tuple counters, use unsigned integers of the specified bit-width', 'natural', ['32', '64', 'natural']),
@@ -75,7 +74,6 @@ if domainname == 'cs.wisc.edu':
     env.AppendENVPath('PATH', '/unsup/ocaml/bin')
     env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.4/site-packages/pychecker/checker.py']
     env['PKG_CONFIG_PATH'] = '/usr/lib/pkgconfig'
-    env['launcher'] = False
 
 env['cil_path'] = env.Dir('$cil_path')
 env.SetDefault(gcc=env.WhereIs('gcc'))
@@ -283,18 +281,12 @@ SConscript(dirs=[
     'driver',
     'fuzz',
     'instrumentor',
+    'launcher',
     'lib',
     'ocaml',
     'tools',
     'www',
     ])
-
-if env['launcher']:
-    SConscript(dirs=['launcher'])
-else:
-    config = 'launcher/common/SamplerConfig.py'
-    env.Command(config, [], [Touch('$TARGET')])
-    Default(config)
 
 
 ########################################################################

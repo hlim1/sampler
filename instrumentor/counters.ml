@@ -33,8 +33,7 @@ class manager name file =
       let dummyVar = (findOrCreate_local func ("cbi_" ^ name.prefix ^ "_dummy")) in
       let location = siteInfo#inspiration in
       let implementation = siteInfo#implementation in
-      (* let cfgnode = implementation.sid in
-      let selector = BinOp(PlusA, selector, integer cfgnode, intType) in *)
+      let selector = BinOp(PlusA, selector, integer thisId, intType) in
       let instruction = Set( (Var dummyVar, NoOffset), selector, location) in
       implementation.skind <- Instr [instruction];
       Sites.registry#add func (Site.build implementation);

@@ -20,6 +20,7 @@ BuildRequires: dbus-devel
 BuildRequires: docbook-style-xsl
 BuildRequires: flex
 BuildRequires: gcc
+BuildRequires: GConf2
 BuildRequires: glib2-devel
 BuildRequires: gsl-devel
 BuildRequires: lsb

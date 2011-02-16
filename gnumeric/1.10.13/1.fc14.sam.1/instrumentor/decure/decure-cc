@@ -1,5 +1,0 @@
-#!/bin/sh
-
-here=`dirname $0`
-export CILLY_NATIVE_CC=`$here/../driver/sampler-cc-here decure`
-exec $here/../../../cil/bin/ccured "$@"

@@ -1,3 +1,0 @@
-home = '@traydir@'
-bin = '@bindir@'
-ui = home + '/tray.ui'

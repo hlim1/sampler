@@ -1,4 +1,0 @@
-int five()
-{
-  return 5;
-}

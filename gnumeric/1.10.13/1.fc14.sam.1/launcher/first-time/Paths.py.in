@@ -1,2 +1,0 @@
-home = '@first_timedir@'
-ui = home + '/first-time.ui'

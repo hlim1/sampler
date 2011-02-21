@@ -56,8 +56,7 @@ def libfuncs(target, source, env):
         LIBRARY_COUNT=len(symbols),
         )
 
-
-syslibs = ['/usr/lib/libc_nonshared.a', '/lib/libc.so.6', '/lib/libm.so.6']
+syslibs = env.subst(['/usr/$lib64/libc_nonshared.a', '/$lib64/libc.so.6', '/$lib64/libm.so.6'])
 excludedSources |= set(syslibs)
 [libraries_ml] = env.Command('libraries.ml', ['libraries.ml.in', syslibs], libfuncs)
 

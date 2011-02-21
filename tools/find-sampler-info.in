@@ -74,7 +74,7 @@ sub wanted {
   $subpath =~ s{^\Q$extractdir\E\/}{}
     or die "$subpath is not under $extractdir";
 
-  my $output = "$savedir/usr/lib/sampler/sites/$subpath";
+  my $output = "$savedir@pkglibdir@/sites/$subpath";
   mkpath dirname $output;
   my $sites = new FileHandle "$output.sites", 'w'
     or die "cannot write $output.sites: $!\n";

@@ -23,7 +23,6 @@ BuildRequires: gcc
 BuildRequires: GConf2
 BuildRequires: glib2-devel
 BuildRequires: gsl-devel
-BuildRequires: lsb
 BuildRequires: ocaml
 BuildRequires: ocaml-cil-devel >= 1.3.6
 BuildRequires: perl

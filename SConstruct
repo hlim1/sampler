@@ -1,6 +1,7 @@
 import os
 import stat
 import sys
+import platform
 
 from itertools import chain
 from socket import getfqdn
@@ -22,6 +23,7 @@ version = File('version').get_contents().rstrip()
 #  configurable options
 #
 
+lib64 = 'lib' + {'32bit': '', '64bit': '64'}[platform.architecture()[0]]
 
 def validate_gcc_path(key, value, env):
     if not value:
@@ -44,7 +46,14 @@ def validate_cil_path(key, value, env):
         else:
             raise UserError('bad option %s: %s does not exist' % (key, library))
     else:
-        for path in ['../cil/obj/x86_LINUX', '/usr/local/lib/ocaml/cil', '/usr/local/lib/cil', '/usr/lib/ocaml/cil', '/usr/lib/cil']:
+        paths = [
+            '../cil/obj/x86_LINUX',
+            '/usr/local/%s/ocaml/cil' % lib64,
+            '/usr/local/%s/cil' % lib64,
+            '/usr/%s/ocaml/cil' % lib64,
+            '/usr/%s/cil' % lib64,
+            ]
+        for path in paths:
             library = libcil(path)
             if library.exists():
                 env[key] = path
@@ -117,7 +126,8 @@ env = env.Clone(
     driverdir='$pkglibdir/driver',
     exec_prefix='$prefix',
     first_timedir='$pkgdatadir/first-time',
-    libdir='$prefix/lib',
+    lib64=lib64,
+    libdir='$prefix/$lib64',
     localstatedir='/var',
     omfdir='$datadir/omf/sampler',
     pixmapsdir='$pkgdatadir/pixmaps',
@@ -160,30 +170,21 @@ Export('env')
 
 def distroName(context):
     context.Message('checking for distribution name: ')
-    action = [['/usr/bin/lsb_release', '-is', '>', '$TARGET']]
-    (status, name) = context.TryAction(action)
-    if status:
-        name = name.rstrip()
-        name = {
-            'FedoraCore': 'fedora',
-            'Fedora': 'fedora',
-            'CentOS': 'centos',
-            'RedHatEnterpriseServer': 'rhel',
-            }[name]
-        context.env['DISTRO_NAME'] = name
-        context.Result(name)
-    else:
-        context.Result(False)
-        context.env.Exit(1)
+    name = {
+        'centos': 'centos',
+        'debian': 'debian',
+        'fedora': 'fedora',
+        'redhat': 'rhel',
+        }[platform.dist()[0]]
+    context.env['DISTRO_NAME'] = name
+    context.Result(name)
 
 def distroBasis(context):
     context.Message('checking for distribution basis: ')
     basis = {
-        'fedora': 'rpm',
-        'redhat': 'rpm',
-        'tao': 'rpm',
         'centos': 'rpm',
-        'ubuntu': 'debian',
+        'debian': 'debian',
+        'fedora': 'rpm',
 	'rhel': 'rpm',
         }[context.env['DISTRO_NAME']]
     context.env['DISTRO_BASIS'] = basis

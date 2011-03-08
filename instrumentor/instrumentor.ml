@@ -27,6 +27,20 @@ let schemes = [
   AtomRWScheme.factory;
 ]
 
+let moveFnsToEndIfNeeded file =
+  let handle g =
+    match g with
+    | GFun (fdec, loc) when BranchFinder.shouldMoveToEnd fdec ->
+        ignore (Pretty.eprintf "==== Moving %s to the end\n" fdec.svar.vname);
+        let newVD = GVarDecl (fdec.svar, loc) in
+        (newVD, [g])
+    | _ -> (g, [])
+  in
+  let globals, epilogue = List.split (List.rev_map handle file.globals) in
+  let globals = List.rev globals in
+  let epilogue = List.flatten epilogue in
+  file.globals <- globals @ epilogue;
+  ()
 
 let phase =
   "instrumenting",
@@ -40,6 +54,7 @@ let phase =
 
     let schemes = List.map (fun scheme -> scheme file) schemes in
     List.iter (fun scheme -> scheme#findAllSites) schemes;
+    moveFnsToEndIfNeeded file;
 
     let digest = lazy (Digest.file file.fileName) in
     EmbedSignature.visit file digest;

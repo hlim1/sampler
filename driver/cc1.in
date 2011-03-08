@@ -127,6 +127,7 @@ my %flag_specs =
      '-finstrumentor-input' => sub { $instrumentor_input = shift @ARGV },
      '-finstrumentor-output' => sub { $instrumentor_output = shift @ARGV },
      '-fannotate-sites' => \&inst_toggle,
+     '-fextra-edge-profiles' => \&inst_toggle,
 
      # Overall Options
      '-E' => sub { $preprocessing = 1; },

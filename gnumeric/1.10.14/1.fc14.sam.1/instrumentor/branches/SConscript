@@ -1,0 +1,29 @@
+Import('env')
+env = env.Clone()
+env.AppendUnique(CC=['--sampler-scheme=branches'])
+
+File('library.h')
+
+modular = env.CBIProgram(target='modular', source=['modular-a.c', 'modular-b.c'])
+
+plugin = env.CBISharedLibrary(target='plugin.so', source='plugin.c')
+library = env.CBISharedLibrary(target='library.so', source='library.c')
+program = env.CBIProgram(source=['sharing.c', library], LIBS='dl')
+sharing = env.CBIReports([program, library, plugin])
+
+simple = env.CBIProgram('simple.c')
+
+tenv = env.Clone()
+tenv.AppendUnique(CC=['-pthread'])
+threads = tenv.CBIProgram('threads.c')
+
+Alias('test:branches', map(env.Expect, [
+    env.CBIResolvedSamples(env.CBIReports(simple), objects=simple),
+    env.CBIResolvedSamples(env.CBIReports(modular), objects=modular),
+    env.CBIResolvedSamples(sharing, objects=[program, library, plugin]),
+    tenv.CBIResolvedSamples(env.CBIReports(threads, TEST_STDOUT='/dev/null'), objects=threads),
+    ]))
+
+Alias('test', 'test:branches')
+
+File(Glob('*.expected'))

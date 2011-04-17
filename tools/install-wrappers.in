@@ -1,112 +1,68 @@
-#!@PERL@ -w
-# -*- cperl -*-
+#!/usr/bin/python -O
 
-use strict;
-
-use File::Basename;
-use File::Path;
-use File::stat;
-use FileHandle;
-use FindBin;
-use Getopt::Long;
+from optparse import OptionParser
+from os import chown, makedirs, stat
+from os.path import dirname, join
+from shutil import copymode, move
+from string import Template
 
 
 ########################################################################
-#
-#  sampler install directories
-#
 
 
-my $prefix = '@prefix@';
-my $exec_prefix = "@exec_prefix@";
-my $libdir = "@libdir@";
-my $PACKAGE = '@PACKAGE@';
-my $pkglibdir = "@pkglibdir@";
+class AtTemplate(Template):
+
+    delimiter = '@'
+
+    pattern = r"""
+    (?:
+    (?P<escaped>@@) |
+    (?P<named>(?!)) |
+    @(?P<braced>%(id)s)@ |
+    (?P<invalid>(?!))
+    )
+    """ % {'id': Template.idpattern}
 
 
-########################################################################
-#
-#  command line processing
-#
+def main():
+    usage = 'usage: %prog [options] {executables}'
+    description = 'All options are required except for "--template".  At least one executable is required.'
+    parser = OptionParser(usage=usage, description=description)
+    parser.add_option('--name')
+    parser.add_option('--version', metavar='X.Y.Z')
+    parser.add_option('--release', metavar='X.Y.Z')
+    parser.add_option('--install', metavar='PATH')
+    parser.add_option('--template', metavar='FILE', default=join(dirname(__file__), 'wrapper.in'))
+
+    options, executables = parser.parse_args()
+    if not (options.name and options.version and options.release and options.install and executables):
+        parser.print_help()
+        exit(2)
+
+    pkglibdir = '@pkglibdir@'
+    for executable in executables:
+        executable = executable.lstrip('/')
+        original = join(options.install, executable)
+        wrapped = join(options.install, PKGLIBDIR, 'wrapped', executable)
+        
+    makedirs(dirname(wrapped))
+    move(original, wrapped)
+
+    substitutions = {
+        'name': options.name,
+        'version': options.version,
+        'release': options.release,
+        'path': '/' + executable,
+        }
+    with open(options.template) as infile:
+        with open(original, 'w') as outfile:
+            for line in infile:
+                outfile.write(AtTemplate(line).substitute(substitutions))
+
+    copymode(wrapped, original)
+    stats = stat(wrapped)
+    chown(original, stats.st_uid, st_gid)
 
 
-my $name;
-my $version;
-my $release;
-my $installdir;
-my $template = "$FindBin::Bin/wrapper.in";
-
-sub usage () {
-  die <<"EOT";
-Usage: $0 [options] {executables}
-
-  --name=NAME
-  --version=X.Y.Z
-  --release=X.Y.Z
-  --install=PATH
-  --template=FILE
-
-All options are required except for \"--template\".  At least one
-executable is required.
-EOT
-}
-
-my $result = GetOptions ('name=s' => \$name,
-			 'version=s' => \$version,
-			 'release=s' => \$release,
-			 'install=s' => \$installdir,
-			 'template=s' => \$template);
-
-usage unless $result;
-usage unless $name;
-usage unless $version;
-usage unless $release;
-usage unless $installdir;
-
-usage unless @ARGV;
-
-
-########################################################################
-#
-#  helper subroutines
-#
-
-
-sub installdir ($) {
-  mkpath dirname $_[0];
-}
-
-
-sub instantiate ($$%) {
-  my ($input, $output, %substitutions) = @_;
-  my $infile = new FileHandle $input, 'r' or die "cannot read $input: $!\n";
-  my $outfile = new FileHandle $output, 'w' or die "cannot write $output: $!\n";
-
-  while (<$infile>) {
-    s/@([[:word:]]+)@/$substitutions{$1}/g;
-    $outfile->print($_);
-  }
-}
-
-
-########################################################################
-#
-#  main activity
-#
-
-
-foreach (@ARGV) {
-  s{^/*}{/};
-  my $original = "$installdir$_";
-  my $wrapped = "$installdir$pkglibdir/wrapped$_";
-  installdir $wrapped;
-  rename $original, $wrapped or die "cannot move $original to $wrapped: $!\n";
-  instantiate($template, $original,
-	      'name' => $name,
-	      'version' => $version,
-	      'release' => $release,
-	      'path' => $_);
-  my $stat = stat $wrapped or die "cannot stat $wrapped: $!\n";
-  chmod($stat->mode, $original) == 1 or die "cannot chmod $original: $!\n";
-  chown($stat->uid, $stat->gid, $original) == 1 or die "cannot chown $original: $!\n";
-}
+if __name__ == '__main__':
+    main()

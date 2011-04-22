@@ -28,6 +28,7 @@ static double probability;
 
 
 %option nounput
+%option noyywrap
 
 %x SAMPLES
 

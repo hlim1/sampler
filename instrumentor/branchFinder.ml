@@ -4,8 +4,7 @@ open Dynamic
 let extraEdgeProfiles =
   Options.registerBoolean
     ~flag:"extra-edge-profiles"
-    ~desc:"collect edge profiles for switch statements and indirect calls (adds
-    a branch-site for every case statement and every indirect callee)"
+    ~desc:"collect edge profiles for switch statements and indirect calls (adds a branch-site for every case statement and every indirect callee)"
     ~ident:"extraEdgeProfiles"
     ~default:false
 

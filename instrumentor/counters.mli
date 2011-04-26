@@ -6,6 +6,8 @@ class manager : SchemeName.t -> file ->
     method addSiteExpr : SiteInfo.c -> exp -> (stmt * int)
 
     method addSiteOffset : SiteInfo.c -> offset -> (stmt * int)
+    method selectorToImpl : SiteInfo.c -> offset -> (Cil.stmtkind * int)
+    method addImplementation : SiteInfo.c -> Cil.stmtkind -> stmt
     (* cci *)
     method addSiteInstrs : SiteInfo.c -> instr list-> stmt
     method addExpr : exp -> (instr * int)

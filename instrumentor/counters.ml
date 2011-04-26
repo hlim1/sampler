@@ -22,25 +22,7 @@ class manager name file =
     method private bump = Threads.bump file
 
     method addSiteExpr siteInfo selector =
-      if !annotate then
-          self#getAnnotation siteInfo selector
-      else
-          self#addSiteOffset siteInfo (Index (selector, NoOffset))
-
-    method private getAnnotation siteInfo selector =
-      let thisId = nextId in
-      let func = siteInfo#fundec in
-      let dummyVar = (findOrCreate_local func ("cbi_" ^ name.prefix ^ "_dummy")) in
-      let location = siteInfo#inspiration in
-      let implementation = siteInfo#implementation in
-      let selector = BinOp(PlusA, selector, integer thisId, intType) in
-      let instruction = Set( (Var dummyVar, NoOffset), selector, location) in
-      implementation.skind <- Instr [instruction];
-      Sites.registry#add func (Site.build implementation);
-      siteInfos#push siteInfo;
-      nextId <- nextId + 1;
-      implementation, thisId
-
+      self#addSiteOffset siteInfo (Index (selector, NoOffset))
 
    (*cci : add expression, but don't add it to the sites*)
    method addExpr selector = 
@@ -77,20 +59,53 @@ class manager name file =
       nextId <- nextId+1;
       bump, nextId
 
-    method addSiteOffset siteInfo selector =
-      let thisId = nextId in
-      let site = (Var counters, Index (integer thisId, NoOffset)) in
+    (* get the annotation corresponding to a site *)
+    method private selectorToAnnot siteInfo selector thisId =
       let func = siteInfo#fundec in
+      let selector = match selector with 
+                 | Index (s, NoOffset) -> s
+                 | _ -> raise Errormsg.Error
+      in
+      let dummyVar = (findOrCreate_local func ("cbi_" ^ name.prefix ^ "_dummy")) in
+      let location = siteInfo#inspiration in
+      let selector = BinOp(PlusA, selector, integer thisId, intType) in
+      let instruction = Set( (Var dummyVar, NoOffset), selector, location) in
+      Instr [instruction]
+
+    (* get the increment instruction corresponding to a site *)
+    method private selectorToBump siteInfo selector thisId =
+      let site = (Var counters, Index (integer thisId, NoOffset)) in
       let location = siteInfo#inspiration in
       let stamp = stamper name thisId location in
       let counter = addOffsetLval selector site in
       let bump = self#bump counter location in
-      let implementation = siteInfo#implementation in
       let instructions = bump :: stamp in
-      implementation.skind <- IsolateInstructions.isolate instructions;
-      Sites.registry#add func (Site.build implementation);
+      IsolateInstructions.isolate instructions
+
+    (* get the "implementation" of a "selector" *)
+    method selectorToImpl siteInfo selector =
+      let thisId = nextId in
+      let instructions =
+        if !annotate then
+          self#selectorToAnnot siteInfo selector thisId
+        else
+          self#selectorToBump siteInfo selector thisId
+      in
       siteInfos#push siteInfo;
       nextId <- nextId + 1;
+      instructions, thisId
+
+    (* add an implementation to the siteInfo and registry *)
+    method addImplementation siteInfo instructions =
+      let func = siteInfo#fundec in
+      let implementation = siteInfo#implementation in
+      implementation.skind <- instructions;
+      Sites.registry#add func (Site.build implementation);
+      implementation
+
+    method addSiteOffset siteInfo selector =
+      let instructions, thisId = self#selectorToImpl siteInfo selector in
+      let implementation = self#addImplementation siteInfo instructions in
       implementation, thisId
 
 

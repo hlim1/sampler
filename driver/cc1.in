@@ -283,7 +283,7 @@ FLAG_SPECS_REGEXP = [
 def run_stage(args, **kwargs):
     global VERBOSE
     if VERBOSE:
-        print >>stderr, '  %s\n' % ' '.join(args)
+        print >>stderr, '  run_stage: %s\n' % ' '.join(args)
 
     status = call(args, **kwargs)
     if status:
@@ -325,16 +325,16 @@ def main():
     global INSTRUMENTOR_INPUT, PREPROCESSED
     if PREPROCESSED:
         INSTRUMENTOR_INPUT = inarg
-    elif INSTRUMENTOR_INPUT is None:
-        print >>stderr, 'internal error: instrumentor input file was not set'
-        exit(1)
-
-    global CPP0_OUTPUT_SLOT
-    if CPP0_OUTPUT_SLOT is not None:
-        CPP0[CPP0_OUTPUT_SLOT] = INSTRUMENTOR_INPUT
     else:
-	CPP0 += ['-o', INSTRUMENTOR_INPUT]
-    run_stage(CPP0)
+        if INSTRUMENTOR_INPUT is None:
+            print >>stderr, 'internal error: instrumentor input file was not set'
+            exit(1)
+        global CPP0_OUTPUT_SLOT
+        if CPP0_OUTPUT_SLOT is not None:
+            CPP0[CPP0_OUTPUT_SLOT] = INSTRUMENTOR_INPUT
+        else:
+            CPP0 += ['-o', INSTRUMENTOR_INPUT]
+        run_stage(CPP0)
 
     global INST
     INST.append(INSTRUMENTOR_INPUT)

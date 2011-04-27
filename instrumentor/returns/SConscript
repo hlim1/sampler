@@ -1,6 +1,6 @@
 Import('env')
 env = env.Clone()
-env.AppendUnique(CC=['--sampler-scheme=returns'])
+env.AppendUnique(CC=['-fsampler-scheme=returns'])
 
 extern = env.CBIProgram(target='extern', source=['extern-callee.c', 'extern-caller.c'])
 test = env.CBIProgram('test.c')

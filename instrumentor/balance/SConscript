@@ -1,6 +1,6 @@
 Import('env')
 env = env.Clone()
-env.AppendUnique(CC=['--sampler-scheme=returns'], CCFLAGS=['--balance-paths'])
+env.AppendUnique(CC=['-fsampler-scheme=returns'], CCFLAGS=['-fbalance-paths'])
 
 File('work.h')
 

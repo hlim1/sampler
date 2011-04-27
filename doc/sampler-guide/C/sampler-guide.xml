@@ -42,7 +42,7 @@
       <title>Instrumentor flags</title>
 
       <varlistentry id="sampler-scheme">
-	<term><option>--sampler-scheme=<replaceable>scheme</replaceable></option></term>
+	<term><option>-fsampler-scheme=<replaceable>scheme</replaceable></option></term>
 	<listitem>
 	  <para>Activate the named instrumentation scheme.  This flag
 	  may be used multiple times to activate multiple schemes.
@@ -114,11 +114,11 @@
 		maximum.</para>
 
 		<para>See also the <link
-		linkend="assign-across-pointer"><option>--assign-across-pointer</option></link>,
+		linkend="assign-across-pointer"><option>-fassign-across-pointer</option></link>,
 		<link
-		linkend="assign-into-field"><option>--assign-into-field</option></link>,
+		linkend="assign-into-field"><option>-fassign-into-field</option></link>,
 		and <link
-		linkend="assign-into-index"><option>--assign-into-index</option></link>
+		linkend="assign-into-index"><option>-fassign-into-index</option></link>
 		flags for ways to customize which kinds of assignments
 		are instrumented.</para>
 	      </listitem>
@@ -203,11 +203,11 @@
 		complex floating types.</para>
 
 		<para>See also the <link
-		linkend="assign-across-pointer"><option>--assign-across-pointer</option></link>,
+		linkend="assign-across-pointer"><option>-fassign-across-pointer</option></link>,
 		<link
-		linkend="assign-into-field"><option>--assign-into-field</option></link>,
+		linkend="assign-into-field"><option>-fassign-into-field</option></link>,
 		and <link
-		linkend="assign-into-index"><option>--assign-into-index</option></link>
+		linkend="assign-into-index"><option>-fassign-into-index</option></link>
 		flags for ways to customize which kinds of assignments
 		are instrumented.</para>
 	      </listitem>
@@ -321,15 +321,15 @@
 		trap problems relating to fixed-size buffers,
 		structure sizes, or other <quote>magic</quote> values.
 		To turn on constant expression comparisons, add <link
-		linkend="compare-constants"><option>--compare-constants</option></link>
+		linkend="compare-constants"><option>-fcompare-constants</option></link>
 		to the compiler command line.</para>
 
 		<para>See also the <link
-		linkend="assign-across-pointer"><option>--assign-across-pointer</option></link>,
+		linkend="assign-across-pointer"><option>-fassign-across-pointer</option></link>,
 		<link
-		linkend="assign-into-field"><option>--assign-into-field</option></link>,
+		linkend="assign-into-field"><option>-fassign-into-field</option></link>,
 		and <link
-		linkend="assign-into-index"><option>--assign-into-index</option></link>
+		linkend="assign-into-index"><option>-fassign-into-index</option></link>
 		flags for ways to customize which kinds of assignments
 		are instrumented.</para>
 	      </listitem>
@@ -339,8 +339,8 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--sample</option></term>
-	<term><option>--no-sample</option></term>
+	<term><option>-fsample</option></term>
+	<term><option>-fno-sample</option></term>
 	<listitem>
 	  <para>Enable or disable sampling of instrumentation
 	  points.  If sampling is disabled, instrumentation points
@@ -349,10 +349,10 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--include-function=<function><replaceable>function</replaceable></function></option></term>
-	<term><option>--include-function=<literal>*</literal></option></term>
-	<term><option>--exclude-function=<function><replaceable>function</replaceable></function></option></term>
-	<term><option>--exclude-function=<literal>*</literal></option></term>
+	<term><option>-finclude-function=<function><replaceable>function</replaceable></function></option></term>
+	<term><option>-finclude-function=<literal>*</literal></option></term>
+	<term><option>-fexclude-function=<function><replaceable>function</replaceable></function></option></term>
+	<term><option>-fexclude-function=<literal>*</literal></option></term>
 	<listitem>
 	  <para>Function filtering.  Each of these flags takes one
 	  mandatory argument which can be the name of a function or
@@ -367,7 +367,7 @@
 	  functions:
 
 	    <informalexample>
-	      <para><userinput>… <option>--exclude-function=<function>boringFunction</function></option>
+	      <para><userinput>… <option>-fexclude-function=<function>boringFunction</function></option>
 	      …</userinput></para>
 	    </informalexample>
 	  </para>
@@ -377,14 +377,14 @@
 
 	    <informalexample>
 	      <para><userinput>…
-	      <option>--include-function=<function>interestingFunction</function></option>
-	      <option>--exclude-function=<literal>*</literal></option>
+	      <option>-finclude-function=<function>interestingFunction</function></option>
+	      <option>-fexclude-function=<literal>*</literal></option>
 	      …</userinput></para>
 	    </informalexample>
 	  </para>
 
 	  <para>Default is to include all functions, as though
-	  <option>--include-function=<literal>*</literal></option>
+	  <option>-finclude-function=<literal>*</literal></option>
 	  were implicitly the last flag given.</para>
 
 	  <tip>
@@ -397,14 +397,14 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--include-file=<filename><replaceable>filename</replaceable></filename></option></term>
-	<term><option>--include-file=<literal>*</literal></option></term>
-	<term><option>--exclude-file=<filename><replaceable>filename</replaceable></filename></option></term>
-	<term><option>--exclude-file=<literal>*</literal></option></term>
-	<term><option>--include-location=<filename><replaceable>filename</replaceable></filename>:<replaceable>line-number</replaceable></option></term>
-	<term><option>--include-location=<literal>*</literal>:<replaceable>line-number</replaceable></option></term>
-	<term><option>--exclude-location=<filename><replaceable>filename</replaceable></filename>:<replaceable>line-number</replaceable></option></term>
-	<term><option>--exclude-location=<literal>*</literal>:<replaceable>line-number</replaceable></option></term>
+	<term><option>-finclude-file=<filename><replaceable>filename</replaceable></filename></option></term>
+	<term><option>-finclude-file=<literal>*</literal></option></term>
+	<term><option>-fexclude-file=<filename><replaceable>filename</replaceable></filename></option></term>
+	<term><option>-fexclude-file=<literal>*</literal></option></term>
+	<term><option>-finclude-location=<filename><replaceable>filename</replaceable></filename>:<replaceable>line-number</replaceable></option></term>
+	<term><option>-finclude-location=<literal>*</literal>:<replaceable>line-number</replaceable></option></term>
+	<term><option>-fexclude-location=<filename><replaceable>filename</replaceable></filename>:<replaceable>line-number</replaceable></option></term>
+	<term><option>-fexclude-location=<literal>*</literal>:<replaceable>line-number</replaceable></option></term>
 	<listitem>
 	  <para>File name and line number filtering.  Each of these
 	  flags takes one mandatory argument which can be the name of
@@ -456,15 +456,15 @@
 	  boilerplate:
 
 	    <informalexample>
-	      <para><userinput>… <option>--exclude-file=<filename>/usr/gnu/share/bison.simple</filename></option>
-	      <option>--exclude-file=<filename>lex.yy.c</filename></option>
+	      <para><userinput>… <option>-fexclude-file=<filename>/usr/gnu/share/bison.simple</filename></option>
+	      <option>-fexclude-file=<filename>lex.yy.c</filename></option>
 	      …</userinput></para>
 	    </informalexample>
 	  </para>
 
 	  <para>Default is to include instrumentation points from all
 	  files, as though
-	  <option>--include-file=<literal>*</literal></option> were
+	  <option>-finclude-file=<literal>*</literal></option> were
 	  implicitly the last flag given.</para>
 
 	  <tip>
@@ -477,7 +477,7 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--sampler-random=<replaceable>randomizer</replaceable></option></term>
+	<term><option>-fsampler-random=<replaceable>randomizer</replaceable></option></term>
 	<listitem>
 	  <para>Random countdown management.
 	  <replaceable>randomizer</replaceable> must be one of the
@@ -517,8 +517,8 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--show-stats</option></term>
-	<term><option>--no-show-stats</option></term>
+	<term><option>-fshow-stats</option></term>
+	<term><option>-fno-show-stats</option></term>
 	<listitem>
 	  <para>Static metrics.  Used for data collection when
 	  writing papers.  Default is silent operation.  Safe to
@@ -527,10 +527,10 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--specialize-empty-regions</option></term>
-	<term><option>--no-specialize-empty-regions</option></term>
-	<term><option>--specialize-singleton-regions</option></term>
-	<term><option>--no-specialize-singleton-regions</option></term>
+	<term><option>-fspecialize-empty-regions</option></term>
+	<term><option>-fno-specialize-empty-regions</option></term>
+	<term><option>-fspecialize-singleton-regions</option></term>
+	<term><option>-fno-specialize-singleton-regions</option></term>
 	<listitem>
 	  <para>Region specialization optimizations.  Default is to
 	  perform all specializations.  Safe to ignore.</para>
@@ -538,8 +538,8 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--use-points-to</option></term>
-	<term><option>--no-use-points-to</option></term>
+	<term><option>-fuse-points-to</option></term>
+	<term><option>-fno-use-points-to</option></term>
 	<listitem>
 	  <para>Use a conservative points-to analysis to identify
 	  possible callees at indirect function call sites.  This
@@ -549,8 +549,8 @@
       </varlistentry>
 
       <varlistentry id="compare-constants">
-	<term><option>--compare-constants</option></term>
-	<term><option>--no-compare-constants</option></term>
+	<term><option>-fcompare-constants</option></term>
+	<term><option>-fno-compare-constants</option></term>
 	<listitem>
 	  <para>When using the <option>scalar-pairs</option>
 	  instrumentation scheme, compare each assigned value to
@@ -565,8 +565,8 @@
       </varlistentry>
 
       <varlistentry id="assign-across-pointer">
-	<term><option>--assign-across-pointer</option></term>
-	<term><option>--no-assign-across-pointer</option></term>
+	<term><option>-fassign-across-pointer</option></term>
+	<term><option>-fno-assign-across-pointer</option></term>
 	<listitem>
 	  <para>When using the <option>float-kinds</option> or
 	  <option>scalar-pairs</option> instrumentation scheme,
@@ -581,8 +581,8 @@
       </varlistentry>
 
       <varlistentry id="assign-into-field">
-	<term><option>--assign-into-field</option></term>
-	<term><option>--no-assign-into-field</option></term>
+	<term><option>-fassign-into-field</option></term>
+	<term><option>-fno-assign-into-field</option></term>
 	<listitem>
 	  <para>When using the <option>float-kinds</option> or
 	  <option>scalar-pairs</option> instrumentation scheme,
@@ -597,8 +597,8 @@
       </varlistentry>
 
       <varlistentry id="assign-into-index">
-	<term><option>--assign-into-index</option></term>
-	<term><option>--no-assign-into-index</option></term>
+	<term><option>-fassign-into-index</option></term>
+	<term><option>-fno-assign-into-index</option></term>
 	<listitem>
 	  <para>When using the <option>float-kinds</option> or
 	  <option>scalar-pairs</option> instrumentation scheme,
@@ -613,8 +613,8 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--threads</option></term>
-	<term><option>--no-threads</option></term>
+	<term><option>-fthreads</option></term>
+	<term><option>-fno-threads</option></term>
 	<listitem>
 	  <para>Generate code suitable for multi-threaded execution.
 	  Defaults to generating single-threaded code.  Multi-threaded
@@ -622,7 +622,7 @@
 	  <application>GCC</application> <option>-pthread</option>
 	  flag is observed on the command line.</para>
 
-	  <para>If both <option>--no-threads</option> and
+	  <para>If both <option>-fno-threads</option> and
 	  <option>-pthread</option> are given, then the former
 	  overrides the later regardless of the order in which they
 	  appear.  This can be useful to override automatically
@@ -643,8 +643,8 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--rename-locals</option></term>
-	<term><option>--no-rename-locals</option></term>
+	<term><option>-frename-locals</option></term>
+	<term><option>-fno-rename-locals</option></term>
 	<listitem>
 	  <para>Uniquely rename all local variables and formal
 	  parameters.  This can be useful to avoid confusing multiple
@@ -660,8 +660,8 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--cache-countdown</option></term>
-	<term><option>--no-cache-countdown</option></term>
+	<term><option>-fcache-countdown</option></term>
+	<term><option>-fno-cache-countdown</option></term>
 	<listitem>
 	  <para>Cache the global next sample countdown in local
 	  variables.  This is an important performance optimization.
@@ -672,8 +672,8 @@
       </varlistentry>
 
       <varlistentry>
-	<term><option>--predict-checks</option></term>
-	<term><option>--no-predict-checks</option></term>
+	<term><option>-fpredict-checks</option></term>
+	<term><option>-fno-predict-checks</option></term>
 	<listitem>
 	  <para>Emit static branch prediction hints when checking the
 	  global next sample countdown.  This is a minor performance
@@ -700,7 +700,7 @@
       section</link>.</remark>
 
       <remark>The launchers currently assume that the program was
-      compiled using <option>--sampler-random=online</option>.  We
+      compiled using <option>-fsampler-random=online</option>.  We
       should either remove that restriction or document it clearly
       here.</remark>
     </section>
@@ -722,7 +722,7 @@
 	  <term><envar>$SAMPLER_EVENT_COUNTDOWNS</envar></term>
 	  <listitem>
 	    <para>Used when the executable was built with
-	    <option>--sampler-random=offline</option>.  Set this to
+	    <option>-fsampler-random=offline</option>.  Set this to
 	    the name of a file containing pre-generated random
 	    countdowns.  See <xref linkend="precompute" /> for
 	    information on a tool for building these countdown
@@ -738,8 +738,8 @@
 	  <term><envar>$SAMPLER_SPARSITY</envar></term>
 	  <listitem>
 	    <para>Used when the executable was built with
-	    <option>--sampler-random=online</option> or
-	    <option>--sampler-random=fixed</option>.</para>
+	    <option>-fsampler-random=online</option> or
+	    <option>-fsampler-random=fixed</option>.</para>
 
 	    <para>For <option>online</option> random sampling, set
 	    this to a positive integer or floating point number: the
@@ -764,7 +764,7 @@
 	  <term><envar>$SAMPLER_SEED</envar></term>
 	  <listitem>
 	    <para>Used when the executable was built with
-	    <option>--sampler-random=online</option>.  Seeds the
+	    <option>-fsampler-random=online</option>.  Seeds the
 	    random number generator.  In multithreaded code, each new
 	    thread seeds its own generator using this same
 	    value.</para>
@@ -828,7 +828,7 @@
 	<para><filename>&prefix;/lib/sampler/tools/precompute</filename>
 	is a tool for producing pre-generated countdowns.  This should
 	be used in conjunction with the
-	<option>--sampler-random=offline</option> flag and the
+	<option>-fsampler-random=offline</option> flag and the
 	<envar>$SAMPLER_EVENT_COUNTDOWNS</envar> environment variable.
 	Before starting the instrumented program:</para>
 
@@ -1004,7 +1004,7 @@
 		<listitem>
 		  <para>the name of an instrumentation scheme as given to
 		  <command>sampler-cc</command>'s <link
-		  linkend="sampler-scheme"><option>--sampler-scheme</option></link>
+		  linkend="sampler-scheme"><option>-fsampler-scheme</option></link>
 		  flag</para>
 		</listitem>
 	      </varlistentry>

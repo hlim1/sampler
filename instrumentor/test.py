@@ -252,7 +252,7 @@ def generate(env):
     env['CC'] = env.File('#driver/sampler-cc-here')
 
     env.AppendUnique(
-        CCFLAGS=['--relative-paths'],
+        CCFLAGS=['-frelative-paths'],
         EXTRACT_SECTION=env.File('#tools/extract-section'),
         RESOLVE_CFG=env.File('#tools/resolve-cfg'),
         RESOLVE_SAMPLES=env.File('#tools/resolveSamples'),

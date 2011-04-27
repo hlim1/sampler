@@ -1,6 +1,6 @@
 Import('env')
 env = env.Clone()
-env.AppendUnique(CC=['--sampler-scheme=bounds'], CCFLAGS=['--assign-across-pointer'])
+env.AppendUnique(CC=['-fsampler-scheme=bounds'], CCFLAGS=['-fassign-across-pointer'])
 
 enum = env.CBIProgram('enum.c')
 

@@ -1,6 +1,6 @@
 Import('env')
 env = env.Clone()
-env.AppendUnique(CC=['--sampler-scheme=scalar-pairs'])
+env.AppendUnique(CC=['-fsampler-scheme=scalar-pairs'])
 uenv = env.Clone(TEST_ARGS=['once', 'upon', 'a', 'time'])
 
 late_global = env.CBIProgram('late-global.c')

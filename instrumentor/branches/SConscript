@@ -1,6 +1,6 @@
 Import('env')
 env = env.Clone()
-env.AppendUnique(CC=['--sampler-scheme=branches'])
+env.AppendUnique(CC=['-fsampler-scheme=branches'])
 
 File('library.h')
 

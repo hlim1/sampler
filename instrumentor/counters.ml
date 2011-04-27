@@ -66,7 +66,8 @@ class manager name file =
                  | Index (s, NoOffset) -> s
                  | _ -> raise Errormsg.Error
       in
-      let dummyVar = (findOrCreate_local func ("cbi_" ^ name.prefix ^ "_dummy")) in
+      let dummyVarname = sprintf "cbi_%s_%s_dummy" name.prefix func.svar.vname in
+      let dummyVar = findOrCreate_local func dummyVarname in
       let location = siteInfo#inspiration in
       let selector = BinOp(PlusA, selector, integer thisId, intType) in
       let instruction = Set( (Var dummyVar, NoOffset), selector, location) in

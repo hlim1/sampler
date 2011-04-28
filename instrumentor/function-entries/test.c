@@ -6,7 +6,7 @@ int five()
 
 int main()
 {
-  int x = five();
+  int x __attribute__((unused)) = five();
   five();
 
   return 0;

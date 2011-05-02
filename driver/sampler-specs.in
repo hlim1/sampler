@@ -70,7 +70,9 @@
 
 *lib_threads_yes:
 %{fno-sample:-lsampler-always} \
-%{fsampler-random=*:-lsampler-%*_r} \
+%{fsampler-random=fixed:-lsampler-fixed_r} \
+%{fsampler-random=online:-lsampler-online_r} \
+%{fsampler-random=offline:-lsampler-offline_r} \
 %{!fno-sample:%{!fsampler-random=*:-lsampler-online_r}} \
 -lsampler_r \
 -lpthread

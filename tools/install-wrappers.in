@@ -1,5 +1,6 @@
 #!/usr/bin/python -O
 
+from errno import EEXIST
 from optparse import OptionParser
 from os import chown, makedirs, stat
 from os.path import dirname, join
@@ -39,29 +40,34 @@ def main():
         parser.print_help()
         exit(2)
 
-    pkglibdir = '@pkglibdir@'
-    for executable in executables:
-        executable = executable.lstrip('/')
-        original = join(options.install, executable)
-        wrapped = join(options.install, pkglibdir, 'wrapped', executable)
-        
-    makedirs(dirname(wrapped))
-    move(original, wrapped)
-
     substitutions = {
         'name': options.name,
         'version': options.version,
         'release': options.release,
-        'path': '/' + executable,
         }
-    with open(options.template) as infile:
-        with open(original, 'w') as outfile:
-            for line in infile:
-                outfile.write(AtTemplate(line).substitute(substitutions))
 
-    copymode(wrapped, original)
-    stats = stat(wrapped)
-    chown(original, stats.st_uid, st_gid)
+    pkglibdir = '@pkglibdir@'.lstrip('/')
+    for executable in executables:
+        executable = executable.lstrip('/')
+        original = join(options.install, executable)
+        wrapped = join(options.install, pkglibdir, 'wrapped', executable)
+        substitutions['path'] = '/' + executable
+
+        try:
+            makedirs(dirname(wrapped))
+        except OSError as error:
+            if error.errno != EEXIST:
+                raise
+        move(original, wrapped)
+
+        with open(options.template) as infile:
+            with open(original, 'w') as outfile:
+                for line in infile:
+                    outfile.write(AtTemplate(line).substitute(substitutions))
+
+        copymode(wrapped, original)
+        stats = stat(wrapped)
+        chown(original, stats.st_uid, stats.st_gid)
 
 
 if __name__ == '__main__':

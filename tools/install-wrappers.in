@@ -43,7 +43,7 @@ def main():
     for executable in executables:
         executable = executable.lstrip('/')
         original = join(options.install, executable)
-        wrapped = join(options.install, PKGLIBDIR, 'wrapped', executable)
+        wrapped = join(options.install, pkglibdir, 'wrapped', executable)
         
     makedirs(dirname(wrapped))
     move(original, wrapped)

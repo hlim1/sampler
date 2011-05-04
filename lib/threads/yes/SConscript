@@ -4,7 +4,7 @@ env = env.Clone()
 env.AppendUnique(
     CPPDEFINES='CBI_THREADS',
     CCFLAGS=['-pthread'],
-    LINKFLAGS=['-Wl,--wrap,pthread_create'],
+    LIBS=['-ldl'],
     REENTRANT='_r',
     )
 

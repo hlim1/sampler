@@ -1,3 +1,6 @@
+#define _GNU_SOURCE /* For RTLD_NEXT */
+
+#include <dlfcn.h>
 #include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -25,14 +28,14 @@ static void *starter(Closure *closure)
   return start(argument);
 }
 
-
-typeof(pthread_create) __real_pthread_create;
-typeof(pthread_create) __wrap_pthread_create;
-
-int __wrap_pthread_create(pthread_t *thread,
-			  const pthread_attr_t *attributes,
-			  Starter start, void *argument)
+int pthread_create(pthread_t *thread,
+		   const pthread_attr_t *attributes,
+		   Starter start, void *argument)
 {
+  static typeof(pthread_create) *real_pthread_create;
+  if(!real_pthread_create)
+    real_pthread_create = dlsym(RTLD_NEXT, __func__);
+
   Closure * const closure = (Closure *) malloc(sizeof(Closure));
   if (!closure)
     {
@@ -42,5 +45,5 @@ int __wrap_pthread_create(pthread_t *thread,
 
   closure->start = start;
   closure->argument = argument;
-  return __real_pthread_create(thread, attributes, (Starter) starter, closure);
+  return real_pthread_create(thread, attributes, (Starter) starter, closure);
 }

@@ -68,6 +68,8 @@
 + %{v:--verbose} \
 %(embedding)
 
+%rename lib original_lib
+
 *lib_threads_yes:
 %{fno-sample:-lsampler-always} \
 %{fsampler-random=fixed:-lsampler-fixed_r} \
@@ -83,19 +85,14 @@
 %{!fno-sample:%{!fsampler-random=*:-lsampler-online}} \
 -lsampler
 
-*link:
-+ --wrap fork
-
-*lib_threads:
---wrap pthread_create \
-%{fthreads:%(lib_threads_yes)} \
-%{fno-threads:%(lib_threads_no)} \
-%{!fthreads:%{!fno-threads:%{pthread:%(lib_threads_yes)}}} \
-%{!fthreads:%{!fno-threads:%{!pthread:%(lib_threads_no)}}}
-
 *lib:
-+ --undefined=cbi_initialize \
+--undefined=cbi_initialize \
 %{fsampler-lib-dir=*:-L%* -rpath %*} \
 %{fsampler-scheme=*:-lsampler-%*} \
 %{ftimestamp-*:-lsampler-schemes} \
-%(lib_threads)
+%{fthreads:%(lib_threads_yes)} \
+%{fno-threads:%(lib_threads_no)} \
+%{!fthreads:%{!fno-threads:%{pthread:%(lib_threads_yes)}}} \
+%{!fthreads:%{!fno-threads:%{!pthread:%(lib_threads_no)}}} \
+%(original_lib)
+

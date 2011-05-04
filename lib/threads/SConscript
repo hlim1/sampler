@@ -5,7 +5,6 @@ def threadLibs(env, subdir):
     env.AppendUnique(
         CPPPATH=['.', '../..'],
         CCFLAGS=['-ffast-math', '-fpic'],
-        LINKFLAGS='-Wl,--wrap,fork',
         )
 
     def inst(targets):
@@ -19,7 +18,7 @@ def threadLibs(env, subdir):
 
     env.VariantDir('.', '..', duplicate=False)
     parts = ['countdown', 'hijack', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose', 'wrap_fork' ]
-    libs('sampler', parts, [])
+    libs('sampler', parts, 'dl')
 
     randomizers = {'fixed': [], 'offline': [], 'online': ['m']}
     if subdir == 'no':

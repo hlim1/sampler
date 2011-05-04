@@ -1,13 +1,5 @@
 -*- outline -*-
 
-* tray
-
-Clean up after dead clients.  Unfortunately I am told that
-ORBit_small_{,un}listen_for_broken() is inapplicable here.  See
-<http://mail.gnome.org/archives/gnome-components-list/2004-July/msg00000.html>
-and subsequent discussion.  It's not clear that there is any standard,
-good practice for doing this.
-
 * wrapper
 
 The last client to call monitor.unref() sometimes gets a

@@ -1,5 +1,10 @@
 -*- outline -*-
 
+* sampler-1.7.5
+
+** Minor updates for Fedora 15.
+** New strategy for interposing on pthread_create and fork, to avoid libgcc conflicts.
+
 * sampler-1.7.4
 
 ** Minor updates for Fedora 14.

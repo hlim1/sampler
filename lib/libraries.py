@@ -70,7 +70,7 @@ def generate(env):
         )
 
     env.SetDefault(
-        SHLIBVERSION=[0, 0, 0],
+        SHLIBVERSION=[1, 0, 0],
         _SHLIBVERSION=var_shlibversion,
         )
 

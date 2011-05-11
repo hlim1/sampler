@@ -1,9 +1,13 @@
 -*- outline -*-
 
-* sampler-1.7.5
+* sampler-1.7.6
 
 ** Minor updates for Fedora 15.
 ** New strategy for interposing on pthread_create and fork, to avoid libgcc conflicts.  This represents an ABI change for any existing program that called either of these functions, so the shared-library version numbers are being bumped accordingly.
+
+* sampler-1.7.5
+
+** D-Bus activation bug fix for notification tray icon.
 
 * sampler-1.7.4
 

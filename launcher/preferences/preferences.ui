@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <requires lib="gtk+" version="2.14"/>
+  <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkDialog" id="preferences">
     <property name="border_width">12</property>
@@ -10,14 +10,17 @@
     <child internal-child="vbox">
       <object class="GtkVBox" id="layout">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">24</property>
         <child>
           <object class="GtkVBox" id="groups">
             <property name="visible">True</property>
+            <property name="orientation">vertical</property>
             <property name="spacing">18</property>
             <child>
               <object class="GtkVBox" id="auto-group">
                 <property name="visible">True</property>
+                <property name="orientation">vertical</property>
                 <property name="spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="auto-title">
@@ -64,6 +67,7 @@
             <child>
               <object class="GtkVBox" id="apps-group">
                 <property name="visible">True</property>
+                <property name="orientation">vertical</property>
                 <property name="spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="apps-title">

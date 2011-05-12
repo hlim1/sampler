@@ -1,7 +1,7 @@
 This package is maintained by Ben Liblit <liblit@cs.wisc.edu> based on
 initial debianizing by Jesus M. Gonzalez-Barahona <jgb@debian.org>.
 
-It was downloaded from http://www.cs.wisc.edu/cbi/
+It was downloaded from http://research.cs.wisc.edu/cbi/
 
 Upstream Author: Ben Liblit <liblit@cs.wisc.edu>
 
@@ -9,6 +9,8 @@ Copyright:
 
 Copyright (c) 2003-2004 The Regents of the University of California.
 All rights reserved.
+
+Copyright (c) 2005-2011, Benjamin R. Liblit. All rights reserved.
 
 Permission to use, copy, modify, and distribute this software for any
 purpose, without fee, and without written agreement is hereby granted,

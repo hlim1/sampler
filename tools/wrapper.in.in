@@ -4,10 +4,10 @@ import sys
 sys.path.insert(1, '@pkgdatadir@/wrapper')
 
 import Main2
-Main2.main(name = '@name@',
-           wrapped = '@pkglibdir@/wrapped@path@',
-           upload_headers = {'application-version': '@version@',
-                             'application-release': '@release@',
+Main2.main(name = '$name',
+           wrapped = '@pkglibdir@/wrapped$path',
+           upload_headers = {'application-version': '$version',
+                             'application-release': '$release',
                              'instrumentor-version': '@PACKAGE_VERSION@',
                              'build-distribution': '@DISTRO_NAME@-@DISTRO_VERSION@-@DISTRO_CPU@'}
            )

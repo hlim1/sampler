@@ -11,20 +11,6 @@ from string import Template
 ########################################################################
 
 
-class AtTemplate(Template):
-
-    delimiter = '@'
-
-    pattern = r"""
-    (?:
-    (?P<escaped>@@) |
-    (?P<named>(?!)) |
-    @(?P<braced>%(id)s)@ |
-    (?P<invalid>(?!))
-    )
-    """ % {'id': Template.idpattern}
-
-
 def main():
     usage = 'usage: %prog [options] {executables}'
     description = 'All options are required except for "--template".  At least one executable is required.'
@@ -51,7 +37,7 @@ def main():
         executable = executable.lstrip('/')
         original = join(options.install, executable)
         wrapped = join(options.install, pkglibdir, 'wrapped', executable)
-        substitutions['path'] = '/' + executable
+        path = '/' + executable
 
         try:
             makedirs(dirname(wrapped))
@@ -60,10 +46,10 @@ def main():
                 raise
         move(original, wrapped)
 
-        with open(options.template) as infile:
-            with open(original, 'w') as outfile:
-                for line in infile:
-                    outfile.write(AtTemplate(line).substitute(substitutions))
+        before = open(options.template).read()
+        template = Template(before)
+        after = template.substitute(substitutions, path=path)
+        open(original, 'w').write(after)
 
         copymode(wrapped, original)
         stats = stat(wrapped)

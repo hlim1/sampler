@@ -9,7 +9,7 @@
     <subject category="Development|Development Tools|Build Tools"/>
     <type>programmer's guide</type>
     <format mime="text/xml" dtd="-//OASIS//DTD DocBook XML V4.4//EN"/>
-    <identifier url="http://www.cs.wisc.edu/cbi/developers/guide/"/>
+    <identifier url="http://research.cs.wisc.edu/cbi/developers/guide/"/>
     <language code="C"/>
     <relation seriesid="2582b21a-c713-11d7-890f-89dcc7901dde"/>
     <rights type="BSD" holder="Benjamin Robert Liblit"/>

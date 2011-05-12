@@ -11,7 +11,7 @@ Group: Applications/System
 Packager: Ben Liblit <@PACKAGE_BUGREPORT@>
 Vendor: University of Wisconsin-Madison
 Distribution: Cooperative Bug Isolation Project
-URL: http://www.cs.wisc.edu/cbi/
+URL: http://research.cs.wisc.edu/cbi/
 Source: %name-%version.tar.gz
 BuildRoot: %_tmppath/%name-%version-%release-buildroot
 BuildRequires: /usr/bin/camlp4o.opt

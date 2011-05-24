@@ -1,3 +1,5 @@
+import platform
+
 from glob import glob
 
 Import('env')
@@ -8,15 +10,9 @@ env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
 
 def distroVersion(context):
     context.Message('checking for distribution version: ')
-    action = [['lsb_release', '-rs', '>', '$TARGET']]
-    (status, version) = context.TryAction(action)
-    if status:
-        version = version.rstrip()
-        context.env['DISTRO_VERSION'] = version
-        context.Result(version)
-    else:
-        context.Result(False)
-        context.env.Exit(1)
+    version = platform.dist()[1]
+    context.env['DISTRO_VERSION'] = version
+    context.Result(version)
 
 conf = env.Configure(
     clean=False, help=False,

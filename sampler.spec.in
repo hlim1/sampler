@@ -3,12 +3,12 @@
 #  General configuration
 #
 
-Name: @PACKAGE_NAME@
-Version: @PACKAGE_VERSION@
-Release: 1@deployment_release_suffix@
+Name: $PACKAGE_NAME
+Version: $PACKAGE_VERSION
+Release: 1$deployment_release_suffix
 License: BSD
 Group: Applications/System
-Packager: Ben Liblit <@PACKAGE_BUGREPORT@>
+Packager: Ben Liblit <$PACKAGE_BUGREPORT>
 Vendor: University of Wisconsin-Madison
 Distribution: Cooperative Bug Isolation Project
 URL: http://research.cs.wisc.edu/cbi/
@@ -66,7 +66,7 @@ gtk-update-icon-cache --quiet %_datadir/icons/hicolor &>/dev/null || :
 
 %postun
 /sbin/ldconfig
-if [ "$1" -eq 0 ]; then
+if [ "$$1" -eq 0 ]; then
   touch --no-create %_datadir/icons/hicolor &>/dev/null
   gtk-update-icon-cache --quiet %_datadir/icons/hicolor &>/dev/null || :
 fi
@@ -167,7 +167,7 @@ Requires: mod_unique_id.so
 This package provides a CGI script that manages the server end of
 sampled instrumentation reporting.  It can be added to any standard
 Apache web server installation that supports CGI scripts and the
-$UNIQUE_ID environment variable.
+$$UNIQUE_ID environment variable.
 
 %files server
 %defattr(-,root,root,-)
@@ -190,15 +190,15 @@ $UNIQUE_ID environment variable.
 %{?do_check:%scons test}
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir $RPM_BUILD_ROOT
-%scons GCONF_SCHEMAS_INSTALL=False DESTDIR=$RPM_BUILD_ROOT install
+rm -rf $$RPM_BUILD_ROOT
+mkdir $$RPM_BUILD_ROOT
+%scons GCONF_SCHEMAS_INSTALL=False DESTDIR=$$RPM_BUILD_ROOT install
 env
 echo cd `pwd`
 echo /usr/lib/rpm/find-debuginfo.sh --strict-build-id /home/liblit/research/sampler/redhat/BUILD/sampler-1.6.2
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf $$RPM_BUILD_ROOT
 
 
 %changelog

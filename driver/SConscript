@@ -37,7 +37,7 @@ env = env.Clone(
 
 asm = env.Template('as.in', varlist=['asm', 'objcopy'])
 cc1 = env.Template('cc1.in', varlist=['cc1'])
-cc = env.Template('sampler-cc.in', varlist=['PACKAGE', 'prefix', 'exec_prefix', 'libdir', 'pkglibdir', 'driverdir', 'gcc'])
+cc = env.Template('sampler-cc.in', varlist=['driverdir', 'gcc'])
 here = env.Template('sampler-cc-here.in', varlist=['gcc'])
 
 key = 'cpp_tuple_counter_bits_default'

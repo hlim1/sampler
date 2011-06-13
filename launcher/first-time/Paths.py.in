@@ -1,2 +1,2 @@
-home = '@first_timedir@'
+home = '$first_timedir'
 ui = home + '/first-time.ui'

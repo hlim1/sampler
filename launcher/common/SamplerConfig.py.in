@@ -1,2 +1,2 @@
-version = '@VERSION@'
-pixmapsdir = '@pixmapsdir@'
+version = '$VERSION'
+pixmapsdir = '$pixmapsdir'

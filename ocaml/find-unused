@@ -1,21 +1,28 @@
-#!/usr/bin/perl -w
+#!/usr/bin/python -O
 
-use strict;
-use File::Find;
-
-
-########################################################################
+from os import walk
+from os.path import join, splitext
+from sys import stderr
 
 
-sub wanted () {
-    my $obj = $_;
-
-    if ($obj =~ s/\.ml$/.cmo/) {
-	warn "$File::Find::dir/$_\n" unless -e $obj;
-    } elsif ($obj =~ s/\.mli$/.cmi/) {
-	warn "$File::Find::dir/$_\n" unless -e $obj;
+sourceToObject = {
+    '.ml': '.cmo',
+    '.mli': '.cmi',
     }
-}
 
 
-find \&wanted, '.';
+def main():
+    for root, dirs, files in walk('.'):
+        for filename in files:
+            base, extension = splitext(filename)
+            try:
+                extension = sourceToObject[extension]
+            except KeyError:
+                continue
+            objectFile = base + extension
+            if objectFile not in files:
+                print join(root, filename)
+
+
+if __name__ == '__main__':
+    main()

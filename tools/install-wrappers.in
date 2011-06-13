@@ -32,7 +32,7 @@ def main():
         'release': options.release,
         }
 
-    pkglibdir = '@pkglibdir@'.lstrip('/')
+    pkglibdir = '$pkglibdir'.lstrip('/')
     for executable in executables:
         executable = executable.lstrip('/')
         original = join(options.install, executable)

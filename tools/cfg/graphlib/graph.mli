@@ -7,6 +7,7 @@ class ['node, 'nodeData, 'edge] graph : int -> int ->
     method isEdge : 'node -> 'edge -> 'node -> bool
 
     method iterNodes : ('node -> 'nodeData -> unit) -> unit
+    method iterEdges : ('node * 'edge * 'node -> unit) -> unit
 
     method succ : 'node -> ('edge * 'node) list
     method pred : 'node -> ('edge * 'node) list

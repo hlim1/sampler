@@ -50,7 +50,7 @@
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>
     <property name="program_name">Bug Isolation Monitor</property>
-    <property name="version">@version@</property>
+    <property name="version">$version</property>
     <property name="copyright" translatable="yes">Copyright &#xA9; 2003&#x2012;2004 The Regents of the University of California
 Copyright &#xA9; 2005&#x2012;2011 Benjamin R. Liblit</property>
     <property name="comments" translatable="yes">View and set bug isolation preferences</property>

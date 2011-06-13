@@ -13,7 +13,10 @@ sources = map(env.File, sources)
 basics = env.OcamlObject('basics.ml', OCAML_WARN='Ae')
 
 env.OcamlObject(sources)
-Default(env.OcamlProgram('orderSites.ml'),
-        env.OcamlProgram('resolveCfg.ml'))
+Default(
+    env.OcamlProgram('orderSites.ml'),
+    env.OcamlProgram('resolveCfg.ml'),
+    env.OcamlProgram('toDot.ml'),
+    )
 
 Alias('install', env.Install('$DESTDIR$toolsdir', 'orderSites'))

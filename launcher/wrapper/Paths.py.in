@@ -1,4 +1,4 @@
-common = '@commondir@'
-first_time = '@first_timedir@'
-home = '@wrapperdir@'
+common = '$commondir'
+first_time = '$first_timedir'
+home = '$wrapperdir'
 ui = home + '/wrapper.ui'

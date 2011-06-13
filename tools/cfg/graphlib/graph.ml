@@ -39,6 +39,9 @@ class ['node, 'nodeData, 'edge] graph nodeCount edgeCount =
     method iterNodes =
       nodes#iter
 
+    method iterEdges =
+      edges#iterKeys
+
 
     method succ origin : ('edge * 'node) list =
       assert (self#isNode origin);

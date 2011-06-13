@@ -1,6 +1,6 @@
 #!/bin/sh
 
-driverdir=`dirname $0`
-homedir=$driverdir/..
+driverdir=`dirname $$0`
+homedir="$$driverdir/.."
 
-exec '@gcc@' -B "$driverdir" -specs=sampler-specs -fsampler-lib-dir="$driverdir/lib" "$@"
+exec '$gcc' -B "$$driverdir" -specs=sampler-specs -fsampler-lib-dir="$$driverdir/lib" "$$@"

@@ -1,101 +1,66 @@
-#!@PERL@ -w
-# -*- cperl -*-
+#!/usr/bin/python -O
 
-use strict;
-use File::Basename;
-use File::Find;
-use File::Path;
-use FileHandle;
-use FindBin;
-use Getopt::Long;
+__pychecker__ = 'no-shadowbuiltin'
 
+import re
 
-########################################################################
-#
-#  command line processing
-#
+from optparse import OptionParser
+from os import makedirs, walk
+from os.path import dirname, isdir, join, relpath
+from subprocess import check_call, PIPE, Popen
+from sys import exit, path
 
 
-my $extractdir;
-my $savedir;
-my @edit;
-
-sub usage () {
-  die <<"EOT";
-Usage: $0 [options]
-
-  --extract=PATH
-  --save=PATH
-  --edit-source=PATH::PATH
-
-Extract and save paths are required.  Source editing is optional.
-EOT
-}
-
-sub parse_edit ($) {
-  usage unless $_[1] =~ /(.*)::(.*)/;
-  @edit = ($1, $2);
-  map { s{/+$}{} } @edit;
-}
-
-my $result = GetOptions ('extract=s' => \$extractdir,
-			 'save=s' => \$savedir,
-			 'edit-source=s' => \&parse_edit);
-
-usage unless $result;
-usage unless $extractdir;
-usage unless $savedir;
-usage if @ARGV;
-
-$extractdir =~ s{/+$}{};
-$savedir    =~ s{/+$}{};
+def extract_and_edit(extractor, output, suffix, filepath, section, pattern, edit_source):
+    outfile = open('%s.%s' % (output, suffix), 'w')
+    argv = [extractor, section, filepath]
+    if edit_source:
+        exe = Popen(argv, stdout=PIPE)
+        for line in exe.stdout:
+            line = pattern.sub(edit_source[1], line)
+            print >>outfile, line,
+    else:
+        check_call(argv, stdout=outfile)
 
 
-########################################################################
-#
-#  main activity
-#
+def main():
+    parser = OptionParser(usage='usage: %prog [options]', epilog='Extract and save paths are required.  Source editing is optional.')
+    parser.add_option('--extract', metavar='DIR')
+    parser.add_option('--save', metavar='DIR')
+    parser.add_option('--edit-source', metavar='PATH PATH', nargs=2)
+
+    options, args = parser.parse_args()
+    if options.extract is None or options.save is None or args:
+        parser.print_help()
+        exit(2)
+
+    options.extract = options.extract.rstrip('/')
+    options.save = options.save.rstrip('/')
+    if options.edit_source:
+        original = re.escape(options.edit_source[0].rstrip('/'))
+        edit_sites = re.compile('^' + original)
+        edit_cfg = re.compile('(?:^|\t)' + original)
+
+    extractor = join(path[0], 'extract-section')
+    typer = Popen(['file', '--no-buffer', '--files-from=-', '--separator=\t'], stdin=PIPE, stdout=PIPE)
+
+    for dirpath, dirnames, filenames in walk(options.extract):
+        for filename in filenames:
+            filepath = join(dirpath, filename)
+            print >>typer.stdin, filepath
+            magic = typer.stdout.readline().split('\t', 1)[1]
+            if not magic.startswith('ELF '): continue
+            if not magic.endswith(', not stripped'): continue
+
+            subpath = relpath(filepath, options.extract)
+            output = join(options.save, '$pkglibdir', 'sites', subpath)
+            outdir = dirname(output)
+            if not isdir(outdir):
+                makedirs(outdir)
+
+            extract_and_edit(extractor, output, 'sites', filepath, '.debug_site_info', edit_sites, options.edit_source)
+            extract_and_edit(extractor, output, 'cfg', filepath, '.debug_sampler_cfg', edit_cfg, options.edit_source)
 
 
-my $extractor = "$FindBin::Bin/extract-section";
-
-
-sub wanted {
-  return unless -f $_;
-
-  my $exe = new FileHandle;
-  $ENV{PATH} = '/usr/bin:/bin';
-  open $exe, '-|', 'file', $_;
-  my $magic = $exe->getline;
-  return unless $magic =~ /:[ \t]*ELF.*, not stripped/;
-  die unless $exe->close;
-
-  my $subpath = $_;
-  $subpath =~ s{^\Q$extractdir\E\/}{}
-    or die "$subpath is not under $extractdir";
-
-  my $output = "$savedir@pkglibdir@/sites/$subpath";
-  mkpath dirname $output;
-  my $sites = new FileHandle "$output.sites", 'w'
-    or die "cannot write $output.sites: $!\n";
-
-  $exe = new FileHandle;
-  open $exe, '-|', $extractor, '.debug_site_info', $File::Find::name;
-  while (<$exe>) {
-    s{^\Q$edit[0]\E/}{$edit[1]/}o if @edit;
-    $sites->print($_);
-  }
-  die unless $exe->close;
-
-  my $cfg = new FileHandle "$output.cfg", 'w';
-  $exe = new FileHandle;
-  open $exe, '-|', $extractor, '.debug_sampler_cfg', $File::Find::name;
-  while (<$exe>) {
-    s{(^|\t)\Q$edit[0]\E/}{$1$edit[1]/}o if @edit;
-    $cfg->print($_);
-  }
-  die unless $exe->close;
-}
-
-
-find {wanted => \&wanted, no_chdir => 1}, $extractdir;
+if __name__ == '__main__':
+    main()

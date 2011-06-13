@@ -1,20 +1,24 @@
-#!/usr/bin/perl -w
+#!/usr/bin/python -O
 
-use strict;
+__pychecker__ = 'no-shadowbuiltin'
+
+from itertools import imap, takewhile
+from sys import argv, exit, stderr, stdin
 
 
-die "Usage: $0 <scheme>\n" unless @ARGV == 1;
-my $scheme = shift;
+def main():
+    if len(argv) != 2:
+        print >>stderr, 'Usage: %s <scheme>' % argv[0]
+        exit(2)
+
+    scheme = argv[1]
+    lines = imap(str.rstrip, stdin)
+    for signature in lines:
+        print '<samples unit="%s" scheme="%s">' % (signature, scheme)
+        for counters in takewhile(bool, lines):
+            print counters
+        print '</samples>'
 
 
-while (my $signature = <STDIN>) {
-    chomp $signature;
-    print "<samples unit=\"$signature\" scheme=\"$scheme\">\n";
-
-    while (my $tuple = <STDIN>) {
-	last if $tuple eq "\n";
-	print $tuple;
-    }
-
-    print "</samples>\n";
-}
+if __name__ == '__main__':
+    main()

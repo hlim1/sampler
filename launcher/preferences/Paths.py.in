@@ -1,2 +1,2 @@
-home = '@preferencesdir@'
+home = '$preferencesdir'
 ui = home + '/preferences.ui'

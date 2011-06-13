@@ -22,10 +22,10 @@ INPUT = None
 INSTRUMENTOR_INPUT = None
 INSTRUMENTOR_OUTPUT = None
 
-CPP0 = ['@cc1@', '-E', '-quiet']
+CPP0 = ['$cc1', '-E', '-quiet']
 CPP0_OUTPUT_SLOT = None
 
-CC1 = ['@cc1@', '-fpreprocessed']
+CC1 = ['$cc1', '-fpreprocessed']
 CC1_INPUT_SLOT = None
 
 INST = [join(dirname(__file__), 'main')]
@@ -263,17 +263,17 @@ FLAG_SPECS_EXACT = {
 FLAG_SPECS_REGEXP = [
     (re.compile(pattern), handler)
     for pattern, handler in [
-        (r'^(-O\d*)$', slurp_0_cc1),
-        (r'^(-g\d*)$', slurp_0_cc1),
-        (r'^(-m(?:arch|cpu)=.*)$', slurp_0_cc1),
-        (r'^-fsampler-scheme=(.*)$', scheme),
-        (r'^-fsampler-scales=(.*)$', scales),
-        (r'^-f((?:in|ex)clude-(?:file|function|location))=(.*)$', clude),
+        (r'^(-O\d*)$$', slurp_0_cc1),
+        (r'^(-g\d*)$$', slurp_0_cc1),
+        (r'^(-m(?:arch|cpu)=.*)$$', slurp_0_cc1),
+        (r'^-fsampler-scheme=(.*)$$', scheme),
+        (r'^-fsampler-scales=(.*)$$', scales),
+        (r'^-f((?:in|ex)clude-(?:file|function|location))=(.*)$$', clude),
         (r'^-fsampler-random=', skip),
         (r'^-fsampler-lib-dir=', skip),
-        (r'^(-.+)$', slurp_0),
-        (r'^(.*\.[ci]|-)$', cc1_input_slot),
-        (r'^(.*)$', unhandled),
+        (r'^(-.+)$$', slurp_0),
+        (r'^(.*\.[ci]|-)$$', cc1_input_slot),
+        (r'^(.*)$$', unhandled),
         ]]
 
 

@@ -56,8 +56,8 @@ let eliminate description follow sites =
 	    ())
     in
     try
-      sites#iter (fun a () ->
-	sites#iter (fun b () ->
+      sites#iterKeys (fun a ->
+	sites#iterKeys (fun b ->
 	  compare a b))
     with Eliminate ((iFunc, iId) as inferior, (sFunc, sId)) ->
       sites#remove inferior;
@@ -68,7 +68,7 @@ let eliminate description follow sites =
 
   Fixpoint.compute iteration;
 
-  sites#iter (fun (func, id) () ->
+  sites#iterKeys (fun (func, id) ->
     Printf.printf "%s\t%s\t%d\n%!" description func id)
 
 

@@ -13,6 +13,7 @@ class type ['key, 'value] t =
     method length : int
 
     method iter : ('key -> 'value -> unit) -> unit
+    method iterKeys : ('key -> unit) -> unit
     method fold : ('key -> 'value -> 'result -> 'result) -> 'result -> 'result
   end
 

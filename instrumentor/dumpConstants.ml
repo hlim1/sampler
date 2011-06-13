@@ -3,8 +3,8 @@ open Cil
 let dump file =
   let constants = Constants.collect file in
   print_endline "constants:";
-  let scanner n () = Printf.printf "\t%Ld\n" n in
-  constants#iter scanner;
+  let scanner n = Printf.printf "\t%Ld\n" n in
+  constants#iterKeys scanner;
   print_newline ()
 
 let process filename =

@@ -65,7 +65,7 @@ class visitor loopless changed =
 
 
 let addLibraries loopless =
-  Libraries.functions#iter (fun name () -> loopless#add name true);
+  Libraries.functions#iterKeys (fun name -> loopless#add name true);
   List.iter loopless#remove ["bsearch"; "qsort";
 			     "setjmp"; "__sigsetjmp"; "_setjmp";
 			     "__libc_longjmp"; "__libc_siglongjmp";

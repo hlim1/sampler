@@ -16,6 +16,7 @@ class type ['key, 'value] t =
     method length : int
 
     method iter : ('key -> 'value -> unit) -> unit
+    method iterKeys : ('key -> unit) -> unit
     method fold : ('key -> 'value -> 'result -> 'result) -> 'result -> 'result
   end
 
@@ -45,6 +46,10 @@ class ['key, 'value] c initial =
     method length = Hashtbl.length storage
 
     method iter visitor = Hashtbl.iter visitor storage
+
+    method iterKeys visitor =
+      let keyVisitor = (fun key _ -> visitor key) in
+      Hashtbl.iter keyVisitor storage
 
     method fold
 	: 'result . ((_ -> _ -> 'result -> 'result) -> 'result -> 'result)
@@ -89,6 +94,10 @@ module Make (Key : Hashtbl.HashedType) = struct
       method length = Hash.length storage
 
       method iter visitor = Hash.iter visitor storage
+
+      method iterKeys visitor =
+	let keyVisitor = (fun key _ -> visitor key) in
+	Hash.iter keyVisitor storage
 
       method fold
 	  : 'result . ((_ -> _ -> 'result -> 'result) -> 'result -> 'result)

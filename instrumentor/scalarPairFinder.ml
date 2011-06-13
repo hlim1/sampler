@@ -88,10 +88,10 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 
 	let iterConsts signed =
 	  let kind = if signed then ILongLong else IULongLong in
-	  let action right () =
+	  let action right =
 	    compareToConst (kinteger64 kind right)
 	  in
-	  constants#iter action
+	  constants#iterKeys action
 	in
 
 	begin

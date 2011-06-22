@@ -1,6 +1,9 @@
 Import('env', 'testPythons')
 env = env.Clone(preferencesdir=env.subst('$preferencesdir'))
 
+service = env.Template('edu.wisc.cs.cbi.Preferences.service.in', varlist=['bindir'])
+Default(service)
+
 Default(env.Template('Paths.py.in', varlist=['preferencesdir']))
 pythons = ['AppFinder.py', 'Application.py', 'AppModel.py', 'Main.py', 'PreferencesDialog.py', 'Service.py']
 
@@ -23,4 +26,5 @@ Alias('install', [
     env.Install('$DESTDIR$applicationsdir', desktop),
     env.Install('$DESTDIR$bindir', prefs),
     env.Install('$DESTDIR$preferencesdir', [compiled, 'preferences.ui']),
+    env.Install('$DESTDIR$servicesdir', service),
     ])

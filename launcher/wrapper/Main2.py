@@ -35,9 +35,8 @@ def main(name, wrapped, upload_headers, **extras):
         import dbus
         bus = dbus.SessionBus()
         remote = bus.get_object('edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor')
-        iface = dbus.Interface(remote, 'edu.wisc.cs.cbi.Monitor')
         try:
-            iface.activate()
+            remote.activate()
         except dbus.exceptions.DBusException, error:
             print >>sys.stderr, "warning: cannot activate CBI tray icon:", error
 

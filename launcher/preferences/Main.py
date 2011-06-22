@@ -23,6 +23,5 @@ def main():
 
         bus = dbus.SessionBus()
         remote = bus.get_object('edu.wisc.cs.cbi.Preferences', '/edu/wisc/cs/cbi/Preferences')
-        iface = dbus.Interface(remote, 'edu.wisc.cs.cbi.Preferences')
-        iface.present()
+        remote.present()
         gtk.gdk.notify_startup_complete()

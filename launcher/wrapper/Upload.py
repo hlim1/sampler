@@ -27,10 +27,9 @@ class Upload(object):
             import gzip
             import shutil
             accumulator = cStringIO.StringIO()
-            compressor = gzip.GzipFile(None, 'wb', 9, accumulator)
-            reports[name].seek(0)
-            shutil.copyfileobj(reports[name], compressor)
-            compressor.close()
+            with gzip.GzipFile(None, 'wb', 9, accumulator) as compressor:
+                reports[name].seek(0)
+                shutil.copyfileobj(reports[name], compressor)
             self.__compressed[name] = accumulator.getvalue()
 
         # pick a boundy that never appears in any report

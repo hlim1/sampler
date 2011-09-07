@@ -1,0 +1,14 @@
+Import('env')
+
+env.File([
+	'changelog',
+	'compat',
+	'control',
+	'copyright',
+	'rules',
+	'sampler-dev.install',
+	'sampler-doc.install',
+	'sampler.install',
+	'sampler-server.install',
+	'watch',
+        ])

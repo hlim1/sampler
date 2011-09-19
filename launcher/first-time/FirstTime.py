@@ -1,10 +1,3 @@
-import gi
-gi.require_version('Gtk', '3.0')
-
-
-########################################################################
-
-
 from gi.repository import Gtk
 
 import Keys
@@ -23,11 +16,12 @@ class FirstTime(object):
     def __get_widget(self, name):
         return self.__builder.get_object(name)
 
-    def __init__(self):
+    def __init__(self, application):
         import Paths
         self.__builder = Gtk.Builder()
         self.__builder.add_from_file(Paths.ui)
         self.__dialog = self.__get_widget('first-time')
+        self.__dialog.set_application(application)
         self.__builder.connect_signals(self)
 
         # hook up GConf configuration monitoring
@@ -65,9 +59,6 @@ class FirstTime(object):
         __pychecker__ = 'no-argsused'
         if response == Gtk.ResponseType.OK:
             self.__client.set_bool(Keys.asked, True)
-
-    def present(self):
-        return self.__dialog.present()
 
     def run(self):
         result = self.__dialog.run()

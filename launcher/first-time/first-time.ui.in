@@ -1,22 +1,54 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkDialog" id="first-time">
+    <property name="can_focus">False</property>
     <property name="border_width">6</property>
     <property name="title" translatable="yes">Welcome to the Cooperative Bug Isolation Project!</property>
     <property name="resizable">False</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
-    <signal name="response" handler="on_response"/>
+    <signal name="response" handler="on_response" swapped="no"/>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="vertical">
+      <object class="GtkBox" id="vertical">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">12</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="buttons">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="ok">
+                <property name="label">gtk-ok</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="receives_default">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkTable" id="table">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="border_width">6</property>
             <property name="n_rows">4</property>
             <property name="n_columns">4</property>
@@ -25,6 +57,7 @@
             <child>
               <object class="GtkImage" id="image">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="yalign">0</property>
                 <property name="stock">gtk-dialog-question</property>
                 <property name="icon-size">6</property>
@@ -37,7 +70,9 @@
             </child>
             <child>
               <object class="GtkLabel" id="prologue">
+                <property name="width_request">405</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="yalign">0</property>
                 <property name="label" translatable="yes">&lt;span weight="bold" size="larger"&gt;The Cooperative Bug Isolation Project&lt;/span&gt;
@@ -58,20 +93,23 @@ Feedback from users like you can help us find and fix the bugs that matter most.
             <child>
               <object class="GtkVBox" id="radio-group">
                 <property name="visible">True</property>
-                <property name="orientation">vertical</property>
+                <property name="can_focus">False</property>
                 <child>
                   <object class="GtkRadioButton" id="yes">
                     <property name="label" translatable="yes">_Yes, count me in</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="use_underline">True</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">no</property>
-                    <signal name="toggled" handler="on_yes_toggled"/>
+                    <signal name="toggled" handler="on_yes_toggled" swapped="no"/>
                   </object>
                   <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -81,11 +119,14 @@ Feedback from users like you can help us find and fix the bugs that matter most.
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="use_underline">True</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -99,8 +140,10 @@ Feedback from users like you can help us find and fix the bugs that matter most.
             </child>
             <child>
               <object class="GtkLabel" id="yes-details">
+                <property name="width_request">381</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;small&gt;If you choose &#x201C;Yes&#x201D; then participating applications will send feedback to the bug isolation center after each run. Failed runs will also include crash reports to help us see what went wrong.&lt;/small&gt;</property>
+                <property name="label" translatable="yes">&lt;small&gt;If you choose “Yes” then participating applications will send feedback to the bug isolation center after each run. Failed runs will also include crash reports to help us see what went wrong.&lt;/small&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
@@ -115,9 +158,11 @@ Feedback from users like you can help us find and fix the bugs that matter most.
             </child>
             <child>
               <object class="GtkLabel" id="no-details">
+                <property name="width_request">381</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;small&gt;If you choose &#x201C;No&#x201D; then participating applications will not monitor their own behavior. No automatic feedback will ever be sent, though you can still report problems manually.&lt;/small&gt;</property>
+                <property name="label" translatable="yes">&lt;small&gt;If you choose “No” then participating applications will not monitor their own behavior. No automatic feedback will ever be sent, though you can still report problems manually.&lt;/small&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
               </object>
@@ -132,6 +177,7 @@ Feedback from users like you can help us find and fix the bugs that matter most.
             </child>
             <child>
               <object class="GtkLabel" id="learn-more">
+                <property name="width_request">393</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="xalign">0</property>
@@ -161,34 +207,9 @@ Feedback from users like you can help us find and fix the bugs that matter most.
             </child>
           </object>
           <packing>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="buttons">
-            <property name="visible">True</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="ok">
-                <property name="label">gtk-ok</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="has_default">True</property>
-                <property name="receives_default">False</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
             <property name="expand">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>

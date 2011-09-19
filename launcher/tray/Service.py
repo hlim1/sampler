@@ -4,7 +4,7 @@ os.environ['DBUS_PYTHON_NO_DEPRECATED'] = '1'
 from dbus.mainloop.glib import DBusGMainLoop
 
 import dbus.service
-import gtk
+from gi.repository import Gtk
 
 
 class Server(dbus.service.Object):
@@ -30,7 +30,7 @@ class Server(dbus.service.Object):
             try:
                 self.__clients.remove(name)
                 if not self.__clients:
-                    gtk.main_quit()
+                    Gtk.main_quit()
             except KeyError:
                 pass
 

@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 import urlparse
 
 
@@ -18,7 +18,7 @@ class ServerMessage(object):
         import BlipIcons
         import Paths
 
-        builder = gtk.Builder()
+        builder = Gtk.Builder()
         builder.add_from_file(Paths.ui)
         self.__dialog = builder.get_object('server-message')
         pixmap = self.__dialog.render_icon(BlipIcons.stock[True],
@@ -65,8 +65,8 @@ class ServerMessage(object):
     def on_link_clicked(self, document, link):
         screen = self.__dialog.get_screen()
         full = urlparse.urljoin(document.base, link)
-        timestamp = gtk.get_current_event_time()
-        gtk.show_uri(screen, full, timestamp)
+        timestamp = Gtk.get_current_event_time()
+        Gtk.show_uri(screen, full, timestamp)
 
     def on_title_changed(self, document, title):
         document.dialog.set_title(title)

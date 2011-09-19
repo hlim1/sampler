@@ -8,8 +8,8 @@ class UserConfig(object):
 
     def __init__(self, name):
         '''Look for preferences under GConf area for the given application.'''
-        import gconf
-        self.__client = gconf.client_get_default()
+        from gi.repository import GConf
+        self.__client = GConf.Client.get_default()
         self.__namespace = Keys.applications + '/' + name
 
     def __key(self, extension):

@@ -1,11 +1,11 @@
-import pygtk
-pygtk.require('2.0')
+import gi
+gi.require_version('Gtk', '3.0')
 
 
 ########################################################################
 
 
-import gtk
+from gi.repository import Gtk
 
 import Keys
 
@@ -25,22 +25,22 @@ class FirstTime(object):
 
     def __init__(self):
         import Paths
-        self.__builder = gtk.Builder()
+        self.__builder = Gtk.Builder()
         self.__builder.add_from_file(Paths.ui)
         self.__dialog = self.__get_widget('first-time')
         self.__builder.connect_signals(self)
 
         # hook up GConf configuration monitoring
-        import gconf
+        from gi.repository import GConf
         from GConfDir import GConfDir
-        self.__client = gconf.client_get_default()
-        self.__dir = GConfDir(self.__client, Keys.root, gconf.CLIENT_PRELOAD_NONE)
+        self.__client = GConf.Client.get_default()
+        self.__dir = GConfDir(self.__client, Keys.root, GConf.ClientPreloadType.PRELOAD_NONE)
 
         # hook up state-linked icons
         from StatusIcon import StatusIcon
         from WindowIcon import WindowIcon
         image = self.__get_widget('image')
-        self.__image_updater = StatusIcon(self.__client, image, gtk.ICON_SIZE_DIALOG)
+        self.__image_updater = StatusIcon(self.__client, image, Gtk.IconSize.DIALOG)
         self.__icon_updater = WindowIcon(self.__client, self.__dialog)
 
         # hook up state-linked radio buttons
@@ -63,7 +63,7 @@ class FirstTime(object):
 
     def on_response(self, dialog, response):
         __pychecker__ = 'no-argsused'
-        if response == gtk.RESPONSE_OK:
+        if response == Gtk.ResponseType.OK:
             self.__client.set_bool(Keys.asked, True)
 
     def present(self):

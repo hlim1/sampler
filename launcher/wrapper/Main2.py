@@ -2,8 +2,8 @@ import sys
 import Paths
 sys.path.append(Paths.common)
 
-import pygtk
-pygtk.require('2.0')
+import gi
+gi.require_version('Gtk', '3.0')
 
 
 ########################################################################

@@ -1,4 +1,4 @@
-import gtk
+from gi.repository import Gtk
 
 import BlipIcons
 import Keys
@@ -12,9 +12,9 @@ class TrayIcon(object):
     __slots__ = ['__about', '__client', '__menu_master', '__notifier', '__popup', '__status_icon']
 
     def __init__(self, client):
-        gtk.about_dialog_set_url_hook(self.__url_hook)
+        Gtk.about_dialog_set_url_hook(self.__url_hook)
 
-        builder = gtk.Builder()
+        builder = Gtk.Builder()
         builder.add_from_file(Paths.ui)
         builder.connect_signals(self)
 
@@ -73,4 +73,4 @@ class TrayIcon(object):
         PreferencesDialog.present()
 
     def on_status_icon_popup_menu(self, status_icon, button, activate_time):
-        self.__popup.popup(None, None, gtk.status_icon_position_menu, button, activate_time, status_icon)
+        self.__popup.popup(None, None, Gtk.status_icon_position_menu, button, activate_time, status_icon)

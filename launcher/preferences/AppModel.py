@@ -1,14 +1,14 @@
-import pygtk
-pygtk.require('2.0')
+import gi
+gi.require_version('Gtk', '3.0')
 
 
 ########################################################################
 
 
-import gtk
+from gi.repository import Gtk
 
 
-class AppModel(gtk.ListStore):
+class AppModel(Gtk.ListStore):
 
     COLUMN_NAME = 0
     COLUMN_ENABLED = 1
@@ -34,10 +34,10 @@ class AppModel(gtk.ListStore):
         return a.get_enabled() - b.get_enabled()
 
     def __init__(self):
-        import gobject
-        gtk.ListStore.__init__(self, gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT)
-        assert self.get_flags() & gtk.TREE_MODEL_ITERS_PERSIST
+        from gi.repository import GObject
+        GObject.GObject.__init__(self, GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT)
+        assert self.get_flags() & Gtk.TREE_MODEL_ITERS_PERSIST
 
         self.set_sort_func(self.COLUMN_NAME, self.__sort_name)
         self.set_sort_func(self.COLUMN_ENABLED, self.__sort_enabled)
-        self.set_sort_column_id(self.COLUMN_NAME, gtk.SORT_ASCENDING)
+        self.set_sort_column_id(self.COLUMN_NAME, Gtk.SortType.ASCENDING)

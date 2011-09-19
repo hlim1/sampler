@@ -1,8 +1,8 @@
-import pygtk
-pygtk.require('2.0')
+import gi
+gi.require_version('Gtk', '3.0')
 
-import gconf
-import gtk
+from gi.repository import GConf
+from gi.repository import Gtk
 
 from GConfDir import GConfDir
 from TrayIcon import TrayIcon
@@ -24,10 +24,10 @@ def main():
     unique = Service.unique()
     if not unique: return
 
-    client = gconf.client_get_default()
-    gconf_dir = GConfDir(client, Keys.root, gconf.CLIENT_PRELOAD_ONELEVEL)
+    client = GConf.Client.get_default()
+    gconf_dir = GConfDir(client, Keys.root, GConf.ClientPreloadType.PRELOAD_ONELEVEL)
 
     tray = TrayIcon(client)
-    gtk.main()
+    Gtk.main()
 
     del gconf_dir

@@ -55,7 +55,7 @@ class FirstTime(object):
         radio = self.__get_widget(name)
         details = self.__get_widget(name + '-details')
         radio.set_active(active)
-        details.set_sensitive(active)
+        details.set_visible(active)
 
     def on_yes_toggled(self, yes):
         enabled = yes.get_active()

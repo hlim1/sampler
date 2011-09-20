@@ -5,13 +5,14 @@ class PreferencesDialog(object):
 
     __slots__ = ['__apps_group', '__client', '__dialog', '__dir', '__icon', '__master', '__notifier']
 
-    def __init__(self):
+    def __init__(self, application):
         from gi.repository import Gtk
         import Paths
         builder = Gtk.Builder()
         builder.add_from_file(Paths.ui)
         builder.connect_signals(self)
         self.__dialog = builder.get_object('preferences')
+        self.__dialog.set_application(application)
 
         from gi.repository import GConf
         from GConfDir import GConfDir
@@ -56,14 +57,14 @@ class PreferencesDialog(object):
 
         view.set_model(model)
 
-    def __name_data_func(self, column, renderer, model, iter):
+    def __name_data_func(self, column, renderer, model, iterator, unused):
         __pychecker__ = 'no-argsused'
-        app = model.get_value(iter, model.COLUMN_NAME)
+        app = model.get_value(iterator, model.COLUMN_NAME)
         renderer.set_property('text', app.name)
 
-    def __enabled_data_func(self, column, renderer, model, iter):
+    def __enabled_data_func(self, column, renderer, model, iterator, unused):
         __pychecker__ = 'no-argsused'
-        app = model.get_value(iter, model.COLUMN_ENABLED)
+        app = model.get_value(iterator, model.COLUMN_ENABLED)
         renderer.set_property('active', app.get_enabled())
 
     def on_master_toggled(self, master):
@@ -81,19 +82,7 @@ class PreferencesDialog(object):
         app = model.get_value(iterator, model.COLUMN_ENABLED)
         app.set_enabled(not app.get_enabled())
 
-    def on_dialog_delete(self, dialog, event):
-        return True
-
-    def on_dialog_response(self, dialog, response):
-        if response < 0:
-            dialog.hide()
-            dialog.emit_stop_by_name('response')
-            return True
-        else:
-            return False
-
-    def present(self):
-        return self.__dialog.present()
-
     def run(self):
-        return self.__dialog.run()
+        result = self.__dialog.run()
+        self.__dialog.destroy()
+        return result

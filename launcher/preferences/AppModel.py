@@ -1,10 +1,3 @@
-import gi
-gi.require_version('Gtk', '3.0')
-
-
-########################################################################
-
-
 from gi.repository import Gtk
 
 
@@ -15,19 +8,17 @@ class AppModel(Gtk.ListStore):
 
     def add_application(self, app):
         iterator = self.append()
-        self.set(iterator,
-                 self.COLUMN_NAME, app,
-                 self.COLUMN_ENABLED, app)
+        self.set_row(iterator, (app, app))
         return iterator
 
-    def __sort_name(self, model, a, b):
+    def __sort_name(self, model, a, b, unused):
         __pychecker__ = 'no-argsused'
         import locale
         a = self.get_value(a, self.COLUMN_NAME)
         b = self.get_value(b, self.COLUMN_NAME)
         return locale.strcoll(a.name, b.name)
 
-    def __sort_enabled(self, model, a, b):
+    def __sort_enabled(self, model, a, b, unused):
         __pychecker__ = 'no-argsused'
         a = self.get_value(a, self.COLUMN_ENABLED)
         b = self.get_value(b, self.COLUMN_ENABLED)
@@ -35,7 +26,7 @@ class AppModel(Gtk.ListStore):
 
     def __init__(self):
         from gi.repository import GObject
-        GObject.GObject.__init__(self, GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT)
+        Gtk.ListStore.__init__(self, GObject.TYPE_PYOBJECT, GObject.TYPE_PYOBJECT)
         assert self.get_flags() & Gtk.TREE_MODEL_ITERS_PERSIST
 
         self.set_sort_func(self.COLUMN_NAME, self.__sort_name)

@@ -1,0 +1,2 @@
+home = '$preferencesdir'
+ui = home + '/preferences.ui'

@@ -38,7 +38,7 @@ def main():
     for line in open(options.template):
         print >>schemasfile, Template(line).substitute(mapping),
 
-    chmod(S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH, schemas)
+    chmod(schemas, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH)
 
 
 if __name__ == '__main__':

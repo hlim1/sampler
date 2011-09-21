@@ -1,0 +1,5 @@
+__pychecker__ = 'no-shadowbuiltin'
+
+home = '$traydir'
+bin = '$bindir'
+ui = home + '/tray.ui'

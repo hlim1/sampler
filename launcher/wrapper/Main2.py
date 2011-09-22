@@ -2,9 +2,6 @@ import sys
 import Paths
 sys.path.append(Paths.common)
 
-import gi
-gi.require_version('Gtk', '3.0')
-
 
 ########################################################################
 
@@ -32,12 +29,13 @@ def main(name, wrapped, upload_headers, **extras):
         Popen([Paths.first_time + '/first-time'])
 
     if user.show_tray_icon():
-        import dbus
-        bus = dbus.SessionBus()
-        remote = bus.get_object('edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor')
+        from gi.repository import Gio
+        from glib import GError
+        bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+        tray = Gio.DBusProxy.new_sync(bus, 0, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None)
         try:
-            remote.activate()
-        except dbus.exceptions.DBusException, error:
+            tray.activate()
+        except GError, error:
             print >>sys.stderr, "warning: cannot activate CBI tray icon:", error
 
     outcome = launcher.wait()

@@ -36,9 +36,10 @@ BuildRequires: scrollkeeper
 #
 
 Summary: Support for applications with sampled instrumentation
-Requires: python >= 2.7
+Requires: GConf2 >= 2.31.1
 Requires: gobject-introspection
-Requires: gtk3
+Requires: gtk3 >= 3.0
+Requires: python >= 2.7
 Requires: webkitgtk3
 Requires(pre): GConf2
 Requires(post): GConf2

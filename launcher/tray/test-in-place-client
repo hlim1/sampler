@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import dbus
+from gi.repository import Gio
 
 from contextlib import contextmanager
 from sys import stdout
@@ -14,12 +14,11 @@ def verbosely(description):
     print 'done'
 
 with verbosely('initializing'):
-    bus = dbus.SessionBus()
-    remote = bus.get_object('edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor')
-    iface = dbus.Interface(remote, 'edu.wisc.cs.cbi.Monitor')
+    bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+    tray = Gio.DBusProxy.new_sync(bus, 0, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None)
 
 with verbosely('activating'):
-    iface.activate()
+    tray.activate()
 
 with verbosely('sleeping for five seconds'):
     sleep(5)

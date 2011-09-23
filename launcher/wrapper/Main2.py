@@ -31,10 +31,8 @@ def main(name, wrapped, upload_headers, **extras):
     if user.show_tray_icon():
         from gi.repository import Gio
         from glib import GError
-        bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
-        tray = Gio.DBusProxy.new_sync(bus, 0, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None)
         try:
-            tray.activate()
+            Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None).activate()
         except GError, error:
             print >>sys.stderr, "warning: cannot activate CBI tray icon:", error
 

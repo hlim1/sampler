@@ -14,8 +14,7 @@ def verbosely(description):
     print 'done'
 
 with verbosely('initializing'):
-    bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
-    tray = Gio.DBusProxy.new_sync(bus, 0, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None)
+    tray = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None)
 
 with verbosely('activating'):
     tray.activate()

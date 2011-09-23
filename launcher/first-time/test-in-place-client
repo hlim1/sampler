@@ -1,8 +1,5 @@
 #!/usr/bin/python
 
-import dbus
+from gi.repository import Gio
 
-bus = dbus.SessionBus()
-remote = bus.get_object('edu.wisc.cs.cbi.FirstTime', '/edu/wisc/cs/cbi/FirstTime')
-iface = dbus.Interface(remote, 'org.gtk.Application')
-iface.Activate({})
+Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.FirstTime', '/edu/wisc/cs/cbi/FirstTime', 'org.gtk.Application', None).Activate('(a{sv})', None)

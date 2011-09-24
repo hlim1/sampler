@@ -1,3 +1,9 @@
+BASE = 'edu.wisc.cs.cbi'
+ASKED = 'asked'
+MASTER = 'enabled'
+SHOW_TRAY_ICON = 'show-tray-icon'
+APPLICATIONS = 'applications'
+
 root = '/apps/sampler'
 asked = root + '/asked'
 master = root + '/enabled'

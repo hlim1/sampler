@@ -1,10 +1,8 @@
 import gi
 gi.require_version('Gtk', '3.0')
 
-from gi.repository import GConf
-from gi.repository import Gtk
+from gi.repository import Gio, Gtk
 
-from GConfDir import GConfDir
 from TrayIcon import TrayIcon
 
 import CommandLine
@@ -24,10 +22,6 @@ def main():
     unique = Service.unique()
     if not unique: return
 
-    client = GConf.Client.get_default()
-    gconf_dir = GConfDir(client, Keys.root, GConf.ClientPreloadType.PRELOAD_ONELEVEL)
-
-    tray = TrayIcon(client)
+    settings = Gio.Settings(Keys.BASE)
+    tray = TrayIcon(settings)
     Gtk.main()
-
-    del gconf_dir

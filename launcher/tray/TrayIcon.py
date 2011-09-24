@@ -1,53 +1,40 @@
-from gi.repository import Gtk
+from gi.repository import Gio, Gtk
 
-import BlipIcons
 import Keys
-from MasterNotifier import MasterNotifier
 import Paths
 
 
 class TrayIcon(object):
 
-    __slots__ = ['__about', '__client', '__menu_master', '__notifier', '__popup', '__status_icon']
+    __slots__ = ['__about', '__popup']
 
-    def __init__(self, client):
+    def __init__(self, settings):
         Gtk.about_dialog_set_url_hook(self.__url_hook)
 
         builder = Gtk.Builder()
         builder.add_from_file(Paths.ui)
         builder.connect_signals(self)
 
+        from AboutBoxIcon import AboutBoxIcon
         self.__about = builder.get_object('about')
-        self.__menu_master = builder.get_object('menu-master')
+        AboutBoxIcon(settings, self.__about)
+
+        from StatusIcon import StatusIcon
+        StatusIcon(settings, builder.get_object('status-icon'))
+
         self.__popup = builder.get_object('ui-manager').get_widget('/ui/popup')
-        self.__status_icon = builder.get_object('status-icon')
-
-        self.__client = client
-        self.__notifier = MasterNotifier(client, self.__enabled_refresh)
-
-    def __enabled_refresh(self, enabled):
-        description = ('disabled', 'enabled')[enabled]
-        pixbuf = self.__about.render_icon(BlipIcons.stock[enabled], BlipIcons.ICON_SIZE_EMBLEM, '')
-        self.__about.set_icon(pixbuf)
-        self.__about.set_property('logo', pixbuf)
-        self.__menu_master.set_active(enabled)
-        self.__status_icon.set_from_stock(BlipIcons.stock[enabled])
-        self.__status_icon.set_tooltip('Automatic reporting is %s' % description)
+        menu_master = builder.get_object('menu-master')
+        settings.bind(Keys.MASTER, menu_master, 'active', Gio.SettingsBindFlags.DEFAULT)
 
     def __url_hook(self, dialog, link):
         __pychecker__ = 'no-argsused'
         pass
 
     def __activate_preferences_dialog(self):
-        from gi.repository import Gio
         preferences = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.Preferences', '/edu/wisc/cs/cbi/Preferences', 'org.gtk.Application', None)
         preferences.Activate('(a{sv})', None)
 
     # popup menu handlers
-
-    def on_master_toggled(self, item):
-        active = item.get_active()
-        self.__client.set_bool(Keys.master, active)
 
     def on_preferences_activate(self, item):
         __pychecker__ = 'no-argsused'

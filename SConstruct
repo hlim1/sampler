@@ -63,7 +63,7 @@ def validate_cil_path(key, value, env):
 
 opts = Variables('.scons-config', ARGUMENTS)
 opts.AddVariables(
-    BoolVariable('GCONF_SCHEMAS_INSTALL', 'install GConf schemas', True),
+    BoolVariable('GSETTINGS_SCHEMAS_COMPILE', 'compile installed GSettings schemas', True),
     BoolVariable('OCAML_NATIVE', 'compile OCaml to native code', False),
     BoolVariable('debug', 'compile for debugging', False),
     PathVariable('prefix', 'install in the given directory', '/usr/local'),
@@ -82,7 +82,6 @@ if domainname == 'cs.wisc.edu':
     print 'adding special tweaks for', domainname
     env.AppendENVPath('PATH', '/unsup/ocaml/bin')
     env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.4/site-packages/pychecker/checker.py']
-    env['PKG_CONFIG_PATH'] = '/usr/lib/pkgconfig'
 
 env['cil_path'] = env.Dir('$cil_path')
 env.SetDefault(gcc=env.WhereIs('gcc'))
@@ -109,12 +108,9 @@ env = env.Clone(
     NAME='$PACKAGE_NAME',
     VERSION=version,
     version=version,
-    deployment_learn_more_url='http://research.cs.wisc.edu/cbi/learn-more/',
     deployment_release_suffix='',
     enable_deployment='default',
     TARCOMSTR='$TAR $TARFLAGS -f $TARGET $$SOURCES',
-
-    pkg_config='PKG_CONFIG_PATH=$PKG_CONFIG_PATH pkg-config',
 
     # various derived paths
     applicationsdir='$datadir/applications',
@@ -135,7 +131,7 @@ env = env.Clone(
     pkglibdir='$libdir/sampler',
     preferencesdir='$pkgdatadir/preferences',
     samplerdir='$driverdir/sampler',
-    schemadir='$sysconfdir/gconf/schemas',
+    schemadir='$datadir/glib-2.0/schemas',
     schemesdir='$samplerdir/schemes',
     sysconfdir='/etc',
     threadsdir='$samplerdir/threads',

@@ -2,17 +2,17 @@ Import('env', 'testPythons')
 env = env.Clone(first_timedir=env.subst('$first_timedir'))
 
 Default(env.Template('Paths.py.in', varlist=['first_timedir']))
-pythons = ['FirstTime.py', 'Main.py', 'StatusIcon.py']
+pythons = ['FirstTime.py', 'Main.py']
 
 pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 
-ui = env.Template('first-time.ui.in', varlist=['deployment_learn_more_url'])
 script = env.Template('first-time.in', varlist=['commondir', 'first_timedir'])
 service = env.Template('edu.wisc.cs.cbi.FirstTime.service.in', varlist=['first_timedir'])
-Default([ui, script, service])
+Default([script, service])
 
+ui = 'first-time.ui'
 testPythons(env, pythons)
 Alias('test', env.TestXML(ui, schema=File('../gtk-builder.xsd')))
 

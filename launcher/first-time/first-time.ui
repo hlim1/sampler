@@ -8,7 +8,7 @@
     <property name="resizable">False</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
-    <signal name="response" handler="on_response" swapped="no"/>
+    <signal name="response" handler="on_response"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="vertical">
         <property name="visible">True</property>
@@ -60,7 +60,7 @@
                 <property name="can_focus">False</property>
                 <property name="yalign">0</property>
                 <property name="stock">gtk-dialog-question</property>
-                <property name="icon-size">6</property>
+                <property name="icon_size">6</property>
               </object>
               <packing>
                 <property name="bottom_attach">4</property>
@@ -105,7 +105,6 @@ Feedback from users like you can help us find and fix the bugs that matter most.
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">no</property>
-                    <signal name="toggled" handler="on_yes_toggled" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -181,7 +180,7 @@ Feedback from users like you can help us find and fix the bugs that matter most.
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">Not sure what to do? &lt;a href="$deployment_learn_more_url"&gt;Click here to learn more.&lt;/a&gt;</property>
+                <property name="label" translatable="yes">Not sure what to do? &lt;a href="http://research.cs.wisc.edu/cbi/learn-more/"&gt;Click here to learn more.&lt;/a&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="use_underline">True</property>
                 <property name="wrap">True</property>

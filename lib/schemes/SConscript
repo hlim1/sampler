@@ -28,7 +28,7 @@ for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pair
 senv.TwoLibraries('float-kinds', ['float-kinds.c'], LIBS=['$LIBS', 'm'])
 
 genv = senv.Clone()
-genv.ParseConfig(['$pkg_config', '--cflags', '--libs', 'gobject-2.0'])
+genv.ParseConfig(['pkg-config', '--cflags', '--libs', 'gobject-2.0'])
 gsources = ['g-object-unref.c', 'g-object-unref-classify.c']
 genv.TwoLibraries('g-object-unref', gsources)
 

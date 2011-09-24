@@ -47,24 +47,6 @@ common-install-prehook-arch::
 
 ########################################################################
 #
-#  install GConf schemas defining sampler preferences
-#
-
-$(SAMPLER_WRAP_PACKAGES:%=sampler-gconf/%) :: sampler-gconf/%:
-	$(SAMPLER_TOOLS)/install-gconf			\
-	  --name=$(SAMPLER_NAME)			\
-	  --sparsity=$(SAMPLER_SPARSITY)		\
-	  --reporting-url=$(SAMPLER_REPORTING_URL)	\
-	  --install=$(SAMPLER_INSTALL)
-	dh_gconf -p$(cdbs_curpkg) $(DEB_DH_GCONF_ARGS)
-
-.PHONY: sampler-gconf/%
-
-$(SAMPLER_WRAP_PACKAGES:%=binary-install/%) :: binary-install/%: sampler-gconf/%
-
-
-########################################################################
-#
 #  wrap instrumened binaries in launcher scripts
 #
 

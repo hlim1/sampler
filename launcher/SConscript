@@ -4,22 +4,17 @@ env = env.Clone(tools=['python'], toolpath=['.'])
 env.File('python.py')
 
 common = env.Dir('#launcher/common')
-config = common.File('SamplerConfig.py')
 
-def testPythons(env, pythons):
+def testPythons(env, sources):
     env = env.Clone()
     env.AppendUnique(ENV={'PYTHONPATH': common.abspath})
-    sources = pythons + [config]
     target = 'pychecker.passed'
     test = env.TestPython(target=target, source=sources)
     Alias('test', test)
 
-Alias('test', env.TestXML('sampler.schemas'))
-
-
 def servicesDir(context):
     context.Message('checking for DBUS session services subdirectory: ')
-    ok, value = context.TryAction([['$pkg_config', '--variable=session_bus_services_dir', 'dbus-1', '>$TARGET']])
+    ok, value = context.TryAction([['pkg-config', '--variable=session_bus_services_dir', 'dbus-1', '>$TARGET']])
     if ok:
         value = value.rstrip()
         context.env['servicesdir'] = value
@@ -34,11 +29,24 @@ conf.ServicesDir()
 conf.Finish()
 
 
-[installed] = env.Install('$DESTDIR$schemadir', 'sampler.schemas')
+compileSchema = '`pkg-config --variable=glib_compile_schemas gio-2.0`'
+schemas = 'edu.wisc.cs.cbi.gschema.xml'
+passed = schemas + '.passed'
+Alias('test',
+      env.Command(passed, schemas, [
+            compileSchema + ' --strict --dry-run --schema-file=$SOURCE',
+            Touch('$TARGET'),
+            ]))
+
+[installed] = env.Install('$DESTDIR$schemadir', schemas)
 Alias('install', installed)
-if env['GCONF_SCHEMAS_INSTALL']:
-    postAction = 'env GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` gconftool-2 --makefile-install-rule %s >/dev/null' % str(installed)
+if env['GSETTINGS_SCHEMAS_COMPILE']:
+    postAction = compileSchema + ' $DESTDIR$schemadir'
     env.AddPostAction(installed, postAction)
+
+migrate = 'edu.wisc.cs.cbi.migrate'
+migrateDir = '$DESTDIR$datadir/GConf/gsettings'
+Alias('install', env.Install(migrateDir, migrate))
 
 
 SConscript(dirs=[

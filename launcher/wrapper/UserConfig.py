@@ -4,21 +4,21 @@ import Keys
 class UserConfig(object):
     '''User preferences for an instrumened application.'''
 
-    __slots__ = ['__client', '__namespace']
+    __slots__ = ['__client', '__namespace', '__settings']
 
     def __init__(self, name):
         '''Look for preferences under GConf area for the given application.'''
-        from gi.repository import GConf
+        from gi.repository import GConf, Gio
         self.__client = GConf.Client.get_default()
         self.__namespace = Keys.applications + '/' + name
+        self.__settings = Gio.Settings(Keys.BASE)
 
     def __key(self, extension):
         return self.__namespace + '/' + extension
 
     def asked(self):
         '''Check whether we have asked the user to participate.'''
-
-        return self.__client.get_bool(Keys.asked)
+        return self.__settings[Keys.ASKED]
 
     def enabled(self):
         '''Check whether sampling is enabled for this application.'''
@@ -26,14 +26,14 @@ class UserConfig(object):
         if not self.asked():
             return 0
 
-        if not self.__client.get_bool(Keys.master):
+        if not self.__settings[Keys.MASTER]:
             return 0
 
         return self.__client.get_bool(self.__key('enabled'))
 
     def show_tray_icon(self):
         '''Check whether a tray icon should be displayed whenever instrumented apps are running.'''
-        return self.__client.get_bool(Keys.show_tray_icon)
+        return self.__settings[Keys.SHOW_TRAY_ICON]
 
     def sparsity(self):
         '''Sparsity of sampled data, or 0 if sampling is disabled.'''

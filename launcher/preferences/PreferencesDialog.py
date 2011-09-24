@@ -3,7 +3,7 @@ import Keys
 
 class PreferencesDialog(object):
 
-    __slots__ = ['__apps_group', '__client', '__dialog', '__dir', '__icon', '__master', '__notifier']
+    __slots__ = ['__apps_group', '__client', '__dialog', '__dir']
 
     def __init__(self, application):
         from gi.repository import Gtk
@@ -27,12 +27,13 @@ class PreferencesDialog(object):
         for path in finder:
             Application(self.__client, model, path)
 
-        from MasterNotifier import MasterNotifier
+        from gi.repository import Gio
+        settings = Gio.Settings(Keys.BASE)
+
         from WindowIcon import WindowIcon
-        self.__master = builder.get_object('master')
-        self.__apps_group = builder.get_object('apps-group')
-        self.__notifier = MasterNotifier(self.__client, self.__master_refresh)
-        self.__icon = WindowIcon(self.__client, self.__dialog)
+        WindowIcon(settings, self.__dialog)
+        settings.bind(Keys.MASTER, builder.get_object('master'), 'active', Gio.SettingsBindFlags.DEFAULT)
+        settings.bind(Keys.MASTER, builder.get_object('apps-group'), 'sensitive', Gio.SettingsBindFlags.DEFAULT)
 
         view = builder.get_object('applications')
 
@@ -66,14 +67,6 @@ class PreferencesDialog(object):
         __pychecker__ = 'no-argsused'
         app = model.get_value(iterator, model.COLUMN_ENABLED)
         renderer.set_property('active', app.get_enabled())
-
-    def on_master_toggled(self, master):
-        active = master.get_active()
-        self.__client.set_bool(Keys.master, active)
-
-    def __master_refresh(self, enabled):
-        self.__master.set_active(enabled)
-        self.__apps_group.set_sensitive(enabled)
 
     def on_application_toggled(self, renderer, path, model):
         __pychecker__ = 'no-argsused'

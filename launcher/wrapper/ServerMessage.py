@@ -1,5 +1,4 @@
 from gi.repository import Gtk, WebKit
-import urlparse
 
 
 ########################################################################
@@ -14,7 +13,6 @@ class ServerMessage(object):
 
     def __init__(self, base, content_type, body):
         import cgi
-        from gi.repository import GLib, GObject
         import BlipIcons
         import Paths
 
@@ -37,6 +35,7 @@ class ServerMessage(object):
         view.show()
 
     def __on_navigation(self, view, frame, request, action, decision):
+        __pychecker__ = 'no-argsused'
         if action.props.reason == WebKit.WebNavigationReason.LINK_CLICKED:
             decision.ignore()
             destination = action.props.original_uri
@@ -48,6 +47,7 @@ class ServerMessage(object):
             return False
 
     def __on_notify_title(self, view, param):
+        __pychecker__ = 'no-argsused'
         title = view.props.title or self.__initial_title
         self.__dialog.props.title = title
         return True

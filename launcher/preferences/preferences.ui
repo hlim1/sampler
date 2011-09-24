@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
-  <object class="GtkListStore" id="apps-store">
-    <columns>
-      <!-- column-name Application -->
-      <column type="gchararray"/>
-      <!-- column-name Enabled -->
-      <column type="gboolean"/>
-    </columns>
-  </object>
   <object class="GtkDialog" id="preferences">
     <property name="can_focus">False</property>
     <property name="border_width">12</property>
     <property name="title" translatable="yes">Bug Isolation Preferences</property>
+    <property name="default_width">260</property>
+    <property name="default_height">336</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkBox" id="layout">
@@ -88,7 +82,6 @@
                         <property name="use_underline">True</property>
                         <property name="active">True</property>
                         <property name="draw_indicator">True</property>
-                        <signal name="toggled" handler="on_master_toggled" swapped="no"/>
                       </object>
                     </child>
                   </object>

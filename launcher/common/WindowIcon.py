@@ -1,13 +1,13 @@
-class WindowIcon(object):
+import BlipIcons
+import Keys
+from StatusIcon import StatusIcon
 
-    __slots__ = ['__notify', '__widget']
 
-    def __init__(self, client, widget):
-        from MasterNotifier import MasterNotifier
-        self.__widget = widget
-        self.__notify = MasterNotifier(client, self.__enabled_refresh)
+class WindowIcon(StatusIcon):
 
-    def __enabled_refresh(self, enabled):
-        import BlipIcons
-        pixbuf = self.__widget.render_icon(BlipIcons.stock[enabled], BlipIcons.ICON_SIZE_EMBLEM, "")
-        self.__widget.set_icon(pixbuf)
+    def set_icon(self, widget, enabled):
+        pixbuf = widget.render_icon(enabled, BlipIcons.ICON_SIZE_EMBLEM, '')
+        self.set_pixbuf(widget, pixbuf)
+
+    def set_pixbuf(self, widget, pixbuf):
+        widget.set_icon(pixbuf)

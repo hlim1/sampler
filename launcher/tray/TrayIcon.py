@@ -4,7 +4,6 @@ import BlipIcons
 import Keys
 from MasterNotifier import MasterNotifier
 import Paths
-import PreferencesDialog
 
 
 class TrayIcon(object):
@@ -39,6 +38,11 @@ class TrayIcon(object):
         __pychecker__ = 'no-argsused'
         pass
 
+    def __activate_preferences_dialog(self):
+        from gi.repository import Gio
+        preferences = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.Preferences', '/edu/wisc/cs/cbi/Preferences', 'org.gtk.Application', None)
+        preferences.Activate('(a{sv})', None)
+
     # popup menu handlers
 
     def on_master_toggled(self, item):
@@ -47,7 +51,7 @@ class TrayIcon(object):
 
     def on_preferences_activate(self, item):
         __pychecker__ = 'no-argsused'
-        PreferencesDialog.present()
+        self.__activate_preferences_dialog()
 
     def on_about_activate(self, item):
         __pychecker__ = 'no-argsused'
@@ -70,7 +74,7 @@ class TrayIcon(object):
 
     def on_status_icon_activate(self, status_icon):
         __pychecker__ = 'no-argsused'
-        PreferencesDialog.present()
+        self.__activate_preferences_dialog()
 
     def on_status_icon_popup_menu(self, status_icon, button, activate_time):
         self.__popup.popup(None, None, Gtk.status_icon_position_menu, button, activate_time, status_icon)

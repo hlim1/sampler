@@ -3,6 +3,7 @@ os.environ['DBUS_PYTHON_NO_DEPRECATED'] = '1'
 
 from dbus.mainloop.glib import DBusGMainLoop
 
+# this module probably cannot be ported to Gio's D-Bus bindings until <https://bugzilla.gnome.org/show_bug.cgi?id=655051> and <https://bugzilla.gnome.org/show_bug.cgi?id=656325> are fixed
 import dbus.service
 from gi.repository import Gtk
 

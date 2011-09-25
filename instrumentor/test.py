@@ -40,7 +40,8 @@ def __sampler_ld_scan(node, env, path):
     __pychecker__ = 'no-argsused'
     deps = chain(
         __driver_deps,
-        env.Glob('#driver/lib/$SHLIBPREFIX*$SHLIBSUFFIX'),
+        env.Glob('#driver/lib/$SHLIBPREFIX*${SHLIBSUFFIX}'),
+        env.Glob('#driver/lib/$SHLIBPREFIX*${SHLIBSUFFIX}.${SHLIBVERSION[0]}'),
         )
     return list(deps)
 

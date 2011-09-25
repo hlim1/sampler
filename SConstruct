@@ -108,6 +108,7 @@ env = env.Clone(
     NAME='$PACKAGE_NAME',
     VERSION=version,
     version=version,
+    SHLIBVERSION=[1, 0, 0],
     deployment_release_suffix='',
     enable_deployment='default',
     TARCOMSTR='$TAR $TARFLAGS -f $TARGET $$SOURCES',

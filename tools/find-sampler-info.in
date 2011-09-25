@@ -42,18 +42,18 @@ def main():
         edit_cfg = re.compile('(?:^|\t)' + original)
 
     extractor = join(path[0], 'extract-section')
-    typer = Popen(['file', '--no-buffer', '--files-from=-', '--separator=\t'], stdin=PIPE, stdout=PIPE)
+    typer = Popen(['file', '--print0', '--separator=', '--no-buffer', '--no-pad', '--files-from=-'], stdin=PIPE, stdout=PIPE)
+    unstripped_re = re.compile('\0 *ELF .*, not stripped$$')
 
     for dirpath, dirnames, filenames in walk(options.extract):
         for filename in filenames:
             filepath = join(dirpath, filename)
             print >>typer.stdin, filepath
-            magic = typer.stdout.readline().split('\t', 1)[1]
-            if not magic.startswith('ELF '): continue
-            if not magic.endswith(', not stripped'): continue
+            magic = typer.stdout.readline()
+            if not unstripped_re.search(magic): continue
 
             subpath = relpath(filepath, options.extract)
-            output = join(options.save, '$pkglibdir', 'sites', subpath)
+            output = join(options.save, '$pkglibdir'.lstrip('/'), 'sites', subpath)
             outdir = dirname(output)
             if not isdir(outdir):
                 makedirs(outdir)

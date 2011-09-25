@@ -18,21 +18,4 @@
       <description>Set to true if the “Bug Isolation Monitor” tray icon should be displayed whenever the user is running any instrumented application.  The tray icon, which appears in the GNOME Panel notification area, serves as a visual reminder that instrumented code is in use.  The icon shows a green blip if automatic reporting is enabled, or no blip if reporting is disabled.</description>
     </key>
   </schema>
-  <schema id="edu.wisc.cs.cbi.application">
-    <key name="enabled" type="b">
-      <default>true</default>
-      <summary>Sampling and reporting is enabled</summary>
-      <description>Set to true if the user has decided to participate in the bug isolation project: samples will be collected during each run and reported to the central bug isolation server after each run concludes.  Set to false if the user has decided not to participate: no samples will be collected or reported.  Note that if the sibling “asked” key is false, then this key only sets the default for the first-time opt-in dialog.  Sampling only begins once both “asked” and “enabled” are true.</description>
-    </key>
-    <key name="sparsity" type="i">
-      <default>100</default>
-      <summary>Sparsity of sampled data</summary>
-      <description>Gives the reciprocal of the average sampling rate.  That is, a sparsity of 100 means that on average 1/100 of potentially interesting events will be sampled.  A larger value for this key make sampling more sparse, which provides less useful information in exchange for less overhead.  A smaller value for this key makes sampling more dense, which provides more useful information in exchange for more overhead.  As a special case, sampling is disabled entirely if sparsity is set to 0.  The central bug isolation server may request a change in sparsity when a report is uploaded; this gives the project coordinators the ability to fine tune overhead or disable sampling entirely once the project concludes.</description>
-    </key>
-    <key name="reporting-url" type="s">
-      <default>'https://cbi.cs.wisc.edu/cbi/cgi-bin/sampler-upload.cgi'</default>
-      <summary>Report submission address</summary>
-      <description>Gives the URL used to submit reports to the central bug isolation server.  This must be either an “http:” or “https:” URL.  Proxying is possible, but uses the Python proxy configuration (as expressed in environment variables) rather than the GNOME proxy configuration.  The central bug isolation server may request a change in reporting URL when a report is uploaded; this gives the project coordinators the ability to change collection servers should the need arise.</description>
-    </key>
-  </schema>
 </schemalist>

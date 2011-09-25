@@ -73,7 +73,6 @@ glib-compile-schemas %_datadir/glib-2.0/schemas &> /dev/null || :
 %files
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING NEWS
-%_bindir/sampler-preferences
 %dir %_libdir/%name
 %_libdir/%name/sites
 %_libdir/%name/wrapped
@@ -81,10 +80,8 @@ glib-compile-schemas %_datadir/glib-2.0/schemas &> /dev/null || :
 %_datadir/%name/common
 %_datadir/%name/first-time
 %_datadir/%name/pixmaps
-%_datadir/%name/preferences
 %_datadir/%name/tray
 %_datadir/%name/wrapper
-%_datadir/applications/*
 %_datadir/dbus-1/services/*
 %_datadir/GConf/gsettings/*
 %_datadir/glib-2.0/schemas/*

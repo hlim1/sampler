@@ -9,8 +9,6 @@ class TrayIcon(object):
     __slots__ = ['__about', '__popup']
 
     def __init__(self, settings):
-        Gtk.about_dialog_set_url_hook(self.__url_hook)
-
         builder = Gtk.Builder()
         builder.add_from_file(Paths.ui)
         builder.connect_signals(self)
@@ -20,25 +18,14 @@ class TrayIcon(object):
         AboutBoxIcon(settings, self.__about)
 
         from StatusIcon import StatusIcon
-        StatusIcon(settings, builder.get_object('status-icon'))
+        status_icon = builder.get_object('status-icon')
+        StatusIcon(settings, status_icon)
 
         self.__popup = builder.get_object('ui-manager').get_widget('/ui/popup')
         menu_master = builder.get_object('menu-master')
         settings.bind(Keys.MASTER, menu_master, 'active', Gio.SettingsBindFlags.DEFAULT)
 
-    def __url_hook(self, dialog, link):
-        __pychecker__ = 'no-argsused'
-        pass
-
-    def __activate_preferences_dialog(self):
-        preferences = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.Preferences', '/edu/wisc/cs/cbi/Preferences', 'org.gtk.Application', None)
-        preferences.Activate('(a{sv})', None)
-
     # popup menu handlers
-
-    def on_preferences_activate(self, item):
-        __pychecker__ = 'no-argsused'
-        self.__activate_preferences_dialog()
 
     def on_about_activate(self, item):
         __pychecker__ = 'no-argsused'
@@ -59,9 +46,15 @@ class TrayIcon(object):
 
     # status icon handlers
 
-    def on_status_icon_activate(self, status_icon):
+    def __position_menu(self, menu, push_in, status_icon):
         __pychecker__ = 'no-argsused'
-        self.__activate_preferences_dialog()
+        return Gtk.StatusIcon.position_menu(menu, status_icon)
+
+    def __show_menu(self, status_icon, button, activate_time):
+        self.__popup.popup(None, None, self.__position_menu, status_icon, button, activate_time)
+
+    def on_status_icon_activate(self, status_icon):
+        self.__show_menu(status_icon, 0, Gtk.get_current_event_time())
 
     def on_status_icon_popup_menu(self, status_icon, button, activate_time):
-        self.__popup.popup(None, None, Gtk.status_icon_position_menu, button, activate_time, status_icon)
+        self.__show_menu(status_icon, button, activate_time)

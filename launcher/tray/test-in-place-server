@@ -1,16 +1,21 @@
 #!/usr/bin/python
 
+from os import environ
 from os.path import dirname, realpath
-import sys
+from sys import argv, path
 
-home = realpath(dirname(sys.argv[0]))
-sys.path.append(home)
+home = realpath(dirname(argv[0]))
+environ['XDG_DATA_DIRS'] = ':'.join([
+    home + '/..',
+    '/usr/local/share',
+    '/usr/share',
+    ])
+
 import Paths
 Paths.home = home
 Paths.ui = home + '/tray.ui'
 
-for subdir in ['common', 'monitor', 'trayicon']:
-    sys.path.append(realpath(home + '/../' + subdir))
+path.append(realpath(home + '/../common'))
 
 import SamplerConfig
 SamplerConfig.pixmapsdir = realpath(home + '/../pixmaps')

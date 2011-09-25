@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=edu.wisc.cs.cbi.Preferences
-Exec=$bindir/sampler-preferences

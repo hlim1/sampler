@@ -10,9 +10,12 @@ from Launcher import Launcher
 class SampledLauncher(Launcher):
     '''Launch an application with sampling enabled.'''
 
-    def __init__(self, app, user, sparsity):
+    __slots = ['__settings', '__sparsity', '__reporting_url']
+
+    def __init__(self, settings, app, sparsity, reporting_url):
         Launcher.__init__(self, app)
-        self.__user = user
+        self.__reporting_url = reporting_url
+        self.__settings = settings
         self.__sparsity = sparsity
 
     def spawn(self):
@@ -47,9 +50,11 @@ class SampledLauncher(Launcher):
         outcome.reports = ReportsReader.ReportsReader(os.fdopen(self.__pipe[0]))
 
     def wait(self):
+        import Keys
+
         outcome = Launcher.wait(self)
-        if self.__user.enabled():
+        if self.__settings[Keys.ENABLED]:
             import Uploader
-            Uploader.upload(self.app, self.__user, outcome, 'text/html')
+            Uploader.upload(self.app, self.__reporting_url, outcome, 'text/html')
 
         return outcome

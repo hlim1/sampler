@@ -11,7 +11,7 @@ import Keys
 
 class FirstTime(object):
 
-    __slots__ = ['__dialog', '__dir', '__icon_updater', '__image_updater', '__notifier', '__settings']
+    __slots__ = ['__dialog', '__settings']
 
     def __init__(self, application):
         import Paths

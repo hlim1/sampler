@@ -3,17 +3,21 @@ env = env.Clone(bindir=env.subst('$bindir'),
                traydir=env.subst('$traydir'))
 
 service = env.Template('edu.wisc.cs.cbi.Monitor.service.in', varlist=['traydir'])
-Default([service, env.Template('Paths.py.in', varlist=['bindir', 'traydir'])])
+paths = env.Template('Paths.py.in', varlist=['bindir', 'traydir'])
+tray = env.Template('tray.in', varlist=['commondir', 'traydir'])
+ui = env.Template('tray.ui.in', varlist=['version'])
+Default(service, paths, tray, ui)
 
-Default(env.Template('tray.in', varlist=['commondir', 'traydir']))
+pythons = [
+    'AboutBoxIcon.py',
+    'Main.py',
+    'Paths.py',
+    'Service.py',
+    'TrayIcon.py',
+    ]
 
-pythons = ['Main.py', 'Service.py', 'TrayIcon.py']
-pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
-
-ui = env.Template('tray.ui.in', varlist=['version'])
-Default(ui)
 
 testPythons(env, pythons)
 Alias('test', [
@@ -22,5 +26,5 @@ Alias('test', [
 
 Alias('install', [
     env.Install('$DESTDIR$servicesdir', service),
-    env.Install('$DESTDIR$traydir', [compiled, 'tray', ui]),
+    env.Install('$DESTDIR$traydir', [compiled, tray, ui]),
     ])

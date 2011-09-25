@@ -10,19 +10,6 @@
             <property name="active">True</property>
             <property name="name">menu-master</property>
             <property name="label" translatable="yes">Automatic _Reporting</property>
-            <signal handler="on_master_toggled" name="activate"/>
-          </object>
-        </child>
-        <child>
-          <object class="GtkAction" id="menu-preferences">
-            <property name="stock_id">gtk-preferences</property>
-            <property name="name">menu-preferences</property>
-            <signal handler="on_preferences_activate" name="activate"/>
-          </object>
-        </child>
-        <child>
-          <object class="GtkAction" id="separator">
-            <property name="name">separator</property>
           </object>
         </child>
         <child>
@@ -37,8 +24,6 @@
     <ui>
       <popup name="popup">
         <menuitem action="menu-master"/>
-        <menuitem action="menu-preferences"/>
-        <separator/>
         <menuitem action="menu-about"/>
       </popup>
     </ui>
@@ -48,7 +33,6 @@
     <property name="title" translatable="yes">About Bug Isolation Monitor</property>
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
-    <property name="has_separator">False</property>
     <property name="program_name">Bug Isolation Monitor</property>
     <property name="version">$version</property>
     <property name="copyright" translatable="yes">Copyright © 2003–2004 The Regents of the University of California

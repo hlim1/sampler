@@ -1,12 +1,25 @@
 Import('env', 'testPythons')
-env = env.Clone(commondir=env.subst('$commondir'),
-               first_timedir=env.subst('$first_timedir'),
-               wrapperdir=env.subst('$wrapperdir'))
+env = env.Clone(
+    commondir=env.subst('$commondir'),
+    wrapperdir=env.subst('$wrapperdir'),
+    )
 
 Default(env.Template('Paths.py.in', varlist=['commondir', 'first_timedir', 'wrapperdir']))
-pythons = ['AppConfig.py', 'Launcher.py', 'Main2.py', 'Main.py', 'Outcome.py', 'RedirectHandler.py', 'ReportsReader.py', 'SampledLauncher.py', 'ServerMessage.py', 'UnsampledLauncher.py', 'Uploader.py', 'Upload.py', 'UserConfig.py']
+pythons = [
+    'AppConfig.py',
+    'Launcher.py',
+    'Main2.py',
+    'Main.py',
+    'Outcome.py',
+    'Paths.py',
+    'ReportsReader.py',
+    'SampledLauncher.py',
+    'ServerMessage.py',
+    'UnsampledLauncher.py',
+    'Uploader.py',
+    'Upload.py',
+    ]
 
-pythons.append('Paths.py')
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 

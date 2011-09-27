@@ -54,14 +54,17 @@ class visitor file =
         in
         let doOneCase caseStmt = List.fold_left doOneLabel [] caseStmt.labels in
         let impls, infos = List.split (List.concat (List.map doOneCase cases)) in
-        (* put instrumentation for all case-statements
-         * in the first case-site's implementation. *)
-        let clump = Block (mkBlock impls) in
-        let firstPatch = tuples#addImplementation (List.hd infos) clump in
-        let switch = mkStmt (Switch(predLval, implementation, cases, location)) in
-        let stmtList = List.concat [[assign]; [firstPatch]; [switch]] in
-        let replacement = Block (mkBlock stmtList) in
-        ChangeDoChildrenPost (stmt, postpatch replacement)
+        if List.length infos > 1 then
+          (* put instrumentation for all case-statements
+           * in the first case-site's implementation. *)
+          let clump = Block (mkBlock impls) in
+          let firstPatch = tuples#addImplementation (List.hd infos) clump in
+          let switch = mkStmt (Switch(predLval, implementation, cases, location)) in
+          let stmtList = List.concat [[assign]; [firstPatch]; [switch]] in
+          let replacement = Block (mkBlock stmtList) in
+          ChangeDoChildrenPost (stmt, postpatch replacement)
+        else
+          DoChildren
 
 	| _ ->
       match IsolateInstructions.isolated stmt with

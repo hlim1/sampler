@@ -10,9 +10,17 @@ static void cbi_reporter()
 {
 }
 
+#pragma cilnoremove("cbi_memset0")
+void cbi_memset0(void *p, unsigned int sz);
+#pragma cilnoremove("cbi_guardedSetZero")
+void cbi_guardedSetZero();
 
-static struct cbi_Unit cbi_unit = { 0, 0, cbi_reporter };
+#pragma sampler_exclude_function("cbi_zeroSetter")
+static void cbi_zeroSetter()
+{
+}
 
+static struct cbi_Unit cbi_unit = { 0, 0, cbi_reporter, cbi_zeroSetter };
 
 #pragma sampler_exclude_function("cbi_constructor")
 static void cbi_constructor() __attribute__((constructor));

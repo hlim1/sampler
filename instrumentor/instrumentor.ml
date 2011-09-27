@@ -62,6 +62,7 @@ let phase =
     EmbedDataflow.visit file digest;
     EmbedSiteInfo.visit schemes digest;
     EmbedImplications.visit ((Lazy.force impls)#getInfos ()) digest;
+    AddResetCode.visit file;
 
     if !sample then
       begin

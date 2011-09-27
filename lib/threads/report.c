@@ -173,8 +173,8 @@ void cbi_initializeReport()
 	  SIGNAL_INST(FPE);
 	  SIGNAL_INST(SEGV);
 	  SIGNAL_INST(TRAP);
-    SIGNAL_INST(TERM);
-    SIGNAL_INST(INT);
+	  SIGNAL_INST(TERM);
+	  SIGNAL_INST(INT);
 	}
     });
 

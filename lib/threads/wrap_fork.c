@@ -3,6 +3,7 @@
 #include <dlfcn.h>
 #include <unistd.h>
 #include "random.h"
+#include "report.h"
 #include "verbose.h"
 
 pid_t fork(void)

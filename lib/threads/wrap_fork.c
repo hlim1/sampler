@@ -15,6 +15,7 @@ pid_t fork(void)
   if (pid == 0)
     {
       VERBOSE("in child");
+      cbi_uninitializeReport();
       cbi_initializeRandom();
     }
 

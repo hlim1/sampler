@@ -276,7 +276,7 @@ FLAG_SPECS_REGEXP = [
         (r'^-f((?:in|ex)clude-(?:file|function|location))=(.*)$$', clude),
         (r'^-fsampler-random=', skip),
         (r'^-fsampler-lib-dir=', skip),
-        (r'^-freset-at-points=(.*)$', resetPoints),
+        (r'^-freset-at-points=(.*)', resetPoints),
         (r'^(-.+)$$', slurp_0),
         (r'^(.*\.[ci]|-)$$', cc1_input_slot),
         (r'^(.*)$$', unhandled),

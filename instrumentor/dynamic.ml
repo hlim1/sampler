@@ -23,6 +23,25 @@ let analyze file =
       compute_results false
     end
 
+let funptrFilter lst =
+  let isFunPtr varinfo =
+    match varinfo.vtype with
+    | TFun (_, _, _, _) ->
+        (varinfo.vname <> "__builtin_alloca")
+    | _ -> false
+  in
+  List.filter isFunPtr lst
+
+module VarInfoSet = Set.Make( 
+  struct
+    let compare = Pervasives.compare
+    type t = varinfo
+  end )
+
+let removeDuplicates lst =
+  let accumulator = (fun acc v -> VarInfoSet.add v acc) in
+  let uniques = List.fold_left accumulator VarInfoSet.empty lst in
+  VarInfoSet.elements uniques
 
 let resolve = function
   | (Var varinfo, NoOffset) ->
@@ -30,7 +49,9 @@ let resolve = function
   | (Mem expression, NoOffset) ->
       if !usePointsTo then
 	try
-	  let result = resolve_exp expression in
+	  let resultList = resolve_exp expression in
+	  let filtered = funptrFilter resultList in
+	  let result = removeDuplicates filtered in
 	  ignore (Pretty.eprintf "=== pta: %a --> [%a]\n"
 		    d_exp expression
 		    (Pretty.d_list ", " (fun () varinfo -> Pretty.text varinfo.vname)) result);

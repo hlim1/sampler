@@ -17,9 +17,27 @@ let isCountdown =
     string_match pattern candidate.vname 0
 
 
+let mylocUnknown = { line = 1; 
+		   file = "CIL_LocUnknown"; 
+		   byte = 0;}
+
 class printer =
   object (self)
     inherit defaultCilPrinterClass as super
+
+    (* Print a pre-defined location for locUnknown *)
+    method pLineDirective ?(forcefile=false) l = 
+      if l.line <= 0 then
+        super#pLineDirective ~forcefile:forcefile mylocUnknown
+      else
+        super#pLineDirective ~forcefile:forcefile l
+
+    (* Print locations for variables added by CIL *)
+    method pVDecl () (v:varinfo) =
+      if v.vdecl.line = -1 then
+        self#pLineDirective v.vdecl ++ (super#pVDecl () v)
+      else
+        super#pVDecl () v
 
     method pGlobal () = function
       | GPragma (Attr ("sampler_exclude_function" as directive, [AStr argument]), location)

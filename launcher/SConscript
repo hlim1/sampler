@@ -38,6 +38,12 @@ Alias('test',
             Touch('$TARGET'),
             ]))
 
+compiled = env.Command('glib-2.0/schemas/gschemas.compiled', schemas, [
+        compileSchema + ' --strict --targetdir=$TARGET.dir --schema-file=$SOURCE',
+        ])
+Default(compiled)
+Clean(compiled, 'glib-2.0')
+
 [installed] = env.Install('$DESTDIR$schemadir', schemas)
 Alias('install', installed)
 if env['GSETTINGS_SCHEMAS_COMPILE']:

@@ -1,7 +1,8 @@
 from gi.repository import Gio, Gtk
+from os.path import abspath, dirname, join
 
 import Keys
-import Paths
+from SamplerConfig import version
 
 
 class TrayIcon(object):
@@ -10,11 +11,13 @@ class TrayIcon(object):
 
     def __init__(self, settings):
         builder = Gtk.Builder()
-        builder.add_from_file(Paths.ui)
+	home = dirname(abspath(__file__))
+        builder.add_from_file(join(home, 'tray.ui'))
         builder.connect_signals(self)
 
         from AboutBoxIcon import AboutBoxIcon
         self.__about = builder.get_object('about')
+        self.__about.props.version = version
         AboutBoxIcon(settings, self.__about)
 
         from StatusIcon import StatusIcon

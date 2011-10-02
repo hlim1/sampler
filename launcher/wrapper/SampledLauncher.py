@@ -53,7 +53,7 @@ class SampledLauncher(Launcher):
         import Keys
 
         outcome = Launcher.wait(self)
-        if self.__settings[Keys.ENABLED]:
+        if self.__settings[Keys.MASTER]:
             import Uploader
             Uploader.upload(self.app, self.__reporting_url, outcome, 'text/html')
 

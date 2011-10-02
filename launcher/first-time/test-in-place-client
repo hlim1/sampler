@@ -1,5 +1,0 @@
-#!/usr/bin/python
-
-from gi.repository import Gio
-
-Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.FirstTime', '/edu/wisc/cs/cbi/FirstTime', 'org.gtk.Application', None).Activate('(a{sv})', None)

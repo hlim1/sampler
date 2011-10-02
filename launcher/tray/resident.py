@@ -1,18 +1,21 @@
 #!/usr/bin/python -O
 # -*- coding: utf-8 -*-
 
-import re
+from os import environ
+from os.path import abspath, dirname
 
-from contextlib import closing
+home = dirname(abspath(__file__))
+launcher = dirname(home)
+environ['XDG_DATA_DIRS'] = ':'.join([
+    launcher,
+    '/usr/local/share',
+    '/usr/share',
+    ])
+
+# add "../common" to sys.path
+import Main
+
 from gi.repository import Gio, GLib, Gtk, Notify
-from subprocess import Popen
-
-from sys import path
-path.insert(0, '../common')
-
-from os.path import realpath
-import SamplerConfig
-SamplerConfig.pixmapsdir = realpath('../pixmaps')
 
 import BlipIcons
 import Keys
@@ -30,10 +33,6 @@ WORDS = {
         'Disable',
         ),
     }
-
-
-def learn_more(note, action, unused):
-    Gtk.show_uri('http://research.cs.wisc.edu/cbi/learn-more/')
 
 
 def closed(note):
@@ -63,7 +62,6 @@ def update(settings, note):
     note.set_icon_from_pixbuf(pixmap)
 
     # awaiting fix for <https://bugzilla.gnome.org/show_bug.cgi?id=658288>/<https://bugzilla.redhat.com/show_bug.cgi?id=741128>
-    #note.add_action('learn-more', 'Learn More…', learn_more, None, None)
     #note.add_action('toggle', Imperative, set_enabled, (settings, not enabled), None)
 
     note.show()
@@ -74,21 +72,21 @@ def main():
 
     # workaround for <https://bugzilla.gnome.org/show_bug.cgi?id=653033>
     if 'body-hyperlinks' not in Notify.get_server_caps():
+        import re
         global BODY
         BODY = re.sub('<(a href="[^"]*"|/a)>', '', BODY)
 
-    with closing(Notify.Notification()) as note:
+    note = Notify.Notification()
+    note.set_urgency(Notify.Urgency.LOW)
+    note.set_hint('resident', GLib.Variant.new_boolean(True))
+    #note.set_hint_string('desktop-entry', ...)
+    note.connect('closed', closed)
 
-        note.set_urgency(Notify.Urgency.LOW)
-        note.set_hint('resident', GLib.Variant.new_boolean(True))
-        #note.set_hint_string('desktop-entry', ...)
-        note.connect('closed', closed)
+    settings = Gio.Settings(Keys.BASE)
+    settings.connect('changed::' + Keys.MASTER, changed_enabled, note)
+    update(settings, note)
 
-        settings = Gio.Settings(Keys.BASE)
-        settings.connect('changed::' + Keys.MASTER, changed_enabled, note)
-        update(settings, note)
-
-        Gtk.main()
+    Gtk.main()
 
 
 if __name__ == '__main__':

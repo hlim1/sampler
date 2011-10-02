@@ -1,7 +1,8 @@
 from gi.repository import GLib, Gtk
-from sys import argv
+from os.path import abspath, dirname, join
+from sys import argv, path
 
-import CommandLine
+path.insert(1, join(dirname(dirname(abspath(__file__))), 'common'))
 
 
 ########################################################################
@@ -18,7 +19,6 @@ def activate(application):
 
 
 def main():
-    CommandLine.parse()
     application = Gtk.Application.new('edu.wisc.cs.cbi.FirstTime', 0)
     application.connect('activate', activate)
     status = application.run(argv)

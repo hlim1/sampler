@@ -1,4 +1,5 @@
 from gi.repository import Gtk, WebKit
+from os.path import abspath, dirname, join
 
 
 ########################################################################
@@ -14,10 +15,10 @@ class ServerMessage(object):
     def __init__(self, base, content_type, body):
         import cgi
         import BlipIcons
-        import Paths
 
         builder = Gtk.Builder()
-        builder.add_from_file(Paths.ui)
+	home = dirname(abspath(__file__))
+        builder.add_from_file(join(home, 'wrapper.ui'))
         self.__dialog = builder.get_object('server-message')
         pixmap = self.__dialog.render_icon(BlipIcons.stock[True], BlipIcons.ICON_SIZE_EMBLEM, '')
         self.__dialog.props.icon = pixmap

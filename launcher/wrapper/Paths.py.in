@@ -1,3 +1,0 @@
-common = '$commondir'
-home = '$wrapperdir'
-ui = home + '/wrapper.ui'

@@ -34,7 +34,6 @@
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">Bug Isolation Monitor</property>
-    <property name="version">$version</property>
     <property name="copyright" translatable="yes">Copyright © 2003–2004 The Regents of the University of California
 Copyright © 2005–2011 Benjamin R. Liblit</property>
     <property name="comments" translatable="yes">View and set bug isolation preferences</property>

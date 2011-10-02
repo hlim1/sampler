@@ -1,10 +1,18 @@
-#!/usr/bin/python -O
+#!/usr/bin/python
 
-import sys
-sys.path.append('../common')
+from os import environ
+from os.path import abspath, dirname
 
-import Paths
-Paths.ui = 'wrapper.ui'
+home = dirname(abspath(__file__))
+launcher = dirname(home)
+environ['XDG_DATA_DIRS'] = ':'.join([
+    launcher,
+    '/usr/local/share',
+    '/usr/share',
+    ])
 
-import Main
-Main.main('/usr/lib/sampler/applications/gaim')
+import Main2
+Main2.main(name = 'test-in-place',
+           wrapped = '/usr/lib/sampler/wrapped/usr/bin/pidgin',
+           upload_headers = {}
+           )

@@ -1,17 +1,15 @@
 from gi.repository import Gtk
+from os.path import abspath, dirname, join
 
 
 ########################################################################
 
 
 def __source(abled, size):
-    import SamplerConfig
-    import os.path
-
-    source = Gtk.IconSource()
+    home = dirname(abspath(__file__))
     filename = '%s-%d.png' % (abled, size)
-    source.set_filename(os.path.join(SamplerConfig.pixmapsdir, filename))
-
+    source = Gtk.IconSource()
+    source.set_filename(join(home, filename))
     return source
 
 

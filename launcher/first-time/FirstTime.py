@@ -1,4 +1,5 @@
 from gi.repository import Gtk
+from os.path import abspath, dirname, join
 
 import Keys
 
@@ -14,9 +15,9 @@ class FirstTime(object):
     __slots__ = ['__dialog', '__settings']
 
     def __init__(self, application):
-        import Paths
         builder = Gtk.Builder()
-        builder.add_from_file(Paths.ui)
+	home = dirname(abspath(__file__))
+        builder.add_from_file(join(home, 'first-time.ui'))
         builder.connect_signals(self)
         get_widget = builder.get_object
 

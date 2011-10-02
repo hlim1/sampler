@@ -1,2 +1,0 @@
-home = '$traydir'
-ui = home + '/tray.ui'

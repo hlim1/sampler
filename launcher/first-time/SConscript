@@ -1,17 +1,14 @@
 Import('env', 'testPythons')
-env = env.Clone(first_timedir=env.subst('$first_timedir'))
 
-Default(env.Template('Paths.py.in', varlist=['first_timedir']))
+script = 'first-time'
 pythons = [
     'FirstTime.py',
     'Main.py',
-    'Paths.py',
     ]
 
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 
-script = env.Template('first-time.in', varlist=['commondir', 'first_timedir'])
 service = env.Template('edu.wisc.cs.cbi.FirstTime.service.in', varlist=['first_timedir'])
 Default(script, service)
 

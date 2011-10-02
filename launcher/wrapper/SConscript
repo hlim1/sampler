@@ -4,14 +4,11 @@ env = env.Clone(
     wrapperdir=env.subst('$wrapperdir'),
     )
 
-Default(env.Template('Paths.py.in', varlist=['commondir', 'first_timedir', 'wrapperdir']))
 pythons = [
     'AppConfig.py',
     'Launcher.py',
     'Main2.py',
-    'Main.py',
     'Outcome.py',
-    'Paths.py',
     'ReportsReader.py',
     'SampledLauncher.py',
     'ServerMessage.py',

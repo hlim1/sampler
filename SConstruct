@@ -127,7 +127,6 @@ env = env.Clone(
     libdir='$prefix/$lib64',
     localstatedir='/var',
     omfdir='$datadir/omf/sampler',
-    pixmapsdir='$pkgdatadir/pixmaps',
     pkgdatadir='$datadir/sampler',
     pkglibdir='$libdir/sampler',
     preferencesdir='$pkgdatadir/preferences',

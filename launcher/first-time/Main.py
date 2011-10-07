@@ -15,7 +15,12 @@ def activate(application):
     else:
         from FirstTime import FirstTime
         dialog = FirstTime(application)
-        GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, FirstTime.run, dialog)
+        try:
+            # gobject-introspection-1.30.0 from Fedora 16
+            GLib.idle_add(dialog.run)
+        except TypeError:
+            # gobject-introspection-0.10.8 from Fedora 15
+            GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, FirstTime.run, dialog)
 
 
 def main():

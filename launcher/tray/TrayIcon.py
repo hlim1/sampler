@@ -49,8 +49,10 @@ class TrayIcon(object):
 
     # status icon handlers
 
-    def __position_menu(self, menu, push_in, status_icon):
-        __pychecker__ = 'no-argsused'
+    # change arguments to "self, menu, status_icon" once Fedora 15 (Gtk-3.0) is no longer supported
+    def __position_menu(self, *args):
+        menu = args[0]
+        status_icon = args[-1]
         return Gtk.StatusIcon.position_menu(menu, status_icon)
 
     def __show_menu(self, status_icon, button, activate_time):

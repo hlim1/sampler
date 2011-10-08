@@ -2,13 +2,6 @@
 
 * wrapper
 
-The last client to call monitor.unref() sometimes gets a
-CORBA.COMM_FAILURE exception.  Not sure why.  We work around it by
-catching and discarding the exception, but that's not a real fix.
-
-Server reply dialog has bad tab navigation.  If focus is on a
-hyperlink in the HTML area, you cannot tab out to the "OK" button.
-
 How does wrapper propagate SIGINT (^C) down to child?  Restore temporary
 passing of SIGINT down, even thought it is less than perfect.
 

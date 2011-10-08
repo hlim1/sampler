@@ -3,6 +3,7 @@
 #include <dlfcn.h>
 #include <unistd.h>
 #include "random.h"
+#include "report.h"
 #include "verbose.h"
 
 pid_t fork(void)
@@ -15,6 +16,7 @@ pid_t fork(void)
   if (pid == 0)
     {
       VERBOSE("in child");
+      cbi_uninitializeReport();
       cbi_initializeRandom();
     }
 

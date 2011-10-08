@@ -12,7 +12,13 @@ class c func inspiration =
     method implementation = implementation
 
     method print =
-      let location = get_stmtLoc implementation.skind in
+      let temp = get_stmtLoc implementation.skind in
+      let location =
+        if temp.line == -1 then
+          inspiration
+        else
+          temp
+      in
       let filename = Paths.normalize location in
       [filename;
        num location.line;

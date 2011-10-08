@@ -157,6 +157,15 @@ class manager name file =
 		sbody.bstmts <- mkStmtOneInstr call :: sbody.bstmts;
 		global
 
+	    | GFun ({svar = {vname = "cbi_zeroSetter"}; sbody = sbody}, _) as global
+	      when nextId > 0 ->
+        let memset0 = FindFunction.find ("cbi_memset0") file in
+        let counter = Lval (Var counters, NoOffset) in
+        let size = SizeOfE (counter) in
+        let call = Call (None, Lval (var memset0), [counter; size], locUnknown) in
+		sbody.bstmts <- mkStmtOneInstr call :: sbody.bstmts;
+		global
+
 	    | other ->
 		other
 	end

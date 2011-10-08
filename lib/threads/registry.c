@@ -2,6 +2,7 @@
 
 #include <fcntl.h>
 #include <pthread.h>
+#include <string.h>
 #include "../registry.h"
 #include "../report.h"
 #include "lock.h"
@@ -10,7 +11,7 @@
 
 struct cbi_Unit cbi_unitAnchor = { &cbi_unitAnchor,
 				   &cbi_unitAnchor,
-				   0 };
+				   0, 0 };
 
 static unsigned unitCount;
 
@@ -99,3 +100,29 @@ void cbi_unregisterAllUnits()
       cbi_unregisterUnit(cbi_unitAnchor.next);
   });
 }
+
+void cbi_zeroAllUnits()
+{
+  CBI_CRITICAL_REGION(unitLock, {
+    struct cbi_Unit *curUnit = cbi_unitAnchor.next;
+    while (curUnit != &cbi_unitAnchor) {
+      curUnit->zeroSetter();
+      curUnit = curUnit->next;
+    }
+  });
+}
+
+void cbi_guardedSetZero()
+{
+  static int zeroedOut = 0;
+  if(zeroedOut)
+    return;
+  cbi_zeroAllUnits();
+  zeroedOut = 1;
+}
+
+void cbi_memset0(void *p, unsigned int sz)
+{
+    memset(p, 0, sz);
+}
+

@@ -8,6 +8,7 @@ struct cbi_Unit {
   struct cbi_Unit *next;
   struct cbi_Unit *prev;
   void (*reporter)(void);
+  void (*zeroSetter)(void);
 };
 
 

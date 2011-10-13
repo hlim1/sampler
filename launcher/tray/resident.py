@@ -61,8 +61,9 @@ def update(settings, note):
     pixmap = iconSet.render_icon_pixbuf(Gtk.StyleContext(), Gtk.IconSize.DIALOG)
     note.set_icon_from_pixbuf(pixmap)
 
-    # awaiting fix for <https://bugzilla.gnome.org/show_bug.cgi?id=658288>/<https://bugzilla.redhat.com/show_bug.cgi?id=741128>
-    #note.add_action('toggle', Imperative, set_enabled, (settings, not enabled), None)
+    # unusable in Fedora 15 and earlier due to <https://bugzilla.gnome.org/show_bug.cgi?id=658288>/<https://bugzilla.redhat.com/show_bug.cgi?id=741128>
+    note.clear_actions()
+    note.add_action('toggle', Imperative, set_enabled, (settings, not enabled), None)
 
     note.show()
 

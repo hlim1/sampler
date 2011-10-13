@@ -42,6 +42,11 @@ Requires: webkitgtk3
 Requires(pre): GConf2
 Requires(posttrans): glib2 >= 2.25.3
 Requires(postun): glib2 >= 2.25.3
+%if 0%{?fedora} >= 16
+Requires: pygobject3
+%else
+Requires: pygobject2
+%endif
 Obsoletes: sampler-gnome < 0.5
 
 %description

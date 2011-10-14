@@ -48,7 +48,7 @@ else:
 specs = env.Template('sampler-specs.in', varlist=[key])
 
 Dir('lib')
-Default([asm, cc1, cc, here, specs, 'lib', 'sampler'])
+Default('.')
 
 
 Alias('install', [

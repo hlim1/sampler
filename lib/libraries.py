@@ -29,7 +29,7 @@ symlink_builder = Builder(
 
 
 def TwoLibraries(env, target, source, objdir='.', **kwargs):
-    target = '#driver/lib/' + target
+    target = '#driver/' + target
     [static] = env.StaticLibrary(target, source, **kwargs)
 
     majorVersioned = static.target_from_source('', env.subst('${SHLIBSUFFIX}.${SHLIBVERSION[0]}'))

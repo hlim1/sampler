@@ -47,7 +47,6 @@ else:
     env[key] = '-DCBI_TUPLE_COUNTER_BITS=$tuple_counter_bits'
 specs = env.Template('sampler-specs.in', varlist=[key])
 
-Dir('lib')
 Default('.')
 
 

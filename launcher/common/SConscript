@@ -2,7 +2,6 @@ Import('env', 'testPythons')
 
 Default(env.Template('SamplerConfig.py.in', varlist=['VERSION']))
 pythons = [
-    'BlipIcons.py',
     'Keys.py',
     'SamplerConfig.py',
     'StatusIcon.py',
@@ -15,8 +14,3 @@ Default(compiled)
 testPythons(env, pythons)
 
 Alias('install', env.Install('$DESTDIR$commondir', compiled))
-
-for size in [48, 96]:
-    Alias('install', env.InstallAs('$DESTDIR$datadir/icons/hicolor/%dx%d/apps/sampler.png' % (size, size), 'enabled-%d.png' % size))
-    for state in ['disabled', 'enabled']:
-        Alias('install', env.Install('$DESTDIR$commondir', '%s-%d.png' % (state, size)))

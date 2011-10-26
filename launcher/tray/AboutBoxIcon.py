@@ -3,6 +3,6 @@ from WindowIcon import WindowIcon
 
 class AboutBoxIcon(WindowIcon):
 
-    def set_pixbuf(self, widget, pixbuf):
-        WindowIcon.set_pixbuf(self, widget, pixbuf)
-        widget.props.logo = pixbuf
+    def set_icon(self, widget, enabled, themed):
+        WindowIcon.set_icon(self, widget, enabled, themed)
+        widget.props.logo_icon_name = themed

@@ -58,6 +58,7 @@ Alias('install', env.Install(migrateDir, migrate))
 SConscript(dirs=[
     'common',
     'first-time',
+    'icons/hicolor',
     'tray',
     'wrapper',
     ],

@@ -17,7 +17,6 @@ import Main
 
 from gi.repository import Gio, GLib, Gtk, Notify
 
-import BlipIcons
 import Keys
 
 
@@ -54,12 +53,8 @@ def update(settings, note):
 
     summary = 'CBI reporting is %s' % adjective
     body = BODY % adjective
-    note.update(summary, body, None)
-
-    stockName = BlipIcons.stock[enabled]
-    iconSet = Gtk.IconFactory.lookup_default(stockName)
-    pixmap = iconSet.render_icon_pixbuf(Gtk.StyleContext(), Gtk.IconSize.DIALOG)
-    note.set_icon_from_pixbuf(pixmap)
+    themed = 'sampler-' + ('enabled' if enabled else 'disabled')
+    note.update(summary, body, themed)
 
     # unusable in Fedora 15 and earlier due to <https://bugzilla.gnome.org/show_bug.cgi?id=658288>/<https://bugzilla.redhat.com/show_bug.cgi?id=741128>
     note.clear_actions()

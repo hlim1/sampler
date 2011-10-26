@@ -9,11 +9,10 @@ class StatusIcon(object):
 
     def __changed_enabled(self, settings, key, widget):
         __pychecker__ = 'no-argsused'
-        import BlipIcons
         enabled = settings[Keys.MASTER]
-        stock = BlipIcons.stock[enabled]
-        self.set_icon(widget, enabled, stock)
+        themed = 'sampler-' + ('enabled' if enabled else 'disabled')
+        self.set_icon(widget, enabled, themed)
 
-    def set_icon(self, widget, enabled, stock):
-        widget.props.stock = stock
+    def set_icon(self, widget, enabled, themed):
+        widget.props.icon_name = themed
         widget.props.tooltip_markup = 'Automatic reporting is <b>%s</b>' % ('disabled', 'enabled')[enabled]

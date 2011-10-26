@@ -14,14 +14,11 @@ class ServerMessage(object):
 
     def __init__(self, base, content_type, body):
         import cgi
-        import BlipIcons
 
         builder = Gtk.Builder()
 	home = dirname(abspath(__file__))
         builder.add_from_file(join(home, 'wrapper.ui'))
         self.__dialog = builder.get_object('server-message')
-        pixmap = self.__dialog.render_icon(BlipIcons.stock[True], BlipIcons.ICON_SIZE_EMBLEM, '')
-        self.__dialog.props.icon = pixmap
         self.__initial_title = self.__dialog.props.title
 
         view = WebKit.WebView()

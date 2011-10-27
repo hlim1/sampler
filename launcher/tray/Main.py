@@ -1,6 +1,7 @@
 import gi
 gi.require_version('Gtk', '3.0')
 
+from contextlib import closing
 from gi.repository import Gio, Gtk
 from os.path import abspath, dirname, join
 from sys import path
@@ -23,5 +24,5 @@ def main():
     if not unique: return
 
     settings = Gio.Settings(Keys.BASE)
-    tray = TrayIcon(settings)
-    Gtk.main()
+    with closing(TrayIcon(settings)):
+        Gtk.main()

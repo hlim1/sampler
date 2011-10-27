@@ -2,9 +2,9 @@ Import('env', 'testPythons')
 
 Default(env.Template('SamplerConfig.py.in', varlist=['VERSION']))
 pythons = [
+    'EnabledIcon.py',
     'Keys.py',
     'SamplerConfig.py',
-    'StatusIcon.py',
     'WindowIcon.py',
     ]
 

@@ -20,13 +20,16 @@ class TrayIcon(object):
         self.__about.props.version = version
         AboutBoxIcon(settings, self.__about)
 
-        from StatusIcon import StatusIcon
+        from EnabledIcon import EnabledIcon
         status_icon = builder.get_object('status-icon')
-        StatusIcon(settings, status_icon)
+        EnabledIcon(settings, status_icon)
 
         self.__popup = builder.get_object('ui-manager').get_widget('/ui/popup')
         menu_master = builder.get_object('menu-master')
         settings.bind(Keys.MASTER, menu_master, 'active', Gio.SettingsBindFlags.DEFAULT)
+
+    def close(self):
+        pass
 
     # popup menu handlers
 

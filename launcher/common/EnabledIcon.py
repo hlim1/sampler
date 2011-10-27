@@ -1,7 +1,7 @@
 import Keys
 
 
-class StatusIcon(object):
+class EnabledIcon(object):
 
     def __init__(self, settings, widget):
         settings.connect('changed::' + Keys.MASTER, self.__changed_enabled, widget)

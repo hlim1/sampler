@@ -1,7 +1,7 @@
-from StatusIcon import StatusIcon
+from EnabledIcon import EnabledIcon
 
 
-class WindowIcon(StatusIcon):
+class WindowIcon(EnabledIcon):
 
     def set_icon(self, widget, enabled, themed):
         __pychecker__ = 'no-argsused'

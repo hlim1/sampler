@@ -22,6 +22,10 @@ import Keys
 
 BODY = 'You are now using instrumented software from the <a href="http://research.cs.wisc.edu/cbi/">Cooperative Bug Isolation Project</a>.  Automatic feedback reporting is <b>%s</b>.'
 
+
+BODY_HYPERLINKS = True
+
+
 WORDS = {
     True: (
         'enabled',
@@ -36,6 +40,12 @@ WORDS = {
 
 def closed(note):
     Gtk.main_quit()
+
+
+def learn_more(note, action, unused):
+    destination = 'http://research.cs.wisc.edu/cbi/learn-more/'
+    timestamp = Gtk.get_current_event_time()
+    Gtk.show_uri(None, destination, timestamp)
 
 
 def set_enabled(note, action, (settings, enabled)):
@@ -59,6 +69,8 @@ def update(settings, note):
     # unusable in Fedora 15 and earlier due to <https://bugzilla.gnome.org/show_bug.cgi?id=658288>/<https://bugzilla.redhat.com/show_bug.cgi?id=741128>
     note.clear_actions()
     note.add_action('toggle', Imperative, set_enabled, (settings, not enabled), None)
+    if not BODY_HYPERLINKS:
+        note.add_action('learn-more', 'Learn More…', learn_more, None, None)
 
     note.show()
 
@@ -69,8 +81,9 @@ def main():
     # workaround for <https://bugzilla.gnome.org/show_bug.cgi?id=653033>
     if 'body-hyperlinks' not in Notify.get_server_caps():
         import re
-        global BODY
+        global BODY, BODY_HYPERLINKS
         BODY = re.sub('<(a href="[^"]*"|/a)>', '', BODY)
+        BODY_HYPERLINKS = False
 
     note = Notify.Notification()
     note.set_urgency(Notify.Urgency.LOW)

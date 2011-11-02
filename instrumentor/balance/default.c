@@ -8,5 +8,6 @@ void test(int flag)
     case 1:
       work();
     default:
+      ;
     }
 }

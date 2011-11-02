@@ -5,7 +5,7 @@
 
 Name: $PACKAGE_NAME
 Version: $PACKAGE_VERSION
-Release: 1$deployment_release_suffix
+Release: 0$deployment_release_suffix
 License: BSD
 Group: Applications/System
 Packager: Ben Liblit <$PACKAGE_BUGREPORT>
@@ -101,7 +101,6 @@ glib-compile-schemas %_datadir/glib-2.0/schemas &> /dev/null || :
 %package devel
 Group: Development/Tools
 Summary: Tools for building applications with sampled instrumentation
-Requires: %(%__cc -print-prog-name=cc1)
 Requires: binutils
 Requires: gcc
 Requires: perl >= 5.8

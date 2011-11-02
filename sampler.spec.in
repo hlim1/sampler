@@ -102,7 +102,6 @@ gtk-update-icon-cache --quiet %_datadir/icons/hicolor &>/dev/null || :
 %package devel
 Group: Development/Tools
 Summary: Tools for building applications with sampled instrumentation
-Requires: %(%__cc -print-prog-name=cc1)
 Requires: binutils
 Requires: gcc
 Requires: perl >= 5.8

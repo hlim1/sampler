@@ -4,7 +4,7 @@ import re
 
 from os import stat
 from os.path import dirname, join
-from subprocess import call
+from subprocess import call, PIPE, Popen
 from sys import argv, exit, path, stderr
 
 
@@ -22,10 +22,12 @@ INPUT = None
 INSTRUMENTOR_INPUT = None
 INSTRUMENTOR_OUTPUT = None
 
-CPP0 = ['$cc1', '-E', '-quiet']
+GCC_CC1 = Popen(['$gcc', '-print-prog-name=cc1'], stdout=PIPE).communicate()[0].rstrip()
+
+CPP0 = [GCC_CC1, '-E', '-quiet']
 CPP0_OUTPUT_SLOT = None
 
-CC1 = ['$cc1', '-fpreprocessed']
+CC1 = [GCC_CC1, '-fpreprocessed']
 CC1_INPUT_SLOT = None
 
 INST = [join(dirname(__file__), 'main')]

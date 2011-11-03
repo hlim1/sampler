@@ -1,9 +1,7 @@
-import sys
-import Paths
-sys.path.append(Paths.common)
+from os.path import abspath, dirname, join
+from sys import path, stderr
 
-import pygtk
-pygtk.require('2.0')
+path.insert(1, join(dirname(dirname(abspath(__file__))), 'common'))
 
 
 ########################################################################
@@ -11,34 +9,35 @@ pygtk.require('2.0')
 
 def main(name, wrapped, upload_headers, **extras):
     __pychecker__ = 'no-argsused'
+    from gi.repository import Gio
+    from glib import GError
     from AppConfig import AppConfig
-    from UserConfig import UserConfig
+    import Keys
 
     app = AppConfig(name, wrapped, upload_headers)
-    user = UserConfig(name)
+    settings = Gio.Settings(Keys.BASE)
 
-    sparsity = user.sparsity()
-    if sparsity > 0:
+    if settings[Keys.ASKED] and settings[Keys.MASTER]:
         import SampledLauncher
-        launcher = SampledLauncher.SampledLauncher(app, user, sparsity)
+        sparsity = 100
+        reporting_url = 'https://cbi.cs.wisc.edu/cbi/cgi-bin/sampler-upload.cgi'
+        launcher = SampledLauncher.SampledLauncher(settings, app, sparsity, reporting_url)
     else:
         import UnsampledLauncher
         launcher = UnsampledLauncher.UnsampledLauncher(app)
-
     launcher.spawn()
 
-    if not user.asked():
-        from subprocess import Popen
-        Popen([Paths.first_time + '/first-time'])
-
-    if user.show_tray_icon():
-        import dbus
-        bus = dbus.SessionBus()
-        remote = bus.get_object('edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor')
+    if not settings[Keys.ASKED]:
         try:
-            remote.activate()
-        except dbus.exceptions.DBusException, error:
-            print >>sys.stderr, "warning: cannot activate CBI tray icon:", error
+            Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.FirstTime', '/edu/wisc/cs/cbi/FirstTime', 'org.gtk.Application', None).Activate('(a{sv})', None)
+        except GError, error:
+            print >>stderr, "warning: cannot activate CBI first-time dialog:", error
+
+    if settings[Keys.SHOW_TRAY_ICON]:
+        try:
+            Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None).activate()
+        except GError, error:
+            print >>stderr, "warning: cannot activate CBI tray icon:", error
 
     outcome = launcher.wait()
     outcome.exit()

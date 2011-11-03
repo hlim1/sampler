@@ -1,18 +1,13 @@
 Import('env', 'testPythons')
-env = env.Clone(pixmapsdir=env.subst('$pixmapsdir'))
 
-Default(env.Template('SamplerConfig.py.in', varlist=['VERSION', 'pixmapsdir']))
+Default(env.Template('SamplerConfig.py.in', varlist=['VERSION']))
 pythons = [
-    'BlipIcons.py',
-    'CommandLine.py',
-    'GConfDir.py',
-    'GConfNotifier.py',
+    'EnabledIcon.py',
     'Keys.py',
-    'MasterNotifier.py',
+    'SamplerConfig.py',
     'WindowIcon.py',
     ]
 
-pythons.append('SamplerConfig.py')
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 

@@ -1,11 +1,5 @@
-import pygtk
-pygtk.require('2.0')
-
-
-########################################################################
-
-
-import gtk
+from gi.repository import Gtk
+from os.path import abspath, dirname, join
 
 import Keys
 
@@ -18,56 +12,42 @@ import Keys
 
 class FirstTime(object):
 
-    __slots__ = ['__client', '__builder', '__dialog', '__dir', '__icon_updater', '__image_updater', '__notifier']
+    __slots__ = ['__dialog', '__settings']
 
-    def __get_widget(self, name):
-        return self.__builder.get_object(name)
+    def __init__(self, application):
+        builder = Gtk.Builder()
+	home = dirname(abspath(__file__))
+        builder.add_from_file(join(home, 'first-time.ui'))
+        builder.connect_signals(self)
+        get_widget = builder.get_object
 
-    def __init__(self):
-        import Paths
-        self.__builder = gtk.Builder()
-        self.__builder.add_from_file(Paths.ui)
-        self.__dialog = self.__get_widget('first-time')
-        self.__builder.connect_signals(self)
+        # grab top-level dialog and claim ownership
+        self.__dialog = get_widget('first-time')
+        self.__dialog.set_application(application)
 
-        # hook up GConf configuration monitoring
-        import gconf
-        from GConfDir import GConfDir
-        self.__client = gconf.client_get_default()
-        self.__dir = GConfDir(self.__client, Keys.root, gconf.CLIENT_PRELOAD_NONE)
+        # hook up GSettings configuration monitoring
+        from gi.repository import Gio
+        self.__settings = Gio.Settings(Keys.BASE)
 
         # hook up state-linked icons
-        from StatusIcon import StatusIcon
+        from EnabledIcon import EnabledIcon
         from WindowIcon import WindowIcon
-        image = self.__get_widget('image')
-        self.__image_updater = StatusIcon(self.__client, image, gtk.ICON_SIZE_DIALOG)
-        self.__icon_updater = WindowIcon(self.__client, self.__dialog)
+        image = get_widget('image')
+        EnabledIcon(self.__settings, image)
+        WindowIcon(self.__settings, self.__dialog)
 
         # hook up state-linked radio buttons
-        from MasterNotifier import MasterNotifier
-        self.__notifier = MasterNotifier(self.__client, self.__enabled_refresh)
+        self.__bind_master(get_widget, 'yes', Gio.SettingsBindFlags.DEFAULT)
+        self.__bind_master(get_widget, 'no', Gio.SettingsBindFlags.INVERT_BOOLEAN)
 
-    def __enabled_refresh(self, enabled):
-        self.__radio_refresh('yes', enabled)
-        self.__radio_refresh('no', not enabled)
-
-    def __radio_refresh(self, name, active):
-        radio = self.__get_widget(name)
-        details = self.__get_widget(name + '-details')
-        radio.set_active(active)
-        details.set_visible(active)
-
-    def on_yes_toggled(self, yes):
-        enabled = yes.get_active()
-        self.__client.set_bool(Keys.master, enabled)
+    def __bind_master(self, get_widget, sense, flags):
+        self.__settings.bind(Keys.MASTER, get_widget(sense), 'active', flags)
+        self.__settings.bind(Keys.MASTER, get_widget(sense + '-details'), 'visible', flags)
 
     def on_response(self, dialog, response):
         __pychecker__ = 'no-argsused'
-        if response == gtk.RESPONSE_OK:
-            self.__client.set_bool(Keys.asked, True)
-
-    def present(self):
-        return self.__dialog.present()
+        if response == Gtk.ResponseType.OK:
+            self.__settings['asked'] = True
 
     def run(self):
         result = self.__dialog.run()

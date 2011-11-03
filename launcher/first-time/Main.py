@@ -1,25 +1,30 @@
-import pygtk
-pygtk.require('2.0')
+from gi.repository import GLib, Gtk
+from os.path import abspath, dirname, join
+from sys import argv, path
 
-import CommandLine
-import Service
+path.insert(1, join(dirname(dirname(abspath(__file__))), 'common'))
 
 
 ########################################################################
 
 
-def main():
-    CommandLine.parse()
-    unique = Service.unique()
-
-    if unique:
-        unique.dialog.run()
-
+def activate(application):
+    windows = application.get_windows()
+    if windows:
+        windows[0].present_with_time(Gtk.get_current_event_time())
     else:
-        import os
-        os.environ['DBUS_PYTHON_NO_DEPRECATED'] = '1'
-        import dbus
+        from FirstTime import FirstTime
+        dialog = FirstTime(application)
+        try:
+            # gobject-introspection-1.30.0 from Fedora 16
+            GLib.idle_add(dialog.run)
+        except TypeError:
+            # gobject-introspection-0.10.8 from Fedora 15
+            GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, FirstTime.run, dialog)
 
-        bus = dbus.SessionBus()
-        remote = bus.get_object('edu.wisc.cs.cbi.FirstTime', '/edu/wisc/cs/cbi/FirstTime')
-        remote.present()
+
+def main():
+    application = Gtk.Application.new('edu.wisc.cs.cbi.FirstTime', 0)
+    application.connect('activate', activate)
+    status = application.run(argv)
+    exit(status)

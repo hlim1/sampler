@@ -1,18 +1,12 @@
 #!/usr/bin/python -O
 
-import os.path        
-import sys
-sys.path.append('../common')
+from os.path import abspath, dirname, join
 
-import Paths
-Paths.ui = 'wrapper.ui'
-
-from os.path import dirname, realpath
-import SamplerConfig
-SamplerConfig.pixmapsdir = dirname(realpath(sys.argv[0])) + '/../pixmaps'
+# add "../common" to sys.path
+import Main2
 
 from ServerMessage import ServerMessage
-
-page = open('test-message.html').read()
+html = join(dirname(abspath(__file__)), 'test-message.html')
+page = open(html).read()
 dialog = ServerMessage('http://www.cs.wisc.edu/', 'text/html', page)
 dialog.run()

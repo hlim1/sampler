@@ -2,25 +2,63 @@ Import('env', 'testPythons')
 env = env.Clone(bindir=env.subst('$bindir'),
                traydir=env.subst('$traydir'))
 
+
+########################################################################
+#
+#  check for working support for Python notification action callbacks
+#
+
+def notificationActions(context):
+    context.Message('checking for Python notification action callbacks: ')
+    tester = File('testNotifications.py')
+    outcome = context.TryAction([tester.abspath])
+    success = outcome[0]
+    context.Result('yes' if success else 'no')
+    context.env['NOTIFICATION_ACTIONS'] = bool(success)
+
+conf = env.Configure(
+    help=False,
+    custom_tests={
+        'NotificationActions': notificationActions,
+        },
+    )
+
+conf.NotificationActions()
+conf.Finish()
+
+trayChoices = ['StatusIcon.py', 'NotificationIcon.py']
+env['TRAY_ICON'] = trayChoices[env.get('NOTIFICATION_ACTIONS', True)]
+
+
+########################################################################
+
+
 service = env.Template('edu.wisc.cs.cbi.Monitor.service.in', varlist=['traydir'])
-Default([service, env.Template('Paths.py.in', varlist=['bindir', 'traydir'])])
+Default(service)
 
-Default(env.Template('tray.in', varlist=['commondir', 'traydir']))
+pythons = trayChoices + [
+    'AboutBoxIcon.py',
+    'Main.py',
+    'Service.py',
+    'testNotifications.py',
+    'TrayIcon.py',
+    ]
 
-pythons = ['Main.py', 'PreferencesDialog.py', 'Service.py', 'TrayIcon.py']
-pythons.append('Paths.py')
+env.InstallAs('TrayIcon.py', '$TRAY_ICON')
+
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
-
-ui = env.Template('tray.ui.in', varlist=['version'])
-Default(ui)
-
 testPythons(env, pythons)
+
+ui = 'tray.ui'
 Alias('test', [
         env.TestXML(ui, schema=File('../gtk-builder.xsd')),
         ])
 
+if not env['NOTIFICATION_ACTIONS']:
+    env.Install('$DESTDIR$traydir', ui)
+
 Alias('install', [
     env.Install('$DESTDIR$servicesdir', service),
-    env.Install('$DESTDIR$traydir', [compiled, 'tray', ui]),
+    env.Install('$DESTDIR$traydir', [compiled, 'tray']),
     ])

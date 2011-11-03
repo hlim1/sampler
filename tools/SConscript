@@ -32,8 +32,6 @@ env.OcamlObject(sources)
 Default(env.OcamlProgram('resolveSamples.ml'),
         env.OcamlProgram('resolveTimestamps.ml'))
 
-Alias('test', env.TestXML('application.schemas.in'))
-
 Default(env.Template('find-sampler-info.in', varlist=['pkglibdir']))
 Default(env.Template('macros.sampler.in', varlist=['pkglibdir']))
 Default(env.Template('install-wrappers.in', varlist=['pkglibdir']))
@@ -59,12 +57,10 @@ Alias('install', env.Install('$DESTDIR$toolsdir', [
     'Object.pm',
     'SymbolTable.pm',
     'Unit.pm',
-    'application.schemas.in',
     'decimate-samples',
     'extract-report',
     'extract-section',
     'find-sampler-info',
-    'install-gconf',
     'install-wrappers',
     'resolve-backtrace',
     'resolve-cfg',

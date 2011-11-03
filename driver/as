@@ -44,7 +44,7 @@ def add_section(name, source):
 
 
 def main():
-    asm = ['as']
+    asm = ['/usr/bin/as']
 
     verbose = False
     outfile = None
@@ -87,7 +87,7 @@ def main():
     objcopy += add_section('sampler_dataflow', saved_dataflow)
     objcopy += add_section('sampler_implications', saved_implications)
     if objcopy and outfile:
-        run_stage(['objcopy'] + objcopy + [outfile], verbose)
+        run_stage(['/usr/bin/objcopy'] + objcopy + [outfile], verbose)
 
 
 if __name__ == '__main__':

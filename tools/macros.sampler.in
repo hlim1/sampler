@@ -34,10 +34,4 @@ package. \
 %sampler_libdir/tools/find-sampler-info --extract="$$RPM_BUILD_ROOT" --save="$$RPM_BUILD_ROOT" --edit-source="$$RPM_BUILD_DIR" /usr/src/debug \
 %nil
 
-%sampler_pre %gconf_schema_prepare sampler-%name
-%sampler_post %gconf_schema_upgrade sampler-%name
-%sampler_preun %gconf_schema_remove sampler-%name
-
 %sampler_files %attr(-, root, root) %sampler_libdir/wrapped/*
-%sampler_files_gconf %attr(-, root, root) %_sysconfdir/gconf/schemas/sampler-%name.schemas
-

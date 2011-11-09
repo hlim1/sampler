@@ -1,9 +1,10 @@
 -*- outline -*-
 
-* sampler-1.7.9
+* sampler-1.8
 
 ** Minor updates for Fedora 16.
 ** Remove dependency on any specific version of gcc.
+** Update all user-facing GUI components to be good GNOME 3 citizens.
 
 * sampler-1.7.8
 

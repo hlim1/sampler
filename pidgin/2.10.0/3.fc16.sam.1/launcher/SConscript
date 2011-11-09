@@ -1,0 +1,78 @@
+Import('env')
+
+env = env.Clone(tools=['python'], toolpath=['.'])
+env.File('python.py')
+
+common = env.Dir('#launcher/common')
+
+def testPythons(env, sources):
+    env = env.Clone()
+    env.AppendUnique(ENV={'PYTHONPATH': common.abspath})
+    target = 'pychecker.passed'
+    test = env.TestPython(target=target, source=sources)
+    Alias('test', test)
+
+def pkgConfigVar(context, package, package_varname, env_varname, missing):
+    context.Message('checking for %s %s: ' % (package, package_varname))
+    ok, value = context.TryAction([['pkg-config', '--variable=' + package_varname, package, '>$TARGET']])
+    if ok:
+        value = value.rstrip()
+        context.env[env_varname] = value
+        context.Result(value)
+        return value
+    else:
+        context.Result(missing)
+        return None
+
+def glibCompileSchemas(context):
+    return pkgConfigVar(context, 'gio-2.0', 'glib_compile_schemas', 'glib_compile_schemas', 'missing')
+
+def servicesDir(context):
+    return pkgConfigVar(context, 'dbus-1', 'session_bus_services_dir', 'servicesdir', 'unknown')
+
+conf = env.Configure(
+    help=False,
+    custom_tests={
+        'GlibCompileSchemas': glibCompileSchemas,
+        'ServicesDir': servicesDir,
+        },
+    )
+conf.GlibCompileSchemas()
+conf.ServicesDir()
+conf.Finish()
+
+
+if 'glib_compile_schemas' in env:
+    schemas = 'edu.wisc.cs.cbi.gschema.xml'
+    passed = schemas + '.passed'
+    Alias('test',
+	  env.Command(passed, schemas, [
+		'$glib_compile_schemas --strict --dry-run --schema-file=$SOURCE',
+		Touch('$TARGET'),
+		]))
+
+    compiled = env.Command('glib-2.0/schemas/gschemas.compiled', schemas, [
+	    '$glib_compile_schemas --strict --targetdir=$TARGET.dir --schema-file=$SOURCE',
+	    ])
+    Default(compiled)
+    Clean(compiled, 'glib-2.0')
+
+    [installed] = env.Install('$DESTDIR$schemadir', schemas)
+    Alias('install', installed)
+    if env['GSETTINGS_SCHEMAS_COMPILE']:
+	postAction = '$glib_compile_schemas $DESTDIR$schemadir'
+	env.AddPostAction(installed, postAction)
+
+migrate = 'edu.wisc.cs.cbi.migrate'
+migrateDir = '$DESTDIR$datadir/GConf/gsettings'
+Alias('install', env.Install(migrateDir, migrate))
+
+
+SConscript(dirs=[
+    'common',
+    'first-time',
+    'icons/hicolor',
+    'tray',
+    'wrapper',
+    ],
+           exports=['env', 'testPythons'])

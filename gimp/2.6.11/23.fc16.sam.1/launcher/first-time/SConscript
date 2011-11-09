@@ -1,0 +1,22 @@
+Import('env', 'testPythons')
+
+script = 'first-time'
+pythons = [
+    'FirstTime.py',
+    'Main.py',
+    ]
+
+compiled = env.PythonBytecodeOpt(pythons)
+Default(compiled)
+
+service = env.Template('edu.wisc.cs.cbi.FirstTime.service.in', varlist=['first_timedir'])
+Default(script, service)
+
+ui = 'first-time.ui'
+testPythons(env, pythons)
+Alias('test', env.TestXML(ui, schema=File('../gtk-builder.xsd')))
+
+Alias('install', [
+    env.Install('$DESTDIR$first_timedir', [compiled, ui, script]),
+    env.Install('$DESTDIR$servicesdir', service),
+    ])

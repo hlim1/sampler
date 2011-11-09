@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="256"
+   height="256"
+   id="svg2816"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="enabled-256.svg"
+   style="display:inline;enable-background:new"
+   inkscape:export-filename="/home/liblit/Dropbox/cbi-logo/enabled-256.png"
+   inkscape:export-xdpi="480"
+   inkscape:export-ydpi="480">
+  <title
+     id="title3019">Cooperative Bug Isolation Project logo</title>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.8710938"
+     inkscape:cx="129.33612"
+     inkscape:cy="128"
+     inkscape:current-layer="svg2816"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:window-width="1059"
+     inkscape:window-height="1001"
+     inkscape:window-x="756"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-global="true"
+     inkscape:snap-grids="true"
+     inkscape:snap-to-guides="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3341"
+       empspacing="4"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="2px"
+       spacingy="2px"
+       dotted="false"
+       originx="0px"
+       originy="0px" />
+    <sodipodi:guide
+       orientation="0,1"
+       position="0,128"
+       id="guide3223" />
+    <sodipodi:guide
+       orientation="1,0"
+       position="128,0"
+       id="guide3225" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2818">
+    <linearGradient
+       id="linearGradient2259"
+       gradientTransform="scale(1.1866606,0.84270097)"
+       x1="4.2135048"
+       y1="12.459936"
+       x2="33.28669"
+       y2="12.459936"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:0;"
+         offset="0"
+         id="stop2261" />
+      <stop
+         id="stop2267"
+         offset="0.5"
+         style="stop-color:#00ff00;stop-opacity:1;" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop2263" />
+    </linearGradient>
+    <filter
+       id="filter3750"
+       inkscape:label="Diffuse light"
+       inkscape:menu="ABCs"
+       inkscape:menu-tooltip="Basic diffuse bevel to use for building textures"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3752"
+         stdDeviation="6"
+         in="SourceGraphic"
+         result="result0" />
+      <feDiffuseLighting
+         id="feDiffuseLighting3754"
+         diffuseConstant="1"
+         surfaceScale="10"
+         result="result5">
+        <feDistantLight
+           id="feDistantLight3756"
+           elevation="25"
+           azimuth="235" />
+      </feDiffuseLighting>
+      <feComposite
+         in2="SourceGraphic"
+         id="feComposite3758"
+         k1="1"
+         in="result5"
+         result="result4"
+         operator="arithmetic"
+         k2="0"
+         k3="0.6"
+         k4="0" />
+    </filter>
+    <filter
+       id="filter2938"
+       inkscape:label="Drop shadow"
+       width="1.5"
+       height="1.5"
+       x="-0.25"
+       y="-0.25"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur2940"
+         in="SourceAlpha"
+         stdDeviation="5"
+         result="blur" />
+      <feColorMatrix
+         id="feColorMatrix2942"
+         result="bluralpha"
+         type="matrix"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.5 0 " />
+      <feOffset
+         id="feOffset2944"
+         in="bluralpha"
+         dx="10"
+         dy="10"
+         result="offsetBlur" />
+      <feMerge
+         id="feMerge2946">
+        <feMergeNode
+           id="feMergeNode2948"
+           in="offsetBlur" />
+        <feMergeNode
+           id="feMergeNode2950"
+           in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3774">
+      <path
+         style="fill:#000000;fill-opacity:1;stroke:none"
+         d="M 32,128 128,32 l 96,96 -96,96 -96,-96 z"
+         id="path3776" />
+    </clipPath>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2259"
+       id="linearGradient3789"
+       x1="31.5"
+       y1="119"
+       x2="208.5"
+       y2="119"
+       gradientUnits="userSpaceOnUse" />
+    <filter
+       id="filter3801"
+       inkscape:label="Simple blur"
+       inkscape:menu="ABCs"
+       inkscape:menu-tooltip="Simple Gaussian blur, same as the blur slider in Fill and Stroke dialog"
+       color-interpolation-filters="sRGB">
+      <feGaussianBlur
+         id="feGaussianBlur3803"
+         stdDeviation="1.5" />
+    </filter>
+    <filter
+       id="filter3811"
+       inkscape:label="Simple blur"
+       inkscape:menu="ABCs"
+       inkscape:menu-tooltip="Simple Gaussian blur, same as the blur slider in Fill and Stroke dialog"
+       color-interpolation-filters="sRGB"
+       width="12"
+       height="12"
+       x="-1"
+       y="-1">
+      <feGaussianBlur
+         id="feGaussianBlur3813"
+         stdDeviation="3" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata2821">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Cooperative Bug Isolation Project logo</dc:title>
+        <dc:date>2011-09-27</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Ben Liblit</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Ben Liblit</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>Ben Liblit</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="plates"
+     style="display:inline"
+     sodipodi:insensitive="true"
+     inkscape:label="plates">
+    <path
+       style="fill:#333333;fill-opacity:1;stroke:none;filter:url(#filter2938)"
+       d="M 26,128 128,26 230,128 128,230 26,128 z"
+       id="frame" />
+    <path
+       style="fill:#4d4d4d;fill-opacity:1;stroke:none;filter:url(#filter3750)"
+       d="m 32,128 96,-96 96,96 -96,96 -96,-96 z"
+       id="central" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="grid"
+     style="display:inline"
+     inkscape:label="grid"
+     sodipodi:insensitive="true">
+    <path
+       d="m 208,144 0,-32 -160,0 0,32 160,0 z m -80,-112 0,192 m 16,-176 0,160 -32,0 0,-160 32,0 z m 16,16 0,128 -64,0 0,-128 64,0 z m 16,16 0,96 -96,0 0,-96 96,0 z m 16,16 0,64 -128,0 0,-64 128,0 z m -160,32 192,0"
+       style="fill:none;stroke:#46a952;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.5;stroke-dasharray:none"
+       id="grid-lines"
+       sodipodi:nodetypes="ccccccccccccccccccccccccccccc"
+       clip-path="url(#clipPath3774)" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="blip"
+     inkscape:label="blip"
+     style="display:inline">
+    <path
+       style="fill:none;stroke:url(#linearGradient3789);stroke-width:8;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter3801)"
+       d="m 32,128 80,0 16,-68 16,118 16,-50 48,0"
+       id="tail"
+       sodipodi:nodetypes="cccccc" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter3811)"
+       id="head"
+       sodipodi:cx="208"
+       sodipodi:cy="128"
+       sodipodi:rx="10"
+       sodipodi:ry="10"
+       d="m 218,128 a 10,10 0 1 1 -20,0 10,10 0 1 1 20,0 z" />
+  </g>
+</svg>

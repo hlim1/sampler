@@ -1,0 +1,27 @@
+Import('env')
+
+for size in 48, 256:
+    target = 'disabled-%s.svg' % size
+    sources = ['remove-blip.xsl', 'enabled-%s.svg' % size]
+    command = 'xsltproc --output $TARGET $SOURCES'
+    Command(target, sources, command)
+
+for state in 'enabled', 'disabled':
+    subdir = 'scalable/status'
+    target = '%s/sampler-%s.svg' % (subdir, state)
+    source = '%s-256.svg' % state
+    command = 'inkscape --export-plain-svg=$TARGET --vacuum-defs $SOURCE'
+    icon = Command(target, source, command)
+    env.Install('$DESTDIR$datadir/icons/hicolor/%s' % subdir, icon)
+
+    for size in 16, 22, 24, 32, 48, 64, 96, 128, 192, 256:
+        basis = 48 if size % 3 == 0 else 256
+        subdir = '%sx%s/status' % (size, size)
+        target = '%s/sampler-%s.png' % (subdir, state)
+        source = '%s-%s.svg' % (state, basis)
+        command = 'inkscape --export-png=$TARGET --export-width=%s --export-height=%s $SOURCE' % (size, size)
+        icon = Command(target, source, command)
+        env.Install('$DESTDIR$datadir/icons/hicolor/%s' % subdir, icon)
+
+Default('.')
+env.Alias('install', '$DESTDIR$datadir/icons')

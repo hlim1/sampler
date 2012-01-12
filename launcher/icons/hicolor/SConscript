@@ -15,7 +15,7 @@ for state in 'enabled', 'disabled':
     env.Install('$DESTDIR$datadir/icons/hicolor/%s' % subdir, icon)
 
     for size in 16, 22, 24, 32, 48, 64, 96, 128, 192, 256:
-        basis = 48 if size % 3 == 0 else 256
+        basis = (256, 48)[size % 3 == 0]
         subdir = '%sx%s/status' % (size, size)
         target = '%s/sampler-%s.png' % (subdir, state)
         source = '%s-%s.svg' % (state, basis)

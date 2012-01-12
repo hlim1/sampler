@@ -13,7 +13,7 @@ def notificationActions(context):
     tester = File('testNotifications.py')
     outcome = context.TryAction([tester.abspath])
     success = outcome[0]
-    context.Result('yes' if success else 'no')
+    context.Result(('no', 'yes')[success])
     context.env['NOTIFICATION_ACTIONS'] = bool(success)
 
 conf = env.Configure(

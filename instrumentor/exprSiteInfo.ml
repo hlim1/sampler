@@ -6,6 +6,6 @@ class c func inspiration expression =
   object
     inherit SiteInfo.c func inspiration as super
 
-    method print =
+    method! print =
       super#print @ [d_exp () expression]
   end

@@ -25,10 +25,10 @@ let isSharedAccess (lhost, _ as lval) =
   else
     (* mutable storage, but is it shared? *)
     match lhost with
-    | Var { vglob = true; vattr = vattr } ->
+    | Var { vglob = true; vattr; _ } ->
 	(* global storage is shared, but thread-local storage is unshared *)
 	not (hasAttribute "thread" vattr)
-    | Var { vglob = false; vaddrof = vaddrof } ->
+    | Var { vglob = false; vaddrof; _ } ->
 	(* local is shared iff its address is taken *)
 	vaddrof
     | Mem _ ->
@@ -45,7 +45,7 @@ class sharedAccessesFinder =
     val mutable found = []
     method found = found
 
-    method vexpr expr =
+    method! vexpr expr =
       match expr with
       | AlignOfE _
       | SizeOfE _ ->
@@ -69,7 +69,7 @@ class sharedAccessesFinder =
 	  DoChildren
 
     (* each lvalue counts as 0 or 1 shared access *)
-    method vlval lval =
+    method! vlval lval =
       if isSharedAccess lval then
 	found <- lval :: found;
       DoChildren
@@ -116,7 +116,7 @@ class isolator fundec =
 	  failwith "internal error"
 
     (* rewrite bottom-up to remove shared, mutable accesses *)
-    method vexpr = function
+    method! vexpr = function
       | Lval lval as expr when isSharedAccess lval ->
 	  ChangeDoChildrenPost (expr, self#prefetchIntoTemporary)
       | AlignOfE _
@@ -128,7 +128,7 @@ class isolator fundec =
 
     (* rewrite if more than one shared, mutable access *)
     (* assignment like "local = global;" remains unchanged *)
-    method vinst = function
+    method! vinst = function
       | Set _ as instr ->
 	  begin
 	    match find instr with

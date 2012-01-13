@@ -2,7 +2,7 @@ open Cil
 
 
 let isInterestingCallee = function
-  | Lval (Var {vname = "__builtin_constant_p"}, NoOffset) ->
+  | Lval (Var {vname = "__builtin_constant_p"; _}, NoOffset) ->
       false
   | _ ->
       true

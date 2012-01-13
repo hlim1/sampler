@@ -6,9 +6,9 @@ class visitor func =
   object
     inherit FunctionBodyVisitor.visitor
 
-    method vstmt _ = DoChildren
+    method! vstmt _ = DoChildren
 
-    method vinst = function
+    method! vinst = function
       | Call (None, callee, args, location)
 	when isInterestingCallee callee ->
 	  let resultType, _, _, _ = splitFunctionType (typeOf callee) in

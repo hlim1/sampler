@@ -20,7 +20,7 @@ class visitor file =
     object (self)
       inherit SiteFinder.visitor
 
-      method vstmt stmt =
+      method! vstmt stmt =
 
 	match stmt.skind with
 	| Instr [Set (left, _, _) as instr]

@@ -1,14 +1,14 @@
 open Cil
 
 
-let find name {globals = globals} =
+let find name {globals; _} =
   let rec findAmong = function
-    | GVarDecl ({vtype = TFun _}, _) :: rest ->
+    | GVarDecl ({vtype = TFun _; _}, _) :: rest ->
 	findAmong rest
-    | GVarDecl ({vname = vname} as varinfo, _) :: _
+    | GVarDecl ({vname; _} as varinfo, _) :: _
       when vname = name ->
 	varinfo
-    | GVar ({vname = vname} as varinfo, _, _) :: _
+    | GVar ({vname; _} as varinfo, _, _) :: _
       when vname = name ->
 	varinfo
     | _ :: rest ->
@@ -19,9 +19,9 @@ let find name {globals = globals} =
   findAmong globals
 
 
-let findInit name {globals = globals} =
+let findInit name {globals; _} =
   let rec findAmong = function
-    | GVar ({vname = vname}, initinfo, _) :: _
+    | GVar ({vname; _}, initinfo, _) :: _
       when vname = name ->
 	initinfo
     | _ :: rest ->

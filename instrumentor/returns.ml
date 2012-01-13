@@ -5,7 +5,7 @@ class patcher countdown =
   object
     inherit FunctionBodyVisitor.visitor
 
-    method vstmt stmt =
+    method! vstmt stmt =
       match stmt.skind with
       | Return (_, location) ->
 	  let export = countdown#export location in
@@ -17,6 +17,6 @@ class patcher countdown =
   end
 
 
-let patch {sbody = sbody} countdown =
+let patch {sbody; _} countdown =
   let visitor = new patcher countdown in
   ignore (visitCilBlock visitor sbody)

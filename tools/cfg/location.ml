@@ -9,4 +9,4 @@ let parse =
   let lineno = integerLine in
   parser
       [< file = filename; line = lineno >] ->
-	{ file = file; line = line }
+	{ file; line }

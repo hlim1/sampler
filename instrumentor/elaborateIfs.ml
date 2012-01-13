@@ -10,7 +10,7 @@ class visitor =
   object
     inherit FunctionBodyVisitor.visitor
 
-    method vstmt stmt =
+    method! vstmt stmt =
       begin
 	match stmt.skind with
 	| If (_, thenBlock, elseBlock, _) ->

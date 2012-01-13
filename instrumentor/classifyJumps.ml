@@ -10,18 +10,18 @@ class visitor =
 
     val seen = new StmtIdHash.c 0
 	
-    val mutable forwards = []
-    val mutable backwards = []
-    method result = { forward = forwards; backward = backwards }
+    val mutable forward = []
+    val mutable backward = []
+    method result = { forward; backward }
 
-    method vstmt stmt =
+    method! vstmt stmt =
       begin
 	match stmt.skind with
 	| Goto (destination, _) ->
 	    if seen#mem !destination then
-	      backwards <- stmt :: backwards
+	      backward <- stmt :: backward
 	    else
-	      forwards <- stmt :: forwards
+	      forward <- stmt :: forward
 	| Break _
 	| Continue _
 	| Loop _ ->
@@ -32,7 +32,7 @@ class visitor =
       seen#add stmt ();
       DoChildren
 
-    method vfunc func =
+    method! vfunc func =
       NumberStatements.visit func;
       DoChildren
   end

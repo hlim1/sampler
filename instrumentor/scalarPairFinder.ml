@@ -26,7 +26,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
     val formals = List.filter isInterestingVar func.sformals
     val locals = List.filter isInterestingVar func.slocals
 
-    method vfunc func =
+    method! vfunc func =
       if self#includedFunction func then
 	begin
 	  if not !compareUninitialized then
@@ -39,7 +39,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
       else
 	SkipChildren
 
-    method vstmt stmt =
+    method! vstmt stmt =
 
       let build first left location (host, off) =
 	let leftType = typeOfLval left in

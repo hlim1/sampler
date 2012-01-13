@@ -12,13 +12,13 @@ class filter =
       matchesOrWildcard "*" template.file focus.file
 
     method private format = function
-      | {file=file; line=(-1)} ->
+      | {file; line=(-1); _} ->
 	  text file ++ text ":*"
       | fileAndLine ->
 	  d_loc () fileAndLine
 
     method private makeLocation file line =
-      {file=file; line=line; byte=(-1)}
+      {file; line; byte=(-1)}
 
     method private fileToLocation file =
       self#makeLocation file (-1)

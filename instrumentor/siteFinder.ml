@@ -14,7 +14,7 @@ class visitor =
     method private includedFunction func =
       FunctionFilter.filter#included func.svar.vname
 
-    method vfunc func =
+    method! vfunc func =
       if self#includedFunction func then
 	DoChildren
       else

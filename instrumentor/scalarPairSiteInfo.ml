@@ -10,7 +10,7 @@ class c func inspiration left right =
   object
     inherit SiteInfo.c func inspiration as super
 
-    method print =
+    method! print =
       let (leftLval, leftHost, leftOff) = left in
       let leftLval = d_lval () leftLval in
       let leftHost = text leftHost in

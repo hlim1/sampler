@@ -6,7 +6,7 @@ module Key = struct
 
   let equal = (==)
       
-  let hash {sid = sid} =
+  let hash {sid; _} =
     assert (sid != -1);
     sid
 end

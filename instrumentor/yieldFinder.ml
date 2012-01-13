@@ -11,7 +11,7 @@ class visitor file =
     object (self)
       inherit SiteFinder.visitor
 
-      method vstmt stmt =
+      method! vstmt stmt =
 	match IsolateInstructions.isolated stmt with
 	| Some (Set (left, expr, location) as instr)
 	  when self#includedStatement stmt ->

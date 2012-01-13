@@ -24,7 +24,7 @@ class visitor loopless changed =
 
     val mutable definitelyLoopless = true
 
-    method vfunc func =
+    method! vfunc func =
       if not (loopless#mem func.svar.vname) then
 	begin
 	  try
@@ -41,10 +41,10 @@ class visitor loopless changed =
 	end;
       SkipChildren
 
-    method vstmt _ =
+    method! vstmt _ =
       DoChildren
 
-    method vinst inst =
+    method! vinst inst =
       begin
 	match inst with
 	| Call (_, Lval (Var callee, NoOffset), _, _) ->
@@ -76,14 +76,14 @@ let addExterns loopless file =
   iterGlobals file
     begin
       function
-	| GVarDecl ({ vtype = TFun _; vname = vname }, _) ->
+	| GVarDecl ({ vtype = TFun _; vname; _ }, _) ->
 	    loopless#add vname true
 	| _ -> ()
     end;
 
   Scanners.iterFuncs file
     begin
-      fun { svar = { vname = vname }} ->
+      fun { svar = { vname; _ }; _} ->
 	loopless#remove vname
     end
 
@@ -124,8 +124,8 @@ initCIL ();
 let process filename =
   let file = Frontc.parse filename () in
   let loopless = loopless file in
-  let considerGlobal {svar = varinfo} =
-    Printf.printf "%s\t%b\n" varinfo.vname (loopless varinfo)
+  let considerGlobal {svar; _} =
+    Printf.printf "%s\t%b\n" svar.vname (loopless svar)
   in
   Scanners.iterFuncs file considerGlobal
 in

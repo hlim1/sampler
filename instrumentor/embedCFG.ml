@@ -45,7 +45,7 @@ class visitor file digest channel =
       output_char channel '\n';
       thing
 
-    method vfunc fundec =
+    method! vfunc fundec =
       Printf.fprintf channel
 	"%c\t%s\t"
 	(if fundec.svar.vstorage == Static then '-' else '+')
@@ -57,7 +57,7 @@ class visitor file digest channel =
 
       ChangeDoChildrenPost (fundec, self#postNewline)
 
-    method vstmt statement =
+    method! vstmt statement =
       assert (statement.sid == !expectedSid);
       incr expectedSid;
 
@@ -65,7 +65,7 @@ class visitor file digest channel =
       self#addLocation (get_stmtLoc statement.skind);
 
       (* successors list *)
-      let addSucc {sid = succId} =
+      let addSucc {sid = succId; _} =
 	Printf.fprintf channel "%d\t" succId
       in
       List.iter addSucc statement.succs;
@@ -80,7 +80,7 @@ class visitor file digest channel =
 	      | Dynamic.Unknown ->
 		  output_string channel "???"
 	      | Dynamic.Known callees ->
-		  let addCallee {vname = vname} =
+		  let addCallee {vname; _} =
 		    output_string channel vname;
 		    output_char channel '\t'
 		  in

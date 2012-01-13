@@ -7,13 +7,13 @@ exception Missing of string
 let find name file =
 
   let rec findAmong = function
-    | GFun ({svar = {vname = vname} as varinfo}, _) :: _
+    | GFun ({svar = {vname; _} as varinfo; _}, _) :: _
       when vname = name ->
 	varinfo
-    | GFun ({svar = {vname = vname; vinline = true} as varinfo}, _) :: _
+    | GFun ({svar = {vname; vinline = true; _} as varinfo; _}, _) :: _
       when vname = name ^ "__extinline" ->
 	varinfo
-    | GVarDecl ({vname = vname; vtype = TFun _} as varinfo, _) :: _
+    | GVarDecl ({vname; vtype = TFun _; _} as varinfo, _) :: _
       when vname = name ->
 	varinfo
     | _ :: rest ->
@@ -28,10 +28,10 @@ let find name file =
 let findDefinition name file =
 
   let rec findAmong = function
-    | GFun ({svar = {vname = vname}} as fundec, _) :: _
+    | GFun ({svar = {vname; _}; _} as fundec, _) :: _
       when vname = name ->
 	fundec
-    | GFun ({svar = {vname = vname; vinline = true}} as fundec, _) :: _
+    | GFun ({svar = {vname; vinline = true; _}; _} as fundec, _) :: _
       when vname = name ^ "__extinline" ->
 	fundec
     | _ :: rest ->

@@ -14,7 +14,7 @@ class c func inspiration (lval : lval) access =
   object
     inherit SiteInfo.c func inspiration as super
 
-    method print =
+    method! print =
       let lval_expr = Lval lval in
       let prevStyle = !lineDirectiveStyle in
       lineDirectiveStyle := None;

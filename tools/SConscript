@@ -3,8 +3,7 @@ import platform
 from glob import glob
 
 Import('env')
-# remove OCAML_WARN='Amr' once Fedora 14 (OCaml 3.11) is no longer supported
-env = env.Clone(LEXFLAGS=['-f', '-p'], OCAML_WARN='Amr', OCAML_LIBS=['unix', 'str'])
+env = env.Clone(LEXFLAGS=['-f', '-p'], OCAML_LIBS=['unix', 'str'])
 env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
 
 

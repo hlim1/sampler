@@ -71,7 +71,7 @@ let classifyByName = function
 
 
 let rec classifyStatement = function
-  | Instr [Call (None, Lval (Var {vname = vname}, NoOffset), _, location)] ->
+  | Instr [Call (None, Lval (Var {vname; _}, NoOffset), _, location)] ->
       classifyByName vname
 
   | Instr (_ :: _ :: _) ->

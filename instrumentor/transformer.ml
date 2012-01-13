@@ -51,7 +51,7 @@ let visit file isWeightyCallee countdown =
 
 	    let headerTotal, headerCount =
 	      weights#fold
-		(fun _ { threshold = threshold } (total, count) ->
+		(fun _ { threshold; _ } (total, count) ->
 		  if threshold == 0 then
 		    (total, count)
 		  else

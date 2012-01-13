@@ -7,9 +7,9 @@ class visitor file =
     object (self)
       inherit SiteFinder.visitor
 
-      method vstmt stmt =
+      method! vstmt stmt =
 	match stmt.skind with
-	| Instr [Call (_, Lval (Var {vname = "g_object_unref"}, NoOffset), [chaff], location)]
+	| Instr [Call (_, Lval (Var {vname = "g_object_unref"; _}, NoOffset), [chaff], location)]
 	  when self#includedStatement stmt ->
 	    let slot = var (makeTempVar func uintType) in
 	    let classify = Call (Some slot, classifier, [chaff], location) in

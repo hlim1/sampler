@@ -44,9 +44,9 @@ let parse =
       ->
 	nodeCount := !nodeCount + 2;
 	incr edgeCount;
-	{ location = location;
-	  successors = successors;
-	  callees = callees;
+	{ location;
+	  successors;
+	  callees;
 	}
 
 

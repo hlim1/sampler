@@ -23,11 +23,11 @@ class visitor isWeighty countdown =
     val mutable result = []
     method result = result
 
-    method vstmt stmt =
+    method! vstmt stmt =
       match IsolateInstructions.isolated stmt with
       | Some (Call (_, Lval callee, _, location) as call)
 	when isWeighty callee ->
-	  let info = {location = location;
+	  let info = {location;
 		      jump = mkEmptyStmt ();
 		      target = mkEmptyStmt ()}
 	  in

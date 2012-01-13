@@ -106,15 +106,15 @@ class visitor hasDefinition hasPragmaWeightless weighty =
   object
     inherit FunctionBodyVisitor.visitor
 
-    method vfunc func =
+    method! vfunc func =
       if weighty#mem func.svar then
 	SkipChildren
       else
 	DoChildren
 
-    method vstmt _ = DoChildren
+    method! vstmt _ = DoChildren
 
-    method vinst instr =
+    method! vinst instr =
       begin
 	match instr with
 	| Call (_, Lval lval, _, location)

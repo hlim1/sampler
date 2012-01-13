@@ -26,7 +26,7 @@ let setScales () =
     done;
 
     registry#iter
-      (fun {svar = {vname = vname}} site ->
+      (fun {svar = {vname; _}; _} site ->
 	let scale = try scales#find (vname, string_of_int site.statement.sid)
 	with Not_found -> try scales#find (vname, "*")
 	with Not_found -> try scales#find ("*", "*")

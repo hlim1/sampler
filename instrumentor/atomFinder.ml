@@ -20,7 +20,7 @@ class visitor file =
     object (self)
       inherit SiteFinder.visitor
 
-      method vstmt stmt =
+      method! vstmt stmt =
 
 	let get_init_ctid_instr () =
 	  let result = var (makeTempVar ~name:"cbi_thread_id" func tid_type) in

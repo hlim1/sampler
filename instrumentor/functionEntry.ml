@@ -3,7 +3,7 @@ open Cil
 
 let find func =
   match func.sbody.bstmts with
-  | {sid = 0} as root :: _ -> root
+  | {sid = 0; _} as root :: _ -> root
   | _ -> ignore (bug "cannot find function entry"); dummyStmt
 
 

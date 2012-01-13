@@ -7,13 +7,13 @@ class visitor func =
 
     val mutable nextId = 0
 
-    method vstmt statement =
+    method! vstmt statement =
       func.sallstmts <- statement :: func.sallstmts;
       statement.sid <- nextId;
       nextId <- nextId + 1;
       DoChildren
 
-    method vfunc func =
+    method! vfunc func =
       func.sallstmts <- [];
       let post func =
 	func.smaxstmtid <- Some nextId;

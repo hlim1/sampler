@@ -23,22 +23,22 @@ class visitor collection =
   object
     inherit nopCilVisitor
 
-    method vglob = function
+    method! vglob = function
       | GEnumTag _ ->
 	  SkipChildren
       | other ->
 	  checkLocationFilter (get_globalLoc other)
 
-    method vstmt stmt =
+    method! vstmt stmt =
       checkLocationFilter (get_stmtLoc stmt.skind)
 
-    method vfunc fundec =
+    method! vfunc fundec =
       if FunctionFilter.filter#included fundec.svar.vname then
 	DoChildren
       else
 	SkipChildren
 
-    method vexpr exp =
+    method! vexpr exp =
       if LocationFilter.filter#included !currentLoc then
 	begin
 	  match isInteger (constFold true exp) with

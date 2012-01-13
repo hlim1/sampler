@@ -14,7 +14,7 @@ class visitor =
   object
     inherit FunctionBodyVisitor.visitor
 
-    method vstmt stmt =
+    method! vstmt stmt =
       begin
 	match stmt.skind with
 	| Switch (expr, block, cases, location) ->
@@ -30,7 +30,7 @@ class visitor =
       end;
       DoChildren
 
-    method vfunc func =
+    method! vfunc func =
       CfgUtils.build func;
       DoChildren
   end
@@ -42,7 +42,7 @@ let addDefaultCases func =
 
 let prepatchSplits func =
   let isSplit = function
-    | { skind = If (_, thenBlock, elseBlock, _) } ->
+    | { skind = If (_, thenBlock, elseBlock, _); _ } ->
 	(* make space for possible future counterweights *)
 	let reserveSpace block =
 	  block.bstmts <- mkEmptyStmt () :: block.bstmts
@@ -51,7 +51,7 @@ let prepatchSplits func =
 	reserveSpace elseBlock;
 	true
 
-    | { skind = Switch (expr, block, cases, location) } as stmt ->
+    | { skind = Switch (expr, block, cases, location); _ } as stmt ->
 	(* turn case fallthroughs into explicit gotos *)
 	let cases =
 	  let elaborateFallthrough case =
@@ -80,8 +80,8 @@ let prepatchSplits func =
 	stmt.skind <- Switch (expr, block, cases, location);
 	true
 
-    | { succs = [] }
-    | { succs = [_] } ->
+    | { succs = []; _ }
+    | { succs = [_]; _ } ->
 	false
 
     | stmt ->

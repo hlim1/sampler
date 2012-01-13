@@ -7,7 +7,7 @@ class resolver registry attributes =
 
     inherit SectionResolver.c registry attributes
 
-    method private printLine ~filename ~unit ~scheme ~siteInfo ~raw =
+    method! private printLine ~filename ~unit ~scheme ~siteInfo ~raw =
       printf "%s\t%s\t%s\t%s\t%s\t%s\n" raw filename unit scheme timing siteInfo
   end
 

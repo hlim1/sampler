@@ -29,7 +29,7 @@ let rec isInterestingType = function
   | TPtr _
   | TEnum _ ->
       true
-  | TNamed ({ttype = ttype}, _) ->
+  | TNamed ({ttype; _}, _) ->
       isInterestingType ttype
   | TBuiltin_va_list _ | TComp _ | TFun _ | TArray _ | TFloat _ | TVoid _ ->
       false
@@ -37,7 +37,7 @@ let rec isInterestingType = function
 
 let rec onlyFields = function
   | NoOffset -> true
-  | Field ({fcomp = {cstruct = true}}, offset)
+  | Field ({fcomp = {cstruct = true; _}; _}, offset)
     when !saveDataflowFields ->
       onlyFields offset
   | Field _
@@ -66,9 +66,9 @@ let collectLval result lval =
 	| TPtr _
 	| TEnum _ ->
 	    (if isDirect then name else anything) :: result
-	| TNamed ({ttype = ttype}, _) ->
+	| TNamed ({ttype; _}, _) ->
 	    traverse result name ttype
-	| TComp ({cstruct = true; cfields = cfields}, _)
+	| TComp ({cstruct = true; cfields; _}, _)
 	  when !saveDataflowFields ->
 	    let prefix = name ++ chr '.' in
 	    List.fold_left
@@ -132,7 +132,7 @@ let embedGlobal channel = function
       List.iter
 	(fun field -> ignore (fprintf channel "&%a\n" insert field))
 	fields
-  | GVar (var, {init = init}, _) ->
+  | GVar (var, {init; _}, _) ->
       begin
 	let storage =
 	  match var.vstorage with
@@ -214,7 +214,7 @@ class visitor file digest channel =
   object
     inherit FunctionBodyVisitor.visitor
 
-    method vfunc fundec =
+    method! vfunc fundec =
       ignore (fprintf channel "%s\n" fundec.svar.vname);
       let embedVars vars =
 	let embedVar var =
@@ -231,7 +231,7 @@ class visitor file digest channel =
       embedVars fundec.slocals;
       ChangeDoChildrenPost (fundec, fun _ -> output_char channel '\n'; fundec)
 
-    method vstmt statement =
+    method! vstmt statement =
       let flag, args =
 	let noop = '~', [] in
 	match statement.skind with

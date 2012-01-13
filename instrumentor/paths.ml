@@ -12,7 +12,7 @@ let relativePaths =
     ~default:false
 
 
-let normalize { Cil.file = given } =
+let normalize { Cil.file = given; _ } =
   let givenDoc = text given in
   if not !relativePaths && Filename.is_relative given then
     cwd ++ chr '/' ++ givenDoc

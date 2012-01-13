@@ -6,7 +6,7 @@ class visitor (tuples : Counters.manager) func =
   object (self)
     inherit SiteFinder.visitor
 
-    method vfunc func =
+    method! vfunc func =
       if self#includedFunction func then
 	begin
 	  StoreReturns.visit func;
@@ -15,7 +15,7 @@ class visitor (tuples : Counters.manager) func =
       else
 	SkipChildren
 
-    method vstmt stmt =
+    method! vstmt stmt =
       match IsolateInstructions.isolated stmt with
       | Some (Call (Some result, callee, _, location))
 	when self#includedStatement stmt

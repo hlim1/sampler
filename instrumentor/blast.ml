@@ -54,11 +54,11 @@ class visitor file =
 	end;
       stmt
 
-    method vfunc func =
+    method! vfunc func =
       inMain <- (func.svar.vname = "main");
       DoChildren
 
-    method vstmt stmt =
+    method! vstmt stmt =
       if inMain then
 	begin
 	  match stmt.skind with
@@ -67,7 +67,7 @@ class visitor file =
 	end;
       ChangeDoChildrenPost (stmt, self#post)
 
-    method vinst instr =
+    method! vinst instr =
       begin
 	match instr with
 	| Set _ -> ()
@@ -79,7 +79,7 @@ class visitor file =
       end;
       DoChildren
 
-    method vlval lval =
+    method! vlval lval =
       begin
 	match lval with
 	| Mem _, _ -> dangerous <- true
@@ -87,7 +87,7 @@ class visitor file =
       end;
       DoChildren
 
-    method voffs offset =
+    method! voffs offset =
       begin
 	match offset with
 	| Index _ -> dangerous <- true

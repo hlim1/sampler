@@ -5,11 +5,11 @@ class virtual visitor =
   object
     inherit SkipVisitor.visitor
 
-    method vglob = function
+    method! vglob = function
       | GFun _ -> DoChildren
       | _ -> SkipChildren
 	    
-    method vfunc _ = DoChildren
+    method! vfunc _ = DoChildren
 
-    method vblock _ = DoChildren
+    method! vblock _ = DoChildren
   end

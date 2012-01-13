@@ -15,7 +15,7 @@ let stmt_what = function
   | If _ -> "If"
   | Switch _ -> "Switch"
   | Loop _ -> "Loop"
-  | Block {bstmts = bstmts} -> Printf.sprintf "Block × %i" (List.length bstmts)
+  | Block {bstmts; _} -> Printf.sprintf "Block × %i" (List.length bstmts)
   | TryFinally _ -> "TryFinally"
   | TryExcept _ -> "TryExcept"
 
@@ -51,14 +51,14 @@ let d_labels () labels =
     ~elements:labels
 
 
-let d_preds () {preds = preds} =
+let d_preds () {preds; _} =
   seq
     ~sep:(text "; ")
     ~doit:(fun stmt -> num stmt.sid)
     ~elements:preds
 
 
-let d_succs () {succs = succs} =
+let d_succs () {succs; _} =
   seq
     ~sep:(text "; ")
     ~doit:(fun stmt -> num stmt.sid)

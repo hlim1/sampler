@@ -32,7 +32,7 @@ class visitor pairs =
       end;
       statement
 
-    method vstmt stmt =
+    method! vstmt stmt =
       let clone = { stmt with labels = mapNoCopy cloneLabel stmt.labels } in
       assert (stmt.sid >= 0);
       pairs.(stmt.sid) <- (stmt, clone);

@@ -14,7 +14,7 @@ class visitor =
   object
     inherit SkipVisitor.visitor
 
-    method vglob = function
+    method! vglob = function
       | GFun (func, _) as global ->
 	  let finder = new BoundFinder.visitor global func in
 	  ignore (Cil.visitCilFunction (finder :> cilVisitor) func);

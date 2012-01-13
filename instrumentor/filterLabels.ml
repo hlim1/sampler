@@ -30,7 +30,7 @@ class numberStatements =
 
     val nextSid = ref 1
 
-    method vstmt stmt =
+    method! vstmt stmt =
       stmt.sid <- !nextSid;
       incr nextSid;
       DoChildren
@@ -44,7 +44,7 @@ class collectDestinations =
     val destinations = new StmtIdHash.c 0
     method result = destinations
 
-    method vstmt stmt =
+    method! vstmt stmt =
       begin
 	match stmt.skind with
 	| Goto (dest, _) ->
@@ -62,7 +62,7 @@ class reduceLabels destinations =
   object
     inherit FunctionBodyVisitor.visitor
 
-    method vstmt stmt =
+    method! vstmt stmt =
       let filter = if destinations#mem stmt then retainOne else retainNone in
       stmt.labels <- filter stmt.labels;
       DoChildren

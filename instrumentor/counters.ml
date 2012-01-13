@@ -142,7 +142,7 @@ class manager name file =
       mapGlobals file
 	begin
 	  function
-	    | GVar ({vtype = TArray (elementType, _, attributes)} as varinfo, initinfo, location)
+	    | GVar ({vtype = TArray (elementType, _, attributes); _} as varinfo, initinfo, location)
 	      when varinfo == counters
 	      ->
 		GVar ({varinfo with vtype = TArray (elementType,
@@ -150,14 +150,14 @@ class manager name file =
 						    attributes)},
 		      initinfo, location)
 
-	    | GFun ({svar = {vname = "cbi_reporter"}; sbody = sbody}, _) as global
+	    | GFun ({svar = {vname = "cbi_reporter"; _}; sbody; _}, _) as global
 	      when nextId > 0 ->
 		let schemeReporter = FindFunction.find ("cbi_" ^ name.prefix ^ "Reporter") file in
 		let call = Call (None, Lval (var schemeReporter), [], locUnknown) in
 		sbody.bstmts <- mkStmtOneInstr call :: sbody.bstmts;
 		global
 
-	    | GFun ({svar = {vname = "cbi_zeroSetter"}; sbody = sbody}, _) as global
+	    | GFun ({svar = {vname = "cbi_zeroSetter"; _}; sbody; _}, _) as global
 	      when nextId > 0 ->
 		let memset0 = FindFunction.find ("cbi_memset0") file in
 		let counter = Lval (Var counters, NoOffset) in

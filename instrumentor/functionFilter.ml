@@ -18,7 +18,7 @@ class filter =
 
     method private matches = matchesOrWildcard "*"
 
-    method included focus =
+    method! included focus =
       if pragmaExclusions#mem focus then
 	false
       else

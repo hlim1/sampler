@@ -32,7 +32,7 @@ class visitor (classifier : classifier) (tuples : Counters.manager) func =
   object (self)
     inherit SiteFinder.visitor
 
-    method vfunc func =
+    method! vfunc func =
       if self#includedFunction func then
 	let body =
 	  let testFormal body formal =
@@ -50,7 +50,7 @@ class visitor (classifier : classifier) (tuples : Counters.manager) func =
       else
 	SkipChildren
 
-    method vstmt stmt =
+    method! vstmt stmt =
 
       let build first left location (host, off) =
 	let leftType = typeOfLval left in

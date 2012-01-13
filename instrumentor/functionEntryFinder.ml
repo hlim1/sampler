@@ -5,7 +5,7 @@ class visitor (counters : Counters.manager) =
   object (self)
     inherit SiteFinder.visitor
 
-    method vfunc func =
+    method! vfunc func =
       begin
 	if self#includedFunction func then
 	  let body = func.sbody in

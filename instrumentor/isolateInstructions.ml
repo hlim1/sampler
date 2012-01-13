@@ -14,7 +14,7 @@ class visitor =
   object
     inherit FunctionBodyVisitor.visitor
 	
-    method vstmt statement =
+    method! vstmt statement =
       match statement.skind with
       | Instr instructions ->
 	  let block = isolate instructions in
@@ -29,7 +29,7 @@ let visit func =
   ignore (visitCilFunction new visitor func)
 
 
-let isolated {skind = skind} =
+let isolated {skind; _} =
   match skind with
   | Instr [singleton] ->
       Some singleton

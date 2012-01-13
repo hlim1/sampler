@@ -33,7 +33,7 @@ class visitor file points =
       let zeroSetter = FindFunction.find ("cbi_guardedSetZero") file in
       mkStmtOneInstr (Call (None, Lval (var zeroSetter), [], locUnknown))
 
-  method vstmt stmt =
+  method! vstmt stmt =
     let loc = get_stmtLoc stmt.skind in
     if points#mem loc.file then
       let resetLines = points#find loc.file in

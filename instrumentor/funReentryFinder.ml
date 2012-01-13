@@ -10,7 +10,7 @@ class visitor file =
     object (self)
       inherit SiteFinder.visitor
 
-      method vfunc func =
+      method! vfunc func =
         if self#includedFunction func && self#includedLocation func.svar.vdecl then
           let body = func.sbody in
           let cci_inc_counter_func = Lval (var (FindFunction.find "cci_atomicIncrementCounter" file)) in
@@ -25,7 +25,7 @@ class visitor file =
         else
 	  SkipChildren
 
-      method vstmt stmt =
+      method! vstmt stmt =
         match stmt.skind with
           | Return(exp,location) ->
               let cci_dec_counter_func = Lval (var (FindFunction.find "cci_atomicDecrementCounter" file)) in

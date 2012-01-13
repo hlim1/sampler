@@ -77,7 +77,7 @@ class visitor global func =
     val mutable globals = [global]
     method globals = globals
 
-    method vstmt stmt =
+    method! vstmt stmt =
       let build replacement left location (host, offset) =
 	let leftType = unrollType (typeOfLval left) in
 	let newLeft = var (Locals.makeTempVar func leftType) in

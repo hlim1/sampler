@@ -6,7 +6,7 @@ class printNodes =
   object
     inherit FunctionBodyVisitor.visitor
 
-    method vstmt statement =
+    method! vstmt statement =
       ignore (Pretty.printf "  n%d [label = \"%s\"];@!"
 		statement.sid
 		(Utils.stmt_describe statement.skind));
@@ -18,7 +18,7 @@ class printEdges =
   object
     inherit FunctionBodyVisitor.visitor
 
-    method vstmt statement =
+    method! vstmt statement =
       let printEdge succ =
 	printf "  n%d -> n%d;\n" statement.sid succ.sid
       in

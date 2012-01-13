@@ -80,7 +80,7 @@ opts.Save('.scons-config', env)
 domainname = getfqdn().split('.', 1)[1]
 if domainname == 'cs.wisc.edu':
     print 'adding special tweaks for', domainname
-    env.AppendENVPath('PATH', '/unsup/ocaml/bin')
+    env.AppendENVPath('PATH', '/unsup/ocaml-3.12.1/bin')
     env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.4/site-packages/pychecker/checker.py']
 
 env['cil_path'] = env.Dir('$cil_path')

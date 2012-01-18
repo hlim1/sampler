@@ -99,7 +99,6 @@ env = env.Clone(
     OCAML_DTYPES=True,
     OCAML_WARN='A',
     OCAML_WARN_ERROR='A',
-    PERL=env.WhereIs('perl'),
 
     PACKAGE='sampler',
     PACKAGE_NAME='$PACKAGE',

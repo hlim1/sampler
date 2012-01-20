@@ -42,7 +42,7 @@ conf.ServicesDir()
 conf.Finish()
 
 
-if 'glib_compile_schemas' in env:
+if env.get('glib_compile_schemas'):
     schemas = 'edu.wisc.cs.cbi.gschema.xml'
     passed = schemas + '.passed'
     Alias('test',

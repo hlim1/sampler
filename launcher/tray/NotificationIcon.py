@@ -65,7 +65,10 @@ class TrayIcon(object):
         if not BODY_HYPERLINKS:
             note.add_action('learn-more', 'Learn More…', self.__learn_more, None, None)
 
-        note.show()
+        try:
+            note.show()
+        except GLib.GError:
+            pass
 
     # notification action callbacks
 

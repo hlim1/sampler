@@ -1,0 +1,64 @@
+Import('env', 'testPythons')
+env = env.Clone(bindir=env.subst('$bindir'),
+               traydir=env.subst('$traydir'))
+
+
+########################################################################
+#
+#  check for working support for Python notification action callbacks
+#
+
+def notificationActions(context):
+    context.Message('checking for Python notification action callbacks: ')
+    tester = File('testNotifications.py')
+    outcome = context.TryAction([tester.abspath])
+    success = outcome[0]
+    context.Result(('no', 'yes')[success])
+    context.env['NOTIFICATION_ACTIONS'] = bool(success)
+
+conf = env.Configure(
+    help=False,
+    custom_tests={
+        'NotificationActions': notificationActions,
+        },
+    )
+
+conf.NotificationActions()
+conf.Finish()
+
+trayChoices = ['StatusIcon.py', 'NotificationIcon.py']
+env['TRAY_ICON'] = trayChoices[env.get('NOTIFICATION_ACTIONS', True)]
+
+
+########################################################################
+
+
+service = env.Template('edu.wisc.cs.cbi.Monitor.service.in', varlist=['traydir'])
+Default(service)
+
+pythons = trayChoices + [
+    'AboutBoxIcon.py',
+    'Main.py',
+    'Service.py',
+    'testNotifications.py',
+    'TrayIcon.py',
+    ]
+
+env.InstallAs('TrayIcon.py', '$TRAY_ICON')
+
+compiled = env.PythonBytecodeOpt(pythons)
+Default(compiled)
+testPythons(env, pythons)
+
+ui = 'tray.ui'
+Alias('test', [
+        env.TestXML(ui, schema=File('../gtk-builder.xsd')),
+        ])
+
+if not env.get('NOTIFICATION_ACTIONS', True):
+    env.Install('$DESTDIR$traydir', ui)
+
+Alias('install', [
+    env.Install('$DESTDIR$servicesdir', service),
+    env.Install('$DESTDIR$traydir', [compiled, 'tray']),
+    ])

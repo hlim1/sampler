@@ -25,7 +25,7 @@ WORDS = {
 
 class TrayIcon(object):
 
-    __slots__ = 'close'
+    __slots__ = '__note'
 
     def __init__(self, settings):
         Notify.init('Bug Isolation Monitor')
@@ -41,11 +41,15 @@ class TrayIcon(object):
         note.set_urgency(Notify.Urgency.LOW)
         note.set_hint('resident', GLib.Variant.new_boolean(True))
         #note.set_hint_string('desktop-entry', ...)
-        self.close = note.close
+        self.__note = note
 
         key = Keys.MASTER
         settings.connect('changed::' + key, self.__changed_enabled, note)
         self.__changed_enabled(settings, key, note)
+
+    def close(self):
+        if self.__note:
+            self.__note.close()
 
     # GSettings signal callbacks
 
@@ -67,8 +71,9 @@ class TrayIcon(object):
 
         try:
             note.show()
+            self.__note = note
         except GLib.GError:
-            pass
+            self.__note = None
 
     # notification action callbacks
 

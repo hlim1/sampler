@@ -1,0 +1,25 @@
+#!/usr/bin/python
+
+import dbus
+
+from contextlib import contextmanager
+from sys import stdout
+from time import sleep
+
+@contextmanager
+def verbosely(description):
+    print description, '...',
+    stdout.flush()
+    yield
+    print 'done'
+
+with verbosely('initializing'):
+    bus = dbus.SessionBus()
+    remote = bus.get_object('edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor')
+    iface = dbus.Interface(remote, 'edu.wisc.cs.cbi.Monitor')
+
+with verbosely('activating'):
+    iface.activate()
+
+with verbosely('sleeping for five seconds'):
+    sleep(5)

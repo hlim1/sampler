@@ -1,1 +1,0 @@
-val showStats : bool ref

@@ -1,9 +1,0 @@
-Import('env', 'threadLibs')
-
-env = env.Clone()
-threadLibs(env, 'no')
-
-precompute = env.Program('precompute.c', LIBS=['sampler-online', 'sampler'], LIBPATH='#driver')
-Default(precompute)
-
-Alias('install', env.Install('$DESTDIR$toolsdir', precompute))

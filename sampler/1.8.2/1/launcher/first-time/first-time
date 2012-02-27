@@ -1,4 +1,0 @@
-#!/usr/bin/python -O
-
-import Main
-Main.main()

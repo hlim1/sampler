@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.8.2
+
+** Delay posting notifications until some notification manager is actually up and running.  Occasionally seen with an instrumented gnome-panel, since that launches quite early during session startup.
+
 * sampler-1.8.1
 
 ** Avoid an uncaught exception if we try to post a notification before the notification daemon is up and running.  Occasionally seen with an instrumented gnome-panel, since that launches quite early during session startup.

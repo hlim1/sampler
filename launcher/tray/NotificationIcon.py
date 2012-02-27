@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from gi.repository import Gio, GLib, Gtk, Notify
+import dbus
 
 import Keys
 
@@ -25,9 +26,12 @@ WORDS = {
 
 class TrayIcon(object):
 
-    __slots__ = '__note'
+    __slots__ = '__note', '__watcher'
 
     def __init__(self, settings):
+        self.__note = None
+        self.__watcher = None
+
         Notify.init('Bug Isolation Monitor')
 
         # workaround for <https://bugzilla.gnome.org/show_bug.cgi?id=653033>
@@ -41,7 +45,6 @@ class TrayIcon(object):
         note.set_urgency(Notify.Urgency.LOW)
         note.set_hint('resident', GLib.Variant.new_boolean(True))
         #note.set_hint_string('desktop-entry', ...)
-        self.__note = note
 
         key = Keys.MASTER
         settings.connect('changed::' + key, self.__changed_enabled, note)
@@ -69,11 +72,18 @@ class TrayIcon(object):
         if not BODY_HYPERLINKS:
             note.add_action('learn-more', 'Learn More…', self.__learn_more, None, None)
 
-        try:
-            note.show()
-            self.__note = note
-        except GLib.GError:
-            self.__note = None
+        def callback(owner):
+            """triggered when desktop notification service provider changes"""
+            if owner:
+                self.__watcher.cancel()
+                self.__watcher = None
+                note.show()
+                self.__note = note
+
+        bus = dbus.Bus.get_session()
+        if self.__watcher:
+            self.__watcher.cancel()
+        self.__watcher = bus.watch_name_owner('org.freedesktop.Notifications', callback)
 
     # notification action callbacks
 

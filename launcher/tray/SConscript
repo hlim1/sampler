@@ -26,7 +26,7 @@ conf = env.Configure(
 conf.NotificationActions()
 conf.Finish()
 
-trayChoices = ['StatusIcon.py', 'NotificationIcon.py']
+trayChoices = File(['StatusIcon.py', 'NotificationIcon.py'])
 env['TRAY_ICON'] = trayChoices[env.get('NOTIFICATION_ACTIONS', True)]
 
 
@@ -36,11 +36,10 @@ env['TRAY_ICON'] = trayChoices[env.get('NOTIFICATION_ACTIONS', True)]
 service = env.Template('edu.wisc.cs.cbi.Monitor.service.in', varlist=['traydir'])
 Default(service)
 
-pythons = trayChoices + [
+pythons = [
     'AboutBoxIcon.py',
     'Main.py',
     'Service.py',
-    'testNotifications.py',
     'TrayIcon.py',
     ]
 

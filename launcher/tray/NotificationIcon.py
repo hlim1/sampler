@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from gi.repository import Gio, GLib, Gtk, Notify
+from gi.repository import GLib, Gtk, Notify
 import dbus
 
 import Keys

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.8.3
+
+** More robust handling of D-Bus timeouts.
+
 * sampler-1.8.2
 
 ** Delay posting notifications until some notification manager is actually up and running.  Occasionally seen with an instrumented gnome-panel, since that launches quite early during session startup.

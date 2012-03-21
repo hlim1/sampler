@@ -52,7 +52,10 @@ class TrayIcon(object):
 
     def close(self):
         if self.__note:
-            self.__note.close()
+            try:
+                self.__note.close()
+            except RuntimeError, error:
+                print >>stderr, "warning: cannot close CBI notification:", error
 
     # GSettings signal callbacks
 

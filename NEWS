@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.8.4
+
+** Continued efforts to avoid notification-related failures with an instrumented gnome-panel.
+
 * sampler-1.8.3
 
 ** More robust handling of D-Bus timeouts.

@@ -18,8 +18,6 @@ import Service
 
 
 def main():
-    __pychecker__ = 'unusednames=tray'
-
     unique = Service.unique()
     if not unique: return
 

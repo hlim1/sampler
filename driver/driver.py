@@ -32,7 +32,7 @@ import config
 # tried, obviously.  The first one that matches is taken, and no order
 # is specified.  Try to avoid overlapping patterns.
 
-class ArgumentListFilter:
+class ArgumentListFilter(object):
 
     def __init__(self, inputList, exactMatches={}, patternMatches={}):
         defaultArgExactMatches = {
@@ -139,10 +139,9 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         self.dataflow = False
         self.gcc = config.gcc
         self.implications = False
-        self.pthreads = False
+        self.pthread = False
         self.random = 'online'
         self.resetAtPoints = None
-        self.saveTemps = False
         self.scales = None
         self.schemes = set()
         self.toggles = {
@@ -159,8 +158,9 @@ class SamplerArgumentListFilter(ArgumentListFilter):
             }
 
         exactMatches = {
-            '-pthreads': SamplerArgumentListFilter._pthreadsCallback,
-            '-save-temps': SamplerArgumentListFilter._saveTempsCallback,
+            '-mt': SamplerArgumentListFilter._pthreadCallback,
+            '-pthread': SamplerArgumentListFilter._pthreadCallback,
+            '-pthreads': SamplerArgumentListFilter._pthreadCallback,
             '-fsampler-dataflow': SamplerArgumentListFilter._dataflowCallback,
             '-fsampler-implications': SamplerArgumentListFilter._implicationsCallback,
             '-v': SamplerArgumentListFilter._verboseCallback,
@@ -200,7 +200,7 @@ class SamplerArgumentListFilter(ArgumentListFilter):
 
         ArgumentListFilter.__init__(self, arglist, exactMatches=exactMatches, patternMatches=patternMatches)
 
-        self.toggles.setdefault('threads', self.pthreads)
+        self.toggles.setdefault('threads', self.pthread)
         if self.schemes & set(('atoms', 'atoms-rw', 'compare-swap')):
             self.toggles['isolate-shared-accesses'] = True
 
@@ -210,9 +210,9 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         aspect = aspect[len(FLAG_PREFIX):]
         self.cludes.append((aspect, argument))
 
-    def _pthreadsCallback(self, flag):
+    def _pthreadCallback(self, flag):
         __pychecker__ = 'unusednames=flag'
-        self.pthreads = True
+        self.pthread = True
 
     def _randomCallback(self, flag):
         self.random = flag.split('=', 1)[1]
@@ -227,10 +227,6 @@ class SamplerArgumentListFilter(ArgumentListFilter):
 
     def _resetAtPointsCallback(self, flag):
         self.resetAtPoints = flag.split('=', 1)[1]
-
-    def _saveTempsCallback(self, flag):
-        __pychecker__ = 'unusednames=flag'
-        self.saveTemps = True
 
     def _scalesCallback(self, flag):
         self.scales = flag.split('=', 1)[1]

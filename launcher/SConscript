@@ -9,6 +9,10 @@ def testPythons(env, sources):
     test = env.TestPython(target=target, source=sources)
     Alias('test', test)
 
+def testPythonsGtk(env, sources):
+    if 'DISPLAY' in env['ENV']:
+        testPythons(env, sources)
+
 def pkgConfigVar(context, package, package_varname, env_varname, missing):
     context.Message('checking for %s %s: ' % (package, package_varname))
     ok, value = context.TryAction([['pkg-config', '--variable=' + package_varname, package, '>$TARGET']])
@@ -72,4 +76,4 @@ SConscript(dirs=[
     'tray',
     'wrapper',
     ],
-           exports=['env', 'testPythons'])
+           exports=['env', 'testPythons', 'testPythonsGtk'])

@@ -1,4 +1,4 @@
-Import('env', 'testPythons')
+Import('env', 'testPythonsGtk')
 env = env.Clone(bindir=env.subst('$bindir'),
                traydir=env.subst('$traydir'))
 
@@ -47,7 +47,7 @@ env.InstallAs('TrayIcon.py', '$TRAY_ICON')
 
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
-testPythons(env, pythons)
+testPythonsGtk(env, pythons)
 
 ui = 'tray.ui'
 Alias('test', [

@@ -6,7 +6,6 @@ if env['tuple_counter_bits'] == 'natural':
 else:
     env[key] = '-DCBI_TUPLE_COUNTER_BITS=$tuple_counter_bits'
 
-File('sampler-cc-here.in')
 cc = env.Template('sampler-cc.in', varlist=['driverdir'])
 config = env.Template('config.py.in', varlist=['gcc', key])
 Default(cc, config)

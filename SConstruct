@@ -93,7 +93,7 @@ env.SetDefault(gcc=env.WhereIs('gcc'))
 #
 
 env = env.Clone(
-    tools=['default', 'ocaml', 'template', 'test', 'xml'], toolpath=['scons-tools'],
+    tools=['default', 'ocaml', 'python', 'template', 'test', 'xml'], toolpath=['scons-tools'],
     CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
     OCAML_DEBUG=env['debug'],
     OCAML_DTYPES=True,
@@ -145,6 +145,7 @@ env.MergeFlags(env.get('extra_cflags'))
 env.File([
         'scons-tools/ocaml.py',
         'scons-tools/pipe.py',
+        'scons-tools/python.py',
         'scons-tools/template.py',
         'scons-tools/test.py',
         'scons-tools/utils.py',

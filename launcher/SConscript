@@ -1,8 +1,5 @@
 Import('env')
 
-env = env.Clone(tools=['python'], toolpath=['.'])
-env.File('python.py')
-
 common = env.Dir('#launcher/common')
 
 def testPythons(env, sources):

@@ -3,7 +3,7 @@
 import collections
 import cPickle as pickle
 import inspect
-import os.path
+import os
 import re
 
 import config
@@ -108,7 +108,6 @@ class ArgumentListFilter:
 
         # Otherwise, see if the input matches some pattern with a
         # handler that we recognize.
-        matched = False
         for pattern, handler in patterns.iteritems():
             if re.match(pattern, currentItem):
                 return handler
@@ -212,21 +211,25 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         self.cludes.append((aspect, argument))
 
     def _pthreadsCallback(self, flag):
+        __pychecker__ = 'unusednames=flag'
         self.pthreads = True
 
     def _randomCallback(self, flag):
         self.random = flag.split('=', 1)[1]
 
     def _dataflowCallback(self, flag):
+        __pychecker__ = 'unusednames=flag'
         self.dataflow = True
 
     def _implicationsCallback(self, flag):
+        __pychecker__ = 'unusednames=flag'
         self.implications = True
 
     def _resetAtPointsCallback(self, flag):
         self.resetAtPoints = flag.split('=', 1)[1]
 
     def _saveTempsCallback(self, flag):
+        __pychecker__ = 'unusednames=flag'
         self.saveTemps = True
 
     def _scalesCallback(self, flag):
@@ -255,7 +258,6 @@ class SamplerArgumentListFilter(ArgumentListFilter):
 ########################################################################
 
 
-import os
 import subprocess
 import sys
 

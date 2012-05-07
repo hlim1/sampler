@@ -82,7 +82,8 @@ misc = map(env.OcamlProgram, [
 ])
 Default(misc)
 
-Install('#driver', main)
+main = Install('#driver', main)
+Default(main)
 
 Alias('install', env.Install('$DESTDIR$driverdir', main))
 

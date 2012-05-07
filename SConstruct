@@ -72,6 +72,7 @@ opts.AddVariables(
     ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
     ('extra_cflags', 'extra C compiler flags'),
     EnumVariable('tuple_counter_bits', 'in tuple counters, use unsigned integers of the specified bit-width', 'natural', ['32', '64', 'natural']),
+    BoolVariable('launcher', 'include GNOME launcher code', True),
     )
 
 env = Environment(options=opts)
@@ -81,7 +82,7 @@ domainname = getfqdn().split('.', 1)[1]
 if domainname == 'cs.wisc.edu':
     print 'adding special tweaks for', domainname
     env.AppendENVPath('PATH', '/unsup/ocaml/bin')
-    env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.4/site-packages/pychecker/checker.py']
+    env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.6/site-packages/pychecker/checker.py']
 
 env['cil_path'] = env.Dir('$cil_path')
 env.SetDefault(gcc=env.WhereIs('gcc'))
@@ -272,18 +273,22 @@ Default(spec)
 excludedSources = set(['config.log'])
 Export('excludedSources')
 
-SConscript(dirs=[
-    'debian',
-    'doc',
-    'driver',
-    'fuzz',
-    'instrumentor',
-    'launcher',
-    'lib',
-    'ocaml',
-    'tools',
-    'www',
-    ])
+subdirs = set((
+        'debian',
+        'doc',
+        'driver',
+        'fuzz',
+        'instrumentor',
+        'lib',
+        'ocaml',
+        'tools',
+        'www',
+        ))
+
+if env['launcher']:
+    subdirs.add('launcher')
+
+SConscript(dirs=sorted(subdirs))
 
 
 ########################################################################

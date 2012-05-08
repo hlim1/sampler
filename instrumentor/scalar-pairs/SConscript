@@ -7,10 +7,25 @@ late_global = env.CBIProgram('late-global.c')
 late_global = env.CBIResolvedSamples(env.CBIReports(late_global), objects=late_global)
 
 eenv = uenv.Clone()
-eenv.AppendUnique(CC=[
-        '-Wno-error=maybe-uninitialized',
-        '-Wno-error=strict-overflow',
-])
+
+def checkCCFlag(context, flag):
+    context.Message('checking for %s flag: ' % flag)
+    env = context.env.Clone()
+    env.AppendUnique(CC=[flag])
+    failed = context.TryCompile('int main() { return 0; }', '.c')
+    context.Result(failed)
+    if not failed:
+        context.env.AppendUnique(CC=[flag])
+
+conf = env.Configure(
+    clean=False, help=False,
+    custom_tests={
+        'CheckCCFlag': checkCCFlag,
+        })
+conf.CheckCCFlag('-Wno-error=maybe-uninitialized')
+conf.Finish()
+
+eenv.AppendUnique(CC=['-Wno-error=strict-overflow'])
 
 upcase_good = eenv.CBIProgram('upcase-good.c')
 upcase_good = eenv.CBIResolvedSamples(uenv.CBIReports(upcase_good, TEST_STDOUT='/dev/null'), objects=upcase_good)

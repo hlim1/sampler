@@ -15,7 +15,7 @@
     <key name="show-tray-icon" type="b">
       <default>true</default>
       <summary>Show tray icon while instrumented applications are running</summary>
-      <description>Set to true if the “Bug Isolation Monitor” tray icon should be displayed whenever the user is running any instrumented application.  The tray icon, which appears in the GNOME Panel notification area, serves as a visual reminder that instrumented code is in use.  The icon shows a green blip if automatic reporting is enabled, or no blip if reporting is disabled.</description>
+      <description>Set to true if the “Bug Isolation Monitor” tray icon should be displayed whenever the user is running any instrumented application.  The tray icon, which appears in the desktop notification area, serves as a visual reminder that instrumented code is in use.  The icon shows a green blip if automatic reporting is enabled, or no blip if reporting is disabled.</description>
     </key>
   </schema>
 </schemalist>

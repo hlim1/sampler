@@ -216,9 +216,6 @@ FLAG_SPECS_EXACT = {
 FLAG_SPECS_REGEXP = [
     (re.compile(pattern), handler)
     for pattern, handler in [
-        (r'^(-O\d*)$', slurp_0_cc1),
-        (r'^(-g\d*)$', slurp_0_cc1),
-        (r'^(-m(?:arch|cpu)=.*)$', slurp_0_cc1),
         (r'^(-.+)$', slurp_0),
         (r'^(.*\.[ci]|-)$', cc1_input_slot),
         (r'^(.*)$', unhandled),

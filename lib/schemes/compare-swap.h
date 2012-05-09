@@ -25,7 +25,7 @@ void cbi_compareSwapReport(const cbi_UnitSignature, unsigned, const cbi_Tuple2 [
 /* unsigned int cbi_dict_lookup(unsigned int key, unsigned int *val); */
 
 // clear the dictionary
-void cbi_dict_clear();
+void cbi_dict_clear(void);
 
 void cbi_dict_insert(unsigned long int key,
                     unsigned long int expectedVal);

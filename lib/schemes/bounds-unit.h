@@ -18,7 +18,7 @@ static cbi_Timestamp cbi_boundsTimestampsLast[];
 
 #pragma cilnoremove("cbi_boundsReportDump")
 #pragma sampler_exclude_function("cbi_boundsReportDump")
-static void cbi_boundsReportDump();
+static void cbi_boundsReportDump(void);
 
 
 #pragma cilnoremove("cbi_boundsReporter")

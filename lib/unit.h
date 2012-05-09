@@ -13,7 +13,7 @@ static void cbi_reporter()
 #pragma cilnoremove("cbi_memset0")
 void cbi_memset0(void *p, unsigned int sz);
 #pragma cilnoremove("cbi_guardedSetZero")
-void cbi_guardedSetZero();
+void cbi_guardedSetZero(void);
 
 #pragma sampler_exclude_function("cbi_zeroSetter")
 static void cbi_zeroSetter()

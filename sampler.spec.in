@@ -29,6 +29,10 @@ BuildRequires: perl
 BuildRequires: scons
 BuildRequires: scrollkeeper
 
+# additional packages required by %check scriptlet
+BuildRequires: /usr/bin/xmllint
+BuildRequires: pychecker
+
 
 ########################################################################
 #

@@ -253,7 +253,11 @@ def generate(env):
     env['CC'] = env.File('#driver/sampler-cc-here')
 
     env.AppendUnique(
-        CCFLAGS=['-frelative-paths'],
+        CCFLAGS=[
+            '-frelative-paths',
+            '-Wno-attributes',  # can remove this for cil-1.4.1+
+            '-Wno-format-nonliteral',
+            ],
         EXTRACT_SECTION=env.File('#tools/extract-section'),
         RESOLVE_CFG=env.File('#tools/resolve-cfg'),
         RESOLVE_SAMPLES=env.File('#tools/resolveSamples'),

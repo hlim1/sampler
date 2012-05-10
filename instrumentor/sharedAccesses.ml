@@ -156,7 +156,7 @@ let isolate file =
   if !enabled then
     Scanners.iterFuncs file
       (fun fundec ->
-	if FunctionFilter.filter#included fundec.svar.vname then
+	if FunctionFilter.instrumentable fundec then
 	  let isolator = new isolator fundec in
 	  ignore (visitCilBlock isolator fundec.sbody))
 

@@ -11,8 +11,8 @@ class visitor =
     method private includedStatement stmt =
       self#includedLocation (get_stmtLoc stmt.skind)
 
-    method private includedFunction func =
-      FunctionFilter.filter#included func.svar.vname
+    method private includedFunction =
+      FunctionFilter.instrumentable
 
     method! vfunc func =
       if self#includedFunction func then

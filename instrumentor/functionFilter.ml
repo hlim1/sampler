@@ -34,3 +34,11 @@ class filter =
 
 
 let filter = new filter
+
+
+let instrumentable { svar; _ } =
+  match svar.vstorage, svar.vinline with
+  | Extern, true ->
+      false
+  | _ ->
+      filter#included svar.vname

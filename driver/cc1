@@ -252,6 +252,9 @@ def main():
                     break
 
     global INST
+    for aspect, argument in CONFIG.cludes:
+        INST += ['--' + aspect, argument]
+
     if CONFIG.resetAtPoints:
         INST += ['--reset-at-points', CONFIG.resetAtPoints]
 

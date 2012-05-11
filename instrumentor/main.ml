@@ -38,8 +38,9 @@ let _ =
     (* back-ported from CIL; can be removed for CIL 1.4.1+ *)
     List.iter (fun attr -> Hashtbl.add attributeHash attr (AttrFunType false))
       [
-       "leaf";
        "artificial";
+       "leaf";
+       "nonnull";
        "warn_unused_result";
      ];
 

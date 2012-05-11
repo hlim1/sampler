@@ -255,7 +255,6 @@ def generate(env):
     env.AppendUnique(
         CCFLAGS=[
             '-frelative-paths',
-            '-Wno-attributes',  # can remove this for cil-1.4.1+
             '-Wno-format-nonliteral',
             ],
         EXTRACT_SECTION=env.File('#tools/extract-section'),

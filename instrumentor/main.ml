@@ -18,6 +18,31 @@ let _ =
     initCIL ();
     lineDirectiveStyle := Some LinePreprocessorOutput;
 
+    (* back-ported from CIL; can be removed for CIL 1.4.1+ *)
+    let addSwap sizeInBits =
+      try
+	let name = Printf.sprintf "__builtin_bswap%d" sizeInBits in
+	if not (Hashtbl.mem builtinFunctions name) then
+	  begin
+	    assert (sizeInBits mod 8 = 0);
+	    let sizeInBytes = sizeInBits / 8 in
+	    let sizedIntType = TInt (intKindForSize sizeInBytes false, []) in
+	    Hashtbl.add builtinFunctions name (sizedIntType, [ sizedIntType ], false)
+	  end
+      with Not_found ->
+	()
+    in
+    addSwap 32;
+    addSwap 64;
+
+    (* back-ported from CIL; can be removed for CIL 1.4.1+ *)
+    List.iter (fun attr -> Hashtbl.add attributeHash attr (AttrFunType false))
+      [
+       "leaf";
+       "artificial";
+       "warn_unused_result";
+     ];
+
     Arg.parse (Options.argspecs ())
       (TestHarness.doOne phases)
       ("Usage:" ^ Sys.executable_name ^ " [<flag> | <source>] ...")

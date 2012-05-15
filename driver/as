@@ -1,8 +1,30 @@
 #!/usr/bin/python -O
 
 from os import stat
-from subprocess import CalledProcessError, check_call
 from sys import argv, stderr
+
+# Once we require Python 2.5+, the following can be simplified to just
+# the "from ... import" statement with no ImportError fallback.
+try:
+    from subprocess import CalledProcessError, check_call
+except ImportError:
+
+    from subprocess import call
+
+    class CalledProcessError(Exception):
+        def __init__(self, returncode, cmd):
+            self.returncode = returncode
+            self.cmd = cmd
+
+    def check_call(*popenargs, **kwargs):
+        retcode = call(*popenargs, **kwargs)
+        cmd = kwargs.get('args')
+        if cmd is None:
+            cmd = popenargs[0]
+        if retcode:
+            raise CalledProcessError(retcode, cmd)
+        return retcode
+
 
 
 def run_stage(command, verbose):

@@ -1,3 +1,8 @@
-#!/bin/sh
+#!/usr/bin/python -O
 
-exec '$gcc' -B '$driverdir' -specs=sampler-specs "$$@"
+from sys import path
+path.insert(1, '$driverdir')
+
+import driver
+
+driver.main()

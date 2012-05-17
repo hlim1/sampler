@@ -5,7 +5,7 @@
 
 
 void cbi_samplesBegin(const cbi_UnitSignature, const char []);
-void cbi_samplesEnd();
+void cbi_samplesEnd(void);
 
 
 #endif /* !INCLUDE_sampler_samples_h */

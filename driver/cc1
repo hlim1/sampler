@@ -1,8 +1,9 @@
 #!/usr/bin/python -O
 
+import cPickle as pickle
+import os
 import re
 
-from os import stat
 from os.path import dirname, join
 from subprocess import call, PIPE, Popen
 from sys import argv, exit, path, stderr
@@ -13,7 +14,9 @@ from sys import argv, exit, path, stderr
 
 ARGV = argv[1:]
 
-VERBOSE = False
+CONFIG = pickle.loads(os.environ['SAMPLER_CC_PARSED_CONFIG'])
+
+VERBOSE = CONFIG.verbose
 PREPROCESSED = False
 PREPROCESSING = False
 
@@ -22,7 +25,8 @@ INPUT = None
 INSTRUMENTOR_INPUT = None
 INSTRUMENTOR_OUTPUT = None
 
-GCC_CC1 = Popen(['$gcc', '-print-prog-name=cc1'], stdout=PIPE).communicate()[0].rstrip()
+GCC = CONFIG.gcc
+GCC_CC1 = Popen([GCC, '-print-prog-name=cc1'], stdout=PIPE).communicate()[0].rstrip()
 
 CPP0 = [GCC_CC1, '-E', '-quiet']
 CPP0_OUTPUT_SLOT = None
@@ -31,6 +35,8 @@ CC1 = [GCC_CC1, '-fpreprocessed']
 CC1_INPUT_SLOT = None
 
 INST = [join(dirname(__file__), 'main')]
+
+TOGGLE_PREFIX = 'SAMPLER_CC_TOGGLE_'
 
 
 def slurp_0(*args):
@@ -44,13 +50,6 @@ def slurp_1(arg):
     slurp_0(arg, ARGV.pop(0))
 
 
-def verbose(arg):
-    slurp_0(arg)
-    global INST, VERBOSE
-    INST.append('--show-phase-times')
-    VERBOSE = True
-
-
 def dumpbase(arg):
     global ARGV, CC1, INST
     value = ARGV.pop(0)
@@ -58,19 +57,44 @@ def dumpbase(arg):
     INST += ['--dumpbase', value]
 
 
-def inst_toggle(arg):
-    if not arg.startswith('-f'):
-        print >>stderr, 'malformed instrumentor flag', arg
-        exit(1)
+def inst_save_blast_spec(arg):
+    global ARGV
+    filename = ARGV.pop(0)
 
-    global INST
-    INST.append('--' + arg[2:])
+    add = CONFIG.toggles.get('add-blast-markers')
+    if add and int(add):
+        global INST
+        INST += ['--add-blast-markers', '--save-blast-spec', filename]
 
 
-def inst_embed(arg):
+def inst_save_cfg(arg):
     global ARGV, INST
-    inst_toggle(arg)
-    INST.append(ARGV.pop(0))
+    filename = ARGV.pop(0)
+    INST += ['--save-cfg', filename]
+
+
+def inst_save_dataflow(arg):
+    global ARGV
+    filename = ARGV.pop(0)
+
+    if CONFIG.dataflow:
+        global INST
+        INST += ['--save-dataflow', filename]
+
+
+def inst_save_implications(arg):
+    global ARGV
+    filename = ARGV.pop(0)
+
+    if CONFIG.implications:
+        global INST
+        INST += ['--save-implications', filename]
+
+
+def inst_save_site_info(arg):
+    global ARGV, INST
+    filename = ARGV.pop(0)
+    INST += ['--save-site-info', filename]
 
 
 def ignore(arg):
@@ -127,30 +151,6 @@ def slurp_1_cpp0(arg):
     CPP0 += [arg, ARGV.pop(0)]
 
 
-def scheme(name):
-    global INST
-    INST.append('--scheme-' + name)
-
-
-def scales(filename):
-    global INST
-    INST += ['--load-scales', filename]
-
-
-def clude(flag, arg):
-    global INST
-    INST += ['--' + flag, arg]
-
-
-def resetPoints(filename):
-    global INST
-    INST += ['--reset-at-points', filename]
-
-
-def skip():
-    pass
-
-
 def cc1_input_slot(arg):
     global CC1, CC1_INPUT_SLOT, INPUTS
     INPUTS.append(arg)
@@ -165,71 +165,17 @@ def unhandled(arg):
 
 FLAG_SPECS_EXACT = {
     # Sampler Options
-    '-fsampler-scheme=nothing': ignore,
-    '-fthreads': inst_toggle,
-    '-fno-threads': inst_toggle,
-    '-fsample': inst_toggle,
-    '-fno-sample': inst_toggle,
-    '-frename-locals': inst_toggle,
-    '-fno-rename-locals': inst_toggle,
-    '-fassign-across-pointer': inst_toggle,
-    '-fno-assign-across-pointer': inst_toggle,
-    '-fassign-into-field': inst_toggle,
-    '-fno-assign-into-field': inst_toggle,
-    '-fassign-into-index': inst_toggle,
-    '-fno-assign-into-index': inst_toggle,
-    '-fcompare-constants': inst_toggle,
-    '-fno-compare-constants': inst_toggle,
-    '-ftimestamp-first': inst_toggle,
-    '-fno-timestamp-first': inst_toggle,
-    '-ftimestamp-last': inst_toggle,
-    '-fno-timestamp-last': inst_toggle,
-    '-frelative-paths': inst_toggle,
-    '-fno-relative-paths': inst_toggle,
-    '-fbalance-paths': inst_toggle,
-    '-fno-balance-paths': inst_toggle,
-    '-fcache-countdown': inst_toggle,
-    '-fno-cache-countdown': inst_toggle,
-    '-fpredict-checks': inst_toggle,
-    '-fno-predict-checks': inst_toggle,
-    '-fspecialize-empty-regions': inst_toggle,
-    '-fno-specialize-empty-regions': inst_toggle,
-    '-fspecialize-singleton-regions': inst_toggle,
-    '-fno-specialize-singleton-regions': inst_toggle,
-    '-fassume-weighty-externs': inst_toggle,
-    '-fno-assume-weighty-externs': inst_toggle,
-    '-fassume-weighty-interns': inst_toggle,
-    '-fno-assume-weighty-interns': inst_toggle,
-    '-fassume-weighty-libraries': inst_toggle,
-    '-fno-assume-weighty-libraries': inst_toggle,
-    '-fuse-points-to': inst_toggle,
-    '-fno-use-points-to': inst_toggle,
-    '-fcompare-uninitialized': inst_toggle,
-    '-fno-compare-uninitialized': inst_toggle,
-    '-fadd-blast-markers': inst_toggle,
-    '-fno-add-blast-markers': inst_toggle,
-    '-fsave-blast-spec': inst_embed,
-    '-fshow-stats': inst_toggle,
-    '-fno-show-stats': inst_toggle,
-    '-fsave-cfg': inst_embed,
-    '-fsave-dataflow': inst_embed,
-    '-fsave-dataflow-fields': inst_toggle,
-    '-fno-save-dataflow-fields': inst_toggle,
-    '-fisolate-shared-accesses': inst_toggle,
-    '-fno-isolate-shared-accesses': inst_toggle,
-    '-fsave-site-info': inst_embed,
-    '-fsave-implications': inst_embed,
-    '-fsampler-dataflow': ignore,
-    '-fsampler-implications': ignore,
     '-finstrumentor-input': instrumentor_input,
     '-finstrumentor-output': instrumentor_output,
-    '-fannotate-sites': inst_toggle,
-    '-fextra-edge-profiles': inst_toggle,
+    '-fsave-blast-spec': inst_save_blast_spec,
+    '-fsave-cfg': inst_save_cfg,
+    '-fsave-dataflow': inst_save_dataflow,
+    '-fsave-implications': inst_save_implications,
+    '-fsave-site-info': inst_save_site_info,
 
      # Overall Options
     '-E': preprocessing,
     '-o': cpp0_output_slot,
-    '-v': verbose,
     
     # C Language Options
     '-aux-info': slurp_0_cc1,
@@ -270,18 +216,9 @@ FLAG_SPECS_EXACT = {
 FLAG_SPECS_REGEXP = [
     (re.compile(pattern), handler)
     for pattern, handler in [
-        (r'^(-O\d*)$$', slurp_0_cc1),
-        (r'^(-g\d*)$$', slurp_0_cc1),
-        (r'^(-m(?:arch|cpu)=.*)$$', slurp_0_cc1),
-        (r'^-fsampler-scheme=(.*)$$', scheme),
-        (r'^-fsampler-scales=(.*)$$', scales),
-        (r'^-f((?:in|ex)clude-(?:file|function|location))=(.*)$$', clude),
-        (r'^-fsampler-random=', skip),
-        (r'^-fsampler-lib-dir=', skip),
-        (r'^-freset-at-points=(.*)', resetPoints),
-        (r'^(-.+)$$', slurp_0),
-        (r'^(.*\.[ci]|-)$$', cc1_input_slot),
-        (r'^(.*)$$', unhandled),
+        (r'^(-.+)$', slurp_0),
+        (r'^(.*\.[ci]|-)$', cc1_input_slot),
+        (r'^(.*)$', unhandled),
         ]]
 
 
@@ -314,6 +251,24 @@ def main():
                     handler(*match.groups())
                     break
 
+    global INST
+    for aspect, argument in CONFIG.cludes:
+        INST += ['--' + aspect, argument]
+
+    if CONFIG.resetAtPoints:
+        INST += ['--reset-at-points', CONFIG.resetAtPoints]
+
+    if CONFIG.scales:
+        INST += ['--load-scales', CONFIG.scales]
+
+    for scheme in CONFIG.schemes:
+        INST.append('--scheme-' + scheme)
+
+    for aspect, enabled in CONFIG.toggles.iteritems():
+        negate = '' if enabled else 'no-'
+        toggle = '--' + negate + aspect
+        INST.append(toggle)
+
     global CPP0, INPUTS, PREPROCESSING
     if PREPROCESSING:
         run_stage(CPP0)
@@ -344,11 +299,10 @@ def main():
             CPP0 += ['-o', INSTRUMENTOR_INPUT]
         run_stage(CPP0)
 
-    global INST
     INST.append(INSTRUMENTOR_INPUT)
     run_stage(INST, stdout=open(INSTRUMENTOR_OUTPUT, 'w'))
 
-    if stat(INSTRUMENTOR_OUTPUT).st_size == 0:
+    if os.stat(INSTRUMENTOR_OUTPUT).st_size == 0:
         print >>stderr, 'instrumentor produced no output'
         exit(1)
 

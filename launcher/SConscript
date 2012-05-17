@@ -1,8 +1,5 @@
 Import('env')
 
-env = env.Clone(tools=['python'], toolpath=['.'])
-env.File('python.py')
-
 common = env.Dir('#launcher/common')
 
 def testPythons(env, sources):
@@ -11,6 +8,10 @@ def testPythons(env, sources):
     target = 'pychecker.passed'
     test = env.TestPython(target=target, source=sources)
     Alias('test', test)
+
+def testPythonsGtk(env, sources):
+    if 'DISPLAY' in env['ENV']:
+        testPythons(env, sources)
 
 def pkgConfigVar(context, package, package_varname, env_varname, missing):
     context.Message('checking for %s %s: ' % (package, package_varname))
@@ -75,4 +76,4 @@ SConscript(dirs=[
     'tray',
     'wrapper',
     ],
-           exports=['env', 'testPythons'])
+           exports=['env', 'testPythons', 'testPythonsGtk'])

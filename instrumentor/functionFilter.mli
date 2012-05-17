@@ -12,3 +12,6 @@ class type filter =
 
 
 val filter : filter
+
+
+val instrumentable : fundec -> bool

@@ -9,9 +9,9 @@
 void cbi_funReentriesReport(const cbi_UnitSignature, unsigned, const cbi_Tuple2 []);
 
 
-void cbi_funre_lock();
+void cbi_funre_lock(void);
 
-void cbi_funre_unlock();
+void cbi_funre_unlock(void);
 
 void cci_atomicIncrementCounter(int *counter);
 

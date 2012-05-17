@@ -1,7 +1,8 @@
 Import('env')
 
-target = env.Dir('$DESTDIR$wwwdir/sampler-uploads')
+wwwdir = env.Dir('$DESTDIR$wwwdir')
+target = wwwdir.Dir('sampler-uploads')
 env.Command(target, None, Mkdir('$TARGET'))
-Alias('install', target)
+Alias('install', wwwdir)
 
 SConscript(dirs='cgi-bin')

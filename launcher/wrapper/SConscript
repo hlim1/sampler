@@ -1,4 +1,4 @@
-Import('env', 'testPythons')
+Import('env', 'testPythonsGtk')
 env = env.Clone(
     commondir=env.subst('$commondir'),
     wrapperdir=env.subst('$wrapperdir'),
@@ -20,7 +20,7 @@ pythons = [
 compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 
-testPythons(env, pythons)
+testPythonsGtk(env, pythons)
 Alias('test', env.TestXML('wrapper.ui', schema=File('../gtk-builder.xsd')))
 
 Alias('install', env.Install('$DESTDIR$wrapperdir', [compiled, 'wrapper.ui']))

@@ -15,7 +15,7 @@ struct cbi_Unit {
 void cbi_registerUnit(struct cbi_Unit *);
 void cbi_unregisterUnit(struct cbi_Unit *);
 
-void cbi_unregisterAllUnits();
+void cbi_unregisterAllUnits(void);
 
 
 #endif /* !INCLUDE_sampler_registry_h */

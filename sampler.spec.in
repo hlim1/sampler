@@ -29,6 +29,10 @@ BuildRequires: perl
 BuildRequires: scons
 BuildRequires: scrollkeeper
 
+# additional packages required by check scriptlet
+BuildRequires: /usr/bin/xmllint
+BuildRequires: pychecker
+
 
 ########################################################################
 #
@@ -184,19 +188,14 @@ $$UNIQUE_ID environment variable.
 
 %build
 %define scons scons %{?_smp_mflags} OCAML_NATIVE=True extra_cflags='%optflags' prefix='%_prefix'
+
 %scons
-%{?do_check:%scons test}
 
 %install
-rm -rf $$RPM_BUILD_ROOT
-mkdir $$RPM_BUILD_ROOT
 %scons GSETTINGS_SCHEMAS_COMPILE=no DESTDIR=$$RPM_BUILD_ROOT install
-env
-echo cd `pwd`
-echo /usr/lib/rpm/find-debuginfo.sh --strict-build-id /home/liblit/research/sampler/redhat/BUILD/sampler-1.6.2
 
-%clean
-rm -rf $$RPM_BUILD_ROOT
+%check
+%scons test
 
 
 %changelog

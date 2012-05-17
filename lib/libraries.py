@@ -40,8 +40,12 @@ def TwoLibraries(env, target, source, objdir='.', **kwargs):
                                  SHLINKFLAGS=['$SHLINKFLAGS', '-Wl,-soname,' + majorVersioned.name],
                                  **kwargs)
 
-    env.Symlink(majorVersioned, shared.name)
-    env.Symlink(unversioned, shared.name)
+    Default(
+        shared,
+        static,
+        env.Symlink(majorVersioned, shared.name),
+        env.Symlink(unversioned, shared.name),
+        )
 
     libdir = env.Dir('$DESTDIR$libdir')
     Alias('install', [

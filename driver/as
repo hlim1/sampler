@@ -1,6 +1,9 @@
 #!/usr/bin/python -O
 
-from os import stat
+import cPickle as pickle
+
+from os import environ, stat
+from os.path import isfile
 from sys import argv, stderr
 
 # Once we require Python 2.5+, the following can be simplified to just
@@ -26,6 +29,8 @@ except ImportError:
         return retcode
 
 
+CONFIG = pickle.loads(environ['SAMPLER_CC_PARSED_CONFIG'])
+
 
 def run_stage(command, verbose):
     if verbose:
@@ -37,7 +42,7 @@ def run_stage(command, verbose):
 
 
 def add_section(name, source):
-    if source and stat(source).st_size > 0:
+    if source and isfile(source) and stat(source).st_size > 0:
         return ['--add-section', '.debug_%s=%s' % (name, source)]
     else:
         return []
@@ -46,7 +51,7 @@ def add_section(name, source):
 def main():
     asm = ['/usr/bin/as']
 
-    verbose = False
+    verbose = CONFIG.verbose
     outfile = None
 
     saved_cfg = None
@@ -74,8 +79,6 @@ def main():
         elif arg == '-o':
             outfile = args.pop(0)
             asm += [arg, outfile]
-        elif arg == '--verbose':
-            verbose = True
         else:
             asm.append(arg)
 

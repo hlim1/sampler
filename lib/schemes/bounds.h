@@ -5,7 +5,7 @@
 
 
 void cbi_boundsReportBegin(const cbi_UnitSignature);
-void cbi_boundsReportEnd();
+void cbi_boundsReportEnd(void);
 
 void cbi_boundDumpSignedChar(signed char, signed char);
 void cbi_boundDumpUnsignedChar(unsigned char, unsigned char);

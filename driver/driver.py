@@ -138,6 +138,7 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         self.cludes = []
         self.dataflow = False
         self.gcc = config.gcc
+        self.linking = True
         self.implications = False
         self.pthread = False
         self.random = 'online'
@@ -158,13 +159,15 @@ class SamplerArgumentListFilter(ArgumentListFilter):
             }
 
         exactMatches = {
+            '--verbose': SamplerArgumentListFilter._verboseCallback,
+            '-E': SamplerArgumentListFilter._notLinkingCallback,
+            '-c': SamplerArgumentListFilter._notLinkingCallback,
+            '-fsampler-dataflow': SamplerArgumentListFilter._dataflowCallback,
+            '-fsampler-implications': SamplerArgumentListFilter._implicationsCallback,
             '-mt': SamplerArgumentListFilter._pthreadCallback,
             '-pthread': SamplerArgumentListFilter._pthreadCallback,
             '-pthreads': SamplerArgumentListFilter._pthreadCallback,
-            '-fsampler-dataflow': SamplerArgumentListFilter._dataflowCallback,
-            '-fsampler-implications': SamplerArgumentListFilter._implicationsCallback,
             '-v': SamplerArgumentListFilter._verboseCallback,
-            '--verbose': SamplerArgumentListFilter._verboseCallback,
             }
 
         toggles = (
@@ -224,6 +227,10 @@ class SamplerArgumentListFilter(ArgumentListFilter):
     def _implicationsCallback(self, flag):
         __pychecker__ = 'unusednames=flag'
         self.implications = True
+
+    def _notLinkingCallback(self, flag):
+        self.linking = False
+        self.keepArgument(flag)
 
     def _resetAtPointsCallback(self, flag):
         self.resetAtPoints = flag.split('=', 1)[1]
@@ -303,6 +310,9 @@ def extraArgs(argFilter, samplerLibDir):
     if argFilter.schemes:
         yield '-include'
         yield sysheader('unit.h')
+
+    if not argFilter.linking:
+        return
 
     if samplerLibDir:
         yield '-L' + samplerLibDir

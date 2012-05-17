@@ -17,6 +17,7 @@ import filecmp
 __driver_deps = map(File, [
         '#driver/as',
         '#driver/cc1',
+        '#driver/driver.py',
         '#driver/main',
         '#driver/sampler-cc-here',
         '#driver/sampler-specs',

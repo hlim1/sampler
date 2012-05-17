@@ -92,7 +92,7 @@ class ArgumentListFilter(object):
             # Get the next argument
             currentItem = inputArgs.popleft()
             handler = self._pickHandler(currentItem, argExactMatches, argPatterns)
-            arity = len(inspect.getargspec(handler).args) - 2
+            arity = len(inspect.getargspec(handler)[0]) - 2
             flagArgs = []
             while arity > 0:
                 flagArgs.append(inputArgs.popleft())
@@ -294,11 +294,11 @@ def extraArgs(argFilter, samplerLibDir):
         yield sysheader('threads/countdown.h')
 
     yield '-include'
-    yield sysheader('threads/random-{0}.h'.format(argFilter.random))
+    yield sysheader('threads/random-%s.h' % argFilter.random)
 
     for scheme in argFilter.schemes:
         yield '-include'
-        yield sysheader('schemes/{0}-unit.h'.format(scheme))
+        yield sysheader('schemes/%s-unit.h' % scheme)
 
     if argFilter.schemes:
         yield '-include'
@@ -314,7 +314,7 @@ def extraArgs(argFilter, samplerLibDir):
     if timestamp:
         yield '-lsampler-schemes'
 
-    reentrant = '_r' if toggles['threads'] else ''
+    reentrant = ('', '_r')[toggles['threads']]
 
     if not toggles['sample']:
         yield '-lsampler-always'

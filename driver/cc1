@@ -265,7 +265,7 @@ def main():
         INST.append('--scheme-' + scheme)
 
     for aspect, enabled in CONFIG.toggles.iteritems():
-        negate = '' if enabled else 'no-'
+        negate = ('no-', '')[enabled]
         toggle = '--' + negate + aspect
         INST.append(toggle)
 

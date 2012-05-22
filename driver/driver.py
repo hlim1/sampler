@@ -172,6 +172,7 @@ class SamplerArgumentListFilter(ArgumentListFilter):
 
         toggles = (
             'add-blast-markers',
+            'annotate-sites',
             'assign-across-pointer',
             'assign-into-field',
             'assign-into-index',

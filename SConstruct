@@ -67,7 +67,7 @@ opts.AddVariables(
     BoolVariable('OCAML_NATIVE', 'compile OCaml to native code', False),
     BoolVariable('debug', 'compile for debugging', False),
     PathVariable('prefix', 'install in the given directory', '/usr/local'),
-    PathVariable('DESTDIR', 'extra installation directory prefix', '/'),
+    PathVariable('DESTDIR', 'extra installation directory prefix', '/', PathVariable.PathIsDirCreate),
     PathVariable('gcc', 'path to native GCC C compiler', None, validate_gcc_path),
     ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
     ('extra_cflags', 'extra C compiler flags'),

@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.9
+
+** Revamped driver script strategy for compatibility with gcc-4.7 and later.
+
 * sampler-1.8.4
 
 ** Continued efforts to avoid notification-related failures with an instrumented gnome-panel.

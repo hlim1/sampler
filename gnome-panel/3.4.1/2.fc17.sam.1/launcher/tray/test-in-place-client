@@ -1,0 +1,23 @@
+#!/usr/bin/python
+
+from gi.repository import Gio
+
+from contextlib import contextmanager
+from sys import stdout
+from time import sleep
+
+@contextmanager
+def verbosely(description):
+    print description, '...',
+    stdout.flush()
+    yield
+    print 'done'
+
+with verbosely('initializing'):
+    tray = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None)
+
+with verbosely('activating'):
+    tray.activate()
+
+with verbosely('sleeping for five seconds'):
+    sleep(5)

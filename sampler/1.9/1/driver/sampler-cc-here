@@ -1,0 +1,6 @@
+#!/usr/bin/python -O
+
+import driver
+import sys
+
+driver.main(samplerLibDir=sys.path[0])

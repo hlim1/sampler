@@ -1,0 +1,8 @@
+#!/usr/bin/python -O
+
+from sys import path
+path.insert(1, '$driverdir')
+
+import driver
+
+driver.main()

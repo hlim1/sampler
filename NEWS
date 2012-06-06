@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.9.1
+
+** Handle errors when posting notes before the notification manager is ready.
+
 * sampler-1.9
 
 ** Revamped driver script strategy for compatibility with gcc-4.7 and later.

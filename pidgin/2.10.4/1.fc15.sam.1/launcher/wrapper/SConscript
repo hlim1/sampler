@@ -1,0 +1,26 @@
+Import('env', 'testPythons')
+env = env.Clone(
+    commondir=env.subst('$commondir'),
+    wrapperdir=env.subst('$wrapperdir'),
+    )
+
+pythons = [
+    'AppConfig.py',
+    'Launcher.py',
+    'Main2.py',
+    'Outcome.py',
+    'ReportsReader.py',
+    'SampledLauncher.py',
+    'ServerMessage.py',
+    'UnsampledLauncher.py',
+    'Uploader.py',
+    'Upload.py',
+    ]
+
+compiled = env.PythonBytecodeOpt(pythons)
+Default(compiled)
+
+testPythons(env, pythons)
+Alias('test', env.TestXML('wrapper.ui', schema=File('../gtk-builder.xsd')))
+
+Alias('install', env.Install('$DESTDIR$wrapperdir', [compiled, 'wrapper.ui']))

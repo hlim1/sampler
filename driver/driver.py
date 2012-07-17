@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import collections
 import cPickle as pickle
 import inspect

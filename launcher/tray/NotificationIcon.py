@@ -2,7 +2,6 @@
 
 from gi._glib import GError
 from gi.repository import GLib, Gtk, Notify
-import dbus
 
 import Keys
 

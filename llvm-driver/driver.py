@@ -299,12 +299,11 @@ class InputFile(object):
     def __guessLanguage(filename):
         """guess a file's language based on its name"""
         extension = splitext(filename)[1]
-        return InputFile.__standardSuffixes.get(extension)
+        return InputFile.__standardSuffixes.get(extension, 'object')
 
     def args(self):
         """return arguments suitable for use on a clang/gcc command line"""
-        language = self.language or 'none'
-        return '-x', language, self.filename
+        return '-x', self.language, self.filename
 
 
 class SamplerArgumentListFilter(ArgumentListFilter):
@@ -330,12 +329,14 @@ class SamplerArgumentListFilter(ArgumentListFilter):
             '^(-o)=?(.+)$': SamplerArgumentListFilter.__outfileCallback,
             '^([^-].*)$': SamplerArgumentListFilter.__infileCallback,
             '^-fsampler-scheme=(.+)$': SamplerArgumentListFilter.__schemeCallback,
+            '^(-l)(.+)$': SamplerArgumentListFilter.__librarySearchCallback,
             }
 
         exactMatches = {
             '--verbose': SamplerArgumentListFilter.__verboseCallback,
             '-E': SamplerArgumentListFilter.__targetPreprocessedCallback,
             '-c': SamplerArgumentListFilter.__targetObjectCallback,
+            '-l': SamplerArgumentListFilter.__librarySearchCallback,
             '-o': SamplerArgumentListFilter.__outfileCallback,
             '-save-temps': SamplerArgumentListFilter.__saveTempsCallback,
             '-v': SamplerArgumentListFilter.__verboseCallback,
@@ -373,6 +374,11 @@ class SamplerArgumentListFilter(ArgumentListFilter):
     def __languageCallback(self, arg):
         """explicitly specify the language for following input files"""
         self.__inputLanguage = None if arg == 'none' else arg
+
+    def __librarySearchCallback(self, flag, arg):
+        """record a searched-for library"""
+        infile = InputFile(flag + arg, 'object')
+        self.__infiles.append(infile)
 
     def __outfileCallback(self, flag, arg):
         """record an explicit output file name"""
@@ -549,12 +555,12 @@ class SamplerArgumentListFilter(ArgumentListFilter):
 
     def __prelink(self, infile):
         """compile to a temporary object file in preparation for linking"""
-        if infile.language:
+        if infile.language == 'object':
+            return infile.filename
+        else:
             outfile = self.__temporaryFile(infile, '.o')
             self.__compileTo(infile, outfile)
             return outfile
-        else:
-            return infile.filename
 
 
 ########################################################################

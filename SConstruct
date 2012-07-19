@@ -80,8 +80,8 @@ opts.Save('.scons-config', env)
 
 env['domainname'] = getfqdn().split('.', 1)[1]
 if env['domainname'] == 'cs.wisc.edu':
-    print 'adding special tweaks for', domainname
-    env.AppendENVPath('PATH', [
+    print 'adding special tweaks for', env['domainname']
+    env.PrependENVPath('PATH', [
             '/unsup/ocaml/bin',
             '/unsup/llvm-3.0/bin',
             '/s/gcc-4.7.0/bin',

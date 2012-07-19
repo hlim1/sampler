@@ -1,0 +1,7 @@
+Import('env')
+
+pythons = ('driver.py',)
+test = env.TestPython('pychecker.passed', pythons)
+Alias('test', test)
+
+Default

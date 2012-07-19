@@ -78,10 +78,14 @@ opts.AddVariables(
 env = Environment(options=opts)
 opts.Save('.scons-config', env)
 
-domainname = getfqdn().split('.', 1)[1]
-if domainname == 'cs.wisc.edu':
+env['domainname'] = getfqdn().split('.', 1)[1]
+if env['domainname'] == 'cs.wisc.edu':
     print 'adding special tweaks for', domainname
-    env.AppendENVPath('PATH', '/unsup/ocaml/bin')
+    env.AppendENVPath('PATH', [
+            '/unsup/ocaml/bin',
+            '/unsup/llvm-3.0/bin',
+            '/s/gcc-4.7.0/bin',
+            ])
     env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.6/site-packages/pychecker/checker.py']
 
 env['cil_path'] = env.Dir('$cil_path')
@@ -280,6 +284,8 @@ subdirs = set((
         'fuzz',
         'instrumentor',
         'lib',
+        'llvm-driver',
+        'llvm-instrumentor',
         'ocaml',
         'tools',
         'www',

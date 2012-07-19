@@ -1,0 +1,18 @@
+[basic]
+argument-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
+attr-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
+method-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
+variable-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
+
+[format]
+max-line-length=120
+
+[master]
+persistent=no
+
+[messages control]
+disable=I0011
+
+[reports]
+include-ids=yes
+reports=no

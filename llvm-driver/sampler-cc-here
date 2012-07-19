@@ -1,0 +1,5 @@
+#!/usr/bin/python -O
+
+from driver import main
+
+main()

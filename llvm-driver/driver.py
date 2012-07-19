@@ -136,6 +136,54 @@ class ArgumentListFilter(object):
 ########################################################################
 
 
+class InstrumentedToObjectFilter(ArgumentListFilter):
+    """filter out command-line arguments that should not be used when compiling instrumented bitcode to native object code"""
+
+    def __init__(self, arglist):
+
+        exactMatches = dict([ (flag, InstrumentedToObjectFilter.__discardOneArgument) for flag in (
+                # Preprocessor assertion
+                '-A',
+                '-D',
+                '-U',
+                # Dependency generation
+                '-MT',
+                '-MQ',
+                '-MF',
+                '-MD',
+                '-MMD',
+                # Include
+                '-I',
+                '-idirafter',
+                '-include',
+                '-imacros',
+                '-iprefix',
+                '-iwithprefix',
+                '-iwithprefixbefore',
+                '-isystem',
+                '-isysroot',
+                '-iquote',
+                '-imultilib',
+                )])
+
+        patternMatches = {
+            '^-[ADIU].': InstrumentedToObjectFilter.__discardNoArgument,
+            }
+
+        ArgumentListFilter.__init__(self, arglist, exactMatches, patternMatches)
+
+    def __discardNoArgument(self):
+        """discard a flag with no following argument"""
+        pass
+
+    def __discardOneArgument(self, flag, arg):
+        """discard a flag and a single following argument"""
+        pass
+
+
+########################################################################
+
+
 class InputFile(object):
     """file name and source language of a single input file"""
 
@@ -212,9 +260,10 @@ class InputFile(object):
 class SamplerArgumentListFilter(ArgumentListFilter):
     """specialized filter for sampler-cc command-line arguments"""
 
-    __slots__ = '__infiles', '__inputLanguage', '__outfile', '__schemes', '__target', '__temporaryFile', '__toggles', '__verbose'
+    __slots__ = '__args_instrumentedToObject', '__infiles', '__inputLanguage', '__outfile', '__schemes', '__target', '__temporaryFile', '__toggles', '__verbose'
 
     def __init__(self, arglist):
+        self.__args_instrumentedToObject = None
         self.__infiles = []
         self.__inputLanguage = None
         self.__outfile = None
@@ -341,7 +390,11 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         self.__run(['opt', '-o', inst, runtime] + phases)
 
         command = ['clang', '-c', '-o', outfile, inst]
-        command += self.filteredArgs
+        if self.__args_instrumentedToObject is None:
+            subfilter = InstrumentedToObjectFilter(self.filteredArgs)
+            self.__args_instrumentedToObject = subfilter.filteredArgs
+            assert self.__args_instrumentedToObject is not None
+        command += self.__args_instrumentedToObject
         self.__run(command)
 
     @staticmethod

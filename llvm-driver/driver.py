@@ -155,18 +155,18 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         self.__verbose = False
 
         patternMatches = {
-            '^-fsampler-scheme=(.+)$': SamplerArgumentListFilter.__schemeCallback,
             '^(-o)=?(.+)$': SamplerArgumentListFilter.__outfileCallback,
             '^([^-].*)$': SamplerArgumentListFilter.__infileCallback,
+            '^-fsampler-scheme=(.+)$': SamplerArgumentListFilter.__schemeCallback,
             }
 
         exactMatches = {
             '--verbose': SamplerArgumentListFilter.__verboseCallback,
             '-E': SamplerArgumentListFilter.__targetPreprocessedCallback,
             '-c': SamplerArgumentListFilter.__targetObjectCallback,
-            '-v': SamplerArgumentListFilter.__verboseCallback,
-            '-save-temps': SamplerArgumentListFilter.__saveTempsCallback,
             '-o': SamplerArgumentListFilter.__outfileCallback,
+            '-save-temps': SamplerArgumentListFilter.__saveTempsCallback,
+            '-v': SamplerArgumentListFilter.__verboseCallback,
             }
 
         toggles = (

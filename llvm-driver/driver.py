@@ -4,10 +4,15 @@
 
 import re
 
-from collections import deque
+from atexit import register
+from collections import deque, namedtuple
+from errno import ENOENT
 from inspect import getargspec
+from itertools import chain
+from os import remove
 from os.path import basename, dirname, join, splitext
-from sys import argv
+from subprocess import CalledProcessError, check_call
+from sys import argv, stderr
 from tempfile import NamedTemporaryFile
 
 
@@ -131,20 +136,87 @@ class ArgumentListFilter(object):
 ########################################################################
 
 
-from atexit import register
-from errno import ENOENT
-from os import remove
-from subprocess import CalledProcessError, check_call
-from sys import stderr
+class InputFile(object):
+    """file name and source language of a single input file"""
+
+    __slots = 'filename', 'language'
+
+    def __init__(self, filename, language=None):
+        self.filename = filename
+        self.language = language or self.__guessLanguage(filename)
+
+    __standardSuffixes = {
+        '.c': 'c',
+        '.i': 'cpp-output',
+        '.ii': 'c++-cpp-output',
+        '.m': 'objective-c',
+        '.mi': 'objective-c-cpp-output',
+        '.mm': 'objective-c++',
+        '.M': 'objective-c++',
+        '.mii': 'objective-c++-cpp-output',
+        '.h': 'c-header',
+        '.cc': 'c++',
+        '.cp': 'c++',
+        '.cxx': 'c++',
+        '.cpp': 'c++',
+        '.CPP': 'c++',
+        '.c++': 'c++',
+        '.C': 'c++',
+        '.mm': 'objective-c++',
+        '.M': 'objective-c++',
+        '.mii': 'objective-c++-cpp-output',
+        '.hh': 'c++-header',
+        '.H': 'c++-header',
+        '.hp': 'c++-header',
+        '.hxx': 'c++-header',
+        '.hpp': 'c++-header',
+        '.HPP': 'c++-header',
+        '.h++': 'c++-header',
+        '.tcc': 'c++-header',
+        '.f': 'f77',
+        '.for': 'f77',
+        '.ftn': 'f77',
+        '.F': 'f77-cpp-input',
+        '.FOR': 'f77-cpp-input',
+        '.fpp': 'f77-cpp-input',
+        '.FPP': 'f77-cpp-input',
+        '.FTN': 'f77-cpp-input',
+        '.f90': 'f95',
+        '.f95': 'f95',
+        '.f03': 'f95',
+        '.f08': 'f95',
+        '.F90': 'f95-cpp-input',
+        '.F95': 'f95-cpp-input',
+        '.F03': 'f95-cpp-input',
+        '.F08': 'f95-cpp-input',
+        '.go': 'go',
+        '.ads': 'ada',
+        '.adb': 'ada',
+        '.s': 'assembler',
+        '.S': 'assembler-with-cpp',
+        '.sx': 'assembler-with-cpp',
+        }
+
+    @staticmethod
+    def __guessLanguage(filename):
+        """guess a file's language based on its name"""
+        extension = splitext(filename)[1]
+        return InputFile.__standardSuffixes.get(extension)
+
+    def args(self):
+        """return arguments suitable for use on a clang/gcc command line"""
+        language = self.language or 'none'
+        return '-x', language, self.filename
 
 
 class SamplerArgumentListFilter(ArgumentListFilter):
     """specialized filter for sampler-cc command-line arguments"""
 
-    __slots__ = '__infiles', '__outfile', '__schemes', '__target', '__temporaryFile', '__toggles', '__verbose'
+    __slots__ = '__infiles', '__inputLanguage', '__outfile', '__schemes', '__target', '__temporaryFile', '__toggles', '__verbose'
 
     def __init__(self, arglist):
         self.__infiles = []
+        self.__inputLanguage = None
         self.__outfile = None
         self.__schemes = set()
         self.__target = 'linked'
@@ -167,6 +239,7 @@ class SamplerArgumentListFilter(ArgumentListFilter):
             '-o': SamplerArgumentListFilter.__outfileCallback,
             '-save-temps': SamplerArgumentListFilter.__saveTempsCallback,
             '-v': SamplerArgumentListFilter.__verboseCallback,
+            '-x': SamplerArgumentListFilter.__languageCallback,
             }
 
         toggles = (
@@ -194,7 +267,12 @@ class SamplerArgumentListFilter(ArgumentListFilter):
 
     def __infileCallback(self, arg):
         """record an input file name, possibly one of several"""
-        self.__infiles.append(arg)
+        infile = InputFile(arg, self.__inputLanguage)
+        self.__infiles.append(infile)
+
+    def __languageCallback(self, arg):
+        """explicitly specify the language for following input files"""
+        self.__inputLanguage = None if arg == 'none' else arg
 
     def __outfileCallback(self, flag, arg):
         """record an explicit output file name"""
@@ -249,7 +327,8 @@ class SamplerArgumentListFilter(ArgumentListFilter):
     def __compileTo(self, infile, outfile):
         """compile a single input file to a single output object file"""
         uninst = self.__temporaryFile(infile, '.uninst.bc')
-        command = ['clang', '-Qunused-arguments', '-emit-llvm', '-c', '-o', uninst, infile]
+        command = ['clang', '-emit-llvm', '-c', '-o', uninst]
+        command += infile.args()
         command += self.filteredArgs
         self.__run(command)
 
@@ -261,14 +340,15 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         phases = ['-' + phase for phase in self.__extraPhases()]
         self.__run(['opt', '-o', inst, runtime] + phases)
 
-        command = ['clang', '-Qunused-arguments', '-c', '-o', outfile, inst]
+        command = ['clang', '-c', '-o', outfile, inst]
         command += self.filteredArgs
         self.__run(command)
 
     @staticmethod
     def __derivedFile(basis, extension):
         """create a (non-temporary) file based on some other file name, but with a new extension"""
-        return splitext(basename(basis))[0] + extension
+        filename = basename(basis.filename)
+        return splitext(filename)[0] + extension
 
     @staticmethod
     def __namedTemporaryFile(basis, extension):
@@ -326,7 +406,7 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         if self.__outfile:
             command += ['-o', self.__outfile]
         command += self.filteredArgs
-        command += self.__infiles
+        command += chain.from_iterable(infile.args() for infile in self.__infiles)
         self.__run(command)
 
     ####################################################################
@@ -362,9 +442,12 @@ class SamplerArgumentListFilter(ArgumentListFilter):
 
     def __prelink(self, infile):
         """compile to a temporary object file in preparation for linking"""
-        outfile = self.__temporaryFile(infile, '.o')
-        self.__compileTo(infile, outfile)
-        return outfile
+        if infile.language:
+            outfile = self.__temporaryFile(infile, '.o')
+            self.__compileTo(infile, outfile)
+            return outfile
+        else:
+            return infile.filename
 
 
 ########################################################################

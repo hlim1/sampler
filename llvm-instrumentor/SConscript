@@ -2,28 +2,31 @@ from SCons.Errors import StopError
 
 Import('env')
 
-env = env.Clone(
+lenv = env.Clone(
     parse_flags='!llvm-config --cxxflags --ldflags',
     tools=('llvm',),
     toolpath='.',
     )
 
-llvm_version = env['LLVM_version']
+llvm_version = lenv['LLVM_version']
 llvm_require = '3.0'
 if llvm_version < '3.0':
     raise StopError('LLVM %s too old; need at least version %s' % (llvm_version, llvm_require))
 
-env.AppendUnique(
+lenv.AppendUnique(
     CXXFLAGS='-std=c++11',
-    INCPREFIX='-isystem ',
     LIBS='LLVM-$LLVM_version',
     SHLINKFLAGS='-Wl,--no-undefined',
     )
 
-if env['domainname'] == 'cs.wisc.edu':
-    env.AppendUnique(CPPPATH='/unsup/boost-1.49.0/include')
+if lenv['domainname'] == 'cs.wisc.edu':
+    lenv.AppendUnique(CPPPATH='/unsup/boost-1.49.0/include')
 
-instrumentor = env.SharedLibrary(
+
+########################################################################
+
+
+instrumentor = lenv.SharedLibrary(
     'Instrumentor', (
         'Branches.cc',
         'Dummy.cc',
@@ -34,12 +37,16 @@ instrumentor = env.SharedLibrary(
         ),
     )
 
-removeDummyUses = env.SharedLibrary(
-    'RemoveDummyUses.cc',
-    )
-
-installed = Install('#llvm-driver', (
-        instrumentor,
-        removeDummyUses,
-        ))
+installed = Install('#llvm-driver', instrumentor)
 Default(installed)
+
+
+########################################################################
+
+
+removeDummyUses = lenv.SharedLibrary('RemoveDummyUses.cc')
+benv = env.Clone(tools=('bitcode',), toolpath='.')
+dummyUses = benv.BitcodeBinary('runtime-dummy-uses.c', CPPPATH=Dir('#lib'), CLANG_FLAGS='-Wno-unknown-pragmas')
+runtime = benv.Command('#llvm-driver/runtime.bc', (dummyUses, removeDummyUses), 'opt -o=$TARGET -load ${SOURCES[1].abspath} -remove-dummy-uses $SOURCE')
+
+Default(runtime)

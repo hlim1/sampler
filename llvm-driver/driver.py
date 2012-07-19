@@ -543,8 +543,8 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         command = ['clang']
         if self.__outfile:
             command += ['-o', self.__outfile]
-        command += ObjectsToExecutableFilter(self.filteredArgs).filteredArgs
         command += imap(self.__prelink, self.__infiles)
+        command += ObjectsToExecutableFilter(self.filteredArgs).filteredArgs
         self.__run(command)
 
     def __prelink(self, infile):

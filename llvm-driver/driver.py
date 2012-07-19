@@ -8,7 +8,7 @@ from atexit import register
 from collections import deque, namedtuple
 from errno import ENOENT
 from inspect import getargspec
-from itertools import chain
+from itertools import chain, imap
 from os import remove
 from os.path import basename, dirname, join, splitext
 from subprocess import CalledProcessError, check_call
@@ -132,53 +132,103 @@ class ArgumentListFilter(object):
         self.keepArgument(flag)
         self.keepArgument(arg)
 
+    def discardNoArgument(self, flag):
+        """discard a flag with no following argument"""
+        pass
+
 
 ########################################################################
 
 
-class InstrumentedToObjectFilter(ArgumentListFilter):
-    """filter out command-line arguments that should not be used when compiling instrumented bitcode to native object code"""
+class SourceToBitcodeFilter(ArgumentListFilter):
+    """filter out command-line arguments that should not be used when compiling source code to LLVM bitcode"""
 
     def __init__(self, arglist):
 
-        exactMatches = dict([ (flag, InstrumentedToObjectFilter.__discardOneArgument) for flag in (
-                # Preprocessor assertion
-                '-A',
-                '-D',
-                '-U',
-                # Dependency generation
-                '-MT',
-                '-MQ',
-                '-MF',
-                '-MD',
-                '-MMD',
-                # Include
-                '-I',
-                '-idirafter',
-                '-include',
-                '-imacros',
-                '-iprefix',
-                '-iwithprefix',
-                '-iwithprefixbefore',
-                '-isystem',
-                '-isysroot',
-                '-iquote',
-                '-imultilib',
-                )])
+        exactMatches = {
+            # Linker
+            '-fopenmp': ArgumentListFilter.discardNoArgument,
+            }
 
         patternMatches = {
-            '^-[ADIU].': InstrumentedToObjectFilter.__discardNoArgument,
+            '^(-Wl),': ArgumentListFilter.discardNoArgument,
             }
 
         ArgumentListFilter.__init__(self, arglist, exactMatches, patternMatches)
 
-    def __discardNoArgument(self):
-        """discard a flag with no following argument"""
+    def __discardOneArgument(self, flag, arg):
+        """discard a flag and a single following argument"""
         pass
+
+
+class BitcodeToObjectFilter(ArgumentListFilter):
+    """filter out command-line arguments that should not be used when compiling LLVM bitcode to native object code"""
+
+    def __init__(self, arglist):
+
+        exactMatches = {
+            # Preprocessor assertion
+            '-A': BitcodeToObjectFilter.__discardOneArgument,
+            '-D': BitcodeToObjectFilter.__discardOneArgument,
+            '-U': BitcodeToObjectFilter.__discardOneArgument,
+            # Dependency generation
+            '-MT': BitcodeToObjectFilter.__discardOneArgument,
+            '-MQ': BitcodeToObjectFilter.__discardOneArgument,
+            '-MF': BitcodeToObjectFilter.__discardOneArgument,
+            '-MD': BitcodeToObjectFilter.__discardOneArgument,
+            '-MMD': BitcodeToObjectFilter.__discardOneArgument,
+            # Include
+            '-I': BitcodeToObjectFilter.__discardOneArgument,
+            '-idirafter': BitcodeToObjectFilter.__discardOneArgument,
+            '-include': BitcodeToObjectFilter.__discardOneArgument,
+            '-imacros': BitcodeToObjectFilter.__discardOneArgument,
+            '-iprefix': BitcodeToObjectFilter.__discardOneArgument,
+            '-iwithprefix': BitcodeToObjectFilter.__discardOneArgument,
+            '-iwithprefixbefore': BitcodeToObjectFilter.__discardOneArgument,
+            '-isystem': BitcodeToObjectFilter.__discardOneArgument,
+            '-isysroot': BitcodeToObjectFilter.__discardOneArgument,
+            '-iquote': BitcodeToObjectFilter.__discardOneArgument,
+            '-imultilib': BitcodeToObjectFilter.__discardOneArgument,
+            # Linker
+            '-fopenmp': ArgumentListFilter.discardNoArgument,
+            }
+
+        patternMatches = {
+            '^(-[ADIU])': ArgumentListFilter.discardNoArgument,
+            '^(-Wl),': ArgumentListFilter.discardNoArgument,
+            }
+
+        ArgumentListFilter.__init__(self, arglist, exactMatches, patternMatches)
 
     def __discardOneArgument(self, flag, arg):
         """discard a flag and a single following argument"""
         pass
+
+
+class ObjectsToExecutableFilter(ArgumentListFilter):
+    """filter out command-line arguments that should not be used when linking native object code into an executable"""
+
+    __slots__ = '__discardPthread'
+
+    def __init__(self, arglist):
+
+        self.__discardPthread = False
+
+        exactMatches = {
+            # Linker
+            '-nostartfiles': ObjectsToExecutableFilter.__discardPthreadHandler,
+            '-nostdlib': ObjectsToExecutableFilter.__discardPthreadHandler,
+            }
+
+        ArgumentListFilter.__init__(self, arglist, exactMatches)
+
+        if self.__discardPthread:
+            self.filteredArgs = [arg for arg in self.filteredArgs if arg != '-pthread']
+
+    def __discardPthreadHandler(self, flag):
+        """remember to discard "-pthread" later"""
+        self.__discardPthread = True
+        self.keepArgument(flag)
 
 
 ########################################################################
@@ -260,10 +310,11 @@ class InputFile(object):
 class SamplerArgumentListFilter(ArgumentListFilter):
     """specialized filter for sampler-cc command-line arguments"""
 
-    __slots__ = '__args_instrumentedToObject', '__infiles', '__inputLanguage', '__outfile', '__schemes', '__target', '__temporaryFile', '__toggles', '__verbose'
+    __slots__ = '__args_bitcodeToObject', '__args_sourceToBitcode', '__infiles', '__inputLanguage', '__outfile', '__schemes', '__target', '__temporaryFile', '__toggles', '__verbose'
 
     def __init__(self, arglist):
-        self.__args_instrumentedToObject = None
+        self.__args_bitcodeToObject = None
+        self.__args_sourceToBitcode = None
         self.__infiles = []
         self.__inputLanguage = None
         self.__outfile = None
@@ -378,7 +429,11 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         uninst = self.__temporaryFile(infile, '.uninst.bc')
         command = ['clang', '-emit-llvm', '-c', '-o', uninst]
         command += infile.args()
-        command += self.filteredArgs
+        if self.__args_sourceToBitcode is None:
+            subfilter = SourceToBitcodeFilter(self.filteredArgs)
+            self.__args_sourceToBitcode = subfilter.filteredArgs
+            assert self.__args_sourceToBitcode is not None
+        command += self.__args_sourceToBitcode
         self.__run(command)
 
         runtime = self.__temporaryFile(infile, '.runtime.bc')
@@ -390,11 +445,11 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         self.__run(['opt', '-o', inst, runtime] + phases)
 
         command = ['clang', '-c', '-o', outfile, inst]
-        if self.__args_instrumentedToObject is None:
-            subfilter = InstrumentedToObjectFilter(self.filteredArgs)
-            self.__args_instrumentedToObject = subfilter.filteredArgs
-            assert self.__args_instrumentedToObject is not None
-        command += self.__args_instrumentedToObject
+        if self.__args_bitcodeToObject is None:
+            subfilter = BitcodeToObjectFilter(self.filteredArgs)
+            self.__args_bitcodeToObject = subfilter.filteredArgs
+            assert self.__args_bitcodeToObject is not None
+        command += self.__args_bitcodeToObject
         self.__run(command)
 
     @staticmethod
@@ -485,12 +540,11 @@ class SamplerArgumentListFilter(ArgumentListFilter):
     def __link(self):
         """build final target by linking an executable"""
         # pylint: disable=W0141
-        objects = map(self.__prelink, self.__infiles)
         command = ['clang']
         if self.__outfile:
             command += ['-o', self.__outfile]
-        command += self.filteredArgs
-        command += objects
+        command += ObjectsToExecutableFilter(self.filteredArgs).filteredArgs
+        command += imap(self.__prelink, self.__infiles)
         self.__run(command)
 
     def __prelink(self, infile):

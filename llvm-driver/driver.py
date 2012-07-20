@@ -136,6 +136,10 @@ class ArgumentListFilter(object):
         """discard a flag with no following argument"""
         pass
 
+    def discardOneArgument(self, flag, arg):
+        """discard a flag and a single following argument"""
+        pass
+
 
 ########################################################################
 
@@ -148,6 +152,7 @@ class SourceToBitcodeFilter(ArgumentListFilter):
         exactMatches = {
             # Linker
             '-fopenmp': ArgumentListFilter.discardNoArgument,
+            '-Xlinker': ArgumentListFilter.discardOneArgument,
             }
 
         patternMatches = {
@@ -155,10 +160,6 @@ class SourceToBitcodeFilter(ArgumentListFilter):
             }
 
         ArgumentListFilter.__init__(self, arglist, exactMatches, patternMatches)
-
-    def __discardOneArgument(self, flag, arg):
-        """discard a flag and a single following argument"""
-        pass
 
 
 class BitcodeToObjectFilter(ArgumentListFilter):
@@ -168,29 +169,30 @@ class BitcodeToObjectFilter(ArgumentListFilter):
 
         exactMatches = {
             # Preprocessor assertion
-            '-A': BitcodeToObjectFilter.__discardOneArgument,
-            '-D': BitcodeToObjectFilter.__discardOneArgument,
-            '-U': BitcodeToObjectFilter.__discardOneArgument,
+            '-A': ArgumentListFilter.discardOneArgument,
+            '-D': ArgumentListFilter.discardOneArgument,
+            '-U': ArgumentListFilter.discardOneArgument,
             # Dependency generation
-            '-MT': BitcodeToObjectFilter.__discardOneArgument,
-            '-MQ': BitcodeToObjectFilter.__discardOneArgument,
-            '-MF': BitcodeToObjectFilter.__discardOneArgument,
-            '-MD': BitcodeToObjectFilter.__discardOneArgument,
-            '-MMD': BitcodeToObjectFilter.__discardOneArgument,
+            '-MT': ArgumentListFilter.discardOneArgument,
+            '-MQ': ArgumentListFilter.discardOneArgument,
+            '-MF': ArgumentListFilter.discardOneArgument,
+            '-MD': ArgumentListFilter.discardOneArgument,
+            '-MMD': ArgumentListFilter.discardOneArgument,
             # Include
-            '-I': BitcodeToObjectFilter.__discardOneArgument,
-            '-idirafter': BitcodeToObjectFilter.__discardOneArgument,
-            '-include': BitcodeToObjectFilter.__discardOneArgument,
-            '-imacros': BitcodeToObjectFilter.__discardOneArgument,
-            '-iprefix': BitcodeToObjectFilter.__discardOneArgument,
-            '-iwithprefix': BitcodeToObjectFilter.__discardOneArgument,
-            '-iwithprefixbefore': BitcodeToObjectFilter.__discardOneArgument,
-            '-isystem': BitcodeToObjectFilter.__discardOneArgument,
-            '-isysroot': BitcodeToObjectFilter.__discardOneArgument,
-            '-iquote': BitcodeToObjectFilter.__discardOneArgument,
-            '-imultilib': BitcodeToObjectFilter.__discardOneArgument,
+            '-I': ArgumentListFilter.discardOneArgument,
+            '-idirafter': ArgumentListFilter.discardOneArgument,
+            '-include': ArgumentListFilter.discardOneArgument,
+            '-imacros': ArgumentListFilter.discardOneArgument,
+            '-iprefix': ArgumentListFilter.discardOneArgument,
+            '-iwithprefix': ArgumentListFilter.discardOneArgument,
+            '-iwithprefixbefore': ArgumentListFilter.discardOneArgument,
+            '-isystem': ArgumentListFilter.discardOneArgument,
+            '-isysroot': ArgumentListFilter.discardOneArgument,
+            '-iquote': ArgumentListFilter.discardOneArgument,
+            '-imultilib': ArgumentListFilter.discardOneArgument,
             # Linker
             '-fopenmp': ArgumentListFilter.discardNoArgument,
+            '-Xlinker': ArgumentListFilter.discardOneArgument,
             }
 
         patternMatches = {
@@ -199,10 +201,6 @@ class BitcodeToObjectFilter(ArgumentListFilter):
             }
 
         ArgumentListFilter.__init__(self, arglist, exactMatches, patternMatches)
-
-    def __discardOneArgument(self, flag, arg):
-        """discard a flag and a single following argument"""
-        pass
 
 
 class ObjectsToExecutableFilter(ArgumentListFilter):
@@ -325,18 +323,12 @@ class SamplerArgumentListFilter(ArgumentListFilter):
             }
         self.__verbose = False
 
-        patternMatches = {
-            '^(-o)=?(.+)$': SamplerArgumentListFilter.__outfileCallback,
-            '^([^-].*)$': SamplerArgumentListFilter.__infileCallback,
-            '^-fsampler-scheme=(.+)$': SamplerArgumentListFilter.__schemeCallback,
-            '^(-l)(.+)$': SamplerArgumentListFilter.__librarySearchCallback,
-            }
-
         exactMatches = {
             '--verbose': SamplerArgumentListFilter.__verboseCallback,
             '-E': SamplerArgumentListFilter.__targetPreprocessedCallback,
+            '-Xlinker': SamplerArgumentListFilter.__linkerOrderSentiveCallback,
             '-c': SamplerArgumentListFilter.__targetObjectCallback,
-            '-l': SamplerArgumentListFilter.__librarySearchCallback,
+            '-l': SamplerArgumentListFilter.__linkerOrderSentiveCallback,
             '-o': SamplerArgumentListFilter.__outfileCallback,
             '-save-temps': SamplerArgumentListFilter.__saveTempsCallback,
             '-v': SamplerArgumentListFilter.__verboseCallback,
@@ -352,7 +344,15 @@ class SamplerArgumentListFilter(ArgumentListFilter):
             exactMatches['-' + toggle] = SamplerArgumentListFilter.__toggleOnCallback
             exactMatches['-no-' + toggle] = SamplerArgumentListFilter.__toggleOffCallback
 
-        ArgumentListFilter.__init__(self, arglist, exactMatches=exactMatches, patternMatches=patternMatches)
+        patternMatches = {
+            '^(-o)=?(.+)$': SamplerArgumentListFilter.__outfileCallback,
+            '^([^-].*)$': SamplerArgumentListFilter.__infileCallback,
+            '^-fsampler-scheme=(.+)$': SamplerArgumentListFilter.__schemeCallback,
+            '^(-l)(.+)$': SamplerArgumentListFilter.__linkerOrderSentiveCallback,
+            '^(-Wl)(,.+)$': SamplerArgumentListFilter.__linkerOrderSentiveCallback,
+            }
+
+        ArgumentListFilter.__init__(self, arglist, exactMatches, patternMatches)
 
         finisher = {
             'preprocessed': self.__preprocess,
@@ -375,8 +375,8 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         """explicitly specify the language for following input files"""
         self.__inputLanguage = None if arg == 'none' else arg
 
-    def __librarySearchCallback(self, flag, arg):
-        """record a searched-for library"""
+    def __linkerOrderSentiveCallback(self, flag, arg):
+        """record a linker flag that must be kept in order with object files"""
         infile = InputFile(flag + arg, 'object')
         self.__infiles.append(infile)
 

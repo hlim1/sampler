@@ -46,7 +46,7 @@ class ArgumentListFilter(object):
 
     def __init__(self, inputList, exactMatches=dict(), patternMatches=dict()):
 
-        argExactMatches = dict([ (flag, ArgumentListFilter.defaultOneArgument) for flag in (
+        argExactMatches = dict([ (flag, ArgumentListFilter.keepOneArgument) for flag in (
                 '-o',
                 '--param',
                 '-aux-info',
@@ -121,16 +121,16 @@ class ArgumentListFilter(object):
 
         # If no action has been specified, this is a zero-argument
         # flag that we should just keep.
-        return ArgumentListFilter.keepArgument, [self, currentItem]
+        return ArgumentListFilter.keepNoArgument, [self, currentItem]
 
-    def keepArgument(self, arg):
+    def keepNoArgument(self, arg):
         """retain an argument for no additional processing"""
         self.filteredArgs.append(arg)
 
-    def defaultOneArgument(self, flag, arg):
-        """retain a flag plus a single following argument"""
-        self.keepArgument(flag)
-        self.keepArgument(arg)
+    def keepOneArgument(self, flag, arg):
+        """retain a flag and a single following argument"""
+        self.keepNoArgument(flag)
+        self.keepNoArgument(arg)
 
     def discardNoArgument(self, flag):
         """discard a flag with no following argument"""
@@ -226,7 +226,7 @@ class ObjectsToExecutableFilter(ArgumentListFilter):
     def __discardPthreadHandler(self, flag):
         """remember to discard "-pthread" later"""
         self.__discardPthread = True
-        self.keepArgument(flag)
+        self.keepNoArgument(flag)
 
 
 ########################################################################
@@ -389,7 +389,7 @@ class SamplerArgumentListFilter(ArgumentListFilter):
     def __saveTempsCallback(self, flag):
         """retain all intermediate "temporary" files"""
         self.__temporaryFile = self.__derivedFile
-        self.keepArgument(flag)
+        self.keepNoArgument(flag)
 
     def __schemeCallback(self, scheme):
         """add a CBI instrumentation scheme, possibly one of several"""
@@ -398,12 +398,12 @@ class SamplerArgumentListFilter(ArgumentListFilter):
     def __targetObjectCallback(self, flag):
         """set final target to compile only, without linking"""
         self.__target = 'compiled'
-        self.keepArgument(flag)
+        self.keepNoArgument(flag)
 
     def __targetPreprocessedCallback(self, flag):
         """set final target to preprocess only, without compiling"""
         self.__target = 'preprocessed'
-        self.keepArgument(flag)
+        self.keepNoArgument(flag)
 
     def __toggle(self, flag, prefix):
         """turn a Boolean toggle either on or off"""
@@ -423,7 +423,7 @@ class SamplerArgumentListFilter(ArgumentListFilter):
     def __verboseCallback(self, flag):
         """verbosely trace all executed subcommands"""
         self.__verbose = True
-        self.keepArgument(flag)
+        self.keepNoArgument(flag)
 
     ####################################################################
     #

@@ -35,7 +35,7 @@ class SamplerDriver(Driver):
         self.__sample = True
         self.__schemes = set()
 
-    def getOptPhases(self):
+    def getExtraOptArgs(self):
         # pylint: disable=C0321
 
         schemes = self.__schemes

@@ -30,6 +30,15 @@ class ArgumentError(ValueError):
         self.flag = flag
 
 
+# pylint: disable=C0103
+Stages = type('Stages', (object,), {
+        'UNSPECIFIED': 'unspecified',
+        'SOURCE_TO_BITCODE': 'source to bitcode',
+        'BITCODE_TO_OBJECT': 'bitcode to object',
+        'OBJECTS_TO_LINKED': 'objects to linked',
+        })
+
+
 class ParsedArgument(object):
     """structured sequence of one or more command-line flags treated as a unit"""
     # pylint: disable=R0903
@@ -37,10 +46,10 @@ class ParsedArgument(object):
     def __str__(self):
         raise NotImplementedError('must be implemented in subclass')
 
-    def forCommandLine(self, stage):
+    def forCommandLine(self, stage=Stages.UNSPECIFIED, substitutions=None):
         """arguments used for a given stage's command line"""
         # pylint: disable=R0201,W0613
-        __pychecker__ = 'unusednames=stage'
+        __pychecker__ = 'unusednames=stage,substitutions'
         raise NotImplementedError('must be implemented in subclass')
 
 
@@ -48,19 +57,20 @@ class Option(ParsedArgument):
     """command-line option, possibly with a value argument"""
     # pylint: disable=R0903
 
-    __slots__ = '__stages', '__value', 'flag'
+    __slots__ = 'applicableStages', 'flag', '__value'
 
-    def __init__(self, stages, flag, value=None):
+    def __init__(self, applicableStages, flag, value=None):
         ParsedArgument.__init__(self)
-        self.__stages = stages
-        self.__value = value
+        self.applicableStages = applicableStages
         self.flag = flag
+        self.__value = value
 
     def __str__(self):
-        return str((self.__stages, self.flag, self.__value))
+        return str((self.applicableStages, self.flag, self.__value))
 
-    def forCommandLine(self, stage):
-        if stage in self.__stages:
+    def forCommandLine(self, stage=Stages.UNSPECIFIED, substitutions=None):
+        __pychecker__ = 'unusednames=substitutions'
+        if stage in self.applicableStages:
             yield self.flag
             if self.__value:
                 yield self.__value
@@ -132,19 +142,20 @@ class InputFile(ParsedArgument):
         extension = splitext(filename)[1]
         return InputFile.__STANDARD_SUFFIXES.get(extension, 'linker')
 
-    def forCommandLine(self, _stage):
-        __pychecker__ = 'unusednames=_stage'
-        return '-x', self.language, self.filename
+    def forCommandLine(self, stage=Stages.UNSPECIFIED, substitutions=None):
+        __pychecker__ = 'unusednames=stage, no-returnvalues'
+        if substitutions:
+            if self in substitutions:
+                substitution = substitutions[self]
+                if substitution:
+                    return (substitution,)
+            else:
+                return ()
+
+        return ('-x', self.language, self.filename)
 
     def __str__(self):
         return "%s [%s]" % (self.filename, self.language)
-
-
-def precompilePatterns(*choices):
-    """build a regular expression matching a set of command-line flags"""
-    joined = '|'.join(choices)
-    anchored = '^-(%s)$' % joined
-    return re.compile(anchored)
 
 
 def regexpHandlerTable(*entries):
@@ -168,6 +179,8 @@ class Driver(object):
         '__inputFiles',
         '__inputLanguage',
         '__outputFile',
+        '__pthreadOptions',
+        '__pthreadUsedByLinker',
         '__verbose',
         'temporaryFile',
         )
@@ -181,6 +194,8 @@ class Driver(object):
         self.__inputFiles = []
         self.__inputLanguage = None
         self.__outputFile = None
+        self.__pthreadOptions = set()
+        self.__pthreadUsedByLinker = True
         self.__verbose = False
         self.temporaryFile = self.__namedTemporaryFile
 
@@ -189,10 +204,12 @@ class Driver(object):
     #  command-line parsing
     #
 
-    __STAGES_ONLY_TO_BITCODE = set(('source to bitcode',))
-    __STAGES_ONLY_TO_OBJECT = set(('bitcode to object',))
-    __STAGES_ONLY_TO_LINKED = set(('objects to linked',))
-    __STAGES_ALL = __STAGES_ONLY_TO_BITCODE | __STAGES_ONLY_TO_OBJECT | __STAGES_ONLY_TO_LINKED
+    __STAGES_ONLY_TO_BITCODE = frozenset((Stages.SOURCE_TO_BITCODE,))
+    __STAGES_ONLY_TO_OBJECT = frozenset((Stages.BITCODE_TO_OBJECT,))
+    __STAGES_ONLY_TO_LINKED = frozenset((Stages.OBJECTS_TO_LINKED,))
+    __STAGES_ONLY_UNSPECIFIED = frozenset((Stages.UNSPECIFIED,))
+    __STAGES_ALL = __STAGES_ONLY_TO_BITCODE | __STAGES_ONLY_TO_OBJECT | __STAGES_ONLY_TO_LINKED | __STAGES_ONLY_UNSPECIFIED
+    __STAGES_NOT_TO_LINKED = __STAGES_ALL - __STAGES_ONLY_TO_LINKED
 
     def __handleFlagGoalPreprocessed(self, _flag):
         """handle "-E" flag"""
@@ -226,6 +243,12 @@ class Driver(object):
         __pychecker__ = 'unusednames=_flag'
         self.__outputFile = filename
 
+    def __handleFlagPthread(self, flag):
+        """handle "-pthread" and "-pthreads" flags"""
+        option = self.__handleFlagOptionNoValue(flag)
+        self.__pthreadOptions.add(option)
+        return option
+
     def __handleFlagInputLanguage(self, _flag, language):
         """handle "-x LANGUAGE" flag"""
         __pychecker__ = 'unusednames=_flag'
@@ -235,6 +258,11 @@ class Driver(object):
         """handle "-v" flag"""
         self.__verbose = True
         return self.__handleFlagOptionNoValue(flag)
+
+    def __handleFlagLinkerPthreadUnused(self, flag):
+        """handle various linker flags that make "-pthread" unused at link time"""
+        self.__pthreadUsedByLinker = False
+        return self.__handleFlagOnlyToLinkedNoValue(flag)
 
     def __handleInputFilename(self, filename):
         """handle input file name"""
@@ -285,6 +313,8 @@ class Driver(object):
         '-save-temps=cwd': __handleFlagSaveTempsCwd,
         '-save-temps=obj': __handleFlagSaveTempsObj,
         '-o': __handleFlagOutputFilename,
+        '-pthread': __handleFlagPthread,
+        '-pthreads': __handleFlagPthread,
         '-x': __handleFlagInputLanguage,
         '-v': __handleFlagVerbose,
         '-wrapper': __handleFlagOptionOneValue,
@@ -322,12 +352,14 @@ class Driver(object):
         '-Xassembler': __handleFlagOnlyToObjectOneValue,
 
         # link options
-        '-l': __handleFlagOnlyToLinkedOneValue,
         '-L': __handleFlagOnlyToLinkedOneValue,
         '-T': __handleFlagOnlyToLinkedOneValue,
         '-Xlinker': __handleFlagOnlyToLinkedOneValue,
-        '-u': __handleFlagOnlyToLinkedOneValue,
         '-fopenmp': __handleFlagOnlyToLinkedNoValue,
+        '-l': __handleFlagOnlyToLinkedOneValue,
+        '-nostartfiles': __handleFlagLinkerPthreadUnused,
+        '-nostdlib': __handleFlagLinkerPthreadUnused,
+        '-u': __handleFlagOnlyToLinkedOneValue,
 
         # Darwin options
         '-bundle_loader': __handleFlagOptionOneValue,
@@ -363,8 +395,6 @@ class Driver(object):
             
     def __pickHandler(self, arg):
         """pick handler for one command line argument"""
-        __pychecker__ = 'no-returnvalues'
-
         handler = self.__flagExactHandlers.get(arg)
         if handler:
             return handler, [arg]
@@ -403,6 +433,11 @@ class Driver(object):
     def process(self, args):
         """process a single command line, building whatever is requested"""
         parsed = tuple(self.__parse(args))
+
+        if not self.__pthreadUsedByLinker:
+            for option in self.__pthreadOptions:
+                option.applicableStages = self.__STAGES_NOT_TO_LINKED
+
         self.__finalGoal(parsed)
 
     def __checkMultipleOutputFiles(self):
@@ -445,22 +480,11 @@ class Driver(object):
     #  compilation helpers
     #
 
-    @staticmethod
-    def __substituteInputFiles(args, substitutions):
-        """command-line arguments with some input files removed or replaced"""
-        for arg in args:
-            if isinstance(arg, InputFile):
-                replacement = substitutions.get(arg)
-                if replacement:
-                    yield replacement
-            else:
-                yield arg
-
     def sourceToBitcodeCommand(self, inputFile, outputFile, args):
         """command line for building bitcode from source code"""
         return chain(
             ('clang', '-emit-llvm', '-c', '-o', outputFile),
-            self.__substituteInputFiles(args, {inputFile: inputFile}),
+            self.__expandArgs(args, 'source to bitcode', {inputFile: None}),
             )
 
     def bitcodeToObjectCommand(self, inputFile, outputFile, intermediateFile, args, targetFlag):
@@ -468,7 +492,7 @@ class Driver(object):
         # pylint: disable=R0913
         return chain(
             ('clang', targetFlag, '-o', outputFile),
-            self.__substituteInputFiles(args, {inputFile: intermediateFile}),
+            self.__expandArgs(args, 'bitcode to object', {inputFile: intermediateFile}),
             )
 
     def instrumentBitcode(self, inputFile, uninstrumented, instrumented):
@@ -476,32 +500,30 @@ class Driver(object):
         # pylint: disable=W0613
         __pychecker__ = 'unusednames=inputFile'
         prelude = ('opt', '-o', instrumented, uninstrumented)
-        phases = self.getOptPhases()
+        phases = self.getExtraOptArgs()
         command = chain(prelude, phases)
         self.run(command)
 
-    def getOptPhases(self):
-        """sequence of LLVM phases to use when transforming bitcode"""
+    def getExtraOptArgs(self):
+        """arguments used when running "opt" to transform bitcode"""
         raise NotImplementedError('must be implemented in subclass')
 
     def __compileTo(self, inputFile, objectFile, args, targetFlag='-c'):
         """compile a single input file to a single output object file"""
         uninstrumented = self.temporaryFile(inputFile, '.uninstrumented.bc')
         command = self.sourceToBitcodeCommand(inputFile, uninstrumented, args)
-        self.run(command, 'source to bitcode')
+        self.run(command)
 
         instrumented = self.temporaryFile(inputFile, '.instrumented.bc')
         self.instrumentBitcode(inputFile, uninstrumented, instrumented)
 
         command = self.bitcodeToObjectCommand(inputFile, objectFile, instrumented, args, targetFlag)
-        self.run(command, 'bitcode to object')
+        self.run(command)
 
     ####################################################################
     #
     #  linking helpers
     #
-
-    MAKE_PTHREAD_UNUSED = set(('-nostartfiles', '-nostdlib'))
 
     def __makeLinkable(self, inputFile, args):
         """compile to a temporary object file in preparation for linking"""
@@ -514,27 +536,15 @@ class Driver(object):
 
     def objectsToLinkedCommand(self, outputFile, args):
         """command line for building native executable from native objects"""
-        for arg in 'clang', '-o', outputFile:
-            yield arg
-
-        discardPthread = False
-        for arg in args:
-            if isinstance(arg, Option):
-                if arg.flag in self.MAKE_PTHREAD_UNUSED:
-                    discardPthread = True
-                    break
-
+        prelude = ('clang', '-o', outputFile)
         objectsForInputs = { inputFile: self.__makeLinkable(inputFile, args) for inputFile in self.__inputFiles }
-        for arg in self.__substituteInputFiles(args, objectsForInputs):
-            if discardPthread and isinstance(arg, Option) and arg.flag == '-pthread':
-                pass
-            else:
-                yield arg
+        expanded = self.__expandArgs(args, 'objects to linked', objectsForInputs)
+        return chain(prelude, expanded)
 
     def linkTo(self, outputFile, args):
         """link to the given output file"""
         command = self.objectsToLinkedCommand(outputFile, args)
-        self.run(command, 'objects to linked')
+        self.run(command)
 
     ####################################################################
     #
@@ -564,7 +574,8 @@ class Driver(object):
         """preprocess, but do not compile"""
         prelude = ('clang', '-E')
         outputFlags = ('-o', self.__outputFile) if self.__outputFile else ()
-        command = chain(prelude, outputFlags, args)
+        userArgs = self.__expandArgs(args)
+        command = chain(prelude, outputFlags, userArgs)
         self.run(command)
 
     ####################################################################
@@ -573,21 +584,17 @@ class Driver(object):
     #
 
     @staticmethod
-    def __expandArg(arg, stage):
-        """expand an option to a sequence of strings, unless it is a string already"""
-        if isinstance(arg, str):
-            return arg,
-        else:
-            return arg.forCommandLine(stage)
+    def __expandArgs(args, stage=Stages.UNSPECIFIED, substitutions=None):
+        """expand a sequence of parsed arguments to a sequence of strings"""
+        return chain.from_iterable(arg.forCommandLine(stage, substitutions) for arg in args)
 
-    def run(self, args, stage=None):
+    def run(self, command):
         """run an external subcommand"""
-        expanded = (self.__expandArg(arg, stage) for arg in args)
-        flattened = tuple(chain.from_iterable(expanded))
+        command = tuple(command)
         if self.__verbose:
-            quoted = imap(quote, flattened)
+            quoted = imap(quote, command)
             print >> stderr, '⌘', ' '.join(quoted)
-        check_call(flattened)
+        check_call(command)
 
 
 def drive(driver):

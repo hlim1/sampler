@@ -1,7 +1,10 @@
 Import('env')
 
-pythons = ('driver.py',)
-test = env.TestPython('pychecker.passed', pythons)
-Alias('test', test)
+subproject = Dir('llvm-instrumentation-driver')
+baseDriver = subproject.File('driver.py')
 
-Default
+tenv = env.Clone()
+tenv.AppendENVPath('PYTHONPATH', subproject.abspath)
+pythons = (baseDriver, 'samplerDriver.py')
+test = tenv.TestPython('pychecker.passed', pythons)
+Alias('test', test)

@@ -1,5 +1,10 @@
 #!/usr/bin/python -O
 
+from os.path import dirname, join
+
+from sys import path
+path.insert(1, join(dirname(__file__), 'llvm-instrumentation-driver'))
+
 from samplerDriver import main
 
 main()

@@ -1,6 +1,7 @@
 [basic]
 argument-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
 attr-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
+function-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
 method-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
 variable-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
 
@@ -11,7 +12,7 @@ max-line-length=120
 persistent=no
 
 [messages control]
-disable=I0011
+disable=I0011,R0922
 
 [reports]
 include-ids=yes

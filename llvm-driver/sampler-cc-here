@@ -1,5 +1,5 @@
 #!/usr/bin/python -O
 
-from driver import main
+from samplerDriver import main
 
 main()

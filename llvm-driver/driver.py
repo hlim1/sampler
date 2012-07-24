@@ -1,504 +1,366 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*- 
 
-"""gcc-emulating front end for LLVM-based CBI instrumenting compilation"""
+"""gcc-emulating front end for LLVM-based instrumenting compilation"""
 
 import re
 
 from atexit import register
-from collections import deque, namedtuple
 from errno import ENOENT
 from inspect import getargspec
-from itertools import chain, imap
+from itertools import chain, imap, starmap
 from os import remove
-from os.path import basename, dirname, join, splitext
+from os.path import basename, splitext
+from pipes import quote
+from shlex import split
 from subprocess import CalledProcessError, check_call
 from sys import argv, stderr
 from tempfile import NamedTemporaryFile
 
 
 ########################################################################
-#
-#  derived from <https://github.com/travitch/whole-program-llvm.git>
-#
-
-# This class applies filters to GCC argument lists.  It has a few
-# default arguments that it records, but does not modify the argument
-# list at all.  It can be subclassed to change this behavior.
-#
-# The idea is that all flags accepting a parameter must be specified
-# so that they know to consume an extra token from the input stream.
-# Flags and arguments can be recorded in any way desired by providing
-# a callback.  Each callback implicitly determines the arity of flags
-# it handles - zero arity flags (such as -v) are provided to their
-# callback as-is.  Higher arities remove the appropriate number of
-# arguments from the list and pass them to the callback with the flag.
-#
-# Most flags can be handled with a simple lookup in a table - these
-# are exact matches.  Other flags are more complex and can be
-# recognized by regular expressions.  All regular expressions must be
-# tried, obviously.  The first one that matches is taken, and no order
-# is specified.  Try to avoid overlapping patterns.
-
-class ArgumentListFilter(object):
-    """generic filter for gcc command-line arguments"""
-
-    __slots__ = 'filteredArgs',
-
-    def __init__(self, inputList, exactMatches=dict(), patternMatches=dict()):
-
-        argExactMatches = dict([ (flag, ArgumentListFilter.keepOneArgument) for flag in (
-                '-o',
-                '--param',
-                '-aux-info',
-                # Preprocessor assertion
-                '-A',
-                '-D',
-                '-U',
-                # Dependency generation
-                '-MT',
-                '-MQ',
-                '-MF',
-                '-MD',
-                '-MMD',
-                # Include
-                '-I',
-                '-idirafter',
-                '-include',
-                '-imacros',
-                '-iprefix',
-                '-iwithprefix',
-                '-iwithprefixbefore',
-                '-isystem',
-                '-isysroot',
-                '-iquote',
-                '-imultilib',
-                # Language
-                '-x',
-                # Component-specifiers
-                '-Xpreprocessor',
-                '-Xassembler',
-                '-Xlinker',
-                # Linker
-                '-l',
-                '-L',
-                '-T',
-                '-u',
-                )])
-
-        argPatterns = {}
-
-        argExactMatches.update(exactMatches)
-        argPatterns.update(patternMatches)
-
-        self.filteredArgs = []
-
-        inputArgs = deque(inputList)
-        while inputArgs:
-            # Get the next argument
-            currentItem = inputArgs.popleft()
-            handler, args = self.__pickHandler(currentItem, argExactMatches, argPatterns)
-            arity = len(getargspec(handler)[0])
-            while len(args) < arity:
-                args.append(inputArgs.popleft())
-            # pylint: disable=W0142
-            handler(*args)
-
-    def __pickHandler(self, currentItem, exact, patterns):
-        """find the handler and partial argument list for a given command-line argument"""
-
-        # First, see if this exact flag has a handler in the table.
-        # This is a cheap test.
-        handler = exact.get(currentItem)
-        if handler:
-            return handler, [self, currentItem]
-
-        # Otherwise, see if the input matches some pattern with a
-        # handler that we recognize.
-        for pattern, handler in patterns.iteritems():
-            match = re.match(pattern, currentItem)
-            if match:
-                return handler, [self] + list(match.groups())
-
-        # If no action has been specified, this is a zero-argument
-        # flag that we should just keep.
-        return ArgumentListFilter.keepNoArgument, [self, currentItem]
-
-    def keepNoArgument(self, arg):
-        """retain an argument for no additional processing"""
-        self.filteredArgs.append(arg)
-
-    def keepOneArgument(self, flag, arg):
-        """retain a flag and a single following argument"""
-        self.keepNoArgument(flag)
-        self.keepNoArgument(arg)
-
-    def discardNoArgument(self, flag):
-        """discard a flag with no following argument"""
-        pass
-
-    def discardOneArgument(self, flag, arg):
-        """discard a flag and a single following argument"""
-        pass
 
 
-########################################################################
+class ArgumentError(ValueError):
+    """raised when a command-line flag is used incorrectly"""
+
+    __slots__ = 'flag'
+
+    def __init__(self, flag, message):
+        ValueError.__init__(self, message % flag)
+        self.flag = flag
 
 
-class SourceToBitcodeFilter(ArgumentListFilter):
-    """filter out command-line arguments that should not be used when compiling source code to LLVM bitcode"""
+class ParsedArgument(object):
+    """structured sequence of one or more command-line flags treated as a unit"""
+    # pylint: disable=R0903
 
-    def __init__(self, arglist):
+    def __str__(self):
+        raise NotImplementedError('must be implemented in subclass')
 
-        exactMatches = {
-            # Linker
-            '-fopenmp': ArgumentListFilter.discardNoArgument,
-            '-Xlinker': ArgumentListFilter.discardOneArgument,
-            }
-
-        patternMatches = {
-            '^(-Wl),': ArgumentListFilter.discardNoArgument,
-            }
-
-        ArgumentListFilter.__init__(self, arglist, exactMatches, patternMatches)
+    def forCommandLine(self):
+        """sequence of arguments used when this option appears on a command line"""
+        raise NotImplementedError('must be implemented in subclass')
 
 
-class BitcodeToObjectFilter(ArgumentListFilter):
-    """filter out command-line arguments that should not be used when compiling LLVM bitcode to native object code"""
+class Option(ParsedArgument):
+    """command-line option, possibly with a value argument"""
+    # pylint: disable=R0903
 
-    def __init__(self, arglist):
+    __slots__ = 'flag', 'value'
 
-        exactMatches = {
-            # Preprocessor assertion
-            '-A': ArgumentListFilter.discardOneArgument,
-            '-D': ArgumentListFilter.discardOneArgument,
-            '-U': ArgumentListFilter.discardOneArgument,
-            # Dependency generation
-            '-MT': ArgumentListFilter.discardOneArgument,
-            '-MQ': ArgumentListFilter.discardOneArgument,
-            '-MF': ArgumentListFilter.discardOneArgument,
-            '-MD': ArgumentListFilter.discardOneArgument,
-            '-MMD': ArgumentListFilter.discardOneArgument,
-            # Include
-            '-I': ArgumentListFilter.discardOneArgument,
-            '-idirafter': ArgumentListFilter.discardOneArgument,
-            '-include': ArgumentListFilter.discardOneArgument,
-            '-imacros': ArgumentListFilter.discardOneArgument,
-            '-iprefix': ArgumentListFilter.discardOneArgument,
-            '-iwithprefix': ArgumentListFilter.discardOneArgument,
-            '-iwithprefixbefore': ArgumentListFilter.discardOneArgument,
-            '-isystem': ArgumentListFilter.discardOneArgument,
-            '-isysroot': ArgumentListFilter.discardOneArgument,
-            '-iquote': ArgumentListFilter.discardOneArgument,
-            '-imultilib': ArgumentListFilter.discardOneArgument,
-            # Linker
-            '-fopenmp': ArgumentListFilter.discardNoArgument,
-            '-Xlinker': ArgumentListFilter.discardOneArgument,
-            }
+    def __init__(self, flag, value=None):
+        ParsedArgument.__init__(self)
+        self.flag = flag
+        self.value = value
 
-        patternMatches = {
-            '^(-[ADIU])': ArgumentListFilter.discardNoArgument,
-            '^(-Wl),': ArgumentListFilter.discardNoArgument,
-            }
+    def __str__(self):
+        return str((self.flag, self.value))
 
-        ArgumentListFilter.__init__(self, arglist, exactMatches, patternMatches)
+    def forCommandLine(self):
+        yield self.flag
+        if self.value:
+            yield self.value
 
 
-class ObjectsToExecutableFilter(ArgumentListFilter):
-    """filter out command-line arguments that should not be used when linking native object code into an executable"""
-
-    __slots__ = '__discardPthread'
-
-    def __init__(self, arglist):
-
-        self.__discardPthread = False
-
-        exactMatches = {
-            # Linker
-            '-nostartfiles': ObjectsToExecutableFilter.__discardPthreadHandler,
-            '-nostdlib': ObjectsToExecutableFilter.__discardPthreadHandler,
-            }
-
-        ArgumentListFilter.__init__(self, arglist, exactMatches)
-
-        if self.__discardPthread:
-            self.filteredArgs = [arg for arg in self.filteredArgs if arg != '-pthread']
-
-    def __discardPthreadHandler(self, flag):
-        """remember to discard "-pthread" later"""
-        self.__discardPthread = True
-        self.keepNoArgument(flag)
-
-
-########################################################################
-
-
-class InputFile(object):
+class InputFile(ParsedArgument):
     """file name and source language of a single input file"""
+    # pylint: disable=R0903
 
-    __slots = 'filename', 'language'
+    __slots__ = 'filename', 'language'
 
     def __init__(self, filename, language=None):
+        ParsedArgument.__init__(self)
         self.filename = filename
         self.language = language or self.__guessLanguage(filename)
 
-    __standardSuffixes = {
+    __STANDARD_SUFFIXES = {
+        '.adb': 'ada',
+        '.ads': 'ada',
         '.c': 'c',
-        '.i': 'cpp-output',
-        '.ii': 'c++-cpp-output',
-        '.m': 'objective-c',
-        '.mi': 'objective-c-cpp-output',
-        '.mm': 'objective-c++',
-        '.M': 'objective-c++',
-        '.mii': 'objective-c++-cpp-output',
-        '.h': 'c-header',
-        '.cc': 'c++',
-        '.cp': 'c++',
-        '.cxx': 'c++',
-        '.cpp': 'c++',
-        '.CPP': 'c++',
         '.c++': 'c++',
         '.C': 'c++',
-        '.mm': 'objective-c++',
-        '.M': 'objective-c++',
-        '.mii': 'objective-c++-cpp-output',
-        '.hh': 'c++-header',
-        '.H': 'c++-header',
-        '.hp': 'c++-header',
-        '.hxx': 'c++-header',
-        '.hpp': 'c++-header',
-        '.HPP': 'c++-header',
-        '.h++': 'c++-header',
-        '.tcc': 'c++-header',
+        '.cc': 'c++',
+        '.cp': 'c++',
+        '.cpp': 'c++',
+        '.CPP': 'c++',
+        '.cxx': 'c++',
+        '.f03': 'f95',
+        '.F03': 'f95-cpp-input',
+        '.f08': 'f95',
+        '.F08': 'f95-cpp-input',
+        '.f90': 'f95',
+        '.F90': 'f95-cpp-input',
+        '.f95': 'f95',
+        '.F95': 'f95-cpp-input',
         '.f': 'f77',
-        '.for': 'f77',
-        '.ftn': 'f77',
         '.F': 'f77-cpp-input',
+        '.for': 'f77',
         '.FOR': 'f77-cpp-input',
         '.fpp': 'f77-cpp-input',
         '.FPP': 'f77-cpp-input',
+        '.ftn': 'f77',
         '.FTN': 'f77-cpp-input',
-        '.f90': 'f95',
-        '.f95': 'f95',
-        '.f03': 'f95',
-        '.f08': 'f95',
-        '.F90': 'f95-cpp-input',
-        '.F95': 'f95-cpp-input',
-        '.F03': 'f95-cpp-input',
-        '.F08': 'f95-cpp-input',
         '.go': 'go',
-        '.ads': 'ada',
-        '.adb': 'ada',
+        '.h': 'c-header',
+        '.h++': 'c++-header',
+        '.H': 'c++-header',
+        '.hh': 'c++-header',
+        '.hp': 'c++-header',
+        '.hpp': 'c++-header',
+        '.HPP': 'c++-header',
+        '.hxx': 'c++-header',
+        '.i': 'cpp-output',
+        '.ii': 'c++-cpp-output',
+        '.mii': 'objective-c++-cpp-output',
+        '.mi': 'objective-c-cpp-output',
+        '.mm': 'objective-c++',
+        '.m': 'objective-c',
+        '.M': 'objective-c++',
         '.s': 'assembler',
         '.S': 'assembler-with-cpp',
         '.sx': 'assembler-with-cpp',
+        '.tcc': 'c++-header',
         }
 
     @staticmethod
     def __guessLanguage(filename):
         """guess a file's language based on its name"""
         extension = splitext(filename)[1]
-        return InputFile.__standardSuffixes.get(extension, 'object')
+        return InputFile.__STANDARD_SUFFIXES.get(extension, 'linker')
 
-    def args(self):
-        """return arguments suitable for use on a clang/gcc command line"""
+    def forCommandLine(self):
         return '-x', self.language, self.filename
 
+    def __str__(self):
+        return "%s [%s]" % (self.filename, self.language)
 
-class SamplerArgumentListFilter(ArgumentListFilter):
-    """specialized filter for sampler-cc command-line arguments"""
 
-    __slots__ = '__args_bitcodeToObject', '__args_sourceToBitcode', '__infiles', '__inputLanguage', '__outfile', '__schemes', '__target', '__temporaryFile', '__toggles', '__verbose'
+def precompilePatterns(*choices):
+    """build a regular expression matching a set of command-line flags"""
+    joined = '|'.join(choices)
+    anchored = '^-(%s)$' % joined
+    return re.compile(anchored)
 
-    def __init__(self, arglist):
-        self.__args_bitcodeToObject = None
-        self.__args_sourceToBitcode = None
-        self.__infiles = []
+
+def regexpHandlerTable(*entries):
+    """compile patterns in a regular expression handler table"""
+
+    def compileEntry(pattern, handler):
+        """compile a single regular expression handler table entry"""
+        return re.compile(pattern), handler
+    return tuple(starmap(compileEntry, entries))
+
+
+class Driver(object):
+    """emulator for an invocation of gcc"""
+    # pylint: disable=R0902
+
+    __slots__ = (
+        '__finalGoal',
+        '__flagExactHandlers',
+        '__flagRegexpHandlers',
+        '__inputFiles',
+        '__inputLanguage',
+        '__outputFile',
+        '__verbose',
+        'temporaryFile',
+        )
+
+    def __init__(self, extraExact=dict(), extraRegexp=tuple()):
+        self.__finalGoal = self.__buildLinked
+        self.__flagExactHandlers = Driver.__FLAG_EXACT_HANDLERS.copy()
+        self.__flagExactHandlers.update(extraExact)
+        self.__flagRegexpHandlers = extraRegexp + Driver.__FLAG_REGEXP_HANDLERS
+        self.__inputFiles = []
         self.__inputLanguage = None
-        self.__outfile = None
-        self.__schemes = set()
-        self.__target = 'linked'
-        self.__temporaryFile = self.__namedTemporaryFile
-        self.__toggles = {
-            'sample': True,
-            }
+        self.__outputFile = None
+        self.temporaryFile = self.__namedTemporaryFile
         self.__verbose = False
 
-        exactMatches = {
-            '--verbose': SamplerArgumentListFilter.__verboseCallback,
-            '-E': SamplerArgumentListFilter.__targetPreprocessedCallback,
-            '-Xlinker': SamplerArgumentListFilter.__linkerOrderSentiveCallback,
-            '-c': SamplerArgumentListFilter.__targetObjectCallback,
-            '-l': SamplerArgumentListFilter.__linkerOrderSentiveCallback,
-            '-o': SamplerArgumentListFilter.__outfileCallback,
-            '-save-temps': SamplerArgumentListFilter.__saveTempsCallback,
-            '-v': SamplerArgumentListFilter.__verboseCallback,
-            '-x': SamplerArgumentListFilter.__languageCallback,
-            }
-
-        toggles = (
-            'predict-checks',
-            'sample',
-            )
-
-        for toggle in toggles:
-            exactMatches['-' + toggle] = SamplerArgumentListFilter.__toggleOnCallback
-            exactMatches['-no-' + toggle] = SamplerArgumentListFilter.__toggleOffCallback
-
-        patternMatches = {
-            '^(-o)=?(.+)$': SamplerArgumentListFilter.__outfileCallback,
-            '^([^-].*)$': SamplerArgumentListFilter.__infileCallback,
-            '^-fsampler-scheme=(.+)$': SamplerArgumentListFilter.__schemeCallback,
-            '^(-l)(.+)$': SamplerArgumentListFilter.__linkerOrderSentiveCallback,
-            '^(-Wl)(,.+)$': SamplerArgumentListFilter.__linkerOrderSentiveCallback,
-            }
-
-        ArgumentListFilter.__init__(self, arglist, exactMatches, patternMatches)
-
-        finisher = {
-            'preprocessed': self.__preprocess,
-            'compiled': self.__compile,
-            'linked': self.__link,
-            }[self.__target]
-        finisher()
-
     ####################################################################
     #
-    #  command line parsing callbacks
+    #  preliminary command-line processing
     #
 
-    def __infileCallback(self, arg):
-        """record an input file name, possibly one of several"""
-        infile = InputFile(arg, self.__inputLanguage)
-        self.__infiles.append(infile)
+    def __handleFlagGoalPreprocessed(self, _flag):
+        """handle "-E" flag"""
+        __pychecker__ = 'unusednames=_flag'
+        self.__finalGoal = self.__buildPreprocessed
 
-    def __languageCallback(self, arg):
-        """explicitly specify the language for following input files"""
-        self.__inputLanguage = None if arg == 'none' else arg
+    def __handleFlagGoalAssembly(self, _flag):
+        """handle "-S" flag"""
+        __pychecker__ = 'unusednames=_flag'
+        self.__finalGoal = self.__buildAssembly
 
-    def __linkerOrderSentiveCallback(self, flag, arg):
-        """record a linker flag that must be kept in order with object files"""
-        infile = InputFile(flag + arg, 'object')
-        self.__infiles.append(infile)
+    def __handleFlagGoalObject(self, _flag):
+        """handle "-c" flag"""
+        __pychecker__ = 'unusednames=_flag'
+        self.__finalGoal = self.__buildObject
 
-    def __outfileCallback(self, flag, arg):
-        """record an explicit output file name"""
-        # pylint: disable=W0613
-        __pychecker__ = 'unusednames=flag'
-        self.__outfile = arg
+    def __handleFlagSaveTemps(self, flag):
+        """handle "-save-temps" flag"""
+        self.temporaryFile = self.derivedFile
+        return self.__handleFlagOptionNoValue(flag)
 
-    def __saveTempsCallback(self, flag):
-        """retain all intermediate "temporary" files"""
-        self.__temporaryFile = self.__derivedFile
-        self.keepNoArgument(flag)
+    def __handleFlagOutputFilename(self, _flag, filename):
+        """handle "-o FILE" flag"""
+        __pychecker__ = 'unusednames=_flag'
+        self.__outputFile = filename
 
-    def __schemeCallback(self, scheme):
-        """add a CBI instrumentation scheme, possibly one of several"""
-        self.__schemes.add(scheme)
+    def __handleFlagInputLanguage(self, _flag, language):
+        """handle "-x LANGUAGE" flag"""
+        __pychecker__ = 'unusednames=_flag'
+        self.__inputLanguage = None if language == 'none' else language
 
-    def __targetObjectCallback(self, flag):
-        """set final target to compile only, without linking"""
-        self.__target = 'compiled'
-        self.keepNoArgument(flag)
-
-    def __targetPreprocessedCallback(self, flag):
-        """set final target to preprocess only, without compiling"""
-        self.__target = 'preprocessed'
-        self.keepNoArgument(flag)
-
-    def __toggle(self, flag, prefix):
-        """turn a Boolean toggle either on or off"""
-        assert flag.startswith(prefix)
-        key = flag[len(prefix):]
-        value = prefix == '-'
-        self.__toggles[key] = value
-
-    def __toggleOnCallback(self, flag):
-        """turn on a Boolean toggle"""
-        self.__toggle(flag, '-')
-
-    def __toggleOffCallback(self, flag):
-        """turn off a Boolean toggle"""
-        self.__toggle(flag, '-no-')
-
-    def __verboseCallback(self, flag):
-        """verbosely trace all executed subcommands"""
+    def __handleFlagVerbose(self, flag):
+        """handle "-v" flag"""
         self.__verbose = True
-        self.keepNoArgument(flag)
+        return self.__handleFlagOptionNoValue(flag)
+
+    def __handleInputFilename(self, filename):
+        """handle input file name"""
+        inputFile = InputFile(filename, self.__inputLanguage)
+        self.__inputFiles.append(inputFile)
+        return inputFile
+
+    def __handleFlagOptionNoValue(self, flag):
+        """keep flag with no additional value argument"""
+        # pylint: disable=R0201
+        return Option(flag)
+
+    def __handleFlagOptionOneValue(self, flag, value):
+        """keep flag with one additional value argument"""
+        # pylint: disable=R0201
+        return Option(flag, value)
+
+    __FLAG_EXACT_HANDLERS = {
+        # overall options
+        '-E': __handleFlagGoalPreprocessed,
+        '-S': __handleFlagGoalAssembly,
+        '-c': __handleFlagGoalObject,
+        '-save-temps': __handleFlagSaveTemps,
+        '-o': __handleFlagOutputFilename,
+        '-x': __handleFlagInputLanguage,
+        '-v': __handleFlagVerbose,
+        '-wrapper': __handleFlagOptionOneValue,
+
+        # C dialect options
+        '-aux-info': __handleFlagOptionOneValue,
+
+        # optimize options
+        '--param': __handleFlagOptionOneValue,
+
+        # preprocessor options
+        '-Xpreprocessor': __handleFlagOptionOneValue,
+        '-D': __handleFlagOptionOneValue,
+        '-U': __handleFlagOptionOneValue,
+        '-I': __handleFlagOptionOneValue,
+        '-MF': __handleFlagOptionOneValue,
+        '-MT': __handleFlagOptionOneValue,
+        '-MQ': __handleFlagOptionOneValue,
+        '-include': __handleFlagOptionOneValue,
+        '-imacros': __handleFlagOptionOneValue,
+        '-idirafter': __handleFlagOptionOneValue,
+        '-iprefix': __handleFlagOptionOneValue,
+        '-iwithprefix': __handleFlagOptionOneValue,
+        '-iwithprefixbefore': __handleFlagOptionOneValue,
+        '-isysroot': __handleFlagOptionOneValue,
+        '-imultilib': __handleFlagOptionOneValue,
+        '-isystem': __handleFlagOptionOneValue,
+        '-iquote': __handleFlagOptionOneValue,
+        '-A': __handleFlagOptionOneValue,
+
+        # assembler options
+        '-Xassembler': __handleFlagOptionOneValue,
+
+        # link options
+        '-l': __handleFlagOptionOneValue,
+        '-T': __handleFlagOptionOneValue,
+        '-Xlinker': __handleFlagOptionOneValue,
+        '-u': __handleFlagOptionOneValue,
+
+        # Darwin options
+        '-bundle_loader': __handleFlagOptionOneValue,
+        '-allowable_client': __handleFlagOptionOneValue,
+
+        # M32R/D options; MIPS options; RS/6000 and PowerPC options
+        '-G': __handleFlagOptionOneValue,
+        }
+
+    __FLAG_REGEXP_HANDLERS = regexpHandlerTable(
+        ('^(-.*)$', __handleFlagOptionNoValue),
+        ('^(.*)$', __handleInputFilename),
+        )
+            
+    def __pickHandler(self, arg):
+        """pick handler for one command line argument"""
+        __pychecker__ = 'no-returnvalues'
+
+        handler = self.__flagExactHandlers.get(arg)
+        if handler:
+            return handler, [arg]
+
+        for pattern, handler in self.__flagRegexpHandlers:
+            match = pattern.match(arg)
+            if match:
+                groups = match.groups()
+                return handler, list(groups)
+
+        raise LookupError('no handler for "%s"' % arg)
+
+    def __parse(self, args):
+        """parse command line, recognizing a few options with special meaning"""
+        args = iter(args)
+        for arg in args:
+            if arg.startswith('@'):
+                filename = arg[1:]
+                with open(filename) as stream:
+                    subargs = split(stream, comments=False)
+                    for subarg in self.__parse(subargs):
+                        yield subarg
+            else:
+                handler, values = self.__pickHandler(arg)
+                arity = len(getargspec(handler)[0]) - 1
+                try:
+                    while len(values) < arity:
+                        values.append(args.next())
+                except StopIteration:
+                    raise ArgumentError(arg, "argument to '%s' is missing")
+                # pylint: disable=W0142
+                parsed = handler(self, *values)
+                if parsed is not None:
+                    yield parsed
+
+    def process(self, args):
+        """process a single command line, building whatever is requested"""
+        parsed = tuple(self.__parse(args))
+        self.__finalGoal(parsed)
+
+    def __checkMultipleOutputFiles(self):
+        """raise an error if multiple output files will be created but a single output file was explicitly named"""
+        if self.__outputFile and len(self.__inputFiles) > 1:
+            raise ArgumentError('-o', "cannot specify '%s' when generating multiple output files")
+
 
     ####################################################################
     #
-    #  generic compilation stage helpers
+    #  file management
     #
-
-    def __compileTo(self, infile, outfile):
-        """compile a single input file to a single output object file"""
-        uninst = self.__temporaryFile(infile, '.uninst.bc')
-        command = ['clang', '-emit-llvm', '-c', '-o', uninst]
-        command += infile.args()
-        if self.__args_sourceToBitcode is None:
-            subfilter = SourceToBitcodeFilter(self.filteredArgs)
-            self.__args_sourceToBitcode = subfilter.filteredArgs
-            assert self.__args_sourceToBitcode is not None
-        command += self.__args_sourceToBitcode
-        self.__run(command)
-
-        runtime = self.__temporaryFile(infile, '.runtime.bc')
-        extra = join(dirname(__file__), 'runtime.bc')
-        self.__run(['llvm-link', '-o', runtime, uninst, extra])
-
-        inst = self.__temporaryFile(infile, '.inst.bc')
-        phases = ['-' + phase for phase in self.__extraPhases()]
-        self.__run(['opt', '-o', inst, runtime] + phases)
-
-        command = ['clang', '-c', '-o', outfile, inst]
-        if self.__args_bitcodeToObject is None:
-            subfilter = BitcodeToObjectFilter(self.filteredArgs)
-            self.__args_bitcodeToObject = subfilter.filteredArgs
-            assert self.__args_bitcodeToObject is not None
-        command += self.__args_bitcodeToObject
-        self.__run(command)
 
     @staticmethod
-    def __derivedFile(basis, extension):
+    def derivedFile(inputFile, extension):
         """create a (non-temporary) file based on some other file name, but with a new extension"""
-        filename = basename(basis.filename)
+        filename = basename(inputFile.filename)
         return splitext(filename)[0] + extension
 
     @staticmethod
-    def __namedTemporaryFile(basis, extension):
+    def __namedTemporaryFile(_inputFile, extension):
         """create a temporary file with a given extension"""
-        # pylint: disable=W0613
-        __pychecker__ = 'unusednames=basis'
+        __pychecker__ = 'unusednames=_inputFile'
         handle = NamedTemporaryFile(prefix='cbi-', suffix=extension, mode='wb', delete=False)
         handle.close()
-        register(SamplerArgumentListFilter.__tryRemove, handle.name)
+        register(Driver.__tryRemove, handle.name)
         return handle.name
-
-    def __extraPhases(self):
-        """extra LLVM phases to be applied to each object file, in order"""
-        # pylint: disable=C0321
-
-        schemes = self.__schemes
-        if not schemes: return
-
-        if 'branches' in schemes: yield 'branches'
-        if 'returns' in schemes: yield 'returns'
-
-        toggles = self.__toggles
-
-        if toggles.get('sample'):
-            yield 'reg2mem'
-            yield 'sampler'
-            #yield 'mem2reg'
-
-        if toggles.get('predict-checks'):
-            yield 'predict-checks'
-
-    def __run(self, command):
-        """run some subcommand, possibly with verbose tracing"""
-        if self.__verbose:
-            print >> stderr, '⌘', ' '.join(command)
-        check_call(command)
 
     @staticmethod
     def __tryRemove(chaff):
@@ -511,64 +373,194 @@ class SamplerArgumentListFilter(ArgumentListFilter):
 
     ####################################################################
     #
-    #  preprocessing
+    #  compilation helpers
     #
 
-    def __preprocess(self):
-        """build final target by preprocessing only, without compiling"""
-        command = ['clang']
-        if self.__outfile:
-            command += ['-o', self.__outfile]
-        command += self.filteredArgs
-        command += chain.from_iterable(infile.args() for infile in self.__infiles)
-        self.__run(command)
+    __SOURCE_TO_BITCODE_UNWANTED = precompilePatterns(
+        'Wl,.*',
+        'Xlinker',
+        'fopenmp',
+        )
+
+    def sourceToBitcodeCommand(self, inputFile, outputFile, args):
+        """command line for building bitcode from source code"""
+        # pylint: disable=R0201
+
+        for arg in 'clang', '-emit-llvm', '-c', '-o', outputFile:
+            yield arg
+
+        for arg in args:
+            if isinstance(arg, InputFile):
+                if arg == inputFile:
+                    yield arg
+            elif Driver.__SOURCE_TO_BITCODE_UNWANTED.match(arg.flag):
+                pass
+            else:
+                yield arg
+
+    __BITCODE_TO_OBJECT_UNWANTED = precompilePatterns(
+        'I.*',
+        'MD',
+        'MF',
+        'MMD',
+        'MP',
+        'MT',
+        'Wl,.*',
+        'Xlinker',
+        'fopenmp',
+        'idirafter',
+        'imacros',
+        'imultilib',
+        'include',
+        'iprefix',
+        'iquote',
+        'isysroot',
+        'isystem',
+        'iwithprefix',
+        'iwithprefixbefore',
+        )
+
+    def bitcodeToObjectCommand(self, inputFile, outputFile, intermediateFile, args, targetFlag):
+        """command line for building native object code from bitcode"""
+        # pylint: disable=R0201,R0913
+
+        for arg in 'clang', targetFlag, '-o', outputFile:
+            yield arg
+
+        for arg in args:
+            if isinstance(arg, InputFile):
+                if arg == inputFile:
+                    yield intermediateFile
+            elif Driver.__BITCODE_TO_OBJECT_UNWANTED.match(arg.flag):
+                pass
+            else:
+                yield arg
+
+    def instrumentBitcode(self, inputFile, uninstrumented, instrumented):
+        """add instrumentation to a single source file's bitcode"""
+        # pylint: disable=W0613
+        __pychecker__ = 'unusednames=inputFile'
+        phases = self.getOptPhases()
+        self.run(('opt', '-o', instrumented, uninstrumented), phases)
+
+    def getOptPhases(self):
+        """sequence of LLVM phases to use when transforming bitcode"""
+        raise NotImplementedError('must be implemented in subclass')
+
+    def __compileTo(self, inputFile, objectFile, args, targetFlag='-c'):
+        """compile a single input file to a single output object file"""
+        uninstrumented = self.temporaryFile(inputFile, '.uninstrumented.bc')
+        command = self.sourceToBitcodeCommand(inputFile, uninstrumented, args)
+        self.run(command)
+
+        instrumented = self.temporaryFile(inputFile, '.instrumented.bc')
+        self.instrumentBitcode(inputFile, uninstrumented, instrumented)
+
+        command = self.bitcodeToObjectCommand(inputFile, objectFile, instrumented, args, targetFlag)
+        self.run(command)
 
     ####################################################################
     #
-    #  compilation
+    #  linking helpers
     #
 
-    def __compile(self):
-        """build final target by compiling only, without linking"""
-        if self.__outfile and len(self.__infiles) > 1:
-            print >> stderr, '%s: error: cannot specify -o when generating multiple output files' % argv[0]
-            exit(1)
+    MAKE_PTHREAD_UNUSED = set(('-nostartfiles', '-nostdlib'))
 
-        for infile in self.__infiles:
-            outfile = self.__outfile or self.__derivedFile(infile, '.o')
-            self.__compileTo(infile, outfile)
-
-    ####################################################################
-    #
-    #  linking
-    #
-
-    def __link(self):
-        """build final target by linking an executable"""
-        # pylint: disable=W0141
-        command = ['clang']
-        if self.__outfile:
-            command += ['-o', self.__outfile]
-        command += imap(self.__prelink, self.__infiles)
-        command += ObjectsToExecutableFilter(self.filteredArgs).filteredArgs
-        self.__run(command)
-
-    def __prelink(self, infile):
+    def __makeLinkable(self, inputFile, args):
         """compile to a temporary object file in preparation for linking"""
-        if infile.language == 'object':
-            return infile.filename
+        if inputFile.language == 'linker':
+            return inputFile.filename
         else:
-            outfile = self.__temporaryFile(infile, '.o')
-            self.__compileTo(infile, outfile)
-            return outfile
+            objectFile = self.temporaryFile(inputFile, '.o')
+            self.__compileTo(inputFile, objectFile, args)
+            return objectFile
+
+    def objectsToLinkedCommand(self, outputFile, args):
+        """command line for building native executable from native objects"""
+        for arg in 'clang', '-o', outputFile:
+            yield arg
+
+        discardPthread = False
+        for arg in args:
+            if isinstance(arg, Option):
+                if arg.flag in self.MAKE_PTHREAD_UNUSED:
+                    discardPthread = True
+                    break
+
+        for arg in args:
+            if isinstance(arg, InputFile):
+                yield self.__makeLinkable(arg, args)
+            elif discardPthread and arg.flag == '-pthread':
+                pass
+            else:
+                yield arg
+
+    def linkTo(self, outputFile, args):
+        """link to the given output file"""
+        self.run(self.objectsToLinkedCommand(outputFile, args))
+
+    ####################################################################
+    #
+    #  final goal builders
+    #
+
+    def __buildLinked(self, args):
+        """build linked executable or shared library"""
+        outputFile = self.__outputFile or 'a.out'
+        self.linkTo(outputFile, args)
+
+    def __buildObject(self, args):
+        """build native object file, but do not link"""
+        self.__checkMultipleOutputFiles()
+        for inputFile in self.__inputFiles:
+            outputFile = self.__outputFile or self.derivedFile(inputFile, '.o')
+            self.__compileTo(inputFile, outputFile, args)
+
+    def __buildAssembly(self, args):
+        """build native assembly file, but do not assemble"""
+        self.__checkMultipleOutputFiles()
+        for inputFile in self.__inputFiles:
+            outputFile = self.__outputFile or self.derivedFile(inputFile, '.s')
+            self.__compileTo(inputFile, outputFile, args, '-S')
+
+    def __buildPreprocessed(self, args):
+        """preprocess, but do not compile"""
+        outputFlags = ('-o', self.__outputFile) if self.__outputFile else ()
+        self.run(('clang', '-E'), outputFlags, args)
+
+    ####################################################################
+    #
+    #  subprocess management
+    #
+
+    @staticmethod
+    def __expandArg(arg):
+        """expand an option to a sequence of strings, unless it is a string already"""
+        if isinstance(arg, str):
+            return arg,
+        else:
+            return arg.forCommandLine()
+
+    def run(self, *args):
+        """run an external subcommand"""
+        chained = chain.from_iterable(args)
+        expanded = imap(self.__expandArg, chained)
+        flattened = tuple(chain.from_iterable(expanded))
+        if self.__verbose:
+            quoted = imap(quote, flattened)
+            print >> stderr, '⌘', ' '.join(quoted)
+        check_call(flattened)
 
 
-########################################################################
-
-
-def main():
-    """imitate gcc using command-line arguments passed to script"""
+def drive(driver):
+    """imitate gcc using the given driver"""
     try:
-        SamplerArgumentListFilter(argv[1:])
+        driver.process(argv[1:])
+    except ArgumentError, error:
+        print >> stderr, "%s: error: %s" % (argv[0], error)
+        exit(1)
     except CalledProcessError, error:
         exit(error.returncode or 1)
+
+
+__all__ = 'drive', 'Driver', 'regexpHandler'

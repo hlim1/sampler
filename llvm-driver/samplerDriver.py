@@ -55,9 +55,10 @@ class SamplerDriver(Driver):
             yield '-predict-checks'
 
     def instrumentBitcode(self, inputFile, uninstrumented, instrumented):
+        runtime = join(self.HOME, 'runtime.bc')
         plusRuntime = self.temporaryFile(inputFile, '.plus-runtime.bc')
-        extra = join(self.HOME, 'runtime.bc')
-        self.run(('llvm-link', '-o', plusRuntime, uninstrumented, extra))
+        command = ('llvm-link', '-o', plusRuntime, uninstrumented, runtime)
+        self.run(command)
         Driver.instrumentBitcode(self, inputFile, plusRuntime, instrumented)
 
 

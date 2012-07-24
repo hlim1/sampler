@@ -37,8 +37,10 @@ class ParsedArgument(object):
     def __str__(self):
         raise NotImplementedError('must be implemented in subclass')
 
-    def forCommandLine(self):
-        """sequence of arguments used when this option appears on a command line"""
+    def forCommandLine(self, stage):
+        """arguments used for a given stage's command line"""
+        # pylint: disable=R0201,W0613
+        __pychecker__ = 'unusednames=stage'
         raise NotImplementedError('must be implemented in subclass')
 
 
@@ -46,20 +48,22 @@ class Option(ParsedArgument):
     """command-line option, possibly with a value argument"""
     # pylint: disable=R0903
 
-    __slots__ = 'flag', 'value'
+    __slots__ = '__stages', '__value', 'flag'
 
-    def __init__(self, flag, value=None):
+    def __init__(self, stages, flag, value=None):
         ParsedArgument.__init__(self)
+        self.__stages = stages
+        self.__value = value
         self.flag = flag
-        self.value = value
 
     def __str__(self):
-        return str((self.flag, self.value))
+        return str((self.__stages, self.flag, self.__value))
 
-    def forCommandLine(self):
-        yield self.flag
-        if self.value:
-            yield self.value
+    def forCommandLine(self, stage):
+        if stage in self.__stages:
+            yield self.flag
+            if self.__value:
+                yield self.__value
 
 
 class InputFile(ParsedArgument):
@@ -128,7 +132,8 @@ class InputFile(ParsedArgument):
         extension = splitext(filename)[1]
         return InputFile.__STANDARD_SUFFIXES.get(extension, 'linker')
 
-    def forCommandLine(self):
+    def forCommandLine(self, _stage):
+        __pychecker__ = 'unusednames=_stage'
         return '-x', self.language, self.filename
 
     def __str__(self):
@@ -156,6 +161,7 @@ class Driver(object):
     # pylint: disable=R0902
 
     __slots__ = (
+        '__derivedFilesNearOutputFile',
         '__finalGoal',
         '__flagExactHandlers',
         '__flagRegexpHandlers',
@@ -167,6 +173,7 @@ class Driver(object):
         )
 
     def __init__(self, extraExact=dict(), extraRegexp=tuple()):
+        self.__derivedFilesNearOutputFile = False
         self.__finalGoal = self.__buildLinked
         self.__flagExactHandlers = Driver.__FLAG_EXACT_HANDLERS.copy()
         self.__flagExactHandlers.update(extraExact)
@@ -174,13 +181,18 @@ class Driver(object):
         self.__inputFiles = []
         self.__inputLanguage = None
         self.__outputFile = None
-        self.temporaryFile = self.__namedTemporaryFile
         self.__verbose = False
+        self.temporaryFile = self.__namedTemporaryFile
 
     ####################################################################
     #
-    #  preliminary command-line processing
+    #  command-line parsing
     #
+
+    __STAGES_ONLY_TO_BITCODE = set(('source to bitcode',))
+    __STAGES_ONLY_TO_OBJECT = set(('bitcode to object',))
+    __STAGES_ONLY_TO_LINKED = set(('objects to linked',))
+    __STAGES_ALL = __STAGES_ONLY_TO_BITCODE | __STAGES_ONLY_TO_OBJECT | __STAGES_ONLY_TO_LINKED
 
     def __handleFlagGoalPreprocessed(self, _flag):
         """handle "-E" flag"""
@@ -197,9 +209,16 @@ class Driver(object):
         __pychecker__ = 'unusednames=_flag'
         self.__finalGoal = self.__buildObject
 
-    def __handleFlagSaveTemps(self, flag):
-        """handle "-save-temps" flag"""
+    def __handleFlagSaveTempsCwd(self, flag):
+        """handle "-save-temps" and "-save-temps=cwd" flags"""
         self.temporaryFile = self.derivedFile
+        self.__derivedFilesNearOutputFile = False
+        return self.__handleFlagOptionNoValue(flag)
+
+    def __handleFlagSaveTempsObj(self, flag):
+        """handle "-save-temps=obj" flag"""
+        self.temporaryFile = self.derivedFile
+        self.__derivedFilesNearOutputFile = True
         return self.__handleFlagOptionNoValue(flag)
 
     def __handleFlagOutputFilename(self, _flag, filename):
@@ -223,22 +242,48 @@ class Driver(object):
         self.__inputFiles.append(inputFile)
         return inputFile
 
+    def __handleFlagOnlyToBitcodeNoValue(self, flag):
+        """handle various compilation-to-bitcode-only flags with no additional value argument"""
+        return Option(self.__STAGES_ONLY_TO_BITCODE, flag)
+
+    def __handleFlagOnlyToBitcodeOneValue(self, flag, value):
+        """handle various compilation-to-bitcode-only flags with one additional value argument"""
+        return Option(self.__STAGES_ONLY_TO_BITCODE, flag, value)
+
+    def __handleFlagOnlyToObjectNoValue(self, flag):
+        """handle various compilation-to-object-only flags with no additional value argument"""
+        return Option(self.__STAGES_ONLY_TO_OBJECT, flag)
+
+    def __handleFlagOnlyToObjectOneValue(self, flag, value):
+        """handle various compilation-to-object-only flags with one additional value argument"""
+        return Option(self.__STAGES_ONLY_TO_OBJECT, flag, value)
+
+    def __handleFlagOnlyToLinkedNoValue(self, flag):
+        """handle various linker-only flags with no additional value argument"""
+        return Option(self.__STAGES_ONLY_TO_LINKED, flag)
+
+    def __handleFlagOnlyToLinkedOneValue(self, flag, value):
+        """handle various linker-only flags with one additional value argument"""
+        return Option(self.__STAGES_ONLY_TO_LINKED, flag, value)
+
     def __handleFlagOptionNoValue(self, flag):
         """keep flag with no additional value argument"""
         # pylint: disable=R0201
-        return Option(flag)
+        return Option(self.__STAGES_ALL, flag)
 
     def __handleFlagOptionOneValue(self, flag, value):
         """keep flag with one additional value argument"""
         # pylint: disable=R0201
-        return Option(flag, value)
+        return Option(self.__STAGES_ALL, flag, value)
 
     __FLAG_EXACT_HANDLERS = {
         # overall options
         '-E': __handleFlagGoalPreprocessed,
         '-S': __handleFlagGoalAssembly,
         '-c': __handleFlagGoalObject,
-        '-save-temps': __handleFlagSaveTemps,
+        '-save-temps': __handleFlagSaveTempsCwd,
+        '-save-temps=cwd': __handleFlagSaveTempsCwd,
+        '-save-temps=obj': __handleFlagSaveTempsObj,
         '-o': __handleFlagOutputFilename,
         '-x': __handleFlagInputLanguage,
         '-v': __handleFlagVerbose,
@@ -251,33 +296,38 @@ class Driver(object):
         '--param': __handleFlagOptionOneValue,
 
         # preprocessor options
-        '-Xpreprocessor': __handleFlagOptionOneValue,
-        '-D': __handleFlagOptionOneValue,
-        '-U': __handleFlagOptionOneValue,
-        '-I': __handleFlagOptionOneValue,
-        '-MF': __handleFlagOptionOneValue,
-        '-MT': __handleFlagOptionOneValue,
-        '-MQ': __handleFlagOptionOneValue,
-        '-include': __handleFlagOptionOneValue,
-        '-imacros': __handleFlagOptionOneValue,
-        '-idirafter': __handleFlagOptionOneValue,
-        '-iprefix': __handleFlagOptionOneValue,
-        '-iwithprefix': __handleFlagOptionOneValue,
-        '-iwithprefixbefore': __handleFlagOptionOneValue,
-        '-isysroot': __handleFlagOptionOneValue,
-        '-imultilib': __handleFlagOptionOneValue,
-        '-isystem': __handleFlagOptionOneValue,
-        '-iquote': __handleFlagOptionOneValue,
-        '-A': __handleFlagOptionOneValue,
+        '-A': __handleFlagOnlyToBitcodeOneValue,
+        '-D': __handleFlagOnlyToBitcodeOneValue,
+        '-I': __handleFlagOnlyToBitcodeOneValue,
+        '-MF': __handleFlagOnlyToBitcodeOneValue,
+        '-MD': __handleFlagOnlyToBitcodeNoValue,
+        '-MMD': __handleFlagOnlyToBitcodeNoValue,
+        '-MP': __handleFlagOnlyToBitcodeNoValue,
+        '-MQ': __handleFlagOnlyToBitcodeOneValue,
+        '-MT': __handleFlagOnlyToBitcodeOneValue,
+        '-U': __handleFlagOnlyToBitcodeOneValue,
+        '-Xpreprocessor': __handleFlagOnlyToBitcodeOneValue,
+        '-idirafter': __handleFlagOnlyToBitcodeOneValue,
+        '-imacros': __handleFlagOnlyToBitcodeOneValue,
+        '-imultilib': __handleFlagOnlyToBitcodeOneValue,
+        '-include': __handleFlagOnlyToBitcodeOneValue,
+        '-iprefix': __handleFlagOnlyToBitcodeOneValue,
+        '-iquote': __handleFlagOnlyToBitcodeOneValue,
+        '-isysroot': __handleFlagOnlyToBitcodeOneValue,
+        '-isystem': __handleFlagOnlyToBitcodeOneValue,
+        '-iwithprefix': __handleFlagOnlyToBitcodeOneValue,
+        '-iwithprefixbefore': __handleFlagOnlyToBitcodeOneValue,
 
         # assembler options
-        '-Xassembler': __handleFlagOptionOneValue,
+        '-Xassembler': __handleFlagOnlyToObjectOneValue,
 
         # link options
-        '-l': __handleFlagOptionOneValue,
-        '-T': __handleFlagOptionOneValue,
-        '-Xlinker': __handleFlagOptionOneValue,
-        '-u': __handleFlagOptionOneValue,
+        '-l': __handleFlagOnlyToLinkedOneValue,
+        '-L': __handleFlagOnlyToLinkedOneValue,
+        '-T': __handleFlagOnlyToLinkedOneValue,
+        '-Xlinker': __handleFlagOnlyToLinkedOneValue,
+        '-u': __handleFlagOnlyToLinkedOneValue,
+        '-fopenmp': __handleFlagOnlyToLinkedNoValue,
 
         # Darwin options
         '-bundle_loader': __handleFlagOptionOneValue,
@@ -288,6 +338,25 @@ class Driver(object):
         }
 
     __FLAG_REGEXP_HANDLERS = regexpHandlerTable(
+        # overall options
+        ('^(-o)(.+)$', __handleFlagOutputFilename),
+        ('^(-x)(.+)$', __handleFlagInputLanguage),
+
+        # preprocessor options
+        ('^(-[ADIU])(.+)$', __handleFlagOnlyToBitcodeOneValue),
+        ('^(-Wp,.*)$', __handleFlagOnlyToBitcodeNoValue),
+
+        # assembler options
+        ('^(-Wa,.*)$', __handleFlagOnlyToObjectNoValue),
+
+        # link options
+        ('^(-[Llt])(.+)$', __handleFlagOnlyToLinkedOneValue),
+        ('^(-Wl,.*)$', __handleFlagOnlyToLinkedNoValue),
+
+        # M32R/D options; MIPS options; RS/6000 and PowerPC options
+        ('^(-G)(.+)$', __handleFlagOptionOneValue),
+
+        # all other options and input files; must appear last
         ('^(-.*)$', __handleFlagOptionNoValue),
         ('^(.*)$', __handleInputFilename),
         )
@@ -347,11 +416,11 @@ class Driver(object):
     #  file management
     #
 
-    @staticmethod
-    def derivedFile(inputFile, extension):
+    def derivedFile(self, inputFile, extension):
         """create a (non-temporary) file based on some other file name, but with a new extension"""
-        filename = basename(inputFile.filename)
-        return splitext(filename)[0] + extension
+        basedOnOutput = self.__derivedFilesNearOutputFile and self.__outputFile
+        basis = self.__outputFile if basedOnOutput else basename(inputFile.filename)
+        return splitext(basis)[0] + extension
 
     @staticmethod
     def __namedTemporaryFile(_inputFile, extension):
@@ -376,72 +445,40 @@ class Driver(object):
     #  compilation helpers
     #
 
-    __SOURCE_TO_BITCODE_UNWANTED = precompilePatterns(
-        'Wl,.*',
-        'Xlinker',
-        'fopenmp',
-        )
+    @staticmethod
+    def __substituteInputFiles(args, substitutions):
+        """command-line arguments with some input files removed or replaced"""
+        for arg in args:
+            if isinstance(arg, InputFile):
+                replacement = substitutions.get(arg)
+                if replacement:
+                    yield replacement
+            else:
+                yield arg
 
     def sourceToBitcodeCommand(self, inputFile, outputFile, args):
         """command line for building bitcode from source code"""
-        # pylint: disable=R0201
-
-        for arg in 'clang', '-emit-llvm', '-c', '-o', outputFile:
-            yield arg
-
-        for arg in args:
-            if isinstance(arg, InputFile):
-                if arg == inputFile:
-                    yield arg
-            elif Driver.__SOURCE_TO_BITCODE_UNWANTED.match(arg.flag):
-                pass
-            else:
-                yield arg
-
-    __BITCODE_TO_OBJECT_UNWANTED = precompilePatterns(
-        'I.*',
-        'MD',
-        'MF',
-        'MMD',
-        'MP',
-        'MT',
-        'Wl,.*',
-        'Xlinker',
-        'fopenmp',
-        'idirafter',
-        'imacros',
-        'imultilib',
-        'include',
-        'iprefix',
-        'iquote',
-        'isysroot',
-        'isystem',
-        'iwithprefix',
-        'iwithprefixbefore',
-        )
+        return chain(
+            ('clang', '-emit-llvm', '-c', '-o', outputFile),
+            self.__substituteInputFiles(args, {inputFile: inputFile}),
+            )
 
     def bitcodeToObjectCommand(self, inputFile, outputFile, intermediateFile, args, targetFlag):
         """command line for building native object code from bitcode"""
-        # pylint: disable=R0201,R0913
-
-        for arg in 'clang', targetFlag, '-o', outputFile:
-            yield arg
-
-        for arg in args:
-            if isinstance(arg, InputFile):
-                if arg == inputFile:
-                    yield intermediateFile
-            elif Driver.__BITCODE_TO_OBJECT_UNWANTED.match(arg.flag):
-                pass
-            else:
-                yield arg
+        # pylint: disable=R0913
+        return chain(
+            ('clang', targetFlag, '-o', outputFile),
+            self.__substituteInputFiles(args, {inputFile: intermediateFile}),
+            )
 
     def instrumentBitcode(self, inputFile, uninstrumented, instrumented):
         """add instrumentation to a single source file's bitcode"""
         # pylint: disable=W0613
         __pychecker__ = 'unusednames=inputFile'
+        prelude = ('opt', '-o', instrumented, uninstrumented)
         phases = self.getOptPhases()
-        self.run(('opt', '-o', instrumented, uninstrumented), phases)
+        command = chain(prelude, phases)
+        self.run(command)
 
     def getOptPhases(self):
         """sequence of LLVM phases to use when transforming bitcode"""
@@ -451,13 +488,13 @@ class Driver(object):
         """compile a single input file to a single output object file"""
         uninstrumented = self.temporaryFile(inputFile, '.uninstrumented.bc')
         command = self.sourceToBitcodeCommand(inputFile, uninstrumented, args)
-        self.run(command)
+        self.run(command, 'source to bitcode')
 
         instrumented = self.temporaryFile(inputFile, '.instrumented.bc')
         self.instrumentBitcode(inputFile, uninstrumented, instrumented)
 
         command = self.bitcodeToObjectCommand(inputFile, objectFile, instrumented, args, targetFlag)
-        self.run(command)
+        self.run(command, 'bitcode to object')
 
     ####################################################################
     #
@@ -487,17 +524,17 @@ class Driver(object):
                     discardPthread = True
                     break
 
-        for arg in args:
-            if isinstance(arg, InputFile):
-                yield self.__makeLinkable(arg, args)
-            elif discardPthread and arg.flag == '-pthread':
+        objectsForInputs = { inputFile: self.__makeLinkable(inputFile, args) for inputFile in self.__inputFiles }
+        for arg in self.__substituteInputFiles(args, objectsForInputs):
+            if discardPthread and isinstance(arg, Option) and arg.flag == '-pthread':
                 pass
             else:
                 yield arg
 
     def linkTo(self, outputFile, args):
         """link to the given output file"""
-        self.run(self.objectsToLinkedCommand(outputFile, args))
+        command = self.objectsToLinkedCommand(outputFile, args)
+        self.run(command, 'objects to linked')
 
     ####################################################################
     #
@@ -525,8 +562,10 @@ class Driver(object):
 
     def __buildPreprocessed(self, args):
         """preprocess, but do not compile"""
+        prelude = ('clang', '-E')
         outputFlags = ('-o', self.__outputFile) if self.__outputFile else ()
-        self.run(('clang', '-E'), outputFlags, args)
+        command = chain(prelude, outputFlags, args)
+        self.run(command)
 
     ####################################################################
     #
@@ -534,17 +573,16 @@ class Driver(object):
     #
 
     @staticmethod
-    def __expandArg(arg):
+    def __expandArg(arg, stage):
         """expand an option to a sequence of strings, unless it is a string already"""
         if isinstance(arg, str):
             return arg,
         else:
-            return arg.forCommandLine()
+            return arg.forCommandLine(stage)
 
-    def run(self, *args):
+    def run(self, args, stage=None):
         """run an external subcommand"""
-        chained = chain.from_iterable(args)
-        expanded = imap(self.__expandArg, chained)
+        expanded = (self.__expandArg(arg, stage) for arg in args)
         flattened = tuple(chain.from_iterable(expanded))
         if self.__verbose:
             quoted = imap(quote, flattened)

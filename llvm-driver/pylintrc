@@ -1,9 +1,9 @@
 [basic]
-argument-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
-attr-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
-function-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
-method-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
-variable-rgx=[a-z_][a-zA-Z0-9_]{2,30}$
+argument-rgx=[a-z_][a-zA-Z0-9_]{2,40}$
+attr-rgx=[a-z_][a-zA-Z0-9_]{2,40}$
+function-rgx=[a-z_][a-zA-Z0-9_]{2,40}$
+method-rgx=[a-z_][a-zA-Z0-9_]{2,40}$
+variable-rgx=[a-z_][a-zA-Z0-9_]{2,40}$
 
 [format]
 max-line-length=120

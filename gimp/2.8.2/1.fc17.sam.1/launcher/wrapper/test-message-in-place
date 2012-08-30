@@ -1,0 +1,12 @@
+#!/usr/bin/python -O
+
+from os.path import abspath, dirname, join
+
+# add "../common" to sys.path
+import Main2
+
+from ServerMessage import ServerMessage
+html = join(dirname(abspath(__file__)), 'test-message.html')
+page = open(html).read()
+dialog = ServerMessage('http://www.cs.wisc.edu/', 'text/html', page)
+dialog.run()

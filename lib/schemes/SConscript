@@ -22,7 +22,7 @@ senv.AppendUnique(
     LIBS=libschemes,
     )
 
-for scheme in ['bounds', 'branches', 'function-entries', 'returns', 'scalar-pairs']:
+for scheme in ['bounds', 'branches', 'coverage', 'function-entries', 'returns', 'scalar-pairs']:
     senv.TwoLibraries(scheme, [scheme + '.c'])
 
 senv.TwoLibraries('float-kinds', ['float-kinds.c'], LIBS=['$LIBS', 'm'])
@@ -48,6 +48,8 @@ headers = [
     'bounds.h',
     'branches-unit.h',
     'branches.h',
+    'coverage-unit.h',
+    'coverage.h',
     'float-kinds-unit.h',
     'float-kinds.h',
     'function-entries-unit.h',

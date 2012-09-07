@@ -150,6 +150,25 @@
 	    </varlistentry>
 
 	    <varlistentry>
+	      <term><option>coverage</option></term>
+	      <listitem>
+		<para>Count how many times each statement is executed. This
+		currently has a performance bug which counts executions of
+		scalar-pairs instrumentation so we suggest not to use both
+		coverage and scalar-pairs simultaneously on large programs.
+		Each statement induces one instrumentation point with one
+		counter:
+
+		  <orderedlist>
+		    <listitem>
+		      <para>statement executed</para>
+		    </listitem>
+		  </orderedlist>
+		</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
 	      <term><option>float-kinds</option></term>
 	      <listitem>
 		<para>At each assignment of a floating point value,

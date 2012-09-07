@@ -109,6 +109,7 @@ SConscript(dirs=[
     'balance',
     'bounds',
     'branches',
+    'coverage',
     'function-entries',
     'g-object-unref',
     'nothing',

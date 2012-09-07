@@ -14,6 +14,7 @@ let impls = Implications.getAccumulator
 
 let schemes = [
   ScalarPairScheme.factory impls;
+  CoverageScheme.factory;
   YieldScheme.factory;
   AtomScheme.factory;
   BranchScheme.factory;

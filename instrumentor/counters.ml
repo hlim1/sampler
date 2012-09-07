@@ -64,6 +64,7 @@ class manager name file =
       let func = siteInfo#fundec in
       let selector = match selector with 
                  | Index (s, NoOffset) -> s
+                 | NoOffset -> zero
                  | _ -> raise Errormsg.Error
       in
       let dummyVarname = sprintf "cbi_%s_%s_dummy" name.prefix func.svar.vname in

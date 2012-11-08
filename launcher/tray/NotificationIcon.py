@@ -24,7 +24,7 @@ WORDS = {
     }
 
 
-class TrayIcon(object):
+class NotificationIcon(object):
 
     __slots__ = '__note'
 

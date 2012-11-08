@@ -8,7 +8,7 @@ from sys import path
 
 path.insert(1, join(dirname(dirname(abspath(__file__))), 'common'))
 
-from TrayIcon import TrayIcon
+from NotificationIcon import NotificationIcon
 
 import Keys
 import Service
@@ -22,5 +22,5 @@ def main():
     if not unique: return
 
     settings = Gio.Settings(Keys.BASE)
-    with closing(TrayIcon(settings)):
+    with closing(NotificationIcon(settings)):
         Gtk.main()

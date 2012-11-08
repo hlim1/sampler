@@ -22,7 +22,7 @@ conf.DistroVersion()
 conf.Finish()
 
 wenv = env.Clone()
-wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare'])
+wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare', '-Wno-type-limits'])
 wenv.ParseConfig(['gsl-config', '--cflags', '--libs'])
 Default(wenv.Program('decimate-samples.l'))
 

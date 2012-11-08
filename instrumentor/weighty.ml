@@ -1,5 +1,4 @@
 open Cil
-open FuncInfo
 open Scanners
 open Str
 

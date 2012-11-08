@@ -1,6 +1,3 @@
-open Printf
-
-
 class loader registry =
   object
     inherit TaggedLoader.t "samples"

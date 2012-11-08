@@ -17,9 +17,6 @@ let saveDataflowFields =
     ~default:false
 
 
-type value = Unknown | Complex | Simple of doc
-
-
 let anything = chr '*'
 let arrayElem = chr '@'
 
@@ -210,7 +207,7 @@ let rec simpleCondition =
 	    None
 
 
-class visitor file digest channel =
+class visitor channel =
   object
     inherit FunctionBodyVisitor.visitor
 
@@ -324,7 +321,7 @@ let visit file digest =
 	iterGlobals file (embedGlobal channel);
 	output_char channel '\n';
 
-	let visitor = new visitor file digest channel in
+	let visitor = new visitor channel in
 	visitCilFileSameGlobals visitor file;
 	output_char channel '\n';
 	close_out channel)

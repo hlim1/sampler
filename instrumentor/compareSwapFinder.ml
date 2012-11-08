@@ -2,14 +2,6 @@ open Cil
 open Helpers
 open Interesting
 
-let postpatch replacement statement =
-  statement.skind <- replacement;
-  statement
-
-
-let isInterestingVar  = isInterestingVar  isDiscreteType
-let isInterestingLval = isInterestingLval isDiscreteType
-
 
 class visitor file =
   let comparesampling = var (FindGlobal.find "cbi_compareSwapSampling" file) in

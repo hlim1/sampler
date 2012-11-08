@@ -1,6 +1,5 @@
 open Cil
 open Helpers
-open Pretty
 open Printf
 open SchemeName
 

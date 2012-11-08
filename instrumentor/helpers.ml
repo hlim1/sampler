@@ -1,6 +1,4 @@
 open Cil
-open Ptranal
-open Dynamic
 (* cci *)
 
 let is_bitfield lval =
@@ -57,5 +55,3 @@ let findOrCreate_global file vname =
     | _ -> create_global file vname
   with Not_found ->  (*create global variable*)
     create_global file vname
-
-let getExp vinfo :exp = Lval(var vinfo)

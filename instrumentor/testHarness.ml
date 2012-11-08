@@ -1,4 +1,3 @@
-open Cil
 open Printf
 open Timed
 
@@ -18,12 +17,12 @@ let time =
     if !showPhaseTimes then
       begin
 	let indent = String.make (2 * !depth) ' ' in
-	Printf.eprintf "%s%s: begin\n" indent description;
+	eprintf "%s%s: begin\n" indent description;
 	incr depth;
 	flush stderr;
 	let elapsed, result = timed action () in
 	decr depth;
-	Printf.eprintf "%s%s: end; %f sec\n" indent description elapsed;
+	eprintf "%s%s: end; %f sec\n" indent description elapsed;
 	flush stderr;
 	result
       end

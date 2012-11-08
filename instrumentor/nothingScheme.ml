@@ -1,14 +1,4 @@
-open SchemeName
-
-
-let name = {
-  flag = "nothing";
-  prefix = "nothing";
-  ident = "Nothing";
-}
-
-
-class c file : Scheme.c =
+class c _ : Scheme.c =
   object
     method findAllSites = ()
     method saveSiteInfo _ _ = ()

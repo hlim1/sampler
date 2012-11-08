@@ -2,10 +2,6 @@ open Cil
 open Helpers
 open Interesting
 
-let postpatch replacement statement =
-  statement.skind <- replacement;
-  statement
-
 
 class visitor file =
   let gsampling = var (FindGlobal.find "cbi_atomsSampling" file) in

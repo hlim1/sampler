@@ -1,5 +1,4 @@
 open Cil
-open Pretty
 
 class c func inspiration statement =
   object

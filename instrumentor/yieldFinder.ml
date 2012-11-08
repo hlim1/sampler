@@ -1,11 +1,6 @@
 open Cil
 open Helpers
 
-let postpatch replacement statement =
-  statement.skind <- replacement;
-  statement
-
-
 class visitor file =
   fun (tuples : Counters.manager)  func ->
     object (self)

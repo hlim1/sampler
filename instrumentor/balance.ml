@@ -119,7 +119,7 @@ let patch func splits weights =
       let succWeight = weightOf successor in
       assert (succWeight <= selfWeight);
       let result = ref tail in
-      for prepend = succWeight + 1 to selfWeight do
+      for _prepend = succWeight + 1 to selfWeight do
 	result := makeCounterweight () :: !result
       done;
       !result

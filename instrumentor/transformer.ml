@@ -1,7 +1,5 @@
-open Calls
 open Cil
 open ClassifyJumps
-open FuncInfo
 open Weight
 
 

@@ -1,5 +1,4 @@
 open SchemeName
-open Cil
 
 (*cci*)
 let name = {

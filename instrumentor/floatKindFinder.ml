@@ -1,10 +1,5 @@
 open Cil
 open Interesting
-open Pretty
-open ScalarPairSiteInfo
-
-
-let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
 
 
 type classifier = fundec -> exp -> location -> (exp * stmt)

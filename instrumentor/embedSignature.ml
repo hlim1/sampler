@@ -1,9 +1,6 @@
 open Cil
 
 
-exception Found
-
-
 let visit file digest =
   try
     let initinfo = FindGlobal.findInit "cbi_unitSignature" file in

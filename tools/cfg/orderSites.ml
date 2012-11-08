@@ -1,5 +1,4 @@
 open Basics
-open FlowGraph
 
 
 type site = Types.Function.extension * Types.Statement.extension

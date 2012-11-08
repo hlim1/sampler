@@ -1,6 +1,3 @@
-exception Found
-
-
 type ('node, 'edge) edge = ('node * 'edge * 'node)
 
 

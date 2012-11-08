@@ -1,6 +1,5 @@
 open Cil
 open Interesting
-open Pretty
 open ScalarPairSiteInfo
 
 
@@ -10,9 +9,6 @@ let compareUninitialized =
     ~desc:"consider uninitialized variables in scalar-pairs comparisons"
     ~ident:"CompareUninitialized"
     ~default:false
-
-
-let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
 
 
 let isInterestingVar  = isInterestingVar  isDiscreteType

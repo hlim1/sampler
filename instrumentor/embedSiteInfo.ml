@@ -1,6 +1,3 @@
-open Cil
-
-
 let saveSiteInfo =
   Options.registerString
     ~flag:"save-site-info"

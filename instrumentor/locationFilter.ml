@@ -5,7 +5,7 @@ open Pretty
 
 class filter =
   object (self)
-    inherit [location] Clude.filter as super
+    inherit [location] Clude.filter
 
     method private matches template focus =
       matchesOrWildcard (-1) template.line focus.line &&

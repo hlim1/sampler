@@ -1,6 +1,5 @@
 open Cil
 open Interesting
-open Pretty
 
 
 type direction = Min | Max
@@ -65,9 +64,6 @@ let extremes typ =
       failwith "internal error"
   in
   builder typ
-
-
-let d_columns = seq ~sep:(chr '\t') ~doit:(fun doc -> doc)
 
 
 class visitor global func =

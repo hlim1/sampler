@@ -1,6 +1,3 @@
-exception Not_empty
-
-
 class type ['key, 'value] t =
   object ('self)
     method copy : 'self

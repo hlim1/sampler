@@ -1,6 +1,5 @@
 open Cil
 open FindFunction
-open Printf
 
 
 let globals = new StackClass.container

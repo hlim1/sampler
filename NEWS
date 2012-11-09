@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.9.2
+
+** Minor updates for Fedora 18.
+
 * sampler-1.9.1
 
 ** Handle errors when posting notes before the notification manager is ready.

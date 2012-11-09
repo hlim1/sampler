@@ -7,17 +7,12 @@ def threadLibs(env, subdir):
         CCFLAGS=['-ffast-math', '-fpic'],
         )
 
-    def inst(targets):
-        instdir = '$DESTDIR/usr/lib'
-        Alias('install', env.Install(instdir, targets))
-
     def libs(target, parts, extraLibs):
         sources = [part + '.c' for part in parts]
         target += '${REENTRANT}'
         env.TwoLibraries(target, sources, LIBS=extraLibs)
 
-    env.VariantDir('.', '..', duplicate=False)
-    parts = ['countdown', 'hijack', 'initialize', 'registry', 'report', 'timestamps-set', 'verbose', 'wrap_fork' ]
+    parts = ['../countdown', 'hijack', '../initialize', '../registry', '../report', '../timestamps-set', '../verbose', '../wrap_fork' ]
     libs('sampler', parts, 'dl')
 
     randomizers = {'fixed': [], 'offline': [], 'online': ['m']}
@@ -25,7 +20,7 @@ def threadLibs(env, subdir):
         randomizers['always'] = []
 
     for when, extraLibs in randomizers.iteritems():
-        src = 'random-%s' % when
+        src = '../random-%s' % when
         libs('sampler-%s' % when, [src], extraLibs)
 
     Alias('install', env.Install('$DESTDIR$threadsdir/%s' % subdir, ['lock.h', 'once.h']))

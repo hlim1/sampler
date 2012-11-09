@@ -1,6 +1,7 @@
 from itertools import imap
 from os import symlink
 from SCons.Script import *
+from SCons.Util import splitext
 
 
 ########################################################################
@@ -28,14 +29,27 @@ symlink_builder = Builder(
 ########################################################################
 
 
-def TwoLibraries(env, target, source, objdir='.', **kwargs):
+def TwoLibraries(env, target, source, **kwargs):
     target = '#driver/' + target
-    [static] = env.StaticLibrary(target, source, **kwargs)
+
+    objdir = Dir('.')
+    def objectsInCwd(builder):
+        def generate():
+            suffix = env.subst(builder.builder.suffix)
+            for src in imap(File, source):
+                obj = objdir.File(splitext(src.name)[0] + suffix)
+                builder(obj, src)
+                yield obj
+        return list(generate())
+
+    objs = objectsInCwd(env.StaticObject)
+    [static] = env.StaticLibrary(target, objs, **kwargs)
 
     majorVersioned = static.target_from_source('', env.subst('${SHLIBSUFFIX}.${SHLIBVERSION[0]}'))
     unversioned    = static.target_from_source('', env.subst('${SHLIBSUFFIX}'))
 
-    [shared] = env.SharedLibrary(target, source,
+    objs = objectsInCwd(env.SharedObject)
+    [shared] = env.SharedLibrary(target, objs,
                                  SHLIBSUFFIX='${SHLIBSUFFIX}.$_SHLIBVERSION',
                                  SHLINKFLAGS=['$SHLINKFLAGS', '-Wl,-soname,' + majorVersioned.name],
                                  **kwargs)

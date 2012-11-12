@@ -36,7 +36,7 @@ static unsigned parse(const char *text)
 int main(int argc, char *argv[])
 {
   size_t bytes;
-  int fd;
+  int fd, status;
   int32_t *map;
   unsigned words, word;
   
@@ -44,17 +44,22 @@ int main(int argc, char *argv[])
   srand48(parse(argv[1]));
   bytes = parse(argv[2]) * 1024 * 1024;
   fd = open(argv[3], O_RDWR | O_CREAT, 0666);
+  insist(fd != -1);
 
   insist(ftruncate(fd, bytes) == 0);
   map = (int32_t *) mmap(0, bytes, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   insist(map != 0);
   insist((intptr_t) map != -1);
+
+  status = close(fd);
+  insist(status == 0);
   
   words = bytes / sizeof(int32_t);
   for (word = 0; word < words; ++word)
     map[word] = mrand48();
 
-  munmap(map, bytes);
-  close(fd);
+  status = munmap(map, bytes);
+  insist(status == 0);
+
   return 0;
 }

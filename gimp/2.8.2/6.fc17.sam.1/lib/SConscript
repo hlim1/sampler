@@ -1,0 +1,22 @@
+Import('env')
+
+env = env.Clone(tools=['libraries'], toolpath='.')
+env.AppendUnique(
+    CCFLAGS=['-O'],
+    )
+env.File('libraries.py')
+
+headers = [
+    'blast-markers.h',
+    'registry.h',
+    'report.h',
+    'signature.h',
+    'timestamps.h',
+    'unit-signature.h',
+    'unit.h',
+    ]
+
+Install('#driver/sampler', headers)
+Alias('install', env.Install('$DESTDIR$samplerdir', headers))
+
+SConscript(dirs=['schemes', 'threads'], exports=['env'])

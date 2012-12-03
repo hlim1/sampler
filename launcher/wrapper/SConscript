@@ -4,6 +4,7 @@ env = env.Clone(
     wrapperdir=env.subst('$wrapperdir'),
     )
 
+Default(env.Template('SamplerConfig.py.in', varlist=['VERSION']))
 pythons = [
     'AppConfig.py',
     'Launcher.py',
@@ -11,6 +12,7 @@ pythons = [
     'Outcome.py',
     'ReportsReader.py',
     'SampledLauncher.py',
+    'SamplerConfig.py',
     'ServerMessage.py',
     'UnsampledLauncher.py',
     'Uploader.py',

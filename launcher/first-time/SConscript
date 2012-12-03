@@ -2,8 +2,10 @@ Import('env', 'testPythonsGtk')
 
 script = 'first-time'
 pythons = [
+    'EnabledIcon.py',
     'FirstTime.py',
     'Main.py',
+    'WindowIcon.py',
     ]
 
 compiled = env.PythonBytecodeOpt(pythons)

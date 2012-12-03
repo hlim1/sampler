@@ -23,7 +23,7 @@ class FirstTime(object):
 
         # grab top-level dialog and claim ownership
         self.__dialog = get_widget('first-time')
-        self.__dialog.set_application(application)
+        self.__dialog.props.application = application
 
         # hook up GSettings configuration monitoring
         from gi.repository import Gio

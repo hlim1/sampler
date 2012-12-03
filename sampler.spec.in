@@ -17,6 +17,7 @@ BuildRoot: %_tmppath/%name-%version-%release-buildroot
 BuildRequires: /usr/bin/camlp4o.opt
 BuildRequires: binutils
 BuildRequires: dbus-devel
+BuildRequires: desktop-file-utils
 BuildRequires: docbook-style-xsl
 BuildRequires: flex
 BuildRequires: gcc
@@ -91,6 +92,7 @@ glib-compile-schemas %_datadir/glib-2.0/schemas &> /dev/null || :
 %_datadir/%name/first-time
 %_datadir/%name/tray
 %_datadir/%name/wrapper
+%_datadir/applications/*
 %_datadir/dbus-1/services/*
 %_datadir/GConf/gsettings/*
 %_datadir/glib-2.0/schemas/*
@@ -192,10 +194,12 @@ $$UNIQUE_ID environment variable.
 %scons
 
 %install
-%scons GSETTINGS_SCHEMAS_COMPILE=no DESTDIR=$$RPM_BUILD_ROOT install
+%scons GSETTINGS_SCHEMAS_COMPILE=no DESTDIR=%buildroot install
+desktop-file-validate %buildroot/%_datadir/applications/first-time.desktop
 
 %check
 %scons test
+desktop-file-validate %buildroot/%_datadir/applications/first-time.desktop
 
 
 %changelog

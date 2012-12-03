@@ -29,12 +29,10 @@ class FirstTime(object):
         from gi.repository import Gio
         self.__settings = Gio.Settings(Keys.BASE)
 
-        # hook up state-linked icons
+        # hook up state-linked icon
         from EnabledIcon import EnabledIcon
-        from WindowIcon import WindowIcon
         image = get_widget('image')
         EnabledIcon(self.__settings, image)
-        WindowIcon(self.__settings, self.__dialog)
 
         # hook up state-linked radio buttons
         self.__bind_master(get_widget, 'yes', Gio.SettingsBindFlags.DEFAULT)

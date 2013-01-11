@@ -6,6 +6,7 @@ open SchemeName
 let name = {
   flag = "scalar-pairs";
   prefix = "scalarPairs";
+  code = "S";
   ident = "ScalarPairs";
 }
 

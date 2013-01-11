@@ -4,6 +4,7 @@ open SchemeName
 let name = {
   flag = "coverage";
   prefix = "coverage";
+  code = "V";
   ident = "Coverage";
 }
 

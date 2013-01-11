@@ -4,6 +4,7 @@ open SchemeName
 let name = {
   flag = "yields";
   prefix = "yields";
+  code = "Y";
   ident = "Yields";
 }
 

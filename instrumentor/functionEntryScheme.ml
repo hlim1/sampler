@@ -4,6 +4,7 @@ open SchemeName
 let name = {
   flag = "function-entries";
   prefix = "functionEntries";
+  code = "E";
   ident = "FunctionEntries";
 }
 

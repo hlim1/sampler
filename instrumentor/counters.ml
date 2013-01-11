@@ -10,8 +10,21 @@ let annotate =
     ~ident:"Annotate"
     ~default:false
 
+let trace =
+  Options.registerBoolean
+    ~flag:"trace-sites"
+    ~desc:"trace sites instead of bumping up counters and dumping summary report"
+    ~ident:"Trace"
+    ~default:false
+
 class manager name file =
   let counters = FindGlobal.find ("cbi_" ^ name.prefix ^ "Counters") file in
+  let traceSite = 
+    if !trace then
+      Lval (var (FindFunction.find "cbi_tracepoint" file))
+    else
+      zero
+  in
 
   object (self)
     val mutable nextId : int = 0
@@ -83,12 +96,29 @@ class manager name file =
       let instructions = bump :: stamp in
       IsolateInstructions.isolate instructions
 
+    (* get the trace instruction corresponding to a site ... todo *)
+    method private selectorToTrace siteInfo selector thisId =
+      let code = Const (CStr name.code) in
+      let site = integer thisId in
+      let selector = match selector with 
+                 | Index (s, NoOffset) -> s
+                 | NoOffset -> zero
+                 | _ -> raise Errormsg.Error
+      in
+      let location = siteInfo#inspiration in
+      let traceInst = Call (None, traceSite, [code; site; selector], location) in
+      let stamp = stamper name thisId location in
+      let instructions = traceInst :: stamp in
+      IsolateInstructions.isolate instructions
+
     (* get the "implementation" of a "selector" *)
     method selectorToImpl siteInfo selector =
       let thisId = nextId in
       let instructions =
         if !annotate then
           self#selectorToAnnot siteInfo selector thisId
+        else if !trace then
+          self#selectorToTrace siteInfo selector thisId
         else
           self#selectorToBump siteInfo selector thisId
       in

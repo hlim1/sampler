@@ -26,6 +26,7 @@ let schemes = [
   FunReentryScheme.factory;
   CompareSwapScheme.factory;
   AtomRWScheme.factory;
+  DataScheme.factory;
 ]
 
 let moveFnsToEndIfNeeded file =

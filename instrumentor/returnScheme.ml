@@ -4,6 +4,7 @@ open SchemeName
 let name = {
   flag = "returns";
   prefix = "returns";
+  code = "R";
   ident = "Returns";
 }
 

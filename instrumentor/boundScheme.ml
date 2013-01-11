@@ -5,6 +5,7 @@ open SchemeName
 let name = {
   flag = "bounds";
   prefix = "bounds";
+  code = "D";
   ident = "Bounds";
 }
 

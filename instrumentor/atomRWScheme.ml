@@ -4,6 +4,7 @@ open SchemeName
 let name = {
   flag = "atoms-rw";
   prefix = "atoms-rw";
+  code = "W";
   ident = "Atoms-RW";
 }
 

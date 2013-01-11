@@ -4,6 +4,7 @@ open SchemeName
 let name = {
   flag = "g-object-unref";
   prefix = "gObjectUnref";
+  code = "G";
   ident = "GObjectUnref";
 }
 

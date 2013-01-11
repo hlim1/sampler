@@ -193,6 +193,7 @@ class SamplerArgumentListFilter(ArgumentListFilter):
             'threads',
             'timestamp-first',
             'timestamp-last',
+            'trace-sites',
             'use-points-to',
             )
 
@@ -203,7 +204,7 @@ class SamplerArgumentListFilter(ArgumentListFilter):
         ArgumentListFilter.__init__(self, arglist, exactMatches=exactMatches, patternMatches=patternMatches)
 
         self.toggles.setdefault('threads', self.pthread)
-        if self.schemes & set(('atoms', 'atoms-rw', 'compare-swap')):
+        if self.schemes & set(('atoms', 'atoms-rw', 'compare-swap', 'data')):
             self.toggles['isolate-shared-accesses'] = True
 
     def _cludeCallback(self, flag):
@@ -295,6 +296,11 @@ def extraArgs(argFilter, samplerLibDir):
         yield '-include'
         yield sysheader('timestamps.h')
 
+    if toggles.get('trace-sites'):
+        yield '-I' + os.path.join(os.environ['HOME'], '.local/include')
+        yield '-include'
+        yield sysheader('trace.h')
+
     if toggles['sample']:
         yield '-include'
         yield sysheader('threads/countdown.h')
@@ -324,6 +330,12 @@ def extraArgs(argFilter, samplerLibDir):
         yield '-lsampler-schemes'
 
     reentrant = ('', '_r')[toggles['threads']]
+
+    if toggles.get('trace-sites'):
+        yield '-L' + os.path.join(os.environ['HOME'], '.local/lib')
+        yield '-llttng-ust'
+        yield '-lpthread'
+        yield '-ltrace'
 
     if not toggles['sample']:
         yield '-lsampler-always'

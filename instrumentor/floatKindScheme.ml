@@ -4,6 +4,7 @@ open SchemeName
 let name = {
   flag = "float-kinds";
   prefix = "floatKinds";
+  code = "F";
   ident = "FloatKinds";
 }
 

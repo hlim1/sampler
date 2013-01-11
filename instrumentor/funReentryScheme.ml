@@ -4,6 +4,7 @@ open SchemeName
 let name = {
   flag = "fun-reentries";
   prefix = "funReentries";
+  code = "Z";
   ident = "FunReentries";
 }
 

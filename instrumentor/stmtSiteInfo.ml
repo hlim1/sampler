@@ -6,11 +6,18 @@ class c func inspiration statement =
 
     method! print =
       let rec printStmt stmt =
-	let rec printStmts stmts =
+	let printStmt1 stmts =
 	  match stmts with
 	    [] -> []
+	    | [s] -> printStmt s
+	    | s :: _ -> printStmt s
+	in
+	let printStmt2 stmts =
+	  match stmts with
+	    [] -> []
+	    | [s] -> printStmt s
 	    | [_; s] -> printStmt s
-	    | _ :: l -> printStmts l
+	    | _ :: stmts -> printStmt1 stmts
 	in
 	let printStmtOption stmtOpt =
 	  match stmtOpt with
@@ -18,7 +25,7 @@ class c func inspiration statement =
 	    | Some s -> printStmt s
 	in
 	match stmt.skind with
-	  Block (b) -> printStmts b.bstmts
+	  Block (b) -> printStmt2 b.bstmts
 	  | Loop (_, _, _, stmt) -> printStmtOption stmt
 	  | If (exp, _, _, _) -> super#print @ [dn_exp () exp]
 	  | Switch (exp, _, _, _) -> super#print @ [dn_exp () exp]

@@ -297,7 +297,6 @@ def extraArgs(argFilter, samplerLibDir):
         yield sysheader('timestamps.h')
 
     if toggles.get('trace-sites'):
-        yield '-I' + os.path.join(os.environ['HOME'], '.local/include')
         yield '-include'
         yield sysheader('trace.h')
 
@@ -332,10 +331,7 @@ def extraArgs(argFilter, samplerLibDir):
     reentrant = ('', '_r')[toggles['threads']]
 
     if toggles.get('trace-sites'):
-        yield '-L' + os.path.join(os.environ['HOME'], '.local/lib')
-        yield '-llttng-ust'
-        yield '-lpthread'
-        yield '-ltrace'
+        yield '-lsampler-trace'
 
     if not toggles['sample']:
         yield '-lsampler-always'

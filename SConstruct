@@ -96,7 +96,6 @@ env.SetDefault(gcc=env.WhereIs('gcc'))
 env = env.Clone(
     tools=['default', 'ocaml', 'python', 'template', 'test', 'xml'], toolpath=['scons-tools'],
     CCFLAGS=['-Wall', '-Wextra', '-Werror', '-Wformat=2'],
-    HOME=os.environ['HOME'],
     OCAML_DEBUG=env['debug'],
     OCAML_DTYPES=True,
     OCAML_WARN='A',

@@ -2,7 +2,7 @@
 #define TRACEPOINT_PROVIDER cbi_trace
 
 #undef TRACEPOINT_INCLUDE_FILE
-#define TRACEPOINT_INCLUDE_FILE ./trace-lttng.h
+#define TRACEPOINT_INCLUDE_FILE trace-lttng.h
 
 #ifdef TRACEPOINT_HEADER_MULTI_READ
 #undef INCLUDE_sampler_trace_lttng_h

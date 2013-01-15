@@ -7,13 +7,11 @@ env.AppendUnique(
 env.File('libraries.py')
 
 tenv = env.Clone(
-    CCFLAGS=['-O', '-fPIC'],
-    CPPPATH=['.', '$HOME/.local/include'],
-    LIBPATH=['$HOME/.local/lib'],
-    LIBS=['dl', 'lttng-ust'],
+    CPPPATH='.',
+    LIBPREFIX='${LIBPREFIX}sampler-',
+    LIBS=['lttng-ust'],
 )
-libtrace = tenv.StaticLibrary('#driver/trace', tenv.StaticObject('trace.o', 'trace.c'))
-Alias('install', tenv.Install('$DESTDIR$libdir', libtrace))
+tenv.TwoLibraries('trace', ['trace.c'])
 
 headers = [
     'blast-markers.h',

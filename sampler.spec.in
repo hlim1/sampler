@@ -24,6 +24,8 @@ BuildRequires: gcc
 BuildRequires: glib2-devel
 BuildRequires: gsl-devel
 BuildRequires: inkscape
+BuildRequires: libuuid-devel
+BuildRequires: lttng-ust-devel
 BuildRequires: ocaml
 BuildRequires: ocaml-cil-devel >= 1.3.6
 BuildRequires: perl

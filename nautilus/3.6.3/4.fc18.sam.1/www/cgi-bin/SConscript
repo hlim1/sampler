@@ -1,0 +1,2 @@
+Import('env')
+env.Install('$DESTDIR$wwwdir/cgi-bin', 'sampler-upload')

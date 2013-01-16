@@ -1,0 +1,24 @@
+########################################################################
+
+
+Import('env')
+env = env.Clone()
+env.AppendUnique(CC=['-fsampler-scheme=function-entries'])
+
+fenv = env.Clone()
+fenv.AppendUnique(CC=['-ftimestamp-first'])
+
+lenv = env.Clone()
+lenv.AppendUnique(CC=['-ftimestamp-last'])
+
+benv = env.Clone()
+benv.AppendUnique(CC=['-ftimestamp-first', '-ftimestamp-last'])
+benv.Command('both.expected', ['first.expected', 'last.expected'], [['cat', '$SOURCES', '>$TARGET']])
+
+tests = [(fenv, 'first'), (lenv, 'last'), (benv, 'both')]
+tests = [ env.CBIResolvedTimestamps(env.CBIStaticObject('%s.o' % base, 'simple.c'), objects=base) for env, base in tests ]
+
+Alias('test:returns', map(env.Expect, tests))
+Alias('test', 'test:returns')
+
+File(Glob('*.expected'))

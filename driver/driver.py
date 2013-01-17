@@ -331,6 +331,7 @@ def extraArgs(argFilter, samplerLibDir):
     reentrant = ('', '_r')[toggles['threads']]
 
     if toggles.get('trace-sites'):
+        yield '-lpthread'
         yield '-lsampler-trace'
 
     if not toggles['sample']:

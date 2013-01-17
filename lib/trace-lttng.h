@@ -16,12 +16,12 @@
 TRACEPOINT_EVENT(
   cbi_trace,
   tp,
-  TP_ARGS( char *, cbi_unit, char *, cbi_scheme, int, cbi_site, int, cbi_selector ),
+  TP_ARGS( const unsigned char *, _unit, const char *, _scheme, unsigned long, _site, unsigned long, _selector ),
   TP_FIELDS(
-    ctf_array( char, unit, cbi_unit, 16 )
-    ctf_array_text( char, scheme, cbi_scheme, 1 )
-    ctf_integer( int, site, cbi_site )
-    ctf_integer( int, selector, cbi_selector )
+    ctf_array( const unsigned char, unit, _unit, 16 )
+    ctf_array_text( const char, scheme, _scheme, 1 )
+    ctf_integer( unsigned long, site, _site )
+    ctf_integer( unsigned long, selector, _selector )
   )
 )
 

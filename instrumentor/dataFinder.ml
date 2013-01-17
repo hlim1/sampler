@@ -16,11 +16,17 @@ class visitor (tuples : Counters.manager) func =
 	  begin
 	    match SharedAccesses.isolated instr with
 	      | Some lval when ((not (is_bitfield lval)) && (isDiscreteType (typeOfLval lval))) ->
-		let accessType, selector =
+		let accessType =
 		  if left == lval then
-		    AccessSiteInfo.Write, Index (one, NoOffset)
+		    AccessSiteInfo.Write
 		  else
-		    AccessSiteInfo.Read, NoOffset
+		    AccessSiteInfo.Read
+		in
+		let selector =
+		  if !Counters.trace then
+		    Index (mkCast (mkAddrOf lval) !upointType, NoOffset)
+		  else
+		    NoOffset
 		in
 		let siteInfo = new AccessSiteInfo.c func !currentLoc lval accessType in
 		let bump, _ = tuples#addSiteOffset siteInfo selector in

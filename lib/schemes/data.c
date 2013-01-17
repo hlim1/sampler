@@ -3,9 +3,9 @@
 
 
 void cbi_dataReport(const cbi_UnitSignature signature,
-			unsigned count, const cbi_Tuple2 counts[])
+			unsigned count, const cbi_Tuple1 counts[])
 {
   cbi_samplesBegin(signature, "data");
-  cbi_samplesDump2(count, counts);
+  cbi_samplesDump1(count, counts);
   cbi_samplesEnd();
 }

@@ -169,6 +169,27 @@
 	    </varlistentry>
 
 	    <varlistentry>
+	      <term><option>data</option></term>
+	      <listitem>
+		<para>For each statement which accesses a potentially
+		aliased memory location, count how many times each
+		statement is executed. Each statement induces one
+		instrumentation point with one counter:
+
+		  <orderedlist>
+		    <listitem>
+		      <para>memory accessed</para>
+		    </listitem>
+		  </orderedlist>
+		</para>
+
+		<para>The <link linkend="trace-sites"><option>-ftrace-sites</option></link>
+		flag changes this scheme to record the addresses of
+		memory accessed.</para>
+	      </listitem>
+	    </varlistentry>
+
+	    <varlistentry>
 	      <term><option>float-kinds</option></term>
 	      <listitem>
 		<para>At each assignment of a floating point value,
@@ -699,6 +720,21 @@
 	  optimization.  Defaults to emitting prediction hints, and
 	  should only be disabled when benchmarking the effect of this
 	  particular optimization.</para>
+	</listitem>
+      </varlistentry>
+
+      <varlistentry id="trace-sites">
+	<term><option>-ftrace-sites</option></term>
+	<term><option>-fno-trace-sites</option></term>
+	<listitem>
+	  <para>Use LTTng-ust to record a trace of all instrumentation
+	  sites instead of bumping up counters and dumping a summary
+	  report. When using the <option>data</option> instrumentation
+	  scheme, the trace will record the address of each memory
+	  access. When using the <option>branches</option>,
+	  <option>data</option>, and <option>function-entries</option>
+	  instrumentation schemes together, a complete dynamic
+	  dependence graph can be reconstructed from a trace.</para>
 	</listitem>
       </varlistentry>
     </variablelist>

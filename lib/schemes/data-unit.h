@@ -3,11 +3,11 @@
 
 #include "../unit-signature.h"
 #include "data.h"
-#include "tuple-2.h"
+#include "tuple-1.h"
 
 
 #pragma cilnoremove("cbi_dataCounters")
-static cbi_Tuple2 cbi_dataCounters[0];
+static cbi_Tuple1 cbi_dataCounters[0];
 
 #ifdef CBI_TIMESTAMP_FIRST
 #pragma cilnoremove("cbi_dataTimestampsFirst");

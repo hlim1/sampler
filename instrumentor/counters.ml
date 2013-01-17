@@ -10,7 +10,7 @@ let annotate =
     ~ident:"Annotate"
     ~default:false
 
-let trace =
+let trace : bool ref =
   Options.registerBoolean
     ~flag:"trace-sites"
     ~desc:"trace sites instead of bumping up counters and dumping summary report"
@@ -19,6 +19,7 @@ let trace =
 
 class manager name file =
   let counters = FindGlobal.find ("cbi_" ^ name.prefix ^ "Counters") file in
+  let signature = Lval (var (FindGlobal.find "cbi_unitSignature" file)) in
   let traceSite = 
     if !trace then
       Lval (var (FindFunction.find "cbi_tracepoint" file))
@@ -106,7 +107,7 @@ class manager name file =
                  | _ -> raise Errormsg.Error
       in
       let location = siteInfo#inspiration in
-      let traceInst = Call (None, traceSite, [code; site; selector], location) in
+      let traceInst = Call (None, traceSite, [signature; code; site; selector], location) in
       let stamp = stamper name thisId location in
       let instructions = traceInst :: stamp in
       IsolateInstructions.isolate instructions

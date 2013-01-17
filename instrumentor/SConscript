@@ -110,11 +110,13 @@ SConscript(dirs=[
     'bounds',
     'branches',
     'coverage',
+    'data',
     'function-entries',
     'g-object-unref',
     'nothing',
     'returns',
     'scalar-pairs',
     'timestamps',
+    'trace',
     ],
            exports='env')

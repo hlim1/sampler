@@ -15,6 +15,7 @@ let impls = Implications.getAccumulator
 let schemes = [
   ScalarPairScheme.factory impls;
   CoverageScheme.factory;
+  DataScheme.factory;
   YieldScheme.factory;
   AtomScheme.factory;
   BranchScheme.factory;
@@ -26,7 +27,6 @@ let schemes = [
   FunReentryScheme.factory;
   CompareSwapScheme.factory;
   AtomRWScheme.factory;
-  DataScheme.factory;
 ]
 
 let moveFnsToEndIfNeeded file =

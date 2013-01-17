@@ -1,5 +1,6 @@
 open Cil
 
+val trace : bool ref
 
 class manager : SchemeName.t -> file ->
   object

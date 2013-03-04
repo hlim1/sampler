@@ -1,0 +1,23 @@
+threads	coverage	threads.c	11	drop_x	1	__asm__  ("dummy statement!!":);	1
+threads	coverage	threads.c	11	drop_x	11	tmp	17001
+threads	coverage	threads.c	11	drop_x	15	break;	1
+threads	coverage	threads.c	11	drop_x	5	tmp = x;	17001
+threads	coverage	threads.c	11	drop_x	8	x --;	17001
+threads	coverage	threads.c	13	drop_x	18	printf((char const   */* __restrict  */)"x: %d\n", x);	17000
+threads	coverage	threads.c	14	drop_x	21	x % 10 == 0	17000
+threads	coverage	threads.c	15	drop_x	24	sched_yield();	1700
+threads	coverage	threads.c	17	drop_x	28	return;	1
+threads	coverage	threads.c	22	drop_y	1	__asm__  ("dummy statement!!":);	1
+threads	coverage	threads.c	22	drop_y	11	tmp	12001
+threads	coverage	threads.c	22	drop_y	15	break;	1
+threads	coverage	threads.c	22	drop_y	5	tmp = y;	12001
+threads	coverage	threads.c	22	drop_y	8	y --;	12001
+threads	coverage	threads.c	24	drop_y	18	printf((char const   */* __restrict  */)"y: %d\n", y);	12000
+threads	coverage	threads.c	25	drop_y	21	y % 5 == 0	12000
+threads	coverage	threads.c	26	drop_y	24	sched_yield();	2400
+threads	coverage	threads.c	28	drop_y	28	return;	1
+threads	coverage	threads.c	36	main	2	pthread_create((pthread_t */* __restrict  */)(& thread_x), (pthread_attr_t const   */* __restrict  */)0, (void *(*)(void * ))(& drop_x), (void */* __restrict  */)0);	1
+threads	coverage	threads.c	37	main	5	pthread_create((pthread_t */* __restrict  */)(& thread_y), (pthread_attr_t const   */* __restrict  */)0, (void *(*)(void * ))(& drop_y), (void */* __restrict  */)0);	1
+threads	coverage	threads.c	39	main	8	pthread_join(thread_x, (void **)0);	1
+threads	coverage	threads.c	40	main	11	pthread_join(thread_y, (void **)0);	1
+threads	coverage	threads.c	42	main	14	return (0);	1

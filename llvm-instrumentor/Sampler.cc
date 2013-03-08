@@ -2,12 +2,11 @@
 #include "utilities.hh"
 #include <boost/bind/bind.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/range/adaptors.hpp>
+#include <boost/range/adaptor/filtered.hpp>
+#include <boost/range/adaptor/indirected.hpp>
+#include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/range/algorithm/for_each.hpp>
-#include <boost/range/algorithm_ext/insert.hpp>
-#include <boost/range/irange.hpp>
-#include <boost/range/numeric.hpp>
 #include <llvm/ADT/DenseSet.h>
 #include <llvm/ADT/SmallSet.h>
 #include <llvm/Function.h>

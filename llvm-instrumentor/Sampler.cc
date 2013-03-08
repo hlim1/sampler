@@ -264,7 +264,7 @@ bool Sampler::runOnFunction(Function &function)
       splitPoints.push_back(&callSite);
 
   // region header after each invoke or non-intrinsic call
-  for (auto &callSite : splitPoints)
+  for (const auto &callSite : splitPoints)
     {
       const auto block(callSite->getParent());
       const auto afterCall(SplitBlock(block, after(callSite), this));
@@ -289,7 +289,7 @@ bool Sampler::runOnFunction(Function &function)
   ValueToValueMapTy valueMap;
   const auto clonedFunction(CloneFunction(&function, valueMap, false));
   assert(clonedFunction->getParent() == nullptr);
-  for (auto mapping : valueMap)
+  for (const auto &mapping : valueMap)
     {
       const auto &fastName(mapping.first->getName());
       if (!fastName.empty())
@@ -302,7 +302,7 @@ bool Sampler::runOnFunction(Function &function)
       SmallVector<Instruction *, 4> chaff;
       for (auto &clonedInstr : clonedBlock | filtered(isDebugDeclare))
 	chaff.push_back(&clonedInstr);
-      for (auto &instr : chaff)
+      for (const auto &instr : chaff)
 	instr->eraseFromParent();
     }
 

@@ -1,0 +1,25 @@
+Import('env', 'testPythonsGtk')
+env = env.Clone(bindir=env.subst('$bindir'),
+               traydir=env.subst('$traydir'))
+
+
+########################################################################
+
+
+service = env.Template('edu.wisc.cs.cbi.Monitor.service.in', varlist=['traydir'])
+Default(service)
+
+pythons = [
+    'Main.py',
+    'NotificationIcon.py',
+    'Service.py',
+    ]
+
+compiled = env.PythonBytecodeOpt(pythons)
+Default(compiled)
+testPythonsGtk(env, pythons)
+
+Alias('install', [
+    env.Install('$DESTDIR$servicesdir', service),
+    env.Install('$DESTDIR$traydir', [compiled, 'tray']),
+    ])

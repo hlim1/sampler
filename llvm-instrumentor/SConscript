@@ -3,6 +3,7 @@ from SCons.Errors import StopError
 Import('env')
 
 lenv = env.Clone(
+    INCPREFIX='-isystem',
     parse_flags='!llvm-config --cxxflags --ldflags',
     tools=('llvm',),
     toolpath='.',

@@ -1,7 +1,7 @@
 #include "Scheme.hh"
 #include "SitesRegistry.hh"
 #include "utilities.hh"
-#include <llvm/Support/IRBuilder.h>
+#include <llvm/IRBuilder.h>
 #include <llvm/Support/Debug.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Transforms/Utils/BasicBlockUtils.h>

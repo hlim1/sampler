@@ -83,8 +83,8 @@ if env['domainname'] == 'cs.wisc.edu':
     print 'adding special tweaks for', env['domainname']
     env.PrependENVPath('PATH', [
             '/unsup/ocaml/bin',
-            '/unsup/llvm-3.0/bin',
-            '/s/gcc-4.7.0/bin',
+            '/unsup/llvm-3.2/bin',
+            '/s/gcc-4.8.0/bin',
             ])
     env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.6/site-packages/pychecker/checker.py']
 

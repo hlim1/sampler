@@ -12,12 +12,12 @@
 #include <llvm/Function.h>
 #include <llvm/InstrTypes.h>
 #include <llvm/IntrinsicInst.h>
+#include <llvm/IRBuilder.h>
 #include <llvm/Module.h>
 #include <llvm/Pass.h>
 #include <llvm/Support/CallSite.h>
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/Debug.h>
-#include <llvm/Support/IRBuilder.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Transforms/Utils/BasicBlockUtils.h>
 #include <llvm/Transforms/Utils/Cloning.h>

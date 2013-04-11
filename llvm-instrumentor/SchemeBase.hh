@@ -2,8 +2,8 @@
 #define INCLUDE_SchemeBase_hh
 
 #include "InstBoolVisitor.hh"
+#include <llvm/IRBuilder.h>
 #include <llvm/Pass.h>
-#include <llvm/Support/IRBuilder.h>
 
 
 class SchemeBase : public llvm::BasicBlockPass

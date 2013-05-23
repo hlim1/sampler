@@ -9,20 +9,23 @@ modular = env.CBIProgram(target='modular', source=['modular-a.c', 'modular-b.c']
 plugin = env.CBISharedLibrary(target='plugin.so', source='plugin.c')
 library = env.CBISharedLibrary(target='library.so', source='library.c')
 program = env.CBIProgram(source=['sharing.c', library], LIBS='dl')
-sharing = env.CBIReports([program, library, plugin])
-
 simple = env.CBIProgram('simple.c')
 
 tenv = env.Clone()
 tenv.AppendUnique(CC=['-pthread'])
 threads = tenv.CBIProgram('threads.c')
 
-Alias('test:trace', map(env.Expect, [
+allSites = (
     env.CBISites('simple', objects=simple),
     env.CBISites('modular', objects=modular),
     env.CBISites('sharing', objects=[program, library, plugin]),
     tenv.CBISites('threads', objects=threads),
-    ]))
+)
+
+for sites in allSites:
+    anonymized = sites[0].target_from_source('', '.anon')
+    env.Command(anonymized, sites, """sed 's/unit="[0-9a-f]\{32\}"/unit="..."/' <$SOURCE >$TARGET""")
+    Alias('test:trace', env.Expect(anonymized))
 
 Alias('test', 'test:trace')
 

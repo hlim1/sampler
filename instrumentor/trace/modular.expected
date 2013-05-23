@@ -1,25 +1,25 @@
-<sites unit="63ee8b6b5a102df93eb52ce569ff9baf" scheme="data">
+<sites unit="..." scheme="data">
 instrumentor/trace/modular-a.c	6	main	4	*(argv + 0)	read
 instrumentor/trace/modular-a.c	6	main	7	*(*(argv + 0) + 0)	read
 instrumentor/trace/modular-a.c	7	main	16	*(argv + 0)	read
 instrumentor/trace/modular-a.c	7	main	19	*(*(argv + 0) + 0)	write
 </sites>
-<sites unit="63ee8b6b5a102df93eb52ce569ff9baf" scheme="branches">
+<sites unit="..." scheme="branches">
 instrumentor/trace/modular-a.c	6	main	11	cbi_shared_access4
 instrumentor/trace/modular-a.c	11	main	25	argc > 1
 instrumentor/trace/modular-a.c	11	main	30	argc > 2
 </sites>
-<sites unit="63ee8b6b5a102df93eb52ce569ff9baf" scheme="function-entries">
+<sites unit="..." scheme="function-entries">
 instrumentor/trace/modular-a.c	4	main	0
 </sites>
-<sites unit="21dd62d023a6e52f525e7cca46ae0577" scheme="data">
+<sites unit="..." scheme="data">
 instrumentor/trace/modular-b.c	6	component	4	value	read
 instrumentor/trace/modular-b.c	7	component	15	value	read
 instrumentor/trace/modular-b.c	7	component	18	value	write
 </sites>
-<sites unit="21dd62d023a6e52f525e7cca46ae0577" scheme="branches">
+<sites unit="..." scheme="branches">
 instrumentor/trace/modular-b.c	6	component	8	cbi_shared_access1
 </sites>
-<sites unit="21dd62d023a6e52f525e7cca46ae0577" scheme="function-entries">
+<sites unit="..." scheme="function-entries">
 instrumentor/trace/modular-b.c	4	component	0
 </sites>

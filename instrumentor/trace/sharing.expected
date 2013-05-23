@@ -1,12 +1,12 @@
-<sites unit="e25645b9e736aaac59921020e993a0a7" scheme="data">
+<sites unit="..." scheme="data">
 instrumentor/trace/sharing.c	14	dlcheck	11	stderr	read
 instrumentor/trace/sharing.c	15	dlcheck	15	stderr	read
 instrumentor/trace/sharing.c	24	main	3	*(argv + 0)	read
 </sites>
-<sites unit="e25645b9e736aaac59921020e993a0a7" scheme="branches">
+<sites unit="..." scheme="branches">
 instrumentor/trace/sharing.c	12	dlcheck	6	message
 </sites>
-<sites unit="e25645b9e736aaac59921020e993a0a7" scheme="function-entries">
+<sites unit="..." scheme="function-entries">
 instrumentor/trace/sharing.c	9	dlcheck	0
 instrumentor/trace/sharing.c	21	main	0
 </sites>

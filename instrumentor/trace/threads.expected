@@ -1,4 +1,4 @@
-<sites unit="0e501eb35852c536411dd498fda02e89" scheme="data">
+<sites unit="..." scheme="data">
 instrumentor/trace/threads.c	11	drop_x	4	x	read
 instrumentor/trace/threads.c	11	drop_x	7	x	read
 instrumentor/trace/threads.c	11	drop_x	10	x	write
@@ -12,13 +12,13 @@ instrumentor/trace/threads.c	25	drop_y	26	y	read
 instrumentor/trace/threads.c	39	main	5	thread_x	read
 instrumentor/trace/threads.c	40	main	9	thread_y	read
 </sites>
-<sites unit="0e501eb35852c536411dd498fda02e89" scheme="branches">
+<sites unit="..." scheme="branches">
 instrumentor/trace/threads.c	11	drop_x	14	tmp
 instrumentor/trace/threads.c	14	drop_x	30	cbi_shared_access4 % 10 == 0
 instrumentor/trace/threads.c	22	drop_y	14	tmp
 instrumentor/trace/threads.c	25	drop_y	30	cbi_shared_access4 % 5 == 0
 </sites>
-<sites unit="0e501eb35852c536411dd498fda02e89" scheme="function-entries">
+<sites unit="..." scheme="function-entries">
 instrumentor/trace/threads.c	9	drop_x	0
 instrumentor/trace/threads.c	20	drop_y	0
 instrumentor/trace/threads.c	31	main	0

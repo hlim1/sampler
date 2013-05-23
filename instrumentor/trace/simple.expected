@@ -1,14 +1,14 @@
-<sites unit="5a1d6d8d0dfc84eb9eeb2586658ea5d6" scheme="data">
+<sites unit="..." scheme="data">
 instrumentor/trace/simple.c	3	main	4	*(argv + 0)	read
 instrumentor/trace/simple.c	3	main	7	*(*(argv + 0) + 0)	read
 instrumentor/trace/simple.c	4	main	16	*(argv + 0)	read
 instrumentor/trace/simple.c	4	main	19	*(*(argv + 0) + 0)	write
 </sites>
-<sites unit="5a1d6d8d0dfc84eb9eeb2586658ea5d6" scheme="branches">
+<sites unit="..." scheme="branches">
 instrumentor/trace/simple.c	3	main	11	cbi_shared_access4
 instrumentor/trace/simple.c	6	main	24	argc > 1
 instrumentor/trace/simple.c	6	main	29	argc > 2
 </sites>
-<sites unit="5a1d6d8d0dfc84eb9eeb2586658ea5d6" scheme="function-entries">
+<sites unit="..." scheme="function-entries">
 instrumentor/trace/simple.c	1	main	0
 </sites>

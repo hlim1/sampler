@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from gi._glib import GError
 from gi.repository import GLib, Gtk, Notify
 
 import Keys
@@ -53,7 +52,7 @@ class NotificationIcon(object):
         if self.__note:
             try:
                 self.__note.close()
-            except GError:
+            except GLib.GError:
                 pass
         self.__note = None
 
@@ -82,7 +81,7 @@ class NotificationIcon(object):
         if self.__note:
             try:
                 note.show()
-            except GError:
+            except GLib.GError:
                 return True
         return False
 

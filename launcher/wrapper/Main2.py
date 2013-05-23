@@ -32,11 +32,10 @@ def main(name, wrapped, upload_headers, **extras):
         except RuntimeError, error:
             print >>stderr, "warning: cannot activate CBI first-time dialog:", error
 
-    if settings[Keys.SHOW_TRAY_ICON]:
-        try:
-            Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None).activate()
-        except RuntimeError, error:
-            print >>stderr, "warning: cannot activate CBI tray icon:", error
+    try:
+        Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES | Gio.DBusProxyFlags.DO_NOT_CONNECT_SIGNALS, None, 'edu.wisc.cs.cbi.Monitor', '/edu/wisc/cs/cbi/Monitor', 'edu.wisc.cs.cbi.Monitor', None).activate()
+    except RuntimeError, error:
+        print >>stderr, "warning: cannot activate CBI tray icon:", error
 
     outcome = launcher.wait()
     outcome.exit()

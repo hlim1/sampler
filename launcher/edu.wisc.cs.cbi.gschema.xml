@@ -12,10 +12,5 @@
       <summary>Sampling and reporting is enabled</summary>
       <description>Set to true if the user has decided to participate in the bug isolation project: samples will be collected during each run and reported to the central bug isolation server after each run concludes.  Set to false if the user has decided not to participate: no samples will be collected or reported.  Note that if the sibling “asked” key is false, then this key only sets the default for the first-time opt-in dialog.  Sampling only begins once both “asked” and “enabled” are true.</description>
     </key>
-    <key name="show-tray-icon" type="b">
-      <default>true</default>
-      <summary>Show tray icon while instrumented applications are running</summary>
-      <description>Set to true if the “Bug Isolation Monitor” tray icon should be displayed whenever the user is running any instrumented application.  The tray icon, which appears in the desktop notification area, serves as a visual reminder that instrumented code is in use.  The icon shows a green blip if automatic reporting is enabled, or no blip if reporting is disabled.</description>
-    </key>
   </schema>
 </schemalist>

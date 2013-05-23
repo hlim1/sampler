@@ -41,7 +41,7 @@ class NotificationIcon(object):
         note = Notify.Notification()
         note.set_urgency(Notify.Urgency.LOW)
         note.set_hint('resident', GLib.Variant.new_boolean(True))
-        #note.set_hint_string('desktop-entry', ...)
+        note.set_hint_string('desktop-entry', 'sampler-tray')
         self.__note = note
 
         key = Keys.MASTER

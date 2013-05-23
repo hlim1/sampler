@@ -19,7 +19,11 @@ compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 testPythonsGtk(env, pythons)
 
+desktop = File('sampler-tray.desktop')
+Alias('test', env.TestDesktop(desktop))
+
 Alias('install', [
+    env.Install('$DESTDIR$applicationsdir', desktop),
     env.Install('$DESTDIR$servicesdir', service),
     env.Install('$DESTDIR$traydir', [compiled, 'tray']),
     ])

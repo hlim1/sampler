@@ -68,7 +68,9 @@ main (int argc __attribute((unused)), char *argv[] __attribute((unused)))
 {
   Test *object;
 
+#if GLIB_VERSION_CUR_STABLE < GLIB_VERSION_2_26
   g_type_init ();
+#endif
 
   object = g_object_new (test_get_type (), 0);
   g_object_ref (object);

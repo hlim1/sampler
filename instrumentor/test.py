@@ -42,7 +42,7 @@ def __sampler_ld_scan(node, env, path):
     deps = chain(
         __driver_deps,
         env.Glob('#driver/lib/$SHLIBPREFIX*${SHLIBSUFFIX}'),
-        env.Glob('#driver/lib/$SHLIBPREFIX*${SHLIBSUFFIX}.${SHLIBVERSION[0]}'),
+        env.Glob('#driver/lib/$SHLIBPREFIX*${SHLIBSUFFIX}.1'),
         )
     return list(deps)
 

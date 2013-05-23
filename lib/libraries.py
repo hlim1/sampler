@@ -29,6 +29,9 @@ symlink_builder = Builder(
 ########################################################################
 
 
+# simplify this using env.InstallVersionedLibrary
+# once we can require scons-2.3 everywhere
+
 def TwoLibraries(env, target, source, **kwargs):
     target = '#driver/' + target
 
@@ -45,12 +48,12 @@ def TwoLibraries(env, target, source, **kwargs):
     objs = objectsInCwd(env.StaticObject)
     [static] = env.StaticLibrary(target, objs, **kwargs)
 
-    majorVersioned = static.target_from_source('', env.subst('${SHLIBSUFFIX}.${SHLIBVERSION[0]}'))
+    majorVersioned = static.target_from_source('', env.subst('${SHLIBSUFFIX}.1'))
     unversioned    = static.target_from_source('', env.subst('${SHLIBSUFFIX}'))
 
     objs = objectsInCwd(env.SharedObject)
     [shared] = env.SharedLibrary(target, objs,
-                                 SHLIBSUFFIX='${SHLIBSUFFIX}.$_SHLIBVERSION',
+                                 SHLIBSUFFIX='${SHLIBSUFFIX}.1.0.0',
                                  SHLINKFLAGS=['$SHLINKFLAGS', '-Wl,-soname,' + majorVersioned.name],
                                  **kwargs)
 
@@ -71,12 +74,6 @@ def TwoLibraries(env, target, source, **kwargs):
     return shared
 
 
-def var_shlibversion(target, source, env, for_signature):
-    strings = imap(str, env['SHLIBVERSION'])
-    dotted = '.'.join(strings)
-    return dotted
-
-
 ########################################################################
 
 
@@ -85,10 +82,6 @@ def generate(env):
         BUILDERS={
             'Symlink': symlink_builder,
             },
-        )
-
-    env.SetDefault(
-        _SHLIBVERSION=var_shlibversion,
         )
 
     env.AddMethod(TwoLibraries)

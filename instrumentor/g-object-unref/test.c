@@ -68,7 +68,7 @@ main (int argc __attribute((unused)), char *argv[] __attribute((unused)))
 {
   Test *object;
 
-#if GLIB_VERSION_CUR_STABLE < GLIB_VERSION_2_26
+#if GLIB_VERSION_CUR_STABLE < G_ENCODE_VERSION(2, 36)
   g_type_init ();
 #endif
 

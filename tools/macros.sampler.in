@@ -9,6 +9,7 @@
 %sampler_tags \
 Requires: sampler >= 1.5 \
 BuildRequires: sampler-devel >= 1.5 \
+BuildRequires: redhat-rpm-config \
 %nil
 
 %sampler_description This package has been built with sampled bug feedback instrumentation.

@@ -345,7 +345,13 @@ AddPostAction(package, [Chmod('$TARGET', 0644)])
 redhat = Dir('redhat')
 
 srpm = env.File('SRPMS/$NAME-$VERSION-1${deployment_release_suffix}.src.rpm', redhat)
-env.Command(srpm, [spec, package], [['rpmbuild', '-bs', '--define', '_topdir ' + redhat.name, '$SOURCE']])
+env.Command(srpm, [spec, package], [[
+            'rpmbuild', '-bs',
+            '--define', '_topdir ' + redhat.path,
+            '--define', '_sourcedir .',
+            '$SOURCE',
+            ]])
+Clean(srpm, env.Dir(['BUILD', 'BUILDROOT', 'SOURCES', 'SPECS'], redhat))
 
 def rpm_targets(env):
     rpmdir = env.Dir('RPMS/$TARGET_ARCH', redhat)

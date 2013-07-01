@@ -1,5 +1,10 @@
 -*- outline -*-
 
+* sampler-1.9.3
+
+** Minor updates for Fedora 19.
+** Use mock to build RPMs, allowing 32-bit builds on 64-bit hosts.
+
 * sampler-1.9.2
 
 ** Minor updates for Fedora 18.

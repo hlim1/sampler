@@ -6,21 +6,6 @@ Import('env')
 env = env.Clone(LEXFLAGS=['-f', '-p'], OCAML_LIBS=['unix', 'str'])
 env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
 
-
-def distroVersion(context):
-    context.Message('checking for distribution version: ')
-    version = platform.dist()[1]
-    context.env['DISTRO_VERSION'] = version
-    context.Result(version)
-
-conf = env.Configure(
-    clean=False, help=False,
-    custom_tests={
-        'DistroVersion': distroVersion,
-        })
-conf.DistroVersion()
-conf.Finish()
-
 wenv = env.Clone()
 wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare', '-Wno-type-limits'])
 wenv.ParseConfig(['gsl-config', '--cflags', '--libs'])

@@ -187,6 +187,23 @@ def distroBasis(context):
     context.Result(basis)
     return basis
 
+def distroVersion(context):
+    context.Message('checking for distribution version: ')
+    version = platform.dist()[1]
+    context.env['DISTRO_VERSION'] = version
+    context.Result(version)
+
+def distroArch(context):
+    context.Message('checking for distribution architecture: ')
+    (status, arch) = context.TryAction('rpm --eval %_build_arch >$TARGET')
+    if status:
+        arch = arch.rstrip()
+        context.env['DISTRO_ARCH'] = arch
+        context.Result(arch)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
 def distroCpu(context):
     context.Message('checking for distribution cpu: ')
     action = {
@@ -203,14 +220,18 @@ def distroCpu(context):
         context.env.Exit(1)
 
 conf = env.Configure(
-    clean=False, help=False,
+    clean=True, help=False,
     custom_tests={
         'DistroName': distroName,
         'DistroBasis': distroBasis,
+        'DistroVersion': distroVersion,
+        'DistroArch': distroArch,
         'DistroCpu': distroCpu,
         })
 conf.DistroName()
 conf.DistroBasis()
+conf.DistroVersion()
+conf.DistroArch()
 conf.DistroCpu()
 conf.Finish()
 
@@ -292,7 +313,7 @@ SConscript(dirs=sorted(subdirs))
 
 ########################################################################
 #
-#  packaging
+#  tar packaging
 #
 
 env.File([
@@ -315,31 +336,33 @@ package = env.Package(
 
 AddPostAction(package, [Chmod('$TARGET', 0644)])
 
-subdirs = [
-    'BUILD',
-    'RPMS/$DISTRO_CPU',
-    'SOURCES',
-    'SRPMS',
-    ]
+
+########################################################################
+#
+#  RPM packaging
+#
 
 redhat = Dir('redhat')
 
-subpackages = ['devel', 'libs', 'server']
-def rpm_targets():
-    yield 'SRPMS/$NAME-${VERSION}-1${deployment_release_suffix}.src.rpm'
-    yield 'RPMS/$DISTRO_CPU/$NAME-${VERSION}-1${deployment_release_suffix}.${DISTRO_CPU}.rpm'
-    for subpackage in subpackages:
-        yield 'RPMS/$DISTRO_CPU/$NAME-%s-${VERSION}-1${deployment_release_suffix}.${DISTRO_CPU}.rpm' % subpackage
+srpm = env.File('SRPMS/$NAME-$VERSION-1${deployment_release_suffix}.src.rpm', redhat)
+env.Command(srpm, [spec, package], [['rpmbuild', '-bs', '--define', '_topdir ' + redhat.name, '$SOURCE']])
 
-rpms = env.File(list(rpm_targets()), redhat)
+def rpm_targets(env):
+    rpmdir = env.Dir('RPMS/$TARGET_ARCH', redhat)
+    yield env.File('$NAME-$VERSION-1${deployment_release_suffix}.${TARGET_CPU}.rpm', rpmdir)
+    for subpackage in 'devel', 'libs', 'server':
+        yield env.File('$NAME-%s-$VERSION-1${deployment_release_suffix}.${TARGET_CPU}.rpm' % subpackage, rpmdir)
 
-def rpm_action():
-    yield Delete('redhat')
-    for subdir in subdirs:
-        yield Mkdir(env.Dir(subdir, redhat))
-    yield Copy(redhat.Dir('SOURCES'), package)
-    yield ['rpmbuild', '--define', '_topdir %s' % redhat.abspath, '-ba', '$SOURCE']
+targetArchCPUs = frozenset((
+            (env['DISTRO_ARCH'], env['DISTRO_CPU']),
+            ('i386', 'i686'),
+            ))
 
-
-Command(rpms, ['sampler.spec', package], list(rpm_action()))
-Alias('rpms', rpms)
+for arch, cpu in targetArchCPUs:
+    tenv = env.Clone(
+        TARGET_ARCH=arch,
+        TARGET_CPU=cpu,
+    )
+    targets = list(rpm_targets(tenv))
+    tenv.Command(targets, srpm, 'mock --root=$DISTRO_NAME-$DISTRO_VERSION-$TARGET_ARCH --resultdir=${TARGETS[0].dir} $SOURCE')
+    Alias('rpms', targets)

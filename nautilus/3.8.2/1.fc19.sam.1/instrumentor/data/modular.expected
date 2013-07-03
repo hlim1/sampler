@@ -1,0 +1,7 @@
+modular	data	modular-a.c	6	main	3	*(argv + 0)	read	1
+modular	data	modular-a.c	6	main	6	*(*(argv + 0) + 0)	read	1
+modular	data	modular-a.c	7	main	11	*(argv + 0)	read	1
+modular	data	modular-a.c	7	main	14	*(*(argv + 0) + 0)	write	1
+modular	data	modular-b.c	6	component	3	value	read	1
+modular	data	modular-b.c	7	component	10	value	read	0
+modular	data	modular-b.c	7	component	13	value	write	0

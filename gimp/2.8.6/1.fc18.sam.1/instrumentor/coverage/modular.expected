@@ -1,0 +1,13 @@
+modular	coverage	modular-a.c	11	main	11	argc > 1	1
+modular	coverage	modular-a.c	11	main	14	argc > 2	0
+modular	coverage	modular-a.c	12	main	17	return (1);	0
+modular	coverage	modular-a.c	14	main	20	return (0);	0
+modular	coverage	modular-a.c	14	main	23	return (0);	1
+modular	coverage	modular-a.c	6	main	1	*(*(argv + 0) + 0)	1
+modular	coverage	modular-a.c	7	main	4	*(*(argv + 0) + 0) = (char )'z';	1
+modular	coverage	modular-a.c	9	main	8	component();	1
+modular	coverage	modular-b.c	6	component	1	__asm__  ("dummy statement!!":);	1
+modular	coverage	modular-b.c	6	component	4	value	1
+modular	coverage	modular-b.c	6	component	8	break;	1
+modular	coverage	modular-b.c	7	component	11	value --;	0
+modular	coverage	modular-b.c	8	component	14	return;	1

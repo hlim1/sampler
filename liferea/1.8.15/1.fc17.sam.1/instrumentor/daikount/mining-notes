@@ -1,0 +1,14 @@
+-*- outline -*-
+
+* regularized logistic regression
+** "supervised" classification problem
+** only applicable to a single bug?
+
+* principal component analysis
+** probably not applicable here
+
+* "unsupervised" classification
+** an unknown number of bugs
+*** bugs not distinguishable merely by crash outcome
+
+* what about bugs that require multiple invariant violations?

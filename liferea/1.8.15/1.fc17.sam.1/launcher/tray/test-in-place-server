@@ -1,0 +1,6 @@
+#!/bin/sh
+
+home="$(cd "$(dirname "$0")" && pwd)"
+launcher="$home/.."
+export XDG_DATA_DIRS="$launcher":/usr/local/share:/usr/share
+exec "$home"/tray

@@ -1,0 +1,2 @@
+cpp_tuple_counter_bits_default = '$cpp_tuple_counter_bits_default'
+gcc = '$gcc'

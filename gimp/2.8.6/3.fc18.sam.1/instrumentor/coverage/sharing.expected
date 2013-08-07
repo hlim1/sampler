@@ -1,0 +1,26 @@
+libplugin.so	coverage	plugin.c	6	function	1	direction	1
+libplugin.so	coverage	plugin.c	7	function	4	pluginCounter ++;	1
+libplugin.so	coverage	plugin.c	8	function	8	return;	1
+library.so	coverage	library.c	10	libraryFunction	4	libraryCounter ++;	1
+library.so	coverage	library.c	11	libraryFunction	8	return;	1
+library.so	coverage	library.c	9	libraryFunction	1	direction	1
+sharing	coverage	sharing.c	11	dlcheck	2	tmp = dlerror();	3
+sharing	coverage	sharing.c	11	dlcheck	5	message = (char const   *)tmp;	3
+sharing	coverage	sharing.c	12	dlcheck	8	message	3
+sharing	coverage	sharing.c	14	dlcheck	12	fputs((char const   */* __restrict  */)message, (FILE */* __restrict  */)stderr);	0
+sharing	coverage	sharing.c	15	dlcheck	15	fputc('\n', stderr);	0
+sharing	coverage	sharing.c	16	dlcheck	18	exit(3);	0
+sharing	coverage	sharing.c	18	dlcheck	22	return;	3
+sharing	coverage	sharing.c	24	main	2	tmp = dirname(*(argv + 0));	1
+sharing	coverage	sharing.c	24	main	5	snprintf((char */* __restrict  */)(path), sizeof(path), (char const   */* __restrict  */)"%s/libplugin.so", tmp);	1
+sharing	coverage	sharing.c	25	main	11	plugin = tmp___0;	1
+sharing	coverage	sharing.c	25	main	8	tmp___0 = dlopen((char const   *)(path), 1);	1
+sharing	coverage	sharing.c	26	main	14	dlcheck();	1
+sharing	coverage	sharing.c	29	main	17	tmp___1 = dlsym((void */* __restrict  */)plugin, (char const   */* __restrict  */)"function");	1
+sharing	coverage	sharing.c	29	main	20	function = (void (*)(int  ))tmp___1;	1
+sharing	coverage	sharing.c	30	main	23	dlcheck();	1
+sharing	coverage	sharing.c	31	main	26	(*function)(1);	1
+sharing	coverage	sharing.c	34	main	29	libraryFunction(1);	1
+sharing	coverage	sharing.c	36	main	32	dlclose(plugin);	1
+sharing	coverage	sharing.c	37	main	35	dlcheck();	1
+sharing	coverage	sharing.c	38	main	38	return (0);	1

@@ -1,0 +1,12 @@
+threads	data	threads.c	11	drop_x	3	x	read	17001
+threads	data	threads.c	11	drop_x	6	x	read	17001
+threads	data	threads.c	11	drop_x	9	x	write	17001
+threads	data	threads.c	13	drop_x	16	x	read	17000
+threads	data	threads.c	14	drop_x	21	x	read	17000
+threads	data	threads.c	22	drop_y	3	y	read	12001
+threads	data	threads.c	22	drop_y	6	y	read	12001
+threads	data	threads.c	22	drop_y	9	y	write	12001
+threads	data	threads.c	24	drop_y	16	y	read	12000
+threads	data	threads.c	25	drop_y	21	y	read	12000
+threads	data	threads.c	39	main	4	thread_x	read	1
+threads	data	threads.c	40	main	8	thread_y	read	1

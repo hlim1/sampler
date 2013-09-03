@@ -1,0 +1,33 @@
+Import('env')
+
+key = 'cpp_tuple_counter_bits_default'
+if env['tuple_counter_bits'] == 'natural':
+    env[key] = ''
+else:
+    env[key] = '-DCBI_TUPLE_COUNTER_BITS=$tuple_counter_bits'
+
+cc = env.Template('sampler-cc.in', varlist=['driverdir'])
+config = env.Template('config.py.in', varlist=['gcc', key])
+Default(cc, config)
+
+Default('sampler')
+
+pythons = [
+    'config.py',
+    'driver.py',
+    ]
+
+bytecode = env.PythonBytecodeOpt(pythons)
+
+test = env.TestPython('pychecker.passed', pythons)
+Alias('test', test)
+
+Alias('install', [
+    env.Install('$DESTDIR$bindir', cc),
+    env.Install('$DESTDIR$driverdir', [
+                bytecode,
+                'as',
+                'cc1',
+                'sampler-specs',
+                ]),
+    ])

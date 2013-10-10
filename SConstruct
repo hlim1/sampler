@@ -78,7 +78,11 @@ opts.AddVariables(
 env = Environment(options=opts)
 opts.Save('.scons-config', env)
 
-domainname = getfqdn().split('.', 1)[1]
+try:
+    domainname = getfqdn().split('.', 1)[1]
+except IndexError:
+    domainname = None
+
 if domainname == 'cs.wisc.edu':
     print 'adding special tweaks for', domainname
     env.AppendENVPath('PATH', '/unsup/ocaml/bin')

@@ -43,7 +43,7 @@ let d_label () = function
   | Case (expr, _) ->
       text "case " ++ d_exp () expr
   | CaseRange (lower, upper, _) ->
-      text "case " ++ d_exp () lower ++ text " ... " ++ d_exp() upper
+      text "case " ++ d_exp () lower ++ text " ... " ++ d_exp () upper
   | Default _ ->
       text "default"
 

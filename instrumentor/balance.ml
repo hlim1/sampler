@@ -141,13 +141,11 @@ let patch func splits weights =
 	  let switchLabels, gotoLabels =
 	    let isCaseLabel = function
 	      | Case _
+	      | CaseRange _
 	      | Default _ ->
 		  true
 	      | Label _ ->
 		  false
-	      | CaseRange _ ->
-		  ignore (bug "unexpected kind of label");
-		  failwith "internal error"
 	    in
 	    List.partition isCaseLabel case.labels
 	  in

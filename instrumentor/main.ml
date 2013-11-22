@@ -17,6 +17,8 @@ let _ =
 
     initCIL ();
     lineDirectiveStyle := Some LinePreprocessorOutput;
+    assert (not !useCaseRange);
+    assert (not !useComputedGoto);
 
     (* back-ported from CIL; can be removed for CIL 1.4.1+ *)
     let addSwap sizeInBits =

@@ -118,7 +118,11 @@ let collectExpr result expr =
 	collect result expr
     | AddrOf _
     | StartOf _ ->
-	anything :: result
+        anything :: result
+    | Question _
+    | AddrOfLabel _ ->
+        ignore (bug "unexpected kind of expression");
+        failwith "internal error"
   in
   collect result (constFold true expr)
 

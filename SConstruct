@@ -32,33 +32,44 @@ def validate_gcc_path(key, value, env):
     PathVariable.PathIsFile(key, value, env)
 
 
-def validate_cil_path(key, value, env):
-
+def validate_cil_paths(paths, diagnostic, env):
     suffix = {True:'.cmxa', False:'.cma'}[env['OCAML_NATIVE']]
-
-    def libcil(path):
-        return env.File('cil' + suffix, path)
-
-    if value:
-        library = libcil(value)
-        if library.exists():
-            return
-        else:
-            raise UserError('bad option %s: %s does not exist' % (key, library))
+    basename = 'cil' + suffix
+    library = env.FindFile(basename, paths)
+    if library:
+        env['cil_paths'] = map(env.Dir, paths)
     else:
-        paths = [
-            '../cil/obj/x86_LINUX',
-            '/usr/local/%s/ocaml/cil' % lib64,
-            '/usr/local/%s/cil' % lib64,
-            '/usr/%s/ocaml/cil' % lib64,
-            '/usr/%s/cil' % lib64,
-            ]
-        for path in paths:
-            library = libcil(path)
-            if library.exists():
-                env[key] = path
-                return
-        raise UserError('cannot find CIL libraries; use cil_path option')
+        raise UserError(diagnostic)
+
+
+def validate_cil_path(key, value, env):
+    paths = (value,)
+    diagnostic = 'bad %s option: cannot find CIL libraries under %s' % (key, value)
+    return validate_cil_paths(paths, diagnostic, env)
+
+
+def guess_cil_path(env):
+    paths = (
+        '/usr/local/%s/ocaml/cil' % lib64,
+        '/usr/local/%s/cil' % lib64,
+        '/usr/%s/ocaml/cil' % lib64,
+        '/usr/%s/cil' % lib64,
+        )
+    diagnostic = 'cannot find CIL libraries; use cil_path or cil_build option'
+    return validate_cil_paths(paths, diagnostic, env)
+
+
+def validate_cil_build(key, value, env):
+    subdirs = (
+        'ocamlutil',
+        'src',
+        'src/ext',
+        'src/ext/pta',
+        'src/frontc',
+        )
+    paths = ['%s/_build/%s' % (value, subdir) for subdir in subdirs]
+    diagnostic = 'cannot find CIL libraries under %s' % value
+    return validate_cil_paths(paths, diagnostic, env)
 
 
 opts = Variables('.scons-config', ARGUMENTS)
@@ -69,7 +80,8 @@ opts.AddVariables(
     PathVariable('prefix', 'install in the given directory', '/usr/local'),
     PathVariable('DESTDIR', 'extra installation directory prefix', '/', PathVariable.PathIsDirCreate),
     PathVariable('gcc', 'path to native GCC C compiler', None, validate_gcc_path),
-    ('cil_path', 'look for CIL in the given directory', '', validate_cil_path),
+    ('cil_path', 'look for CIL in the given directory', None, validate_cil_path),
+    ('cil_build', 'look for CIL in the build tree', None, validate_cil_build),
     ('extra_cflags', 'extra C compiler flags'),
     EnumVariable('tuple_counter_bits', 'in tuple counters, use unsigned integers of the specified bit-width', 'natural', ['32', '64', 'natural']),
     BoolVariable('launcher', 'include GNOME launcher code', True),
@@ -77,6 +89,9 @@ opts.AddVariables(
 
 env = Environment(options=opts)
 opts.Save('.scons-config', env)
+
+if not 'cil_paths' in env:
+    guess_cil_path(env)
 
 try:
     domainname = getfqdn().split('.', 1)[1]
@@ -88,7 +103,6 @@ if domainname == 'cs.wisc.edu':
     env.AppendENVPath('PATH', '/unsup/ocaml/bin')
     env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.6/site-packages/pychecker/checker.py']
 
-env['cil_path'] = env.Dir('$cil_path')
 env.SetDefault(gcc=env.WhereIs('gcc'))
 
 

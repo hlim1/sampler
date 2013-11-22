@@ -10,6 +10,7 @@ let stmt_what = function
   | Instr instrs -> Printf.sprintf "Instr × %i" (List.length instrs)
   | Return _ -> "Return"
   | Goto _ -> "Goto"
+  | ComputedGoto _ -> "ComputedGoto"
   | Break _ -> "Break"
   | Continue _ -> "Continue"
   | If _ -> "If"
@@ -41,6 +42,8 @@ let d_label () = function
       text name
   | Case (expr, _) ->
       text "case " ++ d_exp () expr
+  | CaseRange (lower, upper, _) ->
+      text "case " ++ d_exp () lower ++ text " ... " ++ d_exp() upper
   | Default _ ->
       text "default"
 

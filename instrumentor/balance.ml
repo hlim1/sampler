@@ -145,6 +145,9 @@ let patch func splits weights =
 		  true
 	      | Label _ ->
 		  false
+	      | CaseRange _ ->
+		  ignore (bug "unexpected kind of label");
+		  failwith "internal error"
 	    in
 	    List.partition isCaseLabel case.labels
 	  in

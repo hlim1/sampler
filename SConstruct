@@ -32,20 +32,19 @@ def validate_gcc_path(key, value, env):
     PathVariable.PathIsFile(key, value, env)
 
 
-def validate_cil_paths(paths, diagnostic, env):
+def validate_cil_paths(paths, env):
     suffix = {True:'.cmxa', False:'.cma'}[env['OCAML_NATIVE']]
     basename = 'cil' + suffix
     library = env.FindFile(basename, paths)
     if library:
-        env['cil_paths'] = map(env.Dir, paths)
-    else:
-        raise UserError(diagnostic)
+        return library.dir
 
 
 def validate_cil_path(key, value, env):
     paths = (value,)
-    diagnostic = 'bad %s option: cannot find CIL libraries under %s' % (key, value)
-    return validate_cil_paths(paths, diagnostic, env)
+    if not validate_cil_paths(paths, env):
+        raise UserError('bad %s option: cannot find CIL libraries under %s' % (key, value))
+    env['cil_paths'] = map(env.Dir, paths)
 
 
 def guess_cil_path(env):
@@ -55,8 +54,10 @@ def guess_cil_path(env):
         '/usr/%s/ocaml/cil' % lib64,
         '/usr/%s/cil' % lib64,
         )
-    diagnostic = 'cannot find CIL libraries; use cil_path or cil_build option'
-    return validate_cil_paths(paths, diagnostic, env)
+    selected = validate_cil_paths(paths, env)
+    if not selected:
+        raise UserError('cannot find CIL libraries; use cil_path or cil_build option')
+    env['cil_paths'] = env.Dir(selected)
 
 
 def validate_cil_build(key, value, env):
@@ -68,8 +69,9 @@ def validate_cil_build(key, value, env):
         'src/frontc',
         )
     paths = ['%s/_build/%s' % (value, subdir) for subdir in subdirs]
-    diagnostic = 'cannot find CIL libraries under %s' % value
-    return validate_cil_paths(paths, diagnostic, env)
+    if not validate_cil_paths(paths, env):
+        raise UserError('cannot find CIL libraries under %s' % value)
+    env['cil_paths'] = map(env.Dir, paths)
 
 
 opts = Variables('.scons-config', ARGUMENTS)

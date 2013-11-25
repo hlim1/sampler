@@ -73,4 +73,4 @@ let phase =
 	time "loading site scales" Sites.setScales;
 	time "applying sampling transformation"
 	  (fun () -> Transformer.visit file tester countdown)
-      end;
+      end

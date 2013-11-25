@@ -41,8 +41,8 @@ class visitor file =
 			  let isFound =  var (findOrCreate_local_type func "cbi_isFound" intType) in
 			  let isCur = UnOp (LNot, Lval isStale, intType) in
 			  let test_set_func = Lval (var (FindFunction.find "cbi_dict_test_and_insert" file)) in
-			  let test_set_args = [Cil.mkCast (mkAddrOrStartOf lval) Cil.uintType;
-					       Cil.mkCast (Lval lval) Cil.uintType;
+			  let test_set_args = [Cil.mkCast ~e:(mkAddrOrStartOf lval) ~newt:Cil.uintType;
+					       Cil.mkCast ~e:(Lval lval) ~newt:Cil.uintType;
 					       mkAddrOf isDifferent;
 					       mkAddrOf isStale]
 			  in
@@ -51,8 +51,8 @@ class visitor file =
 
 
 			  let insert_func = Lval (var (FindFunction.find "cbi_dict_insert" file)) in
-			  let insert_args = [Cil.mkCast (mkAddrOrStartOf lval) Cil.uintType;
-					     Cil.mkCast (Lval lval) Cil.uintType]
+			  let insert_args = [Cil.mkCast ~e:(mkAddrOrStartOf lval) ~newt:Cil.uintType;
+					     Cil.mkCast ~e:(Lval lval) ~newt:Cil.uintType]
 			  in
 			  let insert_call = 
 			    if left == lval then

@@ -50,7 +50,7 @@ class visitor file =
 		    let isFound =  var (findOrCreate_local_type func "cbi_isFound" intType) in
 		    let isCur = UnOp (LNot, Lval isStale, intType) in
 		    let test_set_func = Lval (var (FindFunction.find "cbi_dict_test_and_insert" file)) in
-		    let test_set_args = [Cil.mkCast (mkAddrOrStartOf lval) Cil.uintType;
+		    let test_set_args = [Cil.mkCast ~e:(mkAddrOrStartOf lval) ~newt:Cil.uintType;
 					 thread_id_expr;
 					 mkAddrOf isDifferent;
 					 mkAddrOf isStale]

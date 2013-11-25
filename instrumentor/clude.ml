@@ -45,5 +45,5 @@ class virtual ['a] filter =
     method private virtual format : 'a -> doc
 
     method private formatPatterns =
-      Pretty.sprint 0 (seq (text ", ") (d_pattern self#format) patterns)
+      Pretty.sprint ~width:0 (seq ~sep:(text ", ") ~doit:(d_pattern self#format) ~elements:patterns)
   end

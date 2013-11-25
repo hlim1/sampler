@@ -33,8 +33,8 @@ let print channel digest scheme infos =
 
   infos#iter
     (fun siteInfo ->
-      Pretty.fprint channel max_int
-	((seq (chr '\t') (fun doc -> doc) siteInfo#print)
+      Pretty.fprint channel ~width:max_int
+	((seq ~sep:(chr '\t') ~doit:(fun doc -> doc) ~elements:siteInfo#print)
 	   ++ line));
 
   output_string channel "</sites>\n"

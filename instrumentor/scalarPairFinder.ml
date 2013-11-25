@@ -93,7 +93,7 @@ class visitor (constants : Constants.collection) globals (tuples : Counters.mana
 	begin
 	  match unrollType leftType with
 	  | TPtr _ ->
-	      compareToConst (mkCast zero leftType)
+	      compareToConst (mkCast ~e:zero ~newt:leftType)
 	  | TInt (ikind, _) ->
 	      iterConsts (isSigned ikind)
 	  | TEnum _ ->

@@ -89,7 +89,7 @@ let printAll digest channel l =
   in
 
   let printPair l r =
-    Pretty.fprint channel max_int ((docImpl l r)++line)
+    Pretty.fprint channel ~width:max_int ((docImpl l r)++line)
 
   in analyze printPair l
 

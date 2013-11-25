@@ -10,7 +10,7 @@ sources = glob('*.ml') + glob('*.mli')
 sources.remove('basics.ml')
 sources = map(env.File, sources)
 
-basics = env.OcamlObject('basics.ml', OCAML_WARN='Ae')
+basics = env.OcamlObject('basics.ml')
 
 env.OcamlObject(sources)
 Default(

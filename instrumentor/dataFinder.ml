@@ -24,7 +24,7 @@ class visitor (tuples : Counters.manager) func =
 		in
 		let selector =
 		  if !Counters.trace then
-		    Index (mkCast (mkAddrOf lval) !upointType, NoOffset)
+		    Index (mkCast ~e:(mkAddrOf lval) ~newt:!upointType, NoOffset)
 		  else
 		    NoOffset
 		in

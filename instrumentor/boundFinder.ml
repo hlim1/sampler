@@ -6,7 +6,7 @@ type direction = Min | Max
 
 
 let updateBound best example direction location =
-  let example = mkCast example best.vtype in
+  let example = mkCast ~e:example ~newt:best.vtype in
   let best = var best in
   let op = match direction with
   | Min -> Lt
@@ -36,13 +36,13 @@ let makeGlobals =
 
 
 let extremesUnsigned typ =
-  mkCast zero typ,
-  mkCast mone typ
+  mkCast ~e:zero ~newt:typ,
+  mkCast ~e:mone ~newt:typ
 
 
 let extremesSigned bits typ =
   let shift initial =
-    mkCast (kinteger64 ILongLong (Int64.shift_right initial (64 - bits))) typ
+    mkCast ~e:(kinteger64 ILongLong (Int64.shift_right initial (64 - bits))) ~newt:typ
   in
   shift Int64.min_int,
   shift Int64.max_int

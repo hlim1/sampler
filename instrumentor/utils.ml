@@ -28,10 +28,10 @@ let d_stmt _ stmt =
   dprintf "%a: CFG #%i: %s" d_loc (get_stmtLoc stmt.skind) stmt.sid (stmt_what stmt.skind)
     
 let d_stmts _ stmts =
-  seq line (d_stmt ()) stmts
+  seq ~sep:line ~doit:(d_stmt ()) ~elements:stmts
     
 let print_stmts stmts =
-  fprint stdout 80 (d_stmts () stmts)
+  fprint stdout ~width:80 (d_stmts () stmts)
     
 let warn stmt message =
   ignore(fprintf stderr "%a: %s\n" d_stmt stmt message)

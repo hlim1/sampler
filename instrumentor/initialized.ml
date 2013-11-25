@@ -10,14 +10,14 @@ module VarInitsDFA =
 
     (* Pretty print the reaching definition data for a function *)
     let myppFdec () fdec =
-      seq line
-        (fun stm ->
-          let ivih = Inthash.find ReachingDef.stmtStartData stm.sid in
-          Pretty.dprintf "\n============== Statement %d ===============\n%a\n==== Reaching Defs ====\n%a\n"
-                         stm.sid
-                         d_stmt stm
-                         ReachingDef.pretty ivih)
-        fdec.sallstmts
+      seq ~sep:line
+        ~doit:(fun stm ->
+               let ivih = Inthash.find ReachingDef.stmtStartData stm.sid in
+               Pretty.dprintf "\n============== Statement %d ===============\n%a\n==== Reaching Defs ====\n%a\n"
+                              stm.sid
+                              d_stmt stm
+                              ReachingDef.pretty ivih)
+        ~elements:fdec.sallstmts
 
     let analyze func vars =
       (* extreme pointer conservatism: if address is *ever* taken,
@@ -32,7 +32,7 @@ module VarInitsDFA =
       if debug then
         let varRepr _ =
           text "==== Var IDs ====\n" ++
-          seq line (fun var -> Pretty.dprintf "%d %s" var.vid var.vname) vars
+          seq ~sep:line ~doit:(fun var -> Pretty.dprintf "%d %s" var.vid var.vname) ~elements:vars
         in
         ignore(Pretty.eprintf "%t\n%a\n" varRepr myppFdec func)
 

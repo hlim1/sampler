@@ -1,6 +1,7 @@
 Import('env')
 env = env.Clone()
 env.AppendUnique(CC=['-fsampler-scheme=branches'])
+env.AppendUnique(CCFLAGS='-Wno-attributes')
 
 File('library.h')
 

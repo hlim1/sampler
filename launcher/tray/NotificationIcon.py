@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import gi
 from gi.repository import GLib, Gtk, Notify
 
 import Keys
@@ -38,15 +39,9 @@ class NotificationIcon(object):
             BODY = re.sub('<(a href="[^"]*"|/a)>', '', BODY)
             BODY_HYPERLINKS = False
 
-        note = Notify.Notification()
-        note.set_urgency(Notify.Urgency.LOW)
-        note.set_hint('resident', GLib.Variant.new_boolean(True))
-        note.set_hint_string('desktop-entry', 'sampler-tray')
-        self.__note = note
-
         key = Keys.MASTER
-        settings.connect('changed::' + key, self.__changed_enabled, note)
-        self.__changed_enabled(settings, key, note)
+        settings.connect('changed::' + key, self.__changed_enabled)
+        self.__changed_enabled(settings, key)
 
     def close(self):
         if self.__note:
@@ -58,7 +53,8 @@ class NotificationIcon(object):
 
     # GSettings signal callbacks
 
-    def __changed_enabled(self, settings, key, note):
+    def __changed_enabled(self, settings, key):
+
         enabled = settings[key]
         adjective = WORDS[enabled][0]
         Imperative = WORDS[not enabled][1]
@@ -66,14 +62,20 @@ class NotificationIcon(object):
         summary = 'CBI reporting is %s' % adjective
         body = BODY % adjective
         themed = 'sampler-' + ('enabled' if enabled else 'disabled')
-        note.update(summary, body, themed)
 
-        # unusable in Fedora 15 and earlier due to <https://bugzilla.gnome.org/show_bug.cgi?id=658288>/<https://bugzilla.redhat.com/show_bug.cgi?id=741128>
-        note.clear_actions()
-        note.add_action('toggle', Imperative, self.__set_enabled, (settings, key, not enabled), None)
+        note = Notify.Notification(summary=summary, body=body, icon_name=themed)
+        note.set_urgency(Notify.Urgency.LOW)
+        note.set_hint('resident', GLib.Variant.new_boolean(True))
+        note.set_hint_string('desktop-entry', 'sampler-tray')
+
+        # remove extra_args once Fedora 19 is no longer supported
+        extra_args = (None,) if gi.version_info < (3, 10) else ()
+        note.add_action('toggle', Imperative, self.__set_enabled, (settings, key, not enabled), *extra_args)
         if not BODY_HYPERLINKS:
-            note.add_action('learn-more', 'Learn More…', self.__learn_more, None, None)
+            note.add_action('learn-more', 'Learn More…', self.__learn_more, None, *extra_args)
 
+        self.close()
+        self.__note = note
         if self.__show_note(note):
             GLib.timeout_add_seconds(1, self.__show_note, note)
 

@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+
+use strict;
+use FindBin;
+
+
+########################################################################
+
+
+sub trace_system (@) {
+    my $error = system @_;
+
+    if ($error == -1) {
+	die "cannot run $_[0]: $!\n";
+    } elsif ($error) {
+	my $result = $error >> 8 || $error & 127 || -1;
+	exit $result;
+    }
+}
+
+
+########################################################################
+
+
+my $dir = $FindBin::Bin;
+
+push @ARGV, '-include', "$dir/libdecure/decure.h";
+push @ARGV, "$dir/../../../cil/obj/x86_LINUX/ccured_GNUCC_debug.a";
+
+trace_system "$dir/../front-end", "$dir/main", @ARGV;

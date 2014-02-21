@@ -1,0 +1,4 @@
+simple	data	simple.c	3	main	3	*(argv + 0)	read	1
+simple	data	simple.c	3	main	6	*(*(argv + 0) + 0)	read	1
+simple	data	simple.c	4	main	11	*(argv + 0)	read	1
+simple	data	simple.c	4	main	14	*(*(argv + 0) + 0)	write	1

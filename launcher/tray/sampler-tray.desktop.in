@@ -3,4 +3,5 @@ Type=Application
 Name=Cooperative Bug Isolation Feedback Monitor
 NoDisplay=true
 Icon=sampler-enabled
+Exec=$traydir/tray
 X-GNOME-UsesNotifications=true

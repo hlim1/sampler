@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.9.5
+
+** Add "Exec" field to tray's desktop file so standard GNOME notification disabling works.
+
 * sampler-1.9.4
 
 ** Minor updates for Fedora 20.

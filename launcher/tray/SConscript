@@ -19,7 +19,8 @@ compiled = env.PythonBytecodeOpt(pythons)
 Default(compiled)
 testPythonsGtk(env, pythons)
 
-desktop = File('sampler-tray.desktop')
+desktop = env.Template('sampler-tray.desktop.in', varlist=('traydir',))
+Default(desktop)
 Alias('test', env.TestDesktop(desktop))
 
 Alias('install', [

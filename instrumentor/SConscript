@@ -19,6 +19,39 @@ env.File([
 
 ########################################################################
 #
+#  determine CIL version number
+#
+
+def cilVersion(context):
+    context.Message('Checking for CIL version...')
+    env = context.env
+    builder = env.OcamlProgram
+    ok = context.TryBuild(builder, ';;\nprint_endline Cil.cilVersion', '.ml')
+    if ok:
+        program = context.lastTarget
+        outfile = program.target_from_source('', '.out')
+        env.Command(outfile, program, '$SOURCE >$TARGET')
+        ok = context.sconf.BuildNodes([outfile])
+        if ok:
+            output = outfile.get_contents().rstrip()
+            context.Result(output)
+            pieces = tuple(output.split('.'))
+            env['cil_version'] = pieces
+            return 1, output
+    return 0, ''
+
+conf = env.Configure(
+    help=False,
+    custom_tests={
+        'CilVersion': cilVersion,
+        },
+)
+conf.CilVersion()
+conf.Finish()
+
+
+########################################################################
+#
 #  create OCaml source defining sampler version number
 #
 

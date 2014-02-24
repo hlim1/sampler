@@ -68,11 +68,9 @@ class NotificationIcon(object):
         note.set_hint('resident', GLib.Variant.new_boolean(True))
         note.set_hint_string('desktop-entry', 'sampler-tray')
 
-        # remove extra_args once Fedora 19 is no longer supported
-        extra_args = (None,) if gi.version_info < (3, 10) else ()
-        note.add_action('toggle', Imperative, self.__set_enabled, (settings, key, not enabled), *extra_args)
+        note.add_action('toggle', Imperative, self.__set_enabled, (settings, key, not enabled))
         if not BODY_HYPERLINKS:
-            note.add_action('learn-more', 'Learn More…', self.__learn_more, None, *extra_args)
+            note.add_action('learn-more', 'Learn More…', self.__learn_more, None)
 
         self.close()
         self.__note = note

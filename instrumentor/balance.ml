@@ -139,13 +139,23 @@ let patch func splits weights =
 	let prependCounterweights = prependCounterweights stmt in
 	let balanceCase case =
 	  let switchLabels, gotoLabels =
-	    let isCaseLabel = function
+	    let isCaseLabel = 
+IFDEF HAVE_CASE_RANGE THEN
+	      function
 	      | Case _
 	      | CaseRange _
 	      | Default _ ->
-		  true
+		 true
 	      | Label _ ->
-		  false
+		 false
+ELSE
+	      function
+	      | Case _
+	      | Default _ ->
+		 true
+	      | Label _ ->
+		 false
+ENDIF
 	    in
 	    List.partition isCaseLabel case.labels
 	  in

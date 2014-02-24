@@ -50,6 +50,12 @@ conf = env.Configure(
 conf.CilVersion()
 conf.Finish()
 
+if env['cil_version'] >= (1, 6):
+    env['OCAML_PP'] += ' -DHAVE_COMPUTED_GOTO'
+
+if env['cil_version'] >= (1, 7):
+    env['OCAML_PP'] += ' -DHAVE_CASE_RANGE'
+
 
 ########################################################################
 #

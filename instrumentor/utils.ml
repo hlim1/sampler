@@ -37,7 +37,9 @@ let warn stmt message =
   ignore(fprintf stderr "%a: %s\n" d_stmt stmt message)
 
 
-let d_label () = function
+let d_label () = 
+IFDEF HAVE_CASE_RANGE THEN
+  function
   | Label (name, _, _) ->
       text name
   | Case (expr, _) ->
@@ -46,6 +48,15 @@ let d_label () = function
       text "case " ++ d_exp () lower ++ text " ... " ++ d_exp () upper
   | Default _ ->
       text "default"
+ELSE
+  function
+  | Label (name, _, _) ->
+      text name
+  | Case (expr, _) ->
+      text "case " ++ d_exp () expr
+  | Default _ ->
+      text "default"
+ENDIF
 
 let d_labels () labels =
   seq

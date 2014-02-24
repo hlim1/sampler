@@ -1,5 +1,10 @@
 -*- outline -*-
 
+* sampler-1.9.6
+
+** Adapt to changes in GObject Introspection API for notifications.
+** Restore backward compatibility with CIL 1.4.x for Fedora 19.
+
 * sampler-1.9.5
 
 ** Add "Exec" field to tray's desktop file so standard GNOME notification disabling works.

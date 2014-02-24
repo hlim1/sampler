@@ -10,6 +10,7 @@ env = env.Clone(OCAML_LIBS=['nums', 'unix', 'str', 'cil'], OCAML_WARN='Ae',
                 tools=['expect', 'test'], toolpath=['.', '#scons-tools'])
 env.AppendUnique(OCAML_PATH=['instrumentor', 'ocaml'])
 env.AppendUnique(OCAML_PATH='$cil_paths')
+env.AppendUnique(OCAML_PP='camlp4o pa_macro.cmo')
 
 env.File([
         '#scons-tools/expect.py',
@@ -26,7 +27,7 @@ def cilVersion(context):
     context.Message('Checking for CIL version...')
     env = context.env
     builder = env.OcamlProgram
-    ok = context.TryBuild(builder, ';;\nprint_endline Cil.cilVersion', '.ml')
+    ok = context.TryBuild(builder, 'let _ = print_endline Cil.cilVersion', '.ml')
     if ok:
         program = context.lastTarget
         outfile = program.target_from_source('', '.out')

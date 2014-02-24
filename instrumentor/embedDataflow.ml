@@ -84,7 +84,7 @@ let collectVar result varinfo =
 
 let collectExpr result expr =
   let rec collect result = 
-IFDEF HAVE_COMPUTED_GOTO
+IFDEF HAVE_COMPUTED_GOTO THEN
     function
     | Const (CInt64 (value, _, _)) ->
 	text (Int64.to_string value) :: result

@@ -80,7 +80,7 @@ let build func =
   (* scan a single statement *)
   and scanStatement context statement =
 
-IF HAVE_COMPUTED_GOTO THEN
+IFDEF HAVE_COMPUTED_GOTO THEN
     match statement.skind with
     | Instr instructions ->
 	(* fall through to next unless calling a non-returning function *)

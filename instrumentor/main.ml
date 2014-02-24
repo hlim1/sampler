@@ -21,7 +21,7 @@ IFDEF HAVE_CASE_RANGE THEN
     assert (not !useCaseRange)
 ELSE () END;
 IFDEF HAVE_COMPUTED_GOTO THEN
-    assert (not !useComputedGoto);
+    assert (not !useComputedGoto)
 ELSE () END;
 
     (* back-ported from CIL; can be removed for CIL 1.4.1+ *)

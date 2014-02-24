@@ -36,7 +36,7 @@ def cilVersion(context):
         if ok:
             output = outfile.get_contents().rstrip()
             context.Result(output)
-            pieces = tuple(output.split('.'))
+            pieces = tuple(map(int, output.split('.')))
             env['cil_version'] = pieces
             return 1, output
     return 0, ''

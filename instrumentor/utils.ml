@@ -6,7 +6,9 @@ let instr_what = function
   | Call _ -> "Call"
   | Asm _ -> "Asm"
 
-let stmt_what = function
+let stmt_what = 
+IFDEF HAVE_COMPUTED_GOTO THEN
+  function
   | Instr instrs -> Printf.sprintf "Instr × %i" (List.length instrs)
   | Return _ -> "Return"
   | Goto _ -> "Goto"
@@ -19,6 +21,20 @@ let stmt_what = function
   | Block {bstmts; _} -> Printf.sprintf "Block × %i" (List.length bstmts)
   | TryFinally _ -> "TryFinally"
   | TryExcept _ -> "TryExcept"
+ELSE
+  function
+  | Instr instrs -> Printf.sprintf "Instr × %i" (List.length instrs)
+  | Return _ -> "Return"
+  | Goto _ -> "Goto"
+  | Break _ -> "Break"
+  | Continue _ -> "Continue"
+  | If _ -> "If"
+  | Switch _ -> "Switch"
+  | Loop _ -> "Loop"
+  | Block {bstmts; _} -> Printf.sprintf "Block × %i" (List.length bstmts)
+  | TryFinally _ -> "TryFinally"
+  | TryExcept _ -> "TryExcept"
+ENDIF
 
 let stmt_describe stmt =
   let where = get_stmtLoc stmt in

@@ -79,6 +79,8 @@ let build func =
 
   (* scan a single statement *)
   and scanStatement context statement =
+
+IF HAVE_COMPUTED_GOTO THEN
     match statement.skind with
     | Instr instructions ->
 	(* fall through to next unless calling a non-returning function *)
@@ -155,6 +157,82 @@ let build func =
     | TryExcept _ ->
 	ignore (bug "cannot compute control flow for structured exceptions");
 	failwith "internal error"
+
+ELSE
+
+    match statement.skind with
+    | Instr instructions ->
+	(* fall through to next unless calling a non-returning function *)
+	scanInstructions instructions statement context.next
+
+    | Return _ ->
+	(* end of the line *)
+	()
+
+    | Goto (target, _) ->
+	(* jump directly to target *)
+	link statement !target
+
+    | Break _ ->
+	(* jump to current break target *)
+	linkMaybe statement context.break
+
+    | Continue _ ->
+	(* jump to current continue target *)
+	linkLoop statement context.continue
+
+    | If (_, thenBlock, elseBlock, _) ->
+	(* continue in either subblock *)
+	(* if subblock is empty, fall through to next statement *)
+	linkMaybe statement (pickNext context.next thenBlock.bstmts);
+	linkMaybe statement (pickNext context.next elseBlock.bstmts);
+
+	(* each subblock falls through to next statement after "if" *)
+	scanBlock context thenBlock;
+	scanBlock context elseBlock
+
+    | Switch (_, body, cases, _) ->
+	(* continue in any of the case handlers *)
+	List.iter (link statement) cases;
+
+	(* fall through as well if no "default:" case *)
+	begin
+	  match context.next with
+	  | None -> ()
+	  | Some next ->
+	      if not (hasDefault cases) then
+		link statement next
+	end;
+
+	(* breaks in body jump to statement after "switch" *)
+	let switchContext = {context with break = context.next} in
+	scanBlock switchContext body
+
+    | Loop (body, _, _, _) ->
+	(* fall through to top of loop, or self if loop body is empty *)
+	linkMaybe statement (pickNext (Some statement) body.bstmts);
+
+	(* loop is infinite, so body fall-through goes back to top *)
+	(* break jumps to statement after loop *)
+	(* continue jumps to top of loop for one more go-around *)
+	let loopContext = {next = Some statement;
+			   break = context.next;
+			   continue = Some statement}
+	in
+	scanBlock loopContext body
+
+    | Block body ->
+	(* fall through to first substatement *)
+	linkMaybe statement (pickNext context.next body.bstmts);
+
+	(* block body falls through to statement after block *)
+	scanBlock context body
+
+    | TryFinally _
+    | TryExcept _ ->
+	ignore (bug "cannot compute control flow for structured exceptions");
+	failwith "internal error"
+ENDIF
 
   and scanInstructions = function
     | [] ->

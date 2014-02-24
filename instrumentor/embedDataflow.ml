@@ -83,7 +83,9 @@ let collectVar result varinfo =
 
 
 let collectExpr result expr =
-  let rec collect result = function
+  let rec collect result = 
+IFDEF HAVE_COMPUTED_GOTO
+    function
     | Const (CInt64 (value, _, _)) ->
 	text (Int64.to_string value) :: result
     | Const (CChr character) ->
@@ -123,6 +125,44 @@ let collectExpr result expr =
     | AddrOfLabel _ ->
         ignore (bug "unexpected kind of expression");
         failwith "internal error"
+ELSE
+    function
+    | Const (CInt64 (value, _, _)) ->
+	text (Int64.to_string value) :: result
+    | Const (CChr character) ->
+	num (Char.code character) :: result
+    | Const (CStr _) ->
+	anything :: result
+    | Const (CEnum (exp, _, _)) ->
+	let contribution =
+	  match isInteger exp with
+	  | Some value -> text (Int64.to_string value)
+	  | None -> anything
+	in
+	contribution :: result
+    | Const (CWStr _)
+    | Const (CReal _) ->
+	result
+    | Lval lval ->
+	collectLval result lval
+    | SizeOf _
+    | SizeOfE _
+    | SizeOfStr _
+    | AlignOf _
+    | AlignOfE _ ->
+	anything :: result
+    | UnOp (_, _, typ)
+    | BinOp (_, _, _, typ) ->
+	if isInterestingType typ then
+	  anything :: result
+	else
+	  result
+    | CastE (_, expr) ->
+	collect result expr
+    | AddrOf _
+    | StartOf _ ->
+        anything :: result
+ENDIF
   in
   collect result (constFold true expr)
 

@@ -1,0 +1,20 @@
+*cpp:
++ -DCIL
+
+*embedding:
+-fsave-blast-spec %g.spc \
+-fsave-cfg %g.cfg \
+-fsave-dataflow %g.dataflow \
+-fsave-implications %g.impls \
+-fsave-site-info %g.sites
+
+*cc1:
+-finstrumentor-input %g.i \
+-finstrumentor-output %g.inst.i \
+%(embedding)
+
+*asm_final:
+%(embedding)
+
+*link:
++ --undefined=cbi_initialize

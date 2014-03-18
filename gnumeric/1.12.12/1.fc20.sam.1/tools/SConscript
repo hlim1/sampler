@@ -1,0 +1,59 @@
+import platform
+
+from glob import glob
+
+Import('env')
+env = env.Clone(LEXFLAGS=['-f', '-p'], OCAML_LIBS=['unix', 'str'])
+env.AppendUnique(OCAML_PATH=['tools', 'ocaml'])
+
+wenv = env.Clone()
+wenv.AppendUnique(CCFLAGS=['-Wno-sign-compare', '-Wno-type-limits'])
+wenv.ParseConfig(['gsl-config', '--cflags', '--libs'])
+Default(wenv.Program('decimate-samples.l'))
+
+sources = glob('*.ml') + glob('*.mli')
+env.OcamlObject(sources)
+Default(env.OcamlProgram('resolveSamples.ml'),
+        env.OcamlProgram('resolveTimestamps.ml'))
+
+Default(env.Template('find-sampler-info.in', varlist=['pkglibdir']))
+Default(env.Template('macros.sampler.in', varlist=['pkglibdir']))
+Default(env.Template('install-wrappers.in', varlist=['pkglibdir']))
+
+wenv = env.Clone(name='@name@', path='@path@', version='@version@', release='@release@')
+Default(wenv.Template('wrapper.in.in', varlist=[
+    'DISTRO_CPU',
+    'DISTRO_NAME',
+    'DISTRO_VERSION',
+    'PACKAGE_VERSION',
+    'name',
+    'path',
+    'pkgdatadir',
+    'pkglibdir',
+    'release',
+    'version',
+    ]))
+
+Alias('install', env.Install('$DESTDIR$toolsdir', [
+    'Embedded.pm',
+    'Function.pm',
+    'Node.pm',
+    'Object.pm',
+    'SymbolTable.pm',
+    'Unit.pm',
+    'decimate-samples',
+    'extract-report',
+    'extract-section',
+    'find-sampler-info',
+    'install-wrappers',
+    'resolve-backtrace',
+    'resolve-cfg',
+    'resolveSamples',
+    'resolveTimestamps',
+    'wrapper.in',
+    ]))
+
+Alias('install', env.Install('$DESTDIR$sysconfdir/rpm', 'macros.sampler'))
+
+
+SConscript(dirs='cfg')

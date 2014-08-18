@@ -1,0 +1,7 @@
+libplugin.so	data	plugin.c	7	function	3	pluginCounter	read	1
+libplugin.so	data	plugin.c	7	function	6	pluginCounter	write	1
+library.so	data	library.c	10	libraryFunction	3	libraryCounter	read	1
+library.so	data	library.c	10	libraryFunction	6	libraryCounter	write	1
+sharing	data	sharing.c	14	dlcheck	6	stderr	read	0
+sharing	data	sharing.c	15	dlcheck	10	stderr	read	0
+sharing	data	sharing.c	24	main	2	*(argv + 0)	read	1

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Cooperative Bug Isolation First-Time Opt-In
+NoDisplay=true
+Icon=sampler-enabled
+Exec=$first_timedir/first-time
+Categories=Settings;

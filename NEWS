@@ -1,5 +1,9 @@
 -*- outline -*-
 
+* sampler-1.9.7
+
+** Minor updates for Fedora 21.
+
 * sampler-1.9.6
 
 ** Adapt to changes in GObject Introspection API for notifications.

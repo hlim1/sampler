@@ -1,6 +1,3 @@
-open Cil
-
-
 val registry : Site.t FunctionNameHash.c
 
 

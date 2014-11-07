@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import gi
 from gi.repository import GLib, Gtk, Notify
 
 import Keys

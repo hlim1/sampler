@@ -159,6 +159,10 @@ static void handleSignal(int signum)
 }
 
 
+/* https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61118 */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wclobbered"
+
 void cbi_initializeReport()
 {
   VERBOSE("begin");
@@ -180,6 +184,9 @@ void cbi_initializeReport()
 
   VERBOSE("end");
 }
+
+#pragma GCC diagnostic pop
+
 
 void cbi_uninitializeReport()
 {

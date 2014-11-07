@@ -1,6 +1,6 @@
 open Cil
 open Site
-open Weight
+open! Weight
 
 
 class weightsMap = [t] StmtIdHash.c 0

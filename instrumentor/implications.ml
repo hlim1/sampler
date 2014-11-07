@@ -31,7 +31,7 @@ let compare x y =
       ignore (bug "cannot compare %a with %a" d_exp x d_exp y);
       failwith "internal error"
 
-let deriveImplications (lid, lloc, lval, ln) (rid, rloc, rval, rn) =
+let deriveImplications (lid, lloc, lval, ln) (rid, rloc, rval, rn) : (rel * rel) list =
   if (lloc <> rloc || lval <> rval) then
     begin
     ignore (bug "cannot derive an implication when comparisons are with different variables"); 
@@ -80,7 +80,7 @@ let printAll digest channel l =
 	(chr '\t')++
 	(text scheme)++
 	(chr '\t')++
-	(match r with
+	(match (r : rel) with
         | Lt d -> (num d.id)++(chr '\t')++(num 0)
         | Eq d -> (num d.id)++(chr '\t')++(num 1)
         | Gt d -> (num d.id)++(chr '\t')++(num 2)

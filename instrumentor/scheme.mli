@@ -1,6 +1,3 @@
-open Cil
-
-
 class type c =
   object
     method findAllSites : unit

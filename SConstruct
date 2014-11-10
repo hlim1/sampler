@@ -62,11 +62,12 @@ def guess_cil_path(env):
 
 def validate_cil_build(key, value, env):
     subdirs = (
-        'ocamlutil',
         'src',
         'src/ext',
         'src/ext/pta',
+        'src/ext/zrapp',
         'src/frontc',
+        'src/ocamlutil',
         )
     paths = ['%s/_build/%s' % (value, subdir) for subdir in subdirs]
     if not validate_cil_paths(paths, env):

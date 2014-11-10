@@ -380,7 +380,7 @@ def rpm_targets(env):
         yield env.File('$NAME-%s-$VERSION-1${deployment_release_suffix}.${TARGET_CPU}.rpm' % subpackage, rpmdir)
 
 targetArchCPUs = frozenset((
-            (env['DISTRO_ARCH'], env['DISTRO_CPU']),
+            (env.get('DISTRO_ARCH'), env.get('DISTRO_CPU')),
             ('i386', 'i686'),
             ))
 

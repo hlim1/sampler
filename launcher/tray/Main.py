@@ -21,6 +21,6 @@ def main():
     unique = Service.unique()
     if not unique: return
 
-    settings = Gio.Settings(Keys.BASE)
+    settings = Keys.settings()
     with closing(NotificationIcon(settings)):
         Gtk.main()

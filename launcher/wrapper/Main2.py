@@ -14,7 +14,7 @@ def main(name, wrapped, upload_headers, **extras):
     import Keys
 
     app = AppConfig(name, wrapped, upload_headers)
-    settings = Gio.Settings(Keys.BASE)
+    settings = Keys.settings()
 
     if settings[Keys.ASKED] and settings[Keys.MASTER]:
         import SampledLauncher

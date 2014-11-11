@@ -27,7 +27,10 @@ class FirstTime(object):
 
         # hook up GSettings configuration monitoring
         from gi.repository import Gio
-        self.__settings = Gio.Settings(Keys.BASE)
+        # always use "schema_id" once Fedora 20 is no longer supported
+        import gi
+        key = 'schema_id' if gi.version_info >= (3, 14) else 'schema'
+        self.__settings = Gio.Settings(**{key: Keys.BASE})
 
         # hook up state-linked icon
         from EnabledIcon import EnabledIcon

@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.18.3 -->
 <interface>
-  <requires lib="gtk+" version="2.16"/>
-  <object class="GtkDialog" id="first-time">
-    <property name="icon_name">sampler-enabled</property>
+  <requires lib="gtk+" version="3.8"/>
+  <object class="GtkOffscreenWindow" id="off-screen">
     <property name="can_focus">False</property>
+    <child>
+      <placeholder/>
+    </child>
+  </object>
+  <object class="GtkDialog" id="first-time">
+    <property name="can_focus">False</property>
+    <property name="hexpand">False</property>
+    <property name="vexpand">False</property>
     <property name="border_width">6</property>
     <property name="title" translatable="yes">Welcome to the Cooperative Bug Isolation Project!</property>
     <property name="resizable">False</property>
+    <property name="default_width">1</property>
     <property name="destroy_with_parent">True</property>
+    <property name="icon_name">sampler-enabled</property>
     <property name="type_hint">dialog</property>
-    <signal name="response" handler="on_response"/>
+    <property name="transient_for">off-screen</property>
+    <signal name="response" handler="on_response" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="vertical">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
+        <property name="hexpand">False</property>
+        <property name="vexpand">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">12</property>
         <child internal-child="action_area">
@@ -23,14 +36,14 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="ok">
-                <property name="label">gtk-ok</property>
+                <property name="label">_OK</property>
+                <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">False</property>
-                <property name="use_action_appearance">False</property>
-                <property name="use_stock">True</property>
+                <property name="use_underline">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -47,35 +60,16 @@
           </packing>
         </child>
         <child>
-          <object class="GtkTable" id="table">
+          <object class="GtkGrid" id="grid">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="border_width">6</property>
-            <property name="n_rows">4</property>
-            <property name="n_columns">4</property>
-            <property name="column_spacing">12</property>
             <property name="row_spacing">12</property>
-            <child>
-              <object class="GtkImage" id="image">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="yalign">0</property>
-                <property name="icon_name">sampler-enabled</property>
-                <property name="icon_size">6</property>
-              </object>
-              <packing>
-                <property name="bottom_attach">4</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options">GTK_FILL</property>
-              </packing>
-            </child>
+            <property name="column_spacing">12</property>
             <child>
               <object class="GtkLabel" id="prologue">
-                <property name="width_request">405</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
-                <property name="yalign">0</property>
                 <property name="label" translatable="yes">&lt;span weight="bold" size="larger"&gt;The Cooperative Bug Isolation Project&lt;/span&gt;
 
 Some applications on this computer can monitor their own behavior while they run. Each time you use a participating application, you can help to make it better for everyone.
@@ -83,25 +77,39 @@ Some applications on this computer can monitor their own behavior while they run
 Feedback from users like you can help us find and fix the bugs that matter most. Do you wish to provide automatic feedback when you use participating applications on this computer?</property>
                 <property name="use_markup">True</property>
                 <property name="wrap">True</property>
+                <property name="wrap_mode">word-char</property>
+                <property name="max_width_chars">50</property>
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="right_attach">4</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
+                <property name="top_attach">0</property>
+                <property name="width">3</property>
               </packing>
             </child>
             <child>
-              <object class="GtkVBox" id="radio-group">
+              <object class="GtkImage" id="image">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="valign">start</property>
+                <property name="icon_name">sampler-enabled</property>
+                <property name="icon_size">6</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="radio-group">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkRadioButton" id="yes">
                     <property name="label" translatable="yes">_Yes, count me in</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="use_underline">True</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
@@ -119,10 +127,10 @@ Feedback from users like you can help us find and fix the bugs that matter most.
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="use_action_appearance">False</property>
                     <property name="use_underline">True</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
+                    <property name="group">yes</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -133,65 +141,64 @@ Feedback from users like you can help us find and fix the bugs that matter most.
               </object>
               <packing>
                 <property name="left_attach">2</property>
-                <property name="right_attach">4</property>
                 <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
+                <property name="width">2</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="yes-details">
-                <property name="width_request">381</property>
+                <property name="name">&lt;small&gt;If you choose “No” then participating applications will not monitor their own behavior. No automatic feedback will ever be sent, though you can still report problems manually.&lt;/small&gt;</property>
+                <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="label" translatable="yes">&lt;small&gt;If you choose “Yes” then participating applications will send feedback to the bug isolation center after each run. Failed runs will also include crash reports to help us see what went wrong.&lt;/small&gt;</property>
                 <property name="use_markup">True</property>
+                <property name="justify">fill</property>
                 <property name="wrap">True</property>
+                <property name="max_width_chars">40</property>
               </object>
               <packing>
                 <property name="left_attach">3</property>
-                <property name="right_attach">4</property>
                 <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
-                <property name="x_options">GTK_EXPAND | GTK_SHRINK | GTK_FILL</property>
-                <property name="y_options"></property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="no-details">
-                <property name="width_request">381</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="xalign">0</property>
                 <property name="label" translatable="yes">&lt;small&gt;If you choose “No” then participating applications will not monitor their own behavior. No automatic feedback will ever be sent, though you can still report problems manually.&lt;/small&gt;</property>
                 <property name="use_markup">True</property>
+                <property name="justify">fill</property>
                 <property name="wrap">True</property>
+                <property name="max_width_chars">40</property>
+                <property name="lines">3</property>
               </object>
               <packing>
                 <property name="left_attach">3</property>
-                <property name="right_attach">4</property>
                 <property name="top_attach">2</property>
-                <property name="bottom_attach">3</property>
-                <property name="x_options">GTK_EXPAND | GTK_SHRINK | GTK_FILL</property>
-                <property name="y_options"></property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="learn-more">
-                <property name="width_request">393</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="xalign">0</property>
+                <property name="can_focus">False</property>
+                <property name="halign">start</property>
                 <property name="label" translatable="yes">Not sure what to do? &lt;a href="http://research.cs.wisc.edu/cbi/learn-more/"&gt;Click here to learn more.&lt;/a&gt;</property>
                 <property name="use_markup">True</property>
-                <property name="use_underline">True</property>
-                <property name="wrap">True</property>
               </object>
               <packing>
                 <property name="left_attach">2</property>
-                <property name="right_attach">4</property>
                 <property name="top_attach">3</property>
-                <property name="bottom_attach">4</property>
+                <property name="width">2</property>
               </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
             </child>
             <child>
               <placeholder/>

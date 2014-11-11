@@ -130,7 +130,6 @@ Feedback from users like you can help us find and fix the bugs that matter most.
                     <property name="use_underline">True</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">yes</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -170,7 +169,6 @@ Feedback from users like you can help us find and fix the bugs that matter most.
                 <property name="justify">fill</property>
                 <property name="wrap">True</property>
                 <property name="max_width_chars">40</property>
-                <property name="lines">3</property>
               </object>
               <packing>
                 <property name="left_attach">3</property>

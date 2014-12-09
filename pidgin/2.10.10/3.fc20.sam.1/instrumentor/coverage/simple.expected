@@ -1,0 +1,7 @@
+simple	coverage	simple.c	3	main	1	*(*(argv + 0) + 0)	1
+simple	coverage	simple.c	4	main	4	*(*(argv + 0) + 0) = (char )'z';	1
+simple	coverage	simple.c	6	main	11	argc > 2	0
+simple	coverage	simple.c	6	main	8	argc > 1	1
+simple	coverage	simple.c	7	main	14	return (1);	0
+simple	coverage	simple.c	9	main	17	return (0);	0
+simple	coverage	simple.c	9	main	20	return (0);	1

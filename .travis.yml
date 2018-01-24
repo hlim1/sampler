@@ -4,6 +4,7 @@ addons:
     sources:
     - avsm
     packages:
+    - aspcud
     - docbook-xsl
     - flex
     - gir1.2-webkit-3.0

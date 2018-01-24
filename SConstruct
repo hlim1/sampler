@@ -56,7 +56,11 @@ def distroVersion(context):
 
 def distroArch(context):
     context.Message('checking for distribution architecture: ')
-    (status, arch) = context.TryAction('rpm --eval %_build_arch >$TARGET')
+    action = {
+        'rpm': [['rpm', '--eval', '%_build_arch', '>', '$TARGET']],
+        'debian': [['dpkg-architecture', '-s', '-qDEB_BUILD_GNU_CPU', '>', '$TARGET']],
+        }[env['DISTRO_BASIS']]
+    (status, arch) = context.TryAction(action)
     if status:
         arch = arch.rstrip()
         context.env['DISTRO_ARCH'] = arch

@@ -6,6 +6,7 @@ addons:
     packages:
     - aspcud
     - docbook-xsl
+    - dpkg-dev
     - flex
     - gir1.2-webkit-3.0
     - inkscape

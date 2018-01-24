@@ -16,8 +16,8 @@ addons:
     - ocaml-native-compilers
     - opam
 before_install:
-- opam init
-- opam install cil
+- opam init --yes
+- opam install --yes cil
 install: scons OCAML_NATIVE=$OCAML_NATIVE
 script: scons test
 before_cache: rm --force --recursive $HOME/.opam/log

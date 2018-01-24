@@ -1,0 +1,4 @@
+[submodule "scons-tools"]
+	path = scons-tools
+	url = git@github.com:liblit/scons-tools.git
+	branch = master

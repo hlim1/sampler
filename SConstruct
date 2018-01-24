@@ -101,11 +101,6 @@ try:
 except IndexError:
     domainname = None
 
-if domainname == 'cs.wisc.edu':
-    print 'adding special tweaks for', domainname
-    env.AppendENVPath('PATH', '/unsup/ocaml/bin')
-    env['pychecker'] = [sys.executable, '/unsup/pychecker/lib/python2.6/site-packages/pychecker/checker.py']
-
 env.SetDefault(gcc=env.WhereIs('gcc'))
 
 

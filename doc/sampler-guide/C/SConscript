@@ -4,8 +4,15 @@ preinstall = [['scrollkeeper-preinstall', '$prefix/share/sampler/doc/sampler-gui
 omf = env.Command('sampler-guide-C.omf.out', 'sampler-guide-C.omf', preinstall)
 Default(omf)
 
+env['docBookStylesheetDir'] = {
+    'debian': '/usr/share/xml/docbook/stylesheet/docbook-xsl',
+    'rpm': '/usr/share/sgml/docbook/xsl-stylesheets',
+}[env['DISTRO_BASIS']]
+
+xsl = env.Template('sampler-guide.xsl.in', varlist=['docBookStylesheetDir'])
+
 sections = [ 'ar01s0%d.html' % secnum for secnum in xrange(2, 6) ]
-html = env.Command(['index.html'] + sections, 'sampler-guide.xml',
+html = env.Command(['index.html'] + sections, ('sampler-guide.xml', xsl),
                    [['xsltproc', '--stringparam', 'base.dir', '$TARGET.dir/', '$SOURCE']])
 Default(html)
 Alias('html', html)
@@ -20,7 +27,7 @@ Depends('sampler-guide.xml.passed', '#doc/config.dtd')
 guide = [
     'sampler-guide.css',
     'sampler-guide.xml',
-    'sampler-guide.xsl',
+    xsl,
     ]
 
 Alias('install', [

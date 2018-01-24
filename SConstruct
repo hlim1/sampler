@@ -393,11 +393,12 @@ targetArchCPUs = frozenset((
             ('i386', 'i686'),
             ))
 
-for arch, cpu in targetArchCPUs:
-    tenv = env.Clone(
-        TARGET_ARCH=arch,
-        TARGET_CPU=cpu,
-    )
-    targets = list(rpm_targets(tenv))
-    tenv.Command(targets, srpm, 'mock --root=$DISTRO_NAME-$DISTRO_VERSION-$TARGET_ARCH --resultdir=${TARGETS[0].dir} $SOURCE')
-    Alias('rpms', targets)
+if env['DISTRO_BASIS'] == 'rpm':
+    for arch, cpu in targetArchCPUs:
+        tenv = env.Clone(
+            TARGET_ARCH=arch,
+            TARGET_CPU=cpu,
+        )
+        targets = list(rpm_targets(tenv))
+        tenv.Command(targets, srpm, 'mock --root=$DISTRO_NAME-$DISTRO_VERSION-$TARGET_ARCH --resultdir=${TARGETS[0].dir} $SOURCE')
+        Alias('rpms', targets)

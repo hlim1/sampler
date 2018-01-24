@@ -11,7 +11,9 @@ addons:
     - libgsl0-dev
     - liblttng-ust-dev
     - opam
-before_install: opam install cil
+before_install:
+- opam init
+- opam install cil
 install: scons OCAML_NATIVE=$OCAML_NATIVE
 script: scons test
 before_cache: rm --force --recursive $HOME/.opam/log

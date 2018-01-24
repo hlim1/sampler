@@ -209,6 +209,7 @@ FLAG_SPECS_EXACT = {
     '-auxbase': slurp_1,
     '-auxbase-strip': slurp_1,
     '-dumpbase': dumpbase,
+    '-imultiarch': slurp_1,
     '-quiet': slurp_0_cc1,
     }
 

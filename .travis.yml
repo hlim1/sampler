@@ -11,9 +11,13 @@ addons:
     - liblttng-ust-dev
     - opam
 before_install: opam install cil
-install: scons
+install: scons OCAML_NATIVE=$OCAML_NATIVE
 script: scons test
 before_cache: rm --force --recursive $HOME/.opam/log
 cache:
   directories:
   - "$HOME/.opam"
+env:
+  matrix:
+    - OCAML_NATIVE=yes
+    - OCAML_NATIVE=no

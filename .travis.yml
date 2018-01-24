@@ -19,8 +19,8 @@ addons:
 before_install:
 - opam init --yes
 - opam install --yes cil
-install: scons OCAML_NATIVE="$OCAML_NATIVE" cil_path="$HOME/.opam/system/lib/cil"
-script: scons test
+install: scons --keep-going OCAML_NATIVE="$OCAML_NATIVE" cil_path="$HOME/.opam/system/lib/cil"
+script: scons --keep-going test
 before_cache: rm --force --recursive "$HOME/.opam/log"
 cache:
   directories:

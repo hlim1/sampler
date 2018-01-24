@@ -1,0 +1,16 @@
+*.annot
+*.cmi
+*.cmo
+*.o
+*.os
+*.passed
+*.pyc
+*.pyo
+*.so
+*~
+/.sconf_temp/
+/.scons-cache/
+/.scons-config
+/.sconsign.dblite
+/config.log
+/sampler.spec

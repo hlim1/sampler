@@ -1,0 +1,8 @@
+/config.py
+/libsampler*.a
+/libsampler*.so
+/libsampler*.so.1
+/libsampler*.so.1.0.0
+/main
+/sampler-cc
+/sampler/

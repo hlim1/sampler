@@ -1,0 +1,16 @@
+/*/*.reports
+/*/*.resolved
+/*/modular
+/*/sharing
+/*/simple
+/*/threads
+/cfgTest
+/cfgToDot
+/checker
+/dotify
+/dump
+/dumpConstants
+/libraries.ml
+/loopless
+/main
+/version.ml

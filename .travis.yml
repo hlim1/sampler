@@ -1,0 +1,19 @@
+addons:
+  apt:
+    packages:
+    - docbook-xsl
+    - flex
+    - gir1.2-webkit-3.0
+    - inkscape
+    - libdbus-1-dev
+    - libglib2.0-dev
+    - libgsl-dev
+    - liblttng-ust-dev
+    - opam
+before_install: opam install cil
+install: scons
+script: scons test
+before_cache: rm --force --recursive $HOME/.opam/log
+cache:
+  directories:
+  - "$HOME/.opam"

@@ -9,7 +9,6 @@ Import('env', 'excludedSources')
 env = env.Clone(
     OCAML_LIBS=[
         'dynlink',
-        'findlib/findlib',
         'nums',
         'str',
         'unix',

@@ -5,6 +5,7 @@ addons:
     - avsm
     packages:
     - aspcud
+    - desktop-file-utils
     - docbook-xsl
     - dpkg-dev
     - flex
@@ -14,8 +15,12 @@ addons:
     - libglib2.0-dev
     - libgsl0-dev
     - liblttng-ust-dev
+    - libxml2-utils
     - ocaml-native-compilers
     - opam
+    - pychecker
+    - rarian-compat
+    - xsltproc
 before_install:
 - opam init --yes
 - opam install --yes cil

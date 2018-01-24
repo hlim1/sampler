@@ -20,10 +20,96 @@ version = File('version').get_contents().rstrip()
 
 ########################################################################
 #
-#  configurable options
+#  basic build platform detection
 #
 
-lib64 = 'lib' + {'32bit': '', '64bit': '64'}[platform.architecture()[0]]
+def distroName(context):
+    context.Message('checking for distribution name: ')
+    name = {
+        'centos': 'centos',
+        'debian': 'debian',
+        'fedora': 'fedora',
+        'redhat': 'rhel',
+        'Ubuntu': 'ubuntu',
+        }[platform.dist()[0]]
+    context.env['DISTRO_NAME'] = name
+    context.Result(name)
+
+def distroBasis(context):
+    context.Message('checking for distribution basis: ')
+    basis = {
+        'centos': 'rpm',
+        'debian': 'debian',
+        'fedora': 'rpm',
+	'rhel': 'rpm',
+        'ubuntu': 'debian'
+        }[context.env['DISTRO_NAME']]
+    context.env['DISTRO_BASIS'] = basis
+    context.Result(basis)
+    return basis
+
+def distroVersion(context):
+    context.Message('checking for distribution version: ')
+    version = platform.dist()[1]
+    context.env['DISTRO_VERSION'] = version
+    context.Result(version)
+
+def distroArch(context):
+    context.Message('checking for distribution architecture: ')
+    (status, arch) = context.TryAction('rpm --eval %_build_arch >$TARGET')
+    if status:
+        arch = arch.rstrip()
+        context.env['DISTRO_ARCH'] = arch
+        context.Result(arch)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+def distroCpu(context):
+    context.Message('checking for distribution cpu: ')
+    action = {
+        'rpm': [['rpm', '--eval', '%_target_cpu', '>', '$TARGET']],
+        'debian': [['dpkg-architecture', '-s', '-qDEB_BUILD_ARCH', '>', '$TARGET']],
+        }[env['DISTRO_BASIS']]
+    (status, cpu) = context.TryAction(action)
+    if status:
+        cpu = cpu.rstrip()
+        context.env['DISTRO_CPU'] = cpu
+        context.Result(cpu)
+    else:
+        context.Result(False)
+        context.env.Exit(1)
+
+env = Environment()
+
+conf = env.Configure(
+    clean=True, help=False,
+    custom_tests={
+        'DistroName': distroName,
+        'DistroBasis': distroBasis,
+        'DistroVersion': distroVersion,
+        'DistroArch': distroArch,
+        'DistroCpu': distroCpu,
+        })
+conf.DistroName()
+conf.DistroBasis()
+conf.DistroVersion()
+conf.DistroArch()
+conf.DistroCpu()
+conf.Finish()
+
+lib64 = 'lib' + {
+    ('32bit', 'debian'): '32',
+    ('64bit', 'debian'): '',
+    ('32bit', 'rpm'): '',
+    ('64bit', 'rpm'): '64',
+}[platform.architecture()[0], env['DISTRO_BASIS']]
+
+
+########################################################################
+#
+#  configurable options
+#
 
 def validate_gcc_path(key, value, env):
     if not value:
@@ -90,7 +176,7 @@ opts.AddVariables(
     BoolVariable('launcher', 'include GNOME launcher code', True),
     )
 
-env = Environment(options=opts)
+opts.Update(env)
 opts.Save('.scons-config', env)
 
 if not 'cil_paths' in env:
@@ -179,77 +265,6 @@ SConsignFile()
 Help(opts.GenerateHelpText(env))
 Export('env')
 
-
-def distroName(context):
-    context.Message('checking for distribution name: ')
-    name = {
-        'centos': 'centos',
-        'debian': 'debian',
-        'fedora': 'fedora',
-        'redhat': 'rhel',
-        }[platform.dist()[0]]
-    context.env['DISTRO_NAME'] = name
-    context.Result(name)
-
-def distroBasis(context):
-    context.Message('checking for distribution basis: ')
-    basis = {
-        'centos': 'rpm',
-        'debian': 'debian',
-        'fedora': 'rpm',
-	'rhel': 'rpm',
-        }[context.env['DISTRO_NAME']]
-    context.env['DISTRO_BASIS'] = basis
-    context.Result(basis)
-    return basis
-
-def distroVersion(context):
-    context.Message('checking for distribution version: ')
-    version = platform.dist()[1]
-    context.env['DISTRO_VERSION'] = version
-    context.Result(version)
-
-def distroArch(context):
-    context.Message('checking for distribution architecture: ')
-    (status, arch) = context.TryAction('rpm --eval %_build_arch >$TARGET')
-    if status:
-        arch = arch.rstrip()
-        context.env['DISTRO_ARCH'] = arch
-        context.Result(arch)
-    else:
-        context.Result(False)
-        context.env.Exit(1)
-
-def distroCpu(context):
-    context.Message('checking for distribution cpu: ')
-    action = {
-        'rpm': [['rpm', '--eval', '%_target_cpu', '>', '$TARGET']],
-        'debian': [['dpkg-architecture', '-s', '-qDEB_BUILD_ARCH', '>', '$TARGET']],
-        }[env['DISTRO_BASIS']]
-    (status, cpu) = context.TryAction(action)
-    if status:
-        cpu = cpu.rstrip()
-        context.env['DISTRO_CPU'] = cpu
-        context.Result(cpu)
-    else:
-        context.Result(False)
-        context.env.Exit(1)
-
-conf = env.Configure(
-    clean=True, help=False,
-    custom_tests={
-        'DistroName': distroName,
-        'DistroBasis': distroBasis,
-        'DistroVersion': distroVersion,
-        'DistroArch': distroArch,
-        'DistroCpu': distroCpu,
-        })
-conf.DistroName()
-conf.DistroBasis()
-conf.DistroVersion()
-conf.DistroArch()
-conf.DistroCpu()
-conf.Finish()
 
 ########################################################################
 #

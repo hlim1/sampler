@@ -10,6 +10,7 @@ addons:
     - libglib2.0-dev
     - libgsl0-dev
     - liblttng-ust-dev
+    - ocaml-native-compilers
     - opam
 before_install:
 - opam init

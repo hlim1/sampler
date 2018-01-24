@@ -20,5 +20,5 @@ cache:
   - "$HOME/.opam"
 env:
   matrix:
-    - OCAML_NATIVE=yes
-    - OCAML_NATIVE=no
+  - OCAML_NATIVE=yes
+  - OCAML_NATIVE=no

@@ -8,7 +8,7 @@ addons:
     - inkscape
     - libdbus-1-dev
     - libglib2.0-dev
-    - libgsl-dev
+    - libgsl0-dev
     - liblttng-ust-dev
     - opam
 before_install: opam install cil

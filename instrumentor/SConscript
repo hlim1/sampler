@@ -86,7 +86,7 @@ if env.get('cil_version') >= (1, 7):
 #
 
 
-symbolPattern = re.compile('^[0-9a-f]{8} [TW] ([$\\w]+)')
+symbolPattern = re.compile('^[0-9a-f]{8}[0-9a-f]{8}? [TW] ([$\\w]+)')
 
 
 def findSymbols(library):

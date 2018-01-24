@@ -20,7 +20,7 @@
     <property name="icon_name">sampler-enabled</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">off-screen</property>
-    <signal name="response" handler="on_response" swapped="no"/>
+    <signal name="response" handler="on_response"/>
     <child internal-child="vbox">
       <object class="GtkBox" id="vertical">
         <property name="visible">True</property>

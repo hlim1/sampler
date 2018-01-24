@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import gi
+gi.require_version('Notify', '0.7')
+
 from gi.repository import GLib, Gtk, Notify
 
 import Keys

@@ -150,8 +150,6 @@ def validate_cil_build(key, value, env):
     subdirs = (
         'src',
         'src/ext',
-        'src/ext/pta',
-        'src/ext/zrapp',
         'src/frontc',
         'src/ocamlutil',
         )

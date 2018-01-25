@@ -1,6 +1,7 @@
 *.annot
 *.cmi
 *.cmo
+*.cmx
 *.o
 *.os
 *.passed

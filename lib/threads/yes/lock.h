@@ -9,7 +9,10 @@
 #define CBI_CRITICAL_REGION(mutex, block)						\
 do {											\
   int lockError;									\
+  _Pragma("GCC diagnostic push")							\
+  _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")				\
   pthread_cleanup_push((void (*)(void *)) pthread_mutex_unlock, &mutex);		\
+  _Pragma("GCC diagnostic pop")								\
   lockError = pthread_mutex_lock(&mutex);						\
   if (lockError)									\
     {											\

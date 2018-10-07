@@ -9,7 +9,7 @@ addons:
     - docbook-xsl
     - dpkg-dev
     - flex
-    - gir1.2-webkit-3.0
+    - gir1.2-webkit2-3.0
     - inkscape
     - libdbus-1-dev
     - libglib2.0-dev

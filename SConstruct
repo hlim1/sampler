@@ -181,7 +181,7 @@ opts.AddVariables(
 opts.Update(env)
 opts.Save('.scons-config', env)
 
-if not 'cil_paths' in env:
+if 'cil_paths' not in env:
     guess_cil_path(env)
 
 try:

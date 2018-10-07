@@ -41,4 +41,4 @@ let instrumentable { svar; _ } =
   | Extern, true ->
       false
   | _ ->
-      filter#included svar.vname
+      filter#included svar.vname && not (hasAttribute "no_instrument_function" svar.vattr)

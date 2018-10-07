@@ -9,7 +9,7 @@
 #define CBI_CRITICAL_REGION(mutex, block)						\
 do {											\
   int lockError;									\
-  pthread_cleanup_push((void (*)(void *)) pthread_mutex_unlock, (void *) &mutex);	\
+  pthread_cleanup_push((void (*)(void *)) pthread_mutex_unlock, &mutex);		\
   lockError = pthread_mutex_lock(&mutex);						\
   if (lockError)									\
     {											\

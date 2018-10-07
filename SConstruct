@@ -87,16 +87,22 @@ def distroCpu(context):
 env = Environment()
 
 conf = env.Configure(
-    clean=True, help=False,
+    clean=True,
     custom_tests={
         'DistroName': distroName,
         'DistroBasis': distroBasis,
+        })
+conf.DistroName()
+conf.DistroBasis()
+conf.Finish()
+
+conf = env.Configure(
+    clean=True, help=False,
+    custom_tests={
         'DistroVersion': distroVersion,
         'DistroArch': distroArch,
         'DistroCpu': distroCpu,
         })
-conf.DistroName()
-conf.DistroBasis()
 conf.DistroVersion()
 conf.DistroArch()
 conf.DistroCpu()

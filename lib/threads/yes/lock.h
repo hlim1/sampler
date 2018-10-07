@@ -10,6 +10,7 @@
 do {											\
   int lockError;									\
   _Pragma("GCC diagnostic push")							\
+  _Pragma("GCC diagnostic ignored \"-Wpragmas\"")					\
   _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")				\
   pthread_cleanup_push((void (*)(void *)) pthread_mutex_unlock, &mutex);		\
   _Pragma("GCC diagnostic pop")								\

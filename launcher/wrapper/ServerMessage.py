@@ -20,7 +20,7 @@ class ServerMessage(object):
         import cgi
 
         builder = Gtk.Builder()
-	home = dirname(abspath(__file__))
+        home = dirname(abspath(__file__))
         builder.add_from_file(join(home, 'wrapper.ui'))
         self.__dialog = builder.get_object('server-message')
         self.__initial_title = self.__dialog.props.title

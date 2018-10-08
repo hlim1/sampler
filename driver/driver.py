@@ -334,6 +334,8 @@ def extraArgs(argFilter, samplerLibDir):
         yield '-lpthread'
         yield '-lsampler-trace'
 
+    yield '-Wl,--no-as-needed'
+
     if not toggles['sample']:
         yield '-lsampler-always'
     else:

@@ -20,6 +20,7 @@ env.File('samples.h')
 senv = env.Clone()
 senv.AppendUnique(
     LIBS=libschemes,
+    SHLINKFLAGS='-Wl,-rpath,\$$ORIGIN',
     )
 
 for scheme in ['bounds', 'branches', 'coverage', 'data', 'function-entries', 'returns', 'scalar-pairs']:
